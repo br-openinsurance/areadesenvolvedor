@@ -1,4 +1,4 @@
-# OpenInsurance Brasil
+# Open Insurance Brasil
 
 ## O que é?
 
