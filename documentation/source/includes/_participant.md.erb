@@ -1,6 +1,6 @@
 <!-- Generator: Widdershins v4.0.1 -->
 
-# API - Participantes Open Insurance Brasil v1.0.0
+# Participantes
 
 > Scroll down for code samples, example requests and responses. Select a language for code samples from the tabs above or the mobile navigation menu.
 
@@ -8,11 +8,11 @@ Informações sobre os servidores de autorização dos participantes do Open Ins
 
 Base URLs:
 
-* <a href="https://data.directory.opinbrasil.com.br">https://data.directory.opinbrasil.com.br</a>
+* <a href="https://data.directory.opinbrasil.com.br/participants">https://data.directory.opinbrasil.com.br/participants</a>
 
  License: MIT
 
-## Organisations - Export 
+## Organisations
 
 ### Recupera informações técnicas sobre Participantes registrados no diretório, essas informações permitem identificar e consumir as APIs dos participantes
 
