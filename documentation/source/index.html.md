@@ -15,10 +15,11 @@ includes:
 - manual
 - glossary
 - security
-- common_apis
+- status_outages
 - admin_metrics
-- open_insurance
-- participant
+- data_channels
+- products_services
+- participants
 - faq
 
 toc_footers:

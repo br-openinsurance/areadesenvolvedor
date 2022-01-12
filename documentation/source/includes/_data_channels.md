@@ -12,7 +12,7 @@ Base URLs:
 
 Web: <a href="https://openinsurance.susep.gov.br">Support</a> 
 
-<a href="dictionary/swagger/canais_atendimento.yaml">Especificação em OAS</a> <br>
+<a href="files/swagger/canais_atendimento.yaml">Especificação em OAS</a> <br>
 
 ## Dependências próprias
 

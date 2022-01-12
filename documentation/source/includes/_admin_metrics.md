@@ -18,7 +18,7 @@ Web: <a href="https://http://novosite.susep.gov.br">Support</a>
 
 <a id="opIdgetMetrics"></a>
 
-<a href="dictionary/swagger/metrics.yaml">Especificação em OAS</a> <br>
+<a href="files/swagger/metrics.yaml">Especificação em OAS</a> <br>
 
 > Code samples
 
