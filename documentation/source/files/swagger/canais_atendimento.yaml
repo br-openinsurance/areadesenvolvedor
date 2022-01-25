@@ -4,23 +4,23 @@ info:
   description: As APIs descritas neste documento são referentes as APIs da fase Open Data do Open Insurance Brasil.
   version: 1.0.0
   contact:
-    url: 'https://http://novosite.susep.gov.br'
+    url: 'https://novosite.susep.gov.br'
 tags:
-  - name: "Channels"
-    description: "Operações para listagem de canais de atendimentos"
+  - name: 'Channels'
+    description: 'Operações para listagem de canais de atendimentos'
 servers:
   - url: http://api.organizacao.com.br/open-insurance/channels/v1
 paths:
   /branches:
     get:
       tags:
-        - "Channels"
+        - 'Channels'
       summary: Obtém a listagem de dependências próprias da instituição.
-      description: "Método para obter a listagem de dependências próprias da instituição."
-      operationId: "getBranches"
+      description: 'Método para obter a listagem de dependências próprias da instituição.'
+      operationId: 'getBranches'
       parameters:
-        - $ref: "#/components/parameters/page"
-        - $ref: "#/components/parameters/pageSize"
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/pageSize'
       responses:
         '200':
           description: Lista de dependências próprias obtida com sucesso.
@@ -45,17 +45,21 @@ paths:
         '500':
           $ref: '#/components/responses/InternalServerError'
         default:
-          $ref: '#/components/schemas/ResponseBranchesList'        
+          description: Dados de canais
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseBranchesList'
   /electronic-channels:
     get:
       tags:
-        - "Channels"
+        - 'Channels'
       summary: Obtém a listagem de canais eletrônicos de atendimento da instituição.
-      description: "Método para obter a listagem de canais eletrônicos de atendimento da instituição."
-      operationId: "getElectronicChannels"
+      description: 'Método para obter a listagem de canais eletrônicos de atendimento da instituição.'
+      operationId: 'getElectronicChannels'
       parameters:
-        - $ref: "#/components/parameters/page"
-        - $ref: "#/components/parameters/pageSize"
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/pageSize'
       responses:
         '200':
           description: Listagem de canais eletrônicos de atendimento obtida com sucesso.
@@ -80,17 +84,21 @@ paths:
         '500':
           $ref: '#/components/responses/InternalServerError'
         default:
-          $ref: '#/components/schemas/ResponseElectronicChannelsList'     
+          description: Dados de canais
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseElectronicChannelsList'
   /phone-channels:
     get:
       tags:
-        - "Channels"
-      summary: "Obtém a listagem de canais telefônicos de atendimento da instituição."
-      description: "Método para obter a listagem de canais telefônicos de atendimento da instituição."
-      operationId: "getPhoneChannels"
+        - 'Channels'
+      summary: 'Obtém a listagem de canais telefônicos de atendimento da instituição.'
+      description: 'Método para obter a listagem de canais telefônicos de atendimento da instituição.'
+      operationId: 'getPhoneChannels'
       parameters:
-        - $ref: "#/components/parameters/page"
-        - $ref: "#/components/parameters/pageSize"
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/pageSize'
       responses:
         '200':
           description: Listagem de canais telefônicos de atendimento obtida com sucesso.
@@ -115,7 +123,11 @@ paths:
         '500':
           $ref: '#/components/responses/InternalServerError'
         default:
-          $ref: '#/components/schemas/ResponsePhoneChannelsList'    
+          description: Dados de canais
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponsePhoneChannelsList'
 components:
   schemas:
     ResponseBranchesList:
@@ -207,13 +219,13 @@ components:
                       urls:
                         - 'https://empresa1.com/insurance'
                     services:
-                      - name: "SEGUROS"
-                        code: "SEGUROS"
+                      - name: 'SEGUROS'
+                        code: 'SEGUROS'
         links:
           self: 'https://api.organizacao.com.br/open-insurance/channels/v1/electronic-channels'
           first: 'https://api.organizacao.com.br/open-insurance/channels/v1/electronic-channels'
-          prev: "null"
-          next: "null"
+          prev: 'null'
+          next: 'null'
           last: 'https://api.organizacao.com.br/open-insurance/channels/v1/electronic-channels'
         meta:
           totalRecords: 1
@@ -227,7 +239,7 @@ components:
         name:
           type: string
           description: Nome da marca selecionada pela Organização proprietária da dependência (titular).
-          example: "Marca A"
+          example: 'Marca A'
           maxLength: 80
           pattern: \w*\W*
         companies:
@@ -246,7 +258,7 @@ components:
         name:
           type: string
           description: Nome da marca selecionada pela Organização proprietária da dependência (titular).
-          example: "Empresa da Marca A"
+          example: 'Empresa da Marca A'
           maxLength: 80
           pattern: \w*\W*
         cnpjNumber:
@@ -343,14 +355,14 @@ components:
           maxLength: 3
           example: BRA
         geographicCoordinates:
-          $ref: '#/components/schemas/BranchesGeographicCoordinates'       
+          $ref: '#/components/schemas/BranchesGeographicCoordinates'
     BranchIdentification:
       type: object
       properties:
         type:
           type: string
           description: Tipo de dependência.
-          enum: [POSTO_ATENDIMENTO, UNIDADE_ADMINISTRATIVA_DESMEMBRADA]
+          enum: [ POSTO_ATENDIMENTO, UNIDADE_ADMINISTRATIVA_DESMEMBRADA ]
           example: POSTO_ATENDIMENTO
         code:
           type: string
@@ -369,7 +381,7 @@ components:
           maxLength: 100
           pattern: \w*\W*
           description: Nome da dependência
-          example: Marília      
+          example: Marília
     BranchAvailability:
       type: object
       properties:
@@ -520,34 +532,34 @@ components:
             - SEGUNDA_VIA_DOCUMENTOS_CONTRATUAIS
             - SUGESTOES_ELOGIOS
           description: Nome dos Serviços efetivamente prestados pelo Canal de Atendimento
-          example: "ENDOSSO"
+          example: 'ENDOSSO'
         code:
           type: string
           enum:
-            - "01"
-            - "02"
-            - "03"
-            - "04"
-            - "05"
-            - "06"
-            - "07"
-            - "08"
-            - "09"
-            - "10"
-            - "11"
-            - "12"
-            - "13"
-            - "14"
-            - "15"
-            - "16"
-            - "17"
-            - "18"
-            - "19"
+            - '01'
+            - '02'
+            - '03'
+            - '04'
+            - '05'
+            - '06'
+            - '07'
+            - '08'
+            - '09'
+            - '10'
+            - '11'
+            - '12'
+            - '13'
+            - '14'
+            - '15'
+            - '16'
+            - '17'
+            - '18'
+            - '19'
           description: Código dos Serviços efetivamente prestados pelo Canal de Atendimento
-          example: "PORTABILIDADE"
+          example: 'PORTABILIDADE'
       required:
-      - code
-      - name
+        - code
+        - name
     ElectronicChannels:
       type: object
       required:
@@ -562,7 +574,7 @@ components:
             $ref: '#/components/schemas/ElectronicChannelsServices'
           minItems: 1
           maxItems: 20
-          description: "Traz a relação de serviços disponbilizados pelo Canal de Atendimento"
+          description: 'Traz a relação de serviços disponbilizados pelo Canal de Atendimento'
         availability:
           $ref: '#/components/schemas/EletronicChannelsAvailability'
     ElectronicChannelsIdentification:
@@ -580,12 +592,12 @@ components:
             - WHATSAPP
             - CONSUMIDOR
             - OUTROS
-          description: "Tipo de canal de atendimento eletrônico"
-          example: "CHAT"
+          description: 'Tipo de canal de atendimento eletrônico'
+          example: 'CHAT'
         accessType:
           type: string
           description: Tipo de acesso
-          enum: [EMAIL, INTERNET, APP, CHAT, WHATSAPP, CONSUMIDOR, OUTROS]
+          enum: [ EMAIL, INTERNET, APP, CHAT, WHATSAPP, CONSUMIDOR, OUTROS ]
         urls:
           type: array
           items:
@@ -624,33 +636,33 @@ components:
             - RESGATE
             - SEGUNDA_VIA_DOCUMENTOS_CONTRATUAIS
             - SUGESTOES_ELOGIOS
-          description: "Nome dos Serviços efetivamente prestados pelo Canal de Atendimento"
-          example: "ABERTURA_CONTAS_DEPOSITOS_OU_PAGAMENTO_PRE_PAGA"
+          description: 'Nome dos Serviços efetivamente prestados pelo Canal de Atendimento'
+          example: 'ABERTURA_CONTAS_DEPOSITOS_OU_PAGAMENTO_PRE_PAGA'
         code:
           type: string
           enum:
-            - "01"
-            - "02"
-            - "03"
-            - "04"
-            - "05"
-            - "06"
-            - "07"
-            - "08"
-            - "09"
-            - "10"
-            - "11"
-            - "12"
-            - "13"
-            - "14"
-            - "15"
-            - "16"
-            - "17"
-            - "18"
-            - "19"
+            - '01'
+            - '02'
+            - '03'
+            - '04'
+            - '05'
+            - '06'
+            - '07'
+            - '08'
+            - '09'
+            - '10'
+            - '11'
+            - '12'
+            - '13'
+            - '14'
+            - '15'
+            - '16'
+            - '17'
+            - '18'
+            - '19'
 
-          description: "Código dos Serviços efetivamente prestados pelo Canal de Atendimento"
-          example: "RECLAMACAO"
+          description: 'Código dos Serviços efetivamente prestados pelo Canal de Atendimento'
+          example: 'RECLAMACAO'
     BranchPhone:
       type: object
       properties:
@@ -659,26 +671,26 @@ components:
           enum:
             - FIXO
             - MOVEL
-          example: "FIXO"
-          description: "Identificação do Tipo de telefone da dependência. p.ex.FIXO, MOVEL."
+          example: 'FIXO'
+          description: 'Identificação do Tipo de telefone da dependência. p.ex.FIXO, MOVEL.'
         countryCallingCode:
           type: string
           maxLength: 4
           pattern: ^\d{1,4}$
-          example: "55"
-          description: "Número de DDI (Discagem Direta Internacional) para  telefone de acesso ao Canal - se houver. p.ex. '55'"
+          example: '55'
+          description: 'Número de DDI (Discagem Direta Internacional) para  telefone de acesso ao Canal - se houver. p.ex. '55''
         areaCode:
           type: string
           maxLength: 2
           pattern: ^\d{2}$
-          example: "19"
-          description: "Número de DDD (Discagem Direta à Distância) do telefone da dependência - se houver. p.ex. '19'"
+          example: '19'
+          description: 'Número de DDD (Discagem Direta à Distância) do telefone da dependência - se houver. p.ex. '19''
         number:
           type: string
           maxLength: 11
           pattern: '^([0-9]{8,11})$'
-          example: "35721199"
-          description: "Número de telefone da dependência - se houver"
+          example: '35721199'
+          description: 'Número de telefone da dependência - se houver'
     ####################
     ## Phone ElectronicChannels ##
     ####################
@@ -765,8 +777,8 @@ components:
         links:
           self: 'https://api.organizacao.com.br/open-insurance/channels/v1/phone-channels'
           first: 'https://api.organizacao.com.br/open-insurance/channels/v1/phone-channels'
-          prev: "null"
-          next: "null"
+          prev: 'null'
+          next: 'null'
           last: 'https://api.organizacao.com.br/open-insurance/channels/v1/phone-channels'
         meta:
           totalRecords: 1
@@ -782,8 +794,8 @@ components:
           type: string
           pattern: '\w*\W*'
           maxLength: 80
-          description: "Nome da Marca reportada pelo participante do Open Insurance. O conceito a que se refere a 'marca' utilizada está em definição pelos participantes."
-          example: "Marca A"
+          description: 'Nome da Marca reportada pelo participante do Open Insurance. O conceito a que se refere a 'marca' utilizada está em definição pelos participantes.'
+          example: 'Marca A'
         companies:
           type: array
           items:
@@ -802,8 +814,8 @@ components:
           type: string
           pattern: \w*\W*
           maxLength: 80
-          description: "Nome da Instituição, pertencente à organização, responsável pelo Canal Telefônico."
-          example: "Empresa da Marca A"
+          description: 'Nome da Instituição, pertencente à organização, responsável pelo Canal Telefônico.'
+          example: 'Empresa da Marca A'
         cnpjNumber:
           type: string
           minLength: 14
@@ -849,18 +861,18 @@ components:
             - CENTRAL_TELEFONICA
             - SAC
             - OUVIDORIA
-          description: "
+          description: '
             Tipo de canal telefônico de atendimento:
               \n* `CENTRAL_TELEFONICA`
               \n* `SAC`
-              \n* `OUVIDORIA`"
-          example: "OUVIDORIA"
+              \n* `OUVIDORIA`'
+          example: 'OUVIDORIA'
         phones:
           type: array
           items:
             $ref: '#/components/schemas/PhoneChannelsPhones'
           minItems: 1
-          description: "Lista de telefones do Canal de Atendimento"
+          description: 'Lista de telefones do Canal de Atendimento'
     #### PhoneChannelPhones ####
     PhoneChannelsPhones:
       type: object
@@ -873,20 +885,20 @@ components:
           type: string
           maxLength: 4
           pattern: ^\d{1,4}$|^NA$
-          example: "55"
-          description: "Número de DDI (Discagem Direta Internacional) para telefone de acesso ao Canal - se houver."
+          example: '55'
+          description: 'Número de DDI (Discagem Direta Internacional) para telefone de acesso ao Canal - se houver.'
         areaCode:
           type: string
           maxLength: 2
           pattern: ^\d{2}$|^NA$
-          example: "19"
-          description: "Número de DDD (Discagem Direta à Distância) para telefone de acesso ao Canal - se houver."
+          example: '19'
+          description: 'Número de DDD (Discagem Direta à Distância) para telefone de acesso ao Canal - se houver.'
         number:
           type: string
           maxLength: 13
           pattern: ^([0-9]{8,11})$|^NA$
-          example: "08007787788"
-          description: "Número de telefone de acesso ao canal."      
+          example: '08007787788'
+          description: 'Número de telefone de acesso ao canal.'
     #### PhoneChannelsServices ####
     PhoneChannelsServices:
       type: object
@@ -917,30 +929,30 @@ components:
             - SEGUNDA_VIA_DOCUMENTOS_CONTRATUAIS
             - SUGESTOES_ELOGIOS
           description: Nome dos Serviços efetivamente prestados pelo Canal de Atendimento
-          example: "AVISO_SINISTRO"
+          example: 'AVISO_SINISTRO'
         code:
           type: string
           enum:
-            - "01"
-            - "02"
-            - "03"
-            - "04"
-            - "05"
-            - "06"
-            - "07"
-            - "08"
-            - "09"
-            - "10"
-            - "11"
-            - "12"
-            - "13"
-            - "14"
-            - "15"
-            - "16"
-            - "17"
-            - "18"
-            - "19"
-          description: "Código dos Serviços efetivamente prestados pelo Canal de Atendimento"    
+            - '01'
+            - '02'
+            - '03'
+            - '04'
+            - '05'
+            - '06'
+            - '07'
+            - '08'
+            - '09'
+            - '10'
+            - '11'
+            - '12'
+            - '13'
+            - '14'
+            - '15'
+            - '16'
+            - '17'
+            - '18'
+            - '19'
+          description: 'Código dos Serviços efetivamente prestados pelo Canal de Atendimento'
     BranchesGeographicCoordinates:
       type: object
       description: Informação referente a geolocalização informada.
@@ -956,18 +968,18 @@ components:
           type: string
           pattern: ^-?\d{1,3}\.\d{1,8}$
           maxLength: 13
-          example: '-180.836519'  
+          example: '-180.836519'
     LinksPaginated:
       type: object
       properties:
         self:
           type: string
           description: URL da página atualmente requisitada
-          example: "https://api.organizacao.com.br/open-insurance/channels/v1/<resource>"
+          example: 'https://api.organizacao.com.br/open-insurance/channels/v1/<resource>'
         first:
           type: string
           description: URL da primeira página de registros
-          example: "https://api.organizacao.com.br/open-insurance/channels/v1/<resource>"
+          example: 'https://api.organizacao.com.br/open-insurance/channels/v1/<resource>'
         prev:
           type: string
           description: URL da página anterior de registros
@@ -977,7 +989,7 @@ components:
         last:
           type: string
           description: URL da última página de registros
-          example: "https://api.organizacao.com.br/open-insurance/channels/v1/<resource>"
+          example: 'https://api.organizacao.com.br/open-insurance/channels/v1/<resource>'
     MetaPaginated:
       type: object
       properties:
@@ -1028,13 +1040,13 @@ components:
                 description: 'Data e hora da consulta, conforme especificação RFC-3339, formato UTC.'
                 type: string
                 pattern: '[\w\W\s]*'
-                maxLength: 2048  
+                maxLength: 2048
                 format: date-time
                 example: '2021-08-20T08:30:00Z'
             additionalProperties: false
         meta:
           $ref: '#/components/schemas/MetaPaginated'
-      additionalProperties: false   
+      additionalProperties: false
   parameters:
     page:
       name: page
@@ -1100,4 +1112,4 @@ components:
       content:
         application/json; charset=utf-8:
           schema:
-            $ref: '#/components/schemas/ResponseError' 
+            $ref: '#/components/schemas/ResponseError'
