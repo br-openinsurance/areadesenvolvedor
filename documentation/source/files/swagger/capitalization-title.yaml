@@ -26,8 +26,8 @@ paths:
         - $ref: '#/components/parameters/content-Security-Policy'
         - $ref: '#/components/parameters/content-Type'
         - $ref: '#/components/parameters/strict-Transport-Security'
-        - $ref: '#/components/parameters/xxx-Content-Type-Options'
-        - $ref: '#/components/parameters/xxx-Frame-Options'
+        - $ref: '#/components/parameters/x-Content-Type-Options'
+        - $ref: '#/components/parameters/x-Frame-Options'
         - $ref: '#/components/parameters/page'
         - $ref: '#/components/parameters/pageSize'
       responses:
@@ -64,8 +64,7 @@ components:
     ResponseCapitalizationTitleList:
       type: object
       required:
-        #- data
-        - brand
+        - data
         - links
         - meta
       properties:
@@ -76,8 +75,13 @@ components:
           maxLength: 2048
           format: date-time
           example: '2021-08-20T08:30:00Z'
-        brand:
-          $ref: '#/components/schemas/CapitalizationTitleBrand'
+        data:
+          type: object
+          required:
+            - brand
+          properties:
+            brand:
+              $ref: '#/components/schemas/CapitalizationTitleBrand'
         links:
           $ref: '#/components/schemas/Links'
         meta:
@@ -103,7 +107,7 @@ components:
         required:
           - name
           - cnpjNumber
-          - product
+          - products
         properties:
           name:
             type: string
@@ -115,7 +119,7 @@ components:
             description: CNPJ da sociedade pertencente à marca.
             maxLength: 14
             example: '12345678901234'
-          product:
+          products:
             $ref: '#/components/schemas/CapitalizationTitleProduct'
     CapitalizationTitleProduct:
       type: array
@@ -557,15 +561,15 @@ components:
       schema:
         type: string
         pattern: '[\w\W\s]*'
-    xxx-Content-Type-Options:
-      name: xxx-Content-Type-Options
+    x-Content-Type-Options:
+      name: x-Content-Type-Options
       in: header
       description: Campo para evitar que navegadores executem a detecção de MIME e interpretem respostas como HTML de forma inadequada.
       schema:
         type: string
         pattern: '[\w\W\s]*'
-    xxx-Frame-Options:
-      name: xxx-Frame-Options
+    x-Frame-Options:
+      name: x-Frame-Options
       in: header
       description: Campo indica se o navegador deve ou não renderizar um frame.
       schema:
