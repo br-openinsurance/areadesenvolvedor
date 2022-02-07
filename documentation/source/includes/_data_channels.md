@@ -171,7 +171,8 @@ Método para obter a listagem de dependências próprias da instituição.
 This operation does not require authentication
 </aside>
 
-## Obtém a listagem de canais eletrônicos de atendimento da instituição.
+## Canais eletrônicos
+### Obtém a listagem de canais eletrônicos de atendimento da instituição.
 
 <a id="opIdgetElectronicChannels"></a>
 
@@ -294,7 +295,8 @@ Método para obter a listagem de canais eletrônicos de atendimento da institui�
 This operation does not require authentication
 </aside>
 
-## Obtém a listagem de canais telefônicos de atendimento da instituição.
+## Canais telefônicos
+### Obtém a listagem de canais telefônicos de atendimento da instituição.
 
 <a id="opIdgetPhoneChannels"></a>
 
