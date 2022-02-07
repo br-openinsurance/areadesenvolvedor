@@ -1,6 +1,6 @@
 <!-- Generator: Widdershins v4.0.1 -->
 
-# API - Produtos e serviços v1.0.0
+# API - Produtos e serviços v1.0.2
 
 > Scroll down for code samples, example requests and responses. Select a language for code samples from the tabs above or the mobile navigation menu.
 
@@ -18,7 +18,7 @@ Web: <a href="https://openinsurance.susep.gov.br">Support</a>
 
 <a id="opIdgetLifePension"></a>
 
-<a href="files/swagger/life-pension.yaml">Especificação em OAS</a> <br>
+<a href="files/swagger/_life-pension.yaml">Especificação em OAS</a> <br>
 
 > Code samples
 
@@ -244,7 +244,7 @@ This operation does not require authentication
 
 <a id="opIdgetPensionPlan"></a>
 
-<a href="files/swagger/pension-plan.yaml">Especificação em OAS</a> <br>
+<a href="files/swagger/_pension-plan.yaml">Especificação em OAS</a> <br>
 
 > Code samples
 
@@ -478,7 +478,7 @@ This operation does not require authentication
 
 <a id="opIdgetPerson"></a>
 
-<a href="files/swagger/person.yaml">Especificação em OAS</a> <br>
+<a href="files/swagger/_person.yaml">Especificação em OAS</a> <br>
 
 
 > Code samples
@@ -716,7 +716,7 @@ This operation does not require authentication
 
 ### Obtém informações de seguros de automóveis
 
-<a href="files/swagger/auto-insurance.yaml">Especificação em OAS</a> <br>
+<a href="files/swagger/_auto-insurance.yaml">Especificação em OAS</a> <br>
 
 
 <a id="opIdgetAutoInsurance"></a>
@@ -924,6 +924,7 @@ Obtém informações de seguros de automóveis
 |Status|Meaning|Description|Schema|
 |---|---|---|---|
 |200|[OK](https://tools.ietf.org/html/rfc7231#section-6.3.1)|Dados dos Seguros de Automóveis|[ResponseAutoInsuranceList](#schemaresponseautoinsurancelist)|
+|204|[No Content](https://tools.ietf.org/html/rfc7231#section-6.3.5)|Dados dos Seguros de Automóveis|[AutoInsuranceProductDefault](#schemaautoinsuranceproductdefault)|
 |400|[Bad Request](https://tools.ietf.org/html/rfc7231#section-6.5.1)|A requisição foi malformada, omitindo atributos obrigatórios, seja no payload ou através de atributos na URL.|[ResponseError](#schemaresponseerror)|
 |401|[Unauthorized](https://tools.ietf.org/html/rfc7235#section-3.1)|Cabeçalho de autenticação ausente/inválido ou token inválido|[ResponseError](#schemaresponseerror)|
 |403|[Forbidden](https://tools.ietf.org/html/rfc7231#section-6.5.3)|O token tem escopo incorreto ou uma política de segurança foi violada|[ResponseError](#schemaresponseerror)|
@@ -944,7 +945,7 @@ This operation does not require authentication
 
 <a id="opIdgetResidentialInsurance"></a>
 
-<a href="files/swagger/home-insurance.yaml">Especificação em OAS</a> <br>
+<a href="files/swagger/_home-insurance.yaml">Especificação em OAS</a> <br>
 
 > Code samples
 
@@ -1034,86 +1035,87 @@ Obtém informações de seguros redidenciais
   "data": {
     "brand": {
       "name": "EMPRESA A seguros",
-      "company": [
-        {
-          "name": "ABCDE SEGUROS",
-          "cnpjNumber": 12345678901234,
-          "products": [
-            {
-              "name": "RESIDENCIAL XPTO",
-              "code": "0000-0",
-              "coverages": [
-                {
-                  "coverageType": "Escritório em Residência",
-                  "coverageDetail": "Cobertura especial para escritório residenciais",
-                  "coveragePermissionSeparteAquisition": false,
-                  "coverageAttributes": {
-                    "minLMI": {},
-                    "maxLMI": {},
-                    "minDeductibleAmount": {},
-                    "insuredMandatoryParticipationPercentage": 0
-                  }
+      "company": {
+        "name": "ABCDE SEGUROS",
+        "cnpjNumber": 12345678901234,
+        "products": [
+          {
+            "name": "RESIDENCIAL XPTO",
+            "code": "0000-0",
+            "coverages": [
+              {
+                "coverageType": "Escritório em Residência",
+                "coverageDetail": "Cobertura especial para escritório residenciais",
+                "coveragePermissionSeparteAcquisition": false,
+                "coverageAttributes": {
+                  "minLMI": {
+                    "amount": 0,
+                    "unit": {}
+                  },
+                  "maxLMI": {
+                    "amount": 0,
+                    "unit": {}
+                  },
+                  "minDeductibleAmount": {
+                    "amount": 0,
+                    "unit": {}
+                  },
+                  "insuredMandatoryParticipationPercentage": 0
                 }
-              ],
-              "propertyCharacteristics": [
-                {
-                  "propertyType": "CASA",
-                  "propertyBuildType": "ALVENARIA",
-                  "propertyUsageType": "HABITUAL",
-                  "destinationInsuredImportance": "PRÉDIO"
-                }
-              ],
-              "propertyZipCode": "1311000",
-              "protective": true,
-              "additional": [
-                "SORTEIO_GRATUITO"
-              ],
-              "additionalOthers": "string",
-              "assistanceServices": [
-                {
-                  "assistanceServicesPackage": "ATE_10_SERVICOS",
-                  "complementaryAssistanceServicesDetail": "reboque pane seca",
-                  "chargeTypeSignaling": "GRATUITA"
-                }
-              ],
-              "termsAndConditions": [
-                {
-                  "susepProcessNumber": "XXXXX.XXXXXX/XXXX-XX",
-                  "definition": "https://openinsurance.com.br/aaa"
-                }
-              ],
-              "validity": [
-                {
-                  "term": "ANUAL",
-                  "termOthers": "string"
-                }
-              ],
-              "customerServices": [
-                "LIVRE ESCOLHA"
-              ],
-              "premiumRates": [
-                "string"
-              ],
-              "premiumPayments": [
-                {
-                  "paymentMethod": "CARTÃO DE CRÉDITO",
-                  "paymentMethodDetail": "string",
-                  "paymentType": "PAGAMENTO_UNICO"
-                }
-              ],
-              "minimumRequirements": [
-                {
-                  "contractingType": "COLETIVO",
-                  "contractingMinRequirement": "https://openinsurance.com.br/aaa"
-                }
-              ],
-              "targetAudiences": [
-                "PESSOA_NATURAL"
-              ]
-            }
-          ]
-        }
-      ]
+              }
+            ],
+            "propertyCharacteristics": [
+              {
+                "propertyType": "CASA",
+                "propertyBuildType": "ALVENARIA",
+                "propertyUsageType": "HABITUAL",
+                "importanceInsured": "PRÉDIO"
+              }
+            ],
+            "propertyZipCode": 1311000,
+            "protective": true,
+            "additional": "SORTEIO (GRATUITO)",
+            "additionalOthers": "string",
+            "assistanceServices": [
+              {
+                "assistanceServicesPackage": "ATÉ 10 SERVIÇOS",
+                "complementaryAssistanceServicesDetail": "reboque pane seca",
+                "chargeTypeSignaling": "GRATUITA"
+              }
+            ],
+            "termsAndConditions": [
+              {
+                "susepProcessNumber": "XXXXX.XXXXXX/XXXX-XX",
+                "definition": "https://openinsurance.com.br/aaa"
+              }
+            ],
+            "validity": [
+              {
+                "term": "ANUAL",
+                "termOthers": "string"
+              }
+            ],
+            "customerServices": [
+              "LIVRE ESCOLHA"
+            ],
+            "premiumRates": [
+              "string"
+            ],
+            "premiumPayments": [
+              {
+                "paymentMethod": "CARTÃO DE CRÉDITO",
+                "paymentMethodDetail": "string",
+                "paymentType": "A_VISTA"
+              }
+            ],
+            "minimumRequirements": {
+              "contractingType": "COLETIVO",
+              "contractingMinRequirement": "https://openinsurance.com.br/aaa"
+            },
+            "targetAudiences": "PESSOA NATURAL"
+          }
+        ]
+      }
     }
   },
   "links": {
@@ -1155,7 +1157,7 @@ This operation does not require authentication
 
 <a id="opIdcapitalizationTitle"></a>
 
-<a href="files/swagger/capitalization-title.yaml">Especificação em OAS</a> <br>
+<a href="files/swagger/_capitalization-title.yaml">Especificação em OAS</a> <br>
 
 
 > Code samples
@@ -1249,7 +1251,7 @@ Obtém a lista dos produtos do tipo título de capitalização
       {
         "name": "ACME cap da ACME seguros",
         "cnpjNumber": "12345678901234",
-        "product": [
+        "products": [
           {
             "name": "ACMEcap",
             "code": "01234589_cap",
@@ -1284,7 +1286,7 @@ Obtém a lista dos produtos do tipo título de capitalização
               "updateIndex": [
                 "IPCA"
               ],
-              "others": [
+              "updateIndexOthers": [
                 "Índice de atualização"
               ],
               "contributionAmount": {
@@ -1294,7 +1296,10 @@ Obtém a lista dos produtos do tipo título de capitalização
                 "value": 0
               },
               "earlyRedemption": [
-                10
+                {
+                  "quota": 0,
+                  "percentage": 0
+                }
               ],
               "redemptionPercentageEndTerm": 100.002,
               "gracePeriodRedemption": 48
@@ -1310,7 +1315,7 @@ Obtém a lista dos produtos do tipo título de capitalização
               "updateIndex": [
                 "IPCA"
               ],
-              "others": [
+              "updateIndexOthers": [
                 "Índice de atualização"
               ]
             },
@@ -1847,7 +1852,7 @@ Organização controladora do grupo.
 |gracePeriodPortability|integer|true|none|Prazo em dias de carência para portabilidade.|
 |gracePeriodBetweenPortabilityRequests|integer|true|none|Prazo em dias de carência entre pedidos de portabilidade.|
 |portabilityPaymentTerm|integer|true|none|Prazo em dias para pagamento da portabilidade.|
-|investimentFunds|[LifePensionInvestmentFunds](#schemalifepensioninvestmentfunds)|true|none|Lista com as informações do(s) Fundo(s) de Investimento(s) disponíveis para o período de diferimento/acumulação.|
+|investimentFunds|[LifePensionInvestmentFunds](#schemalifepensioninvestmentfunds)|false|none|Lista com as informações do(s) Fundo(s) de Investimento(s) disponíveis para o período de diferimento/acumulação.|
 
 #### Enumerated Values
 
@@ -1856,6 +1861,7 @@ Organização controladora do grupo.
 |updateIndex|IPCA|
 |updateIndex|IGP-M|
 |updateIndex|INPC|
+|updateIndex|NAO_SE_APLICA|
 
 <h2 id="tocS_LifePensionInvestmentFunds">LifePensionInvestmentFunds</h2>
 <!-- backwards compatibility -->
@@ -1893,9 +1899,753 @@ Lista com as informações do(s) Fundo(s) de Investimento(s) disponíveis para o
 |maximumAdministrationFee|number|true|none|Taxa Máxima de Administração – em %.|
 |typePerformanceFee|[string]|true|none|none|
 |maximumPerformanceFee|number|false|none|Taxa Máxima de Performance. Caso o Tipo de Taxa de Performance seja ‘Diretamente’.|
-|eligibilityRule|boolean|true|none|Regra de Eligibilidade.|
-|minimumContributionAmount|number|true|none|Valor Mínimo de Contribuição. Regra de Elegibilidade. Caso a Regra de Elegibilidade SIM.|
-|minimumMathematicalProvisionAmount|number|true|none|Valor Mínimo Provisão Matemática. Caso a Regra de Elegibilidade SIM.|
+|eligibilityRule|boolean|false|none|Regra de Eligibilidade.|
+|minimumContributionAmount|number|false|none|Valor Mínimo de Contribuição. Regra de Elegibilidade. Caso a Regra de Elegibilidade SIM.|
+|minimumMathematicalProvisionAmount|number|false|none|Valor Mínimo Provisão Matemática. Caso a Regra de Elegibilidade SIM.|
+
+<h2 id="tocS_LifePensionPeriodGrantBenefit">LifePensionPeriodGrantBenefit</h2>
+<!-- backwards compatibility -->
+<a id="schemalifepensionperiodgrantbenefit"></a>
+<a id="schema_LifePensionPeriodGrantBenefit"></a>
+<a id="tocSlifepensionperiodgrantbenefit"></a>
+<a id="tocslifepensionperiodgrantbenefit"></a>
+
+```json
+{
+  "incomeModality": [
+    "RENDA_VITALICIA"
+  ],
+  "biometricTable": [
+    "AT_2000_FEMALE_SUAVIZADA_15"
+  ],
+  "interestRate": 3.225,
+  "updateIndex": "IPCA",
+  "reversalResultsFinancial": 13.252,
+  "investimentFunds": [
+    {
+      "cnpjNumber": "13.456.789/0001-12",
+      "companyName": "EYPREV",
+      "maximumAdministrationFee": 20.1,
+      "typePerformanceFee": [
+        "DIRETAMENTE"
+      ],
+      "maximumPerformanceFee": 20,
+      "eligibilityRule": true,
+      "minimumContributionAmount": 1000,
+      "minimumMathematicalProvisionAmount": 1000
+    }
+  ]
+}
+
+```
+
+### Properties
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|incomeModality|[string]|true|none|none|
+|biometricTable|[string]|true|none|none|
+|interestRate|number|true|none|Taxa de juros garantida utilizada para conversão em renda. Em %.|
+|updateIndex|string|true|none|É o índice contratado para atualização monetária dos valores relativos ao plano, na forma estabelecida por este regulamento.|
+|reversalResultsFinancial|number|true|none|Percentual de reversão de excedente financeiro na concessão. Em %.|
+|investimentFunds|[LifePensionInvestmentFunds](#schemalifepensioninvestmentfunds)|true|none|Lista com as informações do(s) Fundo(s) de Investimento(s) disponíveis para o período de diferimento/acumulação.|
+
+#### Enumerated Values
+
+|Property|Value|
+|---|---|
+|updateIndex|IPCA|
+|updateIndex|IGP-M|
+|updateIndex|INPC|
+
+<h2 id="tocS_LifePensionCosts">LifePensionCosts</h2>
+<!-- backwards compatibility -->
+<a id="schemalifepensioncosts"></a>
+<a id="schema_LifePensionCosts"></a>
+<a id="tocSlifepensioncosts"></a>
+<a id="tocslifepensioncosts"></a>
+
+```json
+{
+  "loadingAntecipated": {
+    "minValue": 4.122,
+    "maxValue": 10
+  },
+  "loadingLate": {
+    "minValue": 4.122,
+    "maxValue": 10
+  }
+}
+
+```
+
+### Properties
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|loadingAntecipated|[LifePensionLoading](#schemalifepensionloading)|true|none|none|
+|loadingLate|[LifePensionLoading](#schemalifepensionloading)|true|none|none|
+
+<h2 id="tocS_LifePensionLoading">LifePensionLoading</h2>
+<!-- backwards compatibility -->
+<a id="schemalifepensionloading"></a>
+<a id="schema_LifePensionLoading"></a>
+<a id="tocSlifepensionloading"></a>
+<a id="tocslifepensionloading"></a>
+
+```json
+{
+  "minValue": 4.122,
+  "maxValue": 10
+}
+
+```
+
+### Properties
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|minValue|number|true|none|Valor mínimo em %.|
+|maxValue|number|true|none|alor máximo em %.|
+
+<h2 id="tocS_LifePensionMinimumRequirements">LifePensionMinimumRequirements</h2>
+<!-- backwards compatibility -->
+<a id="schemalifepensionminimumrequirements"></a>
+<a id="schema_LifePensionMinimumRequirements"></a>
+<a id="tocSlifepensionminimumrequirements"></a>
+<a id="tocslifepensionminimumrequirements"></a>
+
+```json
+{
+  "contractType": "INDIVIDUAL",
+  "participantQualified": true,
+  "minRequirementsContract": "https://example.com/mobile-banking"
+}
+
+```
+
+### Properties
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|contractType|string|true|none|O tipo de serviço contratado.|
+|participantQualified|boolean|true|none|Indicação se o plano é destinado para participante qualificado.|
+|minRequirementsContract|string|true|none|Campo aberto contendo todos os requisitos mínimos para contratação (possibilidade de incluir URL).|
+
+#### Enumerated Values
+
+|Property|Value|
+|---|---|
+|contractType|COLETIVO_AVERBADO|
+|contractType|COLETIVO_INSTITUIDO|
+|contractType|INDIVIDUAL|
+
+<h2 id="tocS_LinksPaginated">LinksPaginated</h2>
+<!-- backwards compatibility -->
+<a id="schemalinkspaginated"></a>
+<a id="schema_LinksPaginated"></a>
+<a id="tocSlinkspaginated"></a>
+<a id="tocslinkspaginated"></a>
+
+```json
+{
+  "self": "https://api.organizacao.com.br/open-insurance/products-services/v1",
+  "first": "https://api.organizacao.com.br/open-insurance/products-services/v1",
+  "prev": "string",
+  "next": "string",
+  "last": "https://api.organizacao.com.br/open-insurance/products-services/v1"
+}
+
+```
+
+### Properties
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|self|string|false|none|URL da página atualmente requisitada|
+|first|string|false|none|URL da primeira página de registros|
+|prev|string|false|none|URL da página anterior de registros|
+|next|string|false|none|URL da próxima página de registros|
+|last|string|false|none|URL da última página de registros|
+
+<h2 id="tocS_MetaPaginated">MetaPaginated</h2>
+<!-- backwards compatibility -->
+<a id="schemametapaginated"></a>
+<a id="schema_MetaPaginated"></a>
+<a id="tocSmetapaginated"></a>
+<a id="tocsmetapaginated"></a>
+
+```json
+{
+  "totalRecords": 10,
+  "totalPages": 1
+}
+
+```
+
+### Properties
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|totalRecords|integer|true|none|Total de registros encontrados|
+|totalPages|integer|true|none|Total de páginas para os registros encontrados|
+
+<h2 id="tocS_ResponseError">ResponseError</h2>
+<!-- backwards compatibility -->
+<a id="schemaresponseerror"></a>
+<a id="schema_ResponseError"></a>
+<a id="tocSresponseerror"></a>
+<a id="tocsresponseerror"></a>
+
+```json
+{
+  "errors": [
+    {
+      "code": "string",
+      "title": "string",
+      "detail": "string",
+      "requestDateTime": "2021-08-20T08:30:00Z"
+    }
+  ],
+  "meta": {
+    "totalRecords": 10,
+    "totalPages": 1
+  }
+}
+
+```
+
+### Properties
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|errors|[object]|true|none|none|
+|» code|string|true|none|Código de erro específico do endpoint|
+|» title|string|true|none|Título legível por humanos deste erro específico|
+|» detail|string|true|none|Descrição legível por humanos deste erro específico|
+|» requestDateTime|string(date-time)|true|none|Data e hora da consulta, conforme especificação RFC-3339, formato UTC.|
+|meta|[MetaPaginated](#schemametapaginated)|false|none|none|
+
+<h2 id="tocS_ResponseLifePensionList">ResponseLifePensionList</h2>
+<!-- backwards compatibility -->
+<a id="schemaresponselifepensionlist"></a>
+<a id="schema_ResponseLifePensionList"></a>
+<a id="tocSresponselifepensionlist"></a>
+<a id="tocsresponselifepensionlist"></a>
+
+```json
+[
+  {
+    "identification": {
+      "brand": "Brasilprev",
+      "societyName": "Brasilprev Seguros e Previdência S.A",
+      "cnpjNumber": "27665207000131"
+    },
+    "products": [
+      {
+        "name": "Brasilprev Private Multimercado 2020",
+        "code": "1234",
+        "segment": "PREVIDENCIA",
+        "type": "PGBL",
+        "modality": "CONTRIBUICAO_VARIAVEL",
+        "optionalCoverage": "string",
+        "productDetails": [
+          {
+            "susepProcessNumber": "15414.614141/2020-71",
+            "contractTermsConditions": "https://example.com/mobilebanking",
+            "defferalPeriod": {
+              "interestRate": 0.25123,
+              "updateIndex": "IPCA",
+              "otherMinimumPerformanceGarantees": "SELIC",
+              "reversalFinancialResults": 5.123,
+              "minimumPremiumAmount": [
+                {
+                  "minimumPremiumAmountValue": 250,
+                  "minimumPremiumAmountDescription": ""
+                }
+              ],
+              "premiumPaymentMethod": [
+                "CARTAO_CREDITO"
+              ],
+              "permissionExtraordinaryContributions": true,
+              "permissonScheduledFinancialPayments": true,
+              "gracePeriodRedemption": 100,
+              "gracePeriodBetweenRedemptionRequests": 30,
+              "redemptionPaymentTerm": 10,
+              "gracePeriodPortability": 12,
+              "gracePeriodBetweenPortabilityRequests": 15,
+              "portabilityPaymentTerm": 20,
+              "investimentFunds": [
+                {
+                  "cnpjNumber": "13.456.789/0001-12",
+                  "companyName": "EYPREV",
+                  "maximumAdministrationFee": 20.1,
+                  "typePerformanceFee": [
+                    "DIRETAMENTE"
+                  ],
+                  "maximumPerformanceFee": 20,
+                  "eligibilityRule": true,
+                  "minimumContributionAmount": 1000,
+                  "minimumMathematicalProvisionAmount": 1000
+                }
+              ]
+            },
+            "grantPeriodBenefit": {
+              "incomeModality": [
+                "RENDA_VITALICIA"
+              ],
+              "biometricTable": [
+                "AT_2000_FEMALE_SUAVIZADA_15"
+              ],
+              "interestRate": 3.225,
+              "updateIndex": "IPCA",
+              "reversalResultsFinancial": 13.252,
+              "investimentFunds": [
+                {
+                  "cnpjNumber": "13.456.789/0001-12",
+                  "companyName": "EYPREV",
+                  "maximumAdministrationFee": 20.1,
+                  "typePerformanceFee": [
+                    "DIRETAMENTE"
+                  ],
+                  "maximumPerformanceFee": 20,
+                  "eligibilityRule": true,
+                  "minimumContributionAmount": 1000,
+                  "minimumMathematicalProvisionAmount": 1000
+                }
+              ]
+            },
+            "costs": {
+              "loadingAntecipated": {
+                "minValue": 4.122,
+                "maxValue": 10
+              },
+              "loadingLate": {
+                "minValue": 4.122,
+                "maxValue": 10
+              }
+            }
+          }
+        ],
+        "minimumRequirements": {
+          "contractType": "INDIVIDUAL",
+          "participantQualified": true,
+          "minRequirementsContract": "https://example.com/mobile-banking"
+        },
+        "targetAudience": "PESSOA_NATURAL"
+      }
+    ],
+    "links": {
+      "self": "https://api.organizacao.com.br/open-insurance/products-services/v1",
+      "first": "https://api.organizacao.com.br/open-insurance/products-services/v1",
+      "prev": "string",
+      "next": "string",
+      "last": "https://api.organizacao.com.br/open-insurance/products-services/v1"
+    },
+    "meta": {
+      "totalRecords": 10,
+      "totalPages": 1
+    }
+  }
+]
+
+```
+
+### Properties
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|identification|[LifePensionIdentification](#schemalifepensionidentification)|true|none|Organização controladora do grupo.|
+|products|[LifePensionProduct](#schemalifepensionproduct)|true|none|none|
+|links|[LinksPaginated](#schemalinkspaginated)|true|none|none|
+|meta|[MetaPaginated](#schemametapaginated)|true|none|none|
+
+<h2 id="tocS_LifePensionIdentification">LifePensionIdentification</h2>
+<!-- backwards compatibility -->
+<a id="schemalifepensionidentification"></a>
+<a id="schema_LifePensionIdentification"></a>
+<a id="tocSlifepensionidentification"></a>
+<a id="tocslifepensionidentification"></a>
+
+```json
+{
+  "brand": "Brasilprev",
+  "societyName": "Brasilprev Seguros e Previdência S.A",
+  "cnpjNumber": "27665207000131"
+}
+
+```
+
+Organização controladora do grupo.
+
+### Properties
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|brand|string|true|none|Nome da marca reportada pelo participante do Open Insurance. O conceito a que se refere a marca é em essência uma promessa das sociedades sob ela em fornecer uma série específica de atributos, benefícios e serviços uniformes aos clientes.|
+|societyName|string|true|none|Nome da sociedade pertencente à marca.|
+|cnpjNumber|string|true|none|CNPJ da sociedade pertencente à marca.|
+
+<h2 id="tocS_LifePensionProduct">LifePensionProduct</h2>
+<!-- backwards compatibility -->
+<a id="schemalifepensionproduct"></a>
+<a id="schema_LifePensionProduct"></a>
+<a id="tocSlifepensionproduct"></a>
+<a id="tocslifepensionproduct"></a>
+
+```json
+[
+  {
+    "name": "Brasilprev Private Multimercado 2020",
+    "code": "1234",
+    "segment": "PREVIDENCIA",
+    "type": "PGBL",
+    "modality": "CONTRIBUICAO_VARIAVEL",
+    "optionalCoverage": "string",
+    "productDetails": [
+      {
+        "susepProcessNumber": "15414.614141/2020-71",
+        "contractTermsConditions": "https://example.com/mobilebanking",
+        "defferalPeriod": {
+          "interestRate": 0.25123,
+          "updateIndex": "IPCA",
+          "otherMinimumPerformanceGarantees": "SELIC",
+          "reversalFinancialResults": 5.123,
+          "minimumPremiumAmount": [
+            {
+              "minimumPremiumAmountValue": 250,
+              "minimumPremiumAmountDescription": ""
+            }
+          ],
+          "premiumPaymentMethod": [
+            "CARTAO_CREDITO"
+          ],
+          "permissionExtraordinaryContributions": true,
+          "permissonScheduledFinancialPayments": true,
+          "gracePeriodRedemption": 100,
+          "gracePeriodBetweenRedemptionRequests": 30,
+          "redemptionPaymentTerm": 10,
+          "gracePeriodPortability": 12,
+          "gracePeriodBetweenPortabilityRequests": 15,
+          "portabilityPaymentTerm": 20,
+          "investimentFunds": [
+            {
+              "cnpjNumber": "13.456.789/0001-12",
+              "companyName": "EYPREV",
+              "maximumAdministrationFee": 20.1,
+              "typePerformanceFee": [
+                "DIRETAMENTE"
+              ],
+              "maximumPerformanceFee": 20,
+              "eligibilityRule": true,
+              "minimumContributionAmount": 1000,
+              "minimumMathematicalProvisionAmount": 1000
+            }
+          ]
+        },
+        "grantPeriodBenefit": {
+          "incomeModality": [
+            "RENDA_VITALICIA"
+          ],
+          "biometricTable": [
+            "AT_2000_FEMALE_SUAVIZADA_15"
+          ],
+          "interestRate": 3.225,
+          "updateIndex": "IPCA",
+          "reversalResultsFinancial": 13.252,
+          "investimentFunds": [
+            {
+              "cnpjNumber": "13.456.789/0001-12",
+              "companyName": "EYPREV",
+              "maximumAdministrationFee": 20.1,
+              "typePerformanceFee": [
+                "DIRETAMENTE"
+              ],
+              "maximumPerformanceFee": 20,
+              "eligibilityRule": true,
+              "minimumContributionAmount": 1000,
+              "minimumMathematicalProvisionAmount": 1000
+            }
+          ]
+        },
+        "costs": {
+          "loadingAntecipated": {
+            "minValue": 4.122,
+            "maxValue": 10
+          },
+          "loadingLate": {
+            "minValue": 4.122,
+            "maxValue": 10
+          }
+        }
+      }
+    ],
+    "minimumRequirements": {
+      "contractType": "INDIVIDUAL",
+      "participantQualified": true,
+      "minRequirementsContract": "https://example.com/mobile-banking"
+    },
+    "targetAudience": "PESSOA_NATURAL"
+  }
+]
+
+```
+
+### Properties
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|name|string|true|none|Nome comercial do produto, pelo qual é identificado nos canais de distribuição e atendimento da sociedade.|
+|code|string|true|none|Código único a ser definido pela sociedade.|
+|segment|string|true|none|Segmento do qual se trata o produto contratado.|
+|type|string|false|none|Tipo do produto contratado.|
+|modality|string|true|none|Modalidade do produto contratado.|
+|optionalCoverage|string|false|none|Campo aberto (possibilidade de incluir URL).|
+|productDetails|[LifePensionProductDetails](#schemalifepensionproductdetails)|false|none|none|
+|minimumRequirements|[LifePensionMinimumRequirements](#schemalifepensionminimumrequirements)|true|none|none|
+|targetAudience|string|true|none|Público-alvo.|
+
+#### Enumerated Values
+
+|Property|Value|
+|---|---|
+|segment|SEGURO_PESSOAS|
+|segment|PREVIDENCIA|
+|type|PGBL|
+|type|PRGP|
+|type|PAGP|
+|type|PRSA|
+|type|PRI|
+|type|PDR|
+|type|VGBL|
+|type|VRGP|
+|type|VAGP|
+|type|VRSA|
+|type|VRI|
+|type|VDR|
+|type|DEMAIS_PRODUTOS_PREVIDENCIA|
+|modality|CONTRIBUICAO_VARIAVEL|
+|modality|BENEFICIO_DEFINIDO|
+|targetAudience|PESSOA_NATURAL|
+|targetAudience|PESSOA_JURIDICA|
+
+<h2 id="tocS_LifePensionProductDetails">LifePensionProductDetails</h2>
+<!-- backwards compatibility -->
+<a id="schemalifepensionproductdetails"></a>
+<a id="schema_LifePensionProductDetails"></a>
+<a id="tocSlifepensionproductdetails"></a>
+<a id="tocslifepensionproductdetails"></a>
+
+```json
+[
+  {
+    "susepProcessNumber": "15414.614141/2020-71",
+    "contractTermsConditions": "https://example.com/mobilebanking",
+    "defferalPeriod": {
+      "interestRate": 0.25123,
+      "updateIndex": "IPCA",
+      "otherMinimumPerformanceGarantees": "SELIC",
+      "reversalFinancialResults": 5.123,
+      "minimumPremiumAmount": [
+        {
+          "minimumPremiumAmountValue": 250,
+          "minimumPremiumAmountDescription": ""
+        }
+      ],
+      "premiumPaymentMethod": [
+        "CARTAO_CREDITO"
+      ],
+      "permissionExtraordinaryContributions": true,
+      "permissonScheduledFinancialPayments": true,
+      "gracePeriodRedemption": 100,
+      "gracePeriodBetweenRedemptionRequests": 30,
+      "redemptionPaymentTerm": 10,
+      "gracePeriodPortability": 12,
+      "gracePeriodBetweenPortabilityRequests": 15,
+      "portabilityPaymentTerm": 20,
+      "investimentFunds": [
+        {
+          "cnpjNumber": "13.456.789/0001-12",
+          "companyName": "EYPREV",
+          "maximumAdministrationFee": 20.1,
+          "typePerformanceFee": [
+            "DIRETAMENTE"
+          ],
+          "maximumPerformanceFee": 20,
+          "eligibilityRule": true,
+          "minimumContributionAmount": 1000,
+          "minimumMathematicalProvisionAmount": 1000
+        }
+      ]
+    },
+    "grantPeriodBenefit": {
+      "incomeModality": [
+        "RENDA_VITALICIA"
+      ],
+      "biometricTable": [
+        "AT_2000_FEMALE_SUAVIZADA_15"
+      ],
+      "interestRate": 3.225,
+      "updateIndex": "IPCA",
+      "reversalResultsFinancial": 13.252,
+      "investimentFunds": [
+        {
+          "cnpjNumber": "13.456.789/0001-12",
+          "companyName": "EYPREV",
+          "maximumAdministrationFee": 20.1,
+          "typePerformanceFee": [
+            "DIRETAMENTE"
+          ],
+          "maximumPerformanceFee": 20,
+          "eligibilityRule": true,
+          "minimumContributionAmount": 1000,
+          "minimumMathematicalProvisionAmount": 1000
+        }
+      ]
+    },
+    "costs": {
+      "loadingAntecipated": {
+        "minValue": 4.122,
+        "maxValue": 10
+      },
+      "loadingLate": {
+        "minValue": 4.122,
+        "maxValue": 10
+      }
+    }
+  }
+]
+
+```
+
+### Properties
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|susepProcessNumber|string|true|none|Sequência numérica utilizada para consulta dos processos eletrônicos na SUSEP, com caracteres especiais.|
+|contractTermsConditions|string|true|none|Campo aberto (possibilidade de incluir URL).|
+|defferalPeriod|[LifePensionDefferalPeriod](#schemalifepensiondefferalperiod)|true|none|none|
+|grantPeriodBenefit|[LifePensionPeriodGrantBenefit](#schemalifepensionperiodgrantbenefit)|true|none|none|
+|costs|[LifePensionCosts](#schemalifepensioncosts)|true|none|none|
+
+<h2 id="tocS_LifePensionDefferalPeriod">LifePensionDefferalPeriod</h2>
+<!-- backwards compatibility -->
+<a id="schemalifepensiondefferalperiod"></a>
+<a id="schema_LifePensionDefferalPeriod"></a>
+<a id="tocSlifepensiondefferalperiod"></a>
+<a id="tocslifepensiondefferalperiod"></a>
+
+```json
+{
+  "interestRate": 0.25123,
+  "updateIndex": "IPCA",
+  "otherMinimumPerformanceGarantees": "SELIC",
+  "reversalFinancialResults": 5.123,
+  "minimumPremiumAmount": [
+    {
+      "minimumPremiumAmountValue": 250,
+      "minimumPremiumAmountDescription": ""
+    }
+  ],
+  "premiumPaymentMethod": [
+    "CARTAO_CREDITO"
+  ],
+  "permissionExtraordinaryContributions": true,
+  "permissonScheduledFinancialPayments": true,
+  "gracePeriodRedemption": 100,
+  "gracePeriodBetweenRedemptionRequests": 30,
+  "redemptionPaymentTerm": 10,
+  "gracePeriodPortability": 12,
+  "gracePeriodBetweenPortabilityRequests": 15,
+  "portabilityPaymentTerm": 20,
+  "investimentFunds": [
+    {
+      "cnpjNumber": "13.456.789/0001-12",
+      "companyName": "EYPREV",
+      "maximumAdministrationFee": 20.1,
+      "typePerformanceFee": [
+        "DIRETAMENTE"
+      ],
+      "maximumPerformanceFee": 20,
+      "eligibilityRule": true,
+      "minimumContributionAmount": 1000,
+      "minimumMathematicalProvisionAmount": 1000
+    }
+  ]
+}
+
+```
+
+### Properties
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|interestRate|number|true|none|Taxa de juros garantida que remunera o plano durante a fase de diferimento/acumulação.|
+|updateIndex|string|true|none|Indice garantido que remunera o plano durante a fase de diferimento/ acumulação.|
+|otherMinimumPerformanceGarantees|string|true|none|Para produtos do tipo PDR e VDR, indicação do percentual e do índice de ampla divulgação utilizados como garantia mínima de desempenho. Em %.|
+|reversalFinancialResults|number|true|none|Percentual de reversão de excedente financeiro no período de diferimento.|
+|minimumPremiumAmount|[object]|true|none|none|
+|» minimumPremiumAmountValue|number|false|none|Valor|
+|» minimumPremiumAmountDescription|string|false|none|Descrição Período.|
+|premiumPaymentMethod|[string]|false|none|none|
+|permissionExtraordinaryContributions|boolean|false|none|Se ficam permitidos aportes extraordinários.|
+|permissonScheduledFinancialPayments|boolean|true|none|Se ficam permitidos pagamentos financeiros programados.|
+|gracePeriodRedemption|integer|true|none|Prazo em dias de carência para resgate.|
+|gracePeriodBetweenRedemptionRequests|integer|true|none|Prazo em dias de carência entre pedidos de resgate.|
+|redemptionPaymentTerm|integer|true|none|Prazo em dias para pagamento do resgate.|
+|gracePeriodPortability|integer|true|none|Prazo em dias de carência para portabilidade.|
+|gracePeriodBetweenPortabilityRequests|integer|true|none|Prazo em dias de carência entre pedidos de portabilidade.|
+|portabilityPaymentTerm|integer|true|none|Prazo em dias para pagamento da portabilidade.|
+|investimentFunds|[LifePensionInvestmentFunds](#schemalifepensioninvestmentfunds)|false|none|Lista com as informações do(s) Fundo(s) de Investimento(s) disponíveis para o período de diferimento/acumulação.|
+
+#### Enumerated Values
+
+|Property|Value|
+|---|---|
+|updateIndex|IPCA|
+|updateIndex|IGP-M|
+|updateIndex|INPC|
+|updateIndex|NAO_SE_APLICA|
+
+<h2 id="tocS_LifePensionInvestmentFunds">LifePensionInvestmentFunds</h2>
+<!-- backwards compatibility -->
+<a id="schemalifepensioninvestmentfunds"></a>
+<a id="schema_LifePensionInvestmentFunds"></a>
+<a id="tocSlifepensioninvestmentfunds"></a>
+<a id="tocslifepensioninvestmentfunds"></a>
+
+```json
+[
+  {
+    "cnpjNumber": "13.456.789/0001-12",
+    "companyName": "EYPREV",
+    "maximumAdministrationFee": 20.1,
+    "typePerformanceFee": [
+      "DIRETAMENTE"
+    ],
+    "maximumPerformanceFee": 20,
+    "eligibilityRule": true,
+    "minimumContributionAmount": 1000,
+    "minimumMathematicalProvisionAmount": 1000
+  }
+]
+
+```
+
+Lista com as informações do(s) Fundo(s) de Investimento(s) disponíveis para o período de diferimento/acumulação.
+
+### Properties
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|cnpjNumber|string|true|none|Número de CNPJ.|
+|companyName|string|true|none|Nome Fantasia.|
+|maximumAdministrationFee|number|true|none|Taxa Máxima de Administração – em %.|
+|typePerformanceFee|[string]|true|none|none|
+|maximumPerformanceFee|number|false|none|Taxa Máxima de Performance. Caso o Tipo de Taxa de Performance seja ‘Diretamente’.|
+|eligibilityRule|boolean|false|none|Regra de Eligibilidade.|
+|minimumContributionAmount|number|false|none|Valor Mínimo de Contribuição. Regra de Elegibilidade. Caso a Regra de Elegibilidade SIM.|
+|minimumMathematicalProvisionAmount|number|false|none|Valor Mínimo Provisão Matemática. Caso a Regra de Elegibilidade SIM.|
 
 <h2 id="tocS_LifePensionPeriodGrantBenefit">LifePensionPeriodGrantBenefit</h2>
 <!-- backwards compatibility -->
@@ -2706,7 +3456,7 @@ Lista de Dependências de uma Instituição.
 |pmbacRemuneration|[PersonPmbacRemuneration](#schemapersonpmbacremuneration)|false|none|none|
 |benefitRecalculation|[PersonBenefitRecalculation](#schemapersonbenefitrecalculation)|false|none|none|
 |ageAdjustment|[PersonAgeAdjustment](#schemapersonageadjustment)|false|none|none|
-|contractType|string|true|none|Regime Financeiro|
+|contractType|string|false|none|Regime Financeiro|
 |reclaim|[PersonReclaim](#schemapersonreclaim)|false|none|none|
 |otherGuaranteedValues|string|true|none|none|
 |allowPortability|boolean|true|none|Permite Portabilidade|
@@ -3277,7 +4027,7 @@ Prazo de carência em dias para Portabilidade
 |Name|Type|Required|Restrictions|Description|
 |---|---|---|---|---|
 |interestRate|number|false|none|Taxa de juros para capitalização da PMBaC.|
-|pmbacUpdateIndex|string|true|none|Índice utilizado na atualização da PMBaC.|
+|pmbacUpdateIndex|string|false|none|Índice utilizado na atualização da PMBaC.|
 
 #### Enumerated Values
 
@@ -3306,8 +4056,8 @@ Prazo de carência em dias para Portabilidade
 
 |Name|Type|Required|Restrictions|Description|
 |---|---|---|---|---|
-|benefitRecalculationCriteria|string|true|none|none|
-|benefitUpdateIndex|string|true|none|Índice utilizado na atualização do prêmio/contribuição e do capital segurado/ benefício,  caso critério de atualização por meio de índice|
+|benefitRecalculationCriteria|string|false|none|none|
+|benefitUpdateIndex|string|false|none|Índice utilizado na atualização do prêmio/contribuição e do capital segurado/ benefício,  caso critério de atualização por meio de índice|
 
 #### Enumerated Values
 
@@ -3434,7 +4184,7 @@ Tabela Percentuais de resgate
 
 |Name|Type|Required|Restrictions|Description|
 |---|---|---|---|---|
-|paymentMethod|[string]|true|none|none|
+|paymentMethod|[string]|false|none|none|
 |frequency|[string]|true|none|none|
 |premiumTax|string|false|none|Distribuição de frequência relativa aos valores referentes às taxas cobradas.|
 
@@ -3541,1236 +4291,6 @@ Tabela Percentuais de resgate
 }
 
 ```
-
-<h2 id="tocS_ResponsePensionPlanList">ResponsePensionPlanList</h2>
-<!-- backwards compatibility -->
-<a id="schemaresponsepensionplanlist"></a>
-<a id="schema_ResponsePensionPlanList"></a>
-<a id="tocSresponsepensionplanlist"></a>
-<a id="tocsresponsepensionplanlist"></a>
-
-```json
-{
-  "requestTime": "2021-08-20T08:30:00Z",
-  "data": {},
-  "brand": {
-    "name": "EMPRESA",
-    "companies": {
-      "name": "EMPRESA Seguros",
-      "cnpjNumber": 45086338000178,
-      "products": [
-        {
-          "name": "Nome comercial do Produto",
-          "code": "123456789_cap",
-          "modality": "PENSAO",
-          "coverages": [
-            {
-              "coverage": "INVALIDEZ",
-              "coveragesAttributes": {
-                "indenizationPaymentMethod": "Pagamento Único",
-                "minValue": {
-                  "amount": 0,
-                  "unit": {
-                    "code": "string",
-                    "description": "string"
-                  }
-                },
-                "maxValue": {
-                  "amount": 0,
-                  "unit": {
-                    "code": "string",
-                    "description": "string"
-                  }
-                },
-                "indemnifiablePeriod": "Prazo",
-                "indemnifiableDeadline": 48,
-                "currency": "BRL",
-                "gracePeriod": {
-                  "amount": 0,
-                  "unit": "DIAS"
-                },
-                "excludedRisk": [
-                  "ATO_RECONHECIMENTO_PERIGOSO"
-                ],
-                "excludedRiskURL": "string"
-              },
-              "coveragePeriod": "Vitalícia"
-            }
-          ],
-          "additional": "SORTEIO",
-          "additionalOthers": "string",
-          "assistanceType": [
-            "Funeral"
-          ],
-          "assistanceTypeOthers": [
-            "string"
-          ],
-          "termAndCondition": [
-            {
-              "susepProcessNumber": "15414.622222/2222-22",
-              "definition": "wwww.seguradora.com.br/termos"
-            }
-          ],
-          "updatePMBaC": {
-            "interestRate": 14,
-            "updateIndex": "IPCA(IBGE)"
-          },
-          "premiumUpdateIndex": "IPCA",
-          "ageReframing": {
-            "reframingCriterion": "Após período em anos",
-            "reframingPeriodicity": 10
-          },
-          "financialRegimeContractType": "Repartição Simples",
-          "reclaim": {
-            "reclaimTable": [
-              {
-                "initialMonthRange": 0,
-                "finalMonthRange": 0,
-                "percentage": "string"
-              }
-            ],
-            "differentiatedPercentage": "string",
-            "gracePeriod": "20/Não se aplica"
-          },
-          "otherGuarateedValues": "Saldamento",
-          "profitModality": "PAGAMENTO_UNICO",
-          "contributionPayment": {
-            "contributionPaymentMethod": [
-              "Cartão de crédito"
-            ],
-            "contributionPeriodicity": [
-              "Mensal"
-            ]
-          },
-          "contributionTax": "string",
-          "minimumRequirements": {
-            "minRequirementsContractType": "Individual",
-            "minRequirementsContract": "wwww.seguradora.com.br/termos"
-          },
-          "targetAudience": "Pessoa Natural"
-        }
-      ]
-    }
-  },
-  "linksPaginated": {
-    "self": "https://api.organizacao.com.br/open-insurance/products-services/v1",
-    "first": "https://api.organizacao.com.br/open-insurance/products-services/v1",
-    "prev": "string",
-    "next": "string",
-    "last": "https://api.organizacao.com.br/open-insurance/products-services/v1"
-  },
-  "metaPaginated": {
-    "totalRecords": 10,
-    "totalPages": 1
-  }
-}
-
-```
-
-### Properties
-
-|Name|Type|Required|Restrictions|Description|
-|---|---|---|---|---|
-|requestTime|string(date-time)|false|none|Data e hora da consulta, conforme especificação RFC-3339, formato UTC.|
-|data|object|true|none|none|
-|brand|[PensionPlanBrand](#schemapensionplanbrand)|true|none|Organização controladora do grupo.|
-|linksPaginated|[LinksPaginated](#schemalinkspaginated)|true|none|none|
-|metaPaginated|[MetaPaginated](#schemametapaginated)|true|none|none|
-
-<h2 id="tocS_PensionPlanBrand">PensionPlanBrand</h2>
-<!-- backwards compatibility -->
-<a id="schemapensionplanbrand"></a>
-<a id="schema_PensionPlanBrand"></a>
-<a id="tocSpensionplanbrand"></a>
-<a id="tocspensionplanbrand"></a>
-
-```json
-{
-  "name": "EMPRESA",
-  "companies": {
-    "name": "EMPRESA Seguros",
-    "cnpjNumber": 45086338000178,
-    "products": [
-      {
-        "name": "Nome comercial do Produto",
-        "code": "123456789_cap",
-        "modality": "PENSAO",
-        "coverages": [
-          {
-            "coverage": "INVALIDEZ",
-            "coveragesAttributes": {
-              "indenizationPaymentMethod": "Pagamento Único",
-              "minValue": {
-                "amount": 0,
-                "unit": {
-                  "code": "string",
-                  "description": "string"
-                }
-              },
-              "maxValue": {
-                "amount": 0,
-                "unit": {
-                  "code": "string",
-                  "description": "string"
-                }
-              },
-              "indemnifiablePeriod": "Prazo",
-              "indemnifiableDeadline": 48,
-              "currency": "BRL",
-              "gracePeriod": {
-                "amount": 0,
-                "unit": "DIAS"
-              },
-              "excludedRisk": [
-                "ATO_RECONHECIMENTO_PERIGOSO"
-              ],
-              "excludedRiskURL": "string"
-            },
-            "coveragePeriod": "Vitalícia"
-          }
-        ],
-        "additional": "SORTEIO",
-        "additionalOthers": "string",
-        "assistanceType": [
-          "Funeral"
-        ],
-        "assistanceTypeOthers": [
-          "string"
-        ],
-        "termAndCondition": [
-          {
-            "susepProcessNumber": "15414.622222/2222-22",
-            "definition": "wwww.seguradora.com.br/termos"
-          }
-        ],
-        "updatePMBaC": {
-          "interestRate": 14,
-          "updateIndex": "IPCA(IBGE)"
-        },
-        "premiumUpdateIndex": "IPCA",
-        "ageReframing": {
-          "reframingCriterion": "Após período em anos",
-          "reframingPeriodicity": 10
-        },
-        "financialRegimeContractType": "Repartição Simples",
-        "reclaim": {
-          "reclaimTable": [
-            {
-              "initialMonthRange": 0,
-              "finalMonthRange": 0,
-              "percentage": "string"
-            }
-          ],
-          "differentiatedPercentage": "string",
-          "gracePeriod": "20/Não se aplica"
-        },
-        "otherGuarateedValues": "Saldamento",
-        "profitModality": "PAGAMENTO_UNICO",
-        "contributionPayment": {
-          "contributionPaymentMethod": [
-            "Cartão de crédito"
-          ],
-          "contributionPeriodicity": [
-            "Mensal"
-          ]
-        },
-        "contributionTax": "string",
-        "minimumRequirements": {
-          "minRequirementsContractType": "Individual",
-          "minRequirementsContract": "wwww.seguradora.com.br/termos"
-        },
-        "targetAudience": "Pessoa Natural"
-      }
-    ]
-  }
-}
-
-```
-
-Organização controladora do grupo.
-
-### Properties
-
-|Name|Type|Required|Restrictions|Description|
-|---|---|---|---|---|
-|name|string|true|none|Nome da marca reportada pelo participante do Open Insurance. O conceito a que se refere a marca é em essência uma promessa das sociedades sob ela em fornecer uma série específica de atributos, benefícios e serviços uniformes aos clientes.|
-|companies|[PensionPlanCompany](#schemapensionplancompany)|true|none|Informações referente a sociedade a qual a marca pertence.|
-
-<h2 id="tocS_PensionPlanCompany">PensionPlanCompany</h2>
-<!-- backwards compatibility -->
-<a id="schemapensionplancompany"></a>
-<a id="schema_PensionPlanCompany"></a>
-<a id="tocSpensionplancompany"></a>
-<a id="tocspensionplancompany"></a>
-
-```json
-{
-  "name": "EMPRESA Seguros",
-  "cnpjNumber": 45086338000178,
-  "products": [
-    {
-      "name": "Nome comercial do Produto",
-      "code": "123456789_cap",
-      "modality": "PENSAO",
-      "coverages": [
-        {
-          "coverage": "INVALIDEZ",
-          "coveragesAttributes": {
-            "indenizationPaymentMethod": "Pagamento Único",
-            "minValue": {
-              "amount": 0,
-              "unit": {
-                "code": "string",
-                "description": "string"
-              }
-            },
-            "maxValue": {
-              "amount": 0,
-              "unit": {
-                "code": "string",
-                "description": "string"
-              }
-            },
-            "indemnifiablePeriod": "Prazo",
-            "indemnifiableDeadline": 48,
-            "currency": "BRL",
-            "gracePeriod": {
-              "amount": 0,
-              "unit": "DIAS"
-            },
-            "excludedRisk": [
-              "ATO_RECONHECIMENTO_PERIGOSO"
-            ],
-            "excludedRiskURL": "string"
-          },
-          "coveragePeriod": "Vitalícia"
-        }
-      ],
-      "additional": "SORTEIO",
-      "additionalOthers": "string",
-      "assistanceType": [
-        "Funeral"
-      ],
-      "assistanceTypeOthers": [
-        "string"
-      ],
-      "termAndCondition": [
-        {
-          "susepProcessNumber": "15414.622222/2222-22",
-          "definition": "wwww.seguradora.com.br/termos"
-        }
-      ],
-      "updatePMBaC": {
-        "interestRate": 14,
-        "updateIndex": "IPCA(IBGE)"
-      },
-      "premiumUpdateIndex": "IPCA",
-      "ageReframing": {
-        "reframingCriterion": "Após período em anos",
-        "reframingPeriodicity": 10
-      },
-      "financialRegimeContractType": "Repartição Simples",
-      "reclaim": {
-        "reclaimTable": [
-          {
-            "initialMonthRange": 0,
-            "finalMonthRange": 0,
-            "percentage": "string"
-          }
-        ],
-        "differentiatedPercentage": "string",
-        "gracePeriod": "20/Não se aplica"
-      },
-      "otherGuarateedValues": "Saldamento",
-      "profitModality": "PAGAMENTO_UNICO",
-      "contributionPayment": {
-        "contributionPaymentMethod": [
-          "Cartão de crédito"
-        ],
-        "contributionPeriodicity": [
-          "Mensal"
-        ]
-      },
-      "contributionTax": "string",
-      "minimumRequirements": {
-        "minRequirementsContractType": "Individual",
-        "minRequirementsContract": "wwww.seguradora.com.br/termos"
-      },
-      "targetAudience": "Pessoa Natural"
-    }
-  ]
-}
-
-```
-
-Informações referente a sociedade a qual a marca pertence.
-
-### Properties
-
-|Name|Type|Required|Restrictions|Description|
-|---|---|---|---|---|
-|name|string|true|none|Nome da sociedade pertencente à marca.|
-|cnpjNumber|string|true|none|CNPJ da sociedade pertencente à marca.|
-|products|[PensionPlanProduct](#schemapensionplanproduct)|false|none|Produtos de Seguro de Automóveis.|
-
-<h2 id="tocS_PensionPlanProduct">PensionPlanProduct</h2>
-<!-- backwards compatibility -->
-<a id="schemapensionplanproduct"></a>
-<a id="schema_PensionPlanProduct"></a>
-<a id="tocSpensionplanproduct"></a>
-<a id="tocspensionplanproduct"></a>
-
-```json
-[
-  {
-    "name": "Nome comercial do Produto",
-    "code": "123456789_cap",
-    "modality": "PENSAO",
-    "coverages": [
-      {
-        "coverage": "INVALIDEZ",
-        "coveragesAttributes": {
-          "indenizationPaymentMethod": "Pagamento Único",
-          "minValue": {
-            "amount": 0,
-            "unit": {
-              "code": "string",
-              "description": "string"
-            }
-          },
-          "maxValue": {
-            "amount": 0,
-            "unit": {
-              "code": "string",
-              "description": "string"
-            }
-          },
-          "indemnifiablePeriod": "Prazo",
-          "indemnifiableDeadline": 48,
-          "currency": "BRL",
-          "gracePeriod": {
-            "amount": 0,
-            "unit": "DIAS"
-          },
-          "excludedRisk": [
-            "ATO_RECONHECIMENTO_PERIGOSO"
-          ],
-          "excludedRiskURL": "string"
-        },
-        "coveragePeriod": "Vitalícia"
-      }
-    ],
-    "additional": "SORTEIO",
-    "additionalOthers": "string",
-    "assistanceType": [
-      "Funeral"
-    ],
-    "assistanceTypeOthers": [
-      "string"
-    ],
-    "termAndCondition": [
-      {
-        "susepProcessNumber": "15414.622222/2222-22",
-        "definition": "wwww.seguradora.com.br/termos"
-      }
-    ],
-    "updatePMBaC": {
-      "interestRate": 14,
-      "updateIndex": "IPCA(IBGE)"
-    },
-    "premiumUpdateIndex": "IPCA",
-    "ageReframing": {
-      "reframingCriterion": "Após período em anos",
-      "reframingPeriodicity": 10
-    },
-    "financialRegimeContractType": "Repartição Simples",
-    "reclaim": {
-      "reclaimTable": [
-        {
-          "initialMonthRange": 0,
-          "finalMonthRange": 0,
-          "percentage": "string"
-        }
-      ],
-      "differentiatedPercentage": "string",
-      "gracePeriod": "20/Não se aplica"
-    },
-    "otherGuarateedValues": "Saldamento",
-    "profitModality": "PAGAMENTO_UNICO",
-    "contributionPayment": {
-      "contributionPaymentMethod": [
-        "Cartão de crédito"
-      ],
-      "contributionPeriodicity": [
-        "Mensal"
-      ]
-    },
-    "contributionTax": "string",
-    "minimumRequirements": {
-      "minRequirementsContractType": "Individual",
-      "minRequirementsContract": "wwww.seguradora.com.br/termos"
-    },
-    "targetAudience": "Pessoa Natural"
-  }
-]
-
-```
-
-Produtos de Seguro de Automóveis.
-
-### Properties
-
-|Name|Type|Required|Restrictions|Description|
-|---|---|---|---|---|
-|name|string|true|none|Nome comercial do produto, pelo qual é identificado nos canais de distribuição e atendimento da sociedade.|
-|code|string|true|none|Código único a ser definido pela sociedade.|
-|modality|string|true|none|Lista padronizada de modalidades de coberturas  incluídas no produto.|
-|coverages|[object]|true|none|none|
-|» coverage|string|false|none|Formas de coberturas.|
-|» coveragesAttributes|[PensionPlanCoverageAttributes](#schemapensionplancoverageattributes)|false|none|Atributos da cobertura.|
-|» coveragePeriod|string|false|none|Formas de coberturas.|
-|additional|string|false|none|Adicional ao plano.|
-|additionalOthers|string|false|none|Lista a ser preenchida pelas participantes quando houver ‘Outros’ no campo ‘additional’|
-|assistanceType|[string]|false|none|Tipos de assistências.|
-|assistanceTypeOthers|[string]|false|none|Outros tipos de assistências.|
-|termAndCondition|[[PensionPlanTerms](#schemapensionplanterms)]|false|none|[Informações dos termos e condições conforme número do processo SUSEP.]|
-|updatePMBaC|[PensionPlanUpdatePMBaC](#schemapensionplanupdatepmbac)|false|none|Atualização/ Remuneração da PMaC.|
-|premiumUpdateIndex|string|true|none|Índice utilizado na atualização do prêmio/contribuição e do capital segurado/benefício|
-|ageReframing|[PensionPlanAgeReframing](#schemapensionplanagereframing)|false|none|Reenquadramento etário.|
-|financialRegimeContractType|string|true|none|Tipo de contratação de regime financeiro.|
-|reclaim|[PensionPlanReclaim](#schemapensionplanreclaim)|false|none|Resgate.|
-|otherGuarateedValues|string|true|none|Outros valores garantidos.|
-|profitModality|string|true|none|Modalidade de pagamento da indenização.|
-|contributionPayment|[PensionPlanContributionPayment](#schemapensionplancontributionpayment)|true|none|Pagamento da contribuição.|
-|contributionTax|string|false|none|Distribuição de frequência relativa aos valores referentes às taxas cobradas|
-|minimumRequirements|[PensionPlanMinimumRequirements](#schemapensionplanminimumrequirements)|true|none|Requisitos mínimos.|
-|targetAudience|string|true|none|none|
-
-#### Enumerated Values
-
-|Property|Value|
-|---|---|
-|modality|PECULIO|
-|modality|RENDA|
-|modality|PENSAO_PRAZO_CERTO|
-|modality|PENSAO_MENORES_21|
-|modality|PENSAO_MENORES_24|
-|modality|PENSAO_CONJUGE_VITALICIA|
-|modality|PENSAO_CONJUGE_TEMPORARIA|
-|coverage|MORTE|
-|coverage|INVALIDEZ|
-|coveragePeriod|VITALICIA|
-|coveragePeriod|TEMPORARIA|
-|additional|SORTEIO|
-|additional|OUTROS|
-|premiumUpdateIndex|IPCA|
-|premiumUpdateIndex|IGPM|
-|premiumUpdateIndex|INPC|
-|financialRegimeContractType|REPARTICAO_SIMPLES|
-|financialRegimeContractType|REPARTICAO_CAPITAIS_COBERTURA|
-|financialRegimeContractType|CAPITALIZACAO|
-|otherGuarateedValues|SALDAMENTO|
-|otherGuarateedValues|BENEFICIO_PROLOGANDO|
-|otherGuarateedValues|NAO_APLICA|
-|profitModality|PAGAMENTO_UNICO|
-|profitModality|FORMA_RENDA|
-|targetAudience|PESSOA_NATURAL|
-|targetAudience|PESSOA_JURIDICA|
-
-<h2 id="tocS_PensionPlanTerms">PensionPlanTerms</h2>
-<!-- backwards compatibility -->
-<a id="schemapensionplanterms"></a>
-<a id="schema_PensionPlanTerms"></a>
-<a id="tocSpensionplanterms"></a>
-<a id="tocspensionplanterms"></a>
-
-```json
-{
-  "susepProcessNumber": "15414.622222/2222-22",
-  "definition": "wwww.seguradora.com.br/termos"
-}
-
-```
-
-Informações dos termos e condições conforme número do processo SUSEP.
-
-### Properties
-
-|Name|Type|Required|Restrictions|Description|
-|---|---|---|---|---|
-|susepProcessNumber|string|true|none|Número do processo SUSEP.|
-|definition|string|true|none|Campo aberto (possibilidade de incluir uma url).|
-
-<h2 id="tocS_PensionPlanCovaregeAttibutesDetailsUnit">PensionPlanCovaregeAttibutesDetailsUnit</h2>
-<!-- backwards compatibility -->
-<a id="schemapensionplancovaregeattibutesdetailsunit"></a>
-<a id="schema_PensionPlanCovaregeAttibutesDetailsUnit"></a>
-<a id="tocSpensionplancovaregeattibutesdetailsunit"></a>
-<a id="tocspensionplancovaregeattibutesdetailsunit"></a>
-
-```json
-{
-  "code": "string",
-  "description": "string"
-}
-
-```
-
-### Properties
-
-|Name|Type|Required|Restrictions|Description|
-|---|---|---|---|---|
-|code|string|true|none|Tipo unidade de medida|
-|description|string|true|none|Descrição da unidade de medida|
-
-<h2 id="tocS_PensionPlanCovaregeAttibutesDetails">PensionPlanCovaregeAttibutesDetails</h2>
-<!-- backwards compatibility -->
-<a id="schemapensionplancovaregeattibutesdetails"></a>
-<a id="schema_PensionPlanCovaregeAttibutesDetails"></a>
-<a id="tocSpensionplancovaregeattibutesdetails"></a>
-<a id="tocspensionplancovaregeattibutesdetails"></a>
-
-```json
-{
-  "amount": 0,
-  "unit": {
-    "code": "string",
-    "description": "string"
-  }
-}
-
-```
-
-### Properties
-
-|Name|Type|Required|Restrictions|Description|
-|---|---|---|---|---|
-|amount|number|true|none|none|
-|unit|[PensionPlanCovaregeAttibutesDetailsUnit](#schemapensionplancovaregeattibutesdetailsunit)|true|none|none|
-
-<h2 id="tocS_PensionPlanCoverageAttributes">PensionPlanCoverageAttributes</h2>
-<!-- backwards compatibility -->
-<a id="schemapensionplancoverageattributes"></a>
-<a id="schema_PensionPlanCoverageAttributes"></a>
-<a id="tocSpensionplancoverageattributes"></a>
-<a id="tocspensionplancoverageattributes"></a>
-
-```json
-{
-  "indenizationPaymentMethod": "Pagamento Único",
-  "minValue": {
-    "amount": 0,
-    "unit": {
-      "code": "string",
-      "description": "string"
-    }
-  },
-  "maxValue": {
-    "amount": 0,
-    "unit": {
-      "code": "string",
-      "description": "string"
-    }
-  },
-  "indemnifiablePeriod": "Prazo",
-  "indemnifiableDeadline": 48,
-  "currency": "BRL",
-  "gracePeriod": {
-    "amount": 0,
-    "unit": "DIAS"
-  },
-  "excludedRisk": [
-    "ATO_RECONHECIMENTO_PERIGOSO"
-  ],
-  "excludedRiskURL": "string"
-}
-
-```
-
-Atributos da cobertura.
-
-### Properties
-
-|Name|Type|Required|Restrictions|Description|
-|---|---|---|---|---|
-|indenizationPaymentMethod|string|true|none|Forma de pagamento da indenização.|
-|minValue|[PensionPlanCovaregeAttibutesDetails](#schemapensionplancovaregeattibutesdetails)|true|none|Valor mínimo de cobertura diária ou parcelada. Em reais.|
-|maxValue|[PensionPlanCovaregeAttibutesDetails](#schemapensionplancovaregeattibutesdetails)|true|none|Valor máxima de cobertura diária ou parcelada. Em reais.|
-|indemnifiablePeriod|string|true|none|Período indenizável. Se for indenização única, esse campo não se aplica.|
-|indemnifiableDeadline|integer|true|none|Número máximo de parcelas indenizáveis. Caso seja relacionado a parcelas.|
-|currency|string|true|none|Moeda utilizada.|
-|gracePeriod|[PensionPlanGracePeriod](#schemapensionplangraceperiod)|true|none|Período de carência.|
-|excludedRisk|[string]|true|none|Riscos excluídos.|
-|excludedRiskURL|string|true|none|Campo aberto (possibilidade de incluir URL)|
-
-#### Enumerated Values
-
-|Property|Value|
-|---|---|
-|indenizationPaymentMethod|PAGAMENTO_UNICO|
-|indenizationPaymentMethod|FORMA_RENDA|
-|indemnifiablePeriod|PRAZO|
-|indemnifiablePeriod|ATE_FIM_CICLO_DETERMINADO|
-|currency|AFN|
-|currency|ALL|
-|currency|DZD|
-|currency|USD|
-|currency|EUR|
-|currency|AOA|
-|currency|XCD|
-|currency|XCD|
-|currency|ARS|
-|currency|AMD|
-|currency|AWG|
-|currency|AUD|
-|currency|EUR|
-|currency|AZN|
-|currency|BSD|
-|currency|BHD|
-|currency|BDT|
-|currency|BBD|
-|currency|BYN|
-|currency|EUR|
-|currency|BZD|
-|currency|XOF|
-|currency|BMD|
-|currency|BTN|
-|currency|BOB|
-|currency|BOV|
-|currency|USD|
-|currency|BAM|
-|currency|BWP|
-|currency|NOK|
-|currency|BRL|
-|currency|USD|
-|currency|BND|
-|currency|BGN|
-|currency|XOF|
-|currency|BIF|
-|currency|CVE|
-|currency|KHR|
-|currency|XAF|
-|currency|CAD|
-|currency|KYD|
-|currency|XAF|
-|currency|XAF|
-|currency|CLF|
-|currency|CLP|
-|currency|CNY|
-|currency|AUD|
-|currency|AUD|
-|currency|COP|
-|currency|COU|
-|currency|KMF|
-|currency|CDF|
-|currency|XAF|
-|currency|NZD|
-|currency|CRC|
-|currency|HRK|
-|currency|CUC|
-|currency|CUP|
-|currency|ANG|
-|currency|EUR|
-|currency|CZK|
-|currency|XOF|
-|currency|DKK|
-|currency|DJF|
-|currency|XCD|
-|currency|DOP|
-|currency|USD|
-|currency|EGP|
-|currency|SVC|
-|currency|USD|
-|currency|XAF|
-|currency|ERN|
-|currency|EUR|
-|currency|ETB|
-|currency|EUR|
-|currency|FKP|
-|currency|DKK|
-|currency|FJD|
-|currency|EUR|
-|currency|EUR|
-|currency|EUR|
-|currency|XPF|
-|currency|EUR|
-|currency|XAF|
-|currency|GMD|
-|currency|GEL|
-|currency|EUR|
-|currency|GHS|
-|currency|GIP|
-|currency|EUR|
-|currency|DKK|
-|currency|XCD|
-|currency|EUR|
-|currency|USD|
-|currency|GTQ|
-|currency|GBP|
-|currency|GNF|
-|currency|XOF|
-|currency|GYD|
-|currency|HTG|
-|currency|USD|
-|currency|AUD|
-|currency|EUR|
-|currency|HNL|
-|currency|HKD|
-|currency|HUF|
-|currency|ISK|
-|currency|INR|
-|currency|IDR|
-|currency|XDR|
-|currency|IRR|
-|currency|IQD|
-|currency|EUR|
-|currency|GBP|
-|currency|ILS|
-|currency|EUR|
-|currency|JMD|
-|currency|JPY|
-|currency|GBP|
-|currency|JOD|
-|currency|KZT|
-|currency|KES|
-|currency|AUD|
-|currency|KPW|
-|currency|KRW|
-|currency|KWD|
-|currency|KGS|
-|currency|LAK|
-|currency|EUR|
-|currency|LBP|
-|currency|LSL|
-|currency|ZAR|
-|currency|LRD|
-|currency|LYD|
-|currency|CHF|
-|currency|EUR|
-|currency|EUR|
-|currency|MOP|
-|currency|MGA|
-|currency|MWK|
-|currency|MYR|
-|currency|MVR|
-|currency|XOF|
-|currency|EUR|
-|currency|USD|
-|currency|EUR|
-|currency|MRU|
-|currency|MUR|
-|currency|EUR|
-|currency|XUA|
-|currency|MXN|
-|currency|MXV|
-|currency|USD|
-|currency|MDL|
-|currency|EUR|
-|currency|MNT|
-|currency|EUR|
-|currency|XCD|
-|currency|MAD|
-|currency|MZN|
-|currency|MMK|
-|currency|NAD|
-|currency|ZAR|
-|currency|AUD|
-|currency|NPR|
-|currency|EUR|
-|currency|XPF|
-|currency|NZD|
-|currency|NIO|
-|currency|XOF|
-|currency|NGN|
-|currency|NZD|
-|currency|AUD|
-|currency|USD|
-|currency|NOK|
-|currency|OMR|
-|currency|PKR|
-|currency|USD|
-|currency|PAB|
-|currency|USD|
-|currency|PGK|
-|currency|PYG|
-|currency|PEN|
-|currency|PHP|
-|currency|NZD|
-|currency|PLN|
-|currency|EUR|
-|currency|USD|
-|currency|QAR|
-|currency|MKD|
-|currency|RON|
-|currency|RUB|
-|currency|RWF|
-|currency|EUR|
-|currency|EUR|
-|currency|SHP|
-|currency|XCD|
-|currency|XCD|
-|currency|EUR|
-|currency|EUR|
-|currency|XCD|
-|currency|WST|
-|currency|EUR|
-|currency|STN|
-|currency|SAR|
-|currency|XOF|
-|currency|RSD|
-|currency|SCR|
-|currency|SLL|
-|currency|SGD|
-|currency|ANG|
-|currency|XSU|
-|currency|EUR|
-|currency|EUR|
-|currency|SBD|
-|currency|SOS|
-|currency|ZAR|
-|currency|SSP|
-|currency|EUR|
-|currency|LKR|
-|currency|SDG|
-|currency|SRD|
-|currency|NOK|
-|currency|SZL|
-|currency|SEK|
-|currency|CHE|
-|currency|CHF|
-|currency|CHW|
-|currency|SYP|
-|currency|TWD|
-|currency|TJS|
-|currency|TZS|
-|currency|THB|
-|currency|USD|
-|currency|XOF|
-|currency|NZD|
-|currency|TOP|
-|currency|TTD|
-|currency|TND|
-|currency|TRY|
-|currency|TMT|
-|currency|USD|
-|currency|AUD|
-|currency|UGX|
-|currency|UAH|
-|currency|AED|
-|currency|GBP|
-|currency|USD|
-|currency|USD|
-|currency|USN|
-|currency|UYI|
-|currency|UYU|
-|currency|UZS|
-|currency|VUV|
-|currency|VEF|
-|currency|VND|
-|currency|USD|
-|currency|USD|
-|currency|XPF|
-|currency|MAD|
-|currency|YER|
-|currency|ZMW|
-|currency|ZWL|
-|currency|EUR|
-
-<h2 id="tocS_PensionPlanUpdatePMBaC">PensionPlanUpdatePMBaC</h2>
-<!-- backwards compatibility -->
-<a id="schemapensionplanupdatepmbac"></a>
-<a id="schema_PensionPlanUpdatePMBaC"></a>
-<a id="tocSpensionplanupdatepmbac"></a>
-<a id="tocspensionplanupdatepmbac"></a>
-
-```json
-{
-  "interestRate": 14,
-  "updateIndex": "IPCA(IBGE)"
-}
-
-```
-
-Atualização/ Remuneração da PMaC.
-
-### Properties
-
-|Name|Type|Required|Restrictions|Description|
-|---|---|---|---|---|
-|interestRate|number|true|none|Taxa de juros para capitalização da PMBaC PMBC.|
-|updateIndex|string|true|none|Índice utilizado na atualização da PMBaC.|
-
-#### Enumerated Values
-
-|Property|Value|
-|---|---|
-|updateIndex|FINANCEIRA|
-|updateIndex|IGPM|
-|updateIndex|INPC|
-
-<h2 id="tocS_PensionPlanAgeReframing">PensionPlanAgeReframing</h2>
-<!-- backwards compatibility -->
-<a id="schemapensionplanagereframing"></a>
-<a id="schema_PensionPlanAgeReframing"></a>
-<a id="tocSpensionplanagereframing"></a>
-<a id="tocspensionplanagereframing"></a>
-
-```json
-{
-  "reframingCriterion": "Após período em anos",
-  "reframingPeriodicity": 10
-}
-
-```
-
-Reenquadramento etário.
-
-### Properties
-
-|Name|Type|Required|Restrictions|Description|
-|---|---|---|---|---|
-|reframingCriterion|string|true|none|Critério para reenquadramento etário.|
-|reframingPeriodicity|integer|true|none|Período em anos para reenquadramento etário.|
-
-#### Enumerated Values
-
-|Property|Value|
-|---|---|
-|reframingCriterion|APOS_PERIODO_ANOS|
-|reframingCriterion|CADA_PERIODO_ANOS|
-|reframingCriterion|MUDANCA_FAIXA_ETARIA|
-|reframingCriterion|NAO_APLICAVEL|
-
-<h2 id="tocS_PensionPlanReclaim">PensionPlanReclaim</h2>
-<!-- backwards compatibility -->
-<a id="schemapensionplanreclaim"></a>
-<a id="schema_PensionPlanReclaim"></a>
-<a id="tocSpensionplanreclaim"></a>
-<a id="tocspensionplanreclaim"></a>
-
-```json
-{
-  "reclaimTable": [
-    {
-      "initialMonthRange": 0,
-      "finalMonthRange": 0,
-      "percentage": "string"
-    }
-  ],
-  "differentiatedPercentage": "string",
-  "gracePeriod": "20/Não se aplica"
-}
-
-```
-
-Resgate.
-
-### Properties
-
-|Name|Type|Required|Restrictions|Description|
-|---|---|---|---|---|
-|reclaimTable|[[PensionPlanReclaimTable](#schemapensionplanreclaimtable)]|true|none|Percentual de resgate para PMBaC para cada conjunto aplicável.|
-|differentiatedPercentage|string|false|none|Campo aberto (possibilidade de incluir URL)|
-|gracePeriod|string|true|none|Prazo de carência em dias para resgate.|
-
-<h2 id="tocS_PensionPlanReclaimTable">PensionPlanReclaimTable</h2>
-<!-- backwards compatibility -->
-<a id="schemapensionplanreclaimtable"></a>
-<a id="schema_PensionPlanReclaimTable"></a>
-<a id="tocSpensionplanreclaimtable"></a>
-<a id="tocspensionplanreclaimtable"></a>
-
-```json
-{
-  "initialMonthRange": 0,
-  "finalMonthRange": 0,
-  "percentage": "string"
-}
-
-```
-
-### Properties
-
-|Name|Type|Required|Restrictions|Description|
-|---|---|---|---|---|
-|initialMonthRange|number|true|none|Mês inicial do range|
-|finalMonthRange|number|true|none|Mês final do range|
-|percentage|string|true|none|Percentual da faixa de resgate|
-
-<h2 id="tocS_PensionPlanContributionPayment">PensionPlanContributionPayment</h2>
-<!-- backwards compatibility -->
-<a id="schemapensionplancontributionpayment"></a>
-<a id="schema_PensionPlanContributionPayment"></a>
-<a id="tocSpensionplancontributionpayment"></a>
-<a id="tocspensionplancontributionpayment"></a>
-
-```json
-{
-  "contributionPaymentMethod": [
-    "Cartão de crédito"
-  ],
-  "contributionPeriodicity": [
-    "Mensal"
-  ]
-}
-
-```
-
-Pagamento da contribuição.
-
-### Properties
-
-|Name|Type|Required|Restrictions|Description|
-|---|---|---|---|---|
-|contributionPaymentMethod|[string]|true|none|Forma de pagamento da contribuição.|
-|contributionPeriodicity|[string]|true|none|Periodicidade de pagamento da contribuição.|
-
-<h2 id="tocS_PensionPlanMinimumRequirements">PensionPlanMinimumRequirements</h2>
-<!-- backwards compatibility -->
-<a id="schemapensionplanminimumrequirements"></a>
-<a id="schema_PensionPlanMinimumRequirements"></a>
-<a id="tocSpensionplanminimumrequirements"></a>
-<a id="tocspensionplanminimumrequirements"></a>
-
-```json
-{
-  "minRequirementsContractType": "Individual",
-  "minRequirementsContract": "wwww.seguradora.com.br/termos"
-}
-
-```
-
-Requisitos mínimos.
-
-### Properties
-
-|Name|Type|Required|Restrictions|Description|
-|---|---|---|---|---|
-|minRequirementsContractType|string|true|none|Tipo de contratação.|
-|minRequirementsContract|string|true|none|Campo aberto contendo todos os requisitos mínimos para contratação.|
-
-#### Enumerated Values
-
-|Property|Value|
-|---|---|
-|minRequirementsContractType|COLETIVO|
-|minRequirementsContractType|INDIVIDUAL|
-
-<h2 id="tocS_PensionPlanGracePeriod">PensionPlanGracePeriod</h2>
-<!-- backwards compatibility -->
-<a id="schemapensionplangraceperiod"></a>
-<a id="schema_PensionPlanGracePeriod"></a>
-<a id="tocSpensionplangraceperiod"></a>
-<a id="tocspensionplangraceperiod"></a>
-
-```json
-{
-  "amount": 0,
-  "unit": "DIAS"
-}
-
-```
-
-### Properties
-
-|Name|Type|Required|Restrictions|Description|
-|---|---|---|---|---|
-|amount|number|false|none|Prazo de Carência|
-|unit|string|false|none|Unidade do prazo (dias ou meses)|
-
-#### Enumerated Values
-
-|Property|Value|
-|---|---|
-|unit|DIAS|
-|unit|MESES|
-|unit|NAO_SE_APLICA|
-
-<h2 id="tocS_LinksPaginated">LinksPaginated</h2>
-<!-- backwards compatibility -->
-<a id="schemalinkspaginated"></a>
-<a id="schema_LinksPaginated"></a>
-<a id="tocSlinkspaginated"></a>
-<a id="tocslinkspaginated"></a>
-
-```json
-{
-  "self": "https://api.organizacao.com.br/open-insurance/products-services/v1",
-  "first": "https://api.organizacao.com.br/open-insurance/products-services/v1",
-  "prev": "string",
-  "next": "string",
-  "last": "https://api.organizacao.com.br/open-insurance/products-services/v1"
-}
-
-```
-
-### Properties
-
-|Name|Type|Required|Restrictions|Description|
-|---|---|---|---|---|
-|self|string|true|none|URI completo que gerou a resposta atual.|
-|first|string|false|none|URI da primeira página que originou essa lista de resultados. Restrição - Obrigatório quando não for a primeira página da resposta|
-|prev|string|false|none|URI da página anterior dessa lista de resultados. Restrição - Obrigatório quando não for a primeira página da resposta|
-|next|string|false|none|URI da próxima página dessa lista de resultados. Restrição - Obrigatório quando não for a última página da resposta|
-|last|string|false|none|URI da última página dessa lista de resultados. Restrição - Obrigatório quando não for a última página da resposta|
-
-<h2 id="tocS_MetaPaginated">MetaPaginated</h2>
-<!-- backwards compatibility -->
-<a id="schemametapaginated"></a>
-<a id="schema_MetaPaginated"></a>
-<a id="tocSmetapaginated"></a>
-<a id="tocsmetapaginated"></a>
-
-```json
-{
-  "totalRecords": 10,
-  "totalPages": 1
-}
-
-```
-
-### Properties
-
-|Name|Type|Required|Restrictions|Description|
-|---|---|---|---|---|
-|totalRecords|integer|true|none|Total de registros encontrados|
-|totalPages|integer|true|none|Total de páginas para os registros encontrados|
-
-<h2 id="tocS_ResponseError">ResponseError</h2>
-<!-- backwards compatibility -->
-<a id="schemaresponseerror"></a>
-<a id="schema_ResponseError"></a>
-<a id="tocSresponseerror"></a>
-<a id="tocsresponseerror"></a>
-
-```json
-{
-  "errors": [
-    {
-      "code": "string",
-      "title": "string",
-      "detail": "string",
-      "requestDateTime": "2021-08-20T08:30:00Z"
-    }
-  ],
-  "meta": {
-    "totalRecords": 10,
-    "totalPages": 1
-  }
-}
-
-```
-
-### Properties
-
-|Name|Type|Required|Restrictions|Description|
-|---|---|---|---|---|
-|errors|[object]|true|none|none|
-|» code|string|true|none|Código de erro específico do endpoint|
-|» title|string|true|none|Título legível por humanos deste erro específico|
-|» detail|string|true|none|Descrição legível por humanos deste erro específico|
-|» requestDateTime|string(date-time)|true|none|Data e hora da consulta, conforme especificação RFC-3339, formato UTC.|
-|meta|[MetaPaginated](#schemametapaginated)|false|none|none|
 
 ### Properties
 
@@ -5229,6 +4749,26 @@ Requisitos mínimos.
 |cnpjNumber|string|true|none|CNPJ da sociedade pertencente à marca.|
 |products|[AutoInsuranceProduct](#schemaautoinsuranceproduct)|true|none|Lista de Dependências de uma Instituição.|
 
+<h2 id="tocS_AutoInsuranceProductDefault">AutoInsuranceProductDefault</h2>
+<!-- backwards compatibility -->
+<a id="schemaautoinsuranceproductdefault"></a>
+<a id="schema_AutoInsuranceProductDefault"></a>
+<a id="tocSautoinsuranceproductdefault"></a>
+<a id="tocsautoinsuranceproductdefault"></a>
+
+```json
+[
+  "string"
+]
+
+```
+
+Campo para que a operadora retorne um produto padrão ou retorno customizado caso a consulta por FIPE não seja atendida.
+
+### Properties
+
+*None*
+
 <h2 id="tocS_AutoInsuranceProduct">AutoInsuranceProduct</h2>
 <!-- backwards compatibility -->
 <a id="schemaautoinsuranceproduct"></a>
@@ -5517,8 +5057,8 @@ Listagem de coberturas incluídas no produto que deve observar a relação discr
 |---|---|---|---|---|
 |coverage|string|true|none|Conjunto de riscos elencados na apólice.|
 |coverageDetail|string|true|none|Campo aberto para detalhamento de riscos possíveis dos produtos a ser feito para cada participante.|
-|coveragePermissionSeparteAcquisition|boolean|false|none|Indicação se a cobertura permite contratação separada (por cobertura selecionada).|
-|coverageAttributes|[AutoInsuranceCoverageAttributes](#schemaautoinsurancecoverageattributes)|false|none|Atributos da cobertura.|
+|coveragePermissionSeparteAcquisition|boolean|true|none|Indicação se a cobertura permite contratação separada (por cobertura selecionada).|
+|coverageAttributes|[AutoInsuranceCoverageAttributes](#schemaautoinsurancecoverageattributes)|true|none|Atributos da cobertura.|
 
 #### Enumerated Values
 
@@ -6033,86 +5573,87 @@ Listagem de modelos / ano de veículos. Deve ser padronizada na proposta técnic
   "data": {
     "brand": {
       "name": "EMPRESA A seguros",
-      "company": [
-        {
-          "name": "ABCDE SEGUROS",
-          "cnpjNumber": 12345678901234,
-          "products": [
-            {
-              "name": "RESIDENCIAL XPTO",
-              "code": "0000-0",
-              "coverages": [
-                {
-                  "coverageType": "Escritório em Residência",
-                  "coverageDetail": "Cobertura especial para escritório residenciais",
-                  "coveragePermissionSeparteAquisition": false,
-                  "coverageAttributes": {
-                    "minLMI": {},
-                    "maxLMI": {},
-                    "minDeductibleAmount": {},
-                    "insuredMandatoryParticipationPercentage": 0
-                  }
+      "company": {
+        "name": "ABCDE SEGUROS",
+        "cnpjNumber": 12345678901234,
+        "products": [
+          {
+            "name": "RESIDENCIAL XPTO",
+            "code": "0000-0",
+            "coverages": [
+              {
+                "coverageType": "Escritório em Residência",
+                "coverageDetail": "Cobertura especial para escritório residenciais",
+                "coveragePermissionSeparteAcquisition": false,
+                "coverageAttributes": {
+                  "minLMI": {
+                    "amount": 0,
+                    "unit": {}
+                  },
+                  "maxLMI": {
+                    "amount": 0,
+                    "unit": {}
+                  },
+                  "minDeductibleAmount": {
+                    "amount": 0,
+                    "unit": {}
+                  },
+                  "insuredMandatoryParticipationPercentage": 0
                 }
-              ],
-              "propertyCharacteristics": [
-                {
-                  "propertyType": "CASA",
-                  "propertyBuildType": "ALVENARIA",
-                  "propertyUsageType": "HABITUAL",
-                  "destinationInsuredImportance": "PRÉDIO"
-                }
-              ],
-              "propertyZipCode": "1311000",
-              "protective": true,
-              "additional": [
-                "SORTEIO_GRATUITO"
-              ],
-              "additionalOthers": "string",
-              "assistanceServices": [
-                {
-                  "assistanceServicesPackage": "ATE_10_SERVICOS",
-                  "complementaryAssistanceServicesDetail": "reboque pane seca",
-                  "chargeTypeSignaling": "GRATUITA"
-                }
-              ],
-              "termsAndConditions": [
-                {
-                  "susepProcessNumber": "XXXXX.XXXXXX/XXXX-XX",
-                  "definition": "https://openinsurance.com.br/aaa"
-                }
-              ],
-              "validity": [
-                {
-                  "term": "ANUAL",
-                  "termOthers": "string"
-                }
-              ],
-              "customerServices": [
-                "LIVRE ESCOLHA"
-              ],
-              "premiumRates": [
-                "string"
-              ],
-              "premiumPayments": [
-                {
-                  "paymentMethod": "CARTÃO DE CRÉDITO",
-                  "paymentMethodDetail": "string",
-                  "paymentType": "PAGAMENTO_UNICO"
-                }
-              ],
-              "minimumRequirements": [
-                {
-                  "contractingType": "COLETIVO",
-                  "contractingMinRequirement": "https://openinsurance.com.br/aaa"
-                }
-              ],
-              "targetAudiences": [
-                "PESSOA_NATURAL"
-              ]
-            }
-          ]
-        }
-      ]
+              }
+            ],
+            "propertyCharacteristics": [
+              {
+                "propertyType": "CASA",
+                "propertyBuildType": "ALVENARIA",
+                "propertyUsageType": "HABITUAL",
+                "importanceInsured": "PRÉDIO"
+              }
+            ],
+            "propertyZipCode": 1311000,
+            "protective": true,
+            "additional": "SORTEIO (GRATUITO)",
+            "additionalOthers": "string",
+            "assistanceServices": [
+              {
+                "assistanceServicesPackage": "ATÉ 10 SERVIÇOS",
+                "complementaryAssistanceServicesDetail": "reboque pane seca",
+                "chargeTypeSignaling": "GRATUITA"
+              }
+            ],
+            "termsAndConditions": [
+              {
+                "susepProcessNumber": "XXXXX.XXXXXX/XXXX-XX",
+                "definition": "https://openinsurance.com.br/aaa"
+              }
+            ],
+            "validity": [
+              {
+                "term": "ANUAL",
+                "termOthers": "string"
+              }
+            ],
+            "customerServices": [
+              "LIVRE ESCOLHA"
+            ],
+            "premiumRates": [
+              "string"
+            ],
+            "premiumPayments": [
+              {
+                "paymentMethod": "CARTÃO DE CRÉDITO",
+                "paymentMethodDetail": "string",
+                "paymentType": "A_VISTA"
+              }
+            ],
+            "minimumRequirements": {
+              "contractingType": "COLETIVO",
+              "contractingMinRequirement": "https://openinsurance.com.br/aaa"
+            },
+            "targetAudiences": "PESSOA NATURAL"
+          }
+        ]
+      }
     }
   },
   "links": {
@@ -6149,125 +5690,7 @@ Listagem de modelos / ano de veículos. Deve ser padronizada na proposta técnic
 ```json
 {
   "name": "EMPRESA A seguros",
-  "company": [
-    {
-      "name": "ABCDE SEGUROS",
-      "cnpjNumber": 12345678901234,
-      "products": [
-        {
-          "name": "RESIDENCIAL XPTO",
-          "code": "0000-0",
-          "coverages": [
-            {
-              "coverageType": "Escritório em Residência",
-              "coverageDetail": "Cobertura especial para escritório residenciais",
-              "coveragePermissionSeparteAquisition": false,
-              "coverageAttributes": {
-                "minLMI": {
-                  "amount": 0,
-                  "unit": {
-                    "code": "R$",
-                    "description": "REAL"
-                  }
-                },
-                "maxLMI": {
-                  "amount": 0,
-                  "unit": {
-                    "code": "R$",
-                    "description": "REAL"
-                  }
-                },
-                "minDeductibleAmount": {
-                  "amount": 0,
-                  "unit": {
-                    "code": "R$",
-                    "description": "REAL"
-                  }
-                },
-                "insuredMandatoryParticipationPercentage": 0
-              }
-            }
-          ],
-          "propertyCharacteristics": [
-            {
-              "propertyType": "CASA",
-              "propertyBuildType": "ALVENARIA",
-              "propertyUsageType": "HABITUAL",
-              "destinationInsuredImportance": "PRÉDIO"
-            }
-          ],
-          "propertyZipCode": "1311000",
-          "protective": true,
-          "additional": [
-            "SORTEIO_GRATUITO"
-          ],
-          "additionalOthers": "string",
-          "assistanceServices": [
-            {
-              "assistanceServicesPackage": "ATE_10_SERVICOS",
-              "complementaryAssistanceServicesDetail": "reboque pane seca",
-              "chargeTypeSignaling": "GRATUITA"
-            }
-          ],
-          "termsAndConditions": [
-            {
-              "susepProcessNumber": "XXXXX.XXXXXX/XXXX-XX",
-              "definition": "https://openinsurance.com.br/aaa"
-            }
-          ],
-          "validity": [
-            {
-              "term": "ANUAL",
-              "termOthers": "string"
-            }
-          ],
-          "customerServices": [
-            "LIVRE ESCOLHA"
-          ],
-          "premiumRates": [
-            "string"
-          ],
-          "premiumPayments": [
-            {
-              "paymentMethod": "CARTÃO DE CRÉDITO",
-              "paymentMethodDetail": "string",
-              "paymentType": "PAGAMENTO_UNICO"
-            }
-          ],
-          "minimumRequirements": [
-            {
-              "contractingType": "COLETIVO",
-              "contractingMinRequirement": "https://openinsurance.com.br/aaa"
-            }
-          ],
-          "targetAudiences": [
-            "PESSOA_NATURAL"
-          ]
-        }
-      ]
-    }
-  ]
-}
-
-```
-
-### Properties
-
-|Name|Type|Required|Restrictions|Description|
-|---|---|---|---|---|
-|name|string|true|none|Nome da marca reportada pelo participante do Open Insurance. O conceito a que se refere a marca é em essência uma promessa das sociedades sob ela em fornecer uma série específica de atributos, benefícios e serviços uniformes aos clientes.|
-|company|[HomeInsuranceCompany](#schemahomeinsurancecompany)|false|none|none|
-
-<h2 id="tocS_HomeInsuranceCompany">HomeInsuranceCompany</h2>
-<!-- backwards compatibility -->
-<a id="schemahomeinsurancecompany"></a>
-<a id="schema_HomeInsuranceCompany"></a>
-<a id="tocShomeinsurancecompany"></a>
-<a id="tocshomeinsurancecompany"></a>
-
-```json
-[
-  {
+  "company": {
     "name": "ABCDE SEGUROS",
     "cnpjNumber": 12345678901234,
     "products": [
@@ -6278,7 +5701,7 @@ Listagem de modelos / ano de veículos. Deve ser padronizada na proposta técnic
           {
             "coverageType": "Escritório em Residência",
             "coverageDetail": "Cobertura especial para escritório residenciais",
-            "coveragePermissionSeparteAquisition": false,
+            "coveragePermissionSeparteAcquisition": false,
             "coverageAttributes": {
               "minLMI": {
                 "amount": 0,
@@ -6310,18 +5733,16 @@ Listagem de modelos / ano de veículos. Deve ser padronizada na proposta técnic
             "propertyType": "CASA",
             "propertyBuildType": "ALVENARIA",
             "propertyUsageType": "HABITUAL",
-            "destinationInsuredImportance": "PRÉDIO"
+            "importanceInsured": "PRÉDIO"
           }
         ],
-        "propertyZipCode": "1311000",
+        "propertyZipCode": 1311000,
         "protective": true,
-        "additional": [
-          "SORTEIO_GRATUITO"
-        ],
+        "additional": "SORTEIO (GRATUITO)",
         "additionalOthers": "string",
         "assistanceServices": [
           {
-            "assistanceServicesPackage": "ATE_10_SERVICOS",
+            "assistanceServicesPackage": "ATÉ 10 SERVIÇOS",
             "complementaryAssistanceServicesDetail": "reboque pane seca",
             "chargeTypeSignaling": "GRATUITA"
           }
@@ -6348,24 +5769,130 @@ Listagem de modelos / ano de veículos. Deve ser padronizada na proposta técnic
           {
             "paymentMethod": "CARTÃO DE CRÉDITO",
             "paymentMethodDetail": "string",
-            "paymentType": "PAGAMENTO_UNICO"
+            "paymentType": "A_VISTA"
           }
         ],
-        "minimumRequirements": [
-          {
-            "contractingType": "COLETIVO",
-            "contractingMinRequirement": "https://openinsurance.com.br/aaa"
-          }
-        ],
-        "targetAudiences": [
-          "PESSOA_NATURAL"
-        ]
+        "minimumRequirements": {
+          "contractingType": "COLETIVO",
+          "contractingMinRequirement": "https://openinsurance.com.br/aaa"
+        },
+        "targetAudiences": "PESSOA NATURAL"
       }
     ]
   }
-]
+}
 
 ```
+
+### Properties
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|name|string|true|none|Nome da marca reportada pelo participante do Open Insurance. O conceito a que se refere a marca é em essência uma promessa das sociedades sob ela em fornecer uma série específica de atributos, benefícios e serviços uniformes aos clientes.|
+|company|[HomeInsuranceCompany](#schemahomeinsurancecompany)|false|none|Informações referente a sociedade a qual a marca pertence.|
+
+<h2 id="tocS_HomeInsuranceCompany">HomeInsuranceCompany</h2>
+<!-- backwards compatibility -->
+<a id="schemahomeinsurancecompany"></a>
+<a id="schema_HomeInsuranceCompany"></a>
+<a id="tocShomeinsurancecompany"></a>
+<a id="tocshomeinsurancecompany"></a>
+
+```json
+{
+  "name": "ABCDE SEGUROS",
+  "cnpjNumber": 12345678901234,
+  "products": [
+    {
+      "name": "RESIDENCIAL XPTO",
+      "code": "0000-0",
+      "coverages": [
+        {
+          "coverageType": "Escritório em Residência",
+          "coverageDetail": "Cobertura especial para escritório residenciais",
+          "coveragePermissionSeparteAcquisition": false,
+          "coverageAttributes": {
+            "minLMI": {
+              "amount": 0,
+              "unit": {
+                "code": "R$",
+                "description": "REAL"
+              }
+            },
+            "maxLMI": {
+              "amount": 0,
+              "unit": {
+                "code": "R$",
+                "description": "REAL"
+              }
+            },
+            "minDeductibleAmount": {
+              "amount": 0,
+              "unit": {
+                "code": "R$",
+                "description": "REAL"
+              }
+            },
+            "insuredMandatoryParticipationPercentage": 0
+          }
+        }
+      ],
+      "propertyCharacteristics": [
+        {
+          "propertyType": "CASA",
+          "propertyBuildType": "ALVENARIA",
+          "propertyUsageType": "HABITUAL",
+          "importanceInsured": "PRÉDIO"
+        }
+      ],
+      "propertyZipCode": 1311000,
+      "protective": true,
+      "additional": "SORTEIO (GRATUITO)",
+      "additionalOthers": "string",
+      "assistanceServices": [
+        {
+          "assistanceServicesPackage": "ATÉ 10 SERVIÇOS",
+          "complementaryAssistanceServicesDetail": "reboque pane seca",
+          "chargeTypeSignaling": "GRATUITA"
+        }
+      ],
+      "termsAndConditions": [
+        {
+          "susepProcessNumber": "XXXXX.XXXXXX/XXXX-XX",
+          "definition": "https://openinsurance.com.br/aaa"
+        }
+      ],
+      "validity": [
+        {
+          "term": "ANUAL",
+          "termOthers": "string"
+        }
+      ],
+      "customerServices": [
+        "LIVRE ESCOLHA"
+      ],
+      "premiumRates": [
+        "string"
+      ],
+      "premiumPayments": [
+        {
+          "paymentMethod": "CARTÃO DE CRÉDITO",
+          "paymentMethodDetail": "string",
+          "paymentType": "A_VISTA"
+        }
+      ],
+      "minimumRequirements": {
+        "contractingType": "COLETIVO",
+        "contractingMinRequirement": "https://openinsurance.com.br/aaa"
+      },
+      "targetAudiences": "PESSOA NATURAL"
+    }
+  ]
+}
+
+```
+
+Informações referente a sociedade a qual a marca pertence.
 
 ### Properties
 
@@ -6391,7 +5918,7 @@ Listagem de modelos / ano de veículos. Deve ser padronizada na proposta técnic
       {
         "coverageType": "Escritório em Residência",
         "coverageDetail": "Cobertura especial para escritório residenciais",
-        "coveragePermissionSeparteAquisition": false,
+        "coveragePermissionSeparteAcquisition": false,
         "coverageAttributes": {
           "minLMI": {
             "amount": 0,
@@ -6423,18 +5950,16 @@ Listagem de modelos / ano de veículos. Deve ser padronizada na proposta técnic
         "propertyType": "CASA",
         "propertyBuildType": "ALVENARIA",
         "propertyUsageType": "HABITUAL",
-        "destinationInsuredImportance": "PRÉDIO"
+        "importanceInsured": "PRÉDIO"
       }
     ],
-    "propertyZipCode": "1311000",
+    "propertyZipCode": 1311000,
     "protective": true,
-    "additional": [
-      "SORTEIO_GRATUITO"
-    ],
+    "additional": "SORTEIO (GRATUITO)",
     "additionalOthers": "string",
     "assistanceServices": [
       {
-        "assistanceServicesPackage": "ATE_10_SERVICOS",
+        "assistanceServicesPackage": "ATÉ 10 SERVIÇOS",
         "complementaryAssistanceServicesDetail": "reboque pane seca",
         "chargeTypeSignaling": "GRATUITA"
       }
@@ -6461,18 +5986,14 @@ Listagem de modelos / ano de veículos. Deve ser padronizada na proposta técnic
       {
         "paymentMethod": "CARTÃO DE CRÉDITO",
         "paymentMethodDetail": "string",
-        "paymentType": "PAGAMENTO_UNICO"
+        "paymentType": "A_VISTA"
       }
     ],
-    "minimumRequirements": [
-      {
-        "contractingType": "COLETIVO",
-        "contractingMinRequirement": "https://openinsurance.com.br/aaa"
-      }
-    ],
-    "targetAudiences": [
-      "PESSOA_NATURAL"
-    ]
+    "minimumRequirements": {
+      "contractingType": "COLETIVO",
+      "contractingMinRequirement": "https://openinsurance.com.br/aaa"
+    },
+    "targetAudiences": "PESSOA NATURAL"
   }
 ]
 
@@ -6488,9 +6009,9 @@ Produtos de Seguro Residencial.
 |code|string|true|none|Código único a ser definido pela sociedade.|
 |coverages|[HomeInsuranceCoverages](#schemahomeinsurancecoverages)|true|none|Listagem de coberturas incluídas no produto.|
 |propertyCharacteristics|[HomeInsurancePropertyCharacteristics](#schemahomeinsurancepropertycharacteristics)|true|none|Caracteristicas do imóvel.|
-|propertyZipCode|string|true|none|Código de Endereçamento Postal do Imóvel|
+|propertyZipCode|integer|true|none|Código de Endereçamento Postal do Imóvel|
 |protective|boolean|true|none|Protecionais - Indicativo de exigência de itens protecionais.|
-|additional|[string]|true|none|none|
+|additional|string|true|none|Adicionais do Produto.|
 |additionalOthers|string|false|none|Campo aberto para descrição de cada participante ao selecionar o domínio ‘Outros’ no campo acima ‘Adicionais’.|
 |assistanceServices|[HomeInsuranceAssistanceServices](#schemahomeinsuranceassistanceservices)|true|none|Agrupamento dos serviços de assistências disponíveis vinculado ao produto.|
 |termsAndConditions|[HomeInsuranceTermsAndConditions](#schemahomeinsurancetermsandconditions)|true|none|Informações dos termos e condições conforme número do processo SUSEP.|
@@ -6498,8 +6019,18 @@ Produtos de Seguro Residencial.
 |customerServices|[string]|false|none|Informações de pagamento de prêmio.|
 |premiumRates|[string]|false|none|Distribuição de frequência relativa aos valores referentes às taxas cobradas.|
 |premiumPayments|[HomeInsurancePremiumPayment](#schemahomeinsurancepremiumpayment)|true|none|Informações de pagamento de prêmio.|
-|minimumRequirements|[[HomeInsuranceMinimumRequirements](#schemahomeinsuranceminimumrequirements)]|false|none|[Produtos de Seguro Residencial.]|
-|targetAudiences|[string]|true|none|none|
+|minimumRequirements|[HomeInsuranceMinimumRequirements](#schemahomeinsuranceminimumrequirements)|false|none|Produtos de Seguro Residencial.|
+|targetAudiences|[any]|true|none|Público a quem se destina o produto|
+
+#### Enumerated Values
+
+|Property|Value|
+|---|---|
+|additional|SORTEIO_GRATUITO|
+|additional|CLUBE_BENEFICIOS|
+|additional|CASHBACK|
+|additional|DESCONTOS|
+|additional|OUTROS|
 
 <h2 id="tocS_HomeInsuranceMinimumRequirements">HomeInsuranceMinimumRequirements</h2>
 <!-- backwards compatibility -->
@@ -6531,7 +6062,6 @@ Produtos de Seguro Residencial.
 |---|---|
 |contractingType|COLETIVO|
 |contractingType|INDIVIDUAL|
-|contractingType|AMBAS|
 
 <h2 id="tocS_HomeInsuranceCoverageAttributes">HomeInsuranceCoverageAttributes</h2>
 <!-- backwards compatibility -->
@@ -6649,8 +6179,8 @@ Informações dos termos e condições conforme número do processo SUSEP.
 
 |Name|Type|Required|Restrictions|Description|
 |---|---|---|---|---|
-|susepProcessNumber|string|true|none|Número do processo SUSEP.|
-|definition|string|true|none|Campo aberto (possibilidade de incluir uma url).|
+|susepProcessNumber|number|true|none|Número do processo SUSEP.|
+|definition|string|false|none|Campo aberto (possibilidade de incluir uma url).|
 
 <h2 id="tocS_HomeInsuranceValidity">HomeInsuranceValidity</h2>
 <!-- backwards compatibility -->
@@ -6704,7 +6234,7 @@ Vigência
   {
     "paymentMethod": "CARTÃO DE CRÉDITO",
     "paymentMethodDetail": "string",
-    "paymentType": "PAGAMENTO_UNICO"
+    "paymentType": "A_VISTA"
   }
 ]
 
@@ -6731,9 +6261,8 @@ Informações de pagamento de prêmio.
 |paymentMethod|BOLETO_BANCARIO|
 |paymentMethod|PIX|
 |paymentMethod|CONSIGINACAO_FOLHA_PAGAMENTO|
-|paymentMethod|PONTOS_PROGRAMAS_BENEFICIO|
-|paymentMethod|OUTROS|
-|paymentType|PAGAMENTO_UNICO|
+|paymentMethod|PAGAMENTO_COM_PONTOS|
+|paymentType|A_VISTA|
 |paymentType|PARCELADO|
 |paymentType|AMBOS|
 
@@ -6747,7 +6276,7 @@ Informações de pagamento de prêmio.
 ```json
 [
   {
-    "assistanceServicesPackage": "ATE_10_SERVICOS",
+    "assistanceServicesPackage": "ATÉ 10 SERVIÇOS",
     "complementaryAssistanceServicesDetail": "reboque pane seca",
     "chargeTypeSignaling": "GRATUITA"
   }
@@ -6774,7 +6303,7 @@ Agrupamento dos serviços de assistências disponíveis vinculado ao produto.
 |assistanceServicesPackage|ACIMA_20_SERVICOS|
 |assistanceServicesPackage|CUSTOMIZAVEL|
 |chargeTypeSignaling|GRATUITA|
-|chargeTypeSignaling|PAGO|
+|chargeTypeSignaling|PAGA|
 
 <h2 id="tocS_HomeInsuranceCoverages">HomeInsuranceCoverages</h2>
 <!-- backwards compatibility -->
@@ -6788,7 +6317,7 @@ Agrupamento dos serviços de assistências disponíveis vinculado ao produto.
   {
     "coverageType": "Escritório em Residência",
     "coverageDetail": "Cobertura especial para escritório residenciais",
-    "coveragePermissionSeparteAquisition": false,
+    "coveragePermissionSeparteAcquisition": false,
     "coverageAttributes": {
       "minLMI": {
         "amount": 0,
@@ -6826,7 +6355,7 @@ Listagem de coberturas incluídas no produto.
 |---|---|---|---|---|
 |coverageType|string|true|none|Nome do tipo da cobertura.|
 |coverageDetail|string|true|none|Campo aberto para detalhamento por coberturas possíveis dos produtos a ser feito por cada participante.|
-|coveragePermissionSeparteAquisition|boolean|true|none|Indicação se a cobertura permite contratação separada (por cobertura selecionada).|
+|coveragePermissionSeparteAcquisition|boolean|true|none|Indicação se a cobertura permite contratação separada (por cobertura selecionada).|
 |coverageAttributes|[HomeInsuranceCoverageAttributes](#schemahomeinsurancecoverageattributes)|true|none|Informações de cobertura do Seguro Residencial.|
 
 #### Enumerated Values
@@ -6843,7 +6372,7 @@ Listagem de coberturas incluídas no produto.
 |coverageType|ROUBO_SUBTRACAO_BENS|
 |coverageType|ROUBO_SUBTRACAO_BENS_FORA_LOCAL_SEGURADO|
 |coverageType|TACOS_GOLFE_HOLE_ONE|
-|coverageType|PEQUENAS_REFORMAS_OBRAS|
+|coverageType|PEQUENAS_REFORMAS_OBRA|
 |coverageType|GREVES_TUMULTOS_LOCKOUT|
 |coverageType|MICROEMPREENDEDOR|
 |coverageType|ESCRITORIO_RESIDENCIA|
@@ -6879,7 +6408,7 @@ Listagem de coberturas incluídas no produto.
     "propertyType": "CASA",
     "propertyBuildType": "ALVENARIA",
     "propertyUsageType": "HABITUAL",
-    "destinationInsuredImportance": "PRÉDIO"
+    "importanceInsured": "PRÉDIO"
   }
 ]
 
@@ -6894,7 +6423,7 @@ Caracteristicas do imóvel.
 |propertyType|string|true|none|Tipo de imóvel.|
 |propertyBuildType|string|true|none|Descrição do tipo de construção da propriedade.|
 |propertyUsageType|string|true|none|Descrição do tipo de uso da propriedade.|
-|destinationInsuredImportance|string|true|none|Destinação da Importância Segurada.|
+|importanceInsured|string|true|none|Destinação da Importância Segurada.|
 
 #### Enumerated Values
 
@@ -6911,9 +6440,9 @@ Caracteristicas do imóvel.
 |propertyUsageType|DESOCUPADO|
 |propertyUsageType|CASA_ESCRITORIO|
 |propertyUsageType|ALUGUEL_TEMPORADA|
-|destinationInsuredImportance|PREDIO|
-|destinationInsuredImportance|CONTEUDO|
-|destinationInsuredImportance|AMBOS|
+|importanceInsured|PREDIO|
+|importanceInsured|CONTEUDO|
+|importanceInsured|AMBOS|
 
 <h2 id="tocS_Links">Links</h2>
 <!-- backwards compatibility -->
@@ -7017,7 +6546,7 @@ Caracteristicas do imóvel.
       {
         "name": "ACME cap da ACME seguros",
         "cnpjNumber": "12345678901234",
-        "product": [
+        "products": [
           {
             "name": "ACMEcap",
             "code": "01234589_cap",
@@ -7052,7 +6581,7 @@ Caracteristicas do imóvel.
               "updateIndex": [
                 "IPCA"
               ],
-              "others": [
+              "updateIndexOthers": [
                 "Índice de atualização"
               ],
               "contributionAmount": {
@@ -7062,7 +6591,10 @@ Caracteristicas do imóvel.
                 "value": 0
               },
               "earlyRedemption": [
-                10
+                {
+                  "quota": 0,
+                  "percentage": 0
+                }
               ],
               "redemptionPercentageEndTerm": 100.002,
               "gracePeriodRedemption": 48
@@ -7078,7 +6610,7 @@ Caracteristicas do imóvel.
               "updateIndex": [
                 "IPCA"
               ],
-              "others": [
+              "updateIndexOthers": [
                 "Índice de atualização"
               ]
             },
@@ -7148,7 +6680,7 @@ Caracteristicas do imóvel.
     {
       "name": "ACME cap da ACME seguros",
       "cnpjNumber": "12345678901234",
-      "product": [
+      "products": [
         {
           "name": "ACMEcap",
           "code": "01234589_cap",
@@ -7183,7 +6715,7 @@ Caracteristicas do imóvel.
             "updateIndex": [
               "IPCA"
             ],
-            "others": [
+            "updateIndexOthers": [
               "Índice de atualização"
             ],
             "contributionAmount": {
@@ -7193,7 +6725,10 @@ Caracteristicas do imóvel.
               "value": 0
             },
             "earlyRedemption": [
-              10
+              {
+                "quota": 0,
+                "percentage": 0
+              }
             ],
             "redemptionPercentageEndTerm": 100.002,
             "gracePeriodRedemption": 48
@@ -7209,7 +6744,7 @@ Caracteristicas do imóvel.
             "updateIndex": [
               "IPCA"
             ],
-            "others": [
+            "updateIndexOthers": [
               "Índice de atualização"
             ]
           },
@@ -7265,7 +6800,7 @@ Organização controladora do grupo.
   {
     "name": "ACME cap da ACME seguros",
     "cnpjNumber": "12345678901234",
-    "product": [
+    "products": [
       {
         "name": "ACMEcap",
         "code": "01234589_cap",
@@ -7300,7 +6835,7 @@ Organização controladora do grupo.
           "updateIndex": [
             "IPCA"
           ],
-          "others": [
+          "updateIndexOthers": [
             "Índice de atualização"
           ],
           "contributionAmount": {
@@ -7310,7 +6845,10 @@ Organização controladora do grupo.
             "value": 0
           },
           "earlyRedemption": [
-            10
+            {
+              "quota": 0,
+              "percentage": 0
+            }
           ],
           "redemptionPercentageEndTerm": 100.002,
           "gracePeriodRedemption": 48
@@ -7326,7 +6864,7 @@ Organização controladora do grupo.
           "updateIndex": [
             "IPCA"
           ],
-          "others": [
+          "updateIndexOthers": [
             "Índice de atualização"
           ]
         },
@@ -7366,7 +6904,7 @@ Organização controladora do grupo.
 |---|---|---|---|---|
 |name|string|true|none|Nome da sociedade pertencente à marca.|
 |cnpjNumber|string|true|none|CNPJ da sociedade pertencente à marca.|
-|product|[CapitalizationTitleProduct](#schemacapitalizationtitleproduct)|true|none|Lista de produtos de uma empresa.|
+|products|[CapitalizationTitleProduct](#schemacapitalizationtitleproduct)|false|none|Lista de produtos de uma empresa.|
 
 <h2 id="tocS_CapitalizationTitleProduct">CapitalizationTitleProduct</h2>
 <!-- backwards compatibility -->
@@ -7411,7 +6949,7 @@ Organização controladora do grupo.
       "updateIndex": [
         "IPCA"
       ],
-      "others": [
+      "updateIndexOthers": [
         "Índice de atualização"
       ],
       "contributionAmount": {
@@ -7421,7 +6959,10 @@ Organização controladora do grupo.
         "value": 0
       },
       "earlyRedemption": [
-        10
+        {
+          "quota": 0,
+          "percentage": 0
+        }
       ],
       "redemptionPercentageEndTerm": 100.002,
       "gracePeriodRedemption": 48
@@ -7437,7 +6978,7 @@ Organização controladora do grupo.
       "updateIndex": [
         "IPCA"
       ],
-      "others": [
+      "updateIndexOthers": [
         "Índice de atualização"
       ]
     },
@@ -7602,7 +7143,7 @@ Os títulos de capitalização que prevejam sorteio devem ser estruturados em se
   "updateIndex": [
     "IPCA"
   ],
-  "others": [
+  "updateIndexOthers": [
     "Índice de atualização"
   ],
   "contributionAmount": {
@@ -7612,7 +7153,10 @@ Os títulos de capitalização que prevejam sorteio devem ser estruturados em se
     "value": 0
   },
   "earlyRedemption": [
-    10
+    {
+      "quota": 0,
+      "percentage": 0
+    }
   ],
   "redemptionPercentageEndTerm": 100.002,
   "gracePeriodRedemption": 48
@@ -7628,9 +7172,11 @@ Período de Capitalização
 |---|---|---|---|---|
 |interestRate|number|true|none|Taxa que remunera a parte da mensalidade destinada a formar o Capital, ou seja, a Provisão Matemática de Resgate, também chamada de saldo de capitalização. Em porcentagem ao mês (% a.m)|
 |updateIndex|[string]|true|none|Índice utilizado na correção que remunera a provisão matemática para capitalização|
-|others|[string]|false|none|Preenchida pelas participantes quando houver ‘Outros’ no campo.|
+|updateIndexOthers|[string]|false|none|Preenchida pelas participantes quando houver ‘Outros’ no campo.|
 |contributionAmount|[CapitalizationTitleContributionAmount](#schemacapitalizationtitlecontributionamount)|true|none|none|
-|earlyRedemption|[number]|true|none|Possibilidade de o titular efetuar o resgate do capital constituído antes do fim do prazo de vigência do título, podendo ocorrer por solicitação expressa do titular ou por contemplação em sorteio com liquidação antecipada|
+|earlyRedemption|[object]|true|none|Possibilidade de o titular efetuar o resgate do capital constituído antes do fim do prazo de vigência do título, podendo ocorrer por solicitação expressa do titular ou por contemplação em sorteio com liquidação antecipada|
+|» quota|integer|true|none|Número de parcela.|
+|» percentage|number|true|none|Percentual da quota|
 |redemptionPercentageEndTerm|number|true|none|Percentual mínimo da soma das contribuições efetuadas que poderá ser resgatado ao final da vigência,  tendo como condição os pagamentos das parcelas nos respectivos vencimentos.|
 |gracePeriodRedemption|integer|true|none|Intervalo de tempo mínimo entre contratação e resgate do direito, em meses.|
 
@@ -7707,7 +7253,7 @@ Atraso de Pagamento
   "updateIndex": [
     "IPCA"
   ],
-  "others": [
+  "updateIndexOthers": [
     "Índice de atualização"
   ]
 }
@@ -7722,7 +7268,7 @@ Pagamento da contribuição
 |---|---|---|---|---|
 |paymentMethod|[string]|true|none|Meio de Pagamento utilizados para pagamento da contribuição.|
 |updateIndex|[string]|true|none|Índice utilizado na atualização dos pagamentos mensais (para títulos com mais de 12 meses de vigência)|
-|others|[string]|false|none|Preenchida pelas participantes quando houver ‘Outros’ no campo.|
+|updateIndexOthers|[string]|false|none|Preenchida pelas participantes quando houver ‘Outros’ no campo.|
 
 <h2 id="tocS_CapitalizationTitleredemption">CapitalizationTitleredemption</h2>
 <!-- backwards compatibility -->
@@ -7911,3 +7457,4 @@ Requisitos mínimos.
 |» detail|string|true|none|Descrição legível por humanos deste erro específico|
 |» requestDateTime|string(date-time)|true|none|Data e hora da consulta, conforme especificação RFC-3339, formato UTC.|
 |meta|[Meta](#schemameta)|false|none|none|
+

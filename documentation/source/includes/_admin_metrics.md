@@ -1,6 +1,6 @@
 <!-- Generator: Widdershins v4.0.1 -->
 
-# APIs Open Data do Open Insurance Brasil v1.0.0
+# APIs Open Data do Open Insurance Brasil v1.0.2
 
 > Scroll down for code samples, example requests and responses. Select a language for code samples from the tabs above or the mobile navigation menu.
 
@@ -17,8 +17,6 @@ Web: <a href="https://http://novosite.susep.gov.br">Support</a>
 ### Obtém as métricas de disponibilidade das APIs
 
 <a id="opIdgetMetrics"></a>
-
-<a href="files/swagger/metrics.yaml">Especificação em OAS</a> <br>
 
 > Code samples
 

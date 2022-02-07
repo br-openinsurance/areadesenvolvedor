@@ -1,6 +1,6 @@
 <!-- Generator: Widdershins v4.0.1 -->
 
-# API - Canais de Atendimento v1.0.0
+# API - Canais de Atendimento v1.0.2
 
 > Scroll down for code samples, example requests and responses. Select a language for code samples from the tabs above or the mobile navigation menu.
 
@@ -12,7 +12,7 @@ Base URLs:
 
 Web: <a href="https://openinsurance.susep.gov.br">Support</a> 
 
-<a href="files/swagger/canais_atendimento.yaml">Especificação em OAS</a> <br>
+<a href="files/swagger/_data_channels_.yaml">Especificação em OAS</a> <br>
 
 ## Dependências próprias
 
@@ -34,7 +34,7 @@ xhr.addEventListener("readystatechange", function () {
   }
 });
 
-xhr.open("GET", "https://api.organizacao.com.br/open-insurance/channels/v1/branches");
+xhr.open("GET", "http://api.organizacao.com.br/open-insurance/channels/v1/branches");
 xhr.setRequestHeader("Accept", "application/json");
 
 xhr.send(data);
@@ -43,7 +43,7 @@ xhr.send(data);
 ```python
 import http.client
 
-conn = http.client.HTTPSConnection("api.organizacao.com.br")
+conn = http.client.HTTPConnection("api.organizacao.com.br")
 
 headers = { 'Accept': "application/json" }
 
@@ -56,7 +56,7 @@ print(data.decode("utf-8"))
 ```
 
 ```java
-HttpResponse<String> response = Unirest.get("https://api.organizacao.com.br/open-insurance/channels/v1/branches")
+HttpResponse<String> response = Unirest.get("http://api.organizacao.com.br/open-insurance/channels/v1/branches")
   .header("Accept", "application/json")
   .asString();
 ```
@@ -89,8 +89,8 @@ Método para obter a listagem de dependências próprias da instituição.
             {
               "identification": {
                 "type": "POSTO_ATENDIMENTO",
-                "code": "0001",
-                "checkDigit": "9",
+                "code": 1,
+                "checkDigit": 9,
                 "name": "Marília"
               },
               "postalAddress": {
@@ -98,9 +98,9 @@ Método para obter a listagem de dependências próprias da instituição.
                 "additionalInfo": "Loja B",
                 "districtName": "Centro",
                 "townName": "São Paulo",
-                "ibgeCode": "3550308",
+                "ibgeCode": 3550308,
                 "countrySubDivision": "SP",
-                "postCode": "17500001",
+                "postCode": "17500-001",
                 "country": "Brasil",
                 "countryCode": "BRA",
                 "geographicCoordinates": {
@@ -116,7 +116,6 @@ Método para obter a listagem de dependências próprias da instituição.
                     "closingTime": "16:00:57Z"
                   }
                 ],
-                "exception": "string",
                 "isPublicAccessAllowed": true
               },
               "phones": [
@@ -130,7 +129,7 @@ Método para obter a listagem de dependências próprias da instituição.
               "services": [
                 {
                   "name": "ENDOSSO",
-                  "code": "01"
+                  "code": "PORTABILIDADE"
                 }
               ]
             }
@@ -166,15 +165,13 @@ Método para obter a listagem de dependências próprias da instituição.
 |406|[Not Acceptable](https://tools.ietf.org/html/rfc7231#section-6.5.6)|A solicitação continha um cabeçalho Accept diferente dos tipos de mídia permitidos ou um conjunto de caracteres diferente de UTF-8|[ResponseError](#schemaresponseerror)|
 |429|[Too Many Requests](https://tools.ietf.org/html/rfc6585#section-4)|A operação foi recusada, pois muitas solicitações foram feitas dentro de um determinado período ou o limite global de requisições concorrentes foi atingido|[ResponseError](#schemaresponseerror)|
 |500|[Internal Server Error](https://tools.ietf.org/html/rfc7231#section-6.6.1)|Ocorreu um erro no gateway da API ou no microsserviço|[ResponseError](#schemaresponseerror)|
-|default|Default|Lista de dependências próprias obtida com sucesso.|[ResponseBranchesList](#schemaresponsebrancheslist)|
+|default|Default|none|None|
 
 <aside class="success">
 This operation does not require authentication
 </aside>
 
-## Canais de atendimento eletrônico
-
-### Obtém a listagem de canais eletrônicos de atendimento da instituição.
+## Obtém a listagem de canais eletrônicos de atendimento da instituição.
 
 <a id="opIdgetElectronicChannels"></a>
 
@@ -192,7 +189,7 @@ xhr.addEventListener("readystatechange", function () {
   }
 });
 
-xhr.open("GET", "https://api.organizacao.com.br/open-insurance/channels/v1/electronic-channels");
+xhr.open("GET", "http://api.organizacao.com.br/open-insurance/channels/v1/electronic-channels");
 xhr.setRequestHeader("Accept", "application/json");
 
 xhr.send(data);
@@ -201,7 +198,7 @@ xhr.send(data);
 ```python
 import http.client
 
-conn = http.client.HTTPSConnection("api.organizacao.com.br")
+conn = http.client.HTTPConnection("api.organizacao.com.br")
 
 headers = { 'Accept': "application/json" }
 
@@ -214,7 +211,7 @@ print(data.decode("utf-8"))
 ```
 
 ```java
-HttpResponse<String> response = Unirest.get("https://api.organizacao.com.br/open-insurance/channels/v1/electronic-channels")
+HttpResponse<String> response = Unirest.get("http://api.organizacao.com.br/open-insurance/channels/v1/electronic-channels")
   .header("Accept", "application/json")
   .asString();
 ```
@@ -291,15 +288,13 @@ Método para obter a listagem de canais eletrônicos de atendimento da institui�
 |406|[Not Acceptable](https://tools.ietf.org/html/rfc7231#section-6.5.6)|A solicitação continha um cabeçalho Accept diferente dos tipos de mídia permitidos ou um conjunto de caracteres diferente de UTF-8|[ResponseError](#schemaresponseerror)|
 |429|[Too Many Requests](https://tools.ietf.org/html/rfc6585#section-4)|A operação foi recusada, pois muitas solicitações foram feitas dentro de um determinado período ou o limite global de requisições concorrentes foi atingido|[ResponseError](#schemaresponseerror)|
 |500|[Internal Server Error](https://tools.ietf.org/html/rfc7231#section-6.6.1)|Ocorreu um erro no gateway da API ou no microsserviço|[ResponseError](#schemaresponseerror)|
-|default|Default|Listagem de canais eletrônicos de atendimento obtida com sucesso.|[ResponseElectronicChannelsList](#schemaresponseelectronicchannelslist)|
+|default|Default|none|None|
 
 <aside class="success">
 This operation does not require authentication
 </aside>
 
-## Canais de atendimento telefônico
-
-### Obtém a listagem de canais telefônicos de atendimento da instituição.
+## Obtém a listagem de canais telefônicos de atendimento da instituição.
 
 <a id="opIdgetPhoneChannels"></a>
 
@@ -317,7 +312,7 @@ xhr.addEventListener("readystatechange", function () {
   }
 });
 
-xhr.open("GET", "https://api.organizacao.com.br/open-insurance/channels/v1/phone-channels");
+xhr.open("GET", "http://api.organizacao.com.br/open-insurance/channels/v1/phone-channels");
 xhr.setRequestHeader("Accept", "application/json");
 
 xhr.send(data);
@@ -326,7 +321,7 @@ xhr.send(data);
 ```python
 import http.client
 
-conn = http.client.HTTPSConnection("api.organizacao.com.br")
+conn = http.client.HTTPConnection("api.organizacao.com.br")
 
 headers = { 'Accept': "application/json" }
 
@@ -339,7 +334,7 @@ print(data.decode("utf-8"))
 ```
 
 ```java
-HttpResponse<String> response = Unirest.get("https://api.organizacao.com.br/open-insurance/channels/v1/phone-channels")
+HttpResponse<String> response = Unirest.get("http://api.organizacao.com.br/open-insurance/channels/v1/phone-channels")
   .header("Accept", "application/json")
   .asString();
 ```
@@ -388,7 +383,7 @@ Método para obter a listagem de canais telefônicos de atendimento da institui�
               },
               "services": [
                 {
-                  "name": "ALTERACOES_FORMA_PAGAMENTO",
+                  "name": "ALTERACACOES_FORMA_PAGAMENTO",
                   "code": "01"
                 },
                 {
@@ -408,20 +403,17 @@ Método para obter a listagem de canais telefônicos de atendimento da institui�
                   {
                     "countryCallingCode": "55",
                     "areaCode": "14",
-                    "number": "40044828",
-                    "additionalInfo": "DDI '55'; DDD '11', 40044828, 'Para clientes no exterior'"
+                    "number": "40044828"
                   },
                   {
                     "countryCallingCode": "55",
                     "areaCode": "14",
-                    "number": "40044828",
-                    "additionalInfo": "DDI '55'; DDD '11', 40044828, 'Para clientes no exterior'"
+                    "number": "40044828"
                   },
                   {
                     "countryCallingCode": "55",
                     "areaCode": "14",
-                    "number": "40044828",
-                    "additionalInfo": "DDI '55'; DDD '11', 40044828, 'Para clientes no exterior'"
+                    "number": "40044828"
                   }
                 ]
               },
@@ -504,13 +496,13 @@ Método para obter a listagem de canais telefônicos de atendimento da institui�
 |406|[Not Acceptable](https://tools.ietf.org/html/rfc7231#section-6.5.6)|A solicitação continha um cabeçalho Accept diferente dos tipos de mídia permitidos ou um conjunto de caracteres diferente de UTF-8|[ResponseError](#schemaresponseerror)|
 |429|[Too Many Requests](https://tools.ietf.org/html/rfc6585#section-4)|A operação foi recusada, pois muitas solicitações foram feitas dentro de um determinado período ou o limite global de requisições concorrentes foi atingido|[ResponseError](#schemaresponseerror)|
 |500|[Internal Server Error](https://tools.ietf.org/html/rfc7231#section-6.6.1)|Ocorreu um erro no gateway da API ou no microsserviço|[ResponseError](#schemaresponseerror)|
-|default|Default|Listagem de canais telefônicos de atendimento obtida com sucesso.|[ResponsePhoneChannelsList](#schemaresponsephonechannelslist)|
+|default|Default|none|None|
 
 <aside class="success">
 This operation does not require authentication
 </aside>
 
-<h1 id="schema_channels"> Schemas </h1>
+# Schemas
 
 <h2 id="tocS_ResponseBranchesList">ResponseBranchesList</h2>
 <!-- backwards compatibility -->
@@ -532,8 +524,8 @@ This operation does not require authentication
             {
               "identification": {
                 "type": "POSTO_ATENDIMENTO",
-                "code": "0001",
-                "checkDigit": "9",
+                "code": 1,
+                "checkDigit": 9,
                 "name": "Marília"
               },
               "postalAddress": {
@@ -541,9 +533,9 @@ This operation does not require authentication
                 "additionalInfo": "Loja B",
                 "districtName": "Centro",
                 "townName": "São Paulo",
-                "ibgeCode": "3550308",
+                "ibgeCode": 3550308,
                 "countrySubDivision": "SP",
-                "postCode": "17500001",
+                "postCode": "17500-001",
                 "country": "Brasil",
                 "countryCode": "BRA",
                 "geographicCoordinates": {
@@ -559,7 +551,6 @@ This operation does not require authentication
                     "closingTime": "16:00:57Z"
                   }
                 ],
-                "exception": "string",
                 "isPublicAccessAllowed": true
               },
               "phones": [
@@ -573,7 +564,7 @@ This operation does not require authentication
               "services": [
                 {
                   "name": "ENDOSSO",
-                  "code": "01"
+                  "code": "PORTABILIDADE"
                 }
               ]
             }
@@ -624,8 +615,8 @@ This operation does not require authentication
         {
           "identification": {
             "type": "POSTO_ATENDIMENTO",
-            "code": "0001",
-            "checkDigit": "9",
+            "code": 1,
+            "checkDigit": 9,
             "name": "Marília"
           },
           "postalAddress": {
@@ -633,9 +624,9 @@ This operation does not require authentication
             "additionalInfo": "Loja B",
             "districtName": "Centro",
             "townName": "São Paulo",
-            "ibgeCode": "3550308",
+            "ibgeCode": 3550308,
             "countrySubDivision": "SP",
-            "postCode": "17500001",
+            "postCode": "17500-001",
             "country": "Brasil",
             "countryCode": "BRA",
             "geographicCoordinates": {
@@ -651,7 +642,6 @@ This operation does not require authentication
                 "closingTime": "16:00:57Z"
               }
             ],
-            "exception": "string",
             "isPublicAccessAllowed": true
           },
           "phones": [
@@ -665,7 +655,7 @@ This operation does not require authentication
           "services": [
             {
               "name": "ENDOSSO",
-              "code": "01"
+              "code": "PORTABILIDADE"
             }
           ]
         }
@@ -698,8 +688,8 @@ This operation does not require authentication
     {
       "identification": {
         "type": "POSTO_ATENDIMENTO",
-        "code": "0001",
-        "checkDigit": "9",
+        "code": 1,
+        "checkDigit": 9,
         "name": "Marília"
       },
       "postalAddress": {
@@ -707,9 +697,9 @@ This operation does not require authentication
         "additionalInfo": "Loja B",
         "districtName": "Centro",
         "townName": "São Paulo",
-        "ibgeCode": "3550308",
+        "ibgeCode": 3550308,
         "countrySubDivision": "SP",
-        "postCode": "17500001",
+        "postCode": "17500-001",
         "country": "Brasil",
         "countryCode": "BRA",
         "geographicCoordinates": {
@@ -725,7 +715,6 @@ This operation does not require authentication
             "closingTime": "16:00:57Z"
           }
         ],
-        "exception": "string",
         "isPublicAccessAllowed": true
       },
       "phones": [
@@ -739,7 +728,7 @@ This operation does not require authentication
       "services": [
         {
           "name": "ENDOSSO",
-          "code": "01"
+          "code": "PORTABILIDADE"
         }
       ]
     }
@@ -829,7 +818,7 @@ This operation does not require authentication
   "companies": [
     {
       "name": "Empresa da Marca A",
-      "cnpjNumber": "stringstringst",
+      "cnpjNumber": "string",
       "electronicChannels": [
         {
           "identification": {
@@ -841,9 +830,8 @@ This operation does not require authentication
           },
           "services": [
             {
-              "name": "ALTERACACOES_FORMA_PAGAMENTO",
-              "code": "01",
-              "additionalInfo": "SIC"
+              "name": "ABERTURA_CONTAS_DEPOSITOS_OU_PAGAMENTO_PRE_PAGA",
+              "code": "RECLAMACAO"
             }
           ],
           "availability": {
@@ -880,7 +868,7 @@ This operation does not require authentication
 ```json
 {
   "name": "Empresa da Marca A",
-  "cnpjNumber": "stringstringst",
+  "cnpjNumber": "string",
   "electronicChannels": [
     {
       "identification": {
@@ -892,9 +880,8 @@ This operation does not require authentication
       },
       "services": [
         {
-          "name": "ALTERACACOES_FORMA_PAGAMENTO",
-          "code": "01",
-          "additionalInfo": "SIC"
+          "name": "ABERTURA_CONTAS_DEPOSITOS_OU_PAGAMENTO_PRE_PAGA",
+          "code": "RECLAMACAO"
         }
       ],
       "availability": {
@@ -931,8 +918,8 @@ This operation does not require authentication
 {
   "identification": {
     "type": "POSTO_ATENDIMENTO",
-    "code": "0001",
-    "checkDigit": "9",
+    "code": 1,
+    "checkDigit": 9,
     "name": "Marília"
   },
   "postalAddress": {
@@ -940,9 +927,9 @@ This operation does not require authentication
     "additionalInfo": "Loja B",
     "districtName": "Centro",
     "townName": "São Paulo",
-    "ibgeCode": "3550308",
+    "ibgeCode": 3550308,
     "countrySubDivision": "SP",
-    "postCode": "17500001",
+    "postCode": "17500-001",
     "country": "Brasil",
     "countryCode": "BRA",
     "geographicCoordinates": {
@@ -958,7 +945,6 @@ This operation does not require authentication
         "closingTime": "16:00:57Z"
       }
     ],
-    "exception": "string",
     "isPublicAccessAllowed": true
   },
   "phones": [
@@ -972,7 +958,7 @@ This operation does not require authentication
   "services": [
     {
       "name": "ENDOSSO",
-      "code": "01"
+      "code": "PORTABILIDADE"
     }
   ]
 }
@@ -1004,9 +990,9 @@ Dependência destinada à prática das atividades para as quais a instituição 
   "additionalInfo": "Loja B",
   "districtName": "Centro",
   "townName": "São Paulo",
-  "ibgeCode": "3550308",
+  "ibgeCode": 3550308,
   "countrySubDivision": "SP",
-  "postCode": "17500001",
+  "postCode": "17500-001",
   "country": "Brasil",
   "countryCode": "BRA",
   "geographicCoordinates": {
@@ -1042,8 +1028,8 @@ Dependência destinada à prática das atividades para as quais a instituição 
 ```json
 {
   "type": "POSTO_ATENDIMENTO",
-  "code": "0001",
-  "checkDigit": "9",
+  "code": 1,
+  "checkDigit": 9,
   "name": "Marília"
 }
 
@@ -1081,7 +1067,6 @@ Dependência destinada à prática das atividades para as quais a instituição 
       "closingTime": "16:00:57Z"
     }
   ],
-  "exception": "string",
   "isPublicAccessAllowed": true
 }
 
@@ -1095,7 +1080,6 @@ Dependência destinada à prática das atividades para as quais a instituição 
 |» weekday|string|true|none|Dia da semana de abertura da dependência|
 |» openingTime|string|true|none|Horário de abertura da dependência (UTC)|
 |» closingTime|string|true|none|Horário de fechamento da dependência (UTC)|
-|exception|string|false|none|Em campo texto devem ser registradas todas as Exceções para o não atendimento.|
 |isPublicAccessAllowed|boolean|false|none|Indica se a instalação da Dependência tem acesso restrito a clientes.|
 
 #### Enumerated Values
@@ -1202,7 +1186,7 @@ Dependência destinada à prática das atividades para as quais a instituição 
 ```json
 {
   "name": "ENDOSSO",
-  "code": "01"
+  "code": "PORTABILIDADE"
 }
 
 ```
@@ -1275,9 +1259,8 @@ Dependência destinada à prática das atividades para as quais a instituição 
   },
   "services": [
     {
-      "name": "ALTERACACOES_FORMA_PAGAMENTO",
-      "code": "01",
-      "additionalInfo": "SIC"
+      "name": "ABERTURA_CONTAS_DEPOSITOS_OU_PAGAMENTO_PRE_PAGA",
+      "code": "RECLAMACAO"
     }
   ],
   "availability": {
@@ -1372,9 +1355,8 @@ Dependência destinada à prática das atividades para as quais a instituição 
 
 ```json
 {
-  "name": "ALTERACACOES_FORMA_PAGAMENTO",
-  "code": "01",
-  "additionalInfo": "SIC"
+  "name": "ABERTURA_CONTAS_DEPOSITOS_OU_PAGAMENTO_PRE_PAGA",
+  "code": "RECLAMACAO"
 }
 
 ```
@@ -1385,7 +1367,6 @@ Dependência destinada à prática das atividades para as quais a instituição 
 |---|---|---|---|---|
 |name|string|true|none|Nome dos Serviços efetivamente prestados pelo Canal de Atendimento|
 |code|string|true|none|Código dos Serviços efetivamente prestados pelo Canal de Atendimento|
-|additionalInfo|string|false|none|Texto livre para complementar informação relativa ao Serviço disponível, quando for selecionada a opção 'OUTROS_PRODUTOS_SERVICOS'|
 
 #### Enumerated Values
 
@@ -1499,7 +1480,7 @@ Dependência destinada à prática das atividades para as quais a instituição 
               },
               "services": [
                 {
-                  "name": "ALTERACOES_FORMA_PAGAMENTO",
+                  "name": "ALTERACACOES_FORMA_PAGAMENTO",
                   "code": "01"
                 },
                 {
@@ -1519,20 +1500,17 @@ Dependência destinada à prática das atividades para as quais a instituição 
                   {
                     "countryCallingCode": "55",
                     "areaCode": "14",
-                    "number": "40044828",
-                    "additionalInfo": "DDI '55'; DDD '11', 40044828, 'Para clientes no exterior'"
+                    "number": "40044828"
                   },
                   {
                     "countryCallingCode": "55",
                     "areaCode": "14",
-                    "number": "40044828",
-                    "additionalInfo": "DDI '55'; DDD '11', 40044828, 'Para clientes no exterior'"
+                    "number": "40044828"
                   },
                   {
                     "countryCallingCode": "55",
                     "areaCode": "14",
-                    "number": "40044828",
-                    "additionalInfo": "DDI '55'; DDD '11', 40044828, 'Para clientes no exterior'"
+                    "number": "40044828"
                   }
                 ]
               },
