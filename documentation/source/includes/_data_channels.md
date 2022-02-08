@@ -12,7 +12,7 @@ Base URLs:
 
 Web: <a href="https://openinsurance.susep.gov.br">Support</a> 
 
-<a href="files/swagger/_data_channels_.yaml">Especificação em OAS</a> <br>
+<a href="files/swagger/data_channels.yaml" download="data_channels.yaml">Especificação em OAS</a> <br>
 
 ## Dependências próprias
 
