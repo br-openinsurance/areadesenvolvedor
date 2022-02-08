@@ -12,6 +12,8 @@ Base URLs:
 
 Web: <a href="https://http://novosite.susep.gov.br">Support</a> 
 
+<a href="files/swagger/admin_metrics.yaml" download="admin_metrics">Especificação em OAS</a> <br>
+
 ## Metrics
 
 ### Obtém as métricas de disponibilidade das APIs
