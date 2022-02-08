@@ -18,7 +18,7 @@ Web: <a href="https://openinsurance.susep.gov.br">Support</a>
 
 <a id="opIdgetLifePension"></a>
 
-<a href="files/swagger/_life-pension.yaml">Especificação em OAS</a> <br>
+<a href="files/swagger/life-pension.yaml">Especificação em OAS</a> <br>
 
 > Code samples
 
@@ -244,7 +244,7 @@ This operation does not require authentication
 
 <a id="opIdgetPensionPlan"></a>
 
-<a href="files/swagger/_pension-plan.yaml">Especificação em OAS</a> <br>
+<a href="files/swagger/pension-plan.yaml">Especificação em OAS</a> <br>
 
 > Code samples
 
@@ -478,7 +478,7 @@ This operation does not require authentication
 
 <a id="opIdgetPerson"></a>
 
-<a href="files/swagger/_person.yaml">Especificação em OAS</a> <br>
+<a href="files/swagger/person.yaml">Especificação em OAS</a> <br>
 
 
 > Code samples
@@ -716,7 +716,7 @@ This operation does not require authentication
 
 ### Obtém informações de seguros de automóveis
 
-<a href="files/swagger/_auto-insurance.yaml">Especificação em OAS</a> <br>
+<a href="files/swagger/auto-insurance.yaml">Especificação em OAS</a> <br>
 
 
 <a id="opIdgetAutoInsurance"></a>
@@ -945,7 +945,7 @@ This operation does not require authentication
 
 <a id="opIdgetResidentialInsurance"></a>
 
-<a href="files/swagger/_home-insurance.yaml">Especificação em OAS</a> <br>
+<a href="files/swagger/home-insurance.yaml">Especificação em OAS</a> <br>
 
 > Code samples
 
@@ -1157,7 +1157,7 @@ This operation does not require authentication
 
 <a id="opIdcapitalizationTitle"></a>
 
-<a href="files/swagger/_capitalization-title.yaml">Especificação em OAS</a> <br>
+<a href="files/swagger/capitalization-title.yaml">Especificação em OAS</a> <br>
 
 
 > Code samples
