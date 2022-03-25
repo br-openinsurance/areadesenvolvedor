@@ -130,7 +130,6 @@ components:
           - coverages
           - traits
           - allowApartPurchase
-          - propertyType
           - assistanceServices
           - validity
           - premiumPayment
@@ -159,51 +158,38 @@ components:
                  coverage:
                    type: array
                    items:
-                     description: Listagem de coberturas incluídas no produto que deve observar a relação discriminada de coberturas
+                     type: string
+                     maxLength: 32
+                     description: Listagem de coberturas incluídas no produto que deve observar a relação discriminada de coberturas, conforme Tabela II.10 do Anexo II."
                      enum: [
-                    13°_ALUGUEL,
-                    AGUA,
-                    ALUGUEL,
-                    CONDOMINIO,
+                    NAO_PAGAMENTO_DE_13_ALUGUEL,
                     DANOS_A_MOVEIS,
                     DANOS_AO_IMOVEL,
-                    ENCARGOS_LEGAIS,
-                    FUNDO_DE_PROMOCAO,
-                    GAS,
-                    GAS_CANALIZADO,
-                    IPTU,
-                    LUZ,
                     MULTA_POR_RESCISAO_CONTRATUAL,
-                    NAO_PAGAMENTO_DOS_ALUGUEIS,
-                    PINTURA_DO_IMOVEL,
-                    PINTURA_EXTERNA,
-                    PINTURA_INTERNA,
+                    NAO_PAGAMENTO_DE_ALUGUEL,
+                    NAO_PAGAMENTO_DE_CONDOMINIO,
+                    NAO_PAGAMENTO_DE_CONTA_DE_AGUA,
+                    NAO_PAGAMENTO_DE_CONTA_DE_GAS,
+                    NAO_PAGAMENTO_DE_CONTA_DE_LUZ,
+                    NAO_PAGAMENTO_DE_ENCARGOS_LEGAIS,
+                    NAO_PAGAMENTO_DE_IPTU,
+                    PINTURA_DO_IMOVEL_INTERNA,
+                    PINTURA_DO_IMOVEL_EXTERNA,
                     OUTRAS]
                  coverageDescription:
                    type: string
                    maxLength: 3000
-                   description: Campo aberto para detalhamento de cada uma das coberturas possíveis dos produtos a ser feito por cada participante
+                   description: Campo aberto para detalhamento de cada uma das coberturas possíveis dos produtos
                  coverageAttributes:
                     $ref: '#/components/schemas/RentGuaranteeCoverageAttributes'
           allowApartPurchase:
             type: boolean
-            description: Permissão para Contratação Separada
+            description: Indicação se a cobertura permite contratação separada (por cobertura selecionada).
             example: true
           traits:
             type: boolean
-            description: O produto é classificado como Grandes Riscos?
+            description: Indicação se o produto é classificado como destinado para cobertura de grandes riscos, sendo tal classificação de acordo com regulamentação específica
             example: true
-          propertyType:
-            type: array
-            items:
-              type: string
-              description: Tipo de propriedade
-              maxLength: 11
-              enum: [RESIDENCIAL, COMERCIAL, OUTROS]
-          propertyTypeOthers:
-            type: string
-            maxLength: 100
-            description: Campo aberto para descrição de cada participante ao selecionar o domínio ‘Outros’ no campo acima ‘Tipo de imóvel’
           assistanceServices:
             $ref: '#/components/schemas/RentGuaranteeAssistanceServices'
           customerServices:
@@ -230,50 +216,49 @@ components:
       properties:
         term:
           type: string
-          description: Prazo de vigência do seguro contratado Intervalo contínuo de tempo durante o qual está em vigor o contrato de seguro. (RESOLUÇÃO CNSP Nº 341/2016).
           maxLength: 23
           example: ANUAL
-          enum: [ANUAL , ANUAL_INTERMITENTE , PLURIANUAL , PLURIANUAL_INTERMITENTE , MENSAL, MENSAL_INTERMITENTE , DIARIO , DIARIO_INTERMITENTE, OUTROS]
+          enum: [ANUAL, ANUAL_INTERMITENTE , PLURIANUAL, PLURIANUAL_INTERMITENTE, MENSAL, MENSAL_INTERMITENTE, DIARIO, DIARIO_INTERMITENTE, OUTROS]
         termOthers:
           type: string
           description: Campo livre para descrição por cada participante ao selecionar o domínio “Outros” no campo Prazo (acima).
           maxLength: 100
     
     RentGuaranteePremiumPayment:
-      type: object
-      required:
-        - paymentMethod
-        - paymentType
-      properties:
-        paymentMethod:
-          type: array
-          items:
+      type: array
+      items:
+        type: object
+        required:
+          - paymentMethod
+          - paymentType
+        properties:
+          paymentMethod:
             type: string
             description: Metodo de pagamento
             maxLength: 33
             enum: [CARTAO_DE_CREDITO, CARTAO_DE_DEBITO, DEBITO_EM_CONTA_CORRENTE, DEBITO_EM_CONTA_POUPANCA, BOLETO_BANCARIO, PIX, CONSIGNACAO_EM_FOLHA_DE_PAGAMENTO, PONTOS_DE_PROGRAMA_DE_BENEFICIO, OUTROS]
-        paymentDetail:
-          type: string
-          maxLength: 100
-          description: Campo livre para descrição por cada participante ao selecionar o domínio “Outros” no campo Meio de pagamento (acima) 
-        paymentType:
-          type: array
-          description: Forma de pagamento
-          items:
+          paymentDetail:
             type: string
-            maxLength: 9
-            example: A_VISTA
-            enum: [A_VISTA, PARCELADO]
-        premiumRates:
+            maxLength: 100
+            description: Campo livre para descrição por cada participante ao selecionar o domínio “Outros” no campo Meio de pagamento (acima) 
+          paymentType:
             type: array
-            description: Faixa de Preço, conforme estabelecido no inciso VII do Art. 2º do Anexo III da Circular SUSEP 635/2021, inclusive sobre sua faculdade para alguns produtos
+            description: Forma de pagamento
             items:
-                type: string
-                maxLength: 1024
+              type: string
+              maxLength: 9
+              example: A_VISTA
+              enum: [A_VISTA, PARCELADO]
+          premiumRates:
+              description: Distribuição de frequência relativa aos valores referentes às taxas cobradas, nos termos do Anexo III
+              type: string
+              maxLength: 1024
     
     RentGuaranteeTerms:
       type: object
       description: Informações dos termos e condições conforme número do processo SUSEP.
+      required:
+       - definition
       properties:
         susepProcessNumber:
           type: string
@@ -294,18 +279,15 @@ components:
         type: object
         required:
           - assistanceServices
-          - assistanceServicesPackage
-          - complementaryAssistanceServicesDetail
-          - chargeTypeSignaling
         properties:
           assistanceServices:
             type: boolean
-            description: O produto possui assistências?
+            description: Indicação se o produto possui serviços de assistências complementares.
             example: true
           assistanceServicesPackage:
             type: array
             items:
-              description: Para efeitos de comparabilidade considerar agrupamentos de serviços em 4 categorias, conforme os domínios
+              description: Para efeitos de comparabilidade considerar agrupamentos de serviços em 4 categorias
               example: ATE_10_SERVICOS
               enum: [ATE_10_SERVICOS, ATE_20_SERVICOS , ACIMA_20_SERVICOS, CUSTOMIZAVEL]
           complementaryAssistanceServicesDetail:
@@ -316,7 +298,7 @@ components:
           chargeTypeSignaling:
             type: array
             items:
-              description: Indicação se o pacote de assistência é gratuito ou contratado/pago..
+              description: Indicação se o pacote de assistência é gratuito ou contratado/pago.
               example: GRATUITO
               enum: [GRATUITO, PAGO]
     
@@ -330,7 +312,6 @@ components:
       properties:
         contractType:
           type: array
-          description: Tipo de contratação
           items:
             type: string
             maxLength: 10
@@ -340,7 +321,6 @@ components:
           maxLength: 1024
           description: Campo aberto contendo todos os requisitos mínimos para contratação (possibilidade de incluir URL).      
         targetAudiences:
-          description: Público a quem se destina o produto, podendo ser Pessoa Natural ou Pessoa Jurídica ou ambos
           type: array
           maxLength: 30
           items:
@@ -365,41 +345,14 @@ components:
         insuredParticipationOthers:
           type: string
           maxLength: 100
-          description: Campo livre para descrição por cada participante ao selecionar o domínio “Outros” no campo Participação do segurado
         insuredParticipationDescription:
           type: string
           maxLength: 1024
-          description: Campo aberto para descever a franquia, POS e/ou outras participações do segurado 
+          description: Lista com descrição referente ao campo “Participação do Segurado” para cada cobertura."
         maxLMI:
-          description: "Lista com valor de LMI aceito pela sociedade para cada cobertura. Em reais (R$)
-            Importante, Campo de valor numérico relacionado à cobertura que possui o campo. Quando não houver o campo, enviar o valor zerado."
-          $ref: '#/components/schemas/RentGuaranteeCoverageAttributesDetails'
-    
-    RentGuaranteeCoverageAttributesDetails:
-        type: object
-        required:
-          - amount
-          - unit
-        properties:
-          amount:
-            type: number
-          unit:
-            $ref: '#/components/schemas/RentGuaranteeCoverageAttributesDetailsUnit'
-    
-    RentGuaranteeCoverageAttributesDetailsUnit:
-      type: object
-      required:
-        - code
-        - description
-      properties:
-        code:
           type: string
-          maxLength: 2
-          example: R$
-        description:
-          type: string
-          maxLength: 5
-          example: REAL
+          maxLength: 1024
+          description: Lista com valor de LMI aceito pela sociedade para cada cobertura
     
     Links:
       type: object
