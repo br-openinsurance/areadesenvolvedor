@@ -128,7 +128,6 @@ components:
           - name
           - code
           - coverages
-          - allowApartPurchase
           - assistanceServices
           - maxLMGDescription
           - maxLMG 
@@ -155,6 +154,7 @@ components:
                 - coverage
                 - coverageDescription
                 - coverageAttributes
+                - allowApartPurchase
               properties:
                 coverage:
                   type: string
@@ -170,10 +170,11 @@ components:
                   description: Campo aberto para detalhamento de cada uma das coberturas possíveis dos produtos
                 coverageAttributes:
                    $ref: '#/components/schemas/CyberRiskCoverageAttributes'
-          allowApartPurchase:
-            type: boolean
-            description: Indicação se a cobertura permite contratação separada (por cobertura selecionada).
-            example: true
+                allowApartPurchase:
+                  type: boolean
+                  description: Indicação se a cobertura permite contratação separada (por cobertura selecionada).
+                  example: true
+
           assistanceServices:
             $ref: '#/components/schemas/CyberRiskAssistanceServices'  
           maxLMGDescription:
@@ -204,21 +205,23 @@ components:
             $ref: '#/components/schemas/CyberRiskMinimumRequirements'
     
     CyberRiskValidity:
-      type: object
-      required:
-        - term
-      properties:
-        term:
-          type: array
-          items:
+      type: array
+      items:
+        type: object
+        required:
+          - term
+        properties:
+          term:
+            type: array
+            items:
+              type: string
+              maxLength: 23
+              example: ANUAL
+              enum: [ANUAL, ANUAL_INTERMITENTE, PLURIANUAL, PLURIANUAL_INTERMITENTE, MENSAL, MENSAL_INTERMITENTE, DIARIO, DIARIO_INTERMITENTE, OUTROS]
+          termOthers:
             type: string
-            maxLength: 23
-            example: ANUAL
-            enum: [ANUAL, ANUAL_INTERMITENTE, PLURIANUAL, PLURIANUAL_INTERMITENTE, MENSAL, MENSAL_INTERMITENTE, DIARIO, DIARIO_INTERMITENTE, OUTROS]
-        termOthers:
-          type: string
-          description: Campo livre para descrição por cada participante ao selecionar o domínio “Outros” no campo Prazo (acima).
-          maxLength: 1024
+            description: Campo livre para descrição por cada participante ao selecionar o domínio “Outros” no campo Prazo (acima).
+            maxLength: 1024
     
     CyberRiskAssistanceServices:
       type: array
@@ -233,11 +236,13 @@ components:
             description: Indicação se o produto possui serviços de assistências complementares.
             example: true
           assistanceServicesPackage:
-            type: string
-            description: Para efeitos de comparabilidade considerar agrupamentos de serviços em 4 categorias, conforme os domínios
-            maxLength: 17
-            example: ATE_10_SERVICOS
-            enum: [ATE_10_SERVICOS, ATE_20_SERVICOS, ACIMA_20_SERVICOS, CUSTOMIZAVEL]
+            type: array
+            items:
+              type: string
+              description: Para efeitos de comparabilidade considerar agrupamentos de serviços em 4 categorias, conforme os domínios
+              maxLength: 17
+              example: ATE_10_SERVICOS
+              enum: [ATE_10_SERVICOS, ATE_20_SERVICOS, ACIMA_20_SERVICOS, CUSTOMIZAVEL]
           complementaryAssistanceServicesDetail:
             type: string
             description: Campo livre para descrição dos serviços ofertados por cada sociedade participante, contendo minimamente cada um dos serviços assistenciais complementares oferecidos e se o pacote se trata de uma cobertura de assistência securitária ou se serviços de assistência
@@ -329,12 +334,16 @@ components:
       description: Informações de cobertura do Seguro.
       required:
         - maxLMI
+        - maxLA
         - insuredParticipation
         - idenizationBasis
       properties:
         maxLMI:
           description: Lista com valor de LMI aceito pela sociedade para cada cobertura.
           $ref: '#/components/schemas/CyberRiskCoverageAttributesDetails'  
+        maxLA:
+          description: Lista com valor máximo de LA aceito pela sociedade para cada cobertura.
+          $ref: '#/components/schemas/CyberRiskCoverageAttributesDetails'   
         insuredParticipation:
           type: array
           items:
@@ -342,7 +351,7 @@ components:
             description: Lista com indicativo do tipo de participação do segurado para cada cobertura.
             maxLength: 13
             example: FRANQUIA
-            enum: [FRANQUIA, POS, NAO_SE_APLICA, OUTROS]
+            enum: [FRANQUIA, POS, NAO_SE_APLICA]
         insuredParticipationDescription:
           type: string
           maxLength: 1024

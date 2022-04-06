@@ -131,7 +131,6 @@ components:
           - coverages
           - assistanceServices
           - traits
-          - allowApartPurchase
           - insuredGoodsType
           - microInsurance
           - validity
@@ -179,9 +178,10 @@ components:
                 - coverage
                 - coverageDescription
                 - coverageAttributes
+                - allowApartPurchase
               properties:
                 coverage:
-                  description: Listagem de coberturas incluídas no produto que deve observar a relação discriminada de coberturas
+                  description: Listagem de coberturas incluídas no produto que deve observar a relação discriminada de coberturas, conformeTabela II.8 do Anexo II.
                   type: string
                   maxLength: 24
                   enum: [SERVICOS_EMERGENCIAIS,
@@ -193,27 +193,17 @@ components:
                   description: Campo aberto para detalhamento de cada uma das coberturas possíveis dos produtos
                 coverageAttributes:
                       $ref: '#/components/schemas/AssistanceGeneralAssetsCoverageAttributes'
+                allowApartPurchase:
+                  type: boolean
+                  description: Indicação se a cobertura permite contratação separada (por cobertura selecionada).
+                  example: true
+
           assistanceServices:
             $ref: '#/components/schemas/AssistanceGeneralAssetsAssistanceServices'
           traits:
             type: boolean
             description: Indicação se o produto é classificado como destinado para cobertura de grandes riscos, sendo tal classificação de acordo com regulamentação específica
             example: true
-          allowApartPurchase:
-            type: boolean
-            description: Indicação se a cobertura permite contratação separada (por cobertura selecionada).
-            example: true
-          insuredGoodsType:
-            type: array
-            items:
-              type: string
-              maxLength: 15
-              example: LINHA_BRANCA
-              enum: [LINHA_BRANCA, LINHA_MARROM, INFORMATICA, TELEFONIA, MOVEIS, ELETROPORTATEIS, OUTROS]
-          insuredGoodsTypeOthers:
-            type: string
-            maxLength: 3000
-            description: Campo livre para descrição, caso o valor do campo 'Tipo de bem segurado' seja 7. Outros
           microInsurance:
             type: boolean
             description: Indicação se o produto é classificado como microsseguro.
@@ -224,10 +214,9 @@ components:
             type: array
             items:
               type: string
-              maxLength: 33
+              maxLength: 17
               enum: [REDE_REFERENCIADA,
-                    LIVRE_ESCOLHA,
-                    REDE_REFERENCIADA_E_LIVRE_ESCOLHA]
+                    LIVRE_ESCOLHA]
           premiumPayment:
             $ref: '#/components/schemas/AssistanceGeneralAssetsPremiumPayment'            
           termsAndConditions:
@@ -268,21 +257,23 @@ components:
             enum: [GRATUITO, PAGO]
     
     AssistanceGeneralAssetsValidity:
-      type: object
-      required:
-        - term
-      properties:
-        term:
-          type: array
-          items:
+      type: array
+      items:
+        type: object
+        required:
+          - term
+        properties:
+          term:
+            type: array
+            items:
+              type: string
+              maxLength: 23
+              example: ANUAL
+              enum: [ANUAL , ANUAL_INTERMITENTE , PLURIANUAL , PLURIANUAL_INTERMITENTE , MENSAL, MENSAL_INTERMITENTE , DIARIO , DIARIO_INTERMITENTE, OUTROS]
+          termOthers:
             type: string
-            maxLength: 23
-            example: ANUAL
-            enum: [ANUAL , ANUAL_INTERMITENTE , PLURIANUAL , PLURIANUAL_INTERMITENTE , MENSAL, MENSAL_INTERMITENTE , DIARIO , DIARIO_INTERMITENTE, OUTROS]
-        termOthers:
-          type: string
-          description: Campo livre para descrição por cada participante ao selecionar o domínio “Outros” no campo Prazo (acima).
-          maxLength: 100
+            description: Campo livre para descrição por cada participante ao selecionar o domínio “Outros” no campo Prazo (acima).
+            maxLength: 100
     
     AssistanceGeneralAssetsPremiumPayment:
       type: array 
@@ -364,7 +355,6 @@ components:
       description: Informações de cobertura do Seguro.
       required:
         - insuredParticipation
-        - insuredParticipationDescription
         - maxLMI
       properties:
         maxLMI:
@@ -377,15 +367,12 @@ components:
             type: string
             maxLength: 13
             example: FRANQUIA
-            enum: [FRANQUIA, POS, NAO_SE_APLICA, OUTROS]
+            enum: [FRANQUIA, POS, NAO_SE_APLICA]
         insuredParticipationDescription:
           type: string
           maxLength: 1024
           description: Lista com descrição referente ao campo “Participação do Segurado” para cada cobertura.
-        insuredParticipationOthers:
-          type: string
-          maxLength: 100
-          description: Campo livre para descrição por cada participante ao selecionar o domínio “Outros” no campo Participação do segurado
+
     
     AssistanceGeneralAssetsCoverageAttributesDetails:
         type: object
