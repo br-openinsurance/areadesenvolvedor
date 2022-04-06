@@ -128,7 +128,6 @@ components:
           - name
           - code
           - coverages
-          - allowApartPurchase
           - propertyType
           - assistanceServices
           - microInsurance
@@ -156,6 +155,7 @@ components:
               required:
                 - coverage
                 - coverageDescription
+                - allowApartPurchase
               properties:
                 coverage:
                   description: Listagem de coberturas incluídas no produto que deve observar a relação discriminada de coberturas, conforme Tabela II.6 do Anexo II."
@@ -190,10 +190,11 @@ components:
                   example: descrição cobertura
                 coverageAttributes:
                    $ref: '#/components/schemas/CondominiumCoverageAttributes'
-          allowApartPurchase:
-            type: boolean
-            description: Indicação se a cobertura permite contratação separada (por cobertura selecionada).
-            example: true
+                allowApartPurchase:
+                  type: boolean
+                  description: Indicação se a cobertura permite contratação separada (por cobertura selecionada).
+                  example: true   
+
           propertyType:
             $ref: '#/components/schemas/CondominiumPropertyType'  
           commercializationArea:
@@ -231,11 +232,11 @@ components:
             type: string
             maxLength: 22
             example: CONDOMINIO_RESIDENCIAL
-            enum: [CONDOMINIO_RESIDENCIAL, CONDOMINIO_COMERCIAL]
+            enum: [CONDOMINIO_RESIDENCIAL, CONDOMINIO_COMERCIAL, CONDOMINIO_MISTOS]
           structuringType:
             type: string
             maxLength: 21
-            enum: [CONDOMINIO_HORIZONTAL, CONDOMINIO_VERTICAL]
+            enum: [CONDOMINIO_HORIZONTAL, CONDOMINIO_VERTICAL, MISTO]
     
     CondominiumAssistanceServices:
       type: array
@@ -270,21 +271,23 @@ components:
             enum: [GRATUITO, PAGO]
     
     CondominiumValidity:
-      type: object
-      required:
-        - term
-      properties:
-        term:
-          type: array
-          items:
+      type: array
+      items:
+        type: object
+        required:
+          - term
+        properties:
+          term:
+            type: array
+            items:
+              type: string
+              maxLength: 23
+              example: ANUAL
+              enum: [ANUAL , ANUAL_INTERMITENTE , PLURIANUAL , PLURIANUAL_INTERMITENTE , MENSAL, MENSAL_INTERMITENTE , DIARIO , DIARIO_INTERMITENTE, OUTROS]
+          termOthers:
             type: string
-            maxLength: 23
-            example: ANUAL
-            enum: [ANUAL , ANUAL_INTERMITENTE , PLURIANUAL , PLURIANUAL_INTERMITENTE , MENSAL, MENSAL_INTERMITENTE , DIARIO , DIARIO_INTERMITENTE, OUTROS]
-        termOthers:
-          type: string
-          description: Campo livre para descrição por cada participante ao selecionar o domínio “Outros” no campo Prazo (acima).
-          maxLength: 100
+            description: Campo livre para descrição por cada participante ao selecionar o domínio “Outros” no campo Prazo (acima).
+            maxLength: 100
     
     CondominiumPremiumPayment:
       type: array
@@ -357,9 +360,9 @@ components:
           type: array
           items:
             type: string
-            maxLength: 30
+            maxLength: 15
             example: PESSOA_NATURAL
-            enum: [PESSOA_NATURAL, PESSOA_NATURAL_ESTRANGEIRO]
+            enum: [PESSOA_NATURAL, PESSOA_JURIDICA]
     
     CondominiumCoverageAttributes:
       type: object
@@ -378,7 +381,11 @@ components:
             type: string
             maxLength: 13
             example: POS
-            enum: [POS, FRANQUIA, NAO_SE_APLICA]
+            enum: [POS, FRANQUIA, NAO_SE_APLICA] 
+        insuredParticipationDescription:
+          type: string
+          maxLength: 1024
+          description: Lista com descrição referente ao campo “Participação do Segurado” para cada cobertura.    
 
     
     CondominiumCoverageAttributesDetails:
@@ -642,3 +649,4 @@ components:
         application/json; charset=utf-8:
           schema:
             $ref: '#/components/schemas/ResponseError'    
+            
