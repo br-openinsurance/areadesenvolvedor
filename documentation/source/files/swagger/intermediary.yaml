@@ -150,22 +150,16 @@ components:
                 example: 12341234123412
             type: 
               type: string
-              maxLength: 24
+              maxLength: 39
               description: Relação de tipos de intermediário
               enum: [CORRETOR_DE_SEGUROS,
                     REPRESENTANTE_DE_SEGUROS,
                     AGENTES_DE_SEGUROS,
-                    DISTRIBUIDOR_DE_TITULO_DE_CAPITALIZACAO,
-                    OUTROS]
-              example: CORRETOR_DE_SEGUROS 
-            typeOthers:
-              type: string
-              maxLength: 1024
-              description: "Campo para descrição, caso o item 5. Outros seja selecionado no campo acima.
-                OBS: Condicional a seleção de 5. Outros no campo acima"
+                    DISTRIBUIDOR_DE_TITULO_DE_CAPITALIZACAO]
+              example: CORRETOR_DE_SEGUROS
             SUSEP:
                 type: string
-                description: "Número de Registro SUSEP 
+                description: "Número de Registro SUSEP no caso de intermediário ser Corretor de Seguros.
                   OBS: Condicional a seleção de 1. Corretor de seguros no campo acima"
                 maxLength: 20
                 example: 15414622222222222 
@@ -181,7 +175,6 @@ components:
         items:
           required:
             - address
-            - districtName
             - townName
             - ibgeCode
             - countrySubDivision
@@ -531,7 +524,10 @@ components:
         standards:
           $ref: '#/components/schemas/IntermediaryStandards'
         email:
-          $ref: '#/components/schemas/IntermediaryEmails'
+          description: Endereço de e-mail
+          type: string
+          maxLength: 50
+          example: Joao.silva@seguradoraa.com.br
         site:
           type: string
           description: "Campo aberto
@@ -568,23 +564,6 @@ components:
                   SEXTA_FEIRA,
                   SABADO]
             example: DOMINGO
-    IntermediaryEmails:
-      type: array
-      items:
-        properties:
-          type:
-            type: string
-            maxLength: 10
-            enum: [COBRANCA,
-                  COMERCIAL,
-                  PESSOAL,
-                  FINANCEIRO]
-            example: COBRANCA
-          electronicAddress:
-            description: Endereço de e-mail
-            type: string
-            maxLength: 50
-            example: Joao.silva@seguradoraa.com.br
     IntermediaryPhones:
       type: array
       description: Telefone do intermediário
@@ -594,7 +573,7 @@ components:
           type:
             description: Identificação do Tipo de telefone do intermediário
             type: string
-            maxLength: 50
+            maxLength: 13
             example: FIXO
           countryCallingCode:
             description: Número de DDI (Discagem Direta Internacional) para telefone de acesso ao Canal - se houver.
@@ -620,7 +599,7 @@ components:
           - line
         properties:
           name:
-            description: Relação dos serviços efetivamente prestados
+            description: Relação dos serviços efetivamente prestados, conforme discriminado na Tabela II.3 do Anexo II
             type: string
             maxLength: 164
             enum: [ANGARIACAO_PROMOCAO_INTERMEDIACAO_OU_DISTRIBUICAO_DE_PRODUTOS,
@@ -634,7 +613,7 @@ components:
                   PAGAMENTO_DE_INDENIZACAO_BENEFICIO,
                   ORIENTACAO_E_ASSISTENCIA_AOS_CLIENTES_NO_QUE_COMPETE_AOS_CONTRATOS_COMERCIALIZADOS,
                   APOIO_LOGISTICO_E_OPERACIONAL_A_SOCIEDADE_PARTICIPANTE_NA_GESTAO_E_EXECUCAO_DE_CONTRATOS,
-                  OUTROS]
+                  OUTROS,]
             example: ACONSELHAMENTO_SOBRE_PRODUTOS_OFERTADOS
           nameOthers:
             description: Campo aberto para descrição em caso de seleção de Outras na lista padronizada de Tipo de Serviço Prestado por Intermediário
@@ -650,120 +629,6 @@ components:
                     PREVIDENCIA_COMPLEMENTAR_ABERTA,
                     CAPITALIZACAO]
               example: CAPITALIZACAO 
-          branch:
-            type: array
-            items:
-              type: string
-              maxLength: 114
-              description: "OBS: Campo condicional a seleção do item 1 no campo acima, conforme tabela abaixo de nome de ramo"
-              enum: [ASSISTENCIA_BENS_EM_GERAL,
-                    COMPREENSIVO_RESIDENCIAL,
-                    COMPREENSIVO_CONDOMINIO,
-                    COMPREENSIVO_EMPRESARIAL,
-                    LUCROS_CESSANTES,
-                    RISCOS_DE_ENGENHARIA,
-                    RISCOS_DIVERSOS,
-                    GLOBAL_DE_BANCOS,
-                    GARANTIA_ESTENDIDA_BENS_EM_GERAL,
-                    RISCOS_NOMEADOS_E_OPERACIONAIS,
-                    RESPONSABILIDADE_CIVIL_DE_ADMINISTRADORES_E_DIRETORES_D&O,
-                    RESPONSABILIDADE_CIVIL_RISCOS_AMBIENTAIS,
-                    RESPONSABILIDADE_CIVIL_GERAL,
-                    RESPONSABILIDADE_CIVIL_PROFISSIONAL,
-                    COMPREENSIVO_RISCOS_CIBERNETICOS,
-                    ACIDENTES_PESSOAIS_DE_PASSAGEIROS_APP,
-                    GARANTIA_ESTENDIDA_AUTO,
-                    CARTA_VERDE,
-                    SEGURO_AUTO_POPULAR,
-                    AUTOMOVEL_CASCO,
-                    ASSISTENCIA_E_OUTRAS_COBERTURAS_AUTO,
-                    RESPONSABILIDADE_CIVIL_FACULTATIVA_AUTO,
-                    DPVAT,
-                    TRANSPORTE_NACIONAL,
-                    TRANSPORTE_INTERNACIONAL,
-                    RESPONSABILIDADE_CIVIL_DO_TRANSPORTADOR_RODOVIARIO_DE_PASSAGEIROS_EM_VIAGEM_INTERESTADUAL_OU_INTERNACIONAL,
-                    RESPONSABILIDADE_CIVIL_DO_TRANSPORTADOR_RODOVIARIO_DE_PASSAGEIROS_EM_VIAGEM_MUNICIPAL_OU_INTERMUNICIPAL,
-                    RESPONSABILIDADE_CIVIL_DO_TRANSPORTADOR_RODOVIARIO_DE_CARGA_EM_VIAGEM_INTERNACIONAL_RCTR_VI_C,
-                    RESPONSABILIDADE_CIVIL_DO,
-                    TRANSPORTADOR_FERROVIARIO,
-                    CARGA_RCTF_C,
-                    RESPONSABILIDADE_CIVIL_DO_TRANSPORTADOR_RODOVIARIO_EM_VIAGEM_INTERNACIONAL_PESSOAS_TRANSPORTADAS_OU_NAO_CARTA_AZUL,
-                    RESPONSABILIDADE_CIVIL_DO_TRANSPORTADOR_AEREO_CARGA_RCTA_C,
-                    RESPONSABILIDADE_CIVIL_DO_TRANSPORTADOR_RODOVIARIO_CARGA_RCTR_C,
-                    RESPONSABILIDADE_CIVIL_DO_TRANSPORTADOR_DESVIO_DE_CARGA_RCF_DC,
-                    RESPONSABILIDADE_CIVIL_DO_TRANSPORTADOR_AQUAVIARIO_CARGA_RCA_C,
-                    RESPONSABILIDADE_CIVIL_DO_OPERADOR_DO_TRANSPORTE_MULTIMODAL_RCOTM_C,
-                    RISCOS_DIVERSOS_FINANCEIROS,
-                    STOP_LOSS,
-                    FIANCA_LOCATICIA,
-                    CREDITO_INTERNO,
-                    CREDITO_A_EXPORTACAO,
-                    GARANTIA_SEGURADO_SETOR_PUBLICO,
-                    GARANTIA_SEGURADO_SETOR_PRIVADO,
-                    FUNERAL,
-                    PERDA_DO_CERTIFICADO_DE_HABILITACAO_DE_VOO_PCHV,
-                    VIAGEM,
-                    PRESTAMISTA_EXCETO_HABITACIONAL_E_RURAL,
-                    EDUCACIONAL,
-                    ACIDENTES_PESSOAIS,
-                    DOTAL_MISTO,
-                    "DOENCAS_GRAVES_OU_DOENCA,
-                    TERMINAL",
-                    DOTAL_PURO,
-                    DESEMPREGO_PERDA_DE_RENDA,
-                    EVENTOS_ALEATORIOS,
-                    VIDA,
-                    VGBL_VAGP_VRGP_VRSA_VRI,
-                    SEGURO_HABITACIONAL_EM_APOLICES_DE_MERCADO_PRESTAMISTA,
-                    SEGURO_HABITACIONAL_EM_APOLICES_DE_MERCADO_DEMAIS_COBERTURAS,
-                    SEGURO_HABITACIONAL_DO_SISTEMA_FINANCEIRO_DA_HABITACAO,
-                    SEGURO_AGRICOLA_SEM_COBERTURA_DO_FESR,
-                    SEGURO_AGRICOLA_COM_COBERTURA_DO_FESR,
-                    SEGURO_PECUARIO_SEM_COBERTURA_DO_FESR,
-                    SEGURO_PECUARIO_COM_COBERTURA_DO_FESR,
-                    SEGURO_AQUICOLA_SEM_COBERTURA_DO_FESR,
-                    SEGURO_AQUICOLA_COM_COBERTURA_DO_FESR,
-                    SEGURO_FLORESTAS_SEM_COBERTURA_DO_FESR,
-                    SEGURO_FLORESTAS_COM_COBERTURA_DO_FESR,
-                    SEGURO_DA_CEDULA_DO_PRODUTO_RURAL,
-                    SEGURO_BENFEITORIAS_E_PRODUTOS_AGROPECUARIOS,
-                    PENHOR_RURAL,
-                    SEGUROS_ANIMAIS,
-                    SEGURO_DE_VIDA_DO_PRODUTOR_RURAL,
-                    FUNERAL,
-                    PERDA_DO_CERTIFICADO_DE_HABILITACAO_DE_VOO_PCHV,
-                    VIAGEM,
-                    PRESTAMISTA_EXCETO_HABITACIONAL_E_RURAL,
-                    EDUCACIONAL,
-                    ACIDENTES_PESSOAIS,
-                    DOTAL_MISTO,
-                    DOENCAS_GRAVES_OU_DOENCA_TERMINAL,
-                    DOTAL_PURO,
-                    DESEMPREGO_PERDA_DE_RENDA,
-                    EVENTOS_ALEATORIOS,
-                    VIDA,
-                    VGBL_VAGP_VRGP_VRSA_VRI,
-                    SEGURO_COMPREENSIVO_PARA_OPERADORES_PORTUARIOS,
-                    RESPONSABILIDADE_CIVIL_FACULTATIVA_PARA_EMBARCACOES_RCF,
-                    MARITIMOS_CASCO,
-                    DPEM,
-                    RESPONSABILIDADE_CIVIL_FACULTATIVA_PARA_AERONAVES_RCF,
-                    AERONAUTICOS_CASCO,
-                    RESPONSABILIDADE_CIVIL_HANGAR,
-                    RESPONSABILIDADE_DO_EXPLORADOR_OU_TRANSPORTADOR_AEREO_RETA,
-                    SATELITES,
-                    PESSOAS,
-                    DANOS,
-                    PREVIDENCIA,
-                    RISCOS_DE_PETROLEO,
-                    RISCOS_NUCLEARES,
-                    SAUDE_RESSEGURADOR_LOCAL,
-                    ACEITACOES_DO_EXTERIOR,
-                    SUCURSAIS_NO_EXTERIOR,
-                    VIDA,
-                    SOBREVIVENCIA_DE_ASSISTIDO,
-                    FLUXO_BIOMETRICO,
-                    INDICE_BIOMETRICO]
     
     Links:
       type: object
