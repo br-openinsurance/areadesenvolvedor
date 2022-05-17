@@ -154,7 +154,6 @@ components:
                   PECUARIO,
                   AQUICOLA,
                   FLORESTAS,
-                  CEDULA_DO_PRODUTO_RURAL,
                   BENFEITORIAS_E_PRODUTOS_AGROPECUARIOS,
                   PENHOR_RURAL,
                   ANIMAIS,
@@ -173,16 +172,23 @@ components:
                 coverage:
                   description: Listagem de coberturas incluídas no produto que deve observar a relação discriminada de coberturas, conforme Tabela II.17 do Anexo II.
                   type: string
-                  maxLength: 66
-                  example: ABASICA_EVENTOS_CLIMATICOS_MODALIDADE_AGRICOLA
-                  enum: [BASICA_EVENTOS_CLIMATICOS_MODALIDADE_AGRICOLA,
-                  ADICIONAIS_EVENTOS_CLIMATICOS_MODALIDADE_AGRICOLA,
-                  DOENCAS,
-                  BASICA_PARA_A_MODALIDADE_BENFEITORIAS_E_PRODUTOS_AGROPECUARIOS,
-                  ADICIONAIS_PARA_A_MODALIDADE_BENFEITORIAS_E_PRODUTOS_AGROPECUARIOS,
-                  BASICA_PENHOR_RURAL,
-                  ADICIONAIS_PENHOR_RURAL,
-                  MORTE,
+                  maxLength: 357
+                  example: GRANIZO
+                  enum: [GRANIZO,
+                  GEADA,
+                  GRANIZO_GEADA,
+                  GRANIZO_GEADA_CHUVA_EXCESSIVA,
+                  COMPREENSIVA_INCENDIO_E_RAIO_TROMBA_D_AGUA_VENTOS_FORTES_E_VENTOS_FRIOS_CHUVAS_EXCESSIVAS_SECA_VARIACAO_EXCESSIVA_DE_TEMPERATURA_GRANIZO_GEADA,
+                  COMPREENSIVA_INCENDIO_E_RAIO_TROMBA_D_AGUA_VENTOS_FORTES_E_VENTOS_FRIOS_CHUVAS_EXCESSIVAS_SECA_VARIACAO_EXCESSIVA_DE_TEMPERATURA_GRANIZO_GEADA_COM_DOENCAS_E_PRAGAS,
+                  CANCRO_CITRICO,
+                  COMPREENSIVA_PARA_A_MODALIDADE_BENFEITORIAS_E_PRODUTOS_AGROPECUARIOS_INCENDIO_RAIO_EXPLOSAO_VENDAVAL_GRANIZO_TREMORES_DE_TERRA_IMPACTO_DE_VEICULOS_DESMORONAMENTO_TOTAL_OU_PARCIAL_DANOS_AS_MERCADORIAS_DO_SEGURADO_EXCLUSIVAMENTE_PARA_OS_PRODUTOS_AGROPECUARIOS_DECORRENTES_DE_ACIDENTES_COM_O_VEICULO_TRANSPORTADOR_DANOS_AS_MAQUINAS_AGRICOLAS_E_SEUS_IMPLEMENTOS,
+                  DECORRENTES_DE_COLISAO_ABALROAMENTO_E_OU_CAPOTAGEM_QUEDA_DE,
+                  PONTES_VIADUTOS_OU_EM_PRECIPICIOS_ROUBO_OU_FURTO_TOTAL_CASO,
+                  FORTUITO_OU_FORCA_MAIOR_OCORRIDOS_DURANTE_O_TRANSPORTE,
+                  COMPREENSIVA_PARA_A_MODALIDADE_PENHOR_RURAL,
+                  MORTE_DE_ANIMAIS,
+                  CONFINAMENTO_SEMI_CONFINAMENTO_BOVINOS_DE_CORTE,
+                  CONFINAMENTO_BOVINOS_DE_LEITE,
                   VIAGEM,
                   EXPOSICAO_MOSTRA_E_LEILAO,
                   CARREIRA,
@@ -199,8 +205,9 @@ components:
                   REEMBOLSO_CIRURGICO,
                   COLETA_DE_SEMEN,
                   PREMUNICAO,
-                  BASICA_PARA_A_MODALIDADE_FLORESTAS,
-                  ADICIONAIS_PARA_A_MODALIDADE_FLORESTAS,
+                  COMPREENSIVA_PARA_A_MODALIDADE_FLORESTAS,
+                  VIDA_DO_PRODUTOR_RURAL,
+                  BASICA_DE_FATURAMENTO_PARA_O_PECUARIO,
                   OUTRAS]
                 coverageDescription:
                   type: string
@@ -212,6 +219,13 @@ components:
                   example: true
                 coverageAttributes:
                       $ref: '#/components/schemas/RuralCoverageAttributes'
+          maxLMG:
+            description: "Valor de LMG aceito pela sociedade para cada produto. Em reais (R$) Importante: Campo de valor numérico relacionado ao produto que possui o campo. Quando não houver o campo, enviar o valor zerado."
+            $ref: '#/components/schemas/RuralCoverageAttributesDetails'
+          traits:
+            description: Indicação se o produto é classificado como destinado para cobertura de grandes riscos, sendo tal classificação de acordo com regulamentação específica. 
+            type: boolean
+            example: false  
           crops:
             description: "Lista com tipos de culturas cobertas.
               OBS: Condicional a seleção de 1. Agrícola no campo Modalidade"
@@ -230,6 +244,24 @@ components:
               OBS: Condicional a seleção de 5. Outros no campo acima"
             type: string
             maxLength: 1024
+          forestCode:
+            description: "Lista com tipos de florestas cobertas.
+              OBS: Condicional a seleção de 4. Florestas no campo Modalidade"
+            type: array
+            items:
+              type: string
+              maxLength: 11
+              enum: [PINUS,
+                    EUCALIPITO,
+                    TECA,
+                    SERINGUEIRA,
+                    OUTROS]
+              example: PINUS
+          forestCodeOthers: 
+            description: "Campo livre para descrição por cada participante ao selecionar o domínio “Outros” no campo Código Floresta
+              OBS: Condicional a seleção de 5. Outros no campo acima"
+            type: string
+            maxLength: 1024  
           flockCode:
             description: "Lista com tipos de rebanhos cobertos.
               OBS: Condicional a seleção de 2. Pecuário no campo Modalidade"
@@ -261,58 +293,35 @@ components:
               enum: [PRODUCAO,
                     TRABALHO_DESTINADOS_A_SELA,    
                     TRABALHO_POR_TRACAO,
-                    TRANSPORTE_NO_MANEJO_DA_FAZENDA]
+                    TRANSPORTE_NO_MANEJO_DA_FAZENDA,
+                    ATIVIDADE_REPRODUTIVA]
               example: PRODUCAO
-          forestCode:
-            description: "Lista com tipos de florestas cobertas.
-              OBS: Condicional a seleção de 4. Florestas no campo Modalidade"
-            type: array
-            items:
-              type: string
-              maxLength: 11
-              enum: [PINUS,
-                    EUCALIPITO,
-                    TECA,
-                    SERINGUEIRA,
-                    OUTROS]
-              example: PINUS
-          forestCodeOthers: 
-            description: "Campo livre para descrição por cada participante ao selecionar o domínio “Outros” no campo Código Floresta
-              OBS: Condicional a seleção de 5. Outros no campo acima"
-            type: string
-            maxLength: 1024
           animalsClassification:
             description: "Listas com classificações de animais cobertos.
               OBS: Condicional a seleção de 8. Animais no campo Modalidade"
             type: array
             items:
               type: string
-              maxLength: 14
+              maxLength: 30
               enum: [ANIMAIS_DESTINADOS_A_COMPANHIA,
                     CONVIVIO_FAMILIAR,
                     SEGURANCA,
                     LAZER,
                     EXPOSICAO,
-                    ATIVIDADES_ESPORTIVAS]
-              example: ELITE
-          maxLMG:
-            description: "Lista com valor de LMG aceito pela sociedade para cada produto. Em reais (R$) Importante: Campo de valor numérico relacionado ao produto que possui o campo. Quando não houver o campo, enviar o valor zerado."
-            $ref: '#/components/schemas/RuralCoverageAttributesDetails'
-          traits:
-            description: Indicação se o produto é classificado como destinado para cobertura de grandes riscos, sendo tal classificação de acordo com regulamentação específica. 
-            type: boolean
-            example: false
+                    ATIVIDADES_ESPORTIVAS,
+                    ATIVIDADE_REPRODUTIVA]
+              example: ELITE    
           subvention:
             type: boolean
             description: "Permite contratação por subvenção?
               OBS: Condicional a seleção de 1. Agrícola, 2. Pecuário, 3. Aquícola ou 4. Florestas no campo Modalidade"
             example: true
+          termsAndConditions:
+            $ref: '#/components/schemas/RuralTerms'  
           validity:
             $ref: '#/components/schemas/RuralValidity'
           premiumPayment:
             $ref: '#/components/schemas/RuralPremiumPayment'    
-          termsAndConditions:
-            $ref: '#/components/schemas/RuralTerms'
           minimumRequirements:
             $ref: '#/components/schemas/RuralMinimumRequirements'
     
