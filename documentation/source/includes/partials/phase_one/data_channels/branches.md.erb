@@ -1,0 +1,156 @@
+## Dependências próprias
+
+### Obtém a listagem de dependências próprias da instituição.
+
+<a id="opIdgetBranches"></a>
+
+> Code samples
+
+```javascript
+const data = null;
+
+const xhr = new XMLHttpRequest();
+xhr.withCredentials = true;
+
+xhr.addEventListener("readystatechange", function () {
+  if (this.readyState === this.DONE) {
+    console.log(this.responseText);
+  }
+});
+
+xhr.open("GET", "http://api.organizacao.com.br/open-insurance/channels/v1/branches");
+xhr.setRequestHeader("Accept", "application/json");
+
+xhr.send(data);
+```
+
+```python
+import http.client
+
+conn = http.client.HTTPConnection("api.organizacao.com.br")
+
+headers = { 'Accept': "application/json" }
+
+conn.request("GET", "/open-insurance/channels/v1/branches", headers=headers)
+
+res = conn.getresponse()
+data = res.read()
+
+print(data.decode("utf-8"))
+```
+
+```java
+HttpResponse<String> response = Unirest.get("http://api.organizacao.com.br/open-insurance/channels/v1/branches")
+  .header("Accept", "application/json")
+  .asString();
+```
+
+`GET /branches`
+
+Método para obter a listagem de dependências próprias da instituição.
+
+<h3 id="obtém-a-listagem-de-dependências-próprias-da-instituição.-parameters">Parameters</h3>
+
+|Name|In|Type|Required|Description|
+|---|---|---|---|---|
+|page|query|integer|false|Número da página que está sendo requisitada (o valor da primeira página é 1).|
+|page-size|query|integer|false|Quantidade total de registros por páginas.|
+
+> Example responses
+
+> 200 Response
+
+```json
+{
+  "data": {
+    "brand": {
+      "name": "Organização AZ",
+      "companies": [
+        {
+          "name": "Empresa A1",
+          "cnpjNumber": "45086338000178",
+          "branches": [
+            {
+              "identification": {
+                "type": "POSTO_ATENDIMENTO",
+                "code": 1,
+                "checkDigit": 9,
+                "name": "Marília"
+              },
+              "postalAddress": {
+                "address": "Av Naburo Ykesaki 1270, bloco 35, fundos",
+                "additionalInfo": "Loja B",
+                "districtName": "Centro",
+                "townName": "São Paulo",
+                "ibgeCode": 3550308,
+                "countrySubDivision": "SP",
+                "postCode": "17500-001",
+                "country": "Brasil",
+                "countryCode": "BRA",
+                "geographicCoordinates": {
+                  "latitude": "-90.8365180",
+                  "longitude": "-180.836519"
+                }
+              },
+              "availability": {
+                "standards": [
+                  {
+                    "weekday": "SEGUNDA_FEIRA",
+                    "openingTime": "10:00:57Z",
+                    "closingTime": "16:00:57Z"
+                  }
+                ],
+                "isPublicAccessAllowed": true
+              },
+              "phones": [
+                {
+                  "type": "FIXO",
+                  "countryCallingCode": "55",
+                  "areaCode": "19",
+                  "number": "35721199"
+                }
+              ],
+              "services": [
+                {
+                  "name": "ENDOSSO",
+                  "code": "PORTABILIDADE"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "links": {
+      "self": "https://api.organizacao.com.br/open-insurance/channels/v1/<resource>",
+      "first": "https://api.organizacao.com.br/open-insurance/channels/v1/<resource>",
+      "prev": "string",
+      "next": "string",
+      "last": "https://api.organizacao.com.br/open-insurance/channels/v1/<resource>"
+    },
+    "meta": {
+      "totalRecords": 1,
+      "totalPages": 1
+    }
+  }
+}
+```
+
+<h3 id="obtém-a-listagem-de-dependências-próprias-da-instituição.-responses">Responses</h3>
+
+|Status|Meaning|Description|Schema|
+|---|---|---|---|
+|200|[OK](https://tools.ietf.org/html/rfc7231#section-6.3.1)|Lista de dependências próprias obtida com sucesso.|[ResponseBranchesList](#schemaresponsebrancheslist)|
+|400|[Bad Request](https://tools.ietf.org/html/rfc7231#section-6.5.1)|A requisição foi malformada, omitindo atributos obrigatórios, seja no payload ou através de atributos na URL.|[ResponseError](#schemaresponseerror)|
+|401|[Unauthorized](https://tools.ietf.org/html/rfc7235#section-3.1)|Cabeçalho de autenticação ausente/inválido ou token inválido|[ResponseError](#schemaresponseerror)|
+|403|[Forbidden](https://tools.ietf.org/html/rfc7231#section-6.5.3)|O token tem escopo incorreto ou uma política de segurança foi violada|[ResponseError](#schemaresponseerror)|
+|404|[Not Found](https://tools.ietf.org/html/rfc7231#section-6.5.4)|O recurso solicitado não existe ou não foi implementado|[ResponseError](#schemaresponseerror)|
+|405|[Method Not Allowed](https://tools.ietf.org/html/rfc7231#section-6.5.5)|O consumidor tentou acessar o recurso com um método não suportado|[ResponseError](#schemaresponseerror)|
+|406|[Not Acceptable](https://tools.ietf.org/html/rfc7231#section-6.5.6)|A solicitação continha um cabeçalho Accept diferente dos tipos de mídia permitidos ou um conjunto de caracteres diferente de UTF-8|[ResponseError](#schemaresponseerror)|
+|429|[Too Many Requests](https://tools.ietf.org/html/rfc6585#section-4)|A operação foi recusada, pois muitas solicitações foram feitas dentro de um determinado período ou o limite global de requisições concorrentes foi atingido|[ResponseError](#schemaresponseerror)|
+|500|[Internal Server Error](https://tools.ietf.org/html/rfc7231#section-6.6.1)|Ocorreu um erro no gateway da API ou no microsserviço|[ResponseError](#schemaresponseerror)|
+|default|Default|none|None|
+
+<aside class="success">
+This operation does not require authentication
+</aside>
