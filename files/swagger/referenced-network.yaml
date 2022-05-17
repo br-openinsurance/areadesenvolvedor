@@ -156,19 +156,19 @@ components:
       items:
         type: object
         required:
-          - code
           - name
+          - code
         properties:
-          code:
-            type: string
-            description: Listagem de código de identificação do produto (vide seção 3 do Manual de Dados e Serviços) que possui atendimento pelo prestador de serviço. 
-            maxLength: 100
-            example: "01234589-0"
           name:
             type: string
             description: Nome comercial do produto, pelo qual é identificado nos canais de distribuição e atendimento da sociedade.
             maxLength: 80
             example: Produto de Seguro
+          code:
+            type: string
+            description: Listagem de código de identificação do produto (vide seção 3 do Manual de Dados e Serviços) que possui atendimento pelo prestador de serviço. 
+            maxLength: 100
+            example: "01234589-0"
           coverage:
             type: array
             description: "Indicação da lista de coberturas, caso a distinção do atendimento pelo prestador de serviço se aplique para diferentes coberturas de um mesmo produto."
@@ -182,6 +182,7 @@ components:
           type: object
           required:
             - address
+            - districtName
             - townName
             - ibgeCode
             - countrySubDivision
@@ -193,6 +194,10 @@ components:
               description: "Deverá trazer toda a informação referente ao endereço do intermediário: Tipo de logradouro + Nome do logradouro + Número do Logradouro (se não existir usar ' s/n') + complemento (se houver), como, p.ex.: 'R Diamantina, 59, bloco 35, fundos’ 'Praça da Boa Vontade s/n'"
               example: "'Rua Diamantina, 59, bloco 35'
                 Praça da Boa Vontade, s/n" 
+            number: 
+              description: Número (Logradouro)
+              type: string
+              maxLength: 10
             additionalInfo:
               type: string
               maxLength: 30
@@ -565,6 +570,23 @@ components:
                   SEXTA_FEIRA,
                   SABADO]
             example: DOMINGO
+    ReferencedNetworkEmails:
+      type: array
+      items:
+        properties:
+          type:
+            type: string
+            maxLength: 10
+            enum: [COBRANCA,
+                  COMERCIAL,
+                  PESSOAL,
+                  FINANCEIRO]
+            example: COBRANCA
+          eletronicAddress:
+            description: Endereço de e-mail
+            type: string
+            maxLength: 50
+            example: Joao.silva@seguradoraa.com.br
     ReferencedNetworkPhones:
       type: array
       description: Telefone do intermediário
@@ -598,7 +620,6 @@ components:
         required:
           - type
           - name
-          - description
         properties:
             type: 
               description: "Relação dos tipos de prestação de serviços efetivamente prestados, conforme discriminado na Tabela XXX do Anexo II"
@@ -621,148 +642,11 @@ components:
               type: string
               maxLength: 3000
             name:
-              description: "Relação dos serviços efetivamente prestados, conforme discriminado na Tabela II.5 do Anexo II"
+              description: "Descrição dos serviços prestados"
               type: array
               items:
                 type: string
-                maxLength: 57
-                enum: [ACIONAMENTO_E_OU_AGENDAMENTO_DE_LEVA_E_TRAZ,
-                      AMPARO_DE_CRIANCAS,
-                      APLICACAO_DE_VACINAS_EM_DOMICILIO,
-                      AQUECEDORES,
-                      ASSISTENCIA_A_ELETRODOMESTICOS,
-                      ASSISTENCIA_AUTO_E_OU_MOTO,
-                      ASSISTENCIA_BIKE,
-                      ASSISTENCIA_EM_VIAGEM,
-                      ASSISTENCIA_ESCOLAR,
-                      ASSISTENCIA_FUNERAL,
-                      ASSISTENCIA_FUNERAL_PET,
-                      ASSISTENCIA_INFORMATICA,
-                      ASSISTENCIA_NUTRICIONAL,
-                      ASSISTENCIA_PET,
-                      ASSISTENCIA_RESIDENCIAL,
-                      ASSISTENCIA_SUSTENTAVEL,
-                      ASSISTENCIA_VETERINARIA_EMERGENCIAL,
-                      ASSISTENCIAS_SAUDE_E_BEM_ESTAR,
-                      BABY_SITTER,
-                      CACAMBA,
-                      CARRO_RESERVA,
-                      CESTA_BASICA,
-                      CESTA_DE_ALIMENTOS,
-                      CESTA_NATALIDADE,
-                      CHAVEIRO,
-                      CHECK_UP,
-                      COBERTURA_PROVISORIA_DE_TELHADO,
-                      CONCIERGE,
-                      CONSERTO_DE_AR_CONDICIONADO,
-                      CONSERTO_DE_ELETRODOMESTICOS_LINHA_BRANCA,
-                      CONSERTO_DE_ELETROELETRONICO_LINHA_MARROM,
-                      CONSERTO_DE_PORTA_ONDULADA,
-                      CONSULTAS_VETERINARIAS,
-                      CONSULTORIA_ORCAMENTARIA,
-                      CONVENIENCIA_EM_VIAGEM,
-                      DEDETIZACAO,
-                      DESATOLAMENTO,
-                      DESCARTE_RESPONSAVEL,
-                      DESCONTOS_EM_CONSULTAS_E_EXAMES,
-                      DESCONTOS_EM_MEDICAMENTOS,
-                      DESENTUPIMENTO,
-                      DESINSETIZACAO_E_DESRATIZACAO,
-                      DESPACHANTE,
-                      DESPESAS_FARMACEUTICAS,
-                      DESPESAS_MEDICAS_CIRURGICAS_E_DE_HOSPITALIZACAO,
-                      DESPESAS_ODONTOLOGICAS,
-                      ELETRICISTA,
-                      EMERGENCIAS,
-                      ENCANADOR,
-                      ENVIO_DE_ACOMPANHANTE_EM_CASO_DE_ACIDENTE,
-                      ENVIO_DE_FAMILIAR_PARA_ACOMPANHAMENTO_DE_MENORES_DE_ANOS,
-                      ENVIO_DE_RACAO,
-                      ESCRITORIO_VIRTUAL,
-                      GUARDA_DE_ANIMAIS,
-                      GUARDA_DO_VEICULO,
-                      GUINCHO,
-                      HELP_DESK,
-                      HIDRAULICA,
-                      HOSPEDAGEM,
-                      HOSPEDAGEM_DE_ANIMAIS,
-                      INDICACAO_DE_BANHO_E_TOSA,
-                      INDICACAO_DE_PROFISSIONAIS,
-                      INFORMACAO_SOBRE_RACAS_DE_CAES,
-                      INFORMACAO_SOBRE_VENDA_DE_FILHOTES,
-                      INFORMACOES_SOBRE_VACINAS,
-                      INFORMACOES_VETERINARIAS_UTEIS,
-                      INSTALACAO_RESIDENCIA,
-                      INSTALACAO_DE_CHUVEIRO_ELETRICO_E_OU_TROCA_DE_RESISTENCIA,
-                      INSTALACAO_DE_SUPORTE_TV_ATE,
-                      LIMPEZA,
-                      LIMPEZA_DE_AR_CONDICIONADO,
-                      LIMPEZA_DE_CAIXA_D_AGUA,
-                      LIMPEZA_DE_CALHAS,
-                      LIMPEZA_DE_RALOS_E_SIFOES,
-                      LOCACAO_DE_ELETRODOMESTICOS,
-                      LOCACAO_DE_VEICULOS,
-                      LOCALIZACAO_DE_BAGAGEM,
-                      MANUTENCAO,
-                      MARTELINHO_E_REPARO_RAPIDO,
-                      MECANICO,
-                      MEIO_DE_TRANSPORTE,
-                      MONITORACAO_MEDICA,
-                      MOTO,
-                      MOTORISTA_AMIGO,
-                      MOTORISTA_SUBSTITUTO,
-                      MTA_MEIO_DE_TRANSPORTE_ALTERNATIVO,
-                      MUDANCA_E_GUARDA_DE_MOVEIS,
-                      ORGANIZACAO,
-                      ORIENTACAO_EM_CASO_DE_PERDA_DE_DOCUMENTOS,
-                      ORIENTACAO_MEDICA,
-                      ORIENTACAO_PSICOLOGICA,
-                      PERSONAL_FITNESS,
-                      REBOQUE,
-                      REBOQUE_BIKE,
-                      RECUPERACAO_DO_VEICULO,
-                      REGRESSO_ANTECIPADO_EM_CASO_DE_FALECIMENTO_DE_PARENTES,
-                      REGRESSO_DO_USUARIO_APOS_ALTA_HOSPITALAR,
-                      REINSTALACAO_E_REPARO_DO_VENTILADOR_DE_TETO,
-                      REMANEJAMENTO_DE_MOVEIS,
-                      REMOCAO_HOSPITALAR,
-                      REMOCAO_MEDICA,
-                      REMOCAO_MEDICA_INTER_HOSPITALAR,
-                      REPARACAO_AUTOMOTIVA,
-                      REPARO_DE_TELEFONIA,
-                      REPARO_EM_PORTOES_AUTOMATICOS,
-                      REPARO_FIXACAO_DE_ANTENAS,
-                      REPAROS_ELETRICOS,
-                      RETORNO_ANTECIPADO_AO_DOMICILIO,
-                      REVERSAO_DE_FOGAO,
-                      REVISAO_DE_INSTALACAO_ELETRICA,
-                      SEGUNDA_OPINIAO_MEDICA_INTERNACIONAL,
-                      SEGURANCA,
-                      SERRALHEIRO,
-                      SERVICO_DE_INDICACAO_MEDICA,
-                      SERVICO_DE_LIMPEZA,
-                      SERVICOS_AUTO,
-                      SERVICOS_ESPECIAIS_FIXACAO_DE_OBJETOS,
-                      SERVICOS_GERAIS,
-                      SUBSTITUICAO_DE_PNEUS,
-                      SUBSTITUICAO_DE_TELHAS,
-                      TAXI,
-                      TELEMEDICINA,
-                      TRANSMISSAO_DE_MENSAGENS_URGENTES,
-                      TRANSPORTE_E_ENVIO_DE_FAMILIAR,
-                      TRANSPORTE_E_GUARDA_MOVEIS,
-                      TRANSPORTE_ESCOLAR_PESSOAS,
-                      TRANSPORTE_VETERINARIO_EMERGENCIAL,
-                      TRASLADO_DE_CORPO,
-                      TROCA_DE_BATERIA,
-                      TROCA_DE_PNEUS,
-                      VERIFICACAO_DE_POSSIVEIS_VAZAMENTOS,
-                      VIGILANCIA_E_SEGURANCA,
-                      OUTRAS]
-            description:
-              type: string
-              maxLength: 5000
-              description: Campo aberto para detalhamento do tipo de serviço prestado.
+                maxLength: 5000
     
     Links:
       type: object
