@@ -5625,6 +5625,1143 @@ Obtem a lista dos produtos do tipo StopLoss
 This operation does not require authentication
 </aside>
 
+## Housing
+
+### Obtem a lista dos produtos do tipo Habitacional
+
+<a id="opIdgetHousing"></a>
+
+<a href="files/swagger/housing.yaml" download="housing.yaml">Especificação em OAS</a> <br>
+<a href="files/docs/housing.docx" download="housing.docx">Detalhamento Técnico</a> <br>
+
+> Code samples
+
+```javascript
+const data = null;
+
+const xhr = new XMLHttpRequest();
+xhr.withCredentials = true;
+
+xhr.addEventListener("readystatechange", function () {
+  if (this.readyState === this.DONE) {
+    console.log(this.responseText);
+  }
+});
+
+xhr.open("GET", "https://api.organizacao.com.br/open-insurance/products-services/v1/housing/");
+xhr.setRequestHeader("Accept", "application/json");
+xhr.setRequestHeader("cache-control", "string");
+xhr.setRequestHeader("Content-Security-Policy", "string");
+xhr.setRequestHeader("content-Type", "string");
+xhr.setRequestHeader("Strict-Transport-Security", "string");
+xhr.setRequestHeader("X-Content-Type-Options", "string");
+xhr.setRequestHeader("X-Frame-Options", "string");
+
+xhr.send(data);
+```
+
+```python
+import http.client
+
+conn = http.client.HTTPSConnection("api.organizacao.com.br")
+
+headers = {
+    'Accept': "application/json",
+    'cache-control': "string",
+    'Content-Security-Policy': "string",
+    'content-Type': "string",
+    'Strict-Transport-Security': "string",
+    'X-Content-Type-Options': "string",
+    'X-Frame-Options': "string"
+    }
+
+conn.request("GET", "/open-insurance/products-services/v1/housing/", headers=headers)
+
+res = conn.getresponse()
+data = res.read()
+
+print(data.decode("utf-8"))
+```
+
+```java
+HttpResponse<String> response = Unirest.get("https://api.organizacao.com.br/open-insurance/products-services/v1/housing/")
+  .header("Accept", "application/json")
+  .header("cache-control", "string")
+  .header("Content-Security-Policy", "string")
+  .header("content-Type", "string")
+  .header("Strict-Transport-Security", "string")
+  .header("X-Content-Type-Options", "string")
+  .header("X-Frame-Options", "string")
+  .asString();
+```
+
+`GET /housing/`
+
+Obtem a lista dos produtos do tipo Habitacional
+
+<h3 id="obtem-a-lista-dos-produtos-do-tipo-habitacional-parameters">Parameters</h3>
+
+|Name|In|Type|Required|Description|
+|---|---|---|---|---|
+|cache-control|header|string|true|Controle de cache para evitar que informações confidenciais sejam armazenadas em cache.|
+|Content-Security-Policy|header|string|false|Campo para proteção contra ataques clickjack do estilo - drag and drop.|
+|content-Type|header|string|false|Especificar o tipo de conteúdo da resposta.|
+|Strict-Transport-Security|header|string|false|Campo para exigir conexões por HTTPS e proteger contra certificados falsificados.|
+|X-Content-Type-Options|header|string|false|Campo para evitar que navegadores executem a detecção de MIME e interpretem respostas como HTML de forma inadequada.|
+|X-Frame-Options|header|string|false|Campo indica se o navegador deve ou não renderizar um frame.|
+|page|query|integer|false|Número da página que está sendo requisitada (o valor da primeira página é 1).|
+|page-size|query|integer|false|Quantidade total de registros por páginas.|
+
+> Example responses
+
+> 200 Response
+
+```json
+{
+  "data": {
+    "brand": {
+      "name": "ACME Group Seguros",
+      "companies": [
+        {
+          "name": "Empresa da Organização A",
+          "cnpjNumber": "12345678901234",
+          "products": [
+            {
+              "name": "Produto de Seguro",
+              "code": "01234589-0",
+              "coverages": [
+                {
+                  "coverage": "DANOS_ELETRICOS",
+                  "coverageDescription": "string",
+                  "allowApartPurchase": true,
+                  "coverageAttributes": {
+                    "maxLMI": {},
+                    "insuredParticipation": [],
+                    "insuredParticipationDescription": "string"
+                  }
+                }
+              ],
+              "additional": [
+                "SORTEIO_GRATUITO"
+              ],
+              "additionalOthers": "string",
+              "premiumRates": "string",
+              "termsAndConditions": {
+                "susepProcessNumber": 15414622222222222,
+                "definition": "https://www.seguradora.com.br/produto/tradicional/pdf/condicoes_gerais.pdf"
+              },
+              "minimumRequirements": {
+                "minimumRequirementDetails": "string",
+                "targetAudiences": [
+                  "PESSOA_FISICA"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "links": {
+    "self": "https://api.organizacao.com.br/open-insurance/products-services/v1",
+    "first": "https://api.organizacao.com.br/open-insurance/products-services/v1",
+    "prev": "https://api.organizacao.com.br/open-insurance/products-services/v1",
+    "next": "https://api.organizacao.com.br/open-insurance/products-services/v1",
+    "last": "https://api.organizacao.com.br/open-insurance/products-services/v1"
+  },
+  "meta": {
+    "totalRecords": 10,
+    "totalPages": 1
+  }
+}
+```
+
+<h3 id="obtem-a-lista-dos-produtos-do-tipo-habitacional-responses">Responses</h3>
+
+|Status|Meaning|Description|Schema|
+|---|---|---|---|
+|200|[OK](https://tools.ietf.org/html/rfc7231#section-6.3.1)|Dados dos produtos de Seguro Habitacional em Apólices de Mercado – Demais Coberturas e Seguro Habitacional em Apólices de Mercado – Prestamista|[ResponseHousingList](#schemaresponsehousinglist)|
+|204|[No Content](https://tools.ietf.org/html/rfc7231#section-6.3.5)|O recurso solicitado não existe ou não foi localizado.|[ResponseError](#schemaresponseerror)|
+|400|[Bad Request](https://tools.ietf.org/html/rfc7231#section-6.5.1)|A requisição foi malformada, omitindo atributos obrigatórios, seja no payload ou através de atributos na URL.|[ResponseError](#schemaresponseerror)|
+|401|[Unauthorized](https://tools.ietf.org/html/rfc7235#section-3.1)|Cabeçalho de autenticação ausente/inválido ou token inválido|[ResponseError](#schemaresponseerror)|
+|403|[Forbidden](https://tools.ietf.org/html/rfc7231#section-6.5.3)|O token tem escopo incorreto ou uma política de segurança foi violada|[ResponseError](#schemaresponseerror)|
+|404|[Not Found](https://tools.ietf.org/html/rfc7231#section-6.5.4)|O recurso solicitado não existe ou não foi implementado|[ResponseError](#schemaresponseerror)|
+|405|[Method Not Allowed](https://tools.ietf.org/html/rfc7231#section-6.5.5)|O consumidor tentou acessar o recurso com um método não suportado|[ResponseError](#schemaresponseerror)|
+|406|[Not Acceptable](https://tools.ietf.org/html/rfc7231#section-6.5.6)|A solicitação continha um cabeçalho Accept diferente dos tipos de mídia permitidos ou um conjunto de caracteres diferente de UTF-8|[ResponseError](#schemaresponseerror)|
+|429|[Too Many Requests](https://tools.ietf.org/html/rfc6585#section-4)|A operação foi recusada, pois muitas solicitações foram feitas dentro de um determinado período ou o limite global de requisições concorrentes foi atingido|[ResponseError](#schemaresponseerror)|
+|500|[Internal Server Error](https://tools.ietf.org/html/rfc7231#section-6.6.1)|Ocorreu um erro no gateway da API ou no microsserviço|[ResponseError](#schemaresponseerror)|
+|default|Default|Dados dos produtos de Seguro Habitacional em Apólices de Mercado – Demais Coberturas e Seguro Habitacional em Apólices de Mercado – Prestamista|[ResponseHousingList](#schemaresponsehousinglist)|
+
+<aside class="success">
+This operation does not require authentication
+</aside>
+
+## Intermediary
+
+### Obtem a lista dos produtos do tipo Intermediarios
+
+<a id="opIdgetIntermediary"></a>
+
+<a href="files/swagger/intermediary.yaml" download="intermediary.yaml">Especificação em OAS</a> <br>
+<a href="files/docs/intermediary.docx" download="intermediary.docx">Detalhamento Técnico</a> <br>
+
+> Code samples
+
+```javascript
+const data = null;
+
+const xhr = new XMLHttpRequest();
+xhr.withCredentials = true;
+
+xhr.addEventListener("readystatechange", function () {
+  if (this.readyState === this.DONE) {
+    console.log(this.responseText);
+  }
+});
+
+xhr.open("GET", "https://api.organizacao.com.br/open-insurance/products-services/v1/intermediary/string");
+xhr.setRequestHeader("Accept", "application/json");
+xhr.setRequestHeader("cache-control", "string");
+xhr.setRequestHeader("Content-Security-Policy", "string");
+xhr.setRequestHeader("content-Type", "string");
+xhr.setRequestHeader("Strict-Transport-Security", "string");
+xhr.setRequestHeader("X-Content-Type-Options", "string");
+xhr.setRequestHeader("X-Frame-Options", "string");
+
+xhr.send(data);
+```
+
+```python
+import http.client
+
+conn = http.client.HTTPSConnection("api.organizacao.com.br")
+
+headers = {
+    'Accept': "application/json",
+    'cache-control': "string",
+    'Content-Security-Policy': "string",
+    'content-Type': "string",
+    'Strict-Transport-Security': "string",
+    'X-Content-Type-Options': "string",
+    'X-Frame-Options': "string"
+    }
+
+conn.request("GET", "/open-insurance/products-services/v1/intermediary/string", headers=headers)
+
+res = conn.getresponse()
+data = res.read()
+
+print(data.decode("utf-8"))
+```
+
+```java
+HttpResponse<String> response = Unirest.get("https://api.organizacao.com.br/open-insurance/products-services/v1/intermediary/string")
+  .header("Accept", "application/json")
+  .header("cache-control", "string")
+  .header("Content-Security-Policy", "string")
+  .header("content-Type", "string")
+  .header("Strict-Transport-Security", "string")
+  .header("X-Content-Type-Options", "string")
+  .header("X-Frame-Options", "string")
+  .asString();
+```
+
+`GET /intermediary/{countrySubDivision}`
+
+Obtem a lista dos produtos do tipo Intermediarios
+
+<h3 id="obtem-a-lista-dos-produtos-do-tipo-intermediarios-parameters">Parameters</h3>
+
+|Name|In|Type|Required|Description|
+|---|---|---|---|---|
+|cache-control|header|string|true|Controle de cache para evitar que informações confidenciais sejam armazenadas em cache.|
+|Content-Security-Policy|header|string|false|Campo para proteção contra ataques clickjack do estilo - drag and drop.|
+|content-Type|header|string|false|Especificar o tipo de conteúdo da resposta.|
+|Strict-Transport-Security|header|string|false|Campo para exigir conexões por HTTPS e proteger contra certificados falsificados.|
+|X-Content-Type-Options|header|string|false|Campo para evitar que navegadores executem a detecção de MIME e interpretem respostas como HTML de forma inadequada.|
+|X-Frame-Options|header|string|false|Campo indica se o navegador deve ou não renderizar um frame.|
+|page|query|integer|false|Número da página que está sendo requisitada (o valor da primeira página é 1).|
+|page-size|query|integer|false|Quantidade total de registros por páginas.|
+|countrySubDivision|path|string|true|Enumeração referente a cada sigla da unidade da federação que identifica o estado ou o distrito federal, no qual o endereço está localizado|
+|serviceLine|query|string|false|Enumeração referente a cada sigla da unidade da federação que identifica o estado ou o distrito federal, no qual o endereço está localizado|
+
+> Example responses
+
+> 200 Response
+
+```json
+{
+  "data": {
+    "brand": {
+      "name": "ACME Group Seguros",
+      "companies": [
+        {
+          "name": "ACME Seguros",
+          "cnpjNumber": "12345678901234",
+          "identification": [
+            {
+              "name": "Intermediário C",
+              "nameOther": "Intermediário D",
+              "documentNumber": 12341234123412,
+              "type": "CORRETOR_DE_SEGUROS",
+              "SUSEP": 15414622222222222,
+              "postalAddress": [
+                {
+                  "address": "'Rua Diamantina, 59, bloco 35' Praça da Boa Vontade, s/n",
+                  "additionalInfo": "Loja B",
+                  "districtName": "Paraíso",
+                  "townName": "São Paulo",
+                  "ibgeCode": "string",
+                  "countrySubDivision": "AC",
+                  "postCode": 1310200,
+                  "country": "ANDORRA",
+                  "countryCode": "BRA",
+                  "geographicCoordinates": {
+                    "latitude": -89.836518,
+                    "longitude": -179.836519
+                  }
+                }
+              ],
+              "access": {
+                "standards": [
+                  {
+                    "openingTime": "10:00:57Z",
+                    "closingTime": "16:00:57Z",
+                    "weekday": "DOMINGO"
+                  }
+                ],
+                "email": "Joao.silva@seguradoraa.com.br",
+                "site": "https://openinsurance.com.br/aaa",
+                "phones": [
+                  {
+                    "type": "FIXO",
+                    "countryCallingCode": 55,
+                    "areaCode": 11,
+                    "number": 30041000
+                  }
+                ]
+              },
+              "services": [
+                {
+                  "name": "ACONSELHAMENTO_SOBRE_PRODUTOS_OFERTADOS",
+                  "nameOthers": "string",
+                  "line": [
+                    "CAPITALIZACAO"
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "links": {
+    "self": "https://api.organizacao.com.br/open-insurance/products-services/v1",
+    "first": "https://api.organizacao.com.br/open-insurance/products-services/v1",
+    "prev": "https://api.organizacao.com.br/open-insurance/products-services/v1",
+    "next": "https://api.organizacao.com.br/open-insurance/products-services/v1",
+    "last": "https://api.organizacao.com.br/open-insurance/products-services/v1"
+  },
+  "meta": {
+    "totalRecords": 10,
+    "totalPages": 1
+  }
+}
+```
+
+<h3 id="obtem-a-lista-dos-produtos-do-tipo-intermediarios-responses">Responses</h3>
+
+|Status|Meaning|Description|Schema|
+|---|---|---|---|
+|200|[OK](https://tools.ietf.org/html/rfc7231#section-6.3.1)|Dados dos produtos de Intermediarios|[ResponseIntermediaryList](#schemaresponseintermediarylist)|
+|204|[No Content](https://tools.ietf.org/html/rfc7231#section-6.3.5)|O recurso solicitado não existe ou não foi localizado.|[ResponseError](#schemaresponseerror)|
+|400|[Bad Request](https://tools.ietf.org/html/rfc7231#section-6.5.1)|A requisição foi malformada, omitindo atributos obrigatórios, seja no payload ou através de atributos na URL.|[ResponseError](#schemaresponseerror)|
+|401|[Unauthorized](https://tools.ietf.org/html/rfc7235#section-3.1)|Cabeçalho de autenticação ausente/inválido ou token inválido|[ResponseError](#schemaresponseerror)|
+|403|[Forbidden](https://tools.ietf.org/html/rfc7231#section-6.5.3)|O token tem escopo incorreto ou uma política de segurança foi violada|[ResponseError](#schemaresponseerror)|
+|404|[Not Found](https://tools.ietf.org/html/rfc7231#section-6.5.4)|O recurso solicitado não existe ou não foi implementado|[ResponseError](#schemaresponseerror)|
+|405|[Method Not Allowed](https://tools.ietf.org/html/rfc7231#section-6.5.5)|O consumidor tentou acessar o recurso com um método não suportado|[ResponseError](#schemaresponseerror)|
+|406|[Not Acceptable](https://tools.ietf.org/html/rfc7231#section-6.5.6)|A solicitação continha um cabeçalho Accept diferente dos tipos de mídia permitidos ou um conjunto de caracteres diferente de UTF-8|[ResponseError](#schemaresponseerror)|
+|429|[Too Many Requests](https://tools.ietf.org/html/rfc6585#section-4)|A operação foi recusada, pois muitas solicitações foram feitas dentro de um determinado período ou o limite global de requisições concorrentes foi atingido|[ResponseError](#schemaresponseerror)|
+|500|[Internal Server Error](https://tools.ietf.org/html/rfc7231#section-6.6.1)|Ocorreu um erro no gateway da API ou no microsserviço|[ResponseError](#schemaresponseerror)|
+|default|Default|Dados dos produtos de API de informações de dados do produto Intermediarios. Os recursos que podem ser consumidos pelos participantes conforme a regra 3.1.2 do manual de escopo de dados.|[ResponseIntermediaryList](#schemaresponseintermediarylist)|
+
+<aside class="success">
+This operation does not require authentication
+</aside>
+
+## OthersScopes
+
+### Obtem a lista dos produtos do tipo Demais Escopos
+
+<a id="opIdgetOthersScopes"></a>
+
+<a href="files/swagger/others-scopes.yaml" download="others-scopes.yaml">Especificação em OAS</a> <br>
+<a href="files/docs/others-scopes.docx" download="others-scopes.docx">Detalhamento Técnico</a> <br>
+
+> Code samples
+
+```javascript
+const data = null;
+
+const xhr = new XMLHttpRequest();
+xhr.withCredentials = true;
+
+xhr.addEventListener("readystatechange", function () {
+  if (this.readyState === this.DONE) {
+    console.log(this.responseText);
+  }
+});
+
+xhr.open("GET", "https://api.organizacao.com.br/open-insurance/products-services/v1/others-scopes/");
+xhr.setRequestHeader("Accept", "application/json");
+xhr.setRequestHeader("cache-control", "string");
+xhr.setRequestHeader("Content-Security-Policy", "string");
+xhr.setRequestHeader("content-Type", "string");
+xhr.setRequestHeader("Strict-Transport-Security", "string");
+xhr.setRequestHeader("X-Content-Type-Options", "string");
+xhr.setRequestHeader("X-Frame-Options", "string");
+
+xhr.send(data);
+```
+
+```python
+import http.client
+
+conn = http.client.HTTPSConnection("api.organizacao.com.br")
+
+headers = {
+    'Accept': "application/json",
+    'cache-control': "string",
+    'Content-Security-Policy': "string",
+    'content-Type': "string",
+    'Strict-Transport-Security': "string",
+    'X-Content-Type-Options': "string",
+    'X-Frame-Options': "string"
+    }
+
+conn.request("GET", "/open-insurance/products-services/v1/others-scopes/", headers=headers)
+
+res = conn.getresponse()
+data = res.read()
+
+print(data.decode("utf-8"))
+```
+
+```java
+HttpResponse<String> response = Unirest.get("https://api.organizacao.com.br/open-insurance/products-services/v1/others-scopes/")
+  .header("Accept", "application/json")
+  .header("cache-control", "string")
+  .header("Content-Security-Policy", "string")
+  .header("content-Type", "string")
+  .header("Strict-Transport-Security", "string")
+  .header("X-Content-Type-Options", "string")
+  .header("X-Frame-Options", "string")
+  .asString();
+```
+
+`GET /others-scopes/`
+
+Obtem a lista dos produtos do tipo Demais Escopos - Petróleo, Nucleares, Marítimo e Aeronáutico.
+
+<h3 id="obtem-a-lista-dos-produtos-do-tipo-demais-escopos-parameters">Parameters</h3>
+
+|Name|In|Type|Required|Description|
+|---|---|---|---|---|
+|cache-control|header|string|true|Controle de cache para evitar que informações confidenciais sejam armazenadas em cache.|
+|Content-Security-Policy|header|string|false|Campo para proteção contra ataques clickjack do estilo - drag and drop.|
+|content-Type|header|string|false|Especificar o tipo de conteúdo da resposta.|
+|Strict-Transport-Security|header|string|false|Campo para exigir conexões por HTTPS e proteger contra certificados falsificados.|
+|X-Content-Type-Options|header|string|false|Campo para evitar que navegadores executem a detecção de MIME e interpretem respostas como HTML de forma inadequada.|
+|X-Frame-Options|header|string|false|Campo indica se o navegador deve ou não renderizar um frame.|
+|page|query|integer|false|Número da página que está sendo requisitada (o valor da primeira página é 1).|
+|page-size|query|integer|false|Quantidade total de registros por páginas.|
+
+> Example responses
+
+> 200 Response
+
+```json
+{
+  "data": {
+    "brand": {
+      "name": "ACME Group Seguros",
+      "companies": [
+        {
+          "name": "ABCDE Seguros",
+          "cnpjNumber": "12345678901234",
+          "products": [
+            {
+              "name": "Produto de Seguro",
+              "code": "01234589-0",
+              "coverages": [
+                {
+                  "coverage": "CASCO",
+                  "coverageDescription": "string",
+                  "allowApartPurchase": true,
+                  "coverageAttributes": {
+                    "maxLMI": {}
+                  }
+                }
+              ],
+              "traits": false,
+              "termsAndConditions": {
+                "susepProcessNumber": 15414622222222222,
+                "definition": "https://www.seguradora.com.br/produto/tradicional/pdf/condicoes_gerais.pdf"
+              },
+              "validity": {
+                "term": [
+                  "ANUAL"
+                ],
+                "termOthers": "string"
+              },
+              "premiumRates": [
+                "string"
+              ],
+              "minimumRequirements": {
+                "targetAudiences": [
+                  "PESSOA_FISICA"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "links": {
+    "self": "https://api.organizacao.com.br/open-insurance/products-services/v1",
+    "first": "https://api.organizacao.com.br/open-insurance/products-services/v1",
+    "prev": "https://api.organizacao.com.br/open-insurance/products-services/v1",
+    "next": "https://api.organizacao.com.br/open-insurance/products-services/v1",
+    "last": "https://api.organizacao.com.br/open-insurance/products-services/v1"
+  },
+  "meta": {
+    "totalRecords": 10,
+    "totalPages": 1
+  }
+}
+```
+
+<h3 id="obtem-a-lista-dos-produtos-do-tipo-demais-escopos-responses">Responses</h3>
+
+|Status|Meaning|Description|Schema|
+|---|---|---|---|
+|200|[OK](https://tools.ietf.org/html/rfc7231#section-6.3.1)|Dados dos produtos de Demais Escopos|[ResponseOthersScopesList](#schemaresponseothersscopeslist)|
+|204|[No Content](https://tools.ietf.org/html/rfc7231#section-6.3.5)|O recurso solicitado não existe ou não foi localizado.|[ResponseError](#schemaresponseerror)|
+|400|[Bad Request](https://tools.ietf.org/html/rfc7231#section-6.5.1)|A requisição foi malformada, omitindo atributos obrigatórios, seja no payload ou através de atributos na URL.|[ResponseError](#schemaresponseerror)|
+|401|[Unauthorized](https://tools.ietf.org/html/rfc7235#section-3.1)|Cabeçalho de autenticação ausente/inválido ou token inválido|[ResponseError](#schemaresponseerror)|
+|403|[Forbidden](https://tools.ietf.org/html/rfc7231#section-6.5.3)|O token tem escopo incorreto ou uma política de segurança foi violada|[ResponseError](#schemaresponseerror)|
+|404|[Not Found](https://tools.ietf.org/html/rfc7231#section-6.5.4)|O recurso solicitado não existe ou não foi implementado|[ResponseError](#schemaresponseerror)|
+|405|[Method Not Allowed](https://tools.ietf.org/html/rfc7231#section-6.5.5)|O consumidor tentou acessar o recurso com um método não suportado|[ResponseError](#schemaresponseerror)|
+|406|[Not Acceptable](https://tools.ietf.org/html/rfc7231#section-6.5.6)|A solicitação continha um cabeçalho Accept diferente dos tipos de mídia permitidos ou um conjunto de caracteres diferente de UTF-8|[ResponseError](#schemaresponseerror)|
+|429|[Too Many Requests](https://tools.ietf.org/html/rfc6585#section-4)|A operação foi recusada, pois muitas solicitações foram feitas dentro de um determinado período ou o limite global de requisições concorrentes foi atingido|[ResponseError](#schemaresponseerror)|
+|500|[Internal Server Error](https://tools.ietf.org/html/rfc7231#section-6.6.1)|Ocorreu um erro no gateway da API ou no microsserviço|[ResponseError](#schemaresponseerror)|
+|default|Default|Dados dos produtos de API de informações de dados do produto Demais Escopos. Os recursos que podem ser consumidos pelos participantes conforme a regra 3.1.2 do manual de escopo de dados.|[ResponseOthersScopesList](#schemaresponseothersscopeslist)|
+
+<aside class="success">
+This operation does not require authentication
+</aside>
+
+## ReferencedNetwork
+
+### Obtem a lista dos produtos do tipo Rede Referenciada
+
+<a id="opIdgetReferencedNetwork"></a>
+
+<a href="files/swagger/referenced-network.yaml" download="referenced-network.yaml">Especificação em OAS</a> <br>
+<a href="files/docs/referenced-network.docx" download="referenced-network.docx">Detalhamento Técnico</a> <br>
+
+> Code samples
+
+```javascript
+const data = null;
+
+const xhr = new XMLHttpRequest();
+xhr.withCredentials = true;
+
+xhr.addEventListener("readystatechange", function () {
+  if (this.readyState === this.DONE) {
+    console.log(this.responseText);
+  }
+});
+
+xhr.open("GET", "https://api.organizacao.com.br/open-insurance/products-services/v1/referenced-network/string/string");
+xhr.setRequestHeader("Accept", "application/json");
+xhr.setRequestHeader("cache-control", "string");
+xhr.setRequestHeader("Content-Security-Policy", "string");
+xhr.setRequestHeader("content-Type", "string");
+xhr.setRequestHeader("Strict-Transport-Security", "string");
+xhr.setRequestHeader("X-Content-Type-Options", "string");
+xhr.setRequestHeader("X-Frame-Options", "string");
+
+xhr.send(data);
+```
+
+```python
+import http.client
+
+conn = http.client.HTTPSConnection("api.organizacao.com.br")
+
+headers = {
+    'Accept': "application/json",
+    'cache-control': "string",
+    'Content-Security-Policy': "string",
+    'content-Type': "string",
+    'Strict-Transport-Security': "string",
+    'X-Content-Type-Options': "string",
+    'X-Frame-Options': "string"
+    }
+
+conn.request("GET", "/open-insurance/products-services/v1/referenced-network/string/string", headers=headers)
+
+res = conn.getresponse()
+data = res.read()
+
+print(data.decode("utf-8"))
+```
+
+```java
+HttpResponse<String> response = Unirest.get("https://api.organizacao.com.br/open-insurance/products-services/v1/referenced-network/string/string")
+  .header("Accept", "application/json")
+  .header("cache-control", "string")
+  .header("Content-Security-Policy", "string")
+  .header("content-Type", "string")
+  .header("Strict-Transport-Security", "string")
+  .header("X-Content-Type-Options", "string")
+  .header("X-Frame-Options", "string")
+  .asString();
+```
+
+`GET /referenced-network/{countrySubDivision}/{serviceType}`
+
+Obtem a lista dos produtos do tipo Rede Referenciada
+
+<h3 id="obtem-a-lista-dos-produtos-do-tipo-rede-referenciada-parameters">Parameters</h3>
+
+|Name|In|Type|Required|Description|
+|---|---|---|---|---|
+|cache-control|header|string|true|Controle de cache para evitar que informações confidenciais sejam armazenadas em cache.|
+|Content-Security-Policy|header|string|false|Campo para proteção contra ataques clickjack do estilo - drag and drop.|
+|content-Type|header|string|false|Especificar o tipo de conteúdo da resposta.|
+|Strict-Transport-Security|header|string|false|Campo para exigir conexões por HTTPS e proteger contra certificados falsificados.|
+|X-Content-Type-Options|header|string|false|Campo para evitar que navegadores executem a detecção de MIME e interpretem respostas como HTML de forma inadequada.|
+|X-Frame-Options|header|string|false|Campo indica se o navegador deve ou não renderizar um frame.|
+|page|query|integer|false|Número da página que está sendo requisitada (o valor da primeira página é 1).|
+|page-size|query|integer|false|Quantidade total de registros por páginas.|
+|countrySubDivision|path|string|true|Enumeração referente a cada sigla da unidade da federação que identifica o estado ou o distrito federal, no qual o endereço está localizado|
+|serviceType|path|string|true|Listagem de tipos que deve ser padronizada na proposta técnica submetida pela Estrutura Inicial de Governança para observância comum por todas as sociedades participantes|
+
+> Example responses
+
+> 200 Response
+
+```json
+{
+  "data": {
+    "brand": {
+      "name": "ACME Group Seguros",
+      "companies": [
+        {
+          "name": "ACME Seguros",
+          "cnpjNumber": "12345678901234",
+          "identification": [
+            {
+              "name": "Empresa B",
+              "cnpjNumber": 12341234123412,
+              "products": [
+                {
+                  "code": "01234589-0",
+                  "name": "Produto de Seguro",
+                  "coverage": [
+                    "string"
+                  ]
+                }
+              ],
+              "postalAddress": [
+                {
+                  "address": "'Rua Diamantina, 59, bloco 35' Praça da Boa Vontade, s/n",
+                  "additionalInfo": "Loja B",
+                  "districtName": "Paraíso",
+                  "townName": "São Paulo",
+                  "ibgeCode": "string",
+                  "countrySubDivision": "AC",
+                  "postCode": 1310200,
+                  "country": "ANDORRA",
+                  "countryCode": "BRA",
+                  "geographicCoordinates": {
+                    "latitude": -89.836518,
+                    "longitude": -179.836519
+                  }
+                }
+              ],
+              "access": [
+                {
+                  "standards": [
+                    {}
+                  ],
+                  "restrictionIndicator": false,
+                  "phones": [
+                    {}
+                  ]
+                }
+              ],
+              "services": [
+                {
+                  "type": "ASSISTENCIA_AUTO",
+                  "typeOthers": "string",
+                  "name": [
+                    "ACIONAMENTO_E_OU_AGENDAMENTO_DE_LEVA_E_TRAZ"
+                  ],
+                  "description": "string"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "links": {
+    "self": "https://api.organizacao.com.br/open-insurance/products-services/v1",
+    "first": "https://api.organizacao.com.br/open-insurance/products-services/v1",
+    "prev": "https://api.organizacao.com.br/open-insurance/products-services/v1",
+    "next": "https://api.organizacao.com.br/open-insurance/products-services/v1",
+    "last": "https://api.organizacao.com.br/open-insurance/products-services/v1"
+  },
+  "meta": {
+    "totalRecords": 10,
+    "totalPages": 1
+  }
+}
+```
+
+<h3 id="obtem-a-lista-dos-produtos-do-tipo-rede-referenciada-responses">Responses</h3>
+
+|Status|Meaning|Description|Schema|
+|---|---|---|---|
+|200|[OK](https://tools.ietf.org/html/rfc7231#section-6.3.1)|Dados dos produtos de Rede Referenciada|[ResponseReferencedNetworkList](#schemaresponsereferencednetworklist)|
+|204|[No Content](https://tools.ietf.org/html/rfc7231#section-6.3.5)|O recurso solicitado não existe ou não foi localizado.|[ResponseError](#schemaresponseerror)|
+|400|[Bad Request](https://tools.ietf.org/html/rfc7231#section-6.5.1)|A requisição foi malformada, omitindo atributos obrigatórios, seja no payload ou através de atributos na URL.|[ResponseError](#schemaresponseerror)|
+|401|[Unauthorized](https://tools.ietf.org/html/rfc7235#section-3.1)|Cabeçalho de autenticação ausente/inválido ou token inválido|[ResponseError](#schemaresponseerror)|
+|403|[Forbidden](https://tools.ietf.org/html/rfc7231#section-6.5.3)|O token tem escopo incorreto ou uma política de segurança foi violada|[ResponseError](#schemaresponseerror)|
+|404|[Not Found](https://tools.ietf.org/html/rfc7231#section-6.5.4)|O recurso solicitado não existe ou não foi implementado|[ResponseError](#schemaresponseerror)|
+|405|[Method Not Allowed](https://tools.ietf.org/html/rfc7231#section-6.5.5)|O consumidor tentou acessar o recurso com um método não suportado|[ResponseError](#schemaresponseerror)|
+|406|[Not Acceptable](https://tools.ietf.org/html/rfc7231#section-6.5.6)|A solicitação continha um cabeçalho Accept diferente dos tipos de mídia permitidos ou um conjunto de caracteres diferente de UTF-8|[ResponseError](#schemaresponseerror)|
+|429|[Too Many Requests](https://tools.ietf.org/html/rfc6585#section-4)|A operação foi recusada, pois muitas solicitações foram feitas dentro de um determinado período ou o limite global de requisições concorrentes foi atingido|[ResponseError](#schemaresponseerror)|
+|500|[Internal Server Error](https://tools.ietf.org/html/rfc7231#section-6.6.1)|Ocorreu um erro no gateway da API ou no microsserviço|[ResponseError](#schemaresponseerror)|
+|default|Default|Dados dos produtos de API de informações de dados do produto Rede Referenciada. Os recursos que podem ser consumidos pelos participantes conforme a regra 3.1.2 do manual de escopo de dados.|[ResponseReferencedNetworkList](#schemaresponsereferencednetworklist)|
+
+<aside class="success">
+This operation does not require authentication
+</aside>
+
+## Rural
+
+### Obtem a lista dos produtos do tipo Rural
+
+<a id="opIdgetRural"></a>
+
+<a href="files/swagger/rural.yaml" download="rural.yaml">Especificação em OAS</a> <br>
+<a href="files/docs/rural.docx" download="rural.docx">Detalhamento Técnico</a> <br>
+
+> Code samples
+
+```javascript
+const data = null;
+
+const xhr = new XMLHttpRequest();
+xhr.withCredentials = true;
+
+xhr.addEventListener("readystatechange", function () {
+  if (this.readyState === this.DONE) {
+    console.log(this.responseText);
+  }
+});
+
+xhr.open("GET", "https://api.organizacao.com.br/open-insurance/products-services/v1/rural/");
+xhr.setRequestHeader("Accept", "application/json");
+xhr.setRequestHeader("cache-control", "string");
+xhr.setRequestHeader("Content-Security-Policy", "string");
+xhr.setRequestHeader("content-Type", "string");
+xhr.setRequestHeader("Strict-Transport-Security", "string");
+xhr.setRequestHeader("X-Content-Type-Options", "string");
+xhr.setRequestHeader("X-Frame-Options", "string");
+
+xhr.send(data);
+```
+
+```python
+import http.client
+
+conn = http.client.HTTPSConnection("api.organizacao.com.br")
+
+headers = {
+    'Accept': "application/json",
+    'cache-control': "string",
+    'Content-Security-Policy': "string",
+    'content-Type': "string",
+    'Strict-Transport-Security': "string",
+    'X-Content-Type-Options': "string",
+    'X-Frame-Options': "string"
+    }
+
+conn.request("GET", "/open-insurance/products-services/v1/rural/", headers=headers)
+
+res = conn.getresponse()
+data = res.read()
+
+print(data.decode("utf-8"))
+```
+
+```java
+HttpResponse<String> response = Unirest.get("https://api.organizacao.com.br/open-insurance/products-services/v1/rural/")
+  .header("Accept", "application/json")
+  .header("cache-control", "string")
+  .header("Content-Security-Policy", "string")
+  .header("content-Type", "string")
+  .header("Strict-Transport-Security", "string")
+  .header("X-Content-Type-Options", "string")
+  .header("X-Frame-Options", "string")
+  .asString();
+```
+
+`GET /rural/`
+
+Obtem a lista dos produtos do tipo Rural - Seguro Agrícola com cobertura do FESR, Seguro Agrícola sem cobertura do FESR, Seguro Florestas sem cobertura do FESR, Seguro Pecuário com cobertura do FESR, Seguro Pecuário sem cobertura do FESR, Seguros Animais, Penhor Rural e Seguro Benfeitorias, Produtos Agropecuários, Penhor Rural, Seguro Benfeitorias, Produtos Agropecuários e Seguro de Vida do Produtor Rural.
+
+<h3 id="obtem-a-lista-dos-produtos-do-tipo-rural-parameters">Parameters</h3>
+
+|Name|In|Type|Required|Description|
+|---|---|---|---|---|
+|cache-control|header|string|true|Controle de cache para evitar que informações confidenciais sejam armazenadas em cache.|
+|Content-Security-Policy|header|string|false|Campo para proteção contra ataques clickjack do estilo - drag and drop.|
+|content-Type|header|string|false|Especificar o tipo de conteúdo da resposta.|
+|Strict-Transport-Security|header|string|false|Campo para exigir conexões por HTTPS e proteger contra certificados falsificados.|
+|X-Content-Type-Options|header|string|false|Campo para evitar que navegadores executem a detecção de MIME e interpretem respostas como HTML de forma inadequada.|
+|X-Frame-Options|header|string|false|Campo indica se o navegador deve ou não renderizar um frame.|
+|page|query|integer|false|Número da página que está sendo requisitada (o valor da primeira página é 1).|
+|page-size|query|integer|false|Quantidade total de registros por páginas.|
+
+> Example responses
+
+> 200 Response
+
+```json
+{
+  "data": {
+    "brand": {
+      "name": "EMPRESA A seguros",
+      "companies": [
+        {
+          "name": "ACME Seguros",
+          "cnpjNumber": "12345678901234",
+          "products": [
+            {
+              "name": "Produto de Seguro",
+              "code": "01234589-0",
+              "modality": "AGRICOLA",
+              "coverages": [
+                {
+                  "coverage": "GRANIZO",
+                  "coverageDescription": "string",
+                  "allowApartPurchase": true,
+                  "coverageAttributes": {
+                    "insuredParticipation": [],
+                    "insuredParticipationDescription": "string"
+                  }
+                }
+              ],
+              "maxLMG": {
+                "amount": 0,
+                "unit": {
+                  "code": "R$",
+                  "description": "REAL"
+                }
+              },
+              "traits": false,
+              "crops": [
+                "FRUTAS"
+              ],
+              "cropsOthers": "string",
+              "forestCode": [
+                "PINUS"
+              ],
+              "forestCodeOthers": "string",
+              "flockCode": [
+                "BOVINOS"
+              ],
+              "flockCodeOthers": "string",
+              "animalDestination": [
+                "PRODUCAO"
+              ],
+              "animalsClassification": [
+                "ELITE"
+              ],
+              "subvention": true,
+              "termsAndConditions": {
+                "susepProcessNumber": "15414.622222/2222-22",
+                "definition": "https://www.seguradora.com.br/produto/tradicional/pdf/condicoes_gerais.pdf"
+              },
+              "validity": {
+                "term": [
+                  "ANUAL"
+                ],
+                "termOthers": "string"
+              },
+              "premiumPayment": [
+                {
+                  "paymentMethod": "CARTAO_DE_CREDITO",
+                  "paymentDetail": "string",
+                  "paymentType": [
+                    "A_VISTA"
+                  ],
+                  "premiumRates": "string"
+                }
+              ],
+              "minimumRequirements": {
+                "contractType": "COLETIVO",
+                "minimumRequirementDetails": "https://openinsurance.com.br/aaa",
+                "targetAudiences": [
+                  "PESSOA_FISICA"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "links": {
+    "self": "https://api.organizacao.com.br/open-insurance/products-services/v1",
+    "first": "https://api.organizacao.com.br/open-insurance/products-services/v1",
+    "prev": "https://api.organizacao.com.br/open-insurance/products-services/v1",
+    "next": "https://api.organizacao.com.br/open-insurance/products-services/v1",
+    "last": "https://api.organizacao.com.br/open-insurance/products-services/v1"
+  },
+  "meta": {
+    "totalRecords": 10,
+    "totalPages": 1
+  }
+}
+```
+
+<h3 id="obtem-a-lista-dos-produtos-do-tipo-rural-responses">Responses</h3>
+
+|Status|Meaning|Description|Schema|
+|---|---|---|---|
+|200|[OK](https://tools.ietf.org/html/rfc7231#section-6.3.1)|Dados dos produtos de Rural - Seguro Agrícola com cobertura do FESR, Seguro Agrícola sem cobertura do FESR, Seguro Florestas sem cobertura do FESR, Seguro Pecuário com cobertura do FESR, Seguro Pecuário sem cobertura do FESR e Seguros Animais|[ResponseRuralList](#schemaresponserurallist)|
+|204|[No Content](https://tools.ietf.org/html/rfc7231#section-6.3.5)|O recurso solicitado não existe ou não foi localizado.|[ResponseError](#schemaresponseerror)|
+|400|[Bad Request](https://tools.ietf.org/html/rfc7231#section-6.5.1)|A requisição foi malformada, omitindo atributos obrigatórios, seja no payload ou através de atributos na URL.|[ResponseError](#schemaresponseerror)|
+|401|[Unauthorized](https://tools.ietf.org/html/rfc7235#section-3.1)|Cabeçalho de autenticação ausente/inválido ou token inválido|[ResponseError](#schemaresponseerror)|
+|403|[Forbidden](https://tools.ietf.org/html/rfc7231#section-6.5.3)|O token tem escopo incorreto ou uma política de segurança foi violada|[ResponseError](#schemaresponseerror)|
+|404|[Not Found](https://tools.ietf.org/html/rfc7231#section-6.5.4)|O recurso solicitado não existe ou não foi implementado|[ResponseError](#schemaresponseerror)|
+|405|[Method Not Allowed](https://tools.ietf.org/html/rfc7231#section-6.5.5)|O consumidor tentou acessar o recurso com um método não suportado|[ResponseError](#schemaresponseerror)|
+|406|[Not Acceptable](https://tools.ietf.org/html/rfc7231#section-6.5.6)|A solicitação continha um cabeçalho Accept diferente dos tipos de mídia permitidos ou um conjunto de caracteres diferente de UTF-8|[ResponseError](#schemaresponseerror)|
+|429|[Too Many Requests](https://tools.ietf.org/html/rfc6585#section-4)|A operação foi recusada, pois muitas solicitações foram feitas dentro de um determinado período ou o limite global de requisições concorrentes foi atingido|[ResponseError](#schemaresponseerror)|
+|500|[Internal Server Error](https://tools.ietf.org/html/rfc7231#section-6.6.1)|Ocorreu um erro no gateway da API ou no microsserviço|[ResponseError](#schemaresponseerror)|
+|default|Default|Dados dos produtos de API de informações de dados do produto Rural. Os recursos que podem ser consumidos pelos participantes conforme a regra 3.1.2 do manual de escopo de dados. - Seguro Agrícola com cobertura do FESR, Seguro Agrícola sem cobertura do FESR, Seguro Florestas sem cobertura do FESR, Seguro Pecuário com cobertura do FESR, Seguro Pecuário sem cobertura do FESR e Seguros Animais|[ResponseRuralList](#schemaresponserurallist)|
+
+<aside class="success">
+This operation does not require authentication
+</aside>
+
+## Transport
+
+### Obtem a lista dos produtos do tipo Transport
+
+<a id="opIdgetTransport"></a>
+
+<a href="files/swagger/transport.yaml" download="transport.yaml">Especificação em OAS</a> <br>
+<a href="files/docs/transport.docx" download="transport.docx">Detalhamento Técnico</a> <br>
+
+
+> Code samples
+
+```javascript
+const data = null;
+
+const xhr = new XMLHttpRequest();
+xhr.withCredentials = true;
+
+xhr.addEventListener("readystatechange", function () {
+  if (this.readyState === this.DONE) {
+    console.log(this.responseText);
+  }
+});
+
+xhr.open("GET", "https://api.organizacao.com.br/open-insurance/products-services/v1/transport/");
+xhr.setRequestHeader("Accept", "application/json");
+xhr.setRequestHeader("cache-control", "string");
+xhr.setRequestHeader("Content-Security-Policy", "string");
+xhr.setRequestHeader("content-Type", "string");
+xhr.setRequestHeader("Strict-Transport-Security", "string");
+xhr.setRequestHeader("X-Content-Type-Options", "string");
+xhr.setRequestHeader("X-Frame-Options", "string");
+
+xhr.send(data);
+```
+
+```python
+import http.client
+
+conn = http.client.HTTPSConnection("api.organizacao.com.br")
+
+headers = {
+    'Accept': "application/json",
+    'cache-control': "string",
+    'Content-Security-Policy': "string",
+    'content-Type': "string",
+    'Strict-Transport-Security': "string",
+    'X-Content-Type-Options': "string",
+    'X-Frame-Options': "string"
+    }
+
+conn.request("GET", "/open-insurance/products-services/v1/transport/", headers=headers)
+
+res = conn.getresponse()
+data = res.read()
+
+print(data.decode("utf-8"))
+```
+
+```java
+HttpResponse<String> response = Unirest.get("https://api.organizacao.com.br/open-insurance/products-services/v1/transport/")
+  .header("Accept", "application/json")
+  .header("cache-control", "string")
+  .header("Content-Security-Policy", "string")
+  .header("content-Type", "string")
+  .header("Strict-Transport-Security", "string")
+  .header("X-Content-Type-Options", "string")
+  .header("X-Frame-Options", "string")
+  .asString();
+```
+
+`GET /transport/`
+
+Obtem a lista dos produtos do tipo Transport - RCA-C, RCF-DC, RCOTM-C, RCTA-C, RCTF-C, RCTR-C, RCTR-VI-C, Carta Azul, Transporte Internacional, Nacional e Ônibus
+
+<h3 id="obtem-a-lista-dos-produtos-do-tipo-transport-parameters">Parameters</h3>
+
+|Name|In|Type|Required|Description|
+|---|---|---|---|---|
+|cache-control|header|string|true|Controle de cache para evitar que informações confidenciais sejam armazenadas em cache.|
+|Content-Security-Policy|header|string|false|Campo para proteção contra ataques clickjack do estilo - drag and drop.|
+|content-Type|header|string|false|Especificar o tipo de conteúdo da resposta.|
+|Strict-Transport-Security|header|string|false|Campo para exigir conexões por HTTPS e proteger contra certificados falsificados.|
+|X-Content-Type-Options|header|string|false|Campo para evitar que navegadores executem a detecção de MIME e interpretem respostas como HTML de forma inadequada.|
+|X-Frame-Options|header|string|false|Campo indica se o navegador deve ou não renderizar um frame.|
+|page|query|integer|false|Número da página que está sendo requisitada (o valor da primeira página é 1).|
+|page-size|query|integer|false|Quantidade total de registros por páginas.|
+
+> Example responses
+
+> 200 Response
+
+```json
+{
+  "data": {
+    "brand": {
+      "name": "EMPRESA A seguros",
+      "companies": [
+        {
+          "name": "ACME Seguros",
+          "cnpjNumber": "12345678901234",
+          "products": [
+            {
+              "name": "Produto de Seguro",
+              "code": "01234589-0",
+              "coverages": [
+                {
+                  "coverage": "ACIDENTES_PESSOAIS_COM_PASSAGEIROS",
+                  "coverageDescription": "string",
+                  "allowApartPurchase": true,
+                  "coverageAttributes": {
+                    "insuredParticipation": [],
+                    "insuredParticipationDescription": "string"
+                  }
+                }
+              ],
+              "maxLMG": {
+                "amount": 0,
+                "unit": {
+                  "code": "R$",
+                  "description": "REAL"
+                }
+              },
+              "assistanceServices": [
+                {
+                  "assistanceServices": true,
+                  "assistanceServicesPackage": [
+                    "ATE_10_SERVICOS"
+                  ],
+                  "complementaryAssistanceServicesDetail": "reboque pane seca",
+                  "chargeTypeSignaling": "GRATUITO"
+                }
+              ],
+              "traits": false,
+              "validity": {
+                "term": [
+                  "ANUAL"
+                ],
+                "termOthers": "string"
+              },
+              "premiumRates": "string",
+              "policyType": [
+                "AVULSA"
+              ],
+              "termsAndConditions": {
+                "susepProcessNumber": "15414.622222/2222-22",
+                "definition": "https://www.seguradora.com.br/produto/tradicional/pdf/condicoes_gerais.pdf"
+              },
+              "minimumRequirements": {
+                "minimumRequirementDetails": "string",
+                "targetAudiences": [
+                  [
+                    "PESSOA_FISICA"
+                  ]
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "links": {
+    "self": "https://api.organizacao.com.br/open-insurance/products-services/v1",
+    "first": "https://api.organizacao.com.br/open-insurance/products-services/v1",
+    "prev": "https://api.organizacao.com.br/open-insurance/products-services/v1",
+    "next": "https://api.organizacao.com.br/open-insurance/products-services/v1",
+    "last": "https://api.organizacao.com.br/open-insurance/products-services/v1"
+  },
+  "meta": {
+    "totalRecords": 10,
+    "totalPages": 1
+  }
+}
+```
+
+<h3 id="obtem-a-lista-dos-produtos-do-tipo-transport-responses">Responses</h3>
+
+|Status|Meaning|Description|Schema|
+|---|---|---|---|
+|200|[OK](https://tools.ietf.org/html/rfc7231#section-6.3.1)|Dados dos produtos de Transport - RCA-C, RCF-DC, RCOTM-C, RCTA-C, RCTF-C, RCTR-C, RCTR-VI-C, Carta Azul, Transporte Internacional, Nacional e Ônibus|[ResponseTransportList](#schemaresponsetransportlist)|
+|204|[No Content](https://tools.ietf.org/html/rfc7231#section-6.3.5)|O recurso solicitado não existe ou não foi localizado.|[ResponseError](#schemaresponseerror)|
+|400|[Bad Request](https://tools.ietf.org/html/rfc7231#section-6.5.1)|A requisição foi malformada, omitindo atributos obrigatórios, seja no payload ou através de atributos na URL.|[ResponseError](#schemaresponseerror)|
+|401|[Unauthorized](https://tools.ietf.org/html/rfc7235#section-3.1)|Cabeçalho de autenticação ausente/inválido ou token inválido|[ResponseError](#schemaresponseerror)|
+|403|[Forbidden](https://tools.ietf.org/html/rfc7231#section-6.5.3)|O token tem escopo incorreto ou uma política de segurança foi violada|[ResponseError](#schemaresponseerror)|
+|404|[Not Found](https://tools.ietf.org/html/rfc7231#section-6.5.4)|O recurso solicitado não existe ou não foi implementado|[ResponseError](#schemaresponseerror)|
+|405|[Method Not Allowed](https://tools.ietf.org/html/rfc7231#section-6.5.5)|O consumidor tentou acessar o recurso com um método não suportado|[ResponseError](#schemaresponseerror)|
+|406|[Not Acceptable](https://tools.ietf.org/html/rfc7231#section-6.5.6)|A solicitação continha um cabeçalho Accept diferente dos tipos de mídia permitidos ou um conjunto de caracteres diferente de UTF-8|[ResponseError](#schemaresponseerror)|
+|429|[Too Many Requests](https://tools.ietf.org/html/rfc6585#section-4)|A operação foi recusada, pois muitas solicitações foram feitas dentro de um determinado período ou o limite global de requisições concorrentes foi atingido|[ResponseError](#schemaresponseerror)|
+|500|[Internal Server Error](https://tools.ietf.org/html/rfc7231#section-6.6.1)|Ocorreu um erro no gateway da API ou no microsserviço|[ResponseError](#schemaresponseerror)|
+|default|Default|Dados dos produtos de API de informações de dados do produto Transportes. Os recursos que podem ser consumidos pelos participantes conforme a regra 3.1.2 do manual de escopo de dados. - RCA-C, RCF-DC, RCOTM-C, RCTA-C, RCTF-C, RCTR-C, RCTR-VI-C, Carta Azul, Transporte Internacional, Nacional e Ônibus|[ResponseTransportList](#schemaresponsetransportlist)|
+
+<aside class="success">
+This operation does not require authentication
+</aside>
+
 <h1 id="schema_products_services">Schemas</h1>
 
 <h2 id="tocS_ResponseLifePensionList">ResponseLifePensionList</h2>
@@ -26625,6 +27762,4417 @@ Informações de cobertura do Seguro.
 |---|---|---|---|---|
 |code|string|true|none|none|
 |description|string|true|none|none|
+
+<h2 id="tocS_Links">Links</h2>
+<!-- backwards compatibility -->
+<a id="schemalinks"></a>
+<a id="schema_Links"></a>
+<a id="tocSlinks"></a>
+<a id="tocslinks"></a>
+
+```json
+{
+  "self": "https://api.organizacao.com.br/open-insurance/products-services/v1",
+  "first": "https://api.organizacao.com.br/open-insurance/products-services/v1",
+  "prev": "https://api.organizacao.com.br/open-insurance/products-services/v1",
+  "next": "https://api.organizacao.com.br/open-insurance/products-services/v1",
+  "last": "https://api.organizacao.com.br/open-insurance/products-services/v1"
+}
+
+```
+
+### Properties
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|self|string|false|none|URL da página atualmente requisitada|
+|first|string|false|none|URL da primeira página de registros|
+|prev|string|false|none|URL da página anterior de registros|
+|next|string|false|none|URL da próxima página de registros|
+|last|string|false|none|URL da última página de registros|
+
+<h2 id="tocS_Meta">Meta</h2>
+<!-- backwards compatibility -->
+<a id="schemameta"></a>
+<a id="schema_Meta"></a>
+<a id="tocSmeta"></a>
+<a id="tocsmeta"></a>
+
+```json
+{
+  "totalRecords": 10,
+  "totalPages": 1
+}
+
+```
+
+### Properties
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|totalRecords|integer|true|none|Total de registros encontrados|
+|totalPages|integer|true|none|Total de páginas para os registros encontrados|
+
+<h2 id="tocS_ResponseError">ResponseError</h2>
+<!-- backwards compatibility -->
+<a id="schemaresponseerror"></a>
+<a id="schema_ResponseError"></a>
+<a id="tocSresponseerror"></a>
+<a id="tocsresponseerror"></a>
+
+```json
+{
+  "errors": [
+    {
+      "code": "string",
+      "title": "string",
+      "detail": "string",
+      "requestDateTime": "2021-08-20T08:30:00Z"
+    }
+  ],
+  "meta": {
+    "totalRecords": 10,
+    "totalPages": 1
+  }
+}
+
+```
+
+### Properties
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|errors|[object]|true|none|none|
+|» code|string|true|none|Código de erro específico do endpoint|
+|» title|string|true|none|Título legível por humanos deste erro específico|
+|» detail|string|true|none|Descrição legível por humanos deste erro específico|
+|» requestDateTime|string(date-time)|false|none|Data e hora da consulta, conforme especificação RFC-3339, formato UTC.|
+|meta|[Meta](#schemameta)|false|none|none|
+
+<h2 id="tocS_ResponseHousingList">ResponseHousingList</h2>
+<!-- backwards compatibility -->
+<a id="schemaresponsehousinglist"></a>
+<a id="schema_ResponseHousingList"></a>
+<a id="tocSresponsehousinglist"></a>
+<a id="tocsresponsehousinglist"></a>
+
+```json
+{
+  "data": {
+    "brand": {
+      "name": "ACME Group Seguros",
+      "companies": [
+        {
+          "name": "Empresa da Organização A",
+          "cnpjNumber": "12345678901234",
+          "products": [
+            {
+              "name": "Produto de Seguro",
+              "code": "01234589-0",
+              "coverages": [
+                {
+                  "coverage": "DANOS_ELETRICOS",
+                  "coverageDescription": "string",
+                  "allowApartPurchase": true,
+                  "coverageAttributes": {
+                    "maxLMI": {},
+                    "insuredParticipation": [],
+                    "insuredParticipationDescription": "string"
+                  }
+                }
+              ],
+              "additional": [
+                "SORTEIO_GRATUITO"
+              ],
+              "additionalOthers": "string",
+              "premiumRates": "string",
+              "termsAndConditions": {
+                "susepProcessNumber": 15414622222222222,
+                "definition": "https://www.seguradora.com.br/produto/tradicional/pdf/condicoes_gerais.pdf"
+              },
+              "minimumRequirements": {
+                "minimumRequirementDetails": "string",
+                "targetAudiences": [
+                  "PESSOA_FISICA"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "links": {
+    "self": "https://api.organizacao.com.br/open-insurance/products-services/v1",
+    "first": "https://api.organizacao.com.br/open-insurance/products-services/v1",
+    "prev": "https://api.organizacao.com.br/open-insurance/products-services/v1",
+    "next": "https://api.organizacao.com.br/open-insurance/products-services/v1",
+    "last": "https://api.organizacao.com.br/open-insurance/products-services/v1"
+  },
+  "meta": {
+    "totalRecords": 10,
+    "totalPages": 1
+  }
+}
+
+```
+
+### Properties
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|data|object|true|none|none|
+|» brand|[HousingBrand](#schemahousingbrand)|true|none|Organizacao controladora do grupo.|
+|links|[Links](#schemalinks)|true|none|none|
+|meta|[Meta](#schemameta)|true|none|none|
+
+<h2 id="tocS_HousingBrand">HousingBrand</h2>
+<!-- backwards compatibility -->
+<a id="schemahousingbrand"></a>
+<a id="schema_HousingBrand"></a>
+<a id="tocShousingbrand"></a>
+<a id="tocshousingbrand"></a>
+
+```json
+{
+  "name": "ACME Group Seguros",
+  "companies": [
+    {
+      "name": "Empresa da Organização A",
+      "cnpjNumber": "12345678901234",
+      "products": [
+        {
+          "name": "Produto de Seguro",
+          "code": "01234589-0",
+          "coverages": [
+            {
+              "coverage": "DANOS_ELETRICOS",
+              "coverageDescription": "string",
+              "allowApartPurchase": true,
+              "coverageAttributes": {
+                "maxLMI": {
+                  "amount": 0,
+                  "unit": {
+                    "code": "R$",
+                    "description": "REAL"
+                  }
+                },
+                "insuredParticipation": [
+                  "FRANQUIA"
+                ],
+                "insuredParticipationDescription": "string"
+              }
+            }
+          ],
+          "additional": [
+            "SORTEIO_GRATUITO"
+          ],
+          "additionalOthers": "string",
+          "premiumRates": "string",
+          "termsAndConditions": {
+            "susepProcessNumber": 15414622222222222,
+            "definition": "https://www.seguradora.com.br/produto/tradicional/pdf/condicoes_gerais.pdf"
+          },
+          "minimumRequirements": {
+            "minimumRequirementDetails": "string",
+            "targetAudiences": [
+              "PESSOA_FISICA"
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}
+
+```
+
+Organizacao controladora do grupo.
+
+### Properties
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|name|string|true|none|Nome da Marca reportada pelo participante do Open Insurance. O conceito a que se refere a 'marca' é em essência uma promessa da empresa em fornecer uma série específica de atributos, benefícios e serviços uniformes aos clientes|
+|companies|[HousingCompany](#schemahousingcompany)|true|none|none|
+
+<h2 id="tocS_HousingCompany">HousingCompany</h2>
+<!-- backwards compatibility -->
+<a id="schemahousingcompany"></a>
+<a id="schema_HousingCompany"></a>
+<a id="tocShousingcompany"></a>
+<a id="tocshousingcompany"></a>
+
+```json
+[
+  {
+    "name": "Empresa da Organização A",
+    "cnpjNumber": "12345678901234",
+    "products": [
+      {
+        "name": "Produto de Seguro",
+        "code": "01234589-0",
+        "coverages": [
+          {
+            "coverage": "DANOS_ELETRICOS",
+            "coverageDescription": "string",
+            "allowApartPurchase": true,
+            "coverageAttributes": {
+              "maxLMI": {
+                "amount": 0,
+                "unit": {
+                  "code": "R$",
+                  "description": "REAL"
+                }
+              },
+              "insuredParticipation": [
+                "FRANQUIA"
+              ],
+              "insuredParticipationDescription": "string"
+            }
+          }
+        ],
+        "additional": [
+          "SORTEIO_GRATUITO"
+        ],
+        "additionalOthers": "string",
+        "premiumRates": "string",
+        "termsAndConditions": {
+          "susepProcessNumber": 15414622222222222,
+          "definition": "https://www.seguradora.com.br/produto/tradicional/pdf/condicoes_gerais.pdf"
+        },
+        "minimumRequirements": {
+          "minimumRequirementDetails": "string",
+          "targetAudiences": [
+            "PESSOA_FISICA"
+          ]
+        }
+      }
+    ]
+  }
+]
+
+```
+
+### Properties
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|name|string|true|none|Nome da Instituição, pertencente à Marca.|
+|cnpjNumber|string|true|none|CNPJ da sociedade pertencente à marca.|
+|products|[HousingProduct](#schemahousingproduct)|true|none|Lista de produtos de uma empresa.|
+
+<h2 id="tocS_HousingProduct">HousingProduct</h2>
+<!-- backwards compatibility -->
+<a id="schemahousingproduct"></a>
+<a id="schema_HousingProduct"></a>
+<a id="tocShousingproduct"></a>
+<a id="tocshousingproduct"></a>
+
+```json
+[
+  {
+    "name": "Produto de Seguro",
+    "code": "01234589-0",
+    "coverages": [
+      {
+        "coverage": "DANOS_ELETRICOS",
+        "coverageDescription": "string",
+        "allowApartPurchase": true,
+        "coverageAttributes": {
+          "maxLMI": {
+            "amount": 0,
+            "unit": {
+              "code": "R$",
+              "description": "REAL"
+            }
+          },
+          "insuredParticipation": [
+            "FRANQUIA"
+          ],
+          "insuredParticipationDescription": "string"
+        }
+      }
+    ],
+    "additional": [
+      "SORTEIO_GRATUITO"
+    ],
+    "additionalOthers": "string",
+    "premiumRates": "string",
+    "termsAndConditions": {
+      "susepProcessNumber": 15414622222222222,
+      "definition": "https://www.seguradora.com.br/produto/tradicional/pdf/condicoes_gerais.pdf"
+    },
+    "minimumRequirements": {
+      "minimumRequirementDetails": "string",
+      "targetAudiences": [
+        "PESSOA_FISICA"
+      ]
+    }
+  }
+]
+
+```
+
+Lista de produtos de uma empresa.
+
+### Properties
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|name|string|true|none|Nome comercial do produto, pelo qual é identificado nos canais de distribuição e atendimento da sociedade.|
+|code|string|true|none|Código único a ser definido pela sociedade.|
+|coverages|[object]|true|none|none|
+|» coverage|string|true|none|Listagem de coberturas incluídas no produto que deve observar a relação discriminada de coberturas|
+|» coverageDescription|string|true|none|Campo aberto para detalhamento de cada uma das coberturas possíveis dos produtos a ser feito por cada participante|
+|» allowApartPurchase|boolean|true|none|Permissão para Contratação Separada|
+|» coverageAttributes|[HousingCoverageAttributes](#schemahousingcoverageattributes)|true|none|Informações de cobertura do Seguro.|
+|additional|[string]|true|none|none|
+|additionalOthers|string|false|none|Campo livre para descrição por cada participante ao selecionar o domínio “Outros” no campo Prazo (acima) OBS: Condicional a seleção de 5. Outros no campo acima|
+|premiumRates|string|true|none|Distribuição de frequência relativa aos valores referentes às taxas cobradas.|
+|termsAndConditions|[HousingTerms](#schemahousingterms)|true|none|Informações dos termos e condições conforme número do processo SUSEP.|
+|minimumRequirements|[HousingMinimumRequirements](#schemahousingminimumrequirements)|true|none|Requisitos mínimos.|
+
+#### Enumerated Values
+
+|Property|Value|
+|---|---|
+|coverage|DANOS_ELETRICOS|
+|coverage|DANOS_FISICOS_AO_CONTEUDO|
+|coverage|DANOS_FISICOS_AO_IMOVEL|
+|coverage|MORTE_OU_INVALIDEZ_TOTAL_PERMANENTE|
+|coverage|PAGAMENTO_DE_ALUGUEL|
+|coverage|RESPONSABILIDADE_CIVIL_DO_CONSTRUTOR_RCC|
+|coverage|ROUBO_E_FURTO_AO_CONTEUDO|
+|coverage|OUTRAS|
+
+<h2 id="tocS_HousingCoverageAttributes">HousingCoverageAttributes</h2>
+<!-- backwards compatibility -->
+<a id="schemahousingcoverageattributes"></a>
+<a id="schema_HousingCoverageAttributes"></a>
+<a id="tocShousingcoverageattributes"></a>
+<a id="tocshousingcoverageattributes"></a>
+
+```json
+{
+  "maxLMI": {
+    "amount": 0,
+    "unit": {
+      "code": "R$",
+      "description": "REAL"
+    }
+  },
+  "insuredParticipation": [
+    "FRANQUIA"
+  ],
+  "insuredParticipationDescription": "string"
+}
+
+```
+
+Informações de cobertura do Seguro.
+
+### Properties
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|maxLMI|[HousingCoverageAttributesDetails](#schemahousingcoverageattributesdetails)|true|none|Lista com valor máximo de LMI aceito pela sociedade para cada cobertura.|
+|insuredParticipation|[string]|true|none|Lista com indicativo do tipo de participação do segurado para cada|
+|insuredParticipationDescription|string|true|none|Lista com descrição referente ao campo “Participação do Segurado” para cada cobertura.|
+
+<h2 id="tocS_HousingCoverageAttributesDetails">HousingCoverageAttributesDetails</h2>
+<!-- backwards compatibility -->
+<a id="schemahousingcoverageattributesdetails"></a>
+<a id="schema_HousingCoverageAttributesDetails"></a>
+<a id="tocShousingcoverageattributesdetails"></a>
+<a id="tocshousingcoverageattributesdetails"></a>
+
+```json
+{
+  "amount": 0,
+  "unit": {
+    "code": "R$",
+    "description": "REAL"
+  }
+}
+
+```
+
+### Properties
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|amount|number|true|none|none|
+|unit|[HousingCoverageAttributesDetailsUnit](#schemahousingcoverageattributesdetailsunit)|true|none|none|
+
+<h2 id="tocS_HousingCoverageAttributesDetailsUnit">HousingCoverageAttributesDetailsUnit</h2>
+<!-- backwards compatibility -->
+<a id="schemahousingcoverageattributesdetailsunit"></a>
+<a id="schema_HousingCoverageAttributesDetailsUnit"></a>
+<a id="tocShousingcoverageattributesdetailsunit"></a>
+<a id="tocshousingcoverageattributesdetailsunit"></a>
+
+```json
+{
+  "code": "R$",
+  "description": "REAL"
+}
+
+```
+
+### Properties
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|code|string|true|none|none|
+|description|string|true|none|none|
+
+<h2 id="tocS_HousingTerms">HousingTerms</h2>
+<!-- backwards compatibility -->
+<a id="schemahousingterms"></a>
+<a id="schema_HousingTerms"></a>
+<a id="tocShousingterms"></a>
+<a id="tocshousingterms"></a>
+
+```json
+{
+  "susepProcessNumber": 15414622222222222,
+  "definition": "https://www.seguradora.com.br/produto/tradicional/pdf/condicoes_gerais.pdf"
+}
+
+```
+
+Informações dos termos e condições conforme número do processo SUSEP.
+
+### Properties
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|susepProcessNumber|string|true|none|Número do processo SUSEP.|
+|definition|string|true|none|Campo aberto (possibilidade de incluir uma url).|
+
+<h2 id="tocS_HousingMinimumRequirements">HousingMinimumRequirements</h2>
+<!-- backwards compatibility -->
+<a id="schemahousingminimumrequirements"></a>
+<a id="schema_HousingMinimumRequirements"></a>
+<a id="tocShousingminimumrequirements"></a>
+<a id="tocshousingminimumrequirements"></a>
+
+```json
+{
+  "minimumRequirementDetails": "string",
+  "targetAudiences": [
+    "PESSOA_FISICA"
+  ]
+}
+
+```
+
+Requisitos mínimos.
+
+### Properties
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|minimumRequirementDetails|string|true|none|Campo aberto contendo todos os requisitos mínimos para contratação (possibilidade de incluir URL).|
+|targetAudiences|[string]|true|none|none|
+
+<h2 id="tocS_Links">Links</h2>
+<!-- backwards compatibility -->
+<a id="schemalinks"></a>
+<a id="schema_Links"></a>
+<a id="tocSlinks"></a>
+<a id="tocslinks"></a>
+
+```json
+{
+  "self": "https://api.organizacao.com.br/open-insurance/products-services/v1",
+  "first": "https://api.organizacao.com.br/open-insurance/products-services/v1",
+  "prev": "https://api.organizacao.com.br/open-insurance/products-services/v1",
+  "next": "https://api.organizacao.com.br/open-insurance/products-services/v1",
+  "last": "https://api.organizacao.com.br/open-insurance/products-services/v1"
+}
+
+```
+
+### Properties
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|self|string|false|none|URL da página atualmente requisitada|
+|first|string|false|none|URL da primeira página de registros|
+|prev|string|false|none|URL da página anterior de registros|
+|next|string|false|none|URL da próxima página de registros|
+|last|string|false|none|URL da última página de registros|
+
+<h2 id="tocS_Meta">Meta</h2>
+<!-- backwards compatibility -->
+<a id="schemameta"></a>
+<a id="schema_Meta"></a>
+<a id="tocSmeta"></a>
+<a id="tocsmeta"></a>
+
+```json
+{
+  "totalRecords": 10,
+  "totalPages": 1
+}
+
+```
+
+### Properties
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|totalRecords|integer|true|none|Total de registros encontrados|
+|totalPages|integer|true|none|Total de páginas para os registros encontrados|
+
+<h2 id="tocS_ResponseError">ResponseError</h2>
+<!-- backwards compatibility -->
+<a id="schemaresponseerror"></a>
+<a id="schema_ResponseError"></a>
+<a id="tocSresponseerror"></a>
+<a id="tocsresponseerror"></a>
+
+```json
+{
+  "errors": [
+    {
+      "code": "string",
+      "title": "string",
+      "detail": "string",
+      "requestDateTime": "2021-08-20T08:30:00Z"
+    }
+  ],
+  "meta": {
+    "totalRecords": 10,
+    "totalPages": 1
+  }
+}
+
+```
+
+### Properties
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|errors|[object]|true|none|none|
+|» code|string|true|none|Código de erro específico do endpoint|
+|» title|string|true|none|Título legível por humanos deste erro específico|
+|» detail|string|true|none|Descrição legível por humanos deste erro específico|
+|» requestDateTime|string(date-time)|false|none|Data e hora da consulta, conforme especificação RFC-3339, formato UTC.|
+|meta|[Meta](#schemameta)|false|none|none|
+
+<h2 id="tocS_ResponseIntermediaryList">ResponseIntermediaryList</h2>
+<!-- backwards compatibility -->
+<a id="schemaresponseintermediarylist"></a>
+<a id="schema_ResponseIntermediaryList"></a>
+<a id="tocSresponseintermediarylist"></a>
+<a id="tocsresponseintermediarylist"></a>
+
+```json
+{
+  "data": {
+    "brand": {
+      "name": "ACME Group Seguros",
+      "companies": [
+        {
+          "name": "ACME Seguros",
+          "cnpjNumber": "12345678901234",
+          "identification": [
+            {
+              "name": "Intermediário C",
+              "nameOther": "Intermediário D",
+              "documentNumber": 12341234123412,
+              "type": "CORRETOR_DE_SEGUROS",
+              "SUSEP": 15414622222222222,
+              "postalAddress": [
+                {
+                  "address": "'Rua Diamantina, 59, bloco 35' Praça da Boa Vontade, s/n",
+                  "additionalInfo": "Loja B",
+                  "districtName": "Paraíso",
+                  "townName": "São Paulo",
+                  "ibgeCode": "string",
+                  "countrySubDivision": "AC",
+                  "postCode": 1310200,
+                  "country": "ANDORRA",
+                  "countryCode": "BRA",
+                  "geographicCoordinates": {
+                    "latitude": -89.836518,
+                    "longitude": -179.836519
+                  }
+                }
+              ],
+              "access": {
+                "standards": [
+                  {
+                    "openingTime": "10:00:57Z",
+                    "closingTime": "16:00:57Z",
+                    "weekday": "DOMINGO"
+                  }
+                ],
+                "email": "Joao.silva@seguradoraa.com.br",
+                "site": "https://openinsurance.com.br/aaa",
+                "phones": [
+                  {
+                    "type": "FIXO",
+                    "countryCallingCode": 55,
+                    "areaCode": 11,
+                    "number": 30041000
+                  }
+                ]
+              },
+              "services": [
+                {
+                  "name": "ACONSELHAMENTO_SOBRE_PRODUTOS_OFERTADOS",
+                  "nameOthers": "string",
+                  "line": [
+                    "CAPITALIZACAO"
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "links": {
+    "self": "https://api.organizacao.com.br/open-insurance/products-services/v1",
+    "first": "https://api.organizacao.com.br/open-insurance/products-services/v1",
+    "prev": "https://api.organizacao.com.br/open-insurance/products-services/v1",
+    "next": "https://api.organizacao.com.br/open-insurance/products-services/v1",
+    "last": "https://api.organizacao.com.br/open-insurance/products-services/v1"
+  },
+  "meta": {
+    "totalRecords": 10,
+    "totalPages": 1
+  }
+}
+
+```
+
+### Properties
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|data|object|true|none|none|
+|» brand|[IntermediaryBrand](#schemaintermediarybrand)|true|none|Organizacao controladora do grupo.|
+|links|[Links](#schemalinks)|true|none|none|
+|meta|[Meta](#schemameta)|true|none|none|
+
+<h2 id="tocS_IntermediaryBrand">IntermediaryBrand</h2>
+<!-- backwards compatibility -->
+<a id="schemaintermediarybrand"></a>
+<a id="schema_IntermediaryBrand"></a>
+<a id="tocSintermediarybrand"></a>
+<a id="tocsintermediarybrand"></a>
+
+```json
+{
+  "name": "ACME Group Seguros",
+  "companies": [
+    {
+      "name": "ACME Seguros",
+      "cnpjNumber": "12345678901234",
+      "identification": [
+        {
+          "name": "Intermediário C",
+          "nameOther": "Intermediário D",
+          "documentNumber": 12341234123412,
+          "type": "CORRETOR_DE_SEGUROS",
+          "SUSEP": 15414622222222222,
+          "postalAddress": [
+            {
+              "address": "'Rua Diamantina, 59, bloco 35' Praça da Boa Vontade, s/n",
+              "additionalInfo": "Loja B",
+              "districtName": "Paraíso",
+              "townName": "São Paulo",
+              "ibgeCode": "string",
+              "countrySubDivision": "AC",
+              "postCode": 1310200,
+              "country": "ANDORRA",
+              "countryCode": "BRA",
+              "geographicCoordinates": {
+                "latitude": -89.836518,
+                "longitude": -179.836519
+              }
+            }
+          ],
+          "access": {
+            "standards": [
+              {
+                "openingTime": "10:00:57Z",
+                "closingTime": "16:00:57Z",
+                "weekday": "DOMINGO"
+              }
+            ],
+            "email": "Joao.silva@seguradoraa.com.br",
+            "site": "https://openinsurance.com.br/aaa",
+            "phones": [
+              {
+                "type": "FIXO",
+                "countryCallingCode": 55,
+                "areaCode": 11,
+                "number": 30041000
+              }
+            ]
+          },
+          "services": [
+            {
+              "name": "ACONSELHAMENTO_SOBRE_PRODUTOS_OFERTADOS",
+              "nameOthers": "string",
+              "line": [
+                "CAPITALIZACAO"
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
+
+```
+
+Organizacao controladora do grupo.
+
+### Properties
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|name|string|true|none|Nome da Marca reportada pelo participante do Open Insurance. O conceito a que se refere a 'marca' é em essência uma promessa da empresa em fornecer uma série específica de atributos, benefícios e serviços uniformes aos clientes|
+|companies|[IntermediaryCompany](#schemaintermediarycompany)|true|none|none|
+
+<h2 id="tocS_IntermediaryCompany">IntermediaryCompany</h2>
+<!-- backwards compatibility -->
+<a id="schemaintermediarycompany"></a>
+<a id="schema_IntermediaryCompany"></a>
+<a id="tocSintermediarycompany"></a>
+<a id="tocsintermediarycompany"></a>
+
+```json
+[
+  {
+    "name": "ACME Seguros",
+    "cnpjNumber": "12345678901234",
+    "identification": [
+      {
+        "name": "Intermediário C",
+        "nameOther": "Intermediário D",
+        "documentNumber": 12341234123412,
+        "type": "CORRETOR_DE_SEGUROS",
+        "SUSEP": 15414622222222222,
+        "postalAddress": [
+          {
+            "address": "'Rua Diamantina, 59, bloco 35' Praça da Boa Vontade, s/n",
+            "additionalInfo": "Loja B",
+            "districtName": "Paraíso",
+            "townName": "São Paulo",
+            "ibgeCode": "string",
+            "countrySubDivision": "AC",
+            "postCode": 1310200,
+            "country": "ANDORRA",
+            "countryCode": "BRA",
+            "geographicCoordinates": {
+              "latitude": -89.836518,
+              "longitude": -179.836519
+            }
+          }
+        ],
+        "access": {
+          "standards": [
+            {
+              "openingTime": "10:00:57Z",
+              "closingTime": "16:00:57Z",
+              "weekday": "DOMINGO"
+            }
+          ],
+          "email": "Joao.silva@seguradoraa.com.br",
+          "site": "https://openinsurance.com.br/aaa",
+          "phones": [
+            {
+              "type": "FIXO",
+              "countryCallingCode": 55,
+              "areaCode": 11,
+              "number": 30041000
+            }
+          ]
+        },
+        "services": [
+          {
+            "name": "ACONSELHAMENTO_SOBRE_PRODUTOS_OFERTADOS",
+            "nameOthers": "string",
+            "line": [
+              "CAPITALIZACAO"
+            ]
+          }
+        ]
+      }
+    ]
+  }
+]
+
+```
+
+### Properties
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|name|string|true|none|Nome da sociedade supervisionada participante|
+|cnpjNumber|string|true|none|CNPJ da sociedade supervisionada participante|
+|identification|[IntermediaryIdentification](#schemaintermediaryidentification)|true|none|none|
+
+<h2 id="tocS_IntermediaryIdentification">IntermediaryIdentification</h2>
+<!-- backwards compatibility -->
+<a id="schemaintermediaryidentification"></a>
+<a id="schema_IntermediaryIdentification"></a>
+<a id="tocSintermediaryidentification"></a>
+<a id="tocsintermediaryidentification"></a>
+
+```json
+[
+  {
+    "name": "Intermediário C",
+    "nameOther": "Intermediário D",
+    "documentNumber": 12341234123412,
+    "type": "CORRETOR_DE_SEGUROS",
+    "SUSEP": 15414622222222222,
+    "postalAddress": [
+      {
+        "address": "'Rua Diamantina, 59, bloco 35' Praça da Boa Vontade, s/n",
+        "additionalInfo": "Loja B",
+        "districtName": "Paraíso",
+        "townName": "São Paulo",
+        "ibgeCode": "string",
+        "countrySubDivision": "AC",
+        "postCode": 1310200,
+        "country": "ANDORRA",
+        "countryCode": "BRA",
+        "geographicCoordinates": {
+          "latitude": -89.836518,
+          "longitude": -179.836519
+        }
+      }
+    ],
+    "access": {
+      "standards": [
+        {
+          "openingTime": "10:00:57Z",
+          "closingTime": "16:00:57Z",
+          "weekday": "DOMINGO"
+        }
+      ],
+      "email": "Joao.silva@seguradoraa.com.br",
+      "site": "https://openinsurance.com.br/aaa",
+      "phones": [
+        {
+          "type": "FIXO",
+          "countryCallingCode": 55,
+          "areaCode": 11,
+          "number": 30041000
+        }
+      ]
+    },
+    "services": [
+      {
+        "name": "ACONSELHAMENTO_SOBRE_PRODUTOS_OFERTADOS",
+        "nameOthers": "string",
+        "line": [
+          "CAPITALIZACAO"
+        ]
+      }
+    ]
+  }
+]
+
+```
+
+### Properties
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|name|string|true|none|Nome ou razão social (pessoa jurídica) do intermediário|
+|nameOther|string|false|none|No caso da Pessoa jurídica|
+|documentNumber|string|false|none|CPF ou CNPJ do intermediário OBS: Opcional para pessoa natural|
+|type|string|true|none|Relação de tipos de intermediário|
+|SUSEP|string|false|none|Número de Registro SUSEP no caso de intermediário ser Corretor de Seguros. OBS: Condicional a seleção de 1. Corretor de seguros no campo acima|
+|postalAddress|[IntermediaryCoveragePostalAddress](#schemaintermediarycoveragepostaladdress)|true|none|none|
+|access|[IntermediaryAccess](#schemaintermediaryaccess)|false|none|Forma de acesso.|
+|services|[IntermediaryServices](#schemaintermediaryservices)|true|none|none|
+
+#### Enumerated Values
+
+|Property|Value|
+|---|---|
+|type|CORRETOR_DE_SEGUROS|
+|type|REPRESENTANTE_DE_SEGUROS|
+|type|AGENTES_DE_SEGUROS|
+|type|DISTRIBUIDOR_DE_TITULO_DE_CAPITALIZACAO|
+
+<h2 id="tocS_IntermediaryCoveragePostalAddress">IntermediaryCoveragePostalAddress</h2>
+<!-- backwards compatibility -->
+<a id="schemaintermediarycoveragepostaladdress"></a>
+<a id="schema_IntermediaryCoveragePostalAddress"></a>
+<a id="tocSintermediarycoveragepostaladdress"></a>
+<a id="tocsintermediarycoveragepostaladdress"></a>
+
+```json
+[
+  {
+    "address": "'Rua Diamantina, 59, bloco 35' Praça da Boa Vontade, s/n",
+    "additionalInfo": "Loja B",
+    "districtName": "Paraíso",
+    "townName": "São Paulo",
+    "ibgeCode": "string",
+    "countrySubDivision": "AC",
+    "postCode": 1310200,
+    "country": "ANDORRA",
+    "countryCode": "BRA",
+    "geographicCoordinates": {
+      "latitude": -89.836518,
+      "longitude": -179.836519
+    }
+  }
+]
+
+```
+
+### Properties
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|address|string|true|none|Deverá trazer toda a informação referente ao endereço do intermediário: Tipo de logradouro + Nome do logradouro + Número do Logradouro (se não existir usar ' s/n') + complemento (se houver)|
+|additionalInfo|string|false|none|Alguns logradouros ainda necessitam ser especificados por meio de complemento, conforme o exemplo a seguir: 'Loja B', 'Fundos', 'Casa 2', 'Lote C'|
+|districtName|string|false|none|Bairro é uma comunidade ou região localizada em uma cidade ou município de acordo com as suas subdivisões geográficas|
+|townName|string|true|none|Localidade: O nome da localidade corresponde à designação da cidade ou município no qual o endereço está localizado|
+|ibgeCode|string|true|none|7 dígitos (o último é um código verificador).|
+|countrySubDivision|string|true|none|Enumeração referente a cada sigla da unidade da federação que identifica o estado ou o distrito federal, no qual o endereço está localizado. p.ex. 'AC'. São consideradas apenas as siglas para os estados brasileiros:|
+|postCode|string|true|none|Código de Endereçamento Postal: Composto por um conjunto numérico de oito dígitos, o objetivo principal do CEP é orientar e acelerar o encaminhamento, o tratamento e a entrega de objetos postados nos Correios, por meio da sua atribuição a localidades, logradouros, unidades dos Correios, serviços, órgãos públicos, empresas e edifícios|
+|country|string|false|none|Lista de países vide aba 'Lista de países'|
+|countryCode|string|false|none|Código do país de acordo com o código “alpha3” do ISO-3166. p.ex.'BRA'|
+|geographicCoordinates|[IntermediaryGeographicCoordinates](#schemaintermediarygeographiccoordinates)|false|none|none|
+
+#### Enumerated Values
+
+|Property|Value|
+|---|---|
+|countrySubDivision|AC|
+|countrySubDivision|AL|
+|countrySubDivision|AP|
+|countrySubDivision|AM|
+|countrySubDivision|BA|
+|countrySubDivision|CE|
+|countrySubDivision|DF|
+|countrySubDivision|ES|
+|countrySubDivision|GO|
+|countrySubDivision|MA|
+|countrySubDivision|MT|
+|countrySubDivision|MS|
+|countrySubDivision|MG|
+|countrySubDivision|PA|
+|countrySubDivision|PB|
+|countrySubDivision|PR|
+|countrySubDivision|PE|
+|countrySubDivision|PI|
+|countrySubDivision|RJ|
+|countrySubDivision|RN|
+|countrySubDivision|RS|
+|countrySubDivision|RO|
+|countrySubDivision|RR|
+|countrySubDivision|SC|
+|countrySubDivision|SP|
+|countrySubDivision|SE|
+|countrySubDivision|TO|
+|country|ANDORRA|
+|country|EMIRADOS_ARABES_UNIDOS|
+|country|AFEGANISTAO|
+|country|ANTIGUA_E_BARBUDA|
+|country|ANGUILLA|
+|country|ALBANIA|
+|country|ARMENIA|
+|country|ANTILHAS_HOLANDESAS|
+|country|ANGOLA|
+|country|ANTARTIDA|
+|country|ARGENTINA|
+|country|SAMOA_AMERICANA|
+|country|AUSTRIA|
+|country|AUSTRALIA|
+|country|ARUBA|
+|country|ILHAS_ALAND|
+|country|AZERBAIJAO|
+|country|BOSNIA_HERZEGOVINA|
+|country|BARBADOS|
+|country|BANGLADESH|
+|country|BELGICA|
+|country|BURKINA_FASSO|
+|country|BULGARIA|
+|country|BAHREIN|
+|country|BURUNDI|
+|country|BENIN|
+|country|SAO_BARTOLOMEU|
+|country|BERMUDAS|
+|country|BRUNEI|
+|country|BOLIVIA|
+|country|BONAIRE_SINT_EUSTATIUS_E_SABA|
+|country|BRASIL|
+|country|BAHAMAS|
+|country|BUTAO|
+|country|ILHA_BOUVET_TERRITORIO_DA_NORUEGA|
+|country|BOTSUANA|
+|country|BELARUS|
+|country|BELIZE|
+|country|CANADA|
+|country|ILHAS_COCOS|
+|country|REPUBLICA_DEMOCRATICA_DO_CONGO_EX_ZAIRE|
+|country|REPUBLICA_CENTRO_AFRICANA|
+|country|CONGO|
+|country|SUICA|
+|country|COSTA_DO_MARFIM|
+|country|ILHAS_COOK|
+|country|CHILE|
+|country|CAMAROES|
+|country|CHINA|
+|country|COLOMBIA|
+|country|COSTA_RICA|
+|country|CUBA|
+|country|CABO_VERDE|
+|country|CURACAO|
+|country|ILHA_NATAL|
+|country|CHIPRE|
+|country|REPUBLICA_TCHECA|
+|country|ALEMANHA|
+|country|DJIBUTI|
+|country|DINAMARCA|
+|country|DOMINICA|
+|country|REPUBLICA_DOMINICANA|
+|country|ARGELIA|
+|country|EQUADOR|
+|country|ESTONIA|
+|country|EGITO|
+|country|SAARA_OCIDENTAL_EX_SPANISH_SAHARA|
+|country|ERITREIA|
+|country|ESPANHA|
+|country|ETIOPIA|
+|country|FINLANDIA|
+|country|FIJI|
+|country|ILHAS_FALKLAND_MALVINAS|
+|country|MICRONESIA|
+|country|ILHAS_FAROES|
+|country|FRANCA|
+|country|GABAO|
+|country|GRA_BRETANHA_REINO_UNIDO_UK|
+|country|GRANADA|
+|country|GEORGIA|
+|country|GUIANA_FRANCESA|
+|country|GUERNSEY|
+|country|GANA|
+|country|GIBRALTAR|
+|country|GROELANDIA|
+|country|GAMBIA|
+|country|GUINE|
+|country|GUADALUPE|
+|country|GUINE_EQUATORIAL|
+|country|GRECIA|
+|country|ILHAS_GEORGIA_DO_SUL_E_SANDWICH_DO_SUL|
+|country|GUATEMALA|
+|country|GUAM_TERRITORIO_DOS_ESTADOS_UNIDOS|
+|country|GUINE_BISSAU|
+|country|GUIANA|
+|country|HONG_KONG|
+|country|ILHAS_HEARD_E_MCDONALD_TERRITORIO_DA_AUSTRALIA|
+|country|HONDURAS|
+|country|CROACIA_HRVATSKA|
+|country|HAITI|
+|country|HUNGRIA|
+|country|INDONESIA|
+|country|IRLANDA|
+|country|ISRAEL|
+|country|ILHA_DO_HOMEM|
+|country|INDIA|
+|country|TERRITORIO_BRITANICO_DO_OCEANO_INDICO|
+|country|IRAQUE|
+|country|IRA|
+|country|ISLANDIA|
+|country|ITALIA|
+|country|JERSEY|
+|country|JAMAICA|
+|country|JORDANIA|
+|country|JAPAO|
+|country|KENIA|
+|country|KYRGYZSTAN|
+|country|CAMBOJA|
+|country|KIRIBATI|
+|country|ILHAS_COMORES|
+|country|SAO_CRISTOVAO_E_NEVIS|
+|country|COREIA_DO_NORTE|
+|country|COREIA_DO_SUL|
+|country|KUAIT|
+|country|ILHAS_CAYMAN|
+|country|CAZAQUISTAO|
+|country|LAOS|
+|country|LIBANO|
+|country|SANTA_LUCIA|
+|country|LIECHTENSTEIN|
+|country|SRI_LANKA|
+|country|LIBERIA|
+|country|LESOTO|
+|country|LITUANIA|
+|country|LUXEMBURGO|
+|country|LATVIA|
+|country|LIBIA|
+|country|MARROCOS|
+|country|MONACO|
+|country|MOLDOVA|
+|country|MONTENEGRO|
+|country|SAO_MARTIM|
+|country|MADAGASCAR|
+|country|ILHAS_MARSHALL|
+|country|MACEDONIA_REPUBLICA_YUGOSLAVA|
+|country|MALI|
+|country|MYANMA_EX_BURMA|
+|country|MONGOLIA|
+|country|MACAU|
+|country|ILHAS_MARIANAS_DO_NORTE|
+|country|MARTINICA|
+|country|MAURITANIA|
+|country|MONTSERRAT|
+|country|MALTA|
+|country|MAURICIO|
+|country|MALDIVAS|
+|country|MALAUI|
+|country|MEXICO|
+|country|MALASIA|
+|country|MOCAMBIQUE|
+|country|NAMIBIA|
+|country|NOVA_CALEDONIA|
+|country|NIGER|
+|country|ILHAS_NORFOLK|
+|country|NIGERIA|
+|country|NICARAGUA|
+|country|HOLANDA|
+|country|NORUEGA|
+|country|NEPAL|
+|country|NAURU|
+|country|NIUE|
+|country|NOVA_ZELANDIA|
+|country|OMA|
+|country|PANAMA|
+|country|PERU|
+|country|POLINESIA_FRANCESA|
+|country|PAPUA_NOVA_GUINE|
+|country|FILIPINAS|
+|country|PAQUISTAO|
+|country|POLONIA|
+|country|ST_PIERRE_AND_MIQUELON|
+|country|ILHA_PITCAIRN|
+|country|PORTO_RICO|
+|country|TERRITORIOS_PALESTINOS_OCUPADOS|
+|country|PORTUGAL|
+|country|PALAU|
+|country|PARAGUAI|
+|country|QATAR|
+|country|ILHA_REUNIAO|
+|country|ROMENIA|
+|country|SERVIA|
+|country|FEDERACAO_RUSSA|
+|country|RUANDA|
+|country|ARABIA_SAUDITA|
+|country|ILHAS_SOLOMAO|
+|country|ILHAS_SEYCHELLES|
+|country|SUDAO|
+|country|SUECIA|
+|country|CINGAPURA|
+|country|SANTA_HELENA|
+|country|ESLOVENIA|
+|country|ILHAS_SVALBARD_E_JAN_MAYEN|
+|country|ESLOVAQUIA|
+|country|SERRA_LEOA|
+|country|SAN_MARINO|
+|country|SENEGAL|
+|country|SOMALIA|
+|country|SURINAME|
+|country|SUDAO_DO_SUL|
+|country|SAO_TOME_E_PRINCIPE|
+|country|EL_SALVADOR|
+|country|SAO_MARTINHO_PARTE_HOLANDESA|
+|country|SIRIA|
+|country|SUAZILANDIA|
+|country|ILHAS_TURKS_E_CAICOS|
+|country|CHADE|
+|country|TERRITORIOS_DO_SUL_DA_FRANCA|
+|country|TOGO|
+|country|TAILANDIA|
+|country|TADJIQUISTAO|
+|country|ILHAS_TOKELAU|
+|country|TIMOR_LESTE_EX_EAST_TIMOR|
+|country|TURCOMENISTAO|
+|country|TUNISIA|
+|country|TONGA|
+|country|TURQUIA|
+|country|TRINIDAD_AND_TOBAGO|
+|country|TUVALU|
+|country|TAIWAN|
+|country|TANZANIA|
+|country|UCRANIA|
+|country|UGANDA|
+|country|ILHAS_MENORES_DOS_ESTADOS_UNIDOS|
+|country|ESTADOS_UNIDOS|
+|country|URUGUAI|
+|country|UZBEQUISTAO|
+|country|VATICANO|
+|country|SAINT_VINCENTE_E_GRANADINAS|
+|country|VENEZUELA|
+|country|ILHAS_VIRGENS_INGLATERRA|
+|country|ILHAS_VIRGENS_ESTADOS_UNIDOS|
+|country|VIETNAM|
+|country|VANUATU|
+|country|ILHAS_WALLIS_E_FUTUNA|
+|country|SAMOA_OCIDENTAL|
+|country|IEMEN|
+|country|MAYOTTE|
+|country|AFRICA_DO_SUL|
+|country|ZAMBIA|
+|country|ZIMBABUE|
+
+<h2 id="tocS_IntermediaryGeographicCoordinates">IntermediaryGeographicCoordinates</h2>
+<!-- backwards compatibility -->
+<a id="schemaintermediarygeographiccoordinates"></a>
+<a id="schema_IntermediaryGeographicCoordinates"></a>
+<a id="tocSintermediarygeographiccoordinates"></a>
+<a id="tocsintermediarygeographiccoordinates"></a>
+
+```json
+{
+  "latitude": -89.836518,
+  "longitude": -179.836519
+}
+
+```
+
+### Properties
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|latitude|string|false|none|Informação da Latitude referente a geolocalização informada. Entre -90 e 90. Formato numérico 2 casas antes da vírgula, 11 posições.|
+|longitude|string|false|none|Informação da Longitude referente a geolocalização informada. Formato numérico 3 casas antes da vírgula, 11 posições. Entre -180 e 180.|
+
+<h2 id="tocS_IntermediaryAccess">IntermediaryAccess</h2>
+<!-- backwards compatibility -->
+<a id="schemaintermediaryaccess"></a>
+<a id="schema_IntermediaryAccess"></a>
+<a id="tocSintermediaryaccess"></a>
+<a id="tocsintermediaryaccess"></a>
+
+```json
+{
+  "standards": [
+    {
+      "openingTime": "10:00:57Z",
+      "closingTime": "16:00:57Z",
+      "weekday": "DOMINGO"
+    }
+  ],
+  "email": "Joao.silva@seguradoraa.com.br",
+  "site": "https://openinsurance.com.br/aaa",
+  "phones": [
+    {
+      "type": "FIXO",
+      "countryCallingCode": 55,
+      "areaCode": 11,
+      "number": 30041000
+    }
+  ]
+}
+
+```
+
+Forma de acesso.
+
+### Properties
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|standards|[IntermediaryStandards](#schemaintermediarystandards)|false|none|none|
+|email|string|false|none|Endereço de e-mail|
+|site|string|false|none|Campo aberto As URLs são limitadas a 2048 caracteres, mas, para o contexto do Open Insurance, foi adotado a metade deste tamanho (1024).|
+|phones|[IntermediaryPhones](#schemaintermediaryphones)|false|none|Telefone do intermediário|
+
+<h2 id="tocS_IntermediaryStandards">IntermediaryStandards</h2>
+<!-- backwards compatibility -->
+<a id="schemaintermediarystandards"></a>
+<a id="schema_IntermediaryStandards"></a>
+<a id="tocSintermediarystandards"></a>
+<a id="tocsintermediarystandards"></a>
+
+```json
+[
+  {
+    "openingTime": "10:00:57Z",
+    "closingTime": "16:00:57Z",
+    "weekday": "DOMINGO"
+  }
+]
+
+```
+
+### Properties
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|openingTime|string|false|none|Horário de abertura|
+|closingTime|string|false|none|Horário de encerramento|
+|weekday|string|false|none|Dias de funcionamento|
+
+#### Enumerated Values
+
+|Property|Value|
+|---|---|
+|weekday|DOMINGO|
+|weekday|SEGUNDA_FEIRA|
+|weekday|TERCA_FEIRA|
+|weekday|QUARTA_FEIRA|
+|weekday|QUINTA_FEIRA|
+|weekday|SEXTA_FEIRA|
+|weekday|SABADO|
+
+<h2 id="tocS_IntermediaryPhones">IntermediaryPhones</h2>
+<!-- backwards compatibility -->
+<a id="schemaintermediaryphones"></a>
+<a id="schema_IntermediaryPhones"></a>
+<a id="tocSintermediaryphones"></a>
+<a id="tocsintermediaryphones"></a>
+
+```json
+[
+  {
+    "type": "FIXO",
+    "countryCallingCode": 55,
+    "areaCode": 11,
+    "number": 30041000
+  }
+]
+
+```
+
+Telefone do intermediário
+
+### Properties
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|type|string|false|none|Identificação do Tipo de telefone do intermediário|
+|countryCallingCode|string|false|none|Número de DDI (Discagem Direta Internacional) para telefone de acesso ao Canal - se houver.|
+|areaCode|string|false|none|Número de DDD (Discagem Direta à Distância) do telefone do intermediário - se houver. p.ex. '19'|
+|number|string|false|none|Número de telefone do intermediário - se houver|
+
+<h2 id="tocS_IntermediaryServices">IntermediaryServices</h2>
+<!-- backwards compatibility -->
+<a id="schemaintermediaryservices"></a>
+<a id="schema_IntermediaryServices"></a>
+<a id="tocSintermediaryservices"></a>
+<a id="tocsintermediaryservices"></a>
+
+```json
+[
+  {
+    "name": "ACONSELHAMENTO_SOBRE_PRODUTOS_OFERTADOS",
+    "nameOthers": "string",
+    "line": [
+      "CAPITALIZACAO"
+    ]
+  }
+]
+
+```
+
+### Properties
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|name|string|true|none|Relação dos serviços efetivamente prestados, conforme discriminado na Tabela II.3 do Anexo II|
+|nameOthers|string|false|none|Campo aberto para descrição em caso de seleção de Outras na lista padronizada de Tipo de Serviço Prestado por Intermediário|
+|line|[string]|true|none|none|
+
+#### Enumerated Values
+
+|Property|Value|
+|---|---|
+|name|ANGARIACAO_PROMOCAO_INTERMEDIACAO_OU_DISTRIBUICAO_DE_PRODUTOS|
+|name|ACONSELHAMENTO_SOBRE_PRODUTOS_OFERTADOS|
+|name|RECEPCAO_DE_PROPOSTAS_E_EMISSAO_DE_DOCUMENTOS_CONTRATUAIS|
+|name|SUBSCRICAO_DE_RISCOS_RELACIONADOS_A_PRODUTOS_DE_SEGUROS|
+|name|COLETA_E_FORNECIMENTO_A_SOCIEDADE_PARTICIPANTE_DE_DADOS_CADASTRAIS_E_DE_DOCUMENTACAO_DE_CLIENTES_E_SE_FOR_O_CASO_ESTIPULANTES_CORRETORES_DE_SEGUROS_E_SEUS_PREPOSTOS|
+|name|RECOLHIMENTO_DE_PREMIOS_E_CONTRIBUICOES|
+|name|RECEBIMENTO_DE_AVISOS_DE_SINISTROS|
+|name|REGULACAO_DE_SINISTROS|
+|name|PAGAMENTO_DE_INDENIZACAO_BENEFICIO|
+|name|ORIENTACAO_E_ASSISTENCIA_AOS_CLIENTES_NO_QUE_COMPETE_AOS_CONTRATOS_COMERCIALIZADOS|
+|name|APOIO_LOGISTICO_E_OPERACIONAL_A_SOCIEDADE_PARTICIPANTE_NA_GESTAO_E_EXECUCAO_DE_CONTRATOS|
+|name|OUTROS|
+
+<h2 id="tocS_Links">Links</h2>
+<!-- backwards compatibility -->
+<a id="schemalinks"></a>
+<a id="schema_Links"></a>
+<a id="tocSlinks"></a>
+<a id="tocslinks"></a>
+
+```json
+{
+  "self": "https://api.organizacao.com.br/open-insurance/products-services/v1",
+  "first": "https://api.organizacao.com.br/open-insurance/products-services/v1",
+  "prev": "https://api.organizacao.com.br/open-insurance/products-services/v1",
+  "next": "https://api.organizacao.com.br/open-insurance/products-services/v1",
+  "last": "https://api.organizacao.com.br/open-insurance/products-services/v1"
+}
+
+```
+
+### Properties
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|self|string|false|none|URL da página atualmente requisitada|
+|first|string|false|none|URL da primeira página de registros|
+|prev|string|false|none|URL da página anterior de registros|
+|next|string|false|none|URL da próxima página de registros|
+|last|string|false|none|URL da última página de registros|
+
+<h2 id="tocS_Meta">Meta</h2>
+<!-- backwards compatibility -->
+<a id="schemameta"></a>
+<a id="schema_Meta"></a>
+<a id="tocSmeta"></a>
+<a id="tocsmeta"></a>
+
+```json
+{
+  "totalRecords": 10,
+  "totalPages": 1
+}
+
+```
+
+### Properties
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|totalRecords|integer|true|none|Total de registros encontrados|
+|totalPages|integer|true|none|Total de páginas para os registros encontrados|
+
+<h2 id="tocS_ResponseError">ResponseError</h2>
+<!-- backwards compatibility -->
+<a id="schemaresponseerror"></a>
+<a id="schema_ResponseError"></a>
+<a id="tocSresponseerror"></a>
+<a id="tocsresponseerror"></a>
+
+```json
+{
+  "errors": [
+    {
+      "code": "string",
+      "title": "string",
+      "detail": "string",
+      "requestDateTime": "2021-08-20T08:30:00Z"
+    }
+  ],
+  "meta": {
+    "totalRecords": 10,
+    "totalPages": 1
+  }
+}
+
+```
+
+### Properties
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|errors|[object]|true|none|none|
+|» code|string|true|none|Código de erro específico do endpoint|
+|» title|string|true|none|Título legível por humanos deste erro específico|
+|» detail|string|true|none|Descrição legível por humanos deste erro específico|
+|» requestDateTime|string(date-time)|false|none|Data e hora da consulta, conforme especificação RFC-3339, formato UTC.|
+|meta|[Meta](#schemameta)|false|none|none|
+
+<h2 id="tocS_ResponseOthersScopesList">ResponseOthersScopesList</h2>
+<!-- backwards compatibility -->
+<a id="schemaresponseothersscopeslist"></a>
+<a id="schema_ResponseOthersScopesList"></a>
+<a id="tocSresponseothersscopeslist"></a>
+<a id="tocsresponseothersscopeslist"></a>
+
+```json
+{
+  "data": {
+    "brand": {
+      "name": "ACME Group Seguros",
+      "companies": [
+        {
+          "name": "ABCDE Seguros",
+          "cnpjNumber": "12345678901234",
+          "products": [
+            {
+              "name": "Produto de Seguro",
+              "code": "01234589-0",
+              "coverages": [
+                {
+                  "coverage": "CASCO",
+                  "coverageDescription": "string",
+                  "allowApartPurchase": true,
+                  "coverageAttributes": {
+                    "maxLMI": {}
+                  }
+                }
+              ],
+              "traits": false,
+              "termsAndConditions": {
+                "susepProcessNumber": 15414622222222222,
+                "definition": "https://www.seguradora.com.br/produto/tradicional/pdf/condicoes_gerais.pdf"
+              },
+              "validity": {
+                "term": [
+                  "ANUAL"
+                ],
+                "termOthers": "string"
+              },
+              "premiumRates": [
+                "string"
+              ],
+              "minimumRequirements": {
+                "targetAudiences": [
+                  "PESSOA_FISICA"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "links": {
+    "self": "https://api.organizacao.com.br/open-insurance/products-services/v1",
+    "first": "https://api.organizacao.com.br/open-insurance/products-services/v1",
+    "prev": "https://api.organizacao.com.br/open-insurance/products-services/v1",
+    "next": "https://api.organizacao.com.br/open-insurance/products-services/v1",
+    "last": "https://api.organizacao.com.br/open-insurance/products-services/v1"
+  },
+  "meta": {
+    "totalRecords": 10,
+    "totalPages": 1
+  }
+}
+
+```
+
+### Properties
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|data|object|true|none|none|
+|» brand|[OthersScopesBrand](#schemaothersscopesbrand)|true|none|Organizacao controladora do grupo.|
+|links|[Links](#schemalinks)|true|none|none|
+|meta|[Meta](#schemameta)|true|none|none|
+
+<h2 id="tocS_OthersScopesBrand">OthersScopesBrand</h2>
+<!-- backwards compatibility -->
+<a id="schemaothersscopesbrand"></a>
+<a id="schema_OthersScopesBrand"></a>
+<a id="tocSothersscopesbrand"></a>
+<a id="tocsothersscopesbrand"></a>
+
+```json
+{
+  "name": "ACME Group Seguros",
+  "companies": [
+    {
+      "name": "ABCDE Seguros",
+      "cnpjNumber": "12345678901234",
+      "products": [
+        {
+          "name": "Produto de Seguro",
+          "code": "01234589-0",
+          "coverages": [
+            {
+              "coverage": "CASCO",
+              "coverageDescription": "string",
+              "allowApartPurchase": true,
+              "coverageAttributes": {
+                "maxLMI": {
+                  "amount": 0,
+                  "unit": {
+                    "code": "R$",
+                    "description": "REAL"
+                  }
+                }
+              }
+            }
+          ],
+          "traits": false,
+          "termsAndConditions": {
+            "susepProcessNumber": 15414622222222222,
+            "definition": "https://www.seguradora.com.br/produto/tradicional/pdf/condicoes_gerais.pdf"
+          },
+          "validity": {
+            "term": [
+              "ANUAL"
+            ],
+            "termOthers": "string"
+          },
+          "premiumRates": [
+            "string"
+          ],
+          "minimumRequirements": {
+            "targetAudiences": [
+              "PESSOA_FISICA"
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}
+
+```
+
+Organizacao controladora do grupo.
+
+### Properties
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|name|string|true|none|Nome da Marca reportada pelo participante do Open Insurance. O conceito a que se refere a 'marca' é em essência uma promessa da empresa em fornecer uma série específica de atributos, benefícios e serviços uniformes aos clientes|
+|companies|[OthersScopesCompany](#schemaothersscopescompany)|true|none|none|
+
+<h2 id="tocS_OthersScopesCompany">OthersScopesCompany</h2>
+<!-- backwards compatibility -->
+<a id="schemaothersscopescompany"></a>
+<a id="schema_OthersScopesCompany"></a>
+<a id="tocSothersscopescompany"></a>
+<a id="tocsothersscopescompany"></a>
+
+```json
+[
+  {
+    "name": "ABCDE Seguros",
+    "cnpjNumber": "12345678901234",
+    "products": [
+      {
+        "name": "Produto de Seguro",
+        "code": "01234589-0",
+        "coverages": [
+          {
+            "coverage": "CASCO",
+            "coverageDescription": "string",
+            "allowApartPurchase": true,
+            "coverageAttributes": {
+              "maxLMI": {
+                "amount": 0,
+                "unit": {
+                  "code": "R$",
+                  "description": "REAL"
+                }
+              }
+            }
+          }
+        ],
+        "traits": false,
+        "termsAndConditions": {
+          "susepProcessNumber": 15414622222222222,
+          "definition": "https://www.seguradora.com.br/produto/tradicional/pdf/condicoes_gerais.pdf"
+        },
+        "validity": {
+          "term": [
+            "ANUAL"
+          ],
+          "termOthers": "string"
+        },
+        "premiumRates": [
+          "string"
+        ],
+        "minimumRequirements": {
+          "targetAudiences": [
+            "PESSOA_FISICA"
+          ]
+        }
+      }
+    ]
+  }
+]
+
+```
+
+### Properties
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|name|string|true|none|Nome da Instituição pertencente à marca.|
+|cnpjNumber|string|true|none|CNPJ da sociedade pertencente à marca.|
+|products|[OthersScopesProduct](#schemaothersscopesproduct)|true|none|Lista de produtos de uma empresa.|
+
+<h2 id="tocS_OthersScopesProduct">OthersScopesProduct</h2>
+<!-- backwards compatibility -->
+<a id="schemaothersscopesproduct"></a>
+<a id="schema_OthersScopesProduct"></a>
+<a id="tocSothersscopesproduct"></a>
+<a id="tocsothersscopesproduct"></a>
+
+```json
+[
+  {
+    "name": "Produto de Seguro",
+    "code": "01234589-0",
+    "coverages": [
+      {
+        "coverage": "CASCO",
+        "coverageDescription": "string",
+        "allowApartPurchase": true,
+        "coverageAttributes": {
+          "maxLMI": {
+            "amount": 0,
+            "unit": {
+              "code": "R$",
+              "description": "REAL"
+            }
+          }
+        }
+      }
+    ],
+    "traits": false,
+    "termsAndConditions": {
+      "susepProcessNumber": 15414622222222222,
+      "definition": "https://www.seguradora.com.br/produto/tradicional/pdf/condicoes_gerais.pdf"
+    },
+    "validity": {
+      "term": [
+        "ANUAL"
+      ],
+      "termOthers": "string"
+    },
+    "premiumRates": [
+      "string"
+    ],
+    "minimumRequirements": {
+      "targetAudiences": [
+        "PESSOA_FISICA"
+      ]
+    }
+  }
+]
+
+```
+
+Lista de produtos de uma empresa.
+
+### Properties
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|name|string|false|none|Nome comercial do produto, pelo qual é identificado nos canais de distribuição e atendimento da sociedade.|
+|code|string|true|none|Código único a ser definido pela sociedade.|
+|coverages|[object]|true|none|none|
+|» coverage|string|true|none|Listagem de coberturas incluídas no produto que deve observar a relação discriminada de coberturas, conforme Tabela II.18 do Anexo II.|
+|» coverageDescription|string|true|none|Campo aberto para detalhamento de cada uma das coberturas possíveis dos produtos a ser feito por cada participante|
+|» allowApartPurchase|boolean|true|none|Cobertura - Permissão para Contratação Separada|
+|» coverageAttributes|[OthersScopesCoverageAttributes](#schemaothersscopescoverageattributes)|true|none|Informações de cobertura do Seguro.|
+|traits|boolean|true|none|Indicação se o produto é classificado como destinado para cobertura de grandes riscos, sendo tal classificação de acordo com regulamentação|
+|termsAndConditions|[OthersScopesTerms](#schemaothersscopesterms)|true|none|Informações dos termos e condições conforme número do processo SUSEP.|
+|validity|[OthersScopesValidity](#schemaothersscopesvalidity)|true|none|none|
+|premiumRates|[string]|false|none|Distribuição de frequência relativa aos valores referentes às taxas cobradas, nos termos do Anexo III.|
+|minimumRequirements|[OthersScopesMinimumRequirements](#schemaothersscopesminimumrequirements)|true|none|Requisitos mínimos.|
+
+#### Enumerated Values
+
+|Property|Value|
+|---|---|
+|coverage|CASCO|
+|coverage|RESPONSABILIDADE_CIVIL_FACULTATIVA|
+|coverage|RESPONSABILIDADE_CIVIL_AEROPORTUARIA|
+|coverage|RESPONSABILIDADE_DO_EXPLORADOR_E_TRANSPORTADOR_AEREO_RETA|
+|coverage|BASICA_DANOS_MATERIAIS_A_EMBARCACAO_COBERTURA_DE_ASSISTENCIA_E_SALVAMENTO_COBERTURA_DE_COLOCACAO_E_RETIRADA_DA_AGUA|
+|coverage|BASICA_DE_OPERADOR_PORTUARIO_DANOS_MATERIAIS_E_CORPORAIS_A_TERCEIROS|
+|coverage|DANOS_ELETRICOS|
+|coverage|DANOS_FISICOS_A_BENS_MOVEIS_E_IMOVEIS|
+|coverage|DANOS_MORAIS|
+|coverage|DESPESAS_COM_HONORARIOS_DE_ESPECIALISTAS|
+|coverage|EXTENSAO_DO_LIMITE_DE_NAVEGACAO|
+|coverage|GUARDA_DE_EMBARCACOES|
+|coverage|LIMITE_DE_NAVEGACAO|
+|coverage|PARTICIPACAO_EM_EVENTOS_FEIRAS_EXPOSICOES_REGATAS_A_VELA_COMPETICOES_DE_PESCA_OU_COMPETICOES_DE_VELOCIDADE|
+|coverage|PERDA_DE_RECEITA_BRUTA_E_OU_DESPESAS_ADICIONAIS_OU_EXTRAORDINARIAS|
+|coverage|PERDA_E_OU_PAGAMENTO_DE_ALUGUEL|
+|coverage|REMOCAO_DE_DESTROCOS|
+|coverage|RESPONSABILIDADE_CIVIL|
+|coverage|ROUBO_E_OU_FURTO_QUALIFICADO_ACESSORIOS_FIXOS_OU_NAO_FIXOS_TOTAL_OU_PARCIAL|
+|coverage|SEGURO_DE_CONSTRUTORES_NAVAIS|
+|coverage|TRANSPORTE_TERRESTRE|
+|coverage|RISCOS_DE_PETROLEO|
+|coverage|RISCOS_NUCLEARES|
+|coverage|OUTRAS|
+
+<h2 id="tocS_OthersScopesCoverageAttributes">OthersScopesCoverageAttributes</h2>
+<!-- backwards compatibility -->
+<a id="schemaothersscopescoverageattributes"></a>
+<a id="schema_OthersScopesCoverageAttributes"></a>
+<a id="tocSothersscopescoverageattributes"></a>
+<a id="tocsothersscopescoverageattributes"></a>
+
+```json
+{
+  "maxLMI": {
+    "amount": 0,
+    "unit": {
+      "code": "R$",
+      "description": "REAL"
+    }
+  }
+}
+
+```
+
+Informações de cobertura do Seguro.
+
+### Properties
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|maxLMI|[OthersScopesCoverageAttributesDetails](#schemaothersscopescoverageattributesdetails)|true|none|none|
+
+<h2 id="tocS_OthersScopesCoverageAttributesDetailsUnit">OthersScopesCoverageAttributesDetailsUnit</h2>
+<!-- backwards compatibility -->
+<a id="schemaothersscopescoverageattributesdetailsunit"></a>
+<a id="schema_OthersScopesCoverageAttributesDetailsUnit"></a>
+<a id="tocSothersscopescoverageattributesdetailsunit"></a>
+<a id="tocsothersscopescoverageattributesdetailsunit"></a>
+
+```json
+{
+  "code": "R$",
+  "description": "REAL"
+}
+
+```
+
+### Properties
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|code|string|true|none|none|
+|description|string|true|none|none|
+
+<h2 id="tocS_OthersScopesCoverageAttributesDetails">OthersScopesCoverageAttributesDetails</h2>
+<!-- backwards compatibility -->
+<a id="schemaothersscopescoverageattributesdetails"></a>
+<a id="schema_OthersScopesCoverageAttributesDetails"></a>
+<a id="tocSothersscopescoverageattributesdetails"></a>
+<a id="tocsothersscopescoverageattributesdetails"></a>
+
+```json
+{
+  "amount": 0,
+  "unit": {
+    "code": "R$",
+    "description": "REAL"
+  }
+}
+
+```
+
+### Properties
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|amount|number|true|none|none|
+|unit|[OthersScopesCoverageAttributesDetailsUnit](#schemaothersscopescoverageattributesdetailsunit)|true|none|none|
+
+<h2 id="tocS_OthersScopesValidity">OthersScopesValidity</h2>
+<!-- backwards compatibility -->
+<a id="schemaothersscopesvalidity"></a>
+<a id="schema_OthersScopesValidity"></a>
+<a id="tocSothersscopesvalidity"></a>
+<a id="tocsothersscopesvalidity"></a>
+
+```json
+{
+  "term": [
+    "ANUAL"
+  ],
+  "termOthers": "string"
+}
+
+```
+
+### Properties
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|term|[string]|true|none|none|
+|termOthers|string|false|none|Campo livre para descrição por cada participante ao selecionar o domínio “Outros” no campo Prazo (acima).|
+
+<h2 id="tocS_OthersScopesTerms">OthersScopesTerms</h2>
+<!-- backwards compatibility -->
+<a id="schemaothersscopesterms"></a>
+<a id="schema_OthersScopesTerms"></a>
+<a id="tocSothersscopesterms"></a>
+<a id="tocsothersscopesterms"></a>
+
+```json
+{
+  "susepProcessNumber": 15414622222222222,
+  "definition": "https://www.seguradora.com.br/produto/tradicional/pdf/condicoes_gerais.pdf"
+}
+
+```
+
+Informações dos termos e condições conforme número do processo SUSEP.
+
+### Properties
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|susepProcessNumber|string|false|none|Número do processo Susep|
+|definition|string|false|none|Campo aberto (possibilidade de incluir uma url).|
+
+<h2 id="tocS_OthersScopesMinimumRequirements">OthersScopesMinimumRequirements</h2>
+<!-- backwards compatibility -->
+<a id="schemaothersscopesminimumrequirements"></a>
+<a id="schema_OthersScopesMinimumRequirements"></a>
+<a id="tocSothersscopesminimumrequirements"></a>
+<a id="tocsothersscopesminimumrequirements"></a>
+
+```json
+{
+  "targetAudiences": [
+    "PESSOA_FISICA"
+  ]
+}
+
+```
+
+Requisitos mínimos.
+
+### Properties
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|targetAudiences|[string]|true|none|Público Alvo|
+
+<h2 id="tocS_Links">Links</h2>
+<!-- backwards compatibility -->
+<a id="schemalinks"></a>
+<a id="schema_Links"></a>
+<a id="tocSlinks"></a>
+<a id="tocslinks"></a>
+
+```json
+{
+  "self": "https://api.organizacao.com.br/open-insurance/products-services/v1",
+  "first": "https://api.organizacao.com.br/open-insurance/products-services/v1",
+  "prev": "https://api.organizacao.com.br/open-insurance/products-services/v1",
+  "next": "https://api.organizacao.com.br/open-insurance/products-services/v1",
+  "last": "https://api.organizacao.com.br/open-insurance/products-services/v1"
+}
+
+```
+
+### Properties
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|self|string|false|none|URL da página atualmente requisitada|
+|first|string|false|none|URL da primeira página de registros|
+|prev|string|false|none|URL da página anterior de registros|
+|next|string|false|none|URL da próxima página de registros|
+|last|string|false|none|URL da última página de registros|
+
+<h2 id="tocS_Meta">Meta</h2>
+<!-- backwards compatibility -->
+<a id="schemameta"></a>
+<a id="schema_Meta"></a>
+<a id="tocSmeta"></a>
+<a id="tocsmeta"></a>
+
+```json
+{
+  "totalRecords": 10,
+  "totalPages": 1
+}
+
+```
+
+### Properties
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|totalRecords|integer|true|none|Total de registros encontrados|
+|totalPages|integer|true|none|Total de páginas para os registros encontrados|
+
+<h2 id="tocS_ResponseError">ResponseError</h2>
+<!-- backwards compatibility -->
+<a id="schemaresponseerror"></a>
+<a id="schema_ResponseError"></a>
+<a id="tocSresponseerror"></a>
+<a id="tocsresponseerror"></a>
+
+```json
+{
+  "errors": [
+    {
+      "code": "string",
+      "title": "string",
+      "detail": "string",
+      "requestDateTime": "2021-08-20T08:30:00Z"
+    }
+  ],
+  "meta": {
+    "totalRecords": 10,
+    "totalPages": 1
+  }
+}
+
+```
+
+### Properties
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|errors|[object]|true|none|none|
+|» code|string|true|none|Código de erro específico do endpoint|
+|» title|string|true|none|Título legível por humanos deste erro específico|
+|» detail|string|true|none|Descrição legível por humanos deste erro específico|
+|» requestDateTime|string(date-time)|false|none|Data e hora da consulta, conforme especificação RFC-3339, formato UTC.|
+|meta|[Meta](#schemameta)|false|none|none|
+
+<h2 id="tocS_ResponseReferencedNetworkList">ResponseReferencedNetworkList</h2>
+<!-- backwards compatibility -->
+<a id="schemaresponsereferencednetworklist"></a>
+<a id="schema_ResponseReferencedNetworkList"></a>
+<a id="tocSresponsereferencednetworklist"></a>
+<a id="tocsresponsereferencednetworklist"></a>
+
+```json
+{
+  "data": {
+    "brand": {
+      "name": "ACME Group Seguros",
+      "companies": [
+        {
+          "name": "ACME Seguros",
+          "cnpjNumber": "12345678901234",
+          "identification": [
+            {
+              "name": "Empresa B",
+              "cnpjNumber": 12341234123412,
+              "products": [
+                {
+                  "code": "01234589-0",
+                  "name": "Produto de Seguro",
+                  "coverage": [
+                    "string"
+                  ]
+                }
+              ],
+              "postalAddress": [
+                {
+                  "address": "'Rua Diamantina, 59, bloco 35' Praça da Boa Vontade, s/n",
+                  "additionalInfo": "Loja B",
+                  "districtName": "Paraíso",
+                  "townName": "São Paulo",
+                  "ibgeCode": "string",
+                  "countrySubDivision": "AC",
+                  "postCode": 1310200,
+                  "country": "ANDORRA",
+                  "countryCode": "BRA",
+                  "geographicCoordinates": {
+                    "latitude": -89.836518,
+                    "longitude": -179.836519
+                  }
+                }
+              ],
+              "access": [
+                {
+                  "standards": [
+                    {}
+                  ],
+                  "restrictionIndicator": false,
+                  "phones": [
+                    {}
+                  ]
+                }
+              ],
+              "services": [
+                {
+                  "type": "ASSISTENCIA_AUTO",
+                  "typeOthers": "string",
+                  "name": [
+                    "ACIONAMENTO_E_OU_AGENDAMENTO_DE_LEVA_E_TRAZ"
+                  ],
+                  "description": "string"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "links": {
+    "self": "https://api.organizacao.com.br/open-insurance/products-services/v1",
+    "first": "https://api.organizacao.com.br/open-insurance/products-services/v1",
+    "prev": "https://api.organizacao.com.br/open-insurance/products-services/v1",
+    "next": "https://api.organizacao.com.br/open-insurance/products-services/v1",
+    "last": "https://api.organizacao.com.br/open-insurance/products-services/v1"
+  },
+  "meta": {
+    "totalRecords": 10,
+    "totalPages": 1
+  }
+}
+
+```
+
+### Properties
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|data|object|true|none|none|
+|» brand|[ReferencedNetworkBrand](#schemareferencednetworkbrand)|true|none|Organizacao controladora do grupo.|
+|links|[Links](#schemalinks)|true|none|none|
+|meta|[Meta](#schemameta)|true|none|none|
+
+<h2 id="tocS_ReferencedNetworkBrand">ReferencedNetworkBrand</h2>
+<!-- backwards compatibility -->
+<a id="schemareferencednetworkbrand"></a>
+<a id="schema_ReferencedNetworkBrand"></a>
+<a id="tocSreferencednetworkbrand"></a>
+<a id="tocsreferencednetworkbrand"></a>
+
+```json
+{
+  "name": "ACME Group Seguros",
+  "companies": [
+    {
+      "name": "ACME Seguros",
+      "cnpjNumber": "12345678901234",
+      "identification": [
+        {
+          "name": "Empresa B",
+          "cnpjNumber": 12341234123412,
+          "products": [
+            {
+              "code": "01234589-0",
+              "name": "Produto de Seguro",
+              "coverage": [
+                "string"
+              ]
+            }
+          ],
+          "postalAddress": [
+            {
+              "address": "'Rua Diamantina, 59, bloco 35' Praça da Boa Vontade, s/n",
+              "additionalInfo": "Loja B",
+              "districtName": "Paraíso",
+              "townName": "São Paulo",
+              "ibgeCode": "string",
+              "countrySubDivision": "AC",
+              "postCode": 1310200,
+              "country": "ANDORRA",
+              "countryCode": "BRA",
+              "geographicCoordinates": {
+                "latitude": -89.836518,
+                "longitude": -179.836519
+              }
+            }
+          ],
+          "access": [
+            {
+              "standards": [
+                {
+                  "openingTime": "10:00:57Z",
+                  "closingTime": "16:00:57Z",
+                  "weekday": "DOMINGO"
+                }
+              ],
+              "restrictionIndicator": false,
+              "phones": [
+                {
+                  "type": "FIXO",
+                  "countryCallingCode": 55,
+                  "areaCode": 11,
+                  "number": 30041000
+                }
+              ]
+            }
+          ],
+          "services": [
+            {
+              "type": "ASSISTENCIA_AUTO",
+              "typeOthers": "string",
+              "name": [
+                "ACIONAMENTO_E_OU_AGENDAMENTO_DE_LEVA_E_TRAZ"
+              ],
+              "description": "string"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
+
+```
+
+Organizacao controladora do grupo.
+
+### Properties
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|name|string|true|none|Nome da Marca reportada pelo participante do Open Insurance. O conceito a que se refere a 'marca' é em essência uma promessa da empresa em fornecer uma série específica de atributos, benefícios e serviços uniformes aos clientes|
+|companies|[ReferencedNetworkCompany](#schemareferencednetworkcompany)|true|none|none|
+
+<h2 id="tocS_ReferencedNetworkCompany">ReferencedNetworkCompany</h2>
+<!-- backwards compatibility -->
+<a id="schemareferencednetworkcompany"></a>
+<a id="schema_ReferencedNetworkCompany"></a>
+<a id="tocSreferencednetworkcompany"></a>
+<a id="tocsreferencednetworkcompany"></a>
+
+```json
+[
+  {
+    "name": "ACME Seguros",
+    "cnpjNumber": "12345678901234",
+    "identification": [
+      {
+        "name": "Empresa B",
+        "cnpjNumber": 12341234123412,
+        "products": [
+          {
+            "code": "01234589-0",
+            "name": "Produto de Seguro",
+            "coverage": [
+              "string"
+            ]
+          }
+        ],
+        "postalAddress": [
+          {
+            "address": "'Rua Diamantina, 59, bloco 35' Praça da Boa Vontade, s/n",
+            "additionalInfo": "Loja B",
+            "districtName": "Paraíso",
+            "townName": "São Paulo",
+            "ibgeCode": "string",
+            "countrySubDivision": "AC",
+            "postCode": 1310200,
+            "country": "ANDORRA",
+            "countryCode": "BRA",
+            "geographicCoordinates": {
+              "latitude": -89.836518,
+              "longitude": -179.836519
+            }
+          }
+        ],
+        "access": [
+          {
+            "standards": [
+              {
+                "openingTime": "10:00:57Z",
+                "closingTime": "16:00:57Z",
+                "weekday": "DOMINGO"
+              }
+            ],
+            "restrictionIndicator": false,
+            "phones": [
+              {
+                "type": "FIXO",
+                "countryCallingCode": 55,
+                "areaCode": 11,
+                "number": 30041000
+              }
+            ]
+          }
+        ],
+        "services": [
+          {
+            "type": "ASSISTENCIA_AUTO",
+            "typeOthers": "string",
+            "name": [
+              "ACIONAMENTO_E_OU_AGENDAMENTO_DE_LEVA_E_TRAZ"
+            ],
+            "description": "string"
+          }
+        ]
+      }
+    ]
+  }
+]
+
+```
+
+### Properties
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|name|string|true|none|Nome da sociedade pertencente à marca.|
+|cnpjNumber|string|true|none|CNPJ da sociedade pertencente à marca.|
+|identification|[ReferencedNetworkIdentification](#schemareferencednetworkidentification)|true|none|none|
+
+<h2 id="tocS_ReferencedNetworkIdentification">ReferencedNetworkIdentification</h2>
+<!-- backwards compatibility -->
+<a id="schemareferencednetworkidentification"></a>
+<a id="schema_ReferencedNetworkIdentification"></a>
+<a id="tocSreferencednetworkidentification"></a>
+<a id="tocsreferencednetworkidentification"></a>
+
+```json
+[
+  {
+    "name": "Empresa B",
+    "cnpjNumber": 12341234123412,
+    "products": [
+      {
+        "code": "01234589-0",
+        "name": "Produto de Seguro",
+        "coverage": [
+          "string"
+        ]
+      }
+    ],
+    "postalAddress": [
+      {
+        "address": "'Rua Diamantina, 59, bloco 35' Praça da Boa Vontade, s/n",
+        "additionalInfo": "Loja B",
+        "districtName": "Paraíso",
+        "townName": "São Paulo",
+        "ibgeCode": "string",
+        "countrySubDivision": "AC",
+        "postCode": 1310200,
+        "country": "ANDORRA",
+        "countryCode": "BRA",
+        "geographicCoordinates": {
+          "latitude": -89.836518,
+          "longitude": -179.836519
+        }
+      }
+    ],
+    "access": [
+      {
+        "standards": [
+          {
+            "openingTime": "10:00:57Z",
+            "closingTime": "16:00:57Z",
+            "weekday": "DOMINGO"
+          }
+        ],
+        "restrictionIndicator": false,
+        "phones": [
+          {
+            "type": "FIXO",
+            "countryCallingCode": 55,
+            "areaCode": 11,
+            "number": 30041000
+          }
+        ]
+      }
+    ],
+    "services": [
+      {
+        "type": "ASSISTENCIA_AUTO",
+        "typeOthers": "string",
+        "name": [
+          "ACIONAMENTO_E_OU_AGENDAMENTO_DE_LEVA_E_TRAZ"
+        ],
+        "description": "string"
+      }
+    ]
+  }
+]
+
+```
+
+### Properties
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|name|string|true|none|Nome ou razão social do prestador de serviço|
+|cnpjNumber|string|true|none|CNPJ do prestador de serviço|
+|products|[ReferencedNetworkProduct](#schemareferencednetworkproduct)|true|none|Lista de produtos de uma empresa.|
+|postalAddress|[ReferencedNetworkCoveragePostalAddress](#schemareferencednetworkcoveragepostaladdress)|true|none|none|
+|access|[ReferencedNetworkAccess](#schemareferencednetworkaccess)|false|none|none|
+|services|[ReferencedNetworkServices](#schemareferencednetworkservices)|true|none|none|
+
+<h2 id="tocS_ReferencedNetworkProduct">ReferencedNetworkProduct</h2>
+<!-- backwards compatibility -->
+<a id="schemareferencednetworkproduct"></a>
+<a id="schema_ReferencedNetworkProduct"></a>
+<a id="tocSreferencednetworkproduct"></a>
+<a id="tocsreferencednetworkproduct"></a>
+
+```json
+[
+  {
+    "code": "01234589-0",
+    "name": "Produto de Seguro",
+    "coverage": [
+      "string"
+    ]
+  }
+]
+
+```
+
+Lista de produtos de uma empresa.
+
+### Properties
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|code|string|true|none|Listagem de código de identificação do produto (vide seção 3 do Manual de Dados e Serviços) que possui atendimento pelo prestador de serviço.|
+|name|string|true|none|Nome comercial do produto, pelo qual é identificado nos canais de distribuição e atendimento da sociedade.|
+|coverage|[string]|false|none|Indicação da lista de coberturas, caso a distinção do atendimento pelo prestador de serviço se aplique para diferentes coberturas de um mesmo produto.|
+
+<h2 id="tocS_ReferencedNetworkCoveragePostalAddress">ReferencedNetworkCoveragePostalAddress</h2>
+<!-- backwards compatibility -->
+<a id="schemareferencednetworkcoveragepostaladdress"></a>
+<a id="schema_ReferencedNetworkCoveragePostalAddress"></a>
+<a id="tocSreferencednetworkcoveragepostaladdress"></a>
+<a id="tocsreferencednetworkcoveragepostaladdress"></a>
+
+```json
+[
+  {
+    "address": "'Rua Diamantina, 59, bloco 35' Praça da Boa Vontade, s/n",
+    "additionalInfo": "Loja B",
+    "districtName": "Paraíso",
+    "townName": "São Paulo",
+    "ibgeCode": "string",
+    "countrySubDivision": "AC",
+    "postCode": 1310200,
+    "country": "ANDORRA",
+    "countryCode": "BRA",
+    "geographicCoordinates": {
+      "latitude": -89.836518,
+      "longitude": -179.836519
+    }
+  }
+]
+
+```
+
+### Properties
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|address|string|true|none|Deverá trazer toda a informação referente ao endereço do intermediário: Tipo de logradouro + Nome do logradouro + Número do Logradouro (se não existir usar ' s/n') + complemento (se houver), como, p.ex.: 'R Diamantina, 59, bloco 35, fundos’ 'Praça da Boa Vontade s/n|
+|additionalInfo|string|false|none|Alguns logradouros ainda necessitam ser especificados por meio de complemento, conforme o exemplo a seguir: 'Loja B', 'Fundos', 'Casa 2', 'Lote C'|
+|districtName|string|false|none|Bairro é uma comunidade ou região localizada em uma cidade ou município de acordo com as suas subdivisões geográficas. p.ex: 'Paraíso'|
+|townName|string|true|none|Localidade: O nome da localidade corresponde à designação da cidade ou município no qual o endereço está localizado. p.ex. 'São Paulo'|
+|ibgeCode|string|true|none|7 dígitos (o último é um código verificador).|
+|countrySubDivision|string|true|none|Enumeração referente a cada sigla da unidade da federação que identifica o estado ou o distrito federal, no qual o endereço está localizado. p.ex. 'AC'. São consideradas apenas as siglas para os estados brasileiros:|
+|postCode|string|true|none|Código de Endereçamento Postal: Composto por um conjunto numérico de oito dígitos, o objetivo principal do CEP é orientar e acelerar o encaminhamento, o tratamento e a entrega de objetos postados nos Correios, por meio da sua atribuição a localidades, logradouros, unidades dos Correios, serviços, órgãos públicos, empresas e edifícios. p.ex. '01311000'|
+|country|string|false|none|Lista de países vide aba 'Lista de países'|
+|countryCode|string|false|none|Código do país de acordo com o código “alpha3” do ISO-3166. p.ex.'BRA'|
+|geographicCoordinates|[ReferencedNetworkGeographicCoordinates](#schemareferencednetworkgeographiccoordinates)|false|none|none|
+
+#### Enumerated Values
+
+|Property|Value|
+|---|---|
+|countrySubDivision|AC|
+|countrySubDivision|AL|
+|countrySubDivision|AP|
+|countrySubDivision|AM|
+|countrySubDivision|BA|
+|countrySubDivision|CE|
+|countrySubDivision|DF|
+|countrySubDivision|ES|
+|countrySubDivision|GO|
+|countrySubDivision|MA|
+|countrySubDivision|MT|
+|countrySubDivision|MS|
+|countrySubDivision|MG|
+|countrySubDivision|PA|
+|countrySubDivision|PB|
+|countrySubDivision|PR|
+|countrySubDivision|PE|
+|countrySubDivision|PI|
+|countrySubDivision|RJ|
+|countrySubDivision|RN|
+|countrySubDivision|RS|
+|countrySubDivision|RO|
+|countrySubDivision|RR|
+|countrySubDivision|SC|
+|countrySubDivision|SP|
+|countrySubDivision|SE|
+|countrySubDivision|TO|
+|country|ANDORRA|
+|country|EMIRADOS_ARABES_UNIDOS|
+|country|AFEGANISTAO|
+|country|ANTIGUA_E_BARBUDA|
+|country|ANGUILLA|
+|country|ALBANIA|
+|country|ARMENIA|
+|country|ANTILHAS_HOLANDESAS|
+|country|ANGOLA|
+|country|ANTARTIDA|
+|country|ARGENTINA|
+|country|SAMOA_AMERICANA|
+|country|AUSTRIA|
+|country|AUSTRALIA|
+|country|ARUBA|
+|country|ILHAS_ALAND|
+|country|AZERBAIJAO|
+|country|BOSNIA_HERZEGOVINA|
+|country|BARBADOS|
+|country|BANGLADESH|
+|country|BELGICA|
+|country|BURKINA_FASSO|
+|country|BULGARIA|
+|country|BAHREIN|
+|country|BURUNDI|
+|country|BENIN|
+|country|SAO_BARTOLOMEU|
+|country|BERMUDAS|
+|country|BRUNEI|
+|country|BOLIVIA|
+|country|BONAIRE_SINT_EUSTATIUS_E_SABA|
+|country|BRASIL|
+|country|BAHAMAS|
+|country|BUTAO|
+|country|ILHA_BOUVET_TERRITORIO_DA_NORUEGA|
+|country|BOTSUANA|
+|country|BELARUS|
+|country|BELIZE|
+|country|CANADA|
+|country|ILHAS_COCOS|
+|country|REPUBLICA_DEMOCRATICA_DO_CONGO_EX_ZAIRE|
+|country|REPUBLICA_CENTRO_AFRICANA|
+|country|CONGO|
+|country|SUICA|
+|country|COSTA_DO_MARFIM|
+|country|ILHAS_COOK|
+|country|CHILE|
+|country|CAMAROES|
+|country|CHINA|
+|country|COLOMBIA|
+|country|COSTA_RICA|
+|country|CUBA|
+|country|CABO_VERDE|
+|country|CURACAO|
+|country|ILHA_NATAL|
+|country|CHIPRE|
+|country|REPUBLICA_TCHECA|
+|country|ALEMANHA|
+|country|DJIBUTI|
+|country|DINAMARCA|
+|country|DOMINICA|
+|country|REPUBLICA_DOMINICANA|
+|country|ARGELIA|
+|country|EQUADOR|
+|country|ESTONIA|
+|country|EGITO|
+|country|SAARA_OCIDENTAL_EX_SPANISH_SAHARA|
+|country|ERITREIA|
+|country|ESPANHA|
+|country|ETIOPIA|
+|country|FINLANDIA|
+|country|FIJI|
+|country|ILHAS_FALKLAND_MALVINAS|
+|country|MICRONESIA|
+|country|ILHAS_FAROES|
+|country|FRANCA|
+|country|GABAO|
+|country|GRA_BRETANHA_REINO_UNIDO_UK|
+|country|GRANADA|
+|country|GEORGIA|
+|country|GUIANA_FRANCESA|
+|country|GUERNSEY|
+|country|GANA|
+|country|GIBRALTAR|
+|country|GROELANDIA|
+|country|GAMBIA|
+|country|GUINE|
+|country|GUADALUPE|
+|country|GUINE_EQUATORIAL|
+|country|GRECIA|
+|country|ILHAS_GEORGIA_DO_SUL_E_SANDWICH_DO_SUL|
+|country|GUATEMALA|
+|country|GUAM_TERRITORIO_DOS_ESTADOS_UNIDOS|
+|country|GUINE_BISSAU|
+|country|GUIANA|
+|country|HONG_KONG|
+|country|ILHAS_HEARD_E_MCDONALD_TERRITORIO_DA_AUSTRALIA|
+|country|HONDURAS|
+|country|CROACIA_HRVATSKA|
+|country|HAITI|
+|country|HUNGRIA|
+|country|INDONESIA|
+|country|IRLANDA|
+|country|ISRAEL|
+|country|ILHA_DO_HOMEM|
+|country|INDIA|
+|country|TERRITORIO_BRITANICO_DO_OCEANO_INDICO|
+|country|IRAQUE|
+|country|IRA|
+|country|ISLANDIA|
+|country|ITALIA|
+|country|JERSEY|
+|country|JAMAICA|
+|country|JORDANIA|
+|country|JAPAO|
+|country|KENIA|
+|country|KYRGYZSTAN|
+|country|CAMBOJA|
+|country|KIRIBATI|
+|country|ILHAS_COMORES|
+|country|SAO_CRISTOVAO_E_NEVIS|
+|country|COREIA_DO_NORTE|
+|country|COREIA_DO_SUL|
+|country|KUAIT|
+|country|ILHAS_CAYMAN|
+|country|CAZAQUISTAO|
+|country|LAOS|
+|country|LIBANO|
+|country|SANTA_LUCIA|
+|country|LIECHTENSTEIN|
+|country|SRI_LANKA|
+|country|LIBERIA|
+|country|LESOTO|
+|country|LITUANIA|
+|country|LUXEMBURGO|
+|country|LATVIA|
+|country|LIBIA|
+|country|MARROCOS|
+|country|MONACO|
+|country|MOLDOVA|
+|country|MONTENEGRO|
+|country|SAO_MARTIM|
+|country|MADAGASCAR|
+|country|ILHAS_MARSHALL|
+|country|MACEDONIA_REPUBLICA_YUGOSLAVA|
+|country|MALI|
+|country|MYANMA_EX_BURMA|
+|country|MONGOLIA|
+|country|MACAU|
+|country|ILHAS_MARIANAS_DO_NORTE|
+|country|MARTINICA|
+|country|MAURITANIA|
+|country|MONTSERRAT|
+|country|MALTA|
+|country|MAURICIO|
+|country|MALDIVAS|
+|country|MALAUI|
+|country|MEXICO|
+|country|MALASIA|
+|country|MOCAMBIQUE|
+|country|NAMIBIA|
+|country|NOVA_CALEDONIA|
+|country|NIGER|
+|country|ILHAS_NORFOLK|
+|country|NIGERIA|
+|country|NICARAGUA|
+|country|HOLANDA|
+|country|NORUEGA|
+|country|NEPAL|
+|country|NAURU|
+|country|NIUE|
+|country|NOVA_ZELANDIA|
+|country|OMA|
+|country|PANAMA|
+|country|PERU|
+|country|POLINESIA_FRANCESA|
+|country|PAPUA_NOVA_GUINE|
+|country|FILIPINAS|
+|country|PAQUISTAO|
+|country|POLONIA|
+|country|ST_PIERRE_AND_MIQUELON|
+|country|ILHA_PITCAIRN|
+|country|PORTO_RICO|
+|country|TERRITORIOS_PALESTINOS_OCUPADOS|
+|country|PORTUGAL|
+|country|PALAU|
+|country|PARAGUAI|
+|country|QATAR|
+|country|ILHA_REUNIAO|
+|country|ROMENIA|
+|country|SERVIA|
+|country|FEDERACAO_RUSSA|
+|country|RUANDA|
+|country|ARABIA_SAUDITA|
+|country|ILHAS_SOLOMAO|
+|country|ILHAS_SEYCHELLES|
+|country|SUDAO|
+|country|SUECIA|
+|country|CINGAPURA|
+|country|SANTA_HELENA|
+|country|ESLOVENIA|
+|country|ILHAS_SVALBARD_E_JAN_MAYEN|
+|country|ESLOVAQUIA|
+|country|SERRA_LEOA|
+|country|SAN_MARINO|
+|country|SENEGAL|
+|country|SOMALIA|
+|country|SURINAME|
+|country|SUDAO_DO_SUL|
+|country|SAO_TOME_E_PRINCIPE|
+|country|EL_SALVADOR|
+|country|SAO_MARTINHO_PARTE_HOLANDESA|
+|country|SIRIA|
+|country|SUAZILANDIA|
+|country|ILHAS_TURKS_E_CAICOS|
+|country|CHADE|
+|country|TERRITORIOS_DO_SUL_DA_FRANCA|
+|country|TOGO|
+|country|TAILANDIA|
+|country|TADJIQUISTAO|
+|country|ILHAS_TOKELAU|
+|country|TIMOR_LESTE_EX_EAST_TIMOR|
+|country|TURCOMENISTAO|
+|country|TUNISIA|
+|country|TONGA|
+|country|TURQUIA|
+|country|TRINIDAD_AND_TOBAGO|
+|country|TUVALU|
+|country|TAIWAN|
+|country|TANZANIA|
+|country|UCRANIA|
+|country|UGANDA|
+|country|ILHAS_MENORES_DOS_ESTADOS_UNIDOS|
+|country|ESTADOS_UNIDOS|
+|country|URUGUAI|
+|country|UZBEQUISTAO|
+|country|VATICANO|
+|country|SAINT_VINCENTE_E_GRANADINAS|
+|country|VENEZUELA|
+|country|ILHAS_VIRGENS_INGLATERRA|
+|country|ILHAS_VIRGENS_ESTADOS_UNIDOS|
+|country|VIETNAM|
+|country|VANUATU|
+|country|ILHAS_WALLIS_E_FUTUNA|
+|country|SAMOA_OCIDENTAL|
+|country|IEMEN|
+|country|MAYOTTE|
+|country|AFRICA_DO_SUL|
+|country|ZAMBIA|
+|country|ZIMBABUE|
+
+<h2 id="tocS_ReferencedNetworkGeographicCoordinates">ReferencedNetworkGeographicCoordinates</h2>
+<!-- backwards compatibility -->
+<a id="schemareferencednetworkgeographiccoordinates"></a>
+<a id="schema_ReferencedNetworkGeographicCoordinates"></a>
+<a id="tocSreferencednetworkgeographiccoordinates"></a>
+<a id="tocsreferencednetworkgeographiccoordinates"></a>
+
+```json
+{
+  "latitude": -89.836518,
+  "longitude": -179.836519
+}
+
+```
+
+### Properties
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|latitude|string|false|none|Informação da Latitude referente a geolocalização informada. Entre -90 e 90. Formato numérico 2 casas antes da vírgula, 11 posições. p.ex. '-89.8365180'|
+|longitude|string|false|none|Informação da Longitude referente a geolocalização informada. Formato numérico 3 casas antes da vírgula, 11 posições. Entre -180 e 180. p.ex'-179.836519.'|
+
+<h2 id="tocS_ReferencedNetworkAccess">ReferencedNetworkAccess</h2>
+<!-- backwards compatibility -->
+<a id="schemareferencednetworkaccess"></a>
+<a id="schema_ReferencedNetworkAccess"></a>
+<a id="tocSreferencednetworkaccess"></a>
+<a id="tocsreferencednetworkaccess"></a>
+
+```json
+[
+  {
+    "standards": [
+      {
+        "openingTime": "10:00:57Z",
+        "closingTime": "16:00:57Z",
+        "weekday": "DOMINGO"
+      }
+    ],
+    "restrictionIndicator": false,
+    "phones": [
+      {
+        "type": "FIXO",
+        "countryCallingCode": 55,
+        "areaCode": 11,
+        "number": 30041000
+      }
+    ]
+  }
+]
+
+```
+
+### Properties
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|standards|[ReferencedNetworkStandards](#schemareferencednetworkstandards)|false|none|none|
+|restrictionIndicator|boolean|false|none|Indica se a instalação dos Prestadores de serviços tem acesso restrito a clientes, por exemplo. p.ex. 'false' (restrito)|
+|phones|[ReferencedNetworkPhones](#schemareferencednetworkphones)|false|none|Telefone do intermediário|
+
+<h2 id="tocS_ReferencedNetworkStandards">ReferencedNetworkStandards</h2>
+<!-- backwards compatibility -->
+<a id="schemareferencednetworkstandards"></a>
+<a id="schema_ReferencedNetworkStandards"></a>
+<a id="tocSreferencednetworkstandards"></a>
+<a id="tocsreferencednetworkstandards"></a>
+
+```json
+[
+  {
+    "openingTime": "10:00:57Z",
+    "closingTime": "16:00:57Z",
+    "weekday": "DOMINGO"
+  }
+]
+
+```
+
+### Properties
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|openingTime|string|false|none|Horário de abertura|
+|closingTime|string|false|none|Horário de encerramento|
+|weekday|string|false|none|Dias de funcionamento|
+
+#### Enumerated Values
+
+|Property|Value|
+|---|---|
+|weekday|DOMINGO|
+|weekday|SEGUNDA_FEIRA|
+|weekday|TERCA_FEIRA|
+|weekday|QUARTA_FEIRA|
+|weekday|QUINTA_FEIRA|
+|weekday|SEXTA_FEIRA|
+|weekday|SABADO|
+
+<h2 id="tocS_ReferencedNetworkPhones">ReferencedNetworkPhones</h2>
+<!-- backwards compatibility -->
+<a id="schemareferencednetworkphones"></a>
+<a id="schema_ReferencedNetworkPhones"></a>
+<a id="tocSreferencednetworkphones"></a>
+<a id="tocsreferencednetworkphones"></a>
+
+```json
+[
+  {
+    "type": "FIXO",
+    "countryCallingCode": 55,
+    "areaCode": 11,
+    "number": 30041000
+  }
+]
+
+```
+
+Telefone do intermediário
+
+### Properties
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|type|string|false|none|Identificação do Tipo de telefone do intermediário|
+|countryCallingCode|string|false|none|Número de DDI (Discagem Direta Internacional) para telefone de acesso ao Canal - se houver.|
+|areaCode|string|false|none|Número de DDD (Discagem Direta à Distância) do telefone do intermediário - se houver. p.ex. '19'|
+|number|string|false|none|Número de telefone do intermediário - se houver|
+
+<h2 id="tocS_ReferencedNetworkServices">ReferencedNetworkServices</h2>
+<!-- backwards compatibility -->
+<a id="schemareferencednetworkservices"></a>
+<a id="schema_ReferencedNetworkServices"></a>
+<a id="tocSreferencednetworkservices"></a>
+<a id="tocsreferencednetworkservices"></a>
+
+```json
+[
+  {
+    "type": "ASSISTENCIA_AUTO",
+    "typeOthers": "string",
+    "name": [
+      "ACIONAMENTO_E_OU_AGENDAMENTO_DE_LEVA_E_TRAZ"
+    ],
+    "description": "string"
+  }
+]
+
+```
+
+### Properties
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|type|string|true|none|Relação dos tipos de prestação de serviços efetivamente prestados, conforme discriminado na Tabela XXX do Anexo II|
+|typeOthers|string|false|none|Descrição de serviços efetuados no tipo de prestação de serviços CASO PREENCHIDO A OPÇÃO OUTRAS. Deve ser padronizada na proposta técnica submetida pela Estrutura Inicial de Governança para observância comum por todas as sociedades participantes|
+|name|[string]|true|none|Relação dos serviços efetivamente prestados, conforme discriminado na Tabela II.5 do Anexo II|
+|description|string|true|none|Campo aberto para detalhamento do tipo de serviço prestado.|
+
+#### Enumerated Values
+
+|Property|Value|
+|---|---|
+|type|ASSISTENCIA_AUTO|
+|type|ASSISTENCIA_RE|
+|type|ASSISTENCIA_VIDA|
+|type|BENEFICIOS|
+|type|DESPACHANTE|
+|type|LOCACAO_DE_VEICULOS|
+|type|REPAROS_AUTOMOTIVOS|
+|type|REPAROS_EMERGENCIAIS|
+|type|SERVICO_DE_MANUTENCAO|
+|type|SERVICO_EM_CASO_DE_SINISTRO|
+|type|TRANSPORTE_DO_EMERGENCIAL|
+|type|OUTROS|
+
+<h2 id="tocS_Links">Links</h2>
+<!-- backwards compatibility -->
+<a id="schemalinks"></a>
+<a id="schema_Links"></a>
+<a id="tocSlinks"></a>
+<a id="tocslinks"></a>
+
+```json
+{
+  "self": "https://api.organizacao.com.br/open-insurance/products-services/v1",
+  "first": "https://api.organizacao.com.br/open-insurance/products-services/v1",
+  "prev": "https://api.organizacao.com.br/open-insurance/products-services/v1",
+  "next": "https://api.organizacao.com.br/open-insurance/products-services/v1",
+  "last": "https://api.organizacao.com.br/open-insurance/products-services/v1"
+}
+
+```
+
+### Properties
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|self|string|false|none|URL da página atualmente requisitada|
+|first|string|false|none|URL da primeira página de registros|
+|prev|string|false|none|URL da página anterior de registros|
+|next|string|false|none|URL da próxima página de registros|
+|last|string|false|none|URL da última página de registros|
+
+<h2 id="tocS_Meta">Meta</h2>
+<!-- backwards compatibility -->
+<a id="schemameta"></a>
+<a id="schema_Meta"></a>
+<a id="tocSmeta"></a>
+<a id="tocsmeta"></a>
+
+```json
+{
+  "totalRecords": 10,
+  "totalPages": 1
+}
+
+```
+
+### Properties
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|totalRecords|integer|true|none|Total de registros encontrados|
+|totalPages|integer|true|none|Total de páginas para os registros encontrados|
+
+<h2 id="tocS_ResponseError">ResponseError</h2>
+<!-- backwards compatibility -->
+<a id="schemaresponseerror"></a>
+<a id="schema_ResponseError"></a>
+<a id="tocSresponseerror"></a>
+<a id="tocsresponseerror"></a>
+
+```json
+{
+  "errors": [
+    {
+      "code": "string",
+      "title": "string",
+      "detail": "string",
+      "requestDateTime": "2021-08-20T08:30:00Z"
+    }
+  ],
+  "meta": {
+    "totalRecords": 10,
+    "totalPages": 1
+  }
+}
+
+```
+
+### Properties
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|errors|[object]|true|none|none|
+|» code|string|true|none|Código de erro específico do endpoint|
+|» title|string|true|none|Título legível por humanos deste erro específico|
+|» detail|string|true|none|Descrição legível por humanos deste erro específico|
+|» requestDateTime|string(date-time)|false|none|Data e hora da consulta, conforme especificação RFC-3339, formato UTC.|
+|meta|[Meta](#schemameta)|false|none|none|
+
+<h2 id="tocS_ResponseRuralList">ResponseRuralList</h2>
+<!-- backwards compatibility -->
+<a id="schemaresponserurallist"></a>
+<a id="schema_ResponseRuralList"></a>
+<a id="tocSresponserurallist"></a>
+<a id="tocsresponserurallist"></a>
+
+```json
+{
+  "data": {
+    "brand": {
+      "name": "EMPRESA A seguros",
+      "companies": [
+        {
+          "name": "ACME Seguros",
+          "cnpjNumber": "12345678901234",
+          "products": [
+            {
+              "name": "Produto de Seguro",
+              "code": "01234589-0",
+              "modality": "AGRICOLA",
+              "coverages": [
+                {
+                  "coverage": "GRANIZO",
+                  "coverageDescription": "string",
+                  "allowApartPurchase": true,
+                  "coverageAttributes": {
+                    "insuredParticipation": [],
+                    "insuredParticipationDescription": "string"
+                  }
+                }
+              ],
+              "maxLMG": {
+                "amount": 0,
+                "unit": {
+                  "code": "R$",
+                  "description": "REAL"
+                }
+              },
+              "traits": false,
+              "crops": [
+                "FRUTAS"
+              ],
+              "cropsOthers": "string",
+              "forestCode": [
+                "PINUS"
+              ],
+              "forestCodeOthers": "string",
+              "flockCode": [
+                "BOVINOS"
+              ],
+              "flockCodeOthers": "string",
+              "animalDestination": [
+                "PRODUCAO"
+              ],
+              "animalsClassification": [
+                "ELITE"
+              ],
+              "subvention": true,
+              "termsAndConditions": {
+                "susepProcessNumber": "15414.622222/2222-22",
+                "definition": "https://www.seguradora.com.br/produto/tradicional/pdf/condicoes_gerais.pdf"
+              },
+              "validity": {
+                "term": [
+                  "ANUAL"
+                ],
+                "termOthers": "string"
+              },
+              "premiumPayment": [
+                {
+                  "paymentMethod": "CARTAO_DE_CREDITO",
+                  "paymentDetail": "string",
+                  "paymentType": [
+                    "A_VISTA"
+                  ],
+                  "premiumRates": "string"
+                }
+              ],
+              "minimumRequirements": {
+                "contractType": "COLETIVO",
+                "minimumRequirementDetails": "https://openinsurance.com.br/aaa",
+                "targetAudiences": [
+                  "PESSOA_FISICA"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "links": {
+    "self": "https://api.organizacao.com.br/open-insurance/products-services/v1",
+    "first": "https://api.organizacao.com.br/open-insurance/products-services/v1",
+    "prev": "https://api.organizacao.com.br/open-insurance/products-services/v1",
+    "next": "https://api.organizacao.com.br/open-insurance/products-services/v1",
+    "last": "https://api.organizacao.com.br/open-insurance/products-services/v1"
+  },
+  "meta": {
+    "totalRecords": 10,
+    "totalPages": 1
+  }
+}
+
+```
+
+### Properties
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|data|object|true|none|none|
+|» brand|[RuralBrand](#schemaruralbrand)|true|none|Organizacao controladora do grupo.|
+|links|[Links](#schemalinks)|true|none|none|
+|meta|[Meta](#schemameta)|true|none|none|
+
+<h2 id="tocS_RuralBrand">RuralBrand</h2>
+<!-- backwards compatibility -->
+<a id="schemaruralbrand"></a>
+<a id="schema_RuralBrand"></a>
+<a id="tocSruralbrand"></a>
+<a id="tocsruralbrand"></a>
+
+```json
+{
+  "name": "EMPRESA A seguros",
+  "companies": [
+    {
+      "name": "ACME Seguros",
+      "cnpjNumber": "12345678901234",
+      "products": [
+        {
+          "name": "Produto de Seguro",
+          "code": "01234589-0",
+          "modality": "AGRICOLA",
+          "coverages": [
+            {
+              "coverage": "GRANIZO",
+              "coverageDescription": "string",
+              "allowApartPurchase": true,
+              "coverageAttributes": {
+                "insuredParticipation": [
+                  "FRANQUIA"
+                ],
+                "insuredParticipationDescription": "string"
+              }
+            }
+          ],
+          "maxLMG": {
+            "amount": 0,
+            "unit": {
+              "code": "R$",
+              "description": "REAL"
+            }
+          },
+          "traits": false,
+          "crops": [
+            "FRUTAS"
+          ],
+          "cropsOthers": "string",
+          "forestCode": [
+            "PINUS"
+          ],
+          "forestCodeOthers": "string",
+          "flockCode": [
+            "BOVINOS"
+          ],
+          "flockCodeOthers": "string",
+          "animalDestination": [
+            "PRODUCAO"
+          ],
+          "animalsClassification": [
+            "ELITE"
+          ],
+          "subvention": true,
+          "termsAndConditions": {
+            "susepProcessNumber": "15414.622222/2222-22",
+            "definition": "https://www.seguradora.com.br/produto/tradicional/pdf/condicoes_gerais.pdf"
+          },
+          "validity": {
+            "term": [
+              "ANUAL"
+            ],
+            "termOthers": "string"
+          },
+          "premiumPayment": [
+            {
+              "paymentMethod": "CARTAO_DE_CREDITO",
+              "paymentDetail": "string",
+              "paymentType": [
+                "A_VISTA"
+              ],
+              "premiumRates": "string"
+            }
+          ],
+          "minimumRequirements": {
+            "contractType": "COLETIVO",
+            "minimumRequirementDetails": "https://openinsurance.com.br/aaa",
+            "targetAudiences": [
+              "PESSOA_FISICA"
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}
+
+```
+
+Organizacao controladora do grupo.
+
+### Properties
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|name|string|true|none|Nome da Marca reportada pelo participante do Open Insurance. O conceito a que se refere a 'marca' é em essência uma promessa da empresa em fornecer uma série específica de atributos, benefícios e serviços uniformes aos clientes.|
+|companies|[RuralCompany](#schemaruralcompany)|true|none|none|
+
+<h2 id="tocS_RuralCompany">RuralCompany</h2>
+<!-- backwards compatibility -->
+<a id="schemaruralcompany"></a>
+<a id="schema_RuralCompany"></a>
+<a id="tocSruralcompany"></a>
+<a id="tocsruralcompany"></a>
+
+```json
+[
+  {
+    "name": "ACME Seguros",
+    "cnpjNumber": "12345678901234",
+    "products": [
+      {
+        "name": "Produto de Seguro",
+        "code": "01234589-0",
+        "modality": "AGRICOLA",
+        "coverages": [
+          {
+            "coverage": "GRANIZO",
+            "coverageDescription": "string",
+            "allowApartPurchase": true,
+            "coverageAttributes": {
+              "insuredParticipation": [
+                "FRANQUIA"
+              ],
+              "insuredParticipationDescription": "string"
+            }
+          }
+        ],
+        "maxLMG": {
+          "amount": 0,
+          "unit": {
+            "code": "R$",
+            "description": "REAL"
+          }
+        },
+        "traits": false,
+        "crops": [
+          "FRUTAS"
+        ],
+        "cropsOthers": "string",
+        "forestCode": [
+          "PINUS"
+        ],
+        "forestCodeOthers": "string",
+        "flockCode": [
+          "BOVINOS"
+        ],
+        "flockCodeOthers": "string",
+        "animalDestination": [
+          "PRODUCAO"
+        ],
+        "animalsClassification": [
+          "ELITE"
+        ],
+        "subvention": true,
+        "termsAndConditions": {
+          "susepProcessNumber": "15414.622222/2222-22",
+          "definition": "https://www.seguradora.com.br/produto/tradicional/pdf/condicoes_gerais.pdf"
+        },
+        "validity": {
+          "term": [
+            "ANUAL"
+          ],
+          "termOthers": "string"
+        },
+        "premiumPayment": [
+          {
+            "paymentMethod": "CARTAO_DE_CREDITO",
+            "paymentDetail": "string",
+            "paymentType": [
+              "A_VISTA"
+            ],
+            "premiumRates": "string"
+          }
+        ],
+        "minimumRequirements": {
+          "contractType": "COLETIVO",
+          "minimumRequirementDetails": "https://openinsurance.com.br/aaa",
+          "targetAudiences": [
+            "PESSOA_FISICA"
+          ]
+        }
+      }
+    ]
+  }
+]
+
+```
+
+### Properties
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|name|string|true|none|Nome da Instituição, pertencente à Marca.|
+|cnpjNumber|string|true|none|CNPJ da sociedade pertencente à marca.|
+|products|[RuralProduct](#schemaruralproduct)|true|none|Lista de produtos de uma empresa.|
+
+<h2 id="tocS_RuralProduct">RuralProduct</h2>
+<!-- backwards compatibility -->
+<a id="schemaruralproduct"></a>
+<a id="schema_RuralProduct"></a>
+<a id="tocSruralproduct"></a>
+<a id="tocsruralproduct"></a>
+
+```json
+[
+  {
+    "name": "Produto de Seguro",
+    "code": "01234589-0",
+    "modality": "AGRICOLA",
+    "coverages": [
+      {
+        "coverage": "GRANIZO",
+        "coverageDescription": "string",
+        "allowApartPurchase": true,
+        "coverageAttributes": {
+          "insuredParticipation": [
+            "FRANQUIA"
+          ],
+          "insuredParticipationDescription": "string"
+        }
+      }
+    ],
+    "maxLMG": {
+      "amount": 0,
+      "unit": {
+        "code": "R$",
+        "description": "REAL"
+      }
+    },
+    "traits": false,
+    "crops": [
+      "FRUTAS"
+    ],
+    "cropsOthers": "string",
+    "forestCode": [
+      "PINUS"
+    ],
+    "forestCodeOthers": "string",
+    "flockCode": [
+      "BOVINOS"
+    ],
+    "flockCodeOthers": "string",
+    "animalDestination": [
+      "PRODUCAO"
+    ],
+    "animalsClassification": [
+      "ELITE"
+    ],
+    "subvention": true,
+    "termsAndConditions": {
+      "susepProcessNumber": "15414.622222/2222-22",
+      "definition": "https://www.seguradora.com.br/produto/tradicional/pdf/condicoes_gerais.pdf"
+    },
+    "validity": {
+      "term": [
+        "ANUAL"
+      ],
+      "termOthers": "string"
+    },
+    "premiumPayment": [
+      {
+        "paymentMethod": "CARTAO_DE_CREDITO",
+        "paymentDetail": "string",
+        "paymentType": [
+          "A_VISTA"
+        ],
+        "premiumRates": "string"
+      }
+    ],
+    "minimumRequirements": {
+      "contractType": "COLETIVO",
+      "minimumRequirementDetails": "https://openinsurance.com.br/aaa",
+      "targetAudiences": [
+        "PESSOA_FISICA"
+      ]
+    }
+  }
+]
+
+```
+
+Lista de produtos de uma empresa.
+
+### Properties
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|name|string|true|none|Nome comercial do produto, pelo qual é identificado nos canais de distribuição e atendimento da sociedade.|
+|code|string|true|none|Código único a ser definido pela sociedade.|
+|modality|string|true|none|Modalidade|
+|coverages|[object]|true|none|none|
+|» coverage|string|true|none|Listagem de coberturas incluídas no produto que deve observar a relação discriminada de coberturas, conforme Tabela II.17 do Anexo II.|
+|» coverageDescription|string|true|none|Campo aberto para detalhamento de cada uma das coberturas possíveis dos produtos a ser feito por cada participante|
+|» allowApartPurchase|boolean|true|none|Indicação se a cobertura permite contratação separada (por cobertura selecionada).|
+|» coverageAttributes|[RuralCoverageAttributes](#schemaruralcoverageattributes)|true|none|Informações de cobertura do Seguro.|
+|maxLMG|[RuralCoverageAttributesDetails](#schemaruralcoverageattributesdetails)|true|none|Valor de LMG aceito pela sociedade para cada produto. Em reais (R$) Importante: Campo de valor numérico relacionado ao produto que possui o campo. Quando não houver o campo, enviar o valor zerado.|
+|traits|boolean|true|none|Indicação se o produto é classificado como destinado para cobertura de grandes riscos, sendo tal classificação de acordo com regulamentação específica.|
+|crops|[string]|false|none|Lista com tipos de culturas cobertas. OBS: Condicional a seleção de 1. Agrícola no campo Modalidade|
+|cropsOthers|string|false|none|Campo livre para descrição por cada participante ao selecionar o domínio “Outros” no campo Culturas OBS: Condicional a seleção de 5. Outros no campo acima|
+|forestCode|[string]|false|none|Lista com tipos de florestas cobertas. OBS: Condicional a seleção de 4. Florestas no campo Modalidade|
+|forestCodeOthers|string|false|none|Campo livre para descrição por cada participante ao selecionar o domínio “Outros” no campo Código Floresta OBS: Condicional a seleção de 5. Outros no campo acima|
+|flockCode|[string]|false|none|Lista com tipos de rebanhos cobertos. OBS: Condicional a seleção de 2. Pecuário no campo Modalidade|
+|flockCodeOthers|string|false|none|Campo livre para descrição por cada participante ao selecionar o domínio “Outros” no campo Código do Rebanho OBS: Condicional a seleção de 8. Outros no campo acima|
+|animalDestination|[string]|false|none|Lista com tipos de destinação do animal coberto. OBS: Condicional a seleção de 2. Pecuário no campo Modalidade|
+|animalsClassification|[string]|false|none|Listas com classificações de animais cobertos. OBS: Condicional a seleção de 8. Animais no campo Modalidade|
+|subvention|boolean|false|none|Permite contratação por subvenção? OBS: Condicional a seleção de 1. Agrícola, 2. Pecuário, 3. Aquícola ou 4. Florestas no campo Modalidade|
+|termsAndConditions|[RuralTerms](#schemaruralterms)|true|none|Informações dos termos e condições conforme número do processo SUSEP.|
+|validity|[RuralValidity](#schemaruralvalidity)|true|none|none|
+|premiumPayment|[RuralPremiumPayment](#schemaruralpremiumpayment)|true|none|none|
+|minimumRequirements|[RuralMinimumRequirements](#schemaruralminimumrequirements)|true|none|Requisitos mínimos.|
+
+#### Enumerated Values
+
+|Property|Value|
+|---|---|
+|modality|AGRICOLA|
+|modality|PECUARIO|
+|modality|AQUICOLA|
+|modality|FLORESTAS|
+|modality|BENFEITORIAS_E_PRODUTOS_AGROPECUARIOS|
+|modality|PENHOR_RURAL|
+|modality|ANIMAIS|
+|modality|VIDA_DO_PRODUTOR_RURAL|
+|coverage|GRANIZO|
+|coverage|GEADA|
+|coverage|GRANIZO_GEADA|
+|coverage|GRANIZO_GEADA_CHUVA_EXCESSIVA|
+|coverage|COMPREENSIVA_INCENDIO_E_RAIO_TROMBA_D_AGUA_VENTOS_FORTES_E_VENTOS_FRIOS_CHUVAS_EXCESSIVAS_SECA_VARIACAO_EXCESSIVA_DE_TEMPERATURA_GRANIZO_GEADA|
+|coverage|COMPREENSIVA_INCENDIO_E_RAIO_TROMBA_D_AGUA_VENTOS_FORTES_E_VENTOS_FRIOS_CHUVAS_EXCESSIVAS_SECA_VARIACAO_EXCESSIVA_DE_TEMPERATURA_GRANIZO_GEADA_COM_DOENCAS_E_PRAGAS|
+|coverage|CANCRO_CITRICO|
+|coverage|COMPREENSIVA_PARA_A_MODALIDADE_BENFEITORIAS_E_PRODUTOS_AGROPECUARIOS_INCENDIO_RAIO_EXPLOSAO_VENDAVAL_GRANIZO_TREMORES_DE_TERRA_IMPACTO_DE_VEICULOS_DESMORONAMENTO_TOTAL_OU_PARCIAL_DANOS_AS_MERCADORIAS_DO_SEGURADO_EXCLUSIVAMENTE_PARA_OS_PRODUTOS_AGROPECUARIOS_DECORRENTES_DE_ACIDENTES_COM_O_VEICULO_TRANSPORTADOR_DANOS_AS_MAQUINAS_AGRICOLAS_E_SEUS_IMPLEMENTOS|
+|coverage|DECORRENTES_DE_COLISAO_ABALROAMENTO_E_OU_CAPOTAGEM_QUEDA_DE|
+|coverage|PONTES_VIADUTOS_OU_EM_PRECIPICIOS_ROUBO_OU_FURTO_TOTAL_CASO|
+|coverage|FORTUITO_OU_FORCA_MAIOR_OCORRIDOS_DURANTE_O_TRANSPORTE|
+|coverage|COMPREENSIVA_PARA_A_MODALIDADE_PENHOR_RURAL|
+|coverage|MORTE_DE_ANIMAIS|
+|coverage|CONFINAMENTO_SEMI_CONFINAMENTO_BOVINOS_DE_CORTE|
+|coverage|CONFINAMENTO_BOVINOS_DE_LEITE|
+|coverage|VIAGEM|
+|coverage|EXPOSICAO_MOSTRA_E_LEILAO|
+|coverage|CARREIRA|
+|coverage|SALTO_E_ADESTRAMENTO|
+|coverage|PROVAS_FUNCIONAIS|
+|coverage|HIPISMO_RURAL|
+|coverage|POLO|
+|coverage|TROTE|
+|coverage|VAQUEJADA|
+|coverage|EXTENSAO_DE_COBERTURA_EM_TERRITORIO_ESTRANGEIRO|
+|coverage|TRANSPORTE|
+|coverage|RESPONSABILIDADE_CIVIL|
+|coverage|PERDA_DE_FERTILIDADE_DE_GARANHAO|
+|coverage|REEMBOLSO_CIRURGICO|
+|coverage|COLETA_DE_SEMEN|
+|coverage|PREMUNICAO|
+|coverage|COMPREENSIVA_PARA_A_MODALIDADE_FLORESTAS|
+|coverage|VIDA_DO_PRODUTOR_RURAL|
+|coverage|BASICA_DE_FATURAMENTO_PARA_O_PECUARIO|
+|coverage|OUTRAS|
+
+<h2 id="tocS_RuralCoverageAttributesDetails">RuralCoverageAttributesDetails</h2>
+<!-- backwards compatibility -->
+<a id="schemaruralcoverageattributesdetails"></a>
+<a id="schema_RuralCoverageAttributesDetails"></a>
+<a id="tocSruralcoverageattributesdetails"></a>
+<a id="tocsruralcoverageattributesdetails"></a>
+
+```json
+{
+  "amount": 0,
+  "unit": {
+    "code": "R$",
+    "description": "REAL"
+  }
+}
+
+```
+
+### Properties
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|amount|number|true|none|none|
+|unit|[RuralCoverageAttributesDetailsUnit](#schemaruralcoverageattributesdetailsunit)|true|none|none|
+
+<h2 id="tocS_RuralCoverageAttributesDetailsUnit">RuralCoverageAttributesDetailsUnit</h2>
+<!-- backwards compatibility -->
+<a id="schemaruralcoverageattributesdetailsunit"></a>
+<a id="schema_RuralCoverageAttributesDetailsUnit"></a>
+<a id="tocSruralcoverageattributesdetailsunit"></a>
+<a id="tocsruralcoverageattributesdetailsunit"></a>
+
+```json
+{
+  "code": "R$",
+  "description": "REAL"
+}
+
+```
+
+### Properties
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|code|string|true|none|none|
+|description|string|true|none|none|
+
+<h2 id="tocS_RuralValidity">RuralValidity</h2>
+<!-- backwards compatibility -->
+<a id="schemaruralvalidity"></a>
+<a id="schema_RuralValidity"></a>
+<a id="tocSruralvalidity"></a>
+<a id="tocsruralvalidity"></a>
+
+```json
+{
+  "term": [
+    "ANUAL"
+  ],
+  "termOthers": "string"
+}
+
+```
+
+### Properties
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|term|[string]|true|none|none|
+|termOthers|string|false|none|Campo livre para descrição por cada participante ao selecionar o domínio “Outros” no campo Prazo (acima).|
+
+<h2 id="tocS_RuralPremiumPayment">RuralPremiumPayment</h2>
+<!-- backwards compatibility -->
+<a id="schemaruralpremiumpayment"></a>
+<a id="schema_RuralPremiumPayment"></a>
+<a id="tocSruralpremiumpayment"></a>
+<a id="tocsruralpremiumpayment"></a>
+
+```json
+[
+  {
+    "paymentMethod": "CARTAO_DE_CREDITO",
+    "paymentDetail": "string",
+    "paymentType": [
+      "A_VISTA"
+    ],
+    "premiumRates": "string"
+  }
+]
+
+```
+
+### Properties
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|paymentMethod|string|true|none|Metodo de pagamento|
+|paymentDetail|string|false|none|Campo livre para descrição por cada participante ao selecionar o domínio “Outros” no campo Meio de pagamento (acima)|
+|paymentType|[string]|true|none|Forma de Pagamento|
+|premiumRates|string|false|none|Distribuição de frequência relativa aos valores referentes às taxas cobradas, nos termos do Anexo III.|
+
+#### Enumerated Values
+
+|Property|Value|
+|---|---|
+|paymentMethod|CARTAO_DE_CREDITO|
+|paymentMethod|CARTAO_DE_DEBITO|
+|paymentMethod|DEBITO_EM_CONTA_CORRENTE|
+|paymentMethod|DEBITO_EM_CONTA_POUPANCA|
+|paymentMethod|BOLETO_BANCARIO|
+|paymentMethod|PIX|
+|paymentMethod|CONSIGNACAO_EM_FOLHA_DE_PAGAMENTO|
+|paymentMethod|PONTOS_DE_PROGRAMA_DE_BENEFICIO|
+|paymentMethod|OUTROS|
+
+<h2 id="tocS_RuralTerms">RuralTerms</h2>
+<!-- backwards compatibility -->
+<a id="schemaruralterms"></a>
+<a id="schema_RuralTerms"></a>
+<a id="tocSruralterms"></a>
+<a id="tocsruralterms"></a>
+
+```json
+{
+  "susepProcessNumber": "15414.622222/2222-22",
+  "definition": "https://www.seguradora.com.br/produto/tradicional/pdf/condicoes_gerais.pdf"
+}
+
+```
+
+Informações dos termos e condições conforme número do processo SUSEP.
+
+### Properties
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|susepProcessNumber|string|false|none|Número do processo Susep. OBS: Condicional a seleção de 2. Não no campo acima.|
+|definition|string|false|none|Campo aberto (possibilidade de incluir uma url).|
+
+<h2 id="tocS_RuralMinimumRequirements">RuralMinimumRequirements</h2>
+<!-- backwards compatibility -->
+<a id="schemaruralminimumrequirements"></a>
+<a id="schema_RuralMinimumRequirements"></a>
+<a id="tocSruralminimumrequirements"></a>
+<a id="tocsruralminimumrequirements"></a>
+
+```json
+{
+  "contractType": "COLETIVO",
+  "minimumRequirementDetails": "https://openinsurance.com.br/aaa",
+  "targetAudiences": [
+    "PESSOA_FISICA"
+  ]
+}
+
+```
+
+Requisitos mínimos.
+
+### Properties
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|contractType|string|true|none|none|
+|minimumRequirementDetails|string|true|none|Campo aberto contendo todos os requisitos mínimos para contratação (possibilidade de incluir URL).|
+|targetAudiences|[string]|true|none|none|
+
+#### Enumerated Values
+
+|Property|Value|
+|---|---|
+|contractType|COLETIVO|
+|contractType|INDIVIDUAL|
+
+<h2 id="tocS_RuralCoverageAttributes">RuralCoverageAttributes</h2>
+<!-- backwards compatibility -->
+<a id="schemaruralcoverageattributes"></a>
+<a id="schema_RuralCoverageAttributes"></a>
+<a id="tocSruralcoverageattributes"></a>
+<a id="tocsruralcoverageattributes"></a>
+
+```json
+{
+  "insuredParticipation": [
+    "FRANQUIA"
+  ],
+  "insuredParticipationDescription": "string"
+}
+
+```
+
+Informações de cobertura do Seguro.
+
+### Properties
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|insuredParticipation|[string]|true|none|Lista com indicativo do tipo de participação do segurado para cada cobertura.|
+|insuredParticipationDescription|string|false|none|Lista com descrição referente ao campo “Participação do Segurado” para cada cobertura. OBS: Obrigatório, quando houver|
+
+<h2 id="tocS_Links">Links</h2>
+<!-- backwards compatibility -->
+<a id="schemalinks"></a>
+<a id="schema_Links"></a>
+<a id="tocSlinks"></a>
+<a id="tocslinks"></a>
+
+```json
+{
+  "self": "https://api.organizacao.com.br/open-insurance/products-services/v1",
+  "first": "https://api.organizacao.com.br/open-insurance/products-services/v1",
+  "prev": "https://api.organizacao.com.br/open-insurance/products-services/v1",
+  "next": "https://api.organizacao.com.br/open-insurance/products-services/v1",
+  "last": "https://api.organizacao.com.br/open-insurance/products-services/v1"
+}
+
+```
+
+### Properties
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|self|string|false|none|URL da página atualmente requisitada|
+|first|string|false|none|URL da primeira página de registros|
+|prev|string|false|none|URL da página anterior de registros|
+|next|string|false|none|URL da próxima página de registros|
+|last|string|false|none|URL da última página de registros|
+
+<h2 id="tocS_Meta">Meta</h2>
+<!-- backwards compatibility -->
+<a id="schemameta"></a>
+<a id="schema_Meta"></a>
+<a id="tocSmeta"></a>
+<a id="tocsmeta"></a>
+
+```json
+{
+  "totalRecords": 10,
+  "totalPages": 1
+}
+
+```
+
+### Properties
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|totalRecords|integer|true|none|Total de registros encontrados|
+|totalPages|integer|true|none|Total de páginas para os registros encontrados|
+
+<h2 id="tocS_ResponseError">ResponseError</h2>
+<!-- backwards compatibility -->
+<a id="schemaresponseerror"></a>
+<a id="schema_ResponseError"></a>
+<a id="tocSresponseerror"></a>
+<a id="tocsresponseerror"></a>
+
+```json
+{
+  "errors": [
+    {
+      "code": "string",
+      "title": "string",
+      "detail": "string",
+      "requestDateTime": "2021-08-20T08:30:00Z"
+    }
+  ],
+  "meta": {
+    "totalRecords": 10,
+    "totalPages": 1
+  }
+}
+
+```
+
+### Properties
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|errors|[object]|true|none|none|
+|» code|string|true|none|Código de erro específico do endpoint|
+|» title|string|true|none|Título legível por humanos deste erro específico|
+|» detail|string|true|none|Descrição legível por humanos deste erro específico|
+|» requestDateTime|string(date-time)|false|none|Data e hora da consulta, conforme especificação RFC-3339, formato UTC.|
+|meta|[Meta](#schemameta)|false|none|none|
+
+<h2 id="tocS_ResponseTransportList">ResponseTransportList</h2>
+<!-- backwards compatibility -->
+<a id="schemaresponsetransportlist"></a>
+<a id="schema_ResponseTransportList"></a>
+<a id="tocSresponsetransportlist"></a>
+<a id="tocsresponsetransportlist"></a>
+
+```json
+{
+  "data": {
+    "brand": {
+      "name": "EMPRESA A seguros",
+      "companies": [
+        {
+          "name": "ACME Seguros",
+          "cnpjNumber": "12345678901234",
+          "products": [
+            {
+              "name": "Produto de Seguro",
+              "code": "01234589-0",
+              "coverages": [
+                {
+                  "coverage": "ACIDENTES_PESSOAIS_COM_PASSAGEIROS",
+                  "coverageDescription": "string",
+                  "allowApartPurchase": true,
+                  "coverageAttributes": {
+                    "insuredParticipation": [],
+                    "insuredParticipationDescription": "string"
+                  }
+                }
+              ],
+              "maxLMG": {
+                "amount": 0,
+                "unit": {
+                  "code": "R$",
+                  "description": "REAL"
+                }
+              },
+              "assistanceServices": [
+                {
+                  "assistanceServices": true,
+                  "assistanceServicesPackage": [
+                    "ATE_10_SERVICOS"
+                  ],
+                  "complementaryAssistanceServicesDetail": "reboque pane seca",
+                  "chargeTypeSignaling": "GRATUITO"
+                }
+              ],
+              "traits": false,
+              "validity": {
+                "term": [
+                  "ANUAL"
+                ],
+                "termOthers": "string"
+              },
+              "premiumRates": "string",
+              "policyType": [
+                "AVULSA"
+              ],
+              "termsAndConditions": {
+                "susepProcessNumber": "15414.622222/2222-22",
+                "definition": "https://www.seguradora.com.br/produto/tradicional/pdf/condicoes_gerais.pdf"
+              },
+              "minimumRequirements": {
+                "minimumRequirementDetails": "string",
+                "targetAudiences": [
+                  [
+                    "PESSOA_FISICA"
+                  ]
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "links": {
+    "self": "https://api.organizacao.com.br/open-insurance/products-services/v1",
+    "first": "https://api.organizacao.com.br/open-insurance/products-services/v1",
+    "prev": "https://api.organizacao.com.br/open-insurance/products-services/v1",
+    "next": "https://api.organizacao.com.br/open-insurance/products-services/v1",
+    "last": "https://api.organizacao.com.br/open-insurance/products-services/v1"
+  },
+  "meta": {
+    "totalRecords": 10,
+    "totalPages": 1
+  }
+}
+
+```
+
+### Properties
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|data|object|true|none|none|
+|» brand|[TransportBrand](#schematransportbrand)|true|none|Organizacao controladora do grupo.|
+|links|[Links](#schemalinks)|true|none|none|
+|meta|[Meta](#schemameta)|true|none|none|
+
+<h2 id="tocS_TransportBrand">TransportBrand</h2>
+<!-- backwards compatibility -->
+<a id="schematransportbrand"></a>
+<a id="schema_TransportBrand"></a>
+<a id="tocStransportbrand"></a>
+<a id="tocstransportbrand"></a>
+
+```json
+{
+  "name": "EMPRESA A seguros",
+  "companies": [
+    {
+      "name": "ACME Seguros",
+      "cnpjNumber": "12345678901234",
+      "products": [
+        {
+          "name": "Produto de Seguro",
+          "code": "01234589-0",
+          "coverages": [
+            {
+              "coverage": "ACIDENTES_PESSOAIS_COM_PASSAGEIROS",
+              "coverageDescription": "string",
+              "allowApartPurchase": true,
+              "coverageAttributes": {
+                "insuredParticipation": [
+                  "FRANQUIA"
+                ],
+                "insuredParticipationDescription": "string"
+              }
+            }
+          ],
+          "maxLMG": {
+            "amount": 0,
+            "unit": {
+              "code": "R$",
+              "description": "REAL"
+            }
+          },
+          "assistanceServices": [
+            {
+              "assistanceServices": true,
+              "assistanceServicesPackage": [
+                "ATE_10_SERVICOS"
+              ],
+              "complementaryAssistanceServicesDetail": "reboque pane seca",
+              "chargeTypeSignaling": "GRATUITO"
+            }
+          ],
+          "traits": false,
+          "validity": {
+            "term": [
+              "ANUAL"
+            ],
+            "termOthers": "string"
+          },
+          "premiumRates": "string",
+          "policyType": [
+            "AVULSA"
+          ],
+          "termsAndConditions": {
+            "susepProcessNumber": "15414.622222/2222-22",
+            "definition": "https://www.seguradora.com.br/produto/tradicional/pdf/condicoes_gerais.pdf"
+          },
+          "minimumRequirements": {
+            "minimumRequirementDetails": "string",
+            "targetAudiences": [
+              [
+                "PESSOA_FISICA"
+              ]
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}
+
+```
+
+Organizacao controladora do grupo.
+
+### Properties
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|name|string|true|none|Nome da Marca reportada pelo participante do Open Insurance. O conceito a que se refere a 'marca' é em essência uma promessa da empresa em fornecer uma série específica de atributos, benefícios e serviços uniformes aos clientes.|
+|companies|[TransportCompany](#schematransportcompany)|true|none|none|
+
+<h2 id="tocS_TransportCompany">TransportCompany</h2>
+<!-- backwards compatibility -->
+<a id="schematransportcompany"></a>
+<a id="schema_TransportCompany"></a>
+<a id="tocStransportcompany"></a>
+<a id="tocstransportcompany"></a>
+
+```json
+[
+  {
+    "name": "ACME Seguros",
+    "cnpjNumber": "12345678901234",
+    "products": [
+      {
+        "name": "Produto de Seguro",
+        "code": "01234589-0",
+        "coverages": [
+          {
+            "coverage": "ACIDENTES_PESSOAIS_COM_PASSAGEIROS",
+            "coverageDescription": "string",
+            "allowApartPurchase": true,
+            "coverageAttributes": {
+              "insuredParticipation": [
+                "FRANQUIA"
+              ],
+              "insuredParticipationDescription": "string"
+            }
+          }
+        ],
+        "maxLMG": {
+          "amount": 0,
+          "unit": {
+            "code": "R$",
+            "description": "REAL"
+          }
+        },
+        "assistanceServices": [
+          {
+            "assistanceServices": true,
+            "assistanceServicesPackage": [
+              "ATE_10_SERVICOS"
+            ],
+            "complementaryAssistanceServicesDetail": "reboque pane seca",
+            "chargeTypeSignaling": "GRATUITO"
+          }
+        ],
+        "traits": false,
+        "validity": {
+          "term": [
+            "ANUAL"
+          ],
+          "termOthers": "string"
+        },
+        "premiumRates": "string",
+        "policyType": [
+          "AVULSA"
+        ],
+        "termsAndConditions": {
+          "susepProcessNumber": "15414.622222/2222-22",
+          "definition": "https://www.seguradora.com.br/produto/tradicional/pdf/condicoes_gerais.pdf"
+        },
+        "minimumRequirements": {
+          "minimumRequirementDetails": "string",
+          "targetAudiences": [
+            [
+              "PESSOA_FISICA"
+            ]
+          ]
+        }
+      }
+    ]
+  }
+]
+
+```
+
+### Properties
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|name|string|true|none|Nome da Instituição, pertencente à Marca.|
+|cnpjNumber|string|true|none|CNPJ da sociedade pertencente à marca.|
+|products|[TransportProduct](#schematransportproduct)|true|none|Lista de produtos de uma empresa.|
+
+<h2 id="tocS_TransportProduct">TransportProduct</h2>
+<!-- backwards compatibility -->
+<a id="schematransportproduct"></a>
+<a id="schema_TransportProduct"></a>
+<a id="tocStransportproduct"></a>
+<a id="tocstransportproduct"></a>
+
+```json
+[
+  {
+    "name": "Produto de Seguro",
+    "code": "01234589-0",
+    "coverages": [
+      {
+        "coverage": "ACIDENTES_PESSOAIS_COM_PASSAGEIROS",
+        "coverageDescription": "string",
+        "allowApartPurchase": true,
+        "coverageAttributes": {
+          "insuredParticipation": [
+            "FRANQUIA"
+          ],
+          "insuredParticipationDescription": "string"
+        }
+      }
+    ],
+    "maxLMG": {
+      "amount": 0,
+      "unit": {
+        "code": "R$",
+        "description": "REAL"
+      }
+    },
+    "assistanceServices": [
+      {
+        "assistanceServices": true,
+        "assistanceServicesPackage": [
+          "ATE_10_SERVICOS"
+        ],
+        "complementaryAssistanceServicesDetail": "reboque pane seca",
+        "chargeTypeSignaling": "GRATUITO"
+      }
+    ],
+    "traits": false,
+    "validity": {
+      "term": [
+        "ANUAL"
+      ],
+      "termOthers": "string"
+    },
+    "premiumRates": "string",
+    "policyType": [
+      "AVULSA"
+    ],
+    "termsAndConditions": {
+      "susepProcessNumber": "15414.622222/2222-22",
+      "definition": "https://www.seguradora.com.br/produto/tradicional/pdf/condicoes_gerais.pdf"
+    },
+    "minimumRequirements": {
+      "minimumRequirementDetails": "string",
+      "targetAudiences": [
+        [
+          "PESSOA_FISICA"
+        ]
+      ]
+    }
+  }
+]
+
+```
+
+Lista de produtos de uma empresa.
+
+### Properties
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|name|string|false|none|Nome comercial do produto, pelo qual é identificado nos canais de distribuição e atendimento da sociedade.|
+|code|string|true|none|Código único a ser definido pela sociedade.|
+|coverages|[object]|true|none|none|
+|» coverage|string|true|none|Listagem de coberturas incluídas no produto que deve observar a relação discriminada de coberturas, conforme Tabela II.15 do Anexo II.|
+|» coverageDescription|string|true|none|Campo aberto para detalhamento de cada uma das coberturas possíveis dos produtos|
+|» allowApartPurchase|boolean|true|none|Indicação se a cobertura permite contratação separada (por cobertura selecionada).|
+|» coverageAttributes|[TransportCoverageAttributes](#schematransportcoverageattributes)|true|none|Informações de cobertura do Seguro.|
+|maxLMG|[TransportCoverageAttributesDetails](#schematransportcoverageattributesdetails)|true|none|Lista com valor de LMG aceito pela sociedade para cada produto. Em reais (R$) Importante: Campo de valor numérico relacionado ao produto que possui o campo. Quando não houver o campo, enviar o valor zerado.|
+|assistanceServices|[TransportAssistanceServices](#schematransportassistanceservices)|true|none|Agrupamento dos serviços de assistências disponíveis vinculado ao produto.|
+|traits|boolean|true|none|Indicação se o produto é classificado como destinado para cobertura de grandes riscos, sendo tal classificação de acordo com regulamentação específica.|
+|validity|[TransportValidity](#schematransportvalidity)|true|none|none|
+|premiumRates|string|false|none|Distribuição de frequência relativa aos valores referentes às taxas cobradas, nos termos do Anexo III.|
+|policyType|[string]|true|none|Tipo de inclusão do risco na apólice.|
+|termsAndConditions|[TransportTerms](#schematransportterms)|true|none|Informações dos termos e condições conforme número do processo SUSEP.|
+|minimumRequirements|[TransportMinimumRequirements](#schematransportminimumrequirements)|true|none|Requisitos mínimos.|
+
+#### Enumerated Values
+
+|Property|Value|
+|---|---|
+|coverage|ACIDENTES_PESSOAIS_COM_PASSAGEIROS|
+|coverage|ACIDENTES_PESSOAIS_COM_TRIPULANTES|
+|coverage|DANOS_CORPORAIS_PASSAGEIROS|
+|coverage|DANOS_CORPORAIS_TERCEIROS|
+|coverage|DANOS_CORPORAIS_TRIPULANTES|
+|coverage|DANOS_ESTETICOS_PASSAGEIROS|
+|coverage|DANOS_ESTETICOS_TERCEIROS|
+|coverage|DANOS_ESTETICOS_TRIPULANTES|
+|coverage|DANOS_MATERIAIS_PASSAGEIROS|
+|coverage|DANOS_MATERIAIS_TERCEIROS|
+|coverage|DANOS_MATERIAIS_TRIPULANTES|
+|coverage|DANOS_MORAIS_PASSAGEIROS|
+|coverage|DANOS_MORAIS_TERCEIROS|
+|coverage|DANOS_MORAIS_TRIPULANTES|
+|coverage|DESPESAS_COM_HONORARIOS|
+|coverage|EMBARCADOR_AMPLA_A_RISCOS_DE_PERDA_OU_DANO_MATERIAL_SOFRIDOS_PELO_OBJETO_SEGURADO_EM_CONSEQUENCIA_DE_QUAISQUER_CAUSAS_EXTERNAS_EXCETO_AS_PREVISTAS_NA_CLAUSULA_DE_PREJUIZOS_NAO_INDENIZAVEIS|
+|coverage|EMBARCADOR_RESTRITA_B_COBERTURAS_ELENCADAS_NA_EMBARCADOR_RESTRITA_C_E_INCLUI_INUNDACAO_TRANSBORDAMENTO_DE_CURSOS_DAGUA_REPRESAS_LAGOS_OU_LAGOAS_DURANTE_A_VIAGEM_TERRESTRE_DESMORONAMENTO_OU_QUEDA_DE_PEDRAS_TERRAS_OBRAS_DE_ARTE_DE_QUALQUER_NATUREZA_OU_OUTROS_OBJETOS_DURANTE_A_VIAGEM_TERRESTRE_TERREMOTO_OU_ERUPCAO_VULCANICA_E|
+|coverage|ENTRADA_DE_AGUA_DO_MAR_LAGO_OU_RIO_NA_EMBARCACAO_OU_NO_NAVIO|
+|coverage|VEICULO_CONTAINER_FURGAO_LIFTVAN_OU_LOCAL_DE_ARMAZENAGEM|
+|coverage|EMBARCADOR_RESTRITA_C_PERDAS_E_DANOS_MATERIAIS_CAUSADOS_AO_OBJETO_SEGURADO_EXCLUSIVAMENTE_POR_INCENDIO_RAIO_OU_EXPLOSAO_ENCALHE|
+|coverage|NAUFRAGIO_OU_SOCOBRAMENTO_DO_NAVIO_OU_EMBARCACAO_CAPOTAGEM_COLISAO_TOMBAMENTO_OU_DESCARRILAMENTO_DE_VEICULO_TERRESTRE_ABALROAMENTO_COLISAO_OU_CONTATO_DO_NAVIO_OU_EMBARCACAO_COM_QUALQUER_OBJETO_EXTERNO_QUE_NAO_SEJA_AGUA_COLISAO_QUEDA_E_OU_ATERRISSAGEM_FORCADA_DA_AERONAVE_DEVIDAMENTE_COMPROVADA_DESCARGA_DA_CARGA_EM_PORTO_DE_ARRIBADA_CARGA_LANCADA_AO_MAR_PERDA_TOTAL_DE_QUALQUER_VOLUME_DURANTE_AS_OPERACOES_DE_CARGA_E_DESCARGA_DO_NAVIO_E|
+|coverage|PERDA_TOTAL_DECORRENTE_DE_FORTUNA_DO_MAR_E_OU_DE_ARREBATAMENTO_PELO_MAR|
+|coverage|RESPONSABILIDADE_CIVIL_DO_OPERADOR_DE_TRANSPORTES_MULTIMODAL_CARGA_RCOTM_C|
+|coverage|RESPONSABILIDADE_CIVIL_DO_TRANSPORTADOR_AEREO_CARGA_RCTA_C|
+|coverage|RESPONSABILIDADE_CIVIL_DO_TRANSPORTADOR_AQUAVIARIO_CARGA_RCA_C|
+|coverage|RESPONSABILIDADE_CIVIL_DO_TRANSPORTADOR_FERROVIARIO_CARGA_RCTF_C|
+|coverage|RESPONSABILIDADE_CIVIL_DO_TRANSPORTADOR_RODOVIARIO_CARGA_RCTR|
+|coverage|RESPONSABILIDADE_CIVIL_DO_TRANSPORTADOR_RODOVIARIO_EM_VIAGEM_INTERNACIONAL_DANOS_CAUSADOS_A_PESSOAS_OU_COISAS_TRANSPORTADAS_OU_NAO_A_EXCECAO_DA_CARGA_TRANSPORTADA_CARTA_AZUL|
+
+<h2 id="tocS_TransportCoverageAttributesDetailsUnit">TransportCoverageAttributesDetailsUnit</h2>
+<!-- backwards compatibility -->
+<a id="schematransportcoverageattributesdetailsunit"></a>
+<a id="schema_TransportCoverageAttributesDetailsUnit"></a>
+<a id="tocStransportcoverageattributesdetailsunit"></a>
+<a id="tocstransportcoverageattributesdetailsunit"></a>
+
+```json
+{
+  "code": "R$",
+  "description": "REAL"
+}
+
+```
+
+### Properties
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|code|string|true|none|none|
+|description|string|true|none|none|
+
+<h2 id="tocS_TransportCoverageAttributesDetails">TransportCoverageAttributesDetails</h2>
+<!-- backwards compatibility -->
+<a id="schematransportcoverageattributesdetails"></a>
+<a id="schema_TransportCoverageAttributesDetails"></a>
+<a id="tocStransportcoverageattributesdetails"></a>
+<a id="tocstransportcoverageattributesdetails"></a>
+
+```json
+{
+  "amount": 0,
+  "unit": {
+    "code": "R$",
+    "description": "REAL"
+  }
+}
+
+```
+
+### Properties
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|amount|number|true|none|none|
+|unit|[TransportCoverageAttributesDetailsUnit](#schematransportcoverageattributesdetailsunit)|true|none|none|
+
+<h2 id="tocS_TransportAssistanceServices">TransportAssistanceServices</h2>
+<!-- backwards compatibility -->
+<a id="schematransportassistanceservices"></a>
+<a id="schema_TransportAssistanceServices"></a>
+<a id="tocStransportassistanceservices"></a>
+<a id="tocstransportassistanceservices"></a>
+
+```json
+[
+  {
+    "assistanceServices": true,
+    "assistanceServicesPackage": [
+      "ATE_10_SERVICOS"
+    ],
+    "complementaryAssistanceServicesDetail": "reboque pane seca",
+    "chargeTypeSignaling": "GRATUITO"
+  }
+]
+
+```
+
+Agrupamento dos serviços de assistências disponíveis vinculado ao produto.
+
+### Properties
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|assistanceServices|boolean|true|none|Indicação se o produto possui serviços de assistências complementares.|
+|assistanceServicesPackage|[string]|false|none|none|
+|complementaryAssistanceServicesDetail|string|false|none|Campo livre para descrição dos serviços ofertados por cada sociedade participante, contendo minimamente cada um dos serviços assistenciais complementares oferecidos e se o pacote se trata de uma cobertura de assistência securitária ou se serviços de assistência|
+|chargeTypeSignaling|string|false|none|Indicação se o pacote de Assistência é gratuita ou contratada/paga.|
+
+#### Enumerated Values
+
+|Property|Value|
+|---|---|
+|chargeTypeSignaling|GRATUITO|
+|chargeTypeSignaling|PAGO|
+
+<h2 id="tocS_TransportValidity">TransportValidity</h2>
+<!-- backwards compatibility -->
+<a id="schematransportvalidity"></a>
+<a id="schema_TransportValidity"></a>
+<a id="tocStransportvalidity"></a>
+<a id="tocstransportvalidity"></a>
+
+```json
+{
+  "term": [
+    "ANUAL"
+  ],
+  "termOthers": "string"
+}
+
+```
+
+### Properties
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|term|[string]|true|none|none|
+|termOthers|string|false|none|Campo livre para descrição por cada participante ao selecionar o domínio “Outros” no campo Prazo (acima).|
+
+<h2 id="tocS_TransportTerms">TransportTerms</h2>
+<!-- backwards compatibility -->
+<a id="schematransportterms"></a>
+<a id="schema_TransportTerms"></a>
+<a id="tocStransportterms"></a>
+<a id="tocstransportterms"></a>
+
+```json
+{
+  "susepProcessNumber": "15414.622222/2222-22",
+  "definition": "https://www.seguradora.com.br/produto/tradicional/pdf/condicoes_gerais.pdf"
+}
+
+```
+
+Informações dos termos e condições conforme número do processo SUSEP.
+
+### Properties
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|susepProcessNumber|string|false|none|Número do processo Susep.|
+|definition|string|false|none|Campo aberto (possibilidade de incluir uma url).|
+
+<h2 id="tocS_TransportCoverageAttributes">TransportCoverageAttributes</h2>
+<!-- backwards compatibility -->
+<a id="schematransportcoverageattributes"></a>
+<a id="schema_TransportCoverageAttributes"></a>
+<a id="tocStransportcoverageattributes"></a>
+<a id="tocstransportcoverageattributes"></a>
+
+```json
+{
+  "insuredParticipation": [
+    "FRANQUIA"
+  ],
+  "insuredParticipationDescription": "string"
+}
+
+```
+
+Informações de cobertura do Seguro.
+
+### Properties
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|insuredParticipation|[string]|true|none|Lista com indicativo do tipo de participação do segurado para cada cobertura.|
+|insuredParticipationDescription|string|false|none|Lista com descrição referente ao campo “Participação do Segurado” para cada cobertura.|
+
+<h2 id="tocS_TransportMinimumRequirements">TransportMinimumRequirements</h2>
+<!-- backwards compatibility -->
+<a id="schematransportminimumrequirements"></a>
+<a id="schema_TransportMinimumRequirements"></a>
+<a id="tocStransportminimumrequirements"></a>
+<a id="tocstransportminimumrequirements"></a>
+
+```json
+{
+  "minimumRequirementDetails": "string",
+  "targetAudiences": [
+    [
+      "PESSOA_FISICA"
+    ]
+  ]
+}
+
+```
+
+Requisitos mínimos.
+
+### Properties
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|minimumRequirementDetails|string|true|none|Campo aberto contendo todos os requisitos mínimos para contratação (possibilidade de incluir URL).|
+|targetAudiences|[array]|true|none|Público Alvo|
 
 <h2 id="tocS_Links">Links</h2>
 <!-- backwards compatibility -->
