@@ -4,16 +4,16 @@ info:
   title: APIs Open Data do Open Insurance Brasil
   description:
     API de informações de dados do produto Intermediarios. Os recursos que podem ser consumidos pelos participantes conforme a regra 3.1.2 do manual de escopo de dados..
-  version: 1.0.0
+  version: 1.1.0
   contact:
     url: 'https://http://novosite.susep.gov.br'
 servers:
-  - url: 'https://api.organizacao.com.br/open-insurance/products-services/v1'
+  - url: 'https://api.organizacao.com.br/open-insurance/channels/v1'
     description: Servidor de Producao
-  - url: 'https://api.organizacao.com.br/open-insurance/products-services/v1'
+  - url: 'https://api.organizacao.com.br/open-insurance/channels/v1'
     description: Servidor de Homologacao
 tags:
-- name: "Intermediarios" 
+- name: "Intermediarios"
 
 paths:
   /intermediary/{countrySubDivision}:
@@ -64,7 +64,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ResponseIntermediaryList' 
+                $ref: '#/components/schemas/ResponseIntermediaryList'
 
 components:
   schemas:
@@ -138,7 +138,7 @@ components:
                 example: Intermediário C
             nameOther:
                 type: string
-                maxLength: 80 
+                maxLength: 80
                 description: No caso da Pessoa jurídica
                 example: Intermediário D
             documentNumber:
@@ -148,7 +148,7 @@ components:
                 description: "CPF ou CNPJ do intermediário
                   OBS: Opcional para pessoa natural"
                 example: 12341234123412
-            type: 
+            type:
               type: string
               maxLength: 39
               description: Relação de tipos de intermediário
@@ -162,14 +162,14 @@ components:
                 description: "Número de Registro SUSEP no caso de intermediário ser Corretor de Seguros.
                   OBS: Condicional a seleção de 1. Corretor de seguros no campo acima"
                 maxLength: 20
-                example: 15414622222222222 
+                example: 15414622222222222
             postalAddress:
                 $ref: '#/components/schemas/IntermediaryCoveragePostalAddress'
-            access: 
-              $ref: '#/components/schemas/IntermediaryAccess' 
+            access:
+              $ref: '#/components/schemas/IntermediaryAccess'
             services:
               $ref: '#/components/schemas/IntermediaryServices'
-    
+
     IntermediaryCoveragePostalAddress:
         type: array
         items:
@@ -189,7 +189,7 @@ components:
             additionalInfo:
               type: string
               maxLength: 30
-              description: "Alguns logradouros ainda necessitam ser especificados por meio de complemento, conforme o exemplo a seguir: 'Loja B', 'Fundos', 'Casa 2', 'Lote C'"    
+              description: "Alguns logradouros ainda necessitam ser especificados por meio de complemento, conforme o exemplo a seguir: 'Loja B', 'Fundos', 'Casa 2', 'Lote C'"
               example: Loja B
             districtName:
               type: string
@@ -199,13 +199,13 @@ components:
             townName:
               type: string
               maxLength: 50
-              description: "Localidade: O nome da localidade corresponde à designação da cidade ou município no qual o endereço está localizado"  
+              description: "Localidade: O nome da localidade corresponde à designação da cidade ou município no qual o endereço está localizado"
               example: São Paulo
             ibgeCode:
               type: string
-              maxLength: 7  
-              description: 7 dígitos (o último é um código verificador). 
-            countrySubDivision:     
+              maxLength: 7
+              description: 7 dígitos (o último é um código verificador).
+            countrySubDivision:
               type: string
               maxLength: 2
               description: "Enumeração referente a cada sigla da unidade da federação que identifica o estado ou o distrito federal, no qual o endereço está localizado. p.ex. 'AC'. São consideradas apenas as siglas para os estados brasileiros:"
@@ -495,26 +495,26 @@ components:
                     MAYOTTE,
                     AFRICA_DO_SUL,
                     ZAMBIA,
-                    ZIMBABUE] 
+                    ZIMBABUE]
             countryCode:
                 type: string
-                maxLength: 3 
+                maxLength: 3
                 example: BRA
                 description: Código do país de acordo com o código “alpha3” do ISO-3166. p.ex.'BRA'
             geographicCoordinates:
               $ref: '#/components/schemas/IntermediaryGeographicCoordinates'
-    
+
     IntermediaryGeographicCoordinates:
       type: object
       properties:
-        latitude: 
+        latitude:
           type: string
           maxLength: 11
           description: Informação da Latitude referente a geolocalização informada. Entre -90 e 90. Formato numérico 2 casas antes da vírgula, 11 posições.
           example: -89.8365180
         longitude:
           type: string
-          maxLength: 11 
+          maxLength: 11
           description: Informação da Longitude referente a geolocalização informada. Formato numérico 3 casas antes da vírgula, 11 posições. Entre -180 e 180.'
           example: -179.836519
     IntermediaryAccess:
@@ -585,7 +585,7 @@ components:
             type: string
             maxLength: 2
             example: 11
-          number: 
+          number:
             description: Número de telefone do intermediário - se houver
             type: string
             maxLength: 11
@@ -628,32 +628,32 @@ components:
               enum: [LISTAGEM_DE_RAMOS_DE_SEGUROS_CONFORME_REGULAMENTACAO_ESPECIFICA_SOBRE_CONTABILIZACAO_EM_RAMOS,
                     PREVIDENCIA_COMPLEMENTAR_ABERTA,
                     CAPITALIZACAO]
-              example: CAPITALIZACAO 
-    
+              example: CAPITALIZACAO
+
     Links:
       type: object
       properties:
         self:
           type: string
           description: URL da página atualmente requisitada
-          example: 'https://api.organizacao.com.br/open-insurance/products-services/v1'
+          example: 'https://api.organizacao.com.br/open-insurance/channels/v1'
         first:
           type: string
           description: URL da primeira página de registros
-          example: 'https://api.organizacao.com.br/open-insurance/products-services/v1'
+          example: 'https://api.organizacao.com.br/open-insurance/channels/v1'
         prev:
           type: string
           description: URL da página anterior de registros
-          example: 'https://api.organizacao.com.br/open-insurance/products-services/v1'
+          example: 'https://api.organizacao.com.br/open-insurance/channels/v1'
         next:
           type: string
           description: URL da próxima página de registros
-          example: 'https://api.organizacao.com.br/open-insurance/products-services/v1'
+          example: 'https://api.organizacao.com.br/open-insurance/channels/v1'
         last:
           type: string
           description: URL da última página de registros
-          example: 'https://api.organizacao.com.br/open-insurance/products-services/v1'
-    
+          example: 'https://api.organizacao.com.br/open-insurance/channels/v1'
+
     Meta:
       type: object
       properties:
@@ -668,7 +668,7 @@ components:
       required:
         - totalRecords
         - totalPages
-    
+
     ResponseError:
       type: object
       required:
@@ -708,7 +708,7 @@ components:
         meta:
           $ref: '#/components/schemas/Meta'
       additionalProperties: false
-    
+
   parameters:
       page:
         name: page
@@ -783,7 +783,7 @@ components:
         schema:
             type: string
             pattern: '[\w\W\s]*'
-    
+
   securitySchemes:
     OpenId:
       type: openIdConnect
@@ -797,7 +797,7 @@ components:
           tokenUrl: 'https://authserver.example/token'
           scopes:
             financings: Escopo necessário para acesso à API. O controle dos endpoints específicos é feito via permissions.
-    
+
   responses:
     NoContent:
       description: 'O recurso solicitado não existe ou não foi localizado.'
