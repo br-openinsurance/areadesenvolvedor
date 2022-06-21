@@ -1,0 +1,247 @@
+<!-- Generator: Widdershins v4.0.1 -->
+
+# API - Admin
+
+> Scroll down for code samples, example requests and responses. Select a language for code samples from the tabs above or the mobile navigation menu.
+
+As APIs administrativas são recursos que podem ser consumidos apenas pelo diretório para avaliação e controle da qualidade dos serviços fornecidos pelas instituições
+
+Base URLs:
+
+* <a href="http://api.organizacao.com.br/open-insurance/admin/v1">http://api.organizacao.com.br/open-insurance/admin/v1</a>
+
+Web: <a href="https://http://novosite.susep.gov.br">Support</a> 
+
+<a href="files/swagger/admin_metrics.yaml" download="admin_metrics.yaml">Especificação em OAS</a> <br>
+
+## admin v1.1.0
+
+### Obtém as métricas de disponibilidade das APIs
+
+<a id="opIdgetMetrics"></a>
+
+> Code samples
+
+```javascript
+const data = null;
+
+const xhr = new XMLHttpRequest();
+xhr.withCredentials = true;
+
+xhr.addEventListener("readystatechange", function () {
+  if (this.readyState === this.DONE) {
+    console.log(this.responseText);
+  }
+});
+
+xhr.open("GET", "http://api.organizacao.com.br/open-insurance/admin/v1/metrics");
+xhr.setRequestHeader("Accept", "application/json");
+xhr.setRequestHeader("cache-control", "string");
+xhr.setRequestHeader("Content-Security-Policy", "string");
+xhr.setRequestHeader("content-Type", "string");
+xhr.setRequestHeader("Strict-Transport-Security", "string");
+xhr.setRequestHeader("X-Content-Type-Options", "string");
+xhr.setRequestHeader("X-Frame-Options", "string");
+
+xhr.send(data);
+```
+
+```python
+import http.client
+
+conn = http.client.HTTPConnection("api.organizacao.com.br")
+
+headers = {
+    'Accept': "application/json",
+    'cache-control': "string",
+    'Content-Security-Policy': "string",
+    'content-Type': "string",
+    'Strict-Transport-Security': "string",
+    'X-Content-Type-Options': "string",
+    'X-Frame-Options': "string"
+    }
+
+conn.request("GET", "/open-insurance/admin/v1/metrics", headers=headers)
+
+res = conn.getresponse()
+data = res.read()
+
+print(data.decode("utf-8"))
+```
+
+```java
+HttpResponse<String> response = Unirest.get("http://api.organizacao.com.br/open-insurance/admin/v1/metrics")
+  .header("Accept", "application/json")
+  .header("cache-control", "string")
+  .header("Content-Security-Policy", "string")
+  .header("content-Type", "string")
+  .header("Strict-Transport-Security", "string")
+  .header("X-Content-Type-Options", "string")
+  .header("X-Frame-Options", "string")
+  .asString();
+```
+
+`GET /metrics`
+
+Obtém as métricas de disponibilidade das APIs
+
+<h3 id="obtém-as-métricas-de-disponibilidade-das-apis-parameters">Parameters</h3>
+
+|Name|In|Type|Required|Description|
+|---|---|---|---|---|
+|cache-control|header|string|true|Controle de cache para evitar que informações confidenciais sejam armazenadas em cache.|
+|Content-Security-Policy|header|string|false|Campo para proteção contra ataques clickjack do estilo - drag and drop.|
+|content-Type|header|string|false|Especificar o tipo de conteúdo da resposta.|
+|Strict-Transport-Security|header|string|false|Campo para exigir conexões por HTTPS e proteger contra certificados falsificados.|
+|X-Content-Type-Options|header|string|false|Campo para evitar que navegadores executem a detecção de MIME e interpretem respostas como HTML de forma inadequada.|
+|X-Frame-Options|header|string|false|Campo indica se o navegador deve ou não renderizar um frame.|
+|page|query|integer|false|Número da página que está sendo requisitada (o valor da primeira página é 1).|
+|page-size|query|integer|false|Quantidade total de registros por páginas.|
+|period|query|string|false|Período a ser consultado|
+
+#### Detailed descriptions
+
+**period**: Período a ser consultado
+  * `CURRENT` - Métricas do dia atual.
+  * `ALL` - Métricas de todo o período disponível.
+
+#### Enumerated Values
+
+|Parameter|Value|
+|---|---|
+|period|CURRENT|
+|period|ALL|
+
+> Example responses
+
+> 200 Response
+
+```json
+{
+  "data": {
+    "requestTime": "2019-08-24T14:15:22Z",
+    "availability": {
+      "uptime": {
+        "generalUptimeRate": "string",
+        "endpoints": [
+          {
+            "url": "string",
+            "uptimeRate": "string"
+          }
+        ]
+      },
+      "downtime": {
+        "generalDowntime": 0,
+        "scheduledOutage": 0,
+        "endpoints": [
+          {
+            "url": "string",
+            "partialDowntime": 0
+          }
+        ]
+      }
+    },
+    "invocations": {
+      "unauthenticated": {
+        "currentDay": 0,
+        "previousDays": [
+          0
+        ]
+      },
+      "highPriority": {
+        "currentDay": 0,
+        "previousDays": [
+          0
+        ]
+      },
+      "mediumPriority": {
+        "currentDay": 0,
+        "previousDays": [
+          0
+        ]
+      },
+      "unattended": {
+        "currentDay": 0,
+        "previousDays": [
+          0
+        ]
+      }
+    },
+    "averageResponse": {
+      "unauthenticated": {
+        "currentDay": 0,
+        "previousDays": [
+          0
+        ]
+      },
+      "highPriority": {
+        "currentDay": 0,
+        "previousDays": [
+          0
+        ]
+      },
+      "mediumPriority": {
+        "currentDay": 0,
+        "previousDays": [
+          0
+        ]
+      },
+      "unattended": {
+        "currentDay": 0,
+        "previousDays": [
+          0
+        ]
+      }
+    },
+    "averageTps": {
+      "currentDay": 0,
+      "previousDays": [
+        0
+      ]
+    },
+    "peakTps": {
+      "currentDay": 0,
+      "previousDays": [
+        0
+      ]
+    },
+    "errors": {
+      "currentDay": 0,
+      "previousDays": [
+        0
+      ]
+    },
+    "rejections": {
+      "currentDay": 0,
+      "previousDays": [
+        0
+      ]
+    }
+  },
+  "links": {
+    "self": "https://api.organizacao.com.br/open-insurance/admin/v1/<resource>",
+    "first": "https://api.organizacao.com.br/open-insurance/admin/v1/<resource>",
+    "prev": "string",
+    "next": "string",
+    "last": "https://api.organizacao.com.br/open-insurance/admin/v1/<resource>"
+  },
+  "meta": {
+    "totalRecords": 1,
+    "totalPages": 1
+  }
+}
+```
+
+<h3 id="obtém-as-métricas-de-disponibilidade-das-apis-responses">Responses</h3>
+
+|Status|Meaning|Description|Schema|
+|---|---|---|---|
+|200|[OK](https://tools.ietf.org/html/rfc7231#section-6.3.1)|Dados das métricas|[ResponseMetricsList](#schemaresponsemetricslist)|
+
+<aside class="success">
+This operation does not require authentication
+</aside>
+
+<h1 id="schema_metrics">Schemas</h1>
+
+<%= partial "./includes/partials/monitoring/admin_metrics/schemas" %>
