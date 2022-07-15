@@ -1,0 +1,255 @@
+<h2 id="tocS_Links">Links</h2>
+<!-- backwards compatibility -->
+<a id="schemalinks"></a>
+<a id="schema_Links"></a>
+<a id="tocSlinks"></a>
+<a id="tocslinks"></a>
+
+```json
+{
+  "self": "https://api.seguro.com.br/open-insurance/consents/v1",
+  "first": "https://api.seguro.com.br/open-insurance/consents/v1",
+  "prev": "https://api.seguro.com.br/open-insurance/consents/v1",
+  "next": "https://api.seguro.com.br/open-insurance/consents/v1",
+  "last": "https://api.seguro.com.br/open-insurance/consents/v1"
+}
+
+```
+
+Referências para outros recusos da API requisitada.
+
+### Properties
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|self|string(uri)|true|none|URI completo que gerou a resposta atual.|
+|first|string(uri)|false|none|URI da primeira página que originou essa lista de resultados. Restrição - Obrigatório quando não for a primeira página da resposta|
+|prev|string(uri)|false|none|URI da página anterior dessa lista de resultados. Restrição - 	Obrigatório quando não for a primeira página da resposta|
+|next|string(uri)|false|none|URI da próxima página dessa lista de resultados. Restrição - Obrigatório quando não for a última página da resposta|
+|last|string(uri)|false|none|URI da última página dessa lista de resultados. Restrição - Obrigatório quando não for a última página da resposta|
+
+<h2 id="tocS_Meta">Meta</h2>
+<!-- backwards compatibility -->
+<a id="schemameta"></a>
+<a id="schema_Meta"></a>
+<a id="tocSmeta"></a>
+<a id="tocsmeta"></a>
+
+```json
+{
+  "totalRecords": 1,
+  "totalPages": 1,
+  "requestDateTime": "2021-05-21T08:30:00Z"
+}
+
+```
+
+Meta informações referente à API requisitada.
+
+### Properties
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|totalRecords|integer(int32)|true|none|Número total de registros no resultado|
+|totalPages|integer(int32)|true|none|Número total de páginas no resultado|
+|requestDateTime|string(date-time)|true|none|Data e hora da consulta, conforme especificação RFC-3339, formato UTC.|
+
+<h2 id="tocS_CreateConsent">CreateConsent</h2>
+<!-- backwards compatibility -->
+<a id="schemacreateconsent"></a>
+<a id="schema_CreateConsent"></a>
+<a id="tocScreateconsent"></a>
+<a id="tocscreateconsent"></a>
+
+```json
+{
+  "data": {
+    "loggedUser": {
+      "document": {
+        "identification": "11111111111",
+        "rel": "CPF"
+      }
+    },
+    "businessEntity": {
+      "document": {
+        "identification": "11111111111111",
+        "rel": "CNPJ"
+      }
+    },
+    "permissions": [
+      "PENSION_RISK_READ",
+      "CAPITALIZATION_TITLES_READ",
+      "RESOURCES_READ"
+    ],
+    "expirationDateTime": "2021-05-21T08:30:00Z",
+    "transactionFromDateTime": "2021-01-01T00:00:00Z",
+    "transactionToDateTime": "2021-02-01T23:59:59Z"
+  }
+}
+
+```
+
+### Properties
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|data|object|true|none|none|
+|» loggedUser|[LoggedUser](#schemaloggeduser)|true|none|Usuário (pessoa natural) que encontra-se logado na instituição receptora e que iniciará o processo de consentimento para compartilhamento de dados.|
+|» businessEntity|[BusinessEntity](#schemabusinessentity)|false|none|Titular, pessoa jurídica a quem se referem os dados que são objeto de compartilhamento.|
+|» permissions|[string]|true|none|none|
+|» expirationDateTime|string(date-time)|true|none|Data e hora de expiração da permissão. De preenchimento obrigatório, reflete a data limite de validade do consentimento. Uma string com data e hora conforme especificação RFC-3339, sempre com a utilização de timezone UTC(UTC time format).|
+|» transactionFromDateTime|string(date-time)|false|none|Data e hora da transação inicial. Se não for preenchido, a transação terá a data aberta e a data será retornada com a primeira transação disponível. Uma string com data e hora conforme especificação RFC-3339, sempre com a utilização de timezone UTC(UTC time format).|
+|» transactionToDateTime|string(date-time)|false|none|Data e hora final da transação. Se não for preenchido, a transação terá a data aberta e a data será retornada com a ultima transação disponível. Uma string com data e hora conforme especificação RFC-3339, sempre com a utilização de timezone UTC(UTC time format).|
+
+<h2 id="tocS_ResponseConsent">ResponseConsent</h2>
+<!-- backwards compatibility -->
+<a id="schemaresponseconsent"></a>
+<a id="schema_ResponseConsent"></a>
+<a id="tocSresponseconsent"></a>
+<a id="tocsresponseconsent"></a>
+
+```json
+{
+  "data": {
+    "consentId": "urn:prudential:C1DD93123",
+    "creationDateTime": "2021-05-21T08:30:00Z",
+    "status": "AWAITING_AUTHORISATION",
+    "statusUpdateDateTime": "2021-05-21T08:30:00Z",
+    "permissions": [
+      "PENSION_RISK_READ",
+      "CAPITALIZATION_TITLES_READ",
+      "RESOURCES_READ"
+    ],
+    "expirationDateTime": "2021-05-21T08:30:00Z",
+    "transactionFromDateTime": "2021-01-01T00:00:00Z",
+    "transactionToDateTime": "2021-02-01T23:59:59Z"
+  },
+  "links": {
+    "self": "https://api.seguro.com.br/open-insurance/consents/v1",
+    "first": "https://api.seguro.com.br/open-insurance/consents/v1",
+    "prev": "https://api.seguro.com.br/open-insurance/consents/v1",
+    "next": "https://api.seguro.com.br/open-insurance/consents/v1",
+    "last": "https://api.seguro.com.br/open-insurance/consents/v1"
+  },
+  "meta": {
+    "totalRecords": 1,
+    "totalPages": 1,
+    "requestDateTime": "2021-05-21T08:30:00Z"
+  }
+}
+
+```
+
+### Properties
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|data|object|true|none|none|
+|» consentId|string|true|none|O consentId é o identificador único do consentimento e deverá ser um URN - Uniform Resource Name.  <br>Um URN, conforme definido na [RFC8141](https://tools.ietf.org/html/rfc8141) é um Uniform Resource <br>Identifier - URI - que é atribuído sob o URI scheme "urn" e um namespace URN específico, com a intenção de que o URN <br>seja um identificador de recurso persistente e independente da localização.  <br>Considerando a string urn:prudential:C1DD93123 como exemplo para consentId temos:<br>- o namespace(urn)<br>- o identificador associado ao namespace da instituição transnmissora (prudential) <br>- o identificador específico dentro do namespace (C1DD93123).  <br>Informações mais detalhadas sobre a construção de namespaces devem ser consultadas na [RFC8141](https://tools.ietf.org/html/rfc8141).|
+|» creationDateTime|string(date-time)|true|none|Data e hora em que o recurso foi criado. Uma string com data e hora conforme especificação RFC-3339, sempre com a utilização de timezone UTC(UTC time format).|
+|» status|string|true|none|Estado atual do consentimento cadastrado.|
+|» statusUpdateDateTime|string(date-time)|true|none|Data e hora em que o recurso foi atualizado. Uma string com data e hora conforme especificação RFC-3339, sempre com a utilização de timezone UTC(UTC time format).|
+|» permissions|[string]|true|none|Especifica os tipos de permissões de acesso às APIs no escopo do Open Insurance Brasil - Fase 2, de acordo com os blocos de consentimento fornecidos pelo usuário e necessários ao acesso a cada endpoint das APIs.|
+|» expirationDateTime|string(date-time)|true|none|Data e hora de expiração da permissão. De preenchimento obrigatório, reflete a data limite de validade do consentimento. Uma string com data e hora conforme especificação RFC-3339, sempre com a utilização de timezone UTC(UTC time format).|
+|» transactionFromDateTime|string(date-time)|false|none|Data e hora da transação inicial. Se não for preenchido, a transação terá a data aberta e a data será retornada com a primeira transação disponível. Uma string com data e hora conforme especificação RFC-3339, sempre com a utilização de timezone UTC(UTC time format).|
+|» transactionToDateTime|string(date-time)|false|none|Data e hora final da transação. Se não for preenchido, a transação terá a data aberta e a data será retornada com a ultima transação disponível. Uma string com data e hora conforme especificação RFC-3339, sempre com a utilização de timezone UTC(UTC time format).|
+|links|[Links](#schemalinks)|false|none|Referências para outros recusos da API requisitada.|
+|meta|[Meta](#schemameta)|false|none|Meta informações referente à API requisitada.|
+
+#### Enumerated Values
+
+|Property|Value|
+|---|---|
+|status|AUTHORISED|
+|status|AWAITING_AUTHORISATION|
+|status|REJECTED|
+
+<h2 id="tocS_ResponseError">ResponseError</h2>
+<!-- backwards compatibility -->
+<a id="schemaresponseerror"></a>
+<a id="schema_ResponseError"></a>
+<a id="tocSresponseerror"></a>
+<a id="tocsresponseerror"></a>
+
+```json
+{
+  "errors": [
+    {
+      "code": "string",
+      "title": "string",
+      "detail": "string"
+    }
+  ],
+  "meta": {
+    "totalRecords": 1,
+    "totalPages": 1,
+    "requestDateTime": "2021-05-21T08:30:00Z"
+  }
+}
+
+```
+
+### Properties
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|errors|[object]|true|none|none|
+|» code|string|true|none|Código de erro específico do endpoint|
+|» title|string|true|none|Título legível por humanos deste erro específico|
+|» detail|string|true|none|Descrição legível por humanos deste erro específico|
+|meta|[Meta](#schemameta)|false|none|Meta informações referente à API requisitada.|
+
+<h2 id="tocS_LoggedUser">LoggedUser</h2>
+<!-- backwards compatibility -->
+<a id="schemaloggeduser"></a>
+<a id="schema_LoggedUser"></a>
+<a id="tocSloggeduser"></a>
+<a id="tocsloggeduser"></a>
+
+```json
+{
+  "document": {
+    "identification": "11111111111",
+    "rel": "CPF"
+  }
+}
+
+```
+
+Usuário (pessoa natural) que encontra-se logado na instituição receptora e que iniciará o processo de consentimento para compartilhamento de dados.
+
+### Properties
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|document|object|true|none|none|
+|» identification|string|true|none|Número do documento de identificação oficial do usuário.|
+|» rel|string|true|none|Tipo do documento de identificação oficial do usuário.|
+
+<h2 id="tocS_BusinessEntity">BusinessEntity</h2>
+<!-- backwards compatibility -->
+<a id="schemabusinessentity"></a>
+<a id="schema_BusinessEntity"></a>
+<a id="tocSbusinessentity"></a>
+<a id="tocsbusinessentity"></a>
+
+```json
+{
+  "document": {
+    "identification": "11111111111111",
+    "rel": "CNPJ"
+  }
+}
+
+```
+
+Titular, pessoa jurídica a quem se referem os dados que são objeto de compartilhamento.
+
+### Properties
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|document|object|true|none|none|
+|» identification|string|true|none|Número do documento de identificação oficial do titular pessoa jurídica.|
+|» rel|string|true|none|Tipo do documento de identificação oficial do titular pessoa jurídica.|
+
