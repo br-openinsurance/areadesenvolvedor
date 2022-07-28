@@ -16,19 +16,19 @@ As instituições participantes do Open Insurance possuem a obrigação de acomp
 Estas especificações baseiam-se, referenciam, e complementam, quando aplicável, os seguintes documentos:
         
 |Referência|
-|---------|      
-|<a href='https://tools.ietf.org/html/rfc7525'target="_blank">BCP 195/RFC 7525</a>|
-|<a href='https://owasp.org/www-project-api-security/'target="_blank">Owasp API Top 10</a>|                
-|<a href='https://www.sans.org/top25-software-errors'target="_blank">Sans Top 25 Software Errors</a>|
-|<a href='https://cwe.mitre.org/top25/archive/2020/2020_cwe_top25.html'target="_blank">CWE Top 25 Software Weaknesses|</a>|
-|<a href='https://tsapps.nist.gov/publication/get_pdf.cfm?pub_id=50819'target="_blank">NIST 800-88</a>|
-|<a href='https://www.dami.army.pentagon.mil/site/IndustSec/docs/DoD%20522022-m.pdf'target="_blank">DOD 5220.22-M</a>|
-|<a href='https://www.gov.br/iti/pt-br/centrais-de-conteudo/mct-7-vol-1-v-2-2-pdf'target="_blank">ICP Brasil - Manual de Condutas Técnicas 7 - Volume I</a>|
-
+|----------|      
+|<a href='https://tools.ietf.org/html/rfc7525' target="_blank">BCP 195/RFC 7525</a>|
+|<a href='https://owasp.org/www-project-api-security/' target="_blank">Owasp API Top 10</a>|                
+|<a href='https://www.sans.org/top25-software-errors' target="_blank">Sans Top 25 Software Errors</a>|
+|<a href='https://cwe.mitre.org/top25/archive/2020/2020_cwe_top25.html' target="_blank">CWE Top 25 Software Weaknesses|</a>|
+|<a href='https://tsapps.nist.gov/publication/get_pdf.cfm?pub_id=50819' target="_blank">NIST 800-88</a>|
+|<a href='https://www.dami.army.pentagon.mil/site/IndustSec/docs/DoD%20522022-m.pdf' target="_blank">DOD 5220.22-M</a>|
+|<a href='https://www.gov.br/iti/pt-br/centrais-de-conteudo/mct-7-vol-1-v-2-2-pdf' target="_blank">ICP Brasil - Manual de Condutas Técnicas 7 - Volume I</a>|
 
 Além desse guia, foi elaborado um checklist para auxiliar os participantes do Open Insurance a alcançar um nível adequado de Segurança da Informação, esse checklist pode ser baixado em formato Excel a seguir:
 
 <a href='files/autoavaliação_dos_requisitos_de_SI_1_0.xlsx'>Download Autoavaliação dos requisitos de SI - 1.0.xlsx</a>
+
 
 ## Visão geral
 
@@ -45,10 +45,1559 @@ Segue, a continuação, um *overview* das camadas de segurança básicas para at
 |Transporte|HTTP - TLS 1.2|Protocolo de criptografia que fornece segurança na comunicação sobre a rede física.|
 |Gestão|API *Gateway* / *Manager*|*Gateway* e *Manager* para gerenciar a publicação da API com controles de *throttling*, quotas e outros.|
 
+
 ## Manual de Segurança
 
 A documentação que detalha os controles técnicos de segurança que serão implementados na arquitetura do Open Insurance junto do conjunto padronizado de regras e requisitos para formação do framework de confiança para acesso de recursos protegidos pode ser acessado <a href="files/Controles_técnicos_de_Segurança_da_Informação_3.0.pdf" target="_blank">aqui</a>
 
-## Guia do usuário: Instituição Transmissora e Receptora
 
-Área em construção
+## Visão Geral do Ecossistema
+
+Em sua essência, o Open Finance Brasil é um ecossistema de compartilhamento de dados onde os clientes de bancos e outras instituições financeiras desejam compartilhar suas informações de conta ou dar permissão para que os pagamentos sejam executados em seu nome com serviços de terceiros e o Open Insurance Brasil utiliza os padrões de segurança do Open Finance Brasil.
+
+Há uma série de funções necessárias para vincular qualquer sistema de identificação, autenticação e autorização, independentemente do setor. Todas essas funções são necessárias, mas várias funções podem ser desempenhadas por cada participante. Em geral, o usuário final (“Subject”), está dando a um sistema (“Client”) uma autorização (“Access Token”) para acessar um recurso protegido mantido pelo provedor (“Resource Server”). Isso exige que o Subject e o Client sejam identificados e autenticados e que a autorização seja confirmada.
+
+As regras exatas e os requisitos legais para cada função em um setor específico formam um framework de confiança ("Trust Framework"). Cada ecossistema requer um conjunto padronizado de regras e requisitos legais que abrangem todas as funções e obrigações das interações acima. A combinação de quem fornece qual(is) função(ões), os níveis aos quais eles devem desempenhar essas funções e os padrões pelos quais essas operações devem ser definidas por um framework de confiança específico do setor.
+
+Diferentes frameworks de confiança terão diferentes opções de implementação, mas um framework de confiança comum é um pré-requisito para transformar um ‘setor’ em um ‘ecossistema’. Um framework de confiança comum reduz significativamente a complexidade e custos, aumenta a escalabilidade e a interoperabilidade dentro do setor, bem como abre opções para o tipo de padronização intersetorial que o Open Insurance Brasil está buscando.
+
+Diferentes implementações podem ser definidas para setores, com diferentes prós / contras e custos associados para diferentes participantes. Cada uma das implementações propostas pode ser usada para qualquer setor se os pré-requisitos corretos estiverem em vigor. A solução certa dependerá do apetite e alinhamento de cada conjunto de participantes.
+
+A implementação de um mecanismo comum para o Open Insurance Brasil exigirá um compromisso com a simetria entre os setores para incluir detalhes específicos do setor nos princípios do framework de confiança.
+
+É necessário fazer escolhas técnicas para garantir que qualquer implementação forneça uma base estrita e consistente para ter credibilidade, mas mantenha a flexibilidade para se adaptar às necessidades futuras. Isso implica padrões de código-fonte aberto amplamente disponíveis, amplamente compreendidos e que foram experimentados e testados. Além de habilitar um gama de parceiros e fornecedores que podem apoiar qualquer construção técnica, o que significa que continuará havendo espaço para desenvolvimento comercial de soluções.
+
+### Participantes de um Ecossistema de Compartilhamento de Dados
+
+Nos ecossistemas de Open Insurance voltados para o consumidor que estamos considerando, temos três participantes principais:
+
+- O cliente (user)
+- A instituição transmissora de dados (provider), que oferece serviços de seguros
+- A instituição receptora de dados (TPP - Third Party Provider), que oferece uma proposta de Open Insurance para o cliente:
+
+Em todos os casos a seguir, assumimos:
+
+- Um cliente possui uma conta para um serviço principal ou conjunto de recursos numa instituição transmissora de dados
+- Uma instituição receptora de dados oferece ao cliente uma proposta habilitada por meio do compartilhamento inteligente de dados
+- O cliente dá consentimento à instituição receptora de dados para fins de entrega dessa proposta
+- A instituição transmissora de dados tem a obrigação de salvaguardar os dados do cliente, mas também de compartilhá-los quando instruído.
+
+O ecossistema também possui provedores de serviços de confiança, que são entidades que fornecem garantia técnica a ambas instituições (transmissoras e receptoras) de que todos estão autorizados a participar do ecossistema.
+
+Os **padrões** técnicos necessários para dar suporte ao framework de confiança devem atender todos os requisitos a seguir:
+
+- Identificação de todos os participantes do ecossistema
+- Autenticação quando exigida de todos os participantes entre si
+- Confirmação de autorização de todos os participantes em um ecossistema de compartilhamento de dados
+
+Os **serviços** técnicos necessários para suportar um ecossistema devem habilitar todos os requisitos acima **em uma base e modo contínuos**, isto é, não apenas em um único ponto de registro.
+
+### Princípios de Especificação e Requisitos de Alto Nível
+
+O Open Insurance Brasil adotou os seguintes princípios e requisitos de alto nível no que diz respeito às normas técnicas.
+
+- Consentimento
+    - Os clientes devem estar sempre no controle de quem tem acesso aos seus dados e para quais fins eles estão sendo usados.
+- Minimização de dados
+    - Os clientes devem ser capazes de compartilhar apenas os dados de que precisam, pelo tempo que for necessário.
+- Segurança
+    - Uma modelagem de ameaças foi produzido avaliando todas as fraquezas potenciais nos processos de comunicação.
+    - Todos os pontos fracos identificados foram corrigidos.
+- Identificação
+    - Todos os participantes devem ter segurança na identificação de todos os atores do ecossistema.
+- Autenticação
+    - Todos os participantes devem comunicar as etapas que foram executadas para autenticar cada participante no ecossistema e em que nível isso foi executado.
+- Integridade e não repúdio
+    - Todos os participantes devem ser capazes de provar que as mensagens não foram adulteradas e, na verdade, foram enviadas apenas por um participante legítimo.
+
+Além dos requisitos de alto nível, os seguintes princípios também foram adotados.
+
+- Não reinventar a roda, se existir uma especificação que seja adequada para o propósito, amplamente adotada e publicamente disponível, deve-se adotá-la.
+- Envolver-se com outros órgãos de normalização para aprender com experiências anteriores sobre o que funcionou, o que não funcionou, e o que pode ser feito melhor.
+- Assegurar o amplo suporte da indústria para garantir o máximo de chances de sucesso e, mais importante, a segurança do cliente.
+- Solicitar feedback com antecedência e com frequência, reconhecer que serão necessárias várias iterações para desenvolver um padrão.
+- O framework de confiança que sustenta o ecossistema de compartilhamento de dados, que é o Open Insurance Brasil, é um framework técnico que precisa ser flexível o suficiente para permitir que os participantes e o ecossistema inovem, cresçam e se desenvolvam, enquanto permanecem interoperáveis.
+
+Todos os participantes devem ter certeza de que todos os atores do ecossistema estão lidando com seus dados com segurança tempo todo. Isso requer que todos os participantes testem publicamente seus sistemas quanto à conformidade com as especificações e disponibilizem os resultados de seus testes de conformidade para exame público de outros participantes.
+
+**Este é um requisito aplicável à instituições participantes transmissoras e receptoras de dados**.
+
+### Principais Padrões de Segurança
+
+### Estrutura de Autorização OAuth 2.0
+
+O ecossistema de compartilhamento de dados definido pelo Brasil consiste em muitos padrões diferentes, todos girando em torno de conceitos, funções e obrigações que foram tecnicamente definidos no [OAuth 2.0 Authorization Framework](https://tools.ietf.org/html/rfc6749).
+
+> A estrutura de autorização OAuth 2.0 permite uma aplicação de terceiros (third-party application) obter acesso limitado a um serviço HTTP, seja em nome do proprietário de recurso (resource owner) por meio da orquestração de uma interação de aprovação entre o proprietário do recurso e o serviço HTTP, ou permitindo a aplicação de terceiros obter acesso em seu próprio nome.
+
+A especificação base OAuth 2.0 não fornece, por si só, informações suficientes para atender a todas as necessidades definidas pelo framework de confiança do Open Insurance Brasil. Mais notavelmente, não possui uma maneira de transmitir informações de identidade do cliente em um formato padronizado de uma instituição transmissora para uma receptora, e os mecanismos de autenticação que foram definidos na especificação original não são seguros o suficiente para atender aos requisitos de uma indústria altamente regulamentada.
+
+### OpenID Connect - A Camada de Identidade para a Internet
+
+***Este perfil herda todas as obrigações do OAuth 2.0***
+
+> [OpenID Connect](https://openid.net/connect/) é um conjunto de especificações simplificadas que fornecem uma estrutura para interações de identidade por meio de APIs do tipo REST. A implementação mais simples do OpenID Connect permite que clients de todos os tipos, incluindo baseados em navegador, celulares e clients javascript, solicitem e recebam informações sobre identidades e sessões atualmente autenticadas. O conjunto de especificações é extensível, permitindo que os participantes também suportem, opcionalmente, criptografia de dados de identidade, descoberta do OpenID Provider e gerenciamento avançado de sessão, incluindo logout.
+
+O grupo de trabalho OpenID Foundations Connect tem sido o guardião do Padrão de Identidade “de fato” da Internet por muitos anos, trabalhando em várias especificações que se baseiam no framework de autorização OAuth 2.0, adicionando recursos e requisitos de suporte para melhorar a segurança do framework em si.
+
+[Open ID Connect Core](https://openid.net/specs/openid-connect-core-1_0.html): é um perfil do [OAuth 2.0](https://tools.ietf.org/html/rfc6749), o que significa que herda todos os requisitos e obrigações do OAuth 2.0, mas define o conceito de um `id_token` e introduz novos mecanismos de autenticação.
+
+[Open ID Connect Discovery](https://openid.net/specs/openid-connect-discovery-1_0.html): apresenta o conceito de um documento de descoberta usado por *OpenID Connect (OIDC) Providers* para anunciar como os *clients* OAuth 2.0 podem se comunicar com eles e quais recursos e opções o OIDC Provider oferece suporte.
+
+[RFC7591](https://tools.ietf.org/html/rfc7591): além de definir o processo de registro dinâmico de *clients* OAuth, esta especificação apresenta o conceito de [Software Statement](https://tools.ietf.org/html/rfc7591#section-2.3) (“Declaração de Software”), que pode ser usada para fornecer informações sobre um *client* que é atestado por um serviço de terceiros. Outros atributos de metadados também são definidos no [OpenID Connect Registration Specification](https://openid.net/specs/openid-connect-registration-1_0.html)
+
+> Esta especificação define mecanismos para registrar dinamicamente *clients* OAuth 2.0 com *Authorization Servers* (servidores de autorização). Pedidos de registro enviam um conjunto de valores de metadados do *client* desejado para o *Authorization Server*. As respostas de registro resultantes retornam um *client identifier* para ser usado no *Authorization Server* e os valores de metadados registrados para o *client*. O *client* pode então usar esta informação de registro para se comunicar com o *Authorization Server* usando o protocolo OAuth 2.0. Esta especificação também define um conjunto de campos de metadados do *client* e valores para os *clients* usarem durante o registro.
+
+[RFC7592](https://tools.ietf.org/html/rfc7592): Esta especificação define métodos de gerenciamento de *dynamic client registration* (registros de cliente dinâmico) do OAuth 2.0 para casos de uso em que as propriedades de um *client* registrado necessitam ser alteradas durante a vida do *client*.
+
+As especificações acima são especificações básicas cuja leitura obrigatória sustenta o framework de confiança do Open Insurance Brasil. Entretanto, eles ainda são insuficientes para atender a todos os requisitos e princípios descritos anteriormente.
+
+### OpenID Financial Grade 1.0: Baseline
+
+***Este perfil herda todas as obrigações do OpenID Connect Core***
+
+Reconhecendo as ameaças e riscos restantes que não foram tratados pelo OpenID Connect Core, o grupo de trabalho Financial Grade tem como foco criar uma especificação que visa identificar e endereçar os pontos fracos na especificação OpenID Connect, essencialmente criando um perfil para casos de uso que exigem alto nível segurança.
+
+O perfil Baseline foi originalmente planejado para ser mais facilmente implementado por clients e OpenID Providers às custas de alguns elementos de segurança e, como tal, não oferece o mesmo grau de proteção contra violação de solicitação e resposta.
+
+### OpenID Financial Grade 1.0: Avançado
+
+***Este perfil herda todas as obrigações do OpenID FAPI 1.0: Baseline***
+
+O [FAPI 1.0: Advanced profile](https://openid.net/specs/openid-financial-api-part-2-1_0.html) é atual padrão ouro para API Security, fornecendo um framework de especificação que foi usado como ponto de partida para a criação de uma especificação para o Open Insurance Brasil.
+
+> Este padrão especifica um perfil de segurança avançado do OAuth que é adequado para ser usado para proteger APIs com alto risco inerente. Os exemplos incluem APIs que dão acesso a dados altamente confidenciais ou que podem ser usados para acionar transações financeiras (por exemplo, início de pagamento). Este padrão especifica os controles contra ataques, como: violação de solicitação de autorização, violação de resposta de autorização, incluindo injeção de código, injeção de estado e phishing de solicitação de token.
+
+![FAPI profile](../images/FAPI.png "FAPI profile")
+
+### Sobre o uso de JARM
+
+O suporte ao [JARM](https://bitbucket.org/openid/fapi/src/master/Financial_API_JWT_Secured_Authorization_Response_Mode.md) é opcional aos transmissores e detentores de contas (ASPSP) e, portanto, as instituições que optarem pelo uso do JARM devem, no processo de certificação de segurança, atestar também o suporte a outro profile que não considere o uso do padrão JARM, ou seja, deve também se certificar com um dos profiles listados na tabela a seguir.
+
+|Perfil da certificação OIDF|
+|---------------------------|
+|BR-OB Adv. OP w/ MTLS|
+|BR-OB Adv. OP w/ Private Key|
+|BR-OB Adv. OP w/ MTLS, PAR|
+|BR-OB Adv. OP w/ Private Key, PAR|
+
+
+## Guia do Usuário para Entidades Transmissoras de Dados
+
+### 1.0 Registrando um Participante
+
+### 1.1 Visão Geral do Diretório
+
+Os serviços do *framework* de confiança providos pelo Open Insurance Brasil fornecem todos os serviços de descoberta necessários para que instituiçoes transmissores e receptoras interajam entre si, sem que seja preciso validar individualmente a autenticidade de cada participante.
+
+Um *Authorization Server* ou AS, conforme definido por [RFC 6749 - The OAuth 2.0 Authorization Framework](https://tools.ietf.org/html/rfc6749), executa várias funções em um ecossistema de compartilhamento de dados como o Open Insurance Brasil. Antes de prosseguir, certifique-se de que os conceitos de funções e responsabilidades definidos na RFC original sejam bem compreendidos. Além disso, certifique-se de que os conceitos, funções e responsabilidades definidos no [OpenID Connect Core](https://openid.net/specs/openid-connect-core-1_0.html) e como eles estendem os conceitos definidos no RFC 6749 são igualmente bem compreendidos.
+
+### 1.2 Registrando um Authorization Server e OpenID Provider
+
+As seguradoras, geralmente grandes seguradoras, não serão uma entidade única do ponto de vista das operações de tecnologia. Eles podem ter marcas, segurança e infraestrutura de TI diferentes para diferentes segmentos de clientes, ou podem ter alguma infraestrutura de TI que ofereça suporte a várias marcas ou segmentos de clientes. Isso significa que o ecossistema técnico precisa ser flexível o suficiente para suportar uma ampla variedade de implantações de infraestrutura de seguradoras, garantindo que os serviços necessários possam ser descobertos por clientes de instituições receptoras que precisam interagir com ele.
+
+Um modelo flexível para anunciar serviços de autenticação / autorização e os recursos protegidos pelo AuthN e AuthZ é suportado pelo Diretório.
+
+- **Customer Friendly Name** - Será exibido aos clientes pelas instituições receptoras, e já deve ser reconhecido pelos clientes da seguradora.
+- **Customer Friendly Logo** - Será exibido aos clientes pelos instituições receptoras para auxiliar no reconhecimento da marca.
+- **Description** - Isso pode ser exibido aos clientes pelas instituições receptoras para auxiliar no reconhecimento da marca.
+- **Terms of Service** - Este é um link para os Termos de Serviço da seguradora, que podem ser incluídos pelas instituições receptoras.
+- **Notification WebHook** - *Authorization Servers* podem registrar um WebHook que receberá atualizações por push sobre as alterações dos participantes, seus softwares ou certificados.
+- **OpenID Well Known Document Uri** - Link para o documento de descoberta do Authorization Server.
+
+Uma seguradora pode optar por ter um *Authorization Server* ou muitos, desde que satisfaça os seguintes requisitos:
+
+- Um cliente pode reconhecer o *Authorization Server* como um local com o qual normalmente faria interação com a sua seguradora.
+- O *Authorization Server* pode emitir *tokens* para os recursos e serviços que um cliente ou insituição receptora está procurando.
+- O *Authorization Server* das instituições transmissoras/detentoras de contas que atenda mais de uma marca deve aceitar mais de um cadastro (criação de `client_ids`) para um mesmo *software statement*. Caso a solução de Authorization Server não suporte este comportamento, deverá ser adequado para suportar múltiplas marcas e o cadastramento das marcas no diretório deverá sofrer apontamento de acordo com cada marca.
+
+### 1.3 Registrando Recursos
+
+Depois que uma seguradora registra um *Authorization Server*, ela precisa anunciar para quais recursos, APIs ou serviços ele pode fornecer autorização.
+
+|Auth Id|Auth Customer Friendly Name|Well Known|Resource|Version|
+|-------|---------------------------|----------|--------|-------|
+|1|Seguros Incríveis - Empresas|https://auth.empresas.amazinginsurance.org.br/.well-known/openid-configuration|consents|1|
+|1|Seguros Incríveis - Empresas|https://auth.empresas.amazinginsurance.org.br/.well-known/openid-configuration|customers|1|
+|2|Seguros Incríveis|https://auth.amazinginsurance.org.br/.well-known/openid-configuration|consents|1|
+|2|Seguros Incríveis|https://auth.amazinginsurance.org.br/.well-known/openid-configuration|customers|1|
+|2|Seguros Incríveis|https://auth.amazinginsurance.org.br/.well-known/openid-configuration|insurance-auto|1|
+|2|Seguros Incríveis|https://auth.amazinginsurance.org.br/.well-known/openid-configuration|insurance-auto|2|
+|2|Seguros Incríveis|https://auth.amazinginsurance.org.br/.well-known/openid-configuration|insurance-patrimonial|1|
+
+No exemplo acima, a Seguros Incríveis está anunciando dois serviços que devem ser reconhecidos pelos clientes. “Seguros Incríveis - Empresas" e “Seguros Incríveis". Estes **podem ou não** estar diretamente relacionados a “Marcas”, pois seguradoras diferentes podem precisar anunciar serviços de autenticação diferentes, mesmo dentro de uma submarca.
+
+Além disso, a seguradora anuncia quais recursos cada um dos servidores de autorização está protegendo ou oferecendo. No exemplo acima, a Seguros Incríveis é compatível com a versão 1 e a versão 2 da API de seguros de automóveis, e o “Amazing Insurances” tem dois sistemas separados de consentimento e informações dos clientes de seguros.
+
+Anunciar corretamente quais recursos são oferecidos por cada servidor é importante para atingir a escala prevista pelo Open Insurance Brasil, além de ser fundamental para garantir que os clientes possam identificar sua seguradora facilmente e que as instituições receptoras possam encaminhar os clientes para o *Authorization Server* correto com base nos recursos protegidos por cada serviço.
+
+### 2.0 Validando uma Solicitação de Registro de Cliente
+
+Usando o OpenID Connect Discovery e a especificação de Dynamic Client Registration (DCR) do Open Insurance Brasil. Uma instituição receptora pode registrar seu aplicativo em cada um dos Authorization Servers disponíveis no ecossistema.
+
+### 2.1 Registro OpenID Connect e OAuth 2.0 Dynamic Client Registration
+Consulte a Cláusula 7 da [Especificação de Dynamic Client Registration (DCR) do Open Insurance Brasil](#dynamic-client-registration-dcr) para obter detalhes. 
+
+### 2.2 Processamento de declaração de software (Software Statement Assertion)
+Consulte a Cláusula 8 da [Especificação de Dynamic Client Registration (DCR) do Open Insurance Brasil](#dynamic-client-registration-dcr) para obter detalhes.
+
+### 3.0 Validando um Pedido de Autorização
+Consulte a Cláusula 5 do [Perfil de Segurança do Open Finance Brasil (Financial-grade API Security Profile)](https://openbanking-brasil.github.io/specs-seguranca/open-banking-brasil-financial-api-1_ID3-ptbr.html) para obter detalhes.
+
+
+## Guia do Usuário para Instituições Receptores de Dados
+
+### 1.0 Registrando um Aplicativo
+Em um alto nível, as seguintes etapas principais são necessárias para integrar um novo aplicativo no ecossistema Open Insurance Brasil.
+
+1. Cadastre sua organização no Diretório de Participantes (Interface do Usuário)
+2. Cadastre seu aplicativo no Diretório de Participantes (Interface do Usuário)
+3. Obtenha credenciais para sua aplicação junto à uma autoridade certificadora ICP-Brasi)(fora do escopo deste documento)
+4. Registre suas credenciais para o seu aplicativo no Diretório de Participantes (Interface do Usuário)
+5. Identifique provedores de informações de conta ou serviços de pagamento de interesse dos clientes de seu aplicativo, pesquisando o Diretório de Participantes (API)
+6. Registre seu aplicativo com cada provedor (API)
+
+### 1.1 Diagrama de Sequência
+
+![Registrando um Aplicativo](../images/application-registration.png)
+
+### 1.2 Visão Geral do Diretório
+
+O framework de confiança do Open Insurance Brasil fornece todos os serviços de descoberta necessários para que instituições participantes (receptoras e transmissoras de dados, iniciadoras de serviçoes de seguros) interajam entre si sem serem obrigadas a validarem a autenticidade de identidades, autorizações, Apps, APIs ou credenciais para acessos por aplicativos uns dos outros. Além disso, fornece um único registro de todas propostas ao consumidor sendo oferecidas no mercado e um único ambiente de controle para as autoridades regulatórias que concedem permissões para gerenciar participantes dentro do ecossistema.
+
+O framework de confiança não tem visibilidade ou visão das interações que ocorrem entre instituições participantes receptoras ou transmissoras de dados. Ele é projetado para fornecer confiança e garantia de identidade e autorização apenas. Ele não se enquadra no fluxo de comunicação entre um consumidor e um provedor e não tem conhecimento ou visibilidade de quaisquer dados do cliente. Este modelo de framework de confiança é conhecido como confiança transitiva onde duas partes, uma transmissora e uma receptora, concordam em confiar nas declarações e atestados de legitimidade uns dos outros emitidos por um provedor de confiança comum e, em seguida, prossigam comunicando o que quiserem, sem qualquer validação adicional onerosa ou outro tipo de verificação.
+
+### 1.3 Acessando o Diretório
+
+Este guia do usuário assume que as organizações participantes já passaram pelo processo de iniciação com a Estrutura Inicial do Open Insurance Brasil e já concluíram todas as integrações necessárias, processos de assinatura de contrato e inclusão de administrador individual.
+
+![Tela de login do diretório](../images/login.png "Tela de login do diretório")
+
+### 1.4 Criação de uma Nova Declaração de Software (SSA)
+Uma declaração de software descreve um aplicativo inserido naquilo que pode ser considerado a ‘App Store’ do Open Insurance Brasil. Este registro de aplicativo contém todas as informações necessárias para que uma seguradora identifique tecnicamente e interaja com o aplicativo, além de conter todas as informações que auxiliam os clientes que estejam utilizando-o a confirmar sua legitimidade.
+
+Um novo aplicativo ou declaração de software pode ser registrado fazendo logon no Diretório, acessando sua organização, navegando até ‘Declarações de software’, clicando em ‘Declarações de novo software’ e preenchendo o formulário. Lembre-se de que a maioria dessas informações será exibida aos clientes pelas Seguradoras como parte do processo de redirecionamento ou autorização. Como tal, é importante que todas as URIs e descrições sejam relevantes para o público.
+
+![Campos de declaração de software](../images/software_declaration_fields.png "Campos de declaração de software")
+
+### 1.4.1 Atribuição de Funções Regulatórias de Software
+Em um ecossistema de compartilhamento de dados complexo e diversificado, as funções regulatórias de uma organização podem mudar. Eles podem ser adicionados e revogados. Isso significa que o software adicionado ao Diretório pode receber permissão de ter zero (0) ou mais funções regulatórias. Um administrador pode atribuir a um determinado software todo e qualquer permissões que a organização proprietária do software pode ter.
+
+> Se uma organização perder uma função regulatória, todo software com essa função regulatória será revogado do ecossistema, portanto, é muito importante que um aplicativo receba apenas as funções de que realmente precisa para funcionar.
+
+### 1.5 Criação e Upload de Certificados
+### 1.5.1 Sandbox
+O serviço de Diretório do Open Insurance Brasil inclui uma infraestrutura de chave pública que pode ser usada para criar certificados para os aplicativos sendo registrados no ambiente Sandbox. Basta selecionar certificados no menu e seguir as instruções.
+
+O Diretório suporta vários certificados, tipos de chave e um comando e configuração openssl será disponibilizado como um exemplo. Depois de criar a solicitação de assinatura de certificado (Certificate Signing Request - CSR) para um certificado de “Transporte” e “Assinatura”, você pode enviá-los ao diretório para serem validados e transformados em certificados.
+
+Lembre-se de seguir as práticas de gerenciamento de chaves de sua organização para a geração de certificados. Essas credenciais e chaves precisam ser manuseadas com cuidado. Um evento significativo de comprometimento de chave pode levar ao comprometimento dos dados do cliente.
+
+### 1.5.2 Produção
+Os certificados para acesso e assinatura em ambiente de produção devem ser fornecidos pelo ICP Brasil. Os detalhes sobre os certificados e os requisitos para os certificados estão detalhados no [Padrão de Certificados Open Insurance Brasil](#padrão-de-certificados).
+
+### 1.5.3 O que é um JWT, JWE, JWS e JWK
+Quando os certificados são carregados para o Diretório, o framework de confiança os anuncia em [JSON Web Key Sets](https://tools.ietf.org/html/rfc7517) com cada JSON Web Key (JWK) tendo um ‘KID’ ou um Key ID. Os JWKs, além de ter propriedades específicas que descrevem o algoritmo e os conjuntos de criptografia que eles suportam, também anunciam seu “uso”, que pode ser do tipo ‘enc’ para criptografia ou ‘sig’ para assinatura.
+
+Essas chaves ‘sig’ e pares de chaves ‘enc’ são usadas em muitos lugares dentro do ecossistema do Open Insurance Brasil para criptografar ou assinar dados usando os padrões definidos em [RFC 7519 JSON Web Token](https://tools.ietf.org/html/rfc7519), que deve ser lido em detalhes pelos desenvolvedores.
+
+Tipos de JWT incluem
+
+- OpenID Connect Request Objects definidos em [Open ID Connect Core](https://openid.net/specs/openid-connect-core-1_0.html)
+- OpenID Connect `id_token` definido em [Open ID Connect Core](https://openid.net/specs/openid-connect-core-1_0.html)
+
+Entre muitos outros.
+
+Esses JWTs podem ser criptografados também usando o JSON Web Encryption (JWE). Na maioria dos casos, as chaves que devem ser usadas para validar uma assinatura da Web JSON (JWS) ou a chave que foi usada para criptografar um JWE são geralmente publicadas como uma JSON Web Key em um JSON Web Key Set com a referência à chave que está sendo carregada no campo de cabeçalho ‘kid’ (Key ID).
+
+**Exemplo de Request Object JWT assinado**
+
+```
+eyJhbGciOiJQUzI1NiIsInR5cCI6Im9hdXRoLWF1dGh6LXJlcStqd3QiLCJraWQiOiJ4U2tpbXRFa2EyUzFrdDBFQUV4MlJmNkZLendHSi1zUzRReHYzN2xiU2l3In0
+.
+eyJzY29wZSI6Im9wZW5pZCBvcGVuaW5zdXJhbmNlYnJhc2lsOmdyYW50OkdERVJaR1JXby1lT0V5UTdDVWZqZiIsInJlc3BvbnNlX3R5cGUiOiJjb2RlIGlkX3Rva2VuIiwicmVkaXJlY3RfdXJpIjoiaHR0cHM6Ly90cHAubG9jYWxob3N0L2NiIiwiY29kZV9jaGFsbGVuZ2UiOiJTMmZ4QlVMS2lQUDdxTnZrN2Z5WlBUcUwtYWtJYnJXcU96WlpYU3I1VTZjIiwiY29kZV9jaGFsbGVuZ2VfbWV0aG9kIjoiUzI1NiIsInJlc3BvbnNlX21vZGUiOiJmb3JtX3Bvc3QiLCJzdGF0ZSI6IjAzNTE4MTk2NTA1NTM3ZTIxMWRkMDhjZWRiMTI3MTE4NzBhNTZlYTQ4ODg5MjRkNTk4YzRiMDY0MDMwMTA2M2IiLCJub25jZSI6Ijg5ODFjOGE1NjBjMjFjMGY4NzQ2ZTliOTc4YmZjMDA0YjkyNzRmMmJjZjc4NmEzZTE1YWE5NmM4ZGQ1NDk0ZGQiLCJjbGFpbXMiOnsiaWRfdG9rZW4iOnsiYXV0aF90aW1lIjp7ImVzc2VudGlhbCI6dHJ1ZX0sIm5hdGlvbmFsX2lkIjp7ImVzc2VudGlhbCI6dHJ1ZX0sImdpdmVuX25hbWUiOnsiZXNzZW50aWFsIjp0cnVlfSwiYWNyIjp7InZhbHVlcyI6WyJ1cm46b3Blbmluc3VyYW5jZWJyYXNpbDp0cnVzdGZyYW1ld29yazpnb2xkIl0sImVzc2VudGlhbCI6dHJ1ZX19LCJ1c2VyaW5mbyI6eyJhdXRoX3RpbWUiOnsiZXNzZW50aWFsIjp0cnVlfSwibmF0aW9uYWxfaWQiOnsiZXNzZW50aWFsIjp0cnVlfSwiZ2l2ZW5fbmFtZSI6eyJlc3NlbnRpYWwiOnRydWV9LCJhY3IiOnsidmFsdWVzIjpbInVybjpvcGVuaW5zdXJhbmNlYnJhc2lsOnRydXN0ZnJhbWV3b3JrOmdvbGQiXSwiZXNzZW50aWFsIjp0cnVlfX19LCJtYXhfYWdlIjozMDAsImlzcyI6ImFDbkJIalpCdkQ2a3UzS1ZCYXNsTCIsImF1ZCI6Imh0dHBzOi8vYXV0aC5sb2NhbGhvc3QiLCJjbGllbnRfaWQiOiJhQ25CSGpaQnZENmt1M0tWQmFzbEwiLCJqdGkiOiJxOF9OU2NKb3F1OG5kcmNYZmo3TlRDVUNTZDZjUEk5ZzVJN3FFeUlLa1NVIiwiaWF0IjoxNjE4NjY0NzM4LCJleHAiOjE2MTg2NjUwMzgsIm5iZiI6MTYxODY2NDczOH0
+.
+I-75Ev8Swlk3AXEXevFEyV3FVA40VjjIJQu3sImcVGrxdA3qFzw-gxIMCEHamC94TktI_mv6jebwJa_WCfpTipRdnuT_6f24hjTHCDb261t_uWSu3xZgiJrXvmxtQKykLKe6AVheIfldDPszu3bUmUeg9J3ZF6ilDGcCkphmMXLIPpEFkesOQpkw45mCXuhKLfoCnznax7bN6nlD-cHH0Cd0e2XExy3rmSUJ4CljLkpiJ-aK53WDJDocX2mkcFohRJ6zJOHUWZphZ89qpYCq-8jnCOV-YblG9P4KkzUH7EfdVchVzp8V5FlOfmXZhB2pS5REHBjfsmXrdBChlF4Tig
+```
+
+O exemplo acima é apresentado decodificado logo abaixo. No cabeçalho está incluso o atributo ‘kid’ (id da chave) com o valor `xSkimtEka2S1kt0EAEx2Rf6FKzwGJ-sS4Qxv37lbSiw`, que pode ser localizado no JSON Web KeySet para este cliente [aqui](https://keystore.sandbox.directory.opinbrasil.com.br/4b75db2e-a0c0-4359-a077-684e88fa695c/cd080791-9f2b-4b0d-b6a4-953be52b5971/application.jwks)
+
+```
+{
+  "alg": "PS256",
+  "typ": "oauth-authz-req+jwt",
+  "kid": "PWAi5ruQcHfzPzq2JFdpY7nAUh6LzTTQtDBUpOM37JQ"
+}
+{
+  "scope": "openid opinbrasil:grant:GDERZGRWo-eOEyQ7CUfjf",
+  "response_type": "code id_token",
+  "redirect_uri": "https://tpp.localhost/cb",
+  "code_challenge": "S2fxBULKiPP7qNvk7fyZPTqL-akIbrWqOzZZXSr5U6c",
+  "code_challenge_method": "S256",
+  "response_mode": "form_post",
+  "state": "03518196505537e211dd08cedb12711870a56ea4888924d598c4b0640301063b",
+  "nonce": "8981c8a560c21c0f8746e9b978bfc004b9274f2bcf786a3e15aa96c8dd5494dd",
+  "claims": {
+    "id_token": {
+      "auth_time": {
+        "essential": true
+      },
+      "national_id": {
+        "essential": true
+      },
+      "given_name": {
+        "essential": true
+      },
+      "acr": {
+        "values": [
+          "urn:opinbrasil:trustframework:gold"
+        ],
+        "essential": true
+      }
+    },
+    "userinfo": {
+      "auth_time": {
+        "essential": true
+      },
+      "national_id": {
+        "essential": true
+      },
+      "given_name": {
+        "essential": true
+      },
+      "acr": {
+        "values": [
+          "urn:opinbrasil:trustframework:gold"
+        ],
+        "essential": true
+      }
+    }
+  },
+  "max_age": 300,
+  "iss": "aCnBHjZBvD6ku3KVBaslL",
+  "aud": "https://auth.localhost",
+  "client_id": "aCnBHjZBvD6ku3KVBaslL",
+  "jti": "q8_NScJoqu8ndrcXfj7NTCUCSd6cPI9g5I7qEyIKkSU",
+  "iat": 1618664738,
+  "exp": 1618665038,
+  "nbf": 1618664738
+}
+```
+
+O JWK público do JWKS retirado da uri fornecido anteriormente
+
+```
+{
+  "kty":"RSA",
+  "use":"sig",
+  "x5c":["MIIG9DCCBdygAwIBAgIUHy/za0mwr7eUEasj2fXtS4sekZkwDQYJKoZIhvcNAQELBQAwdzELMAkGA1UEBhMCQlIxHjAcBgNVBAoTFU9wZW4gSW5zdXJhbmNlIEJyYXNpbDEXMBUGA1UECxMOT3BlbiBJbnN1cmFuY2UxLzAtBgNVBAMTJk9wZW4gSW5zdXJhbmNlIFNBTkRCT1ggSXNzdWluZyBDQSAtIEcxMB4XDTIyMDcxNDE3NDkwMFoXDTIzMDgxMzE3NDkwMFowgcMxCzAJBgNVBAYTAkJSMRMwEQYDVQQKEwpJQ1AtQnJhc2lsMUEwDAYDVQQLEwVUZXN0ZTAVBgNVBAsTDjE0NzIzMzc5MDAwMTcyMBoGA1UECxMTY2VydGlmaWNhZG8gZGlnaXRhbDEmMCQGA1UEAxMdT1BFTiBJTlNVUkFOQ0UgQlJBU0lMIC0gUEVFUlMxNDAyBgoJkiaJk/IsZAEBEyQ0Yjc1ZGIyZS1hMGMwLTQzNTktYTA3Ny02ODRlODhmYTY5NWMwggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQC8IHx8C4J7Eyis1G25VbTvAqpa5ny0FJBZVP+K7m0F+hCLxvPhC5ZZDL4dY5pAb6EozKU/Tg70/XGNVbhZvjOvOWgNLOxYI6hiOdRfuy/8GEUQxWEoFqfS9Q24E+aw7miBacUjg9RiVvfhMRPKIZ8Qjhjd1sefI2blcCfKF8exqPcDNP3EyLuS3Ny2Hyq/ZGKXt4rpitahbpBBFnwUpDC4qfBXZ4w55OW4T1sI1+QJA8y5A4QUe2iewSmd8rOXtymiEZLTJ910R/0gRaf9Qv6pb2jzTfABRJbPUlkn5MD/h8bRljZobu/AS2v/XD+rfSdYq6/ZjCvMz20JuXdZEvqLAgMBAAGjggMpMIIDJTAMBgNVHRMBAf8EAjAAMB0GA1UdDgQWBBTY8mtqsrwa73AgQ/jxr6tXhKj3aDAfBgNVHSMEGDAWgBQe6nJx8bsl1+pttR0hY3JNExWkfjBFBggrBgEFBQcBAQQ5MDcwNQYIKwYBBQUHMAGGKWh0dHA6Ly9vY3NwLnNhbmRib3gucGtpLm9waW5icmFzaWwuY29tLmJyMEQGA1UdHwQ9MDswOaA3oDWGM2h0dHA6Ly9jcmwuc2FuZGJveC5wa2kub3BpbmJyYXNpbC5jb20uYnIvaXNzdWVyLmNybDCBkgYDVR0RBIGKMIGHoEAGBWBMAQMCoDcMNTxOYW1lIG9mIHRoZSBwZXJzb24gcmVzcG9uc2libGUgZm9yIHRoZSBvcmdhbml6YXRpb24+oBkGBWBMAQMDoBAMDjE0NzIzMzc5MDAwMTcyoBYGBWBMAQMEoA0MCzExMTExMTExMTMyoBAGBWBMAQMHoAcMBTEyMzQ1MA4GA1UdDwEB/wQEAwIGwDCCAaEGA1UdIASCAZgwggGUMIIBkAYKKwYBBAGDui9kATCCAYAwggE2BggrBgEFBQcCAjCCASgMggEkVGhpcyBDZXJ0aWZpY2F0ZSBpcyBzb2xlbHkgZm9yIHVzZSB3aXRoIFJhaWRpYW0gU2VydmljZXMgTGltaXRlZCBhbmQgb3RoZXIgcGFydGljaXBhdGluZyBvcmdhbmlzYXRpb25zIHVzaW5nIFJhaWRpYW0gU2VydmljZXMgTGltaXRlZHMgVHJ1c3QgRnJhbWV3b3JrIFNlcnZpY2VzLiBJdHMgcmVjZWlwdCwgcG9zc2Vzc2lvbiBvciB1c2UgY29uc3RpdHV0ZXMgYWNjZXB0YW5jZSBvZiB0aGUgUmFpZGlhbSBTZXJ2aWNlcyBMdGQgQ2VydGljaWNhdGUgUG9saWN5IGFuZCByZWxhdGVkIGRvY3VtZW50cyB0aGVyZWluLjBEBggrBgEFBQcCARY4aHR0cDovL3JlcG9zaXRvcnkuc2FuZGJveC5wa2kub3BpbmJyYXNpbC5jb20uYnIvcG9saWNpZXMwDQYJKoZIhvcNAQELBQADggEBAG/o37oQuU9QyFdQxiP2tRVlfgQn7Khj1xamIcuxfzhug9ztgu6dwxELkjhxsjcTxn2ynUcK3+rqg9FHZVV7pise/lGuW9HvWzzOd9nGEtKv0UmEdHidpHQ8lAnpsn2cAA+Fs1LiZqGmvvfVouIrqEM2kjnpTSpn05yj0VK83CnUsPm4aUnd1BeacqXI2GU9U6yULI0Y6ooNVkAcRq/yqjyKlo6ik70I3eK39OH4dkkgE1ooF8Qzxl1q0kVUHqjKlJiXu3VsIgihr5Sr9tDtneXEwTrMdA6vuqIQEUQWkohZCqD0m4E/j+NMwvt6lQtiJQwy8RrN6RHFiqeuTg8Mk7Q="],
+  "n":"vCB8fAuCexMorNRtuVW07wKqWuZ8tBSQWVT_iu5tBfoQi8bz4QuWWQy-HWOaQG-hKMylP04O9P1xjVW4Wb4zrzloDSzsWCOoYjnUX7sv_BhFEMVhKBan0vUNuBPmsO5ogWnFI4PUYlb34TETyiGfEI4Y3dbHnyNm5XAnyhfHsaj3AzT9xMi7ktzcth8qv2Ril7eK6YrWoW6QQRZ8FKQwuKnwV2eMOeTluE9bCNfkCQPMuQOEFHtonsEpnfKzl7cpohGS0yfddEf9IEWn_UL-qW9o803wAUSWz1JZJ-TA_4fG0ZY2aG7vwEtr_1w_q30nWKuv2YwrzM9tCbl3WRL6iw",
+  "e":"AQAB",
+  "kid":"xSkimtEka2S1kt0EAEx2Rf6FKzwGJ-sS4Qxv37lbSiw",
+  "x5u":"https://keystore.sandbox.directory.opinbrasil.com.br/4b75db2e-a0c0-4359-a077-684e88fa695c/xSkimtEka2S1kt0EAEx2Rf6FKzwGJ-sS4Qxv37lbSiw.pem",
+  "x5t#256":"xSkimtEka2S1kt0EAEx2Rf6FKzwGJ-sS4Qxv37lbSiw"
+}
+```
+
+A chave privada que foi usada para criar o JWS
+
+```
+-----BEGIN PRIVATE KEY-----
+MIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQC8IHx8C4J7Eyis
+1G25VbTvAqpa5ny0FJBZVP+K7m0F+hCLxvPhC5ZZDL4dY5pAb6EozKU/Tg70/XGN
+VbhZvjOvOWgNLOxYI6hiOdRfuy/8GEUQxWEoFqfS9Q24E+aw7miBacUjg9RiVvfh
+MRPKIZ8Qjhjd1sefI2blcCfKF8exqPcDNP3EyLuS3Ny2Hyq/ZGKXt4rpitahbpBB
+FnwUpDC4qfBXZ4w55OW4T1sI1+QJA8y5A4QUe2iewSmd8rOXtymiEZLTJ910R/0g
+Raf9Qv6pb2jzTfABRJbPUlkn5MD/h8bRljZobu/AS2v/XD+rfSdYq6/ZjCvMz20J
+uXdZEvqLAgMBAAECggEAHwDZkxXQgJj1NJpjpM4HnfYZ/hYLCiBzc41q+cn2RKxj
+6q00huuCcRWFBVHjW2gqLo+fUhH6rAxSmOC+G2gZm3CCAd3b62ChAOMX6VjvfQPA
+6hUlQFaPfNgu1R3OgG0h4uX7+7DfoP9FJaMRaFfnH3LTjUe2qTbL39b+b7NAkToH
+ZdylNWGQUagROIXT0t7uCUgACRU7Xd/OORPja7uKtRySdjvRClk75q8Nvqa2H44j
+X0mIGNOd3j1u3TBPDwmCDO0ud9+FZUi3tGLSaqUnRcG0nfFqrw6qUsRJbrQIA37A
+V9jzis7v+kHaxZS/bPqehbQ7Y3+/oH+Mipjbybz9ZQKBgQDReXv+50m1uvmiTEIH
+Ja+HA/O2oXP+QC62g4qaaCoy6PBpkF4ZuUQXEuWCy//d90BcUwIh0wgQ64qF38KE
+v3DeiOay3UK158DE36yzLJ9Lf78UuhNaUFyj3WJmk6jLfOvzUzay7reerr8gE8Jb
+5F2vvrBy1toXS15EH7qyaFIXlwKBgQDl6TIaNJ7ZxmLMa2EwnsvpJFaQhpYwTVvd
+XqN3Neq/BQNt8RcwM80vNmdDRhbCDGaDw+fSw3FDlHbJy2kBDhb7GoNV4TP4nEyy
+wb2R1Wz7/cGrop8m4cjOffg9H7yck899ZD7v3H9G5UB4owX2LXItaqEhc2X0ySNk
+AE09T9RzLQKBgHDJf5kNQaPnC7h2ZOriQLNqzlOcdQ8F0eEVzJA829PTlnbQc8pX
+9bCSzR7y5k7GbVIIo9JAhUxO9qQEigDd71Dy13yhI+U75pBaeutycEa/fswTMI5l
+TKwybGQcxzrhhU3blU0cuaNoJaKI4RKHUGZrPyhmRMFcJGJ7zxN2lhT7AoGBAOL5
+gZkVce2VSVx+dgjF/JFCaqNr+0HcXWECWWcLN6E1ldkoNrhDq8F8eB2WSElybJKR
+CYCtqlgJbexygEumWVG1LwvNtL0vsRiY5Eng5iMwtc54UZ7VMKWK/1N4zX/W/PTR
+zsCGcrDPCwMODoim/R2RM1oOzw0GtYW4NojdEuRRAoGBALL8Zr7Yqqn/j473ib9q
+/kDhv4qitzi0gl4HMeXseOPvtHeOze8+MwBKTNWd81N5rkLKzXhyLYXg0GSsRbpe
+tWKNkwngOBb7oiMhklUWsWEKmFScUfYqPheArh6OYWrJCxxXptrQw/H4t8Ocf+8R
+tRPcXAoDj8SIs7XBDzdSNIuS
+-----END PRIVATE KEY-----
+```
+
+Se quiser conhecer um pouco mais e exercitar, visite o site [JWT-IO](https://jwt.io/) e conheça um pouco mais.
+
+### 2.0 Interagindo com as APIs de Serviços de Confiança
+Quando um aplicativo é registrado no Diretório, o serviço central usa os metadados e certificados fornecidos para criar para o software um cliente OAuth 2.0 que tem um `grant type` do tipo `client credentials`, conforme definido em [RFC6749](https://tools.ietf.org/html/rfc6749) e com um mecanismo de autenticação de cliente definido como `tls_client_auth`, conforme definido em [RFC 8705](https://tools.ietf.org/html/rfc8705).
+
+Usando o ClientID listado na declaração do software (software statement) no Diretório, [OpenID Connect Discovery](https://openid.net/specs/openid-connect-discovery-1_0.html) e a configuração do OpenID Provider Issuer abaixo, um participante tem todos das informações necessárias para descobrir, autenticar e interagir com as APIs do Diretório
+
+### 2.1 Emissores do Framework de Confiança do Diretório
+
+Produção: https://auth.directory.opinbrasil.com.br/
+
+Sandbox: https://auth.sandbox.directory.opinbrasil.com.br/
+
+Os certificados para acesso às APIs publicadas pelas instituições participantes devem ser obrigatoriamente certificados emitidos no âmbito da ICP-Brasil.
+
+### 2.2 Como se Comunicar com o Authorization Server do Diretório
+
+- Use o OpenID Issuer e a Cláusula 4 da especificação [OpenID Connect Discovery](https://openid.net/specs/openid-connect-discovery-1_0.html) para obter o documento `openid-configuration`.
+
+```
+curl https://auth.directory.opinbrasil.com.br/.well-known/openid-configuration
+
+{
+  "authorization_endpoint": "https://auth.directory.opinbrasil.com.br/auth",
+  "device_authorization_endpoint": "https://auth.directory.opinbrasil.com.br/device/auth",
+  "claims_parameter_supported": true,
+  "claims_supported": [
+    "sub",
+    "email",
+    "email_verified",
+    "phone_number",
+    "phone_number_verified",
+    "address",
+    "birthdate",
+    "family_name",
+    "gender",
+    "given_name",
+    "locale",
+    "middle_name",
+    "name",
+    "nickname",
+    "picture",
+    "preferred_username",
+    "profile",
+    "updated_at",
+    "website",
+    "zoneinfo",
+    "sid",
+    "auth_time",
+    "iss"
+  ],
+  "code_challenge_methods_supported": [
+    "S256"
+  ],
+  "end_session_endpoint": "https://auth.directory.opinbrasil.com.br/session/end",
+  "check_session_iframe": "https://auth.directory.opinbrasil.com.br/session/check",
+  "grant_types_supported": [
+    "implicit",
+    "authorization_code",
+    "refresh_token",
+    "client_credentials"
+  ],
+  "id_token_signing_alg_values_supported": [
+    "PS256"
+  ],
+  "issuer": "https://auth.directory.opinbrasil.com.br",
+  "jwks_uri": "https://auth.directory.opinbrasil.com.br/jwks",
+  "registration_endpoint": "https://auth.directory.opinbrasil.com.br/reg",
+  "response_modes_supported": [
+    "form_post",
+    "fragment",
+    "query",
+    "jwt",
+    "query.jwt",
+    "fragment.jwt",
+    "form_post.jwt"
+  ],
+  "response_types_supported": [
+    "code id_token",
+    "code",
+    "id_token",
+    "none"
+  ],
+  "scopes_supported": [
+    "openid",
+    "offline_access",
+    "profile",
+    "email",
+    "address",
+    "phone",
+    "directory:software"
+  ],
+  "subject_types_supported": [
+    "public",
+    "pairwise"
+  ],
+  "token_endpoint_auth_methods_supported": [
+    "private_key_jwt",
+    "tls_client_auth"
+  ],
+  "token_endpoint_auth_signing_alg_values_supported": [
+    "PS256"
+  ],
+  "token_endpoint": "https://auth.directory.opinbrasil.com.br/token",
+  "pushed_authorization_request_endpoint": "https://auth.directory.opinbrasil.com.br/request",
+  "request_object_signing_alg_values_supported": [
+    "PS256"
+  ],
+  "request_parameter_supported": true,
+  "request_uri_parameter_supported": true,
+  "require_request_uri_registration": true,
+  "userinfo_endpoint": "https://auth.directory.opinbrasil.com.br/me",
+  "userinfo_signing_alg_values_supported": [
+    "PS256"
+  ],
+  "authorization_signing_alg_values_supported": [
+    "PS256"
+  ],
+  "introspection_endpoint": "https://auth.directory.opinbrasil.com.br/token/introspection",
+  "introspection_endpoint_auth_methods_supported": [
+    "private_key_jwt",
+    "tls_client_auth"
+  ],
+  "introspection_endpoint_auth_signing_alg_values_supported": [
+    "PS256"
+  ],
+  "revocation_endpoint": "https://auth.directory.opinbrasil.com.br/token/revocation",
+  "revocation_endpoint_auth_methods_supported": [
+    "private_key_jwt",
+    "tls_client_auth"
+  ],
+  "revocation_endpoint_auth_signing_alg_values_supported": [
+    "PS256"
+  ],
+  "frontchannel_logout_supported": true,
+  "frontchannel_logout_session_supported": true,
+  "tls_client_certificate_bound_access_tokens": true,
+  "claim_types_supported": [
+    "normal"
+  ],
+  "mtls_endpoint_aliases": {
+    "token_endpoint": "https://matls-auth.directory.opinbrasil.com.br/token",
+    "revocation_endpoint": "https://matls-auth.directory.opinbrasil.com.br/token/revocation",
+    "introspection_endpoint": "https://matls-auth.directory.opinbrasil.com.br/token/introspection",
+    "device_authorization_endpoint": "https://matls-auth.directory.opinbrasil.com.br/device/auth",
+    "pushed_authorization_request_endpoint": "https://matls-auth.directory.opinbrasil.com.br/request",
+    "userinfo_endpoint": "https://matls-auth.directory.opinbrasil.com.br/me"
+  }
+}
+```
+
+- Obtenha o `alias` do endpoint do Mutual TLS Token, conforme definido por [RFC8705 - OAuth 2.0 Mutual-TLS Client Authentication and Certificate-Bound Access Tokens](https://tools.ietf.org/html/rfc8705)
+
+```
+ "mtls_endpoint_aliases": {
+    "token_endpoint": "https://matls-auth.directory.opinbrasil.com.br/token",
+  }
+```
+
+- Estabeleça uma conexão TLS mútua usando o certificado de transporte registrado anteriormente e solicite um token de acesso com o escopo `directory:software`
+
+```
+curl --cert transport.pem --key transport.key https://matls-auth.directory.opinbrasil.com.br/token -X POST -d 'client_id=cd080791-9f2b-4b0d-b6a4-953be52b5971&grant_type=client_credentials&scope=directory:software'
+
+{"access_token":"O9lA1EsQM7sAEOgmNdjcIwXAjeBqqFCDnYALhg7bysJ","expires_in":600,"token_type":"Bearer","scope":"directory:software"}
+```
+
+### 2.3 Como se Comunicar com as APIs do Diretório
+As APIs do Diretório são recursos RESTful protegidos usando o Perfil de Segurança do Open Insurance Brasil. Isso significa que eles têm a mesma postura de segurança das APIs publicadas pelas seguradoras. Todas as APIs de Diretório requerem o escopo do recurso OAuth 2.0 de `directory:software` e são protegidos usando Mutual TLS (mTLS).
+
+Consulte a especificação do [Diretório OpenAPI v3](https://raw.githubusercontent.com/br-openinsurance/specs-directory-main/main/openapi_opin.yaml) para o conjunto completo de endpoints disponíveis.
+
+### 2.4 Descobrindo Authorization Servers de Seguradoras
+Faça uma busca pelo recurso de participantes (informações públicas) e obtenha uma lista de todos os participantes e seus Authorization Servers.
+
+```
+curl https://data.directory.opinbrasil.com.br/participants
+
+{
+  "content": [
+    {
+      "OrganisationId": "c20ae180-e660-43c3-90e6-2914ace51974",
+      "Status": "Active",
+      "OrganisationName": "OPEN INSURANCE BRASIL",
+      "CreatedOn": "2022-01-26T21:05:03.381Z",
+      "LegalEntityName": "Open insurance Brasil",
+      "CountryOfRegistration": "BR",
+      "CompanyRegister": "VAT Number",
+      "Tags": [
+          "Technical Service Provider"
+      ],
+      "Size": "50",
+      "RegistrationNumber": "123456",
+      "RegistrationId": "12345678910",
+      "RegisteredName": "Open insurance Brasil",
+      "AddressLine1": "199 Bishopsgate",
+      "AddressLine2": "string",
+      "City": "London",
+      "Postcode": "BA",
+      "Country": "BR",
+      "RequiresParticipantTermsAndConditionsSigning": true
+    }
+  
+  -- resultados filtrados para brevidade
+
+  ]
+}
+```
+
+Filtre os participantes por aqueles que possuem Authorization Servers protegendo os recursos que você está interessado em acessar para o seu produto. No exemplo acima, existem dois Authorization Servers para ‘_’, um para o negócio de varejo e um para o corporativo.
+
+O aplicativo agora descobriu a lista de seguradoras que estão oferecendo APIs que podem ser úteis para os usuários do aplicativo e pode gerar uma lista de ‘*customer friendly names*’ de seguradoras e logotipos para exibir aos clientes para permitir que eles selecionem a seguradora a partir do qual desejam compartilhar dados.
+
+### 3.0 Registrando o Aplicativo com um Provedor
+
+![DCR](../images/dynamic-client-registration.png)
+
+A partir do exemplo dado acima, podemos ver que a localização do "OpenIDDiscoveryDocument" é anunciada por cada um dos Authorization Server.
+
+### 3.1 Criação de uma Declaração de Software (SSA)
+
+Uma afirmação de declaração de software (software statement assertion - SSA) é um JWT assinado pelo Diretório que contém todas as informações sobre um aplicativo que existe em um determinado momento no Diretório. Inclui a localização de todas as chaves públicas vinculadas à esta declaração de software e todos os outros metadados de que uma seguradora precisa para validar a legitimidade do aplicativo.
+
+Um SSA não tem período de validade, é simplesmente um registro pontual do que existia como atributos válidos no momento em que foi criado. As seguradoras devem aceitar um SSA com menos de alguns minutos, mas a janela exata pode ser diferente entre os provedores.
+
+* Obtenha um token de acesso e, em seguida, carregue a declaração do software para um aplicativo no Diretório.
+
+```
+curl --cert transport.pem --key transport.key https://matls-auth.directory.opinbrasil.com.br/token -X POST -d 'client_id=cd080791-9f2b-4b0d-b6a4-953be52b5971&grant_type=client_credentials&scope=directory:software'
+
+{"access_token":"O9lA1EsQM7sAEOgmNdjcIwXAjeBqqFCDnYALhg7bysJ","expires_in":600,"token_type":"Bearer","scope":"directory:software"}
+
+curl --cert transport.pem --key transport.key https://matls-api.directory.opinbrasil.com.br/organisations/4b75db2e-a0c0-4359-a077-684e88fa695c/softwarestatements/cd080791-9f2b-4b0d-b6a4-953be52b5971/assertion -H 'Authorization: Bearer O9lA1EsQM7sAEOgmNdjcIwXAjeBqqFCDnYALhg7bysJ'
+
+eyJraWQiOiJzaWduZXIiLCJ0eXAiOiJKV1QiLCJhbGciOiJQUzI1NiJ9.eyJzb2Z0d2FyZV9qd2tzX2luYWN0aXZlX3VyaSI6Imh0dHBzOlwvXC9rZXlzdG9yZS5zYW5kYm94LmRpcmVjdG9yeS5vcGluYnJhc2lsLmNvbS5iclwvNGI3NWRiMmUtYTBjMC00MzU5LWEwNzctNjg0ZTg4ZmE2OTVjXC9jZDA4MDc5MS05ZjJiLTRiMGQtYjZhNC05NTNiZTUyYjU5NzFcL2luYWN0aXZlXC9hcHBsaWNhdGlvbi5qd2tzIiwic29mdHdhcmVfbW9kZSI6IkxpdmUiLCJzb2Z0d2FyZV9yZWRpcmVjdF91cmlzIjpbImh0dHBzOlwvXC93d3cubmFvdmFsaWRvLmNvbS5iciJdLCJzb2Z0d2FyZV9zdGF0ZW1lbnRfcm9sZXMiOltdLCJvcmdfandrc190cmFuc3BvcnRfdXJpIjoiaHR0cHM6XC9cL2tleXN0b3JlLnNhbmRib3guZGlyZWN0b3J5Lm9waW5icmFzaWwuY29tLmJyXC80Yjc1ZGIyZS1hMGMwLTQzNTktYTA3Ny02ODRlODhmYTY5NWNcL3RyYW5zcG9ydC5qd2tzIiwic29mdHdhcmVfY2xpZW50X25hbWUiOiJUZXN0ZSBTYW5kYm94Iiwib3JnX3N0YXR1cyI6IkFjdGl2ZSIsImlzcyI6Ik9wZW4gSW5zdXJhbmNlIEJyYXNpbCBTYW5kYm94IFNTQSBpc3N1ZXIiLCJvcmdfandrc190cmFuc3BvcnRfaW5hY3RpdmVfdXJpIjoiaHR0cHM6XC9cL2tleXN0b3JlLnNhbmRib3guZGlyZWN0b3J5Lm9waW5icmFzaWwuY29tLmJyXC80Yjc1ZGIyZS1hMGMwLTQzNTktYTA3Ny02ODRlODhmYTY5NWNcL2luYWN0aXZlXC90cmFuc3BvcnQuandrcyIsInNvZnR3YXJlX2p3a3NfdHJhbnNwb3J0X2luYWN0aXZlX3VyaSI6Imh0dHBzOlwvXC9rZXlzdG9yZS5zYW5kYm94LmRpcmVjdG9yeS5vcGluYnJhc2lsLmNvbS5iclwvNGI3NWRiMmUtYTBjMC00MzU5LWEwNzctNjg0ZTg4ZmE2OTVjXC9jZDA4MDc5MS05ZjJiLTRiMGQtYjZhNC05NTNiZTUyYjU5NzFcL2luYWN0aXZlXC90cmFuc3BvcnQuandrcyIsInNvZnR3YXJlX3BvbGljeV91cmkiOiJodHRwczpcL1wvd3d3Lm5hb3ZhbGlkby5jb20uYnIiLCJzb2Z0d2FyZV9pZCI6ImNkMDgwNzkxLTlmMmItNGIwZC1iNmE0LTk1M2JlNTJiNTk3MSIsInNvZnR3YXJlX3N0YXR1cyI6IkFjdGl2ZSIsInNvZnR3YXJlX2Vudmlyb25tZW50IjoiU2FuZGJveCIsInNvZnR3YXJlX3ZlcnNpb24iOiIxLjAwIiwib3JnX25hbWUiOiJPUEVOIElOU1VSQU5DRSBCUkFTSUwgLSBQRUVSUyIsImlhdCI6MTY1NzgyOTExNCwic29mdHdhcmVfc2VjdG9yX2lkZW50aWZpZXJfdXJpIjoiaHR0cHM6XC9cL2tleXN0b3JlLnNhbmRib3guZGlyZWN0b3J5Lm9waW5icmFzaWwuY29tLmJyXC80Yjc1ZGIyZS1hMGMwLTQzNTktYTA3Ny02ODRlODhmYTY5NWNcL2NkMDgwNzkxLTlmMmItNGIwZC1iNmE0LTk1M2JlNTJiNTk3MVwvcmVkaXJlY3RfdXJpcy5qc29uIiwic29mdHdhcmVfY2xpZW50X2lkIjoiY2QwODA3OTEtOWYyYi00YjBkLWI2YTQtOTUzYmU1MmI1OTcxIiwib3JnX2p3a3NfaW5hY3RpdmVfdXJpIjoiaHR0cHM6XC9cL2tleXN0b3JlLnNhbmRib3guZGlyZWN0b3J5Lm9waW5icmFzaWwuY29tLmJyXC80Yjc1ZGIyZS1hMGMwLTQzNTktYTA3Ny02ODRlODhmYTY5NWNcL2luYWN0aXZlXC9hcHBsaWNhdGlvbi5qd2tzIiwic29mdHdhcmVfandrc190cmFuc3BvcnRfdXJpIjoiaHR0cHM6XC9cL2tleXN0b3JlLnNhbmRib3guZGlyZWN0b3J5Lm9waW5icmFzaWwuY29tLmJyXC80Yjc1ZGIyZS1hMGMwLTQzNTktYTA3Ny02ODRlODhmYTY5NWNcL2NkMDgwNzkxLTlmMmItNGIwZC1iNmE0LTk1M2JlNTJiNTk3MVwvdHJhbnNwb3J0Lmp3a3MiLCJzb2Z0d2FyZV9jbGllbnRfdXJpIjoiaHR0cHM6XC9cL3d3dy5uYW92YWxpZG8uY29tLmJyIiwic29mdHdhcmVfbG9nb191cmkiOiJodHRwczpcL1wvd3d3Lm5hb3ZhbGlkby5jb20uYnIiLCJvcmdfaWQiOiI0Yjc1ZGIyZS1hMGMwLTQzNTktYTA3Ny02ODRlODhmYTY5NWMiLCJvcmdfandrc191cmkiOiJodHRwczpcL1wva2V5c3RvcmUuc2FuZGJveC5kaXJlY3Rvcnkub3BpbmJyYXNpbC5jb20uYnJcLzRiNzVkYjJlLWEwYzAtNDM1OS1hMDc3LTY4NGU4OGZhNjk1Y1wvYXBwbGljYXRpb24uandrcyIsIm9yZ19udW1iZXIiOiIxNDcyMzM3OTAwMDE3MiIsInNvZnR3YXJlX2p3a3NfdXJpIjoiaHR0cHM6XC9cL2tleXN0b3JlLnNhbmRib3guZGlyZWN0b3J5Lm9waW5icmFzaWwuY29tLmJyXC80Yjc1ZGIyZS1hMGMwLTQzNTktYTA3Ny02ODRlODhmYTY5NWNcL2NkMDgwNzkxLTlmMmItNGIwZC1iNmE0LTk1M2JlNTJiNTk3MVwvYXBwbGljYXRpb24uandrcyIsInNvZnR3YXJlX3JvbGVzIjpbXSwib3JnYW5pc2F0aW9uX2NvbXBldGVudF9hdXRob3JpdHlfY2xhaW1zIjpbXX0.bdWayyhABvNGnT7Vmsdd5ZTht1oYBm_hHRAAyRGD-lCmNi08HDFH-8RzjFsMJ5ZWzS99mwwVrCBph0YcbwfzWuSu9uFdd-bwvfhXFhkNDzQHuRMOF1QTHd0C8r3N-_CkBtYWyXXNFGiREyXjFn8Muvw3fGSr98sy01PDlNyZlxxpBTU9-nz2r-WxwwVyTJyVfz8wVXrrX3_H19Ty3vwiqAbf0tSPyfXFEe3XQE6XJ8W93Ec9M2CzB3PuaaNvgsa2f4T6tT3yHqUfnRQuqf1FCc3raxxn7tVAB-G1yJ9bz-ZaKdsjX2nWCGhJR41rIPlAGv85EsESAo_JSHpfZW0EbA
+```
+
+### 3.2 Enviando uma Solicitação de Dynamic Client Registration (RFC7591)
+
+Consulte o [Dynamic Client Registration do Open Insurance Brasil](#dynamic-client-registration-dcr)
+
+### 3.3 Salvando o Token de Dynamic Registration Management (RFC7592)
+
+Consulte o [Dynamic Client Registration do Open Insurance Brasil](#dynamic-client-registration-dcr)
+
+### 3.4 Modificando um cliente usando Dynamic Client Management Token (RFC7592)
+
+Consulte o [Dynamic Client Registration do Open Insurance Brasil](#dynamic-client-registration-dcr)
+
+### 4.0 Obtendo Acesso aos Recursos dos Clientes
+
+![Consent](../images/consent-process-redirect.png)
+
+Para todas as opções, incluindo todos os códigos de permissão, consulte o [Consent API](). Os exemplos a seguir são exemplos mínimos, mas funcionais para demonstrar o fluxo de ponta a ponta. Esses exemplos pressupõem que o cliente está se comunicando com um provedor de OpenID, aproveitando o mecanismo de autenticação de endpoint do token `tls_client_auth`. Exemplos alternativos estão disponíveis no apêndice.
+
+### 4.1 Pré-requisitos
+
+Esses exemplos **não normativos** presumem que o cliente OAuth descobriu os locais de todos os 'endpoints' necessários para se comunicar com os recursos das seguradoras do Diretório, incluindo o recurso de consentimento, os recursos de dados e o documento de descoberta de autorização OpenID do Diretório.
+
+### 4.2 Criando Consentimento
+
+1. Obtendo um Token de Acesso com escopo 'consents'
+
+```
+curl --cert transport.pem --key transport.key https://matls-auth.amazinginsurance.com.br/token -X POST -d 'client_id=clientIdFromAmazingInsurance&grant_type=client_credentials&scope=consents'
+
+{"access_token":"2Pjwts8m1KRZmm0aJyXbOTB8zRosN55fo8Ewdulhxxa","expires_in":600,"token_type":"Bearer","scope":"consents"}
+```
+
+2. Criando um recurso de consentimento
+
+```
+curl --cert transport.pem --key transport.key -H 'Authorization: Bearer 2Pjwts8m1KRZmm0aJyXbOTB8zRosN55fo8Ewdulhxxa'
+-H "Content-Type: application/json"
+ https://matls-api.amazinginsurance.com.br/consents/v1/consents
+--data
+'{
+  "data": {
+    "loggedUser": {
+      "document": {
+        "identification": "11111111111",
+        "rel": "CPF"
+      }
+    },
+    "businessEntity": {
+      "document": {
+        "identification": "11111111111111",
+        "rel": "CNPJ"
+      }
+    },
+    "permissions": [
+      CUSTOMERS_PERSONAL_IDENTIFICATIONS_READ,
+      CUSTOMERS_PERSONAL_QUALIFICATION_READ,
+      CUSTOMERS_PERSONAL_ADITTIONALINFO_READ
+    ],
+    "expirationDateTime": "2022-02-01T23:59:59Z",
+    "transactionFromDateTime": "2021-01-01T00:00:00Z",
+    "transactionToDateTime": "2022-02-01T23:59:59Z"
+  }
+}'
+
+Resposta
+
+{
+  "data": {
+    "consentId": "urn:seguradoraex:C1DD33123",
+    "creationDateTime": "2021-05-21T08:30:00Z",
+    "status": "AWAITING_AUTHORISATION",
+    "statusUpdateDateTime": "2021-05-21T08:30:00Z",
+    "permissions": [
+      CUSTOMERS_PERSONAL_IDENTIFICATIONS_READ,
+      CUSTOMERS_PERSONAL_QUALIFICATION_READ,
+      CUSTOMERS_PERSONAL_ADITTIONALINFO_READ
+    ],
+    "expirationDateTime": "2022-02-01T23:59:59Z",
+    "transactionFromDateTime": "2021-01-01T00:00:00Z",
+    "transactionToDateTime": "2022-02-01T23:59:59Z"
+  },
+  "links": {
+    "self": "https://matls-api.amazinginsurance.com.br/consents/urn:seguradoraex:C1DD33123"
+  },
+  "meta": {
+    "totalRecords": 1,
+    "totalPages": 1,
+    "requestDateTime": "2021-05-21T08:30:00Z"
+  }
+}
+```
+
+### 4.3 Autorizando Consentimento - Redirecionar
+
+### 4.3.1 Criar OpenID Connect Request Object
+
+Diferentes métodos de autenticação (_private_key_jwt_ e _tls_client_auth_) e de encaminhamento do Request Object (com e sem uso de *PAR*) podem ser suportados pelos _Authorization Servers_ de acordo com a especificação [FAPI-1.0 Part 2 - Advanced](https://openid.net/specs/openid-financial-api-part-2-1_0.html).
+
+Portanto, como reforça o perfil de segurança para o Open Finance Brasil (item 8 da seção 5.2.3 dos [requisitos de segurança para o cliente confidencial](https://openbanking-brasil.github.io/specs-seguranca/open-banking-brasil-financial-api-1_ID3-ptbr.html#section-5.2.3)), *todas* as 4 combinações de métodos devem ser suportados pelos clientes de API.
+
+A tabela abaixo reflete os diferentes profiles de segurança e combinações que devem ser suportados por todos os clientes de API (conforme os [profiles certificados pela OIDF para o Open Insurance Brasil](https://openid.net/certification/#FAPI_OPs)).
+
+| Perfil da certificação OIDF |
+| --------------------------- |
+| BR-OB Adv. OP w/ MTLS	|
+| BR-OB Adv. OP w/ Private Key |
+| BR-OB Adv. OP w/ MTLS, PAR	|
+| BR-OB Adv. OP w/ Private Key, PAR	|
+
+Todos os requisitos para o OpenID Request Object estão incluídos no [Perfil de Segurança do Open Insurance Brasil](https://openbanking-brasil.github.io/specs-seguranca/open-banking-brasil-financial-api-1_ID3-ptbr.html). Veja o exemplo com JWS a seguir:
+
+```
+{
+ "alg": "PS256",
+ "typ": "oauth-authz-req+jwt",
+ "kid": "PWAi5ruQcHfzPzq2JFdpY7nAUh6LzTTQtDBUpOM37JQ"
+}
+.
+{
+  "scope": "openid consent:urn:amazinginsurance:0be7a3bb-33e6-4d73-b60a-9523aee6cc0d insurance-auto",
+  "response_type": "code id_token",
+  "redirect_uri": "https://tpp.localhost/cb",
+  "code_challenge": "0q5idWeuyFAGeHHpawD3k4mjE7WzPhw6hOdKbnAQY7s",
+  "code_challenge_method": "S256",
+  "state": "19a1456013b8be71e6ce89916c9723e0642e1eb42a9360146cc84178f2bc928e",
+  "nonce": "8dedaf2c53f7ba7294825ca25e45aa544c3feda8fd4ac16220c216e973ad5fd7",
+  "claims": {
+    "id_token": {
+      "auth_time": {
+        "essential": true
+      },
+      "cpf": {
+        "essential": true
+      },
+      "given_name": {
+        "essential": true
+      },
+      "acr": {
+        "values": [
+          "brasil:openinsurance:standard"
+        ],
+        "essential": true
+      }
+    }
+  },
+  "max_age": 300,
+  "iss": "clientIdFromAmazingInsurance",
+  "aud": "https://auth.amazinginsurance.com.br",
+  "client_id": "clientIdFromAmazingInsurance",
+  "jti": "_fj7iamgC1wDzh8KXaJ7XzJiEK_s25DhoDs7uAxpU-k",
+  "iat": 1618672338,
+  "exp": 1618672638,
+  "nbf": 1618672338
+}
+Assinatura omitida por questões de brevidade
+```
+
+### 4.3.1.1 Solicitação de Claims Específicas
+
+Também é opcional para receptoras solicitar `claims` de identidade ('Identity Claims') adicionais, incluindo CPF e CNPJ. Essas `claims` são definidas no Perfil de Segurança do Open Insurance Brasil. Também é possível para um receptor solicitar que uma `claim` corresponda a um determinado valor, baseando-se em [OpenID Connect Core Clause 5.5.1](https://openid.net/specs/openid-connect-core-1_0.html#IndividualClaimsRequests) para solicitar `claims` individuais.
+
+Por exemplo:
+
+```
+"cpf": {
+        "essential": true,
+        value: 12345678123
+      },
+```
+
+Nesse exemplo seria exigido que o provedor OpenID retornasse apenas uma autenticação e autorização bem-sucedidas se o usuário que estava autenticando poderia ser confirmado pela seguradoras que eles tinham um número de CPF de 12345678123. Se a seguradora não puder confirmar este número, então a autenticação deve falhar.
+
+Solicitar reivindicações de valor específico é totalmente opcional para o receptor.
+
+### 4.3.2 Redirecionar o Usuário ao Authorization Server para Autorização
+
+De acordo com o OpenID Connect Core.
+```
+https://auth.amazinginsurance.com.br/auth?client_id=clientIdFromAmazingInsurance&scope=openid&request=eyJhbGciOiJQUzI1NiIsInR5cCI6Im9hdXRoLWF1dGh6LXJlcStqd3QiLCJraWQiOiJQV0FpNXJ1UWNIZnpQenEySkZkcFk3bkFVaDZMelRUUXRE...j1CpNMT7NtDerEl32E8plGnsuA
+```
+
+### 4.3.3 Obtenção de Token de Acesso por Meio de Troca de Código de Autorização
+
+Conforme [RFC 7636 Proof Key for Code Exchange](https://tools.ietf.org/html/rfc7636)
+
+### 4.3.4 Verificação do Status do Recurso de Consentimento
+
+Neste ponto, um receptor pode, opcionalmente, verificar o status da solicitação de consentimento para ver se mudou para totalmente autorizado. Esta etapa não deverá ser necessária para recursos que não requerem consentimento de múltiplos indivíduos, entretanto, para contas comerciais ou contas conjuntas com requisitos de acesso especiais, a seguradora pode demorar um pouco para obter as autorizações adicionais necessárias para que esse consentimento seja totalmente autorizado. Os receptores não devem abusar da verificação do status da API de consentimento.
+
+```
+curl --cert transport.pem --key transport.key -H 'Authorization: Bearer 2Pjwts8m1KRZmm0aJyXbOTB8zRosN55fo8Ewdulhxxa'
+ https://matls-api.amazinginsurance.com.br/consents/v1/consents/urn:amazinginsurance:0be7a3bb-33e6-4d73-b60a-9523aee6cc0d
+
+{
+  "data": {
+    "consentId": "urn:seguradoraex:C1DD33123",
+    "creationDateTime": "2021-05-21T08:30:00Z",
+    "status": "AWAITING_AUTHORISATION",
+    "statusUpdateDateTime": "2021-05-21T08:30:00Z",
+    "permissions": [
+      CUSTOMERS_PERSONAL_IDENTIFICATIONS_READ,
+      CUSTOMERS_PERSONAL_QUALIFICATION_READ,
+      CUSTOMERS_PERSONAL_ADITTIONALINFO_READ..
+    ],
+    "expirationDateTime": "2022-02-01T23:59:59Z",
+    "transactionFromDateTime": "2021-01-01T00:00:00Z",
+    "transactionToDateTime": "2022-02-01T23:59:59Z"
+  },
+  "links": {
+    "self": "https://matls-api.amazinginsurance.com.br/consents/urn:seguradoraex:C1DD33123"
+  },
+  "meta": {
+    "totalRecords": 1,
+    "totalPages": 1,
+    "requestDateTime": "2021-05-21T08:30:00Z"
+  }
+}
+```
+
+### 4.3.5 Acesso aos Recursos
+
+Com o token de acesso que foi retornado em 4.3.3, o receptor agora tem a capacidade de chamar os recursos dos clientes.
+
+
+## Dynamic Client Registration (DCR)
+
+### Prefácio
+
+A Estrutura Inicial do Open Insurance Brasil é responsável por criar os padrões e especificações necessários para atender aos requisitos e obrigações da Legislação do Open Insurance do Brasil, conforme originalmente delineado pela SUSEP. É possível que alguns dos elementos deste documento estejam sujeitos a direitos de patente. A Estrutura Inicial não se responsabiliza pela identificação de qualquer ou todos os direitos de patente.
+
+O Perfil de Segurança Financial-grade API 1.0 do Open Insurance Brasil consiste nas seguintes partes:
+
+* [Open Finance Brasil Financial-grade API Security Profile 1.0](https://openbanking-brasil.github.io/specs-seguranca/open-banking-brasil-financial-api-1_ID3.html)
+* Open Insurance Brasil Dynamic Client Registration Profile 1.0
+
+Essas partes devem ser usadas com [RFC6749](https://tools.ietf.org/html/rfc6749), [RFC6750](https://tools.ietf.org/html/rfc6750), [RFC7636](https://tools.ietf.org/html/rfc7636), [OIDC](https://openid.net/specs/openid-connect-core-1_0.html), [OIDR](https://openid.net/specs/openid-connect-registration-1_0.html), [RFC7591](https://tools.ietf.org/html/rfc7591), [RFC7592](https://tools.ietf.org/html/rfc7592), [FAPI-1-Baseline](https://openid.net/specs/openid-financial-api-part-1-1_0.html) e [FAPI-1-Advanced](https://openid.net/specs/openid-financial-api-part-2-1_0.html)
+
+### Introdução
+
+O Perfil de Registro de Cliente Dinâmico (DCR - *Dynamic Client Registration*) do Financial-grade API (FAPI) do Open Insurance Brasil é um perfil de [RFC7591](https://tools.ietf.org/html/rfc7591), [RFC7592](https://tools.ietf.org/html/rfc7592) e [OIDR](https://openid.net/specs/openid-connect-registration-1_0.html) que visa fornecer diretrizes de implementação específicas para segurança e interoperabilidade que podem ser aplicadas à identificação, registro e gerenciamento de *Clients OAuth* operando no ecossistema Open Insurance Brasil.
+
+Embora seja possível codificar um *OpenID Provider* e *Relying Party* desde o princípio usando esta especificação, o principal público para esta especificação são as partes que já possuem uma implementação certificada do [OpenID Connect](https://openid.net/specs/openid-connect-core-1_0.html) e desejam obter a certificação para o Open Insurance Brasil.
+
+### Convenções Notacionais
+
+As palavras-chave "*deve*" (shall), "*não deve*" (shall not), "*deveria*" (should), "*não deveria*" (should not) e "*pode*" (may) presentes nesse documento devem ser interpretadas conforme as diretrizes descritas em [ISO Directive Part 2](https://www.iso.org/sites/directives/current/part2/index.xhtml) observando  seguinte equivalência:
+
+* "deve" => equivalente ao termo "shall" e expressa um requerimento definido no documento (nas traduções é similar ao termo "must", que pode denotar um requerimento externo ao documento);
+* "não deve" => equivalente ao termo "shall not" e também expressa um requerimento definido no documento;
+* "deveria" e "não deveria"=> equivalente ao termo "should" e "should not" e expressa uma recomendação
+* "pode" => equivalente ao termo "may" indica uma permissão
+
+Estas palavras-chave não são usadas como termos de dicionário, de modo que qualquer ocorrência deles deve ser interpretada como palavras-chave e não devem ser interpretados com seus significados de linguagem natural.
+
+### 1. Escopo
+
+Este documento especifica o método de
+
+* aplicativos cadastrados no [Diretorio de Participantes do Open Insurance](https://web.directory.opinbrasil.com.br) para descobrir OpenID Providers que oferecem serviços no ecossistema Open Insurance Brasil;
+* aplicativos para usar o [OpenID Connect Registration](https://openid.net/specs/openid-connect-registration-1_0.html) para integrar seus aplicativos com OpenID Providers das seguradoras; e
+* aplicativos para usar [OAuth 2.0 Dynamic Client Registration Management Protocol](https://tools.ietf.org/html/rfc7592) para gerenciar seus aplicativos com OpenID Providers;
+
+Este documento é aplicável a todos os participantes do Open Insurance no Brasil.
+
+### 2. Referências normativas
+
+Os seguintes documentos referenciados são indispensáveis para a aplicação deste documento. Para referências datadas, apenas a edição citada se aplica. Para referências não datadas, a última edição do documento referenciado (incluindo quaisquer emendas) se aplica.
+
+* ISODIR2 - [ISO/IEC Directives Part 2](https://www.iso.org/sites/directives/current/part2/index.xhtml)
+
+* RFC6749 - [The OAuth 2.0 Authorization Framework](https://tools.ietf.org/html/rfc6749)
+
+* RFC6750 - [The OAuth 2.0 Authorization Framework: Bearer Token Usage](https://tools.ietf.org/html/rfc6750)
+
+* RFC7636 - [Proof Key for Code Exchange by OAuth Public Clients](https://tools.ietf.org/html/rfc7636)
+
+* RFC6819 - [OAuth 2.0 Threat Model and Security Considerations](https://tools.ietf.org/html/rfc6819)
+
+* RFC7519 - [JSON Web Token (JWT)](https://tools.ietf.org/html/rfc7519)
+
+* RFC7591 - [OAuth 2.0 Dynamic Client Registration Protocol](https://tools.ietf.org/html/rfc7591)
+
+* RFC7592 - [OAuth 2.0 Dynamic Client Registration Management Protocol](https://tools.ietf.org/html/rfc7592)
+
+* BCP195 - [Recommendations for Secure Use of Transport Layer Security (TLS) and Datagram Transport Layer Security (DTLS)](https://tools.ietf.org/html/bcp195)
+
+* OIDC - [OpenID Connect Core 1.0 incorporating errata set 1](https://openid.net/specs/openid-connect-core-1_0.html)
+
+* FAPI-CIBA - [Financial-grade API: Client Initiated Backchannel Authentication Profile](https://bitbucket.org/openid/fapi/src/master/Financial_API_WD_CIBA.md)
+
+* RFC4514 - [Lightweight Directory Access Protocol (LDAP): String Representation of Distinguished Names](https://www.rfc-editor.org/rfc/rfc4514)
+
+* RFC4517 - [Lightweight Directory Access Protocol (LDAP): Syntaxes and Matching Rules](https://www.rfc-editor.org/rfc/rfc4517)
+
+* OIDD - [OpenID Connect Discovery 1.0 incorporating errata set 1](https://openid.net/specs/openid-connect-discovery-1_0.html)
+
+* OIDR - [OpenID Connect Registration 1.0 incorporating errata set 1](https://openid.net/specs/openid-connect-registration-1_0.html)
+
+* RFC8705 - [OAuth 2.0 Mutual TLS Client Authentication and Certificate Bound Access Tokens](https://tools.ietf.org/html/rfc8705)
+
+* JARM - [Financial-grade API: JWT Secured Authorization Response Mode for OAuth 2.0 (JARM)](https://bitbucket.org/openid/fapi/src/master/Financial_API_JWT_Secured_Authorization_Response_Mode.md)
+
+* PAR - [OAuth 2.0 Pushed Authorization Requests](https://tools.ietf.org/html/draft-ietf-oauth-par)
+
+* JAR - [OAuth 2.0 JWT Secured Authorization Request](https://tools.ietf.org/html/draft-ietf-oauth-jwsreq)
+
+* FAPI-1-Baseline - [Financial-grade API Security Profile 1.0 - Part 1: Baseline](https://openid.net/specs/openid-financial-api-part-1-1_0.html)
+
+* FAPI-1-Advanced - [Financial-grade API Security Profile 1.0 - Part 2: Advanced](https://openid.net/specs/openid-financial-api-part-2-1_0.html)
+
+* OFB-FAPI - [Open Finance Brasil Financial-grade API Security Profile 1.0](https://openbanking-brasil.github.io/specs-seguranca/open-banking-brasil-financial-api-1_ID3.html)
+
+* OFB-Cert-Standards - [Open Insurance Brasil x.509 Certificate Standards](#padrão-de-certificados)
+
+* OFB-DCR/DCM-Swagger - [DCR & DCM Swagger](../files/swagger/dcr-dcm-swagger.yaml)
+
+### 3. Termos e definições
+
+Para efeitos deste documento, aplicam-se os termos definidos em [RFC6749](https://tools.ietf.org/html/rfc6749), [RFC6750](https://tools.ietf.org/html/rfc6750), [RFC7636](https://tools.ietf.org/html/rfc7636), [OpenID Connect Core](https://openid.net/specs/openid-connect-core-1_0.html) e ISO29100.
+
+### 4. Símbolos e Termos abreviados
+
+* **API** – Application Programming Interface (Interface de Programação da Aplicação)
+* **DCR** – Dynamic Client Registration (Registro de Cliente Dinâmico)
+* **FAPI** - Financial-grade API
+* **HTTP** – Hyper Text Transfer Protocol
+* **OIDF** - OpenID Foundation
+* **REST** – Representational State Transfer
+* **SS** – Software Statement (Declaração de Software)
+* **SSA** – Software Statement Assertion (Afirmação de Declaração de Software)
+* **TLS** – Transport Layer Security
+
+### 5. Introdução
+
+O ecossistema Open Insurance Brasil apoia-se em um provedor de confiança ou _diretório de participantes_ como a fonte mais valiosa de informações sobre participantes credenciados e softwares que estão autorizados a participar do ecossistema Open Insurance Brasil.
+
+Os serviços do Diretório incluem:
+
+* Registro e gerenciamento de software
+* Registro e gerenciamento de credenciais de software usando certificados ICP
+* Geração de Software Statement Assertion (SSA)
+
+Os participantes do ecossistema devem aproveitar esses serviços para facilitar o registro de cliente OAuth orientado por API usando o processo descrito na cláusula 3.1.1 do [RFC7591](https://tools.ietf.org/html/rfc7591) com metadados adicionais necessários para oferecer suporte ao OpenID Connect definido em [OpenID Connect Registration](https://openid.net/specs/openid-connect-registration-1_0.html). 
+
+É importante reforçar que o payload de registro de clientes possui a maior parte de seus atributos não obrigatórios, e que os atributos cujos valores conflitem com os presentes no software statement assertion *serão sobrepostos pelos valores do próprio software statement assertion emitido pelo diretório central*. Nem todos os metadados que um cliente deseja fornecer podem estar contidos em um *software statement*, por exemplo, alternativa [Metadata Languages and Script values](https://openid.net/specs/openid-connect-registration-1_0.html#LanguagesAndScripts). Há casos ainda de metadados de cliente que são um subconjunto dos valores existentes no SSA, como por exemplo os redirect_URIs.
+
+### 6. Provisionamentos do OpenID Connect Discovery do Open Insurance Brasil
+
+### 6.1 Servidor de Autorização
+
+O servidor de autorização deve suportar [OpenID Connect Discovery](https://openid.net/specs/openid-connect-discovery-1_0.html) conforme exigido pelo [Financial-grade API Security Profile 1.0 - Part 1: Baseline](https://openid.net/specs/openid-financial-api-part-1-1_0.html). Este suporte deve estar explicito tanto na forma como o Servidor de Autorização está registrado no Diretório de Participantes quanto na declaração dos seus atributos no arquivo de Discovery (well-known), respeitando os mecanismos de autenticação certificados pela institição através dos testes de conformidade do Open Insurance Brasil. 
+
+Adicionalmente, o Servidor de Autorização:
+
+1. deve anunciar sua presença no ecossistema Open Insurance Brasil, sendo listada no Diretório de Participantes;
+2. deve anunciar todos os recursos API REST do Open Insurance Brasil protegidos pelo Provedor OpenID no Diretório de Participantes;
+3. deve anunciar suporte para todos os mecanismos de assinatura, criptografia, autenticação e padrões necessários para suportar o [Open Finance Brasil Financial API](https://openbanking-brasil.github.io/specs-seguranca/open-banking-brasil-financial-api-1_ID3.html);
+4. deve anunciar suporte para [OpenID Dynamic Client Registration](https://openid.net/specs/openid-connect-registration-1_0.html);
+5. deve anunciar `mtls_endpoint_aliases` de acordo com a cláusula 5 [RFC 8705 OAuth 2.0 Mutual-TLS Client Authentication e Certificate-Bound Access Tokens](https://tools.ietf.org/html/rfc8705) o `token_endpoint`, `registration_endpoint` e `userinfo_endpoint`;
+6. se suportar [OAuth 2.0 Pushed Authorisation Requests](https://tools.ietf.org/html/draft-ietf-oauth-par), deve anunciar por meio de [OIDD](https://openid.net/specs/openid-connect-discovery-1_0.html) `mtls_endpoint_aliases` o `push_authorization_request_endpoint`;
+7. se suportar [Financial API - Client Initiated Back Channel Authentication](https://bitbucket.org/openid/fapi/src/master/Financial_API_WD_CIBA.md), deve anunciar através de [OIDD](https://openid.net/specs/openid-connect-discovery-1_0.html) `mtls_endpoint_aliases` o `backchannel_authentication_endpoint`;
+
+### 6.2 Cliente
+
+O cliente deve suportar [OpenID Connect Discovery](https://openid.net/specs/openid-connect-discovery-1_0.html) conforme exigido pelo [Financial-grade API Security Profile 1.0 - Part 1: Baseline](https://openid.net/specs/openid-financial-api-part-1-1_0.html).
+
+Além disso, o Cliente
+
+1. deve contar com serviços de descoberta do ecossistemas fornecidos apenas pelo Diretório de Participantes;
+2. deve derivar os metadados necessários do Authorization Server somente por meio do serviço OpenID Connect Discovery dos Authorization Servers;
+3. quando presente, deve usar endpoints anunciados em `mtls_endpoint_aliases` conforme a cláusula 5 [RFC 8705 OAuth 2.0 Mutual-TLS Client Authentication e Certificate-Bound Access Tokens](https://tools.ietf.org/html/rfc8705);
+
+### 7. Provisionamento de registro OpenID Connect do Open Insurance Brasil
+
+### 7.1 Servidor de Autorização
+
+O servidor de autorização deve suportar as RFCs de Dynamic Client Registration (DCR) [RFC7591](https://tools.ietf.org/html/rfc7591), Dynamic Client Management (DCM) [RFC7592](https://tools.ietf.org/html/rfc7592) e [OpenID Registration](https://openid.net/specs/openid-connect-registration-1_0.html)
+
+Além disso, o servidor de autorização
+
+1. deve rejeitar as solicitações de registro de cliente dinâmico não realizadas em uma conexão protegida com mTLS usando certificados emitidos pelo Brasil ICP (produção) ou o Diretório de Participantes (sandbox);
+2. deve validar que a solicitação contém _software\_statement_ JWT assinado usando o algoritmo `PS256` emitido pelo Diretório de Participantes do Open Insurance Brasil;
+3. deve validar que o _software\_statement_ foi emitido (iat - *issued at*) não mais de 5 minutos antes do pedido ser recebido;
+4. deve validar que um atributo `jwks` (definida por valor) **não** foi incluído, e sim declarado como referência no atributo `jwks_uri`;
+5. deve, quando informado, validar que o `jwks_uri` corresponda ao `software_jwks_uri` fornecido na declaração do software;
+6. deve exigir e validar que o `redirect_uris` corresponda ou contenha um subconjunto dos valores de `software_redirect_uris` fornecidos no _software\_statement_;
+7. deve exigir e validar que todos os mecanismos de autenticação de cliente cumpram os requisitos definidos nas [RFC7591](https://tools.ietf.org/html/rfc7591) e [RFC7592](https://tools.ietf.org/html/rfc7592), através da validação do `registration_access_token` e, como conexão segura, da cadeia de certificados confiáveis ICP-Brasil.
+8. deve validar se os escopos solicitados são adequados para as permissões regulatórias autorizadas da instituição e contidas no _software\_statement_. A relação de permissões regulatórias e os escopos correspondentes está descrita nas seções a seguir.
+9. deve, sempre que possível, validar os metadados declarados pelo cliente em relação aos metadados fornecidos no _software\_statement_, adotando os valores presentes no SSA com precedência.
+10. deve aceitar todos os nomes x.500 AttributeType definidas no _Distinguished Name_ dos Perfis de Certificado x.509 definidos em [Open Insurance Brasil x.509 Certificate Standards](#padrão-de-certificados);
+11. se for compatível com o mecanismo de autenticação do cliente `tls_client_auth`, conforme definido em [RFC8705](https://tools.ietf.org/html/rfc8705), somente deve aceitar `tls_client_auth_subject_dn` como uma indicação do valor do atributo _subject_ do certificado, conforme definido na cláusula 2.1.2 [RFC8705](https://tools.ietf.org/html/rfc8705);
+12. Os valores dos campos *UID* e *OU* do certificado devem coincidir com os enviados no SSA. O campo *OU* deve conter o valor do campo *org_id* do SSA e campo *UID* deve conter o valor do campo *software_id* do SSA.
+13. deve, durante o processo de handshake TLS, usar a regra `distinguishedNameMatch` para comparar os valores DN conforme definido na [RFC4517](https://www.rfc-editor.org/rfc/rfc4517).
+
+Estas disposições aplicam-se igualmente ao processamento de pedidos [RFC7591](https://tools.ietf.org/html/rfc7591), [RFC7592](https://tools.ietf.org/html/rfc7592) e [OpenID Registration](https://openid.net/specs/openid-connect-registration-1_0.html)
+
+### 7.1.1 Aplicando Server Defaults
+
+Quando as propriedades de uma solicitação DCR não estão incluídas e não são obrigatórias na especificação, o Authorization Server deve aplicar os padrões do cliente da seguinte maneira:
+
+1. deve selecionar e aplicar o algoritmo de criptografia e a escolha da cifra a partir dos conjuntos mais recomendados de cifra da IANA que são suportados pelo Servidor de Autorização;
+2. deve preencher *defaults* a partir de valores da afirmação de _software\_statement_, sempre que possível;
+3. deve conceder ao cliente permissão para o conjunto completo de escopos potenciais com base nas permissões regulatórias de softwares incluídas no _software\_statement_;
+
+### 7.1.2 Análise do Distinguished Name do Certificado
+
+A cláusula 3 do [Lightweight Directory Access Protocol (LDAP): String Representation of Distinguished Names](https://www.rfc-editor.org/rfc/rfc4514) define os OIDs obrigatórios cujas as _strings_ do AttributeType (descritores) devem ser reconhecidos pelos implementadores. Esta lista obrigatória não inclui vários dos OIDs definidos em [Open Insurance Brasil x.509 Certificate Standards](#padrão-de-certificados), nem existe um mecanismo definido para os Servidores de Autorização publicarem informações sobre o formato que eles esperam de uma Solicitação Dinâmica de Registro do Cliente (_Dynamic Client Registrarion_) que inclui um `tls_client_auth_subject_dn`.
+
+Para resolver essa ambiguidade, o Servidor de Autorização deve aceitar exclusivamente os AttributeType (descritores) definidas no último parágrafo da cláusula 3 [RFC4514](https://www.rfc-editor.org/rfc/rfc4514) em formato string, também deve aceitar em formato OID, com seus valores em ASN.1, todos os AttributeTypes definidos no Distinguished Name [Open Insurance Brasil x.509 Certificate Standards](#padrão-de-certificados) ou adicionados pela Autoridade Certificadora.
+
+Em caso de não atendimento destes requisitos o Servidor de Autorização deverá rejeitar o registro.
+
+Segue na tabela abaixo como deve ser feita a decodificação:
+
+
+- Obtenha na ordem reversa os atributos do certificado
+- Concatene cada RDN (RelativeDistinguishedName) com uma virgula (',')
+- Use as strings da RFC (CN, L, ST, O, OU, C, Street, DC, UID) com o valor dos seus atributos legível para humanos
+- Use os OIDs dos atributos definidos nesta especificação para uso no OFB (businessCategory = OID 2.5.4.15, jurisdictionCountryName = OID 1.3.6.1.4.1.311.60.2.1.3, serialNumber = OID 2.5.4.5) com o valor dos seus atributos em formato ASN.1 seguindo a RFC4514, sendo que:
+    - Os nomes dos atributos devem ser definidos seguindo a notação ponto-decimal, sem adição de prefixo “OID”, ex. “2.5.4.15”, seguido dos sinais de (‘=#’) mais o valor hexadecimal do atributo, exemplo final: 2.5.4.15=#0C1450726976617465204F7267616E697A6174696F6E
+    - Não há qualquer restrição para as codificações/formatações utilizadas nos valores dos atributos. Deve ser respeitado o uso em hexadecimal apresentado na codificação utilizada no atributo do certificado (PrintableString, UTF8String, etc). Este item atende à opcionalidade do formato já estabelecido pela AC frente aos normativos ICP e ao itens 2.3, 2.4 e 5.2 da RFC4514.
+
+Seguem abaixo exemplos para os atributos obrigatórios da CAs atualmente ativas:
+
+|subject_dn|Issuer|
+|----------|------|
+|UID=67c57882-043b-11ec-9a03-0242ac130003, 1.3.6.1.4.1.311.60.2.1.3=#13024252, 2.5.4.15=#131450726976617465204f7267616e697a6174696f6e, 2.5.4.5=#130e3133333533323336303030313839, CN=mycn.insurance.gov.br,OU=497e1ffe-b2a2-4a4e-8ef0-70633fd11b59, O=My Public Insurance, L=BRASILIA, ST=DF, C=BR|issuer=CN=Open Insurance SANDBOX Issuing CA - G1,OU=Open Insurance,O=Open Insurance Brasil,C=BR|
+|UID=67c57882-043b-11ec-9a03-0242ac130003, 1.3.6.1.4.1.311.60.2.1.3=#13024252, 2.5.4.15=#131450726976617465204f7267616e697a6174696f6e, 2.5.4.5=#130e3133333533323336303030313839, CN=mycn.insurance.gov.br,OU=497e1ffe-b2a2-4a4e-8ef0-70633fd11b59, O=My Public Insurance, L=BRASILIA, ST=DF, C=BR|issuer=CN=Autoridade Certificadora do SERPRO SSLv1,OU=Autoridade Certificadora Raiz Brasileira v10,O=ICP-Brasil,C=BR|
+|UID=67c57882-043b-11ec-9a03-0242ac130003, 1.3.6.1.4.1.311.60.2.1.3=#13024252, 2.5.4.15=#131450726976617465204f7267616e697a6174696f6e, 2.5.4.5=#130e3133333533323336303030313839, CN=mycn.insurance.gov.br,OU=497e1ffe-b2a2-4a4e-8ef0-70633fd11b59, O=My Public Insurance, L=BRASILIA, ST=DF, C=BR|issuer=CN=AC SOLUTI SSL EV,OU=Autoridade Certificadora Raiz Brasileira v10,O=ICP-Brasil,C=BR|
+|UID=67c57882-043b-11ec-9a03-0242ac130003, 1.3.6.1.4.1.311.60.2.1.3=#13024252, 2.5.4.15=#131450726976617465204f7267616e697a6174696f6e, 2.5.4.5=#130e3133333533323336303030313839, CN=mycn.insurance.gov.br,OU=497e1ffe-b2a2-4a4e-8ef0-70633fd11b59, O=My Public Insurance, L=BRASILIA, ST=DF, C=BR|issuer=CN=AC SERASA SSL EV,OU=Autoridade Certificadora Raiz Brasileira v10,O=ICP-Brasil,C=BR|
+|UID=67c57882-043b-11ec-9a03-0242ac130003, 1.3.6.1.4.1.311.60.2.1.3=#13024252, 2.5.4.15=#131450726976617465204f7267616e697a6174696f6e, 2.5.4.5=#130e3133333533323336303030313839, CN=mycn.insurance.gov.br,OU=497e1ffe-b2a2-4a4e-8ef0-70633fd11b59, O=My Public Insurance, L=BRASILIA, ST=DF, C=BR|issuer=CN=AC Certisign ICP-Brasil SSL G2,OU=Autoridade Certificadora Raiz Brasileira v10,O=ICP-Brasil,C=BR|
+|UID=67c57882-043b-11ec-9a03-0242ac130003, 1.3.6.1.4.1.311.60.2.1.3=#13024252, 2.5.4.15=#131450726976617465204f7267616e697a6174696f6e, 2.5.4.5=#130e3133333533323336303030313839, CN=mycn.insurance.gov.br,OU=497e1ffe-b2a2-4a4e-8ef0-70633fd11b59, O=My Public Insurance, L=BRASILIA, ST=DF, C=BR|issuer=CN=AC VALID SSL EV,OU=Autoridade Certificadora Raiz Brasileira v10,O=ICP-Brasil,C=BR|
+
+### 7.2 Funções regulatórias para mapeamentos OpenID e OAuth 2.0
+
+Para participar do ecossistema do Open Insurance, as instituições credenciadas devem se cadastrar no Diretório de Participantes de acordo com seus papéis regulatórios. Essas funções refletem a autorização do SUSEP para as instituições e, consequentemente, as APIs que podem utilizar.
+
+A tabela a seguir descreve as funções regulatórias do Open Insurance e o mapeamento de escopos do OAuth 2.0 relacionado. Se os escopos forem omitidos durante o processo de DCR, o Servidor de Autorização deve conceder o conjunto completo de escopos potenciais com base nas funções regulatórias registradas para a seguradora, conforme descrito na seção Server Defaults.
+<!-- concluir escopos -->
+|Papel Regulador|Descrição|Escopos Permitidos (em construção)|Fase-alvo|
+|---------------|---------|------------------|---------|
+|DADOS|Instituição transmissora / receptora de dados| openid consents resources customers insurance-acceptance-and-branches-abroad insurance-auto insurance-aviation insurance-financial-risk insurance-nautical insurance-nuclear insurance-patrimonial insurance-petroleum insurance-responsibility |Fase 2|
+
+É necessário validar as _roles_ ativas no _software\_statement_ da aplicação. Na validação dessa informação deve ser utilizado o campo _software\_statement\_roles_, e deve ser verificado se as _roles_ listadas estão ativas.
+
+### 7.3 Registro do Cliente
+No processo de registro do cliente, utilizando-se o método de autenticação _tls\_client\_auth_, o cliente deve encaminhar o campo _tls\_client\_auth\_subject\_dn_ com os AttibuteTypes(Descritores) em formato definido no item [7.1.2 Análise do Distinguished Name do Certificado](#712-análise-do-distinguished-name-do-certificado). Em caso de não aderencia a este padrão o registro será rejeitado.
+
+### 8. Declaração de Software
+
+Uma declaração de software (_software\_statement_) é um [JSON Web Token (JWT)](https://tools.ietf.org/html/rfc7519) que afirma valores de metadados sobre o software cliente como um todo. Na estrutura do Open Insurance Brasil, esse _software\_statement_ é assinado pelo Diretório de Participantes, e sua assinatura DEVE ser validada pelos Servidores de Autorizacao usando as chaves públicas disponíveis na seção a seguir.
+
+### 8.1 Atributos da Declaração de Software (Claims)
+
+O exemplo a seguir contém todos os atributos atualmente incluídos em um _software\_statement_:
+
+```
+{
+  "software_mode": "Live",
+  "software_redirect_uris": [
+    "https://www.raidiam.com/insurance/cb"
+  ],
+  "software_statement_roles": [
+    {
+      "role": "DADOS",
+      "authorisation_domain": "Open Insurance",
+      "status": "Active"
+    }
+  ],
+  "software_client_name": "Raidiam Insurance",
+  "org_status": "Active",
+  "software_client_id": "Cki1EbvjwyhPB12NGLlz2",
+  "iss": "Open Insurance Brasil prod SSA issuer",
+  "software_tos_uri": "https://www.raidiam.com/insurance/tos.html",
+  "software_client_description": "Raidiam Insurance leverage cutting edge open insurance access to bring you real time up to date views of your insurances",
+  "software_jwks_uri": "https://keystore.directory.opinbrasil.com.br/b961c4eb-509d-4edf-afeb-35642b38185d/25556d5a-b9dd-4e27-aa1a-cce732fe74de/application.jwks",
+  "software_policy_uri": "https://www.raidiam.com/insurance/policy.html",
+  "software_id": "25556d5a-b9dd-4e27-aa1a-cce732fe74de",
+  "software_client_uri": "https://www.raidiam.com/insurance.html",
+  "software_jwks_inactive_uri": "https://keystore.directory.opinbrasil.com.br/b961c4eb-509d-4edf-afeb-35642b38185d/25556d5a-b9dd-4e27-aa1a-cce732fe74de/inactive/application.jwks",
+  "software_jwks_transport_inactive_uri": "https://keystore.directory.opinbrasil.com.br/b961c4eb-509d-4edf-afeb-35642b38185d/25556d5a-b9dd-4e27-aa1a-cce732fe74de/inactive/transport.jwks",
+  "software_jwks_transport_uri": "https://keystore.directory.opinbrasil.com.br/b961c4eb-509d-4edf-afeb-35642b38185d/25556d5a-b9dd-4e27-aa1a-cce732fe74de/transport.jwks",
+  "software_logo_uri": "https://www.raidiam.com/insurance/logo.png",
+  "org_id": "b961c4eb-509d-4edf-afeb-35642b38185d",
+  "org_number": "112233445566",
+  "software_environment": "production",
+  "software_version": "1.1",
+  "software_roles": [
+    "DADOS"
+  ],
+  "org_name": "Open Insurance Brasil",
+  "iat": 1620060821,
+  "organisation_competent_authority_claims": [
+    {
+      "authorisation_domain": "Open Insurance",
+      "authorisations": [],
+      "registration_id": "13353236-OIB-DADOS",
+      "authority_id": "687a1c94-b360-4e04-9589-0fa5cb16451b",
+      "authority_name": "SUSEP",
+      "authorisation_role": "DADOS",
+      "authority_code": "SUSEP",
+      "status": "Active"
+    }
+  ]
+}
+```
+
+### 9. Processamento de solicitação de registro de cliente dinâmico
+
+![DCR](../images/dynamic-client-registration.png)
+
+### 9.1 Enviar uma solicitação com uma declaração de software
+
+Este exemplo inclui vários campos opcionais, alguns dos quais podem não ser aplicáveis a algumas implantações. Para um guia completo dos atributos e sua obrigatoriedade, consultar o [Swagger DCR](../files/swagger/dcr-dcm-swagger.yaml).
+A quebra de linha dentro dos valores são apenas para fins de exibição.
+
+```
+POST /reg HTTP/1.1
+Host: auth.raidiam.com
+Content-Type: application/json
+{
+"application_type": "web",
+"grant_types": [
+    "client_credentials",
+    "authorization_code",
+    "refresh_token",
+    "implicit"
+],
+"id_token_signed_response_alg": "PS256",
+"require_auth_time": false,
+"response_types": [
+    "code id_token",
+    "id_token"
+],
+"software_statement": "eyJraWQiOiJzaWduZXIiLCJ0eXAiOiJKV1QiLCJhbGciOiJQUzI1NiJ9.eyJzb2Z0d2FyZV9qd2tzX2luYWN0aXZlX3VyaSI6Imh0dHBzOlwvXC9rZXlzdG9yZS5zYW5kYm94LmRpcmVjdG9yeS5vcGluYnJhc2lsLmNvbS5iclwvNGI3NWRiMmUtYTBjMC00MzU5LWEwNzctNjg0ZTg4ZmE2OTVjXC9jZDA4MDc5MS05ZjJiLTRiMGQtYjZhNC05NTNiZTUyYjU5NzFcL2luYWN0aXZlXC9hcHBsaWNhdGlvbi5qd2tzIiwic29mdHdhcmVfbW9kZSI6IkxpdmUiLCJzb2Z0d2FyZV9yZWRpcmVjdF91cmlzIjpbImh0dHBzOlwvXC93d3cubmFvdmFsaWRvLmNvbS5iciJdLCJzb2Z0d2FyZV9zdGF0ZW1lbnRfcm9sZXMiOltdLCJvcmdfandrc190cmFuc3BvcnRfdXJpIjoiaHR0cHM6XC9cL2tleXN0b3JlLnNhbmRib3guZGlyZWN0b3J5Lm9waW5icmFzaWwuY29tLmJyXC80Yjc1ZGIyZS1hMGMwLTQzNTktYTA3Ny02ODRlODhmYTY5NWNcL3RyYW5zcG9ydC5qd2tzIiwic29mdHdhcmVfY2xpZW50X25hbWUiOiJUZXN0ZSBTYW5kYm94Iiwib3JnX3N0YXR1cyI6IkFjdGl2ZSIsImlzcyI6Ik9wZW4gSW5zdXJhbmNlIEJyYXNpbCBTYW5kYm94IFNTQSBpc3N1ZXIiLCJvcmdfandrc190cmFuc3BvcnRfaW5hY3RpdmVfdXJpIjoiaHR0cHM6XC9cL2tleXN0b3JlLnNhbmRib3guZGlyZWN0b3J5Lm9waW5icmFzaWwuY29tLmJyXC80Yjc1ZGIyZS1hMGMwLTQzNTktYTA3Ny02ODRlODhmYTY5NWNcL2luYWN0aXZlXC90cmFuc3BvcnQuandrcyIsInNvZnR3YXJlX2p3a3NfdHJhbnNwb3J0X2luYWN0aXZlX3VyaSI6Imh0dHBzOlwvXC9rZXlzdG9yZS5zYW5kYm94LmRpcmVjdG9yeS5vcGluYnJhc2lsLmNvbS5iclwvNGI3NWRiMmUtYTBjMC00MzU5LWEwNzctNjg0ZTg4ZmE2OTVjXC9jZDA4MDc5MS05ZjJiLTRiMGQtYjZhNC05NTNiZTUyYjU5NzFcL2luYWN0aXZlXC90cmFuc3BvcnQuandrcyIsInNvZnR3YXJlX3BvbGljeV91cmkiOiJodHRwczpcL1wvd3d3Lm5hb3ZhbGlkby5jb20uYnIiLCJzb2Z0d2FyZV9pZCI6ImNkMDgwNzkxLTlmMmItNGIwZC1iNmE0LTk1M2JlNTJiNTk3MSIsInNvZnR3YXJlX3N0YXR1cyI6IkFjdGl2ZSIsInNvZnR3YXJlX2Vudmlyb25tZW50IjoiU2FuZGJveCIsInNvZnR3YXJlX3ZlcnNpb24iOiIxLjAwIiwib3JnX25hbWUiOiJPUEVOIElOU1VSQU5DRSBCUkFTSUwgLSBQRUVSUyIsImlhdCI6MTY1NzgyOTExNCwic29mdHdhcmVfc2VjdG9yX2lkZW50aWZpZXJfdXJpIjoiaHR0cHM6XC9cL2tleXN0b3JlLnNhbmRib3guZGlyZWN0b3J5Lm9waW5icmFzaWwuY29tLmJyXC80Yjc1ZGIyZS1hMGMwLTQzNTktYTA3Ny02ODRlODhmYTY5NWNcL2NkMDgwNzkxLTlmMmItNGIwZC1iNmE0LTk1M2JlNTJiNTk3MVwvcmVkaXJlY3RfdXJpcy5qc29uIiwic29mdHdhcmVfY2xpZW50X2lkIjoiY2QwODA3OTEtOWYyYi00YjBkLWI2YTQtOTUzYmU1MmI1OTcxIiwib3JnX2p3a3NfaW5hY3RpdmVfdXJpIjoiaHR0cHM6XC9cL2tleXN0b3JlLnNhbmRib3guZGlyZWN0b3J5Lm9waW5icmFzaWwuY29tLmJyXC80Yjc1ZGIyZS1hMGMwLTQzNTktYTA3Ny02ODRlODhmYTY5NWNcL2luYWN0aXZlXC9hcHBsaWNhdGlvbi5qd2tzIiwic29mdHdhcmVfandrc190cmFuc3BvcnRfdXJpIjoiaHR0cHM6XC9cL2tleXN0b3JlLnNhbmRib3guZGlyZWN0b3J5Lm9waW5icmFzaWwuY29tLmJyXC80Yjc1ZGIyZS1hMGMwLTQzNTktYTA3Ny02ODRlODhmYTY5NWNcL2NkMDgwNzkxLTlmMmItNGIwZC1iNmE0LTk1M2JlNTJiNTk3MVwvdHJhbnNwb3J0Lmp3a3MiLCJzb2Z0d2FyZV9jbGllbnRfdXJpIjoiaHR0cHM6XC9cL3d3dy5uYW92YWxpZG8uY29tLmJyIiwic29mdHdhcmVfbG9nb191cmkiOiJodHRwczpcL1wvd3d3Lm5hb3ZhbGlkby5jb20uYnIiLCJvcmdfaWQiOiI0Yjc1ZGIyZS1hMGMwLTQzNTktYTA3Ny02ODRlODhmYTY5NWMiLCJvcmdfandrc191cmkiOiJodHRwczpcL1wva2V5c3RvcmUuc2FuZGJveC5kaXJlY3Rvcnkub3BpbmJyYXNpbC5jb20uYnJcLzRiNzVkYjJlLWEwYzAtNDM1OS1hMDc3LTY4NGU4OGZhNjk1Y1wvYXBwbGljYXRpb24uandrcyIsIm9yZ19udW1iZXIiOiIxNDcyMzM3OTAwMDE3MiIsInNvZnR3YXJlX2p3a3NfdXJpIjoiaHR0cHM6XC9cL2tleXN0b3JlLnNhbmRib3guZGlyZWN0b3J5Lm9waW5icmFzaWwuY29tLmJyXC80Yjc1ZGIyZS1hMGMwLTQzNTktYTA3Ny02ODRlODhmYTY5NWNcL2NkMDgwNzkxLTlmMmItNGIwZC1iNmE0LTk1M2JlNTJiNTk3MVwvYXBwbGljYXRpb24uandrcyIsInNvZnR3YXJlX3JvbGVzIjpbXSwib3JnYW5pc2F0aW9uX2NvbXBldGVudF9hdXRob3JpdHlfY2xhaW1zIjpbXX0.bdWayyhABvNGnT7Vmsdd5ZTht1oYBm_hHRAAyRGD-lCmNi08HDFH-8RzjFsMJ5ZWzS99mwwVrCBph0YcbwfzWuSu9uFdd-bwvfhXFhkNDzQHuRMOF1QTHd0C8r3N-_CkBtYWyXXNFGiREyXjFn8Muvw3fGSr98sy01PDlNyZlxxpBTU9-nz2r-WxwwVyTJyVfz8wVXrrX3_H19Ty3vwiqAbf0tSPyfXFEe3XQE6XJ8W93Ec9M2CzB3PuaaNvgsa2f4T6tT3yHqUfnRQuqf1FCc3raxxn7tVAB-G1yJ9bz-ZaKdsjX2nWCGhJR41rIPlAGv85EsESAo_JSHpfZW0EbA",
+"subject_type": "public",
+"token_endpoint_auth_method": "private_key_jwt",
+"request_object_signing_alg": "PS256",
+"require_signed_request_object": true,
+"require_pushed_authorization_requests": false,
+"tls_client_certificate_bound_access_tokens": true,
+"client_id": "aCnBHjZBvD6ku3KVBaslL",
+"client_name": "Raidiam Insurance",
+"client_uri": "https://www.raidiam.com/insurance.html",
+"request_object_encryption_alg": "RSA-OAEP",
+"request_object_encryption_enc": "A256GCM"
+"jwks_uri": "https://keystore.directory.opinbrasil.com.br/b961c4eb-509d-4edf-afeb-35642b38185d/25556d5a-b9dd-4e27-aa1a-cce732fe74de/application.jwks",
+"redirect_uris": [
+    "https://www.raidiam.com/insurance/cb"
+]
+}
+```
+
+### 9.2 Open Insurance Brasil SSA Key Store e detalhes do emissor
+
+As links a seguir apontam para as chaves públicas do Diretório de Participantes, e devem ser usadas para verificar a validadade da assinatura dos _software\_statements_ apresentados durante o processo de registro de cliente. 
+
+**Producão**
+
+[https://keystore.directory.opinbrasil.com.br/openinsurance.jwks](https://keystore.directory.opinbrasil.com.br/openinsurance.jwks)
+
+Emissor do Open Insurance Open Insurance Brasil SSA de produção
+
+**Sandbox**
+
+[https://keystore.sandbox.directory.opinbrasil.com.br/openinsurance.jwks](https://keystore.sandbox.directory.opinbrasil.com.br/openinsurance.jwks)
+
+Emissor do Open Insurance Open Insurance Brasil SSA de sandbox
+
+### 9.3 Sobre os mecanismos de autenticação e autorização dos serviços de DCR e DCM
+
+Por serem serviços auxiliares ao fluxo principal do Open Insurance Brasil, os serviços de registro e manutenção dinâmica de clientes não utilizam os mesmos mecanismos de controle de acesso. Por exemplo: não é possível exigir um _access\_token_ OAuth 2.0 de uma aplicação cliente que ainda não está registrada na instituição transmissora. 
+Para estender as [RFC7591](https://tools.ietf.org/html/rfc7591) e [RFC7592](https://tools.ietf.org/html/rfc7592), que recomendam mecanismos mínimos para autenticação dos seus serviços, as instituições que suportam os fluxos de registro e manutenção dinâmica de clientes devem implementar em seus Servidores de Autorização os controles a seguir:
+
+### 9.3.1 Registro de cliente - POST /register
+
+1. validar que o certificado apresentado pela aplicação cliente é subordinado às cadeias do ICP-Brasil definidas no Padrão de Certificados do Open Insurance Brasil;
+2. assegurar que a assinatura do _software\_statement_ apresentado pela aplicação cliente durante o registro tenha sido feita pelo Diretório de Participantes através das chaves públicas descritas na seção anterior;
+3. assegurar que o _software\_statement_ apresentado pela aplicação cliente durante o registro corresponda à mesma instituição do certificado de cliente apresentado, validando-o através dos atributos que trazem `organization_id` no certificado X.509.
+4. emitir, na resposta do registro, um `registration_access_token` para ser usado como token de autenticação nas operações de manutenção da aplicação cliente registrada, seguindo as especificações descritas na [RFC7592](https://tools.ietf.org/html/rfc7592).
+
+### 9.3.2 Manutenção de cliente - GET /register - PUT /register - DELETE /register
+1. validar que o certificado apresentado pela aplicação cliente é subordinado às cadeias do ICP-Brasil definidas no Padrão de Certificados do Open Insurance Brasil;
+2. validar a presença e a correspondência do header Bearer `Authorization` contendo o valor do atributo `registration_access_token` retornado durante o registro do cliente correspondente.
+
+*Observação:* A [RFC7592](https://tools.ietf.org/html/rfc7592) prevê a possibilidade de rotação do `registration_access_token` emitido pelo Servidor de Autorização a cada uso, tornando-o um token de uso único. As instituições devem considerar esse aspecto no registro de suas aplicações cliente para receber e atualizar o `registration_access_token` pelo novo valor recebido nas chamadas de manutenção de cliente.
+
+
+## FAPI Security Profile 1.0
+
+O Open Insurance adere ao padrão do [Open Finance Brasil grade API Security Profile 1.0 Implementers Draft 3](https://openbanking-brasil.github.io/specs-seguranca/open-banking-brasil-financial-api-1_ID3.html).
+
+
+## Padrão de Certificados
+
+### Prefácio
+
+A Estrutura Inicial do Open Insurance Brasil é responsável por criar os padrões e especificações necessários para atender aos requisitos e obrigações da Legislação do Open Insurance do Brasil, conforme originalmente delineado pela SUSEP. É possível que alguns dos elementos deste documento estejam sujeitos a direitos de patente. A Estrutura Inicial não se responsabiliza pela identificação de qualquer ou todos os direitos de patente.
+
+### Objetivo
+
+Especificar o conjunto de certificados necessários que devem ser utilizados pelas entidades participantes do Open Insurance Brasil para garantir interoperabilidade para autenticação, confidencialidade, integridade e não repúdio entre os participantes, bem como para os usuários e consumidores destas entidades. O público desta especificação são entidades participantes do Open Insurance Brasil que necessitam fazer a emissão de certificados para se autenticar junto a outras entidades, bem como oferecer a seus clientes um canal de autenticação seguro.
+
+### Convenções Notacionais
+
+As palavras-chave "*deve*" (shall), "*não deve*" (shall not), "*deveria*" (should), "*não deveria*" (should not) e "*pode*" (may) presentes nesse documento devem ser interpretadas conforme as diretrizes descritas em [ISO Directive Part 2](https://www.iso.org/sites/directives/current/part2/index.xhtml) observando a seguinte equivalência:
+
+* "deve" => equivalente ao termo "shall" e expressa um requerimento definido no documento (nas traduções é similar ao termo "must", que pode denotar um requerimento externo ao documento);
+* "não deve" => equivalente ao termo "shall not" e também expressa um requerimento definido no documento;
+* "deveria" e "não deveria"=> equivalente ao termo "should" e "should not" e expressa uma recomendação
+* "pode" => equivalente ao termo "may" indica uma permissão
+
+Estas palavras-chave não são usadas como termos de dicionário, de modo que qualquer ocorrência deles deve ser interpretada como palavras-chave e não devem ser interpretados com seus significados de linguagem natural.
+
+### 1. Escopo
+
+Este documento especifica os tipos de certificados necessários para:
+
+* Autenticar mutuamente (MTLS - Mutual TLS) as aplicações dos participantes;
+* Assinatura de Mensagens (JWS - JSON Web Signature) de aplicações para garantir a autenticidade e não repúdio de mensagens entre os participantes;
+* Apresentar um canal seguro e confiável para clientes do Open Insurance Brasil;
+* Autenticar participantes no Diretório de participantes do Open Insurance Brasil.
+
+### 2. Referências Normativas
+
+Os seguintes documentos referenciados são indispensáveis para a aplicação deste documento. Para referências datadas, apenas a edição citada se aplica. Para referências não datadas, a última edição do documento referenciado (incluindo quaisquer emendas) se aplica.
+
+* ISODIR2 - [ISO/IEC Directives Part 2](https://www.iso.org/sites/directives/current/part2/index.xhtml)
+* RFC5280 - [Internet X.509 Public Key Infrastructure Certificate and Certificate Revocation List (CRL) Profile](https://datatracker.ietf.org/doc/html/rfc5280)
+* RFC7519 - [JSON Web Token (JWT)](https://tools.ietf.org/html/rfc7519)
+* RFC7515 - [JSON Web Signature (JWS)](https://datatracker.ietf.org/doc/html/rfc7515)
+* RFC7591 - [OAuth 2.0 Dynamic Client Registration Protocol](https://tools.ietf.org/html/rfc7591)
+* RFC7592 - [OAuth 2.0 Dynamic Client Registration Management Protocol](https://tools.ietf.org/html/rfc7592)
+* BCP195 - [Recommendations for Secure Use of Transport Layer Security (TLS) and Datagram Transport Layer Security (DTLS)](https://tools.ietf.org/html/bcp195)
+* RFC8705 - [OAuth 2.0 Mutual TLS Client Authentication and Certificate Bound Access Tokens](https://tools.ietf.org/html/rfc8705)
+* OFB-FAPI - [Open Finance Brasil Financial-grade API Security Profile 1.0](https://github.com/OpenBanking-Brasil/specs-seguranca/open-banking-brasil-financial-api-1_ID3.html)
+* OPIN-FAPI-DCR - [Open Insurance Brasil Financial-grade API Dynamic Client Registration Profile 1.0](#dynamic-client-registration-dcr)
+* DOC-ICP-01 - [DECLARAÇÃO DE PRÁTICAS DE CERTIFICAÇÃO DA AUTORIDADE CERTIFICADORA RAIZ DA ICP-BRASIL](https://www.gov.br/iti/pt-br/centrais-de-conteudo/doc-icp-01-v-5-2-dpc-da-ac-raiz-da-icp-brasil-pdf)
+* RFC6749 - [The OAuth 2.0 Authorization Framework](https://tools.ietf.org/html/rfc6749)
+* RFC2818 - [HTTP Over TLS](https://datatracker.ietf.org/doc/html/rfc2818)
+* RFC5246 - [The Transport Layer Security (TLS) Protocol Version 1.2](https://www.rfc-editor.org/rfc/rfc5246.txt)
+
+### 3. Termos e Definições
+
+Para o propósito deste documento os termos definidos na [RFC5280](https://datatracker.ietf.org/doc/html/rfc5280), [BCP195](https://tools.ietf.org/html/bcp195), [RFC8705](https://tools.ietf.org/html/rfc8705), e ISO29100 são aplicáveis.
+
+### 4. Glossário
+
+* **API** – Application Programming Interface
+* **DCR** – Dynamic Client Registration
+* **HTTP** – Hyper Text Transfer Protocol
+* **ICP** - Infraestrutura de Chave Públicas Brasileira
+* **SS** – Software Statement
+* **SSA** – Software Statement Assertion
+* **TLS** – Transport Layer Security
+* **mTLS** – Mutual Transport Layer Security
+
+### 5. Padrão de Certificados Open Insurance Brasil
+
+### 5.1 Introdução
+
+O ecossistema do Open Insurance Brasil faz uso de cadeias de certificados e protocolo TLS para garantir a confidencialidade, autenticação e integridade do canal de comunicação utilizado pelas APIs das instituições participantes, bem como dos clientes de cada um dos participantes.
+
+Os certificados utilizados pelo Open Insurance Brasil também são necessários para autenticar as aplicações através do oAuth 2.0 mTLS ou private\_key\_jwt, além de também servirem para realizar a assinatura de _payloads_ pelo uso de JWS. Outra atribuição importante dos certificados é autenticar e apresentar um canal seguro para o usuário final no ato de autenticação e uso dos serviços prestados pela entidade participante.
+
+### 5.2 Certificados ICP-Brasil
+
+Os certificados emitidos pelas Autoridades Certificadoras autorizadas pelo ICP-Brasil são utilizados apenas na comunicação entre as entidades participantes do ecossistema do Open Insurance Brasil.
+
+Os processos de emissão e revogação dos certificados são de responsabilidade das próprias Autoridades Certificadores, sendo regulamentados por Declarações de Prática de Certificação, e supervisionadas pelo Comitê Gestor da Infraestrutura de Chaves Públicas Brasileira.
+
+As práticas, processos, disponibilização e valores praticados pelas Autoridades Certificadoras não são de responsabilidade do Estrutura Inicial do Open Insurance Brasil.
+
+**Algoritmos**
+
+Todos os certificados emitidos junto ao ICP-Brasil devem possuir as seguintes características:
+
+* Tipo A do ICP-Brasil;
+* Algoritmo de Chaves: RSA 2048 bits;
+* Message Digest: SHA 256 bits.
+
+### 5.2.1 Certificado Servidor
+
+O Certificado Servidor deve ser emitido para proteger e autenticar o canal TLS utilizado pelas APIs que serão consumidas pelas aplicações cliente de entidades participantes do Open Insurance.
+
+O padrão de certificado utilizado deve seguir as práticas de emissão de certificados existentes de "CERTIFICADO PARA SERVIDOR WEB – ICP-Brasil".
+
+O certificado de servidor precisa ser enviado com a cadeia intermediária, conforme [RFC5246](https://www.rfc-editor.org/rfc/rfc5246.txt) (itens 7.4.2).
+
+### 5.2.2 Certificado Cliente {#CertificadoCliente}
+
+Os Certificados de Aplicação Cliente (Transporte) são utilizados para autenticar o canal mTLS e para realizar a autenticação da aplicação cliente através de oAuth2.0 mTLS ou private\_key\_jwt, de acordo com o cadastro da aplicação realizado pelo processo de Dynamic Client Registration junto à entidade transmissora. Sobre o mTLS, o certificado cliente precisa ser enviado com a cadeia intermediária, conforme [RFC5246](https://www.rfc-editor.org/rfc/rfc5246.txt) (itens 7.4.2 e 7.4.6).
+
+Para emissão de Certificado Cliente é necessário que a instituição participante do Open Insurance Brasil tenha realizado o cadastro da aplicação no Serviço de Diretório, através do processo de emissão de Software Statement Assertion, e com isso já tenha obtido o valor de Software Statement ID.
+
+#### 5.2.2.1 Atributos Open Insurance Brasil
+
+* **serialNumber:** Cadastro Nacional de Pessoal Jurídica (CNPJ) da pessoa jurídica titular do certificado e associado ao atributo UID e Software Statement ID, durante validação junto ao Serviço de Diretório do Open Insurance Brasil;
+* **organizationalUnitName:** Código de Participante associado ao CNPJ listado no Serviço de Diretório do Open Insurance Brasil;
+* **UID:** Software Statement ID cadastrado no Serviço de Diretório do Open Insurance Brasil e pertencente ao CNPJ e Código de Participante.
+
+O Certificado Cliente deve ser emitido através de cadeia V10, e deve obrigatoriamente conter os seguintes atributos:
+
+**Distinguished Name**
+
+* **businessCategory (OID 2.5.4.15):** Tipo de categoria comercial, devendo conter: "Private Organization" ou "Government Entity" ou "Business Entity" ou "Non-Commercial Entity"
+* **jurisdictionCountryName (OID: 1.3.6.1.4.1.311.60.2.1.3):** BR
+* **serialNumber (OID 2.5.4.5):** CNPJ
+* **countryName (OID 2.5.4.6):** BR
+* **organizationName (OID 2.5.4.10):** Razão Social
+* **stateOrProvinceName (OID 2.5.4.8):** Unidade da federação do endereço físico do titular do certificado
+* **localityName (OID 2.5.4.7):** Cidade do endereço físico do titular
+* **organizationalUnitName (OID 2.5.4.11):** Código de Participante associado ao CNPJ listado no Serviço de Diretório do Open Insurance Brasil
+* **UID (OID 0.9.2342.19200300.100.1.1):** Software Statement ID gerado pelo Diretório do Open Insurance Brasil
+* **commonName (OID 2.5.4.3):** FQDN ou Wildcard
+
+**Certificate Extensions**
+
+* **keyUsage:** critical,digitalSignature,keyEncipherment
+* **extendedKeyUsage:** clientAuth
+
+**Subject Alternative Name**
+
+* **dNSName:** FQDN ou Wildcard
+
+### 5.2.3 Certificado de Assinatura
+
+Os Certificados de Assinatura são utilizados para realizar assinatura do _payload_ através do uso de JWS (JSON Web Signature).
+
+#### 5.2.3.1 Atributos Open Insurance Brasil Presentes no Certificado {#AtributosCertificado}
+
+* **UID:** Código de Participante associado ao CNPJ listado no Serviço de Diretório do Open Insurance Brasil;
+* **commonName:** Razão Social cadastrado no Serviço de Diretório do Open Insurance Brasil e pertencente ao CNPJ e Código de Participante.
+
+O Certificado de Assinatura deve ser emitido através de cadeia V5, e deve obrigatoriamente conter os seguintes atributos:
+
+**Distinguished Name**
+
+* **UID (OID 0.9.2342.19200300.100.1.1):** Código de Participante associado ao CNPJ listado no Serviço de Diretório do Open Insurance Brasil
+* **countryName (OID 2.5.4.6):** BR
+* **organizationName (OID 2.5.4.10):** ICP-Brasil
+* **organizationalUnitName (OID 2.5.4.11):** Nome da Autoridade Certificadora
+* **organizationalUnitName (OID 2.5.4.11):** CNPJ da Autoridade de Registro
+* **organizationalUnitName (OID 2.5.4.11):** Tipo de identificação utilizada (presencial, videoconferência ou certificado digital)
+* **commonName (OID 2.5.4.3):** Nome da Razão Social
+
+**Certificate Extensions**
+
+* **keyUsage:** critical,digitalSignature,nonRepudiation
+
+**Subject Alternative Name**
+
+* **otherName (OID 2.16.76.1.3.2 – ICP-Brasil):** Nome do responsável pelo certificado
+* **otherName (OID 2.16.76.1.3.3 – ICP-Brasil):** Cadastro Nacional de Pessoa Jurídica (CNPJ) da pessoa jurídica titular do certificado;
+* **otherName (OID 2.16.76.1.3.4 – ICP-Brasil):** Responsável pelo certificado de pessoa jurídica titular do certificado (data de nascimento, CPF, PIS/PASEP/CI, RG);
+* **otherName (OID 2.16.76.1.3.7 – ICP-Brasil):** Número do Cadastro Especifico do INSS (CEI) da pessoa jurídica titular do certificado.
+
+#### 5.2.3.2 Autoridades Certificadoras Participantes
+
+As seguintes autoridades certificadoras realizaram o processo de onboarding ao Open Insurance Brasil e estão habilitadas para realizar a emissão de certificados do Open Insurance Brasil utilizando para tal os certificados nível 1 aqui listados:
+
+D5E9797DFB7BF5496ABA9E33CC023CD4C9FA964CECE6413B1CAAF95D9A46DF3F
+
+
+* CertiSign
+    * Cadeia ICP [V5](http://acraiz.icpbrasil.gov.br/credenciadas/RAIZ/ICP-Brasilv5.crt), Impressão Digital SHA256: [94:EB:D7:63:DC:D3:9A:85:87:48:D1:43:38:54:F7:D4:72:B1:DD:47:DD:D2:70:43:23:6F:83:80:2F:AA:F1:AB](http://acraiz.icpbrasil.gov.br/credenciadas/CERTISIGN/v5/p/AC_Certisign_G7.crt)
+    * Cadeia ICP [V10](http://acraiz.icpbrasil.gov.br/credenciadas/RAIZ/ICP-Brasilv10.crt), Impressão Digital SHA256: [59:6D:25:3B:A2:BE:B7:F1:66:C4:F5:8D:08:78:FB:28:2E:30:8A:28:2C:41:62:69:40:18:BE:5A:17:49:74:19](http://acraiz.icpbrasil.gov.br/credenciadas/CERTISIGN/v10/p/AC-CERTISIGN-ICP-BRASIL-SSL.crt)
+    * Cadeia ICP [V10](http://acraiz.icpbrasil.gov.br/credenciadas/RAIZ/ICP-Brasilv10.crt), Impressão Digital SHA256: [55:A4:89:F6:0F:78:5B:EB:E0:42:E9:9A:69:AC:8E:C3:3C:9F:17:37:4C:C4:B7:66:F6:04:CF:70:79:EA:09:BA](http://acraiz.icpbrasil.gov.br/credenciadas/CERTISIGN/v10/p/AC-CERTISIGN-ICP-BRASIL-SSL-G2.crt)
+* Serasa
+    * Cadeia ICP [V5](http://acraiz.icpbrasil.gov.br/credenciadas/RAIZ/ICP-Brasilv5.crt), Impressão Digital SHA256: [48:E3:35:02:C1:11:39:41:03:20:0A:6F:BB:7D:91:7B:C0:2B:9B:24:41:54:5A:23:0F:B0:B7:FD:37:85:DF:5E](http://acraiz.icpbrasil.gov.br/credenciadas/SERASA_ACP/v10/p/Serasa_Autoridade_Certificadora_Principal_v5.crt) 
+    * Cadeia ICP [V10](http://acraiz.icpbrasil.gov.br/credenciadas/RAIZ/ICP-Brasilv10.crt), Impressão Digital SHA256: [50:D0:E2:8B:7B:1A:13:CB:2D:E7:BF:F8:12:A9:3B:74:BE:D4:C5:07:FD:4A:06:20:E6:B6:D8:8E:F6:76:10:53](http://acraiz.icpbrasil.gov.br/credenciadas/SERASA_ACP/v10/p/AC-SERASA-SSL-EV.crt)
+    * Cadeia ICP [V10](http://acraiz.icpbrasil.gov.br/credenciadas/RAIZ/ICP-Brasilv10.crt), Impressão Digital SHA256: [95:E0:F8:9A:8E:0E:12:E3:E4:1D:6D:5A:AB:44:72:D7:32:1C:2E:BC:D9:29:0E:78:D6:16:97:CD:F5:D4:3D:66](http://acraiz.icpbrasil.gov.br/credenciadas/SERASA_ACP/v10/p/AC-SERASA-SSL-EV-V2.crt)
+* Serpro
+    * Cadeia ICP [V5](http://acraiz.icpbrasil.gov.br/credenciadas/RAIZ/ICP-Brasilv5.crt), Impressão Digital SHA256: [35:33:05:81:E9:22:4B:72:CB:34:0F:A4:4B:8F:57:DA:79:AC:0A:3C:95:16:0C:BD:45:19:EC:C1:1B:AB:5C:12](http://acraiz.icpbrasil.gov.br/credenciadas/SERPRO/v5/p/Autoridade_Certificadora_Serpro_v4.crt)
+    * Cadeia ICP [V10](http://acraiz.icpbrasil.gov.br/credenciadas/RAIZ/ICP-Brasilv10.crt), Impressão Digital SHA256: [08:FC:94:2D:51:76:E5:68:AC:BE:F9:C5:95:F3:6A:20:DE:6A:CF:9E:A3:0C:6F:5F:CE:DD:48:21:6E:D5:B0:70](http://acraiz.icpbrasil.gov.br/credenciadas/SERPRO/v10/p/AC-SERPRO-SSLv1-v10.crt)
+* Soluti
+    * Cadeia ICP [V5](http://acraiz.icpbrasil.gov.br/credenciadas/RAIZ/ICP-Brasilv5.crt), Impressão Digital SHA256: [86:D4:58:36:5C:FA:BF:FA:E4:54:2A:B9:8B:99:39:0F:51:9E:C9:D8:31:81:2B:53:00:45:C4:12:AE:6E:B5:B6](http://acraiz.icpbrasil.gov.br/credenciadas/SOLUTI/v5/p/AC_Soluti_v5.crt)
+    * Cadeia ICP [V10](http://acraiz.icpbrasil.gov.br/credenciadas/RAIZ/ICP-Brasilv10.crt), Impressão Digital SHA256: [16:9C:BF:05:47:F3:DF:C4:E6:3E:4A:F9:E0:25:5A:76:03:77:78:FF:5B:8F:4A:53:6A:BD:FF:3A:91:DF:C3:C5](http://acraiz.icpbrasil.gov.br/credenciadas/SOLUTI/v10/p/AC-SOLUTI-SSL-EV.crt)
+* Valid
+    * Cadeia ICP [V5](http://acraiz.icpbrasil.gov.br/credenciadas/VALID/v5/p/AC_VALID_v5.crt), Impressão Digital SHA256: [40:8E:1F:56:1F:96:4E:95:5F:33:8B:94:18:95:E5:20:D1:C7:5A:18:2C:91:63:FA:84:BA:94:BB:5C:3D:A6:E6](http://acraiz.icpbrasil.gov.br/credenciadas/VALID/v5/p/AC_VALID_v5.crt)
+    * Cadeia ICP [V10](http://acraiz.icpbrasil.gov.br/credenciadas/VALID/v10/p/AC-VALID-SSL-EV.crt), Impressão Digital SHA256: [AD:96:0D:6A:51:AF:58:E1:EC:09:EE:05:E6:DF:82:7A:77:18:37:9C:AB:F0:A5:52:9D:E4:B0:1C:12:29:08:C0](http://acraiz.icpbrasil.gov.br/credenciadas/VALID/v10/p/AC-VALID-SSL-EV.crt)
+
+### 5.2.4 Certificado para Front-End
+
+Os certificados para Front-End são utilizados para disponibilizar serviços, em geral páginas Web, com uso de TLS, que são acessados pelo usuário final. Dado a sua finalidade, e para garantir maior interoperabilidade, os certificados devem ser do tipo EV (Extended Validation) e devem ser ser gerados através de uma autoridade certificadora válida, seguindo as regras definidas na RFC 5280 e RFC 2818, em conformidade com os princípios e critérios WebTrust.
+
+### Apêndice
+
+### Modelo de Configuração de Certificado Cliente - OpenSSL
+
+```
+[req]
+default_bits = 2048
+default_md = sha256
+encrypt_key = yes
+prompt = no
+string_mask = utf8only
+distinguished_name = client_distinguished_name
+req_extensions = req_cert_extensions
+
+[ client_distinguished_name ]
+businessCategory = <type of organization>
+jurisdictionCountryName = BR
+serialNumber = <CNPJ>
+countryName = BR
+organizationName = <Company Name>
+stateOrProvinceName = <UF>
+localityName = <City>
+organizationalUnitName = <PArticipante Code>
+UID = <Software Statement ID issued by the Directory>
+commonName = <FQDN|Wildcard>
+
+[ req_cert_extensions ] 
+basicConstraints = CA:FALSE
+subjectAltName = @alt_name
+keyUsage = critical,digitalSignature,keyEncipherment
+extendedKeyUsage = clientAuth
+
+[ alt_name ] 
+DNS = <FQDN|Wildcard>
+```
+
+### Modelo de Configuração de Certificado de Assinatura - OpenSSL
+
+```
+[req]
+default_bits = 2048
+default_md = sha256
+encrypt_key = yes
+prompt = no
+string_mask = utf8only
+distinguished_name = client_distinguished_name
+req_extensions = req_cert_extensions
+
+[ client_distinguished_name ]
+UID = <Código de Participante>
+countryName = BR
+organizationName = ICP-Brasil
+0.organizationalUnitName = <Certificate Authority>
+1.organizationalUnitName = <CNPJ da Registration Authority>
+2.organizationalUnitName = <Validation type>
+commonName = <Company Name>
+
+[ req_cert_extensions ] 
+basicConstraints = CA:FALSE
+subjectAltName = @alt_name
+keyUsage = critical,digitalSignature,nonRepudiation
+
+[ alt_name ] 
+otherName.0 = 2.16.76.1.3.2;UTF8:<Name of the person responsible for the organization>
+otherName.1 = 2.16.76.1.3.3;UTF8:<CNPJ>
+otherName.2 = 2.16.76.1.3.4;UTF8:<CPF/PIS/RF of responsible person>
+otherName.3 = 2.16.76.1.3.7;UTF8:<INSS Number>
+```
+
+### Tabela com Endpoints vs Tipo de Certificado e mTLS
+Abaixo apresentamos quais endpoints podem ser publicados utilizando certificado EV como autenticação do consentimento e os endpoints de autenticação de APIs privadas/negócios que devem ser publicadas usando certificado ICP. Você também poderá verificar quais endpoints devem proteger suas conexões utilizando mTLS.
+
+Fica a critério da instituição a escolha do certificado que deve ser adotado para os _endpoints_ da Fase 1, os quais, por natureza, são de acesso público.
+
+| Fase | Grupo                  | APIs (em construção)                  | Certificado       | mTLS        |
+|------|------------------------|---------------------------------------|-------------------|-------------|
+| NA   | OIDC                   | .well-known/openid-configuration      | EV ou ICP WEB SSL |             |
+| NA   | OIDC                   | jwks_uri                              | EV ou ICP WEB SSL |             |
+| NA   | OIDC                   | authorization_endpoint                | EV                |             |  
+| NA   | OIDC                   | token_endpoint                        | ICP WEB SSL       | Obrigatório |
+| NA   | OIDC                   | userinfo_endpoint                     | ICP WEB SSL       | Obrigatório |
+| NA   | OIDC                   | pushed_authorization_request_endpoint | ICP WEB SSL       | Obrigatório |
+| NA   | DCR                    | registration_endpoint                 | ICP WEB SSL       | Obrigatório |
+| NA   | OIDC                   | revocation_endpoint                   | ICP WEB SSL       | Obrigatório |
+| 2    | Consentimentos         | /consents/\*                          | ICP WEB SSL       | Obrigatório |
+| 2    | Resources              | /resources/\*                         | ICP WEB SSL       | Obrigatório |
+| 2    | Dados                  | /customers/\*                         | ICP WEB SSL       | Obrigatório |
+| 2    | Transacionais          | /insurance-\*/\*                      | ICP WEB SSL       | Obrigatório |
+
+
+## Assinaturas
+
+Sobre os certificados exigidos para assinatura de mensagens: [Padrões de certificados digitais Open Insurance Brasil](#padrão-de-certificados)
+
+Sobre os algoritmos usados para assinatura de mensagens JWS: [Perfil de segurança FAPI - Open Banking Brasil](https://openbanking-brasil.github.io/specs-seguranca/open-banking-brasil-financial-api-1_ID3-ptbr.html#name-considera231245es-sobre-alg)
+
+Sobre mensagens assinadas, JWS e JWKS: [Guia do Usuário para Instituições Receptores de Dados](#153-o-que-é-um-jwt-jwe-jws-e-jwk)
+
+
+## Glossário de Segurança
+
+|Sigla|Descrição|Informação|
+|-----|---------|----------|   		
+|API|Interface de programação de aplicativo|Uma interface de programação de aplicativo é um conjunto de rotinas, protocolos e ferramentas para construir aplicativos de software. Uma API especifica como os componentes de software devem interagir|
+|FAPI|Financial API|Especificação técnica de API e define requisitos técnicos adicionais para o setor financeiro|
+|CIBA|Client Initiated Backchannel Authentication|A autenticação de backchannel iniciada pelo cliente (CIBA) é um dos padrões mais recentes da OpenID Foundation. São categorizados como "fluxo desacoplado". Permite novas maneiras de obter o consentimento do usuário final|
+|OAuth| |O OAuth é um protocolo de autorização para APIs web voltado a permitir que aplicações _client_ acessem um recurso protegido em nome de um usuário|
+|OIDC|OpenID Connect|OpenID Connect é um protocolo de identidade simples com padrão aberto|
+|JWT|JSON Web Token|Uma técnica definida na RFC 7519 para autenticação remota entre duas partes. Ele é uma das formas mais utilizadas para autenticar usuários em APIs RESTful|
+|JWS|JSON Web Signature|Uma forma de garantir a integridade das informações em um formato altamente serializado|
+|SHA256|Secure Hash Algorithm|Um conjunto de funções criptográficas de hash|
+|PKCE|Proof Key for Code Exchange|Chave de prova para troca de código por clientes públicos Oauth|
+|MAC|Código de Autenticação de Mensagem|Permite que as declarações sejam assinadas digitalmente ou protegidas por integridade utilizando JWS|
+|ICP-Brasil|Infraestrutura de Chaves Públicas Brasileira|Na definição oficial, “uma cadeia hierárquica de confiança que viabiliza a emissão de certificados digitais para identificação virtual do cidadão"|
+|AC|Autoridade Certificadora| |
+|AR|Autoridade de Registro| |
+|TLS|Transport Layer Security| |
+|ECDSA|Elliptic Curve Digital Signature Algorithm|Algoritmo de método de assinatura digital de documentos utilizando criptografia baseada em curvas elípticas|
+|ECDHE|Elliptic-curve Diffie–Hellman|Protocolo de contrato chave que permite que duas partes, cada uma com um par de chaves público-privado de curva elíptica, estabeleçam um segredo compartilhado em um canal inseguro|
+|AES|Advanced Encryption Standard|Algoritmos de criptografia de bloco simétrico com uma chave de criptografia de 256 bits|
+|Autenticação mútua| |Chamamos de autenticação mútua quando ambos cliente e servidor apresentam certificados para serem validados pelo par|
+|CSR|Certificate Signing Request|Contém informação que irá ser incluída no seu certificado como o nome da empresa/organização, common name (domínio), localidade e país. Também contém a chave pública (public key) que será incluída no seu certificado. Normalmente é também criada uma chave privada (private key) ao mesmo tempo que é criado o CSR|
+|SSA|Software Statement Assertion|SSA é um JSON Web Token (JWT) que contém metadados sobre uma instância de aplicativo client desenvolvida por um TPP. O JWT é emitido e assinado pelo Diretório do Open Insurance Brasil|
+|End User| |Identificação de usuário final que possui as informações que se deseja acessar|
+|Back-End| |Aplicação ou código que da inteligência de negocio as ações solicitadas via API , código que efetivamente realiza a função desejada|
+|Json|JavaScript Object Notation|Modelo para armazenamento e transmissão de informações no formato texto.|
+|Claims| |Escopos/declarações usadas em uma API durante a autenticação para autorizar o acesso aos detalhes de um usuário, como nome e imagem por exemplo. Cada escopo retorna um conjunto de atributos do usuário, que são chamados de declarações|
+|Header| |Cabeçalho de uma solicitação ou resposta que transmite contexto e metadados adicionais sobre a solicitação ou resposta. Por exemplo, em uma mensagem de solicitação podem ser usados para fornecer credenciais de autenticação|
+|Payload| |Carga Útil do token JWT. É aqui que você coloca informações como a quem o token pertence, qual a expiração dele, quando ele foi criado, entre outras coisas|
+
+
+## Referências Normativas
+|Referências|Descrição|Versão|
+|---------|---------|------|
+|JSON|The JavaScript Object Notation (JSON) Data Interchange Format: [https://tools.ietf.org/html/rfc8259](https://tools.ietf.org/html/rfc8259)|Dec 2017|
+|JWT|JSON Web Token (JWT): [https://tools.ietf.org/html/rfc7519](https://tools.ietf.org/html/rfc7519)|May 2015|
+|JWS|JSON Web Signature (JWS): [https://tools.ietf.org/html/rfc7797](https://tools.ietf.org/html/rfc7797)|Feb 2016|
+
+
+## Referências Informativas
+
+|Referências|Descrição|Versão|
+|---------|---------|------|
+|JSON|The JavaScript Object Notation (JSON) Data Interchange Format: [https://tools.ietf.org/html/rfc8259](https://tools.ietf.org/html/rfc8259)|Dec 2017|
+|JWT|JSON Web Token (JWT): [https://tools.ietf.org/html/rfc7519](https://tools.ietf.org/html/rfc7519)</a>|May 2015|
+|JWS|JSON Web Signature (JWS): [https://tools.ietf.org/html/rfc7797](https://tools.ietf.org/html/rfc7797)|Feb 2016|
