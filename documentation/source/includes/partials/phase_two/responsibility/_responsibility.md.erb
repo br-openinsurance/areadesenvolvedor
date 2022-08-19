@@ -10,7 +10,7 @@
 **Detalhamento Técnico** </br>
 <a href="files/docs/insurance-responsibility.docx" download="insurance-responsibility.docx">Download do Detalhamento Técnico</a>
 
-API de Aeronáuticos do Open Insurance Brasil - Fase 2.
+API de Responsabilidade do Open Insurance Brasil - Fase 2.
 
 Traz informações de apólice, prêmio e sinistro mantidas nas instituições transmissoras por seus clientes.
 
@@ -24,7 +24,7 @@ A `Role`  do diretório de participantes relacionada à presente API é a `DADOS
 
 Para todos os `endpoints` desta API é previsto o envio de um `token` através do header `Authorization`.
 
-Este `token` deverá estar relacionado ao consentimento (identificado pelo `consentId`) mantido na instituição transmissora dos dados, o qual permitirá a pesquisa e retorno, na API em questão, dos
+Este `token` deverá estar relacionado ao consentimento (identificado pelo `consentId`) mantido na instituição transmissora dos dados, o qual permitirá a pesquisa e retorno, na API em questão, dos 
 dados relacionados ao `consentId` específico.
 
 Os dados serão devolvidos na consulta desde que o `consentId` relacionado corresponda a um consentimento válido e com o status `AUTHORISED`.
@@ -35,25 +35,25 @@ Além disso, as `permissions` necessárias deverão ter sido solicitadas quando 
 
 Relacionamos a seguir as `permissions` necessárias para a consulta de dados em cada `endpoint` da presente API.
 
-<h2 id="API - Responsibility v1.0.0-Permissions necessárias para a API Insurance Responsibility">Permissions necessárias para a API Insurance Responsibility</h2>
+## Permissions necessárias para a API InsuranceResponsibility
 
 Para cada um dos `paths` desta API, além dos escopos (`scopes`) indicados existem `permissions` que deverão ser observadas:
 
 ### `/`
-  - permissions:
-    - GET: **DAMAGES_AND_PEOPLE_AERONAUTICAL_READ**
+- permissions:
+- GET: **DAMAGES_AND_PEOPLE_RESPONSIBILITY_READ**
 
 ### `/{policyId}/policy-info`
-  - permissions:
-    - GET: **DAMAGES_AND_PEOPLE_AERONAUTICAL_POLICYINFO_READ**
+- permissions:
+- GET: **DAMAGES_AND_PEOPLE_RESPONSIBILITY_POLICYINFO_READ**
 
 ### `/{policyId}/premium`
-  - permissions:
-    - GET: **DAMAGES_AND_PEOPLE_AERONAUTICAL_PREMIUM_READ**
+- permissions:
+- GET: **DAMAGES_AND_PEOPLE_RESPONSIBILITY_PREMIUM_READ**
 
 ### `/{policyId}/claim`
-  - permissions:
-    - GET: **DAMAGES_AND_PEOPLE_AERONAUTICAL_CLAIM_READ**
+- permissions:
+- GET: **DAMAGES_AND_PEOPLE_RESPONSIBILITY_CLAIM_READ**
 
 Base URLs:
 
@@ -383,7 +383,7 @@ Método para obter as informações gerais da apólice
         "coverages": [
           {
             "branch": 111,
-            "code": "CASCO",
+            "code": "DANOS_CAUSADOS_A_TERCEIROS",
             "description": "string",
             "internalCode": "string",
             "susepProcessNumber": "string",
@@ -409,7 +409,7 @@ Método para obter as informações gerais da apólice
     "coverages": [
       {
         "branch": 111,
-        "code": "CASCO",
+        "code": "DANOS_CAUSADOS_A_TERCEIROS",
         "description": "string",
         "deductible": {
           "type": "DEDUTIVEL",
@@ -446,7 +446,57 @@ Método para obter as informações gerais da apólice
         "identification": "string",
         "cededPercentage": 10
       }
-    ]
+    ],
+    "branchInfo": {
+      "coverages": [
+        {
+          "branch": 111,
+          "code": "DANOS_CAUSADOS_A_TERCEIROS",
+          "description": "string",
+          "type": "POR_OCORRENCIA",
+          "typeDescription": "string",
+          "retroactivityDate": "AAAA-MM-DD",
+          "retroactivityPeriod": "string",
+          "retroactivityTimeUnit": "DIA",
+          "retroactivityWorkingDaysIndex": "DIAS_UTEIS",
+          "complementaryTermStartDate": "AAAA-MM-DD",
+          "complementaryTermEndDate": "AAAA-MM-DD",
+          "complementaryTerm": "string",
+          "complementaryTermTimeUnit": "DIA",
+          "complementaryTermWorkingDaysIndex": "DIAS_UTEIS",
+          "supplementaryTermStartDate": "AAAA-MM-DD",
+          "supplementaryTermEndDate": "AAAA-MM-DD",
+          "supplementaryTerm": "string",
+          "supplementaryTermTimeUnit": "DIA",
+          "supplementaryTermWorkingDaysIndex": "DIAS_UTEIS",
+          "lawyerRecommendation": "ESCOLHIDO_PELO_SEGURADO",
+          "lawyerRecommendationDescription": "string"
+        }
+      ],
+      "insuredObjects": [
+        {
+          "identification": "string",
+          "hasComplementaryContract": true,
+          "complementaryContractAmount": {
+            "amount": 2000,
+            "currency": "BRL"
+          },
+          "coveragesMaxAmount": {
+            "amount": 2000,
+            "currency": "BRL"
+          },
+          "coveragesTermStartDate": "AAAA-MM-DD",
+          "coveragesTermEndDate": "AAAA-MM-DD",
+          "coveragesTerm": 100,
+          "coveragesUnit": "DIA",
+          "coveragesWorkingDaysIndex": "DIAS_UTEIS",
+          "hasTransportationPollutionDamage": true,
+          "hasThirdPatyDamage": true,
+          "professionalClass": "ADMINISTRADOR_IMOBILIARIO",
+          "hasRetroactivityApplication": true
+        }
+      ]
+    }
   },
   "links": {
     "self": "https://api.organizacao.com.br/open-insurance/insurance-responsibility/v1",
@@ -581,7 +631,7 @@ Método para obter os dados de prêmio da apólice.
     "coverages": [
       {
         "branch": 111,
-        "code": "CASCO",
+        "code": "DANOS_CAUSADOS_A_TERCEIROS",
         "description": "string",
         "premiumAmount": {
           "amount": 2000,
@@ -751,7 +801,7 @@ Método para obter os dados de sinistro associados à apólice
         {
           "insuredObjectId": "string",
           "branch": 111,
-          "code": "CASCO",
+          "code": "DANOS_CAUSADOS_A_TERCEIROS",
           "description": "string",
           "warningDate": "2022-05-01",
           "thirdPartyClaimDate": "2022-05-01"
