@@ -48,7 +48,7 @@ Segue, a continuação, um *overview* das camadas de segurança básicas para at
 
 ## Manual de Segurança
 
-A documentação que detalha os controles técnicos de segurança que serão implementados na arquitetura do Open Insurance junto do conjunto padronizado de regras e requisitos para formação do framework de confiança para acesso de recursos protegidos pode ser acessado <a href="files/Controles_tecnicos_de_Seguranca_da_Informacao_3.0.pdf" target="_blank">aqui</a>
+A documentação que detalha os controles técnicos de segurança que serão implementados na arquitetura do Open Insurance junto do conjunto padronizado de regras e requisitos para formação do framework de confiança para acesso de recursos protegidos pode ser acessado <a href="files/Controles_tecnicos_de_Seguranca_da_Informacao_3.1.pdf" target="_blank">aqui</a>
 
 
 ## Diretrizes Técnicas de Certificação
@@ -1126,8 +1126,11 @@ Além disso, o servidor de autorização
 9. deve, sempre que possível, validar os metadados declarados pelo cliente em relação aos metadados fornecidos no _software\_statement_, adotando os valores presentes no SSA com precedência.
 10. deve aceitar todos os nomes x.500 AttributeType definidas no _Distinguished Name_ dos Perfis de Certificado x.509 definidos em [Open Insurance Brasil x.509 Certificate Standards](#padrão-de-certificados);
 11. se for compatível com o mecanismo de autenticação do cliente `tls_client_auth`, conforme definido em [RFC8705](https://tools.ietf.org/html/rfc8705), somente deve aceitar `tls_client_auth_subject_dn` como uma indicação do valor do atributo _subject_ do certificado, conforme definido na cláusula 2.1.2 [RFC8705](https://tools.ietf.org/html/rfc8705);
-12. Os valores dos campos *UID* e *OU* do certificado devem coincidir com os enviados no SSA. O campo *OU* deve conter o valor do campo *org_id* do SSA e campo *UID* deve conter o valor do campo *software_id* do SSA.
-13. deve, durante o processo de handshake TLS, usar a regra `distinguishedNameMatch` para comparar os valores DN conforme definido na [RFC4517](https://www.rfc-editor.org/rfc/rfc4517).
+12. o valor do campo *UID* do certificado deve coincidir com o enviado no SSA, onde o campo *UID* deve conter o valor do campo *software_id* do SSA.
+13. o valor do campo *organizationIdentifier* do certificado deve conter  o prefixo correspondente ao Registration Reference *OPIBR-* seguido do valor do campo *org_id* do SSA.
+14. deve, durante o processo de handshake TLS, usar a regra `distinguishedNameMatch` para comparar os valores DN conforme definido na [RFC4517].
+15. deve garantir a integridade do estoque de consentimentos ativos, mesmo após eventuais mudanças sistêmicas, para que taís alterações sejam transparentes para as instituições receptora de dados.
+16. deve realizar recertificação FAPI e DCR da OIDF após eventuais mudanças sistêmicas.
 
 Estas disposições aplicam-se igualmente ao processamento de pedidos [RFC7591](https://tools.ietf.org/html/rfc7591), [RFC7592](https://tools.ietf.org/html/rfc7592) e [OpenID Registration](https://openid.net/specs/openid-connect-registration-1_0.html)
 
@@ -1161,19 +1164,19 @@ Seguem abaixo exemplos para os atributos obrigatórios da CAs atualmente ativas:
 
 |subject_dn|Issuer|
 |----------|------|
-|UID=67c57882-043b-11ec-9a03-0242ac130003, 1.3.6.1.4.1.311.60.2.1.3=#13024252, 2.5.4.15=#131450726976617465204f7267616e697a6174696f6e, 2.5.4.5=#130e3133333533323336303030313839, CN=mycn.insurance.gov.br,OU=497e1ffe-b2a2-4a4e-8ef0-70633fd11b59, O=My Public Insurance, L=BRASILIA, ST=DF, C=BR|issuer=CN=Open Insurance SANDBOX Issuing CA - G1,OU=Open Insurance,O=Open Insurance Brasil,C=BR|
-|UID=67c57882-043b-11ec-9a03-0242ac130003, 1.3.6.1.4.1.311.60.2.1.3=#13024252, 2.5.4.15=#131450726976617465204f7267616e697a6174696f6e, 2.5.4.5=#130e3133333533323336303030313839, CN=mycn.insurance.gov.br,OU=497e1ffe-b2a2-4a4e-8ef0-70633fd11b59, O=My Public Insurance, L=BRASILIA, ST=DF, C=BR|issuer=CN=Autoridade Certificadora do SERPRO SSLv1,OU=Autoridade Certificadora Raiz Brasileira v10,O=ICP-Brasil,C=BR|
-|UID=67c57882-043b-11ec-9a03-0242ac130003, 1.3.6.1.4.1.311.60.2.1.3=#13024252, 2.5.4.15=#131450726976617465204f7267616e697a6174696f6e, 2.5.4.5=#130e3133333533323336303030313839, CN=mycn.insurance.gov.br,OU=497e1ffe-b2a2-4a4e-8ef0-70633fd11b59, O=My Public Insurance, L=BRASILIA, ST=DF, C=BR|issuer=CN=AC SOLUTI SSL EV,OU=Autoridade Certificadora Raiz Brasileira v10,O=ICP-Brasil,C=BR|
-|UID=67c57882-043b-11ec-9a03-0242ac130003, 1.3.6.1.4.1.311.60.2.1.3=#13024252, 2.5.4.15=#131450726976617465204f7267616e697a6174696f6e, 2.5.4.5=#130e3133333533323336303030313839, CN=mycn.insurance.gov.br,OU=497e1ffe-b2a2-4a4e-8ef0-70633fd11b59, O=My Public Insurance, L=BRASILIA, ST=DF, C=BR|issuer=CN=AC SERASA SSL EV,OU=Autoridade Certificadora Raiz Brasileira v10,O=ICP-Brasil,C=BR|
-|UID=67c57882-043b-11ec-9a03-0242ac130003, 1.3.6.1.4.1.311.60.2.1.3=#13024252, 2.5.4.15=#131450726976617465204f7267616e697a6174696f6e, 2.5.4.5=#130e3133333533323336303030313839, CN=mycn.insurance.gov.br,OU=497e1ffe-b2a2-4a4e-8ef0-70633fd11b59, O=My Public Insurance, L=BRASILIA, ST=DF, C=BR|issuer=CN=AC Certisign ICP-Brasil SSL G2,OU=Autoridade Certificadora Raiz Brasileira v10,O=ICP-Brasil,C=BR|
-|UID=67c57882-043b-11ec-9a03-0242ac130003, 1.3.6.1.4.1.311.60.2.1.3=#13024252, 2.5.4.15=#131450726976617465204f7267616e697a6174696f6e, 2.5.4.5=#130e3133333533323336303030313839, CN=mycn.insurance.gov.br,OU=497e1ffe-b2a2-4a4e-8ef0-70633fd11b59, O=My Public Insurance, L=BRASILIA, ST=DF, C=BR|issuer=CN=AC VALID SSL EV,OU=Autoridade Certificadora Raiz Brasileira v10,O=ICP-Brasil,C=BR|
+|UID=67c57882-043b-11ec-9a03-0242ac130003, 1.3.6.1.4.1.311.60.2.1.3=#13024252, 2.5.4.15=#131450726976617465204f7267616e697a6174696f6e, 2.5.4.5=#130e3133333533323336303030313839, CN=mycn.insurance.gov.br,2.5.4.97=OPIBR-497e1ffe-b2a2-4a4e-8ef0-70633fd11b59, O=My Public Insurance, L=BRASILIA, ST=DF, C=BR|issuer=CN=Open Insurance SANDBOX Issuing CA - G1,OU=Open Insurance,O=Open Insurance Brasil,C=BR|
+|UID=67c57882-043b-11ec-9a03-0242ac130003, 1.3.6.1.4.1.311.60.2.1.3=#13024252, 2.5.4.15=#131450726976617465204f7267616e697a6174696f6e, 2.5.4.5=#130e3133333533323336303030313839, CN=mycn.insurance.gov.br,2.5.4.97=OPIBR-497e1ffe-b2a2-4a4e-8ef0-70633fd11b59, O=My Public Insurance, L=BRASILIA, ST=DF, C=BR|issuer=CN=Autoridade Certificadora do SERPRO SSLv1,OU=Autoridade Certificadora Raiz Brasileira v10,O=ICP-Brasil,C=BR|
+|UID=67c57882-043b-11ec-9a03-0242ac130003, 1.3.6.1.4.1.311.60.2.1.3=#13024252, 2.5.4.15=#131450726976617465204f7267616e697a6174696f6e, 2.5.4.5=#130e3133333533323336303030313839, CN=mycn.insurance.gov.br,2.5.4.97=OPIBR-497e1ffe-b2a2-4a4e-8ef0-70633fd11b59, O=My Public Insurance, L=BRASILIA, ST=DF, C=BR|issuer=CN=AC SOLUTI SSL EV,OU=Autoridade Certificadora Raiz Brasileira v10,O=ICP-Brasil,C=BR|
+|UID=67c57882-043b-11ec-9a03-0242ac130003, 1.3.6.1.4.1.311.60.2.1.3=#13024252, 2.5.4.15=#131450726976617465204f7267616e697a6174696f6e, 2.5.4.5=#130e3133333533323336303030313839, CN=mycn.insurance.gov.br,2.5.4.97=OPIBR-497e1ffe-b2a2-4a4e-8ef0-70633fd11b59, O=My Public Insurance, L=BRASILIA, ST=DF, C=BR|issuer=CN=AC SERASA SSL EV,OU=Autoridade Certificadora Raiz Brasileira v10,O=ICP-Brasil,C=BR|
+|UID=67c57882-043b-11ec-9a03-0242ac130003, 1.3.6.1.4.1.311.60.2.1.3=#13024252, 2.5.4.15=#131450726976617465204f7267616e697a6174696f6e, 2.5.4.5=#130e3133333533323336303030313839, CN=mycn.insurance.gov.br,2.5.4.97=OPIBR-497e1ffe-b2a2-4a4e-8ef0-70633fd11b59, O=My Public Insurance, L=BRASILIA, ST=DF, C=BR|issuer=CN=AC Certisign ICP-Brasil SSL G2,OU=Autoridade Certificadora Raiz Brasileira v10,O=ICP-Brasil,C=BR|
+|UID=67c57882-043b-11ec-9a03-0242ac130003, 1.3.6.1.4.1.311.60.2.1.3=#13024252, 2.5.4.15=#131450726976617465204f7267616e697a6174696f6e, 2.5.4.5=#130e3133333533323336303030313839, CN=mycn.insurance.gov.br,2.5.4.97=OPIBR-497e1ffe-b2a2-4a4e-8ef0-70633fd11b59, O=My Public Insurance, L=BRASILIA, ST=DF, C=BR|issuer=CN=AC VALID SSL EV,OU=Autoridade Certificadora Raiz Brasileira v10,O=ICP-Brasil,C=BR|
 
 ### 7.2 Funções regulatórias para mapeamentos OpenID e OAuth 2.0
 
 Para participar do ecossistema do Open Insurance, as instituições credenciadas devem se cadastrar no Diretório de Participantes de acordo com seus papéis regulatórios. Essas funções refletem a autorização do SUSEP para as instituições e, consequentemente, as APIs que podem utilizar.
 
 A tabela a seguir descreve as funções regulatórias do Open Insurance e o mapeamento de escopos do OAuth 2.0 relacionado. Se os escopos forem omitidos durante o processo de DCR, o Servidor de Autorização deve conceder o conjunto completo de escopos potenciais com base nas funções regulatórias registradas para a seguradora, conforme descrito na seção Server Defaults.
-<!-- concluir escopos -->
+
 |Papel Regulador|Descrição|Escopos Permitidos (em construção)|Fase-alvo|
 |---------------|---------|------------------|---------|
 |DADOS|Instituição transmissora / receptora de dados| openid consents resources customers insurance-acceptance-and-branches-abroad insurance-auto insurance-aviation insurance-financial-risk insurance-nautical insurance-nuclear insurance-patrimonial insurance-petroleum insurance-responsibility |Fase 2|
@@ -1319,6 +1322,7 @@ Para estender as [RFC7591](https://tools.ietf.org/html/rfc7591) e [RFC7592](http
 2. assegurar que a assinatura do _software\_statement_ apresentado pela aplicação cliente durante o registro tenha sido feita pelo Diretório de Participantes através das chaves públicas descritas na seção anterior;
 3. assegurar que o _software\_statement_ apresentado pela aplicação cliente durante o registro corresponda à mesma instituição do certificado de cliente apresentado, validando-o através dos atributos que trazem `organization_id` no certificado X.509.
 4. emitir, na resposta do registro, um `registration_access_token` para ser usado como token de autenticação nas operações de manutenção da aplicação cliente registrada, seguindo as especificações descritas na [RFC7592](https://tools.ietf.org/html/rfc7592).
+5. não devem ser permitidos múltiplos cadastros DCR para o mesmo Software Statement, de forma que em caso de tentativa de novo registro para um Software Statement já cadastrado, deve se utilizar o procedimento de Error Response definido no item 3.2.2 da [RFC7591](https://tools.ietf.org/html/rfc7591).
 
 ### 9.3.2 Manutenção de cliente - GET /register - PUT /register - DELETE /register
 1. validar que o certificado apresentado pela aplicação cliente é subordinado às cadeias do ICP-Brasil definidas no Padrão de Certificados do Open Insurance Brasil;
@@ -1428,7 +1432,7 @@ O padrão de certificado utilizado deve seguir as práticas de emissão de certi
 
 O certificado de servidor precisa ser enviado com a cadeia intermediária, conforme [RFC5246](https://www.rfc-editor.org/rfc/rfc5246.txt) (itens 7.4.2).
 
-### 5.2.2 Certificado Cliente {#CertificadoCliente}
+### 5.2.2 Certificado Cliente
 
 Os Certificados de Aplicação Cliente (Transporte) são utilizados para autenticar o canal mTLS e para realizar a autenticação da aplicação cliente através de oAuth2.0 mTLS ou private\_key\_jwt, de acordo com o cadastro da aplicação realizado pelo processo de Dynamic Client Registration junto à entidade transmissora. Sobre o mTLS, o certificado cliente precisa ser enviado com a cadeia intermediária, conforme [RFC5246](https://www.rfc-editor.org/rfc/rfc5246.txt) (itens 7.4.2 e 7.4.6).
 
@@ -1437,7 +1441,7 @@ Para emissão de Certificado Cliente é necessário que a instituição particip
 ### 5.2.2.1 Atributos Open Insurance Brasil
 
 * **serialNumber:** Cadastro Nacional de Pessoal Jurídica (CNPJ) da pessoa jurídica titular do certificado e associado ao atributo UID e Software Statement ID, durante validação junto ao Serviço de Diretório do Open Insurance Brasil;
-* **organizationalUnitName:** Código de Participante associado ao CNPJ listado no Serviço de Diretório do Open Insurance Brasil;
+* **organizationIdentifier:** Código de Participante associado ao CNPJ listado no Serviço de Diretório do Open Insurance Brasil;
 * **UID:** Software Statement ID cadastrado no Serviço de Diretório do Open Insurance Brasil e pertencente ao CNPJ e Código de Participante.
 
 O Certificado Cliente deve ser emitido através de cadeia V10, e deve obrigatoriamente conter os seguintes atributos:
@@ -1451,7 +1455,7 @@ O Certificado Cliente deve ser emitido através de cadeia V10, e deve obrigatori
 * **organizationName (OID 2.5.4.10):** Razão Social
 * **stateOrProvinceName (OID 2.5.4.8):** Unidade da federação do endereço físico do titular do certificado
 * **localityName (OID 2.5.4.7):** Cidade do endereço físico do titular
-* **organizationalUnitName (OID 2.5.4.11):** Código de Participante associado ao CNPJ listado no Serviço de Diretório do Open Insurance Brasil
+* **organizationIdentifier (OID 2.5.4.97):** Código de Participante associado ao CNPJ listado no Serviço de Diretório do Open Insurance Brasil e prefixo de identificação do diretório
 * **UID (OID 0.9.2342.19200300.100.1.1):** Software Statement ID gerado pelo Diretório do Open Insurance Brasil
 * **commonName (OID 2.5.4.3):** FQDN ou Wildcard
 
@@ -1468,7 +1472,7 @@ O Certificado Cliente deve ser emitido através de cadeia V10, e deve obrigatori
 
 Os Certificados de Assinatura são utilizados para realizar assinatura do _payload_ através do uso de JWS (JSON Web Signature).
 
-### 5.2.3.1 Atributos Open Insurance Brasil Presentes no Certificado {#AtributosCertificado}
+### 5.2.3.1 Atributos Open Insurance Brasil Presentes no Certificado
 
 * **UID:** Código de Participante associado ao CNPJ listado no Serviço de Diretório do Open Insurance Brasil;
 * **commonName:** Razão Social cadastrado no Serviço de Diretório do Open Insurance Brasil e pertencente ao CNPJ e Código de Participante.
@@ -1500,9 +1504,6 @@ O Certificado de Assinatura deve ser emitido através de cadeia V5, e deve obrig
 
 As seguintes autoridades certificadoras realizaram o processo de onboarding ao Open Insurance Brasil e estão habilitadas para realizar a emissão de certificados do Open Insurance Brasil utilizando para tal os certificados nível 1 aqui listados:
 
-D5E9797DFB7BF5496ABA9E33CC023CD4C9FA964CECE6413B1CAAF95D9A46DF3F
-
-
 * CertiSign
     * Cadeia ICP [V5](http://acraiz.icpbrasil.gov.br/credenciadas/RAIZ/ICP-Brasilv5.crt), Impressão Digital SHA256: [94:EB:D7:63:DC:D3:9A:85:87:48:D1:43:38:54:F7:D4:72:B1:DD:47:DD:D2:70:43:23:6F:83:80:2F:AA:F1:AB](http://acraiz.icpbrasil.gov.br/credenciadas/CERTISIGN/v5/p/AC_Certisign_G7.crt)
     * Cadeia ICP [V10](http://acraiz.icpbrasil.gov.br/credenciadas/RAIZ/ICP-Brasilv10.crt), Impressão Digital SHA256: [59:6D:25:3B:A2:BE:B7:F1:66:C4:F5:8D:08:78:FB:28:2E:30:8A:28:2C:41:62:69:40:18:BE:5A:17:49:74:19](http://acraiz.icpbrasil.gov.br/credenciadas/CERTISIGN/v10/p/AC-CERTISIGN-ICP-BRASIL-SSL.crt)
@@ -1533,6 +1534,8 @@ Os certificados para Front-End são utilizados para disponibilizar serviços, em
 
 ```
 [req]
+oid_section = OIDs
+
 default_bits = 2048
 default_md = sha256
 encrypt_key = yes
@@ -1541,16 +1544,19 @@ string_mask = utf8only
 distinguished_name = client_distinguished_name
 req_extensions = req_cert_extensions
 
+[ OIDs ]
+organizationIdentifier = 2.5.4.97
+
 [ client_distinguished_name ]
-businessCategory = <type of organization>
+businessCategory = <tipo de organização>
 jurisdictionCountryName = BR
 serialNumber = <CNPJ>
 countryName = BR
-organizationName = <Company Name>
+organizationName = <Razão Social>
 stateOrProvinceName = <UF>
-localityName = <City>
-organizationalUnitName = <PArticipante Code>
-UID = <Software Statement ID issued by the Directory>
+localityName = <Cidade>
+organizationIdentifier = OPIBR-<Código de Participante>
+UID = <Software Statement ID emitido pelo diretório>
 commonName = <FQDN|Wildcard>
 
 [ req_cert_extensions ]
