@@ -3,9 +3,9 @@ info:
   title: APIs Open Data do Open Insurance Brasil
   description: 
     Obtém a lista dos produtos Seguros de Pessoas – Coberturas de Risco (excluindo VGBL).
-  version: 1.0.3
+  version: 1.2.0
   contact:
-    url: 'http://novosite.susep.gov.br/'
+    url: 'https://openinsurance.susep.gov.br/'
 servers:
   - url: 'https://api.organizacao.com.br/open-insurance/products-services/v1'
     description: Servidor de Produção
@@ -49,12 +49,18 @@ paths:
           $ref: '#/components/responses/MethodNotAllowed'
         '406':
           $ref: '#/components/responses/NotAcceptable'
+        '422':
+          $ref: '#/components/responses/UnprocessableEntity'
         '429':
           $ref: '#/components/responses/TooManyRequests'
         '500':
           $ref: '#/components/responses/InternalServerError'
         default:
-          $ref: '#/components/schemas/ResponsePersonList'               
+          description: Dados dos Plano de Seguro de Pessoas
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponsePersonList'           
 components:
   schemas:
     ResponsePersonList:
@@ -95,7 +101,7 @@ components:
         required:
           - name
           - cnpjNumber
-          - product
+          - products
         properties:
           name:
             type: string
@@ -418,9 +424,7 @@ VITALICIA_REVERSIVEL_MINIMO_GARANTIDO
         - deductibleDays 
         - deductibleBRL    
         - excludedRisks
-        - coverageGroup      
         - allowApartPurchase
-        - minCoverageGroupRequired
       properties:
         indemnityPaymentMethod:
            type: array
@@ -437,12 +441,12 @@ VITALICIA_REVERSIVEL_MINIMO_GARANTIDO
            example: INDENIZACAO_UNICA
            enum: [INDENIZACAO_UNICA, DIARIA_OU_PARCELA]
         minValue:
-          type: object
+          type: array
           description: Listagem do valor mínimo de cobertura (Capital Segurado), diária ou parcela aceito pela  sociedade para cada  combinação de modalidade/cobertura do produto. Em reais
           items:
            $ref: '#/components/schemas/PersonCoverageAttibutesDetails'
         maxValue:
-          type: object
+          type: array
           description: Listagem do valor máximo de cobertura (Capital Segurado), diária ou parcela aceito  pela sociedade para cada  combinação de modalidade/cobertura do produto. Em reais
           items:
            $ref: '#/components/schemas/PersonCoverageAttibutesDetails'
@@ -459,7 +463,7 @@ VITALICIA_REVERSIVEL_MINIMO_GARANTIDO
           type: string
           description: Moeda sobre a qual a cobertura se refere. De acordo com ISO-4217.
           example: BRL
-          enum: [AFN,ALL,DZD,USD,EUR,AOA,XCD,XCD,ARS,AMD,AWG,AUD,EUR,AZN,BSD,BHD,BDT,BBD,BYN,EUR,BZD,XOF,BMD,BTN,BOB,BOV,USD,BAM,BWP,NOK,BRL,USD,BND,BGN,XOF,BIF,CVE,KHR,XAF,CAD,KYD,XAF,XAF,CLF,CLP,CNY,AUD,AUD,COP,COU,KMF,CDF,XAF,NZD,CRC,HRK,CUC,CUP,ANG,EUR,CZK,XOF,DKK,DJF,XCD,DOP,USD,EGP,SVC,USD,XAF,ERN,EUR,ETB,EUR,FKP,DKK,FJD,EUR,EUR,EUR,XPF,EUR,XAF,GMD,GEL,EUR,GHS,GIP,EUR,DKK,XCD,EUR,USD,GTQ,GBP,GNF,XOF,GYD,HTG,USD,AUD,EUR,HNL,HKD,HUF,ISK,INR,IDR,XDR,IRR,IQD,EUR,GBP,ILS,EUR,JMD,JPY,GBP,JOD,KZT,KES,AUD,KPW,KRW,KWD,KGS,LAK,EUR,LBP,LSL,ZAR,LRD,LYD,CHF,EUR,EUR,MOP,MGA,MWK,MYR,MVR,XOF,EUR,USD,EUR,MRU,MUR,EUR,XUA,MXN,MXV,USD,MDL,EUR,MNT,EUR,XCD,MAD,MZN,MMK,NAD,ZAR,AUD,NPR,EUR,XPF,NZD,NIO,XOF,NGN,NZD,AUD,USD,NOK,OMR,PKR,USD,PAB,USD,PGK,PYG,PEN,PHP,NZD,PLN,EUR,USD,QAR,MKD,RON,RUB,RWF,EUR,EUR,SHP,XCD,XCD,EUR,EUR,XCD,WST,EUR,STN,SAR,XOF,RSD,SCR,SLL,SGD,ANG,XSU,EUR,EUR,SBD,SOS,ZAR,SSP,EUR,LKR,SDG,SRD,NOK,SZL,SEK,CHE,CHF,CHW,SYP,TWD,TJS,TZS,THB,USD,XOF,NZD,TOP,TTD,TND,TRY,TMT,USD,AUD,UGX,UAH,AED,GBP,USD,USD,USN,UYI,UYU,UZS,VUV,VEF,VND,USD,USD,XPF,MAD,YER,ZMW,ZWL]   
+          enum: [AED,AFN,ALL,AMD,ANG,AOA,ARS,AUD,AWG,AZN,BAM,BBD,BDT,BGN,BHD,BIF,BMD,BND,BOB,BOV,BRL,BSD,BTN,BWP,BYN,BZD,CAD,CDF,CHE,CHF,CHW,CLF,CLP,CNY,COP,COU,CRC,CUC,CUP,CVE,CZK,DJF,DKK,DOP,DZD,EGP,ERN,ETB,EUR,FJD,FKP,GBP,GEL,GHS,GIP,GMD,GNF,GTQ,GYD,HKD,HNL,HRK,HTG,HUF,IDR,ILS,INR,IQD,IRR,ISK,JMD,JOD,JPY,KES,KGS,KHR,KMF,KPW,KRW,KWD,KYD,KZT,LAK,LBP,LKR,LRD,LSL,LYD,MAD,MDL,MGA,MKD,MMK,MNT,MOP,MRU,MUR,MVR,MWK,MXN,MXV,MYR,MZN,NAD,NGN,NIO,NOK,NPR,NZD,OMR,PAB,PEN,PGK,PHP,PKR,PLN,PYG,QAR,RON,RSD,RUB,RWF,SAR,SBD,SCR,SDG,SEK,SGD,SHP,SLL,SOS,SRD,SSP,STN,SVC,SYP,SZL,THB,TJS,TMT,TND,TOP,TRY,TTD,TWD,TZS,UAH,UGX,USD,USN,UYI,UYU,UZS,VEF,VND,VUV,WST,XAF,XCD,XDR,XOF,XPF,XSU,XUA,YER,ZAR,ZMW,ZWL]
         gracePeriod:
           $ref: '#/components/schemas/PersonGracePeriodUnit'
         differentiatedGracePeriod:
@@ -803,4 +807,10 @@ VITALICIA_REVERSIVEL_MINIMO_GARANTIDO
       content:
         application/json; charset=utf-8:
           schema:
-            $ref: '#/components/schemas/ResponseError'          
+            $ref: '#/components/schemas/ResponseError'
+    UnprocessableEntity:
+      description: O servidor entende o tipo de conteúdo da entidade da requisição, e a sintaxe da requisição esta correta, mas não foi possível processar as instruções presentes.
+      content:
+        application/json; charset=utf-8:
+          schema:
+            $ref: '#/components/schemas/ResponseError'      
