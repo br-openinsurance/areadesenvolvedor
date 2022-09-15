@@ -38,7 +38,7 @@ info:
     ### `/business/complimentary-information`
       - permissions:
         - GET: **CUSTOMERS_BUSINESS_ADITTIONALINFO_READ**
-  version: 1.0.5
+  version: 1.1.0
   license:
     name: Apache 2.0
     url: 'http://www.apache.org/licenses/LICENSE-2.0'
@@ -455,8 +455,6 @@ components:
       type: object
       required:
         - nature
-        - cpfNumber
-        - civilName
       properties:
         nature:
           $ref: '#/components/schemas/EnumProcuratorsNaturePersonal'
@@ -464,21 +462,18 @@ components:
           type: string
           maxLength: 11
           example: '73677831148'
-          description: 'Número completo do CPF. O CPF é o Cadastro de Pessoa natural. Ele é um documento feito pela Receita Federal e serve para identificar os contribuintes. O CPF é uma numeração com 11 dígitos, que só mudam por decisão judicial. O documento é emitido pela receita federal'
+          description: '(Caso Natureza dos poderes vigentes de representantefor “Representante legal” ou “Procurador”) CPF ou CNPJ do representante'
         civilName:
           type: string
           maxLength: 70
           example: Elza Milena Stefany Teixeira
-          description: 'Nome civil completo da pessoa natural. (Direito fundamental da pessoa, o nome civil é aquele atribuído à pessoa natural desde o registro de seu nascimento, com o qual será identificada por toda a sua vida, bem como após a sua morte)'
+          description: '(Caso Natureza dos poderes vigentes de representante for “Representante legal” ou “Procurador”) Nome ou razão social do representante'
         socialName:
           type: string
           maxLength: 70
           pattern: '^[\w\W]*$'
           example: 'string'
-          description: |
-            Nome social da pessoa natural, se houver. 
-            (aquele pelo qual travestis e transexuais se reconhecem, 
-            bem como são identificados por sua comunidade e em seu meio social, conforme Decreto Local).  
+          description: '(Caso Natureza dos poderes vigentes de representante for “Representante legal” ou “Procurador”) Nome social do representante'  
       additionalProperties: false
     BusinessQualificationData:
       type: object
@@ -510,7 +505,7 @@ components:
               pattern: '^(\w{3}){1}$|^NA$'
               maxLength: 3
               example: BRL
-              description: 'Moeda referente ao valor do patrimônio, segundo modelo ISO-4217.'
+              description: 'Moeda referente ao valor do faturamento, segundo modelo ISO-4217.'
             amount:
               type: number
               minLength: 0
@@ -519,13 +514,13 @@ components:
               pattern: '^-?\d{1,15}\.\d{2,4}$'
               example: 100000.04
               description: |
-                Valor da renda
+                Valor do faturamento
             year:
               type: string
-              maxLength: 20
-              format: date-year
+              maxLength: 4
+              format: date-fullyear
               example: '2010'
-              description: 'Data de referência da renda, conforme especificação RFC-3339.' 
+              description: 'Ano de referência do faturamento, conforme especificação RFC-3339.' 
           additionalProperties: false
         informedPatrimony:
           type: object
@@ -544,13 +539,14 @@ components:
               pattern: '^-?\d{1,15}\.\d{2,4}$'
               example: 100000.04
               description: |
-                Valor da renda
-            year:
+                Valor do patrimônio
+            date:
               type: string
-              maxLength: 20
-              format: date-year
-              example: '2010'
-              description: 'Data de referência da renda, conforme especificação RFC-3339.' 
+              maxLength: 10
+              format: date
+              pattern: '^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])$'
+              example: '2012-05-21'
+              description: 'Data de referência do patrimônio, conforme especificação RFC-3339.' 
           additionalProperties: false
       additionalProperties: false
     BusinessParties:
@@ -629,7 +625,6 @@ components:
       description: Conjunto de informações referentes às formas para contatar o cliente.
       required:
         - postalAddresses
-        - phones
       properties:
         postalAddresses:
           type: array
@@ -1132,7 +1127,6 @@ components:
       type: object
       required:
         - businesscnpjNumber
-        - country
       description: Objeto agrupador de informações relativas a Documentos da pessoa natural
       properties:
         businesscnpjNumber:
@@ -1325,8 +1319,6 @@ components:
           description: 'Data de nascimento, conforme especificação RFC-3339'  
         filiation:
           type: object
-          required:
-            - civilName
           properties:
             type:
               $ref: '#/components/schemas/EnumFiliationType'
@@ -1361,8 +1353,6 @@ components:
       type: object
       required:
         - nature
-        - cpfNumber
-        - civilName
       properties:
         nature:
           $ref: '#/components/schemas/EnumProcuratorsNaturePersonal'
@@ -1370,21 +1360,18 @@ components:
           type: string
           maxLength: 11
           example: '73677831148'
-          description: 'Número completo do CPF. O CPF é o Cadastro de Pessoa natural. Ele é um documento feito pela Receita Federal e serve para identificar os contribuintes. O CPF é uma numeração com 11 dígitos, que só mudam por decisão judicial. O documento é emitido pela receita federal'
+          description: '(Caso Natureza dos poderes vigentes de representantefor “Representante legal” ou “Procurador”) CPF ou CNPJ do representante'
         civilName:
           type: string
           maxLength: 70
           example: Elza Milena Stefany Teixeira
-          description: 'Nome civil completo da pessoa natural. (Direito fundamental da pessoa, o nome civil é aquele atribuído à pessoa natural desde o registro de seu nascimento, com o qual será identificada por toda a sua vida, bem como após a sua morte)'
+          description: '(Caso Natureza dos poderes vigentes de representante for “Representante legal” ou “Procurador”) Nome ou razão social do representante'
         socialName:
           type: string
           maxLength: 70
           pattern: '^[\w\W]*$'
           example: 'string'
-          description: |
-            Nome social da pessoa natural, se houver. 
-            (aquele pelo qual travestis e transexuais se reconhecem, 
-            bem como são identificados por sua comunidade e em seu meio social, conforme Decreto Local).  
+          description: '(Caso Natureza dos poderes vigentes de representante for “Representante legal” ou “Procurador”) Nome social do representante'
       additionalProperties: false
     PersonalQualificationData:
       type: object
@@ -1452,7 +1439,7 @@ components:
               pattern: '^(\w{3}){1}$|^NA$'
               maxLength: 3
               example: BRL
-              description: 'Moeda referente ao valor do patrimônio, segundo modelo ISO-4217.'
+              description: 'Moeda referente ao valor da renda, segundo modelo ISO-4217.'
             amount:
               type: number
               minLength: 0
@@ -1462,11 +1449,12 @@ components:
               example: 100000.04
               description: |
                 Valor da renda
-            year:
+            date:
               type: string
-              maxLength: 20
-              format: date-year
-              example: '2010'
+              maxLength: 10
+              format: date
+              pattern: '^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])$'
+              example: '2012-05-21'
               description: 'Data de referência da renda, conforme especificação RFC-3339.' 
           additionalProperties: false
         informedPatrimony:
@@ -1486,13 +1474,13 @@ components:
               pattern: '^-?\d{1,15}\.\d{2,4}$'
               example: 100000.04
               description: |
-                Valor da renda
+                Valor do patrimônio
             year:
               type: string
-              maxLength: 20
-              format: date-year
+              maxLength: 4
+              format: date-fullyear
               example: '2010'
-              description: 'Data de referência da renda, conforme especificação RFC-3339.' 
+              description: 'Ano de referência do patrimônio, conforme especificação RFC-3339.' 
           additionalProperties: false  
       additionalProperties: false
     ResponseBusinessCustomersComplimentaryInformation:
