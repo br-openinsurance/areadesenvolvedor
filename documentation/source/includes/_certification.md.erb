@@ -1,0 +1,287 @@
+## Certificação de conformidade
+
+O *Test Plan* da Fase 2 Versão 2 de dados transacionais é uma série de *test plans* que foram construídos para testar se as implementaçãos de cada instituição estão em linha com a última versão das [APIs de dados transacionais da fase 2 do Open Insurance Brasil](https://br-openinsurance.github.io/areadesenvolvedor/#fase-2-apis-do-open-insurance-brasil), e também estão em linha dos requisitos funcionais esperados
+
+Os testes são divididos em duas diferentes classes:
+
+**- Testes Estruturais** - Testes que validarão a estrutura do JSON structure para as respostas 20X de cada *endpoint* de dados. Já que a camada de segurança não será testada, o *payload* não deve ser protegido via MTLS. Haverão um módulo de teste por API dentro do mesmo *test plan*.
+
+**- Teste Funcionais** - Testes que validarão o comportamente funcional da API, com um *test plan* específico para cada API.
+
+Como os testes estão em desenvolvimento contínuo, até que as certificações iniciem podem ser encontrados erros durante as execuções pelas instituições. Estes erros podem ser relacionados a especificações incertas ou porque o teste está executando um comportamento que não está em linha com o definido nas especificacões. Em ambos os casos, as instituições devem abrir um [ticket de issue no GitLab](https://gitlab.com/openinsurancebrazil/conformance-suite/-/issues) para que o erro possa ser avaliado pelo time de engenharia da Conformance Suite.
+
+
+### Datas das releases
+
+- 15/09/22 - Testes Funcionais e Estruturais foram disponibilizados em uma versão Alpha, para as seguintes APIs:
+    - API de Consents, baseados na versão 1.0.0
+    - API de Resources, baseados na versão 1.0.0
+    - API de Customers, baseados na versão 1.1.0
+    - API de Patrimonial, baseados na versão 1.1.0
+
+
+### Requisitos de amostra de dados
+
+Todos os testes necessitam que as instituições provisionem pelo menos um cliente Pessoa Física ou Pessoa Jurídica com o produto que está sendo testado. O CPF ou par de CPF/CNPJ do cliente testado deve ser provisionado na configuração do teste para que as APIs possam ser acessadas e o *payload* de resposta possa ser validado no escopo do teste.
+
+Quando dados além dos definidos acima forem necessários, o sumário do teste definirá o que deve ser provisionado para que o teste execute com sucesso. Os seguintes *test plans* contém módulos que necessitam de amostras de dados:
+
+1. Resources API Test 1.1.0 - entre 3 a 25 recursos acessíveis devem ser provisionados para que o usuário passe no teste de paginação que requer o acesso a uma segunda página.
+
+
+### Execução dos *test plans*
+To execute the tests the user will have to follow a three-step process:
+Para executar os testes, o usuário deve seguir um processo de 4 passos:
+
+1. Acessar o [Open Insurance Conformance Suite](https://web.conformance.directory.opinbrasil.com.br)
+2. Selecionar um *Test Plan*
+3. Preencher os campos de configuração
+4. Executar os módulos de teste
+
+O detalhe de cada passo é definido a seguir:
+
+
+### Acesso a Conformance Suite
+
+The Customer Data tests are available on the [Open Insurance Brasil Conformance Suite](https://web.conformance.directory.opinbrasil.com.br). To access the conformance suite, the user must have an active account at the [Open Insurance Brasil Sandbox Directory](https://web.sandbox.directory.opinbrasil.com.br/).
+
+Os testes de dados transacionais estão disponíveis na [Open Insurance Brasil Conformance Suite](https://web.conformance.directory.opinbrasil.com.br). Para acessar a Conformance Suite, o usuário deve ter uma conta ativa no [Diretório de Sandbox do Open Insurance Brasil](https://web.sandbox.directory.opinbrasil.com.br/).
+
+Após o acesso o usuário será direcionado a uma página inicial com 6 botões:
+
+![image](../images/suite_buttons.png)
+
+Para executar os testes, o usuário deve clicar no botão **"Create a new test plan"**. O usuário pode também verificar logs de testes ou planos publicados nas outras opções.
+
+
+### Selecionar um *Test Plan*
+
+Ao criar um *test plan*, o usuário deverá prencher as informações pertinentes a execução:
+
+![image](../images/suite_test_info.png)
+
+A lista completa de *test plans* é disponibilizada no menu "Test Plans". Nele o usuário pode selecionar qualquer um dos testes apresentados na lista. Tanto os testes Estruturais quanto os Funcionais estarão disponíveis nesta lista:
+
+![image](../images/suite_test_plans.png)
+
+Após selecionar um *test plan*, o usuário também será solicitado a preencher três opções:
+
+1. **Client Autenthication Type** - Como o cliente se autenticará no servidor para obter o token. FAPI suporta somente `private_key_jwt` e `tls_client_auth` dos [Métodos de Autenticação OAuth 2.0](https://darutk.medium.com/oauth-2-0-client-authentication-4b5f929305d4) disponíveis
+
+2. **Request Object Method** - Se [PAR](https://datatracker.ietf.org/doc/rfc9126/) será ou não utilizado
+
+3. **FAPI Response Mode** - O Open Insurance Brazil não permite JARM, então testes devem ser sempre executados com "plain response"
+
+
+### Preencher os campos de configuração
+
+Dependendo do tipo de teste a ser executado (Funcional ou Estrutural) o usuário será solicitado a providenciar informações adicionais para prosseguir com a execução do teste. As informações são detalhes tanto sobre o cliente que será utilizado pela Conformance Suite, quanto detalhes sobre o servidor que será certificado pelos testes
+
+### Configuração dos testes estruturais
+
+O usuário deve providenciar as seguintes informações para executar os testes estruturais:
+
+![image](../images/suite_structural_config.png)
+
+### Test Information:
+
+Estes campos são usados para definir informações gerais utilizadas pela Conformance Suite quando executando e salvando os testes.
+
+**alias:** Este campo será utilizado para criar o redirect_uri que será utilizado ao executar o fluxo de autorização no escopo dos testes. *Este é um campo padrão, e não será utilizado nos testes estruturais*.
+
+**description:** Campo de texto livre que será utilizado para identificar este teste posteriormente.
+
+**publish:** Selecione se os resultados dos testes devem ser publicados ou mantidos privados - Caso sejam publicados será possível que outros usuários acessem seus *test plans* [ao pesquisar por logs de testes públicos](https://web.conformance.directory.openbankingbrasil.org.br/logs.html?public=true).
+
+### Resource:
+
+**resourceUrl:** Providencie um URL que será utilizado para acessar o *endpoint* via Regex. É importante notar que o URL providenciado neste campo deve ser o que hospede as *payloads* que serão validadas no teste estrutural, portanto não deve ser protegido via MTLS. Exemplo: https://www.example.dummypayload.com/open-insurance/consents/v1/
+
+**Mock Policy ID:** 
+Providencie o *policyId* mockado que será utilizado para acessar os endpoints, quando necessário. O valor também será utilizado como *consentId* nos testes estruturais de consentimento. O usuário *deve providenciar somente o policyID e **não** a URI contendo o policyId*. Exemplo de URI que utilizará este campo: https://www.example.dummypayload.com/open-insurance/insurance-patrimonial/v1/{policyID}/policy-info
+
+
+### Configuração dos testes funcionais
+
+Os testes funcionais requerem informações adicionais que devem ser preenchidas na configuração do teste. As seções que devem ser preenchidas são:
+
+* Test Information
+* Server
+   * Client
+   * Resource
+   * Directory
+
+A descrição de cada campo é detalhada abaixo:
+
+### Test Information:
+
+Estes campos são usados para definir informações gerais utilizadas pela Conformance Suite quando executando e salvando os testes.
+
+**alias:** Este campo será utilizado para criar o redirect_uri que será utilizado ao executar o fluxo de autorização no escopo dos testes.
+A `redirect_uri` terá o seguinte formato: "https://web.conformance.directory.openbankingbrasil.org.br/test/a/alias/callback" no qual `alias` é o valor definido no campo *alias*. Certifique-se de que este `redirect_uri` foi adicionado ao *software_statement* utilizado no DCR.
+
+**description:** Campo de texto livre que será utilizado para identificar este teste posteriormente.
+
+**publish:** Selecione se os resultados dos testes devem ser publicados ou mantidos privados - Caso sejam publicados será possível que outros usuários acessem seus *test plans* [ao pesquisar por logs de testes públicos](https://web.conformance.directory.openbankingbrasil.org.br/logs.html?public=true).
+
+
+### Server Details 
+
+Estes campos são relacionados à configuração do servidor e suas URIs, incluindo tanto as URIs do Authorisation Server as URIs do Resource Server.
+
+**discoveryUrl:** Providencie a [URI de Meta Data do Authorisation Server](https://tools.ietf.org/id/draft-ietf-oauth-discovery-08.html), também conhecida como o endereço *well-known*.
+
+### Client Details:
+
+Estes detalhes são relacionados ao Software Statement que deve ser criado no ambiente de Sandbox do Open Insurance Brasil e que será utilizado pela Conformance Suite para conectar-se ao servidor que será testado. Antes de gerar os certificados e realizar o DCR para gerar o client_id necessário, certifique-se de que o *redirect_uri* correto e o papel de *DADOS* foi adicionado ao Software Statement.
+
+**jwks**: Providencie as chaves de assinatura utilizadas pelo cliente em um formato JWKS. Nós sugerimos utilizar a PKI do Diretório de Sandbox para gerar estas chaves. Para criar uma chave de assinatura (BRSEAL) na PKI do Diretório de Sandbox, refira-se ao [guia de geração do certificado BRSEAL](https://br-openinsurance.github.io/areadesenvolvedor/files/OpenInsurance_Gerando_o_Certificado_BRSEAL.pdf)
+
+As chaves geradas seguindos as instruções do diretório serão geradas em um formato que não é JSON. Porém os testes necessitam que as chaves estejam no formato JWKS. Há diversas maneiras de realizar a conversão. Dado que esta chave será publicada durante a execução do teste, é possível utilizar um conversor online para obter o JWKS, com o procedimento a seguir:
+
+1. Converta o arquivo .key obtido do diretório para RSA com OpenSSL `openssl rsa -in server.key -out server_new.key`
+2. Converta a chave RSA para JWK em https://8gwifi.org/jwkconvertfunctions.jsp 
+3. Antes de adicionar a Private Key na Conformance Suite, certifique-se de o objeto "alg": "PS256" foi adicionado ao jwks, e que o campo "kid" está atualizado com o kid correto do diretório, e que o campo "use" tem o valor "sig".
+
+**mtls.cert**: Providencie o conteúdo do certificado Public Transport (BRCAC) gerado no Diretório de Sandbox em formato PEM. Aqui você pode abrir o arquivo .pem com um editor de texto comum e colar os conteúdos neste campo. Para criar um certificado BRCAC na PKI do Diretório de Sandbox, refira-se ao [guia de geração do certificado BRCAC](https://br-openinsurance.github.io/areadesenvolvedor/files/OpenInsurance_Gerando_o_Certificado_BRCAC.pdf)
+
+**mtls.key**: Providencie o conteúdo da chave pública em formato .PEM. Similar ao campo mtls.cert, porém aqui deve ser providenciado o conteúdo da chave que foi gerada junto ao .csr.
+
+**mtls.ca**: Providencie a cadeia de certificados do Diretório de Sandbox, utilizada para assinar todas as chaves emitidas pela PKI de Sandbox. O arquivo é disponibilizado abaixo, cole todo seu conteúdo no campo.
+
+<div class="center-column"></div>
+
+```
+-----BEGIN CERTIFICATE-----
+MIIF+TCCBOGgAwIBAgIUREOZADRSvAehVYQQw8xHQ60nZ78wDQYJKoZIhvcNAQEL
+BQAwdDELMAkGA1UEBhMCQlIxHjAcBgNVBAoTFU9wZW4gSW5zdXJhbmNlIEJyYXNp
+bDEXMBUGA1UECxMOT3BlbiBJbnN1cmFuY2UxLDAqBgNVBAMTI09wZW4gSW5zdXJh
+bmNlIFJvb3QgUFJPRFVDVElPTiAtIEcxMB4XDTIxMTIwMTIyNTIwMFoXDTI2MTIw
+MTIyNTIwMFowejELMAkGA1UEBhMCQlIxHjAcBgNVBAoTFU9wZW4gSW5zdXJhbmNl
+IEJyYXNpbDEXMBUGA1UECxMOT3BlbiBJbnN1cmFuY2UxMjAwBgNVBAMTKU9wZW4g
+SW5zdXJhbmNlIFBST0RVQ1RJT04gSXNzdWluZyBDQSAtIEcxMIIBIjANBgkqhkiG
+9w0BAQEFAAOCAQ8AMIIBCgKCAQEA6TIU0IP+uAkcZELubrJX+XmBwbaRIciK0h7j
+6GAapcesiLK38yMYoaMDGrIFcBGVZel4obGt/zNgbPgf1DPgy5DiissfpXWiwSM5
+NmfQMzEkytng0VpZqRAadHo1do1s9pxe1GPrPPreS3F4yQgDw6muQxqOhSXFVSzF
+B/PMTBbxOc3UBWy0gTwzTTeRxtl/mxJ/pqeShHshx6aORyJ7jO9w10LR6VxsqaUO
+mZAx9uTYgqksqeude4Zey0+UJ596VwimqEPv5XlvSnZdxnZcL/CoD2utIejWFryz
+K9cf8Dj45QdmA5Zx7vUa0OFAePnOyp6vUtVxfvabuDhbwLqEqQIDAQABo4ICezCC
+AncwDgYDVR0PAQH/BAQDAgEGMBIGA1UdEwEB/wQIMAYBAf8CAQAwHQYDVR0OBBYE
+FPhBgaejhY3OmEaSm8czJEVVH7VnMB8GA1UdIwQYMBaAFMJpDULSOPWXMhRNUL00
+FUsCVtlbMD0GCCsGAQUFBwEBBDEwLzAtBggrBgEFBQcwAYYhaHR0cDovL29jc3Au
+cGtpLm9waW5icmFzaWwuY29tLmJyMDwGA1UdHwQ1MDMwMaAvoC2GK2h0dHA6Ly9j
+cmwucGtpLm9waW5icmFzaWwuY29tLmJyL2lzc3Vlci5jcmwwggGSBgNVHSAEggGJ
+MIIBhTCCAYEGCisGAQQBg7ovZAEwggFxMIIBNgYIKwYBBQUHAgIwggEoDIIBJFRo
+aXMgQ2VydGlmaWNhdGUgaXMgc29sZWx5IGZvciB1c2Ugd2l0aCBSYWlkaWFtIFNl
+cnZpY2VzIExpbWl0ZWQgYW5kIG90aGVyIHBhcnRpY2lwYXRpbmcgb3JnYW5pc2F0
+aW9ucyB1c2luZyBSYWlkaWFtIFNlcnZpY2VzIExpbWl0ZWRzIFRydXN0IEZyYW1l
+d29yayBTZXJ2aWNlcy4gSXRzIHJlY2VpcHQsIHBvc3Nlc3Npb24gb3IgdXNlIGNv
+bnN0aXR1dGVzIGFjY2VwdGFuY2Ugb2YgdGhlIFJhaWRpYW0gU2VydmljZXMgTHRk
+IENlcnRpY2ljYXRlIFBvbGljeSBhbmQgcmVsYXRlZCBkb2N1bWVudHMgdGhlcmVp
+bi4wNQYIKwYBBQUHAgEWKWh0dHA6Ly9jcHMucGtpLm9waW5icmFzaWwuY29tLmJy
+L3BvbGljaWVzMA0GCSqGSIb3DQEBCwUAA4IBAQAw9/XF3wYwCE321WVJBZZ8xHYE
+ze4umx9lTklw90x2gmOhjmxnU5V0eL0LaV+XcZjsRF7Hs8Du/vB7WiOELuAlw2Yq
+I+8/2xcdARfbgEQirhPTrogTUPFcoW9SJ1OS3IGRErsFEvhAaiq1Vh+l9VNWTJdp
+82vraRxR48DiWDPSq+H/qWtW+TrnbLloLu+lhIIGScmaRpPyQfPzGdRL8tmiRdW+
+zlpP9P6dM/Y1RS0LM1xfoSaLL2dxSWmr3w7qq0YgALv3HN7qTX+lUDf9IKU+Bq1U
+wGvtyBGSrL6/WYEAlpLHwZNbTbMcIYUSjerAZ6Pk/AJ825fE2vy3hwtJOQDW
+-----END CERTIFICATE-----
+-----BEGIN CERTIFICATE-----
+MIIDuDCCAqCgAwIBAgIUTJ8WRDgDO7xeSD9ZCWX390zO970wDQYJKoZIhvcNAQEL
+BQAwdDELMAkGA1UEBhMCQlIxHjAcBgNVBAoTFU9wZW4gSW5zdXJhbmNlIEJyYXNp
+bDEXMBUGA1UECxMOT3BlbiBJbnN1cmFuY2UxLDAqBgNVBAMTI09wZW4gSW5zdXJh
+bmNlIFJvb3QgUFJPRFVDVElPTiAtIEcxMB4XDTIxMTIwMTIyNTIwMFoXDTI2MTEz
+MDIyNTIwMFowdDELMAkGA1UEBhMCQlIxHjAcBgNVBAoTFU9wZW4gSW5zdXJhbmNl
+IEJyYXNpbDEXMBUGA1UECxMOT3BlbiBJbnN1cmFuY2UxLDAqBgNVBAMTI09wZW4g
+SW5zdXJhbmNlIFJvb3QgUFJPRFVDVElPTiAtIEcxMIIBIjANBgkqhkiG9w0BAQEF
+AAOCAQ8AMIIBCgKCAQEA2DpSVXawMOMvJgoLnNDjnVHSImyZXEwPNbvaEPW9oHUL
+8ZdcRGgwcqchlSnjle1xEDFSVC+ZX+y/mPuU5KgG/AYdfCa4wlpCgh4v+Cx9QoJS
+s1UsMVBvDjE9uUHh2UJb+aQAelOmaugJGhHnclW8Z29H5jV6gZpjkRPPhOfcOBXl
+K/4uy8JKnjEHofnN00c8qkF4FyHHfrqx6ULKrjJ+rhSLxCYwwklQorVuoASOblxy
+j28aCsuHUCwGUfSDG/mRpvEbZrDb9mjDml6A5IF+5kjaYu+FA44oK7MaKjuVLy4U
+mQ3jQJmLYfRZiiWHtFibuHkBKZthI9lP5d1xYyIN5QIDAQABo0IwQDAOBgNVHQ8B
+Af8EBAMCAQYwDwYDVR0TAQH/BAUwAwEB/zAdBgNVHQ4EFgQUwmkNQtI49ZcyFE1Q
+vTQVSwJW2VswDQYJKoZIhvcNAQELBQADggEBAHYj6cKCDqDF+hfaRS4XysyQcl2v
+mGtgE3a+g/stcFJzR508eVz6ycglYHAsNgAWszD+eLRZmBvo6cp4bpNPwEZkOpUd
+CHtCQeZEk3v5sP6I1xvMUSynwkMb0GfUK7Dj0XRlT+2Xr9XUJmJFDCVkYpQnWCcC
+Pdt5S8aBqEubFGMJjybVSO7Q0+7Ud4JoxdsMgr0J0mKwIhEv3o16YK2AInmfNSu2
+6FDpyQkPQnLyV1o1mNZSyZ4fao8ANxb75K9RrqRma5DQsM+mpw0z9MRd9usrKe3c
+X8XHUuNNi44GGS+bQWipEvaQo99znfRpETB6LNNHEwAqafuAEzbCSj3h5eo=
+-----END CERTIFICATE-----
+```
+
+Estes arquivos também são hospedados na PKI do diretório OPIN: [Root CA](http://crl.pki.opinbrasil.com.br/root-ca.pem) e [Issuing CA](http://crl.pki.opinbrasil.com.br/issuer-ca.pem)
+
+
+**client_id:** Neste campo, você deve providenciar o *client_id* que foi gerado ao realizar um [DCR](https://br-openinsurance.github.io/areadesenvolvedor/#dynamic-client-registration-dcr) contra o servidor a ser testado com as credenciais preenchidas acima.
+
+Certifique-se de que o Software Statemen utilizado foi registrado com o papel de DADOS.
+
+### Resouce
+
+**consentUrl:** Providencie a URI utilizada para acessar a API de Consent de dados transacionais.
+
+**brazilCpf:** Providencie o CPF do cliente teste criado para o escopo dos testes. Este CPF será utilizado ao criar o ConsentID em cada um dos planos executados pela Conformance Suite.
+
+**brazilCnpj:** Caso a instituição deseje testar com um cliente do tipo Pessoa Jurídica, providencie também o CNPJ que será utilizado para criar o Consentimento. Este campo não é obrigatório.
+
+**Business or Personal Products:** Selecione se a Conformance Suite utilizará as permissões de *Customer Personal Permissions* (Pessoas Físicas) ou *Business Personal Permission* (Pessoa Jurídica) ao obter dados do servidor. Caso o campo *brazilCnpj* seja preenchido, selecione *Business Personal Permission*.
+
+### Directory
+
+**Directory ClientID:** ID do cliente (Software Statement) no Diretório. Este valor é utilizado para obter o *access token*, que é utilizado para obter o Software Statement.
+
+Quando todas as configurações estiverem preenchidas, clique em "Create Test Plan":
+
+![image](../images/suite_create_plan.png)
+
+### Executar os módulos de teste
+
+Após a criação dos *test plans*, você será redirecionado à página de *test plan*. Para começar a execução dos testes, selecione o módulo de teste a ser executado, e clique em "Run test":
+
+![image](../images/suite_run_test.png)
+
+Por favor leia a descrição do teste na caixa de texto azul claro próxima ao topo dos logs da página - essa seção pode conter instruções específicas ao teste; por exemplo, um teste requer que o usuário rejeite o processo de autenticação. Se aplicável, o teste pode pedir que seja aceito (ou negado, ou ignorado) o pedido no dispositivo de autenticação em questão.
+
+Quando o teste for completado, pressione “Continue Plan” para iniciar o próximo teste, ou “Return to Plan” para visualizar seu progresso.
+
+Se você necessitar de suporte, por favor crie um *issue* no GitLab da Conformance Suite, visitando este [link](https://gitlab.com/openinsurancebrazil/conformance-suite/-/issues).
+
+Caso seja relacionado a falha de um teste, por favor inclua um link para o *log-detail.html* relacionado, ou caso esteja utilizando uma instalação local, o arquivo de log baixado.
+
+
+### Lista de *Test Plans*
+
+26 módulos de testes distintos já foram disponibilizados para a Certificação da Versão das APIs da Fase 2. Estes testes estão separados em seis diferentes *test plans*, um para cada teste Funcional mais um para os testes Estruturais. Os módulos disponíveis estão listados a seguir:
+* Functional tests for Consents API - version 1.0.0
+   * opin-preflight-check-test
+   * opin-consent-api-test
+   * opin-consent-api-status-test
+   * opin-consent-api-test-negative
+   * opin-consent-api-test-permission-groups
+   * opin-consent-api-test-client-limits
+   * opin-consent-api-status-declined-test
+   * opin-consent-api-expired-consent-test
+   * opin-consents-api-delete-test
+   * opin-consent-inavlid-user-test
+* Functional tests for Resources API - version 1.0.0
+   * opin-resources-api-test
+   * opin-resources-api-test-404-customer-data
+   * opin-resources-api-pagination-test
+* Functional tests for Customer Personal API - version 1.1.0
+   * opin-customer-personal-data-api-test
+   * opin-customer-personal-api-wrong-permissions-test
+* Functional tests for Customer Business API - version 1.1.0
+   * opin-customer-business-data-api-test
+   * opin-customer-business-api-wrong-permissions-test
+* Functional tests for Patrimonial API - version 1.1.0
+   * opin-patrimonial-api-test
+   * opin-patrimonial-api-wrong-permissions-test
+   * opin-patrimonial-resources-api-test
+   * opin-patrimonial-residencial-api-branch-test
+* Structural tests
+   * opin-consents-api-structural-test
+   * opin-resources-api-structural-test
+   * opin-customer-personal-api-structural-test
+   * opin-customer-business-api-structural-test
+   * opin-patrimonial-api-structural-test 
