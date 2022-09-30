@@ -1,0 +1,59 @@
+O Open Insurance, ou Sistema de Seguros Aberto, é a possibilidade de consumidores de produtos e serviços de seguros, previdência complementar aberta e capitalização permitirem o compartilhamento de suas informações entre diferentes sociedades autorizadas/credenciadas pela Susep, de forma segura, ágil, precisa e conveniente. Para entregar esses benefícios ao consumidor, o Open Insurance operacionaliza e padroniza o compartilhamento de dados e serviços por meio de abertura e integração de sistemas, com privacidade e segurança.
+ <a target="_blank" href="https://www.gov.br/susep/pt-br/assuntos/open-insurance">Acesse o site oficial da SUSEP</a>
+<br>
+#### ANTES DE COMEÇAR
+Esse guia tem como objetivo demostrar de forma prática a operação do Diretório Central do Open Insurance Brasil. Além disso, ele é complementar a outras documentações disponibilizadas pela governança e não faz parte do escopo de quaisquer detalhamentos relacionados a experiência do usuário e desenvolvedor, definições de segurança e especificação de APIs.
+
+Todas as funcionalidades estão disponíveis em sandbox e podem ser testadas em: https://web.sandbox.directory.opinbrasil.com.br/
+
+Procedimentos em produção pendentes serão disponibilizados assim que possível. As ações aqui apresentadas podem ser realizadas tanto por administradores quanto por contatos técnicos primários e secundários.
+
+Para ilustrar este guia e tentar deixar as situações de uso mais palpáveis, foram criadas instituições e telas fictícias.
+
+* **As instituições e marcas não são reais.**
+* **As telas desenvolvidas, os softwares e sites são meramente ilustrativos**, para que seja possível ver um exemplo de como os requisitos e as recomendações podem ser aplicados em situações de uso real.
+* **Nomenclaturas e imagens ilustrativas estão descritas na língua inglesa**, devido sua ampla abrangência e por conter terminologia técnica que em algumas situações não dispõe de tradução literal. O ajuste do idioma no Diretório fica a critério do usuário, podendo ser ajustado a qualquer momento.
+<br>
+#### TIPOS DE USUÁRIOS
+Neste exemplo, mostramos as diversas possibilidades suportadas de atribuições de função para um usuário cadastrado no Diretório.
+|   |   |   |
+|---|---|---|
+|![](../../../../images/manualDiretorio/md_2.png)|Administrativo|Usuários com poderes de administração no Diretório, podendo realizar todas ações.|
+|![](../../../../images/manualDiretorio/md_3.png)|Operação|Usuários com permissão em ferramentas específicas no Diretório.|
+|![](../../../../images/manualDiretorio/md_4.png)|Plataforma|Usuários para gestão e operação das plataformas do ecossistema, como o Service Desk, Portal, Plataforma de Resolução de Disputas e Plataforma Centralizada (Ressarcimento).|
+<br>
+#### RELAÇÃO ORGANIZAÇÃO X MARCAS
+Neste exemplo, mostramos as diversas possibilidades suportadas para se realizar cadastros de organizações no Diretório. Assim, **uma organização pode ser cadastrada de forma independente ou pertencente a um conglomerado**. Já as marcas são uma forma mais amigável, democrática e fácil para identificação das instituições participantes. **Uma Marca de um conglomerado pode estar correlacionada a mais de uma Instituição Participante**, assim como uma Instituição Participante pode estar correlacionada a mais de uma marca.
+
+**Importante**: a Marca cadastrada no diretório será a mesma apresentada para escolha do usuário na Jornada de Compartilhamento de Dados e Iniciação de Pagamentos. As Instituições Participantes (ou organizações) também serão apresentadas em tela, apenas em caráter informativo. Para maiores detalhes, consulte o Guia de Experiência do Usuário.
+![](../../../../images/manualDiretorio/md_5.png)
+<br>
+#### PONTOS DE ATENÇÃO NO CADASTRAMENTO DE MARCA/AUTHORISATION SERVER
+* Uma marca é representada por um Authorisation Server e o mesmo sempre deve ser cadastrado associado a uma organização.
+* O vinculo entre uma organização master (mãe) e uma organização que pertence ao conglomerado é realizado via o preenchimento do campo Parent Organization Reference ID no cadastro da organização filha, informando o CNPJ da organização mãe (caso seja necessário ajuste, favor entrar em contato via Service Desk em https://servicedesk.opinbrasil.com.br/servicePortal)
+* Quando a estrutura for de um conglomerado (uma organização master e uma ou mais organizações relacionadas) é recomendado do cadastro da marca na instituição mãe, caso as filhas venham a utilizar somente a mesma marca e arquitetura de autenticação. Importante ressaltar que caso não seja cadastrado uma marca exclusiva para o organização filha, a mesma irá herdar a(s) marca(s) da organização mãe
+* Caso uma marca pertença a uma organização filha o cadastro deve ser exclusivamente realizado na filha
+* Caso a mesma marca pertença a mais de uma organização, deve ser realizado um cadastro de Authorisation Servers para cada uma das organizações. É recomendado que as configurações dos Authorisation Servers sejam iguais, principalmente o campo Customer Friendly Server Name (marca)
+* Quando for necessário cadastrar uma marca exclusiva para uma organização filha ela deixa de herdar a(s) marca(s) da organização mãe. Caso uma filha tenha que estar relacionada a uma marca exclusiva e também a da mãe, é necessário cadastrar a marca da mãe na filha.
+<br>
+#### ALTERNATIVAS PARA ATUALIZAÇÃO DA MARCA
+|   |   |
+|---|---|
+|API Participants|Prefira por consumir dados da API Participants. Ela permite que o conteúdo seja fornecido ao usuário através de um servidor mais próximo, acelerando, assim, a distribuição e melhorando a experiência de consumo.|
+|Webhook do Diretório|Inscreva-se no webhook do Diretório para receber os eventos de notificação das principais atualizações, como alteração de cadastro, atualização de marca, entre outros.|
+|Cache local|Alguns participantes optam pela utilização de estruturas de cache local. Assim, é recomendável a revalidação diária dos dados, a fim de mantê-los íntegros e com a versão mais recente possível.|
+
+|   |   |
+|---|---|
+|![](../../../../images/manualDiretorio/md_6.png)|Importante! Caso a instituição queira utilizar alguma chave forte, recomendamos utilizar o AuthorisationServerID. Os campos Customer Friendly Server Name e Description são especialmente susceptíveis a atualizações pelas organizações e não devem ser utilizados para esse fim|
+<br>
+#### CADASTRAMENTO FASE 1 x FASE 2
+* Se o cadastramento do Authorisation Server na Fase 1 já foi realizado com uma marca válida para a Fase 2: É necessário cadastrar os recursos de Fase 2 no mesmo Authorisation Server, mantendo o Customer Friendly Server Name (marca) da Fase 1
+* Se o cadastramento do Authorisation Server na Fase 1 não foi realizado com uma marca válida para a Fase 2: É necessário atualizar o Customer Friendly Server Name (marca) para a Fase 2 e cadastrar os recursos de Fase 2 no mesmo
+* **Os recursos da Fase 1 devem estar declarados em pelo menos um Authorisation Server do participante válido para a Fase 2**
+* Após esse processo, caso a instituição venha a ter Authorisation Servers / marcas oferecendo recursos exclusivos de fase 2, recomenda-se a criação de novos registros sem os recursos de Fase 1
+<br>
+<!-- #### EXEMPLOS DE POSSÍVEIS CENÁRIOS
+|   |
+|---|
+|Organização e Marcas<br><table><thead><tr><td></td></tr></thead></table>|>
