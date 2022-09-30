@@ -1,0 +1,916 @@
+<h2 id='guia-de-operacao-do-diretorio-central'>Guia de operação do diretório central</h2><h3 id='1-introducao'>1. Introdução</h3>
+<p>O Open Insurance, ou Sistema de Seguros Aberto, é a possibilidade de consumidores de produtos e serviços de seguros, previdência complementar aberta e capitalização permitirem o compartilhamento de suas informações entre diferentes sociedades autorizadas/credenciadas pela Susep, de forma segura, ágil, precisa e conveniente. Para entregar esses benefícios ao consumidor, o Open Insurance operacionaliza e padroniza o compartilhamento de dados e serviços por meio de abertura e integração de sistemas, com privacidade e segurança.
+ <a target="_blank" href="https://www.gov.br/susep/pt-br/assuntos/open-insurance">Acesse o site oficial da SUSEP</a>
+<br></p>
+
+<h4 id='antes-de-comecar'>ANTES DE COMEÇAR</h4>
+
+<p>Esse guia tem como objetivo demostrar de forma prática a operação do Diretório Central do Open Insurance Brasil. Além disso, ele é complementar a outras documentações disponibilizadas pela governança e não faz parte do escopo de quaisquer detalhamentos relacionados a experiência do usuário e desenvolvedor, definições de segurança e especificação de APIs.</p>
+
+<p>Todas as funcionalidades estão disponíveis em sandbox e podem ser testadas em: https://web.sandbox.directory.opinbrasil.com.br/</p>
+
+<p>Procedimentos em produção pendentes serão disponibilizados assim que possível. As ações aqui apresentadas podem ser realizadas tanto por administradores quanto por contatos técnicos primários e secundários.</p>
+
+<p>Para ilustrar este guia e tentar deixar as situações de uso mais palpáveis, foram criadas instituições e telas fictícias.</p>
+
+<ul>
+<li><strong>As instituições e marcas não são reais.</strong></li>
+<li><strong>As telas desenvolvidas, os softwares e sites são meramente ilustrativos</strong>, para que seja possível ver um exemplo de como os requisitos e as recomendações podem ser aplicados em situações de uso real.</li>
+<li><strong>Nomenclaturas e imagens ilustrativas estão descritas na língua inglesa</strong>, devido sua ampla abrangência e por conter terminologia técnica que em algumas situações não dispõe de tradução literal. O ajuste do idioma no Diretório fica a critério do usuário, podendo ser ajustado a qualquer momento.
+<br>
+#### TIPOS DE USUÁRIOS
+Neste exemplo, mostramos as diversas possibilidades suportadas de atribuições de função para um usuário cadastrado no Diretório.
+|   |   |   |
+|---|---|---|
+|<img src="/images/manualDiretorio/md_2-53d23486.png" alt="" />|Administrativo|Usuários com poderes de administração no Diretório, podendo realizar todas ações.|
+|<img src="/images/manualDiretorio/md_3-385910ba.png" alt="" />|Operação|Usuários com permissão em ferramentas específicas no Diretório.|
+|<img src="/images/manualDiretorio/md_4-1794b305.png" alt="" />|Plataforma|Usuários para gestão e operação das plataformas do ecossistema, como o Service Desk, Portal, Plataforma de Resolução de Disputas e Plataforma Centralizada (Ressarcimento).|
+<br>
+#### RELAÇÃO ORGANIZAÇÃO X MARCAS
+Neste exemplo, mostramos as diversas possibilidades suportadas para se realizar cadastros de organizações no Diretório. Assim, <strong>uma organização pode ser cadastrada de forma independente ou pertencente a um conglomerado</strong>. Já as marcas são uma forma mais amigável, democrática e fácil para identificação das instituições participantes. <strong>Uma Marca de um conglomerado pode estar correlacionada a mais de uma Instituição Participante</strong>, assim como uma Instituição Participante pode estar correlacionada a mais de uma marca.</li>
+</ul>
+
+<p><strong>Importante</strong>: a Marca cadastrada no diretório será a mesma apresentada para escolha do usuário na Jornada de Compartilhamento de Dados e Iniciação de Pagamentos. As Instituições Participantes (ou organizações) também serão apresentadas em tela, apenas em caráter informativo. Para maiores detalhes, consulte o Guia de Experiência do Usuário.
+<img src="/images/manualDiretorio/md_5-990374f7.png" alt="" />
+<br></p>
+
+<h4 id='pontos-de-atencao-no-cadastramento-de-marca-authorisation-server'>PONTOS DE ATENÇÃO NO CADASTRAMENTO DE MARCA/AUTHORISATION SERVER</h4>
+
+<ul>
+<li>Uma marca é representada por um Authorisation Server e o mesmo sempre deve ser cadastrado associado a uma organização.</li>
+<li>O vinculo entre uma organização master (mãe) e uma organização que pertence ao conglomerado é realizado via o preenchimento do campo Parent Organization Reference ID no cadastro da organização filha, informando o CNPJ da organização mãe (caso seja necessário ajuste, favor entrar em contato via Service Desk em https://servicedesk.opinbrasil.com.br/servicePortal)</li>
+<li>Quando a estrutura for de um conglomerado (uma organização master e uma ou mais organizações relacionadas) é recomendado do cadastro da marca na instituição mãe, caso as filhas venham a utilizar somente a mesma marca e arquitetura de autenticação. Importante ressaltar que caso não seja cadastrado uma marca exclusiva para o organização filha, a mesma irá herdar a(s) marca(s) da organização mãe</li>
+<li>Caso uma marca pertença a uma organização filha o cadastro deve ser exclusivamente realizado na filha</li>
+<li>Caso a mesma marca pertença a mais de uma organização, deve ser realizado um cadastro de Authorisation Servers para cada uma das organizações. É recomendado que as configurações dos Authorisation Servers sejam iguais, principalmente o campo Customer Friendly Server Name (marca)</li>
+<li>Quando for necessário cadastrar uma marca exclusiva para uma organização filha ela deixa de herdar a(s) marca(s) da organização mãe. Caso uma filha tenha que estar relacionada a uma marca exclusiva e também a da mãe, é necessário cadastrar a marca da mãe na filha.
+<br>
+#### ALTERNATIVAS PARA ATUALIZAÇÃO DA MARCA
+|   |   |
+|---|---|
+|API Participants|Prefira por consumir dados da API Participants. Ela permite que o conteúdo seja fornecido ao usuário através de um servidor mais próximo, acelerando, assim, a distribuição e melhorando a experiência de consumo.|
+|Webhook do Diretório|Inscreva-se no webhook do Diretório para receber os eventos de notificação das principais atualizações, como alteração de cadastro, atualização de marca, entre outros.|
+|Cache local|Alguns participantes optam pela utilização de estruturas de cache local. Assim, é recomendável a revalidação diária dos dados, a fim de mantê-los íntegros e com a versão mais recente possível.|</li>
+</ul>
+
+<table><thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead><tbody>
+<tr>
+<td><img src="/images/manualDiretorio/md_6-e202757e.png" alt="" /></td>
+<td>Importante! Caso a instituição queira utilizar alguma chave forte, recomendamos utilizar o AuthorisationServerID. Os campos Customer Friendly Server Name e Description são especialmente susceptíveis a atualizações pelas organizações e não devem ser utilizados para esse fim</td>
+</tr>
+</tbody></table>
+
+<p><br></p>
+
+<h4 id='cadastramento-fase-1-x-fase-2'>CADASTRAMENTO FASE 1 x FASE 2</h4>
+
+<ul>
+<li>Se o cadastramento do Authorisation Server na Fase 1 já foi realizado com uma marca válida para a Fase 2: É necessário cadastrar os recursos de Fase 2 no mesmo Authorisation Server, mantendo o Customer Friendly Server Name (marca) da Fase 1</li>
+<li>Se o cadastramento do Authorisation Server na Fase 1 não foi realizado com uma marca válida para a Fase 2: É necessário atualizar o Customer Friendly Server Name (marca) para a Fase 2 e cadastrar os recursos de Fase 2 no mesmo</li>
+<li><strong>Os recursos da Fase 1 devem estar declarados em pelo menos um Authorisation Server do participante válido para a Fase 2</strong></li>
+<li>Após esse processo, caso a instituição venha a ter Authorisation Servers / marcas oferecendo recursos exclusivos de fase 2, recomenda-se a criação de novos registros sem os recursos de Fase 1
+<br>
+&lt;!-- #### EXEMPLOS DE POSSÍVEIS CENÁRIOS
+|   |
+|---|
+|Organização e Marcas<br><table><thead><tr><td></td></tr></thead></table>|&gt;</li>
+</ul>
+<h3 id='2-registrando-um-usuario-no-diretorio'>2. Registrando um usuário no diretório</h3>
+<p>Para acessar o Diretório de participantes você precisa estar registrado com um usuário válido. Esta seção descreve as etapas necessárias para realizar o registro de um novo usuário.</p>
+
+<p>ETAPA 1: Registrando um usuário no Diretório</p>
+
+<h4 id='requisitos'>REQUISITOS</h4>
+
+<ol>
+<li><p>No navegador, digite a URL de acordo com o ambiente a ser acessado:</p>
+
+<p><em>Sandbox</em>: https://web.sandbox.directory.opinbrasil.com.br/ <br/>
+<em>Produção</em>: https://web.directory.opinbrasil.com.br/</p></li>
+<li><p>Clique no link <em>Register</em></p></li>
+</ol>
+
+<p><img src="/images/manualDiretorio/cadastrandoContatos_1.PNG" alt="" /></p>
+
+<ol>
+<li>Na tela <em>Register for an account</em>, preencha os campos do formulário. O slide a seguir apresenta cada um dos campos em mais detalhes.</li>
+</ol>
+
+<p><img src="/images/manualDiretorio/cadastrandoContatos_2.PNG" alt="" /></p>
+
+<ol>
+<li>Clique no botão <em>Register</em></li>
+</ol>
+
+<p>Nota:  E-mails sociais não são permitidos, e você deve
+utilizar um endereço de e-mail válido da instituição. O
+cadastro pode ser realizado por qualquer colaborador da
+organização, identificado aqui como um Iniciador de
+Cadastro, podendo esse ser tanto um contato administrativo
+quanto técnico da instituição.</p>
+
+<h4 id='detalhamento-dos-campos'>DETALHAMENTO DOS CAMPOS</h4>
+
+<table><thead>
+<tr>
+<th>Nome do campo</th>
+<th>Descrição</th>
+<th>Exemplo</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>First Name</td>
+<td>Deve ser preencido com o primeiro nome do usuário</td>
+<td>Maria</td>
+</tr>
+<tr>
+<td>Family Name</td>
+<td>Deve ser preenchido com o sobrenome do usuário</td>
+<td>Gomes</td>
+</tr>
+<tr>
+<td>E-mail Address</td>
+<td>Deve ser informado um endereço de e-mail corporativo</td>
+<td>maria.gomes@semicredi.com.br</td>
+</tr>
+<tr>
+<td>Phone Number</td>
+<td>Informar o número de telefone de contato do usuário</td>
+<td>+55 11 900000000</td>
+</tr>
+<tr>
+<td>Password</td>
+<td>Definir uma senha que deve conter entre 8 e 24 caracteres com letras maiúsculas, minúsculas, números e ao menos um carácter especial</td>
+<td><senha_secreta></td>
+</tr>
+<tr>
+<td>Confirm Password</td>
+<td>Repetir a mesma senha informada no campo anterior</td>
+<td><senha_secreta></td>
+</tr>
+<tr>
+<td>National ID (CPF)</td>
+<td>Informar o número de registro do Cadastro de Pessoa Física (CPF)</td>
+<td>999999999-00</td>
+</tr>
+<tr>
+<td>Do you possess an e-signature certificate?</td>
+<td>O seletor deve estar assinalado caso o usuário possua um eCPF</td>
+<td></td>
+</tr>
+</tbody></table>
+
+<p>ETAPA 2: Verificando os dados informados</p>
+
+<h4 id='requisitos-2'>REQUISITOS</h4>
+
+<ol>
+<li>Nesta etapa, o Diretório irá enviar uma senha de uso único (OTP), que será encaminhada ao endereço de e-mail e número de telefone informado na etapa anterior.</li>
+<li>No e-mail recebido, selecione, copie e cole o código OTP no campo EMAIL VERIFICATION CODE.</li>
+<li>Na mensagem SMS recebida no telefone celular, copie o código OTP e informe no campo PHONE NUMBER VERIFICATION CODE.</li>
+<li>Clique no botão Verify.</li>
+</ol>
+
+<p>NOTA: Caso você não tenha recebido o e-mail com o código de confirmação, verifique sua caixa de SPAM e as politicas de bloqueio de mensagens. O envio das mensagens poderá sofrer algum atraso, contudo, se o problema persistir, clique no botão Resend OTP para reenvio das mensagens.</p>
+
+<p>ETAPA 3: Confirmando o progresso de registro</p>
+
+<h4 id='requisitos-3'>REQUISITOS</h4>
+
+<ol>
+<li>Nesta etapa, faça o download de um aplicativo de autenticação de sua preferência. É possível utilizar
+o Google Authenticator, Microsoft Authenticator, LastPass Authenticator, 1Password entre outros.</li>
+<li>Digitalize o QR Code que aparece na página e no aplicativo de autenticação, copie e cole a senha de uso único (OTP).</li>
+<li>Clique no botão <em>Sign-In</em></li>
+</ol>
+
+<p>ETAPA 4: Confirmação da assinatura eletrônica</p>
+
+<h4 id='requisitos-4'>REQUISITOS</h4>
+
+<ol>
+<li>Nesta etapa, será enviado um e-mail contendo um link para análise e assinatura do Termo de Aceite.</li>
+<li>Selecione e copie o código de acesso apresentado na janela <em>Upload e-signature confirmation</em>.</li>
+<li>Na mensagem recebida na caixa de entrada em nome da DocuSign, clique no link ANALISAR DOCUMENTO. Ao clicar, você será redirecionado para o website da DocuSign.</li>
+<li>No navegador, cole o valor copiado no passo 2 e cole no campo Código de acesso.</li>
+<li>Clique no botão Validar.</li>
+</ol>
+
+<p>ETAPA 5: Análise e confirmação do Termo de Aceite</p>
+
+<h4 id='requisitos-5'>REQUISITOS</h4>
+
+<ol>
+<li>Nesta etapa, no website da DocuSign, clique no botão Continuar.</li>
+<li>Role o documento para baixo, e na página seguinte clique no ícone Rubricar, e ao final das páginas no ícone Assinar.</li>
+<li>Clique no botão Concluir.</li>
+<li>Na janela &quot;Salvar uma cópia do seu documento&quot;, você pode se inscrever para obter uma conta DocuSign gratuita e assinar todos os seus documentos eletronicamente. Nesta janela, também é possível clicar no ícone Fazer Download e baixar uma cópia do documento assinado.</li>
+<li>Clique no botão Submeter. Ao clicar no botão Submeter, você aceita os Termos e Condições e reconhece que seus dados serão utilizados conforme descrito na Política de Privacidade da DocuSign.</li>
+<li>Na caixa de entrada, você receberá um e-mail enviado pela DocuSign contendo uma cópia do documento Termo de Aceite assinado eletronicamente.</li>
+<li>Retorne ao Diretório, e na janela Upload esignature confirmation clique no botão <em>Check status</em>. Se todas as etapas anteriores forem validadas com sucesso, você será automaticamente redirecionado à página inicial do Diretório.</li>
+</ol>
+<h3 id='3-acessando-uma-organisation'>3. Acessando uma Organisation</h3>
+<p>Esta seção descreve as etapas necessárias para exibir detalhes de uma organização.</p>
+
+<p>ETAPA 1: Exibindo detalhes de uma organização</p>
+
+<h4 id='requisitos'>REQUISITOS</h4>
+
+<ol>
+<li>No Diretório, localize e selecione a sua organização.</li>
+<li>Revise as informações previamente cadastradas.</li>
+</ol>
+
+<p><img src="/images/../../../../images/manualDiretorio/AcessandoOrganisation1.png" alt="" /></p>
+
+<p><img src="/images/../../../../images/manualDiretorio/AcessandoOrganisation2.png" alt="" /></p>
+
+<p>NOTA: Os cadastrados foram realizados de forma antecipada a partir de informações fornecidas junto a SUSEP. É fundamental que as organizações verifiquem as informações cadastradas. Caso exista alguma divergência entre em contato pelo email secretariado@opinbrasil.com.br</p>
+
+<h4 id='detalhamento-dos-campos'>DETALHAMENTO DOS CAMPOS</h4>
+
+<table><thead>
+<tr>
+<th>Nome do campo</th>
+<th>Descrição</th>
+<th>Exemplo</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>Status</td>
+<td>Define o estado atual do cadastro, se ativo ou não.</td>
+<td>Active</td>
+</tr>
+<tr>
+<td>Organisation Name</td>
+<td>Deve ser informado o nome da organização.</td>
+<td>Seg. Semicredi S.A.</td>
+</tr>
+<tr>
+<td>Registration Number-CNPJ</td>
+<td>Deve ser informado o número de Cadastro Nacional da Pessoa Jurídica (CNPJ) da organização.</td>
+<td>22.222.222/0002-22</td>
+</tr>
+<tr>
+<td>Date of Creation</td>
+<td>Data de criação do registro de cadastro da organização</td>
+<td>2021-01-07T11:13:08.531Z</td>
+</tr>
+<tr>
+<td>Company Registrar</td>
+<td></td>
+<td>Cadastro Nacional da Pessoa Jurídica</td>
+</tr>
+<tr>
+<td>Organisation ID</td>
+<td>Identificador da organização. Esta informação será gerada automaticamente.</td>
+<td>cdc674fd-b019-5110-af5d-0268ed8227371</td>
+</tr>
+<tr>
+<td>Parent Organisation Reference ID</td>
+<td>Deve ser informado o número de Cadastro Nacional da Pessoa Jurídica (CNPJ) da organização mãe para casos em que seja necessário a constituição de um conglomerado. A seção de Cadastramento de conglomerados ilustra este cenário em mais detalhes.</td>
+<td>11.111.111/0001-11</td>
+</tr>
+<tr>
+<td>Legal Name</td>
+<td>Deve ser informado o nome legal de cadastro da instituição.</td>
+<td>Seguradora Semicredi S.A.</td>
+</tr>
+<tr>
+<td>Address Line 1</td>
+<td>Deve ser informado o logradouro da organização.</td>
+<td>Rua ABC 123</td>
+</tr>
+<tr>
+<td>Address Line 2</td>
+<td>Deve ser informado o logradouro da organização.</td>
+<td>Cidades Monções</td>
+</tr>
+<tr>
+<td>City</td>
+<td>Deve ser informada a cidade da organização</td>
+<td>São Paulo, SP</td>
+</tr>
+<tr>
+<td>Country</td>
+<td>Deve ser informado o país da organização</td>
+<td>BR</td>
+</tr>
+</tbody></table>
+
+<h4 id='cadastramento-de-conglomerado'>CADASTRAMENTO DE CONGLOMERADO</h4>
+
+<p>No diretório de participantes há o conceito de conglomerado. Assim, uma organização mãe poderá ser referenciada em um cadastro de uma organização filha, atribuindo-se o CNPJ da organização mãe no campo <em>PARENT ORGANISATION REFERENCE ID</em> da organização filha.</p>
+
+<p>Importante: Se a sua organização faz parte de um conglomerado, é fundamental referenciar as organizações filhas com a organização mãe.</p>
+<h3 id='4-cadastrando-contatos'>4. Cadastrando contatos</h3>
+<p>Após o <em>onboarding</em> da instituição e do representante da mesma é necessário realizar o cadastro da equipe de contatos de notificação no Diretório Central. Esses contatos são para possíveis comunicações entre os participante e a estrutura central.</p>
+
+<p>ETAPA 1: Cadastrando um novo contato</p>
+
+<h4 id='requisitos'>REQUISITOS</h4>
+
+<ol>
+<li>No Diretório, localize e selecione a sua organização.</li>
+<li>Selecione o menu <em>Contacts</em> e clique no botão <em>New Contact</em>.</li>
+<li>Na janela <em>New Contact</em> preencha os campos do formulário. A tabela a seguir apresenta cada um dos campos em mais detalhes.</li>
+<li>Clique no botão <em>Save</em>.</li>
+</ol>
+
+<p><img src="/images/../../../../images/manualDiretorio/CadastrandoContatos1.png" alt="" /></p>
+
+<p><img src="/images/../../../../images/manualDiretorio/CadastrandoContatos2.png" alt="" /></p>
+
+<p>NOTA: Os usuários de notificação não possuem ações dentro do Diretório e nas demais plataformas do perímetro central.</p>
+
+<h4 id='detalhamento-dos-campos'>DETALHAMENTO DOS CAMPOS</h4>
+
+<table><thead>
+<tr>
+<th>Nome do campo</th>
+<th>Descrição</th>
+<th>Exemplo</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>Contact Type*</td>
+<td>Tipo do contato (Business/Negócio, Technical/Técnico, Billing/Cobrança, Incident/Incidente e Security/Segurança).</td>
+<td>Incident</td>
+</tr>
+<tr>
+<td>Department</td>
+<td>Deve ser informado o departamento do contato.</td>
+<td>Operações de TI</td>
+</tr>
+<tr>
+<td>First Name</td>
+<td>Deve ser informado o primeiro nome do contato.</td>
+<td>Maria</td>
+</tr>
+<tr>
+<td>Last Name</td>
+<td>Deve ser informado o sobrenome do contato.</td>
+<td>Gomes</td>
+</tr>
+<tr>
+<td>Email*</td>
+<td>O endereço de e-mail do contato.</td>
+<td>maria.gomes@semicredi.com.br</td>
+</tr>
+<tr>
+<td>Phone Number*</td>
+<td>Deve ser informado o número de telefone do contato.</td>
+<td>+55 51 900000000</td>
+</tr>
+<tr>
+<td>Additional Information</td>
+<td>Deve ser informado o e-mail para o grupo de notificação do contato.</td>
+<td>openinsurance@semicredi.com.br</td>
+</tr>
+<tr>
+<td>PGP Public Key</td>
+<td>Deve ser preenchido com uma chave alfanumérica para comunicação de dados de incidentes de Segurança entre instituições.</td>
+<td>Como esta chave tem extensão muito grande para adicionar como exemplo, segue <a target="_blank" href="https://www.openpgp.org/about/standard/">link para documentações </a>para documentações que definem a chave <a target="_blank" href="https://datatracker.ietf.org/doc/html/rfc4880">PGP (RFC 488)</a>.</td>
+</tr>
+<tr>
+<td>Address Line 1</td>
+<td>Deve ser informado o endereço (Rua, Avenida ou Alameda).</td>
+<td>Rua ABC 123</td>
+</tr>
+<tr>
+<td>Address Line 2</td>
+<td>Deve ser informado o bairro.</td>
+<td>Cidades Monções</td>
+</tr>
+<tr>
+<td>City</td>
+<td>Deve ser informado a cidade de domicílio.</td>
+<td>São Paulo</td>
+</tr>
+<tr>
+<td>Post Code</td>
+<td>Deve ser informado o código portal.</td>
+<td>99.999-99</td>
+</tr>
+<tr>
+<td>Country</td>
+<td>Deve ser informado o país de domicílio.</td>
+<td>Brasil</td>
+</tr>
+</tbody></table>
+
+<p>(*) Campo obrigatório</p>
+
+<h4 id='detalhamento-dos-tipos-de-contato'>DETALHAMENTO DOS TIPOS DE CONTATO</h4>
+
+<table><thead>
+<tr>
+<th>Nome do campo</th>
+<th>Descrição</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>Business/Negócio</td>
+<td>Contato responsável pela gestão de negócio do Open Insurance na instituição.</td>
+</tr>
+<tr>
+<td>Technical/Técnico</td>
+<td>Contato para tratativa de problemas técnicos do tipo: performance, disponibilidade e em relação a API&#39;s de forma geral.</td>
+</tr>
+<tr>
+<td>Billing/Cobrança</td>
+<td>Contato responsável pela cobrança dos custos da estrutura central do Open Insurance Brasil.</td>
+</tr>
+<tr>
+<td>Incident/Incidente</td>
+<td>Contato responsável pelo atendimento de incidentes relacionados ao Open Insurance na instituição.</td>
+</tr>
+<tr>
+<td>Security/Segurança</td>
+<td>Contato para tratativas relacionadas a problemas de caráter de segurança como DCR, certificados entre outros.</td>
+</tr>
+</tbody></table>
+
+<p>NOTA: É de inteira responsabilidade da instituição manter os contatos sempre atualizados para que a comunicação entre as instituições participantes não seja prejudicada.</p>
+<h3 id='5-cadastrando-reinvidicacoes-de-dominio-de-autoridade'>5. Cadastrando reinvidicações de domínio de autoridade</h3>
+<p>Teste Teste Teste</p>
+<h3 id='6-cadastrando-reinvidicacoes-autoridade'>6. Cadastrando reinvidicações autoridade</h3>
+<p>Teste Teste Teste</p>
+<h3 id='7-cadastrando-servidores-de-autorizacao-authorisation-servers'>7. Cadastrando servidores de autorização (authorisation servers)</h3>
+<p>Durante a jornada de consentimento do usuário, os receptores exibirão a marca e o servidor de autorização que está sendo solicitado o acesso aos dados do usuário. Esta seção descreve as etapas necessárias para cadastrar as marcas e os servidores de autorização da organização.</p>
+
+<p>ETAPA 1: Criando um novo servidor de autorização</p>
+
+<h4 id='requisitos'>REQUISITOS</h4>
+
+<p><img src="/images/../../../../images/manualDiretorio/CadastrandoServidores1.png" alt="" /></p>
+
+<p><img src="/images/../../../../images/manualDiretorio/CadastrandoServidores2.png" alt="" /></p>
+
+<ol>
+<li>No Diretório, localize e selecione a sua organização.</li>
+<li>Selecione o menu <em>Authorisation Servers</em>. No canto superior esquerdo será carregado um submenu. Para cadastrar um novo <em>Authorisation Server</em> clique no botão <em>New Authorisation Server</em> localizado no lado direito da tela.</li>
+<li>Na janela <em>New Authorisation Server</em> preencha os campos do formulário. A seguir serão apresentados cada um dos campos em mais detalhes.</li>
+</ol>
+
+<p>Atenção 1: Tendo em vista a ausência de análise de impacto para o ecossistema da retirada de um <em>Authorisation Server</em>, recomenda-se que os(as) responsáveis por consentimentos não sejam retirados do diretório até a expiração/revogação dos consentimentos pelos quais é responsável.</p>
+
+<p>Atenção 2: Caso a instituição queira utilizar alguma chave forte, recomendamos utilizar o AuthorisationServerID. Os campos Customer Friendly Server Name e Description são especialmente susceptíveis a atualizações pelas organizações e não devem ser utilizados para esse fim.</p>
+
+<h4 id='detalhamento-dos-campos'>DETALHAMENTO DOS CAMPOS</h4>
+
+<table><thead>
+<tr>
+<th>Nome do campo</th>
+<th>Descrição</th>
+<th>Exemplo</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>Customer Friendly Server Name*</td>
+<td>Deve ser definido o valor da marca que será exibido no receptor. Apresentar seu nome por inteiro, sem abreviações, de forma a ser reconhecido pelo cliente e aderente a interfaces menores.<br/>• Limite de caracteres: 40 (padrão do campo)<br/>Para mais informações sobre marca, consulte o Guia de Experiência de Usuário.<br/></td>
+<td>Semicredi</td>
+</tr>
+<tr>
+<td>OpenID<br/>Discovery<br/>Document URI*</td>
+<td>O URI para a localização do documento de descoberta OpenID</td>
+<td>https://www.semicredi.com.br/.well-known/openidconfiguration</td>
+</tr>
+<tr>
+<td>Payload Signing<br/>Certificate URI*<br/></td>
+<td>O URI para a localização do certificado de assinatura.</td>
+<td>https://www.semicredi.com.br/jwks</td>
+</tr>
+</tbody></table>
+
+<p>(*) Campo obrigatório</p>
+
+<h4 id='detalhamento-dos-campos-2'>DETALHAMENTO DOS CAMPOS</h4>
+
+<table><thead>
+<tr>
+<th>Nome do campo</th>
+<th>Descrição</th>
+<th>Exemplo</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>Customer Friendly Logo URI*</td>
+<td>Deve ser definida a URI para o logotipo da marca. Para obter mais detalhes sobre formato, dimensão e peso máximo do arquivo consulte o Guia de Experiencia Fase 2.</td>
+<td>https://wwww.semicredi.com.br/logo.svg</td>
+</tr>
+<tr>
+<td>Developer Portal URI</td>
+<td>O URI do portal do desenvolvedor.</td>
+<td>https://developers.semicredi.com.br</td>
+</tr>
+<tr>
+<td>Terms Of Service URI</td>
+<td>A URI de localização do documento de termos e serviços da organização.</td>
+<td>https://wwww.semicredi.com.br/tos.html</td>
+</tr>
+<tr>
+<td>Notification Webhook Endpoint</td>
+<td>Endpoint do Webhook de notificação. A seção configurando eventos de notificação no Diretório descreve esta configuração em mais detalhes.</td>
+<td>https://webhook.site/9d84a827-c200-4170-b0f8-f830170037bb</td>
+</tr>
+<tr>
+<td>Description*</td>
+<td>Esse é um texto de marcação onde deverá ser descrita a marca, trazendo informações adicionais para que o cidadão não tenha dúvidas sobre a escolha feita.<br/>1. Limite de caracteres: 256 (padrão do campo)<br/>2. Não deve ser permitido que a descrição traga links<br/>3. O que deve conter:<br/>• Esse é um texto de marcação onde deverá ser descrita a marca, trazendo informações adicionais para que o cidadão não tenha dúvidas sobre a escolha feita.<br/>4. Orientações sobre o que pode conter:<br/>• Texto institucional de apresentação<br/>• Desde quanto atua<br/>• Diferenciais de atuação<br/>• Canais de atendimento<br/></td>
+<td>“A insituição Semicredi atua desde 1999 sendo uma das maiores seguradoras do Brasil, seja na web ou pelo App oferecemos produtos para sua família, empresa, carro e casa.”</td>
+</tr>
+</tbody></table>
+
+<p>NOTAS:
+* O campo Customer Friendly Logo URI é o que a receptora deverá utilizar para apresentar a logomarca da transmissora.</p>
+
+<p>(*) Campo obrigatório</p>
+
+<h4 id='detalhamento-do-logotipo'>DETALHAMENTO DO LOGOTIPO</h4>
+
+<p>O logotipo das instituições participantes deverá ser aplicado no Portal do Cidadão e também poderá ser aplicado no redirecionamento entre instituições durante a Jornada de Compartilhamento de Dados. Por isso foram deliberadas práticas para uso e disponibilização:<br/>• Utilizar preferencialmente logotipo prioritário, que os clientes reconheçam nos canais;<br/>• Versão reduzida do logo, símbolo ou favicon de site;<br/>• Enviar arquivo SVG contendo a área de proteção do logo da instituição para garantir a leitura e o espaçamento correto;<br/>• Formato de envio:<br/> <sub> &emsp;SVG<br/>&emsp;Dimensão mínima: 512px x 512px<br/>&emsp;Sem sombra</sub><br/>• Peso máximo do arquivo: 1 mega;</p>
+
+<p>ETAPA 2: Cadastrando certificação de segurança no servidor</p>
+
+<h4 id='requisitos-2'>REQUISITOS</h4>
+
+<p><img src="/images/../../../../images/manualDiretorio/CadastrandoServidores3.png" alt="" /></p>
+
+<p><img src="/images/../../../../images/manualDiretorio/CadastrandoServidores4.png" alt="" /></p>
+
+<ol>
+<li>No Diretório, localize e selecione a sua organização.</li>
+<li>Selecione o menu <em>Authorisation Servers</em>. Depois selecione o servidor de autorização que deseja. Após selecionar, vá no submenu à esquerda em cima e clique em <em>Server Certifications</em>.</li>
+<li>Dentro dessa área, para cadastrar uma nova certificação, clique no botão <em>Add New Certification</em> localizado no lado direito da tela.</li>
+<li>Na janela <em>New certification</em> preencha os campos do formulário. A seguir serão apresentados os campos em maior detalhamento.</li>
+</ol>
+
+<p>As informações da certificação do Authorisation Server são referentes a certificação FAPI obtida através da  <a target="_blank" href="https://openid.net/certification/#FAPI_OPs">OpenID Foundation</a>. Dentro do site é possível encontrar uma tabela Open Insurance Brazil (Based on FAPI 1 Advanced Final) que contém as informações que devem ser refletidas no formulário para adição da certificação de segurança.</p>
+
+<h4 id='detalhamento-dos-campos-3'>DETALHAMENTO DOS CAMPOS</h4>
+
+<table><thead>
+<tr>
+<th>Nome do campo</th>
+<th>Descrição</th>
+<th>Exemplo</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>Certification<br/>type*</td>
+<td>O tipo de certificação que foi efetuada com a OpenID Foundation – Deve ser adicionado ao menos uma certificação Redirect (FAPI) e uma DCR.</td>
+<td>Redirect<br/>DCR<br/>CIBA – certificação ainda não disponível</td>
+</tr>
+<tr>
+<td>Certification<br/>type variant*</td>
+<td>As variantes dependem do tipo de certificação escolhida.</td>
+<td>Dentro da tabela da OpenID Foundation, cada coluna representa as possíveis variações nas certificações.<br/>Para a certificação DCR a instiuiçao deve avaliar se certificou utilizando APIs de Dados do consumidor – Unsigned, ou de Pagamentos - Signed</td>
+</tr>
+<tr>
+<td>Profile<br/>version*</td>
+<td>A versão da certificação selecionado – Campo livre, apenas para controle da própria instituição.</td>
+<td>1</td>
+</tr>
+<tr>
+<td>Certification<br/>payload*</td>
+<td>O URI que aponta para o arquivo hospedado pela OpenID Foundation com o pacote de certificação. Formato zip.</td>
+<td>https://openid.net/wordpresscontent/uploads/2021/08/BR-OB_Adv._OP_MTLSexemplo.zip</td>
+</tr>
+<tr>
+<td>Start date of certification*</td>
+<td>A data de certificação inicial – é a mesma data que consta na tabela da OpenID Foundation. Formato dd/mm/yyyy</td>
+<td>09/05/2022</td>
+</tr>
+</tbody></table>
+
+<p>(*) Campo obrigatório</p>
+<h3 id='8-cadastrando-recursos-de-uma-api-endpoints'>8. Cadastrando recursos de uma API (endpoints)</h3>
+<p>Esta seção explica as etapas para cadastrar os endpoints de
+recursos de uma API.</p>
+
+<h4 id='cadastramento-de-recursos-fase-1'>CADASTRAMENTO DE RECURSOS FASE 1</h4>
+
+<p>Para cada uma das famílias de APIs devem ser adicionados todos os endpoints disponíveis. Supondo que a instituição tenha disponibilizado dados em todos os endpoints da fase 1, a publicação deveria ser:</p>
+
+<h4 id='cadastramento-de-recursos-fase-2'>CADASTRAMENTO DE RECURSOS FASE 2</h4>
+
+<p>Na Fase 2 o padrão de cadastramento continua como na Fase 1, segue alguns pontos de atenção:<br/>• A API de consentimento é necessário apenas o cadastramento de uma entrada para o GET e o DELETE;<br/>• A API de customers foi dividida em duas famílias para facilitar o consumos pelos receptores. Customers-business onde é cadastrado os Endpoints PJ e customers-personal onde será cadastrado os endpoints PF. Cabendo aqui o cadastramento conforme a disponibilização do produto pela instituição;<br/>• O cadastramento de recursos deve respeitar a tabela de etapas da implementação assistida, conforme IN BCB n° 136 de 29/7/2021.</p>
+
+<p>*Exemplo de preenchimento, levando em consideração que a instituição disponibilize tanto PF e PJ e o inicio da implementação assistida</p>
+
+<h4 id='cadastramento-de-recursos-fase-3'>CADASTRAMENTO DE RECURSOS FASE 3</h4>
+
+<p>Na Fase 3 o padrão de segue alguns pontos de atenção:<br/>• A API de payments foi dividida para facilitar o consumo pelos iniciadores.<br/>• Na família de payments-consents devem ser declarados os endpoints de consentimento.<br/>• Na família de payments-pix devem ser declarado sos endpoints da forma de pagamento PIX.<br/>• Demais formas de pagamentos devem ser cadastradas conforme as especificações avancem.</p>
+
+<p>*Exemplo de preenchimento</p>
+
+<h4 id='tabela-exemplo-recursos-fase-1'>TABELA EXEMPLO RECURSOS FASE 1</h4>
+
+<table><thead>
+<tr>
+<th>API</th>
+<th>Diretório (Family Type)</th>
+<th>Recursos (resources)</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>discovery</td>
+<td>discovery</td>
+<td>https://api.organizacao.com.br/open-insurance/discovery/v1/status<br/>https://api.organizacao.com.br/open-insurance/discovery/v1/outages</td>
+</tr>
+<tr>
+<td>data_channels</td>
+<td>data_channels</td>
+<td>https://api.organizacao.com.br/open-insurance/data_channels/v1/electronic-channels<br/>https://api.organizacao.com.br/open-insurance/data_channels/v1/branches<br/>https://api.organizacao.com.br/open-insurance/data_channels/v1/phone-channels</td>
+</tr>
+<tr>
+<td>admin_metrics</td>
+<td>admin_metrics</td>
+<td>https://api.organizacao.com.br/open-insurance/admin_metrics/v1/admin_metrics</td>
+</tr>
+</tbody></table>
+
+<p><br/><br/></p>
+
+<h4 id='tabela-exemplo-recursos-fase-2'>TABELA EXEMPLO RECURSOS FASE 2</h4>
+
+<table><thead>
+<tr>
+<th>API</th>
+<th>Diretório (Family Type)</th>
+<th>Recursos (resources)</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>resources</td>
+<td>resources</td>
+<td>https://api.organizacao.com.br/open-insurance/resources/v1/</td>
+</tr>
+<tr>
+<td>customers</td>
+<td>customers</td>
+<td>https://api.organizacao.com.br/open-insurance/customers/v1/personal/identifications<br/>https://api.organizacao.com.br/open-insurance/customers/v1/business/identifications<br/></td>
+</tr>
+</tbody></table>
+
+<p>ETAPA 1: Cadastrando um novo recurso de uma API</p>
+
+<p><img src="/images/../../../../images/manualDiretorio/CadastrandoRecursos1.png" alt="" /></p>
+
+<p><img src="/images/../../../../images/manualDiretorio/CadastrandoRecursos2.png" alt="" /></p>
+
+<p><img src="/images/../../../../images/manualDiretorio/CadastrandoRecursos3.png" alt="" /></p>
+
+<h4 id='requisitos'>REQUISITOS</h4>
+
+<ol>
+<li>No Diretório, localize e selecione a sua organização.</li>
+<li>Selecione o menu <em>Authorisation Servers</em> e clique no link do servidor de autorização na qual se deseja cadastrar os recursos.</li>
+<li>No canto superior esquerdo da página clique em <em>API Resources</em>.</li>
+<li>Na página que será carregada clique no botão <em>New API Resources</em> para abrir a janela <em>New API Resource</em>.</li>
+<li>Na janela <em>New API Resource</em>, clique na caixa de seleção API Family Type e selecione uma das opções disponíveis.</li>
+<li>No campo ao lado, em <em>Version</em> especifique o valor apropriado utilizando versionamento
+semântico (major.minor.patch, exemplo: 1.0.7)</li>
+<li>No campo <em>Certification URI</em> é necessário informar a URI onde se encontra a localização do certificado publicado no GitHub. Esse preenchimento é obrigatório para famílias de APIs a partir da Fase 2.</li>
+<li>Clique no botão <em>Save</em>.</li>
+</ol>
+
+<p>Nota 1: A URI a ser informada deve ser a presente no GitHub (???)
+no caminho conformance &gt; submissions/functional selecionando a API especifica e informar a URI com o artefato de certificação .zip.</p>
+
+<p>Exemplo:
+???
+<family-type>/<version>/<file-name>.zip</p>
+
+<p>Nota 2: No ambiente de Sandbox do Diretório, caso não exista uma certificação, é possível incluir um endereço para testes: https://openinsurance-brasil.github.io/teste.zip</p>
+
+<ol>
+<li>De volta a tela <em>API Resources</em>, informe URI principal no campo <em>API Discovery Endpoints</em>, e em seguida pressione a tecla Enter.</li>
+<li>Para cada uma das famílias de APIs repita os passos 4 a 8.</li>
+</ol>
+
+<p>Nota: Todos os <em>endpoints</em> deverão ser preenchidos, incluindo os respectivos recursos. Para obter mais detalhes sobre o padrão do <em>endpoints</em> e versão consulte o <a target="_blank" href="https://br-openinsurance.github.io/areadesenvolvedor/#api-auto-v100-permissions-necessarias-para-a-api-insuranceauto"> Portal do Desenvolvedor do Open Insurance </a></p>
+
+<!--
+#### CADASTRAMENTO DE RECURSOS FASE 4A
+
+Na Fase 4A o padrão de cadastro segue alguns pontos de atenção:
+• O cadastro das APIs deve ser realizado individualmente, para cada um dos recursos/endpoints existirá um tipo
+de família (Family Type)
+• Diferente das outras famílias, ao requisitar o cadastro dessas APIs, será executado um teste de conformidade
+funcional que verificará a conformidade da API com a especificação do Swagger
+• O diretório só permitirá o cadastro da API caso o teste de conformidade seja bem sucedido
+• Semelhante a Fase 1, a publicação do recurso é condiciona a IF possuir tal produto, logo, não necessariamente
+todos os recursos precisam ser publicados
+*Exemplo de preenchimento
+
+#### TABELA EXEMPLO RECURSOS FASE 4A
+
+API | Diretório (Family Type) | Recursos (resources)
+--|--|--
+opendata-investments |opendata-investments_funds<br/>opendata-investments_bank-fixed-incomes<br/>opendata-investments_credit-fixed-incomes<br/>opendata-investments_variable-incomes<br/>opendata-investments_treasure-titles | ?
+opendata-capitalization | opendata-capitalization_bonds | ?
+opendata-exchange |opendata-exchange_online-rates<br/>opendata-exchange_vet-values | ?
+opendata-acquiring-services |opendata-acquiring-services_personals<br/>opendata-acquiring-services_businesses | ?
+opendata-pension |opendata-pension_risk-coverages<br/>opendata-pension_survival-coverages | ?
+opendata-insurance | opendata-insurance_automotives<br/>opendata-insurance_homes<br/>opendata-insurance_personals | ?
+
+
+ETAPA 2: Cadastrando um novo recursos de uma API com certificação automática - Fase 4A
+
+#### REQUISITOS
+
+1. No Diretório, localize e selecione a sua
+organização.
+2. Selecione o menu Authorisation Servers e clique no link do servidor de autorização na qual se deseja cadastrar os recursos.
+3. No lado esquerdo da tela clique em API Resources
+4. Clique no botão New API Resources para abrir a janela New API Resource
+5. Na janela New API Resource, clique na caixa de seleção API Family Type e selecione uma das opções disponíveis que possuem certificação automática
+6. No campo ao lado, em Version especifique o valor da versão da API conforme especificação
+7. No campo THE URI FOR THE API é necessário
+informar a URI referente ao recurso da API a ser registrado
+8. A URI da API deve seguir o formato especificado no portal do desenvolvedor, caso contrário o diretório irá retornar um erro, não permitindo a continuidade do cadastro
+9. Ao selecionar Save uma janela irá aparecer informando que ao pressionar OK um teste de conformidade será executado contra o recurso preenchido acima
+
+Nota 1: O valor informado no campo THE URI FOR THE API é a URI contra a qual o teste será executado.
+Nota 2: Caso o teste de conformidade não seja bem sucedido é possível consultar os logs de execução do teste que impediu a publicação da API. Para isso basta copiar a URI apresentada na mensagem de erro e colar
+na barra do navegador.
+11. Caso a execução seja mal sucedida, é possível consultar os detalhes que geraram a falha em View Logs.
+12. Caso o teste seja bem sucedido, a nova API será adicionada automaticamente a tabela de recursos do Authorisation Server
+13. A coluna referente a API CERTIFICATION URI também será preenchida automaticamente e
+apresentada na tabela.
+14. Caso seja necessário atualizar a URI do recurso adicionado basta clicar no botão editar ou em apagar.
+
+Nota 1: Para mais detalhes sobre a certificação das APIs consultar o menu Certificação de Conformidade no portal do desenvolvedor.
+
+Nota 2: O Campo API CERTIFICATION URI estará
+preenchido com o link para o teste de conformidade executado com sucesso no momento do registro da API.
+
+Nota 3: Qualquer edição desse cadastro iniciará uma nova execução do teste.
+
+-->
+<h3 id='9-cadastrando-declaracoes-de-software-software-statements'>9. Cadastrando declarações de software (software statements)</h3>
+<p>Teste Teste Teste</p>
+<h3 id='10-criando-uma-nova-reivindicacao-de-autoridade-de-software'>10. Criando uma nova reivindicação de autoridade de software</h3>
+<p>Teste Teste Teste</p>
+<h3 id='11-criando-certificados-de-transporte-e-assinatura-em-sandbox'>11. Criando certificados de transporte e assinatura em Sandbox</h3>
+<p>Teste Teste Teste</p>
+<h3 id='12-carregando-certificados-emitidos-por-autoridade-de-certificacao-em-producao'>12. Carregando certificados emitidos por autoridade de certificação em Produção</h3>
+<p>Teste Teste Teste</p>
+<h3 id='13-cadastrando-administradores-da-organizacao'>13. Cadastrando administradores da organização</h3>
+<p>Teste Teste Teste</p>
+<h3 id='14-obtendo-um-software-statements-assertion'>14. Obtendo um Software Statements Assertion</h3>
+<p>Aqui apresentamos a configuração necessária para criar uma nova declaração de software no Diretório.</p>
+
+<p>ETAPA 1: Criando uma nova declaração de software</p>
+
+<h4 id='requisitos'>REQUISITOS</h4>
+
+<p><img src="/images/../../../../images/manualDiretorio/ObtendoSSA1.png" alt="" /></p>
+
+<p><img src="/images/../../../../images/manualDiretorio/ObtendoSSA2.png" alt="" /></p>
+
+<ol>
+<li>No Diretório, localize e selecione a sua organização.</li>
+<li>Selecione o menu <em>Software Statements</em> e clique no botão New <em>Software Statement</em>.</li>
+<li>Na janela <em>New Software Statement</em> preencha os campos do formulário. A seguir serão apresentados cada um dos campos em mais detalhes.</li>
+</ol>
+
+<table><thead>
+<tr>
+<th>Nome do campo</th>
+<th>Descrição</th>
+<th>Exemplo</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>Version*</td>
+<td>A versão do software deve ser definida para um valor numérico, um número inteiro (por exemplo, 1) ou um número de ponto flutuante (1,2, 2,2, 3,2 etc.)</td>
+<td>1</td>
+</tr>
+<tr>
+<td>Client Name*</td>
+<td>Para registro de software da instituição receptora (<em>software statement</em>), no campo <em>Client Name</em>, recomenda-se usar o nome da Marca, de conhecimento do cliente. Se o nome da marca foi declarado no <em>Authorisation Server</em>, por exemplo, pode-se usar o nome da marca que foi utilizado no cadastro (<em>customer friendly server name</em>). Este é o nome que a transmissora irá receber e declarar ao cliente durante a jornada.</td>
+<td>Seguradora Semicredi</td>
+</tr>
+<tr>
+<td>Client URI*</td>
+<td>O site ou URI raiz do recurso, podendo ser o site institucional da organização.</td>
+<td>https://www.semicredi.com.br/info.html.</td>
+</tr>
+<tr>
+<td>Policy URI</td>
+<td>Deve ser definido como uma sequência de texto que representa uma URI única de política.</td>
+<td>https://www.semicredi.com.br/policy.html</td>
+</tr>
+<tr>
+<td>Logo URI*</td>
+<td>Deve ser definida a URI para o logotipo da marca. Para obter mais detalhes sobre formato, dimensão e peso máximo do arquivo consulte o Guia de Experiencia Fase 2</td>
+<td>https://www.semicredi.com.br/logo.svg</td>
+</tr>
+<tr>
+<td>Redirect URI*</td>
+<td>Os URIs de redirecionamento devem ser definidos como uma string de texto que representa uma URI única de redirecionamento.</td>
+<td>https://www.semicredi.com.br/cb1 https://www.semicredi.com.br/cb2</td>
+</tr>
+<tr>
+<td>Terms of Service</td>
+<td>URI</td>
+<td>Deve ser definido como uma string de texto que representa uma URI única dos Termos de Serviço. https://www.semicredi.com.br/tos.html</td>
+</tr>
+<tr>
+<td>Description</td>
+<td>Deve ser definido como uma string de texto de sua escolha</td>
+<td>Aplicativo Seguradora Semicredi para o segmento de varejo.</td>
+</tr>
+<tr>
+<td>On Behalf Of</td>
+<td>O campo “Em nome de” é classificado como opcional para implementação</td>
+<td>Não se aplica para o contexto do Open Insurance Brasil</td>
+</tr>
+</tbody></table>
+
+<p>NOTAS:
+* O campo Logo URI é o que a transmissora deverá utilizar para apresentar a logomarca da receptora.
+* (*) Campo obrigatório.</p>
+
+<p>ETAPA 2: Cadastrando certificação de declaração de software</p>
+
+<h4 id='requisitos-2'>REQUISITOS</h4>
+
+<p><img src="/images/../../../../images/manualDiretorio/ObtendoSSA3.png" alt="" /></p>
+
+<p><img src="/images/../../../../images/manualDiretorio/ObtendoSSA4.png" alt="" /></p>
+
+<p><img src="/images/../../../../images/manualDiretorio/ObtendoSSA5.png" alt="" /></p>
+
+<ol>
+<li>No Diretório, localize e selecione a sua organização.</li>
+<li>Selecione o menu <em>Software Statements</em>. Depois selecione a declaração de software que deseja. Após selecionar, vá no submenu à esquerda em cima e clique em <em>Certifications</em>.</li>
+<li>Dentro dessa área, para cadastrar uma nova certificação, clique no botão <em>Add New Certification</em> localizado no lado direito da tela.</li>
+<li>Na janela <em>New certification</em> preencha os campos do formulário. A seguir serão apresentados cada um dos campos em mais detalhes.<br/>As informações da certificação do <em>Software Statement</em> são referentes a certificação FAPI obtida através da <a target="_blank" href="https://openid.net/certification/#FAPI-RW_RPs">OpenID Foundation </a>. Dentro do site é possível encontrar uma tabela Brazil Open Insurance (Based on FAPI Relying Parties) que contém as informações que devem ser refletidas no formulário para adição da certificação de segurança.</li>
+</ol>
+
+<table><thead>
+<tr>
+<th>Nome do campo</th>
+<th>Descrição</th>
+<th>Exemplo</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>Certification type*</td>
+<td>O tipo de certificação que foi efetuada com a OpenID Foundation – Deve ser adicionado ao menos uma certificação Redirect(FAPI e DCR).</td>
+<td>Redirect<br/>DCR<br/>CIBA – certificação ainda não disponível<br/></td>
+</tr>
+<tr>
+<td>Certification type variant*</td>
+<td>As variantes dependem do tipo de certificação escolhida. Dentro da tabela da OpenID Foundation, cada coluna representa as possíveis variações nas certificações. Vale notar que JARM não é requisitado segundo a especificação de segurança logo não está presente como uma opção a ser adicionada. Para a certificação DCR a instiuiçao deve avaliar se certificou utilizando APIs de Dados do consumidor – Unsigned, ou de Pagamentos - Signed.</td>
+<td>Se escolheu Redirect:  <br/> • FAPI Adv. OP w/ MTLS <br/>• FAPI Adv. OP w/ MTLS, PAR <br/>• FAPI Adv. OP w/ Private Key<br/>• FAPI Adv. OP w/ Private Key, PAR <br/> Se escolheu DCR: <br/>• DCR Signed payload – JWT <br/>• DCR Unsigned payload - JSON <br/></td>
+</tr>
+<tr>
+<td>Profile version*</td>
+<td>A versão da certificação selecionado – Campo livre, apenas para controle da própria instituição.</td>
+<td>1</td>
+</tr>
+<tr>
+<td>Certification payload*</td>
+<td>O URI que aponta para o arquivo hospedado pela OpenID Foundation com o pacote de certificação. Formato zip.</td>
+<td>https://openid.net/wordpresscontent/uploads/2021/08/BR-OB_Adv._OP_MTLSexemplo.zip</td>
+</tr>
+<tr>
+<td>Start date of certification*</td>
+<td>A data de certificação inicial – é a mesma data que consta na tabela da OpenID Foundation. Formato dd/mm/yyyy</td>
+<td>09/05/2022</td>
+</tr>
+</tbody></table>
+
+<p>(*) Campo obrigatório</p>
+<h3 id='15-configurando-eventos-de-notificacao-no-diretorio'>15. Configurando eventos de notificação no Diretório</h3>
+<p>Teste Teste Teste</p>
+<h3 id='16-obtendo-um-token-de-acesso-para-as-apis-do-diretorio'>16. Obtendo um token de acesso para as APIs do Diretório</h3>
+<p>Teste Teste Teste</p>
+<h3 id='17-listando-as-organizacoes-cadastradas-no-diretorio-via-api'>17. Listando as organizações cadastradas no Diretório via API</h3>
+<p>Teste Teste Teste</p>
+<h3 id='18-listando-os-servidores-de-autorizacao-de-uma-organizacao-via-api'>18. Listando os servidores de autorização de uma organização via API</h3>
+<p>Teste Teste Teste</p>
+<h3 id='19-obtendo-um-software-statement-via-api'>19. Obtendo um Software Statement via API</h3>
+<p>Teste Teste Teste</p>
+<h3 id='20-obtendo-um-software-statement-assertion-via-api'>20. Obtendo um Software Statement Assertion via API</h3>
+<p>Teste Teste Teste</p>
+<h3 id='21-como-se-inscrever-nas-atualizacoes-de-lancamento-do-diretorio'>21. Como se inscrever nas atualizações de lançamento do Diretório</h3>
+<p>Teste Teste Teste</p>
+<h3 id='22-como-obter-suporte-ao-diretorio'>22. Como obter suporte ao Diretório</h3>
+<p>Aqui apresentamos as formas de contato para suporte ao Diretório Central.</p>
+
+<h4 id='service-desk'>SERVICE DESK</h4>
+
+<p>Todas as consultas, problemas ou solicitações de suporte precisam ser roteados por meio do Service Desk.</p>
+
+<p>O Service Desk do Open Insurance Brasil pode ser acessado pelo endereço: https://servicedesk.opinbrasil.com.br/</p>
+
+<p>É possível abrir chamados de Solicitação de Informações, Melhorias, Incidentes de Indisponibilidade e Problemas de Performance.</p>
