@@ -1,0 +1,73 @@
+title Fluxo de consentimento - OPIN
+participant Usuário as psu
+participant Aplicação - receptora as tpp
+participant Authorisation Server\n-  transmissora as as
+participant API de\nconsentimento as consent
+participant ICP-Brasil\n(certificados padrão OPIN) as icp
+participant Diretório\nJWKS as jwks
+participant API de produto\n - transmissora as api
+
+
+tpp->as: Estabelece conexão de mutual tls
+as->icp: Valida Certificado
+icp-->as: Certificado OK
+as->tpp: Conexão Estabelecida
+alt Token Auth: tls_client_auth
+note left of tpp: A aplicação/receptora faz uma\nsolicitação HTTPS "POST" para\no servidor de autorização e\napresenta uma credencial. Na\nresposta, o servidor de\nautorização emite um Access\nToken para a\nAplicação/Receptora.
+tpp->as: Post token endpoint
+as->tpp: Emite access token\nda inst. receptora
+else Token Auth: private_key_jwt
+tpp->tpp: Cria JWT de client_assertion 
+tpp->as: Post token endpoint + client_assertion JWT
+as->jwks: Recupera Key Set
+jwks->as: Retorna Key Set
+note right of jwks: Conjunto de chaves contendo\nas chaves públicas usadas para\nverificar qualquer JSON Web\nToken (JWT) emitido pelo\nservidor de autorização e\nassinado usando o RS256
+as->as: Valida client_assertion JWT utilizando chave\ndo key set confome RFC7523 Clause 2.2
+as->tpp: Emite access token
+end
+note right of consent: Nesse momento é criado um\nconsentimento na instituição\ntransmissora, cujo status é\nAwaiting Authorization.
+tpp->consent: Solicita a criação do consentimento (Post Consent) API
+consent-->tpp: Consentimento criado + consentId
+tpp->tpp: Cria Signed Request Object
+tpp->psu: Redireciona para Authorisation Server
+psu->as: Autentica e Autoriza
+as->as: Extrai o Request Object
+as->jwks: Recupera Key Set
+jwks->as: Retorna Key Set
+as->as: Valida assinatura do Request Object
+as->as: Valida a Request
+note left of as: Consulte a FAPI Conformance Suite\npara todos os requisitos de um Auth. Server.
+as->psu: Challenge (Autenticação e Autorização)
+psu->as: Autentica e Autoriza
+note left of as: Autenticação e confirmação do consentimento:\nOs passos necessários para\napresentar informação para captar\ne salvar consentimento do usuário são \nespecíficos da implementação.
+as->consent: Atualiza status do consentimento
+consent->as: Status OK
+as-->psu: Redireciona para receptora e envia o Authorization Code
+psu-->tpp: Acessa a receptora
+tpp->as: Estabelece conexão mutual tls
+as->icp: Valida Certificado
+icp-->as: Certificado OK
+as->tpp: Conexão estabelecida
+alt Token Auth: tls_client_auth
+note left of tpp: Recebe o Authorization Code\npara geração do Access Token\nque vai viabilizar a conexão\ncom os endpoints, de acordo\ncom o consentimento\n(permissão e escopo).\n
+tpp->as: Post token endpoint + auth code
+as->tpp: Emite Access Token
+else Token Auth: private_key_jwt
+tpp->tpp: Cria JWT de client_assertion 
+tpp->as: Post token endpoint +\nclient_assertion JWT + auth code
+as->jwks: Recupera Key Set
+jwks->as: Retorna Key Set
+as->as: Valida  client_assertion JWT utilizando chave\ndo key set confome RFC7523 Clause 2.2
+as->tpp: Emite Access Token
+end
+tpp->api: Estabelece conexão mutual tls
+api->icp: Valida Certificado
+icp-->api: Certificado OK
+api->tpp: Conexão Estabelecida
+tpp->api: Solicita recurso + access_token
+api->as: Inspeciona Access Token
+as->api: OK
+api-->api: Valida mutual tls
+api-->api: Valida escopo e status do consentimento
+note left of consent: Validation of Policy Validity\nis implementation specific
+api->tpp: Retorna recurso
