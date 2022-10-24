@@ -1,0 +1,668 @@
+openapi: 3.0.0
+info:
+  title: API Quotes - Open Insurance Brasil
+  description: |
+    API que trata da criação, consulta e notificação de cotações para o Open Insurance Brasil Fase 3.  
+    Não possui segregação entre pessoa natural e pessoa jurídica. 
+  version: 1.0.1  
+  license:
+    name: Apache 2.0
+    url: 'http://www.apache.org/licenses/LICENSE-2.0'
+  contact:
+    name: Governança do Open Insurance Brasil - Especificações
+    email: gt-interfaces@openinsurancebr.org
+    url: 'https://http://novosite.susep.gov.br'
+servers:
+  - url: 'https://api.seguro.com.br/open-insurance/quotes/v1'
+    description: Servidor de Produção
+  - url: 'https://apih.seguro.com.br/open-insurance/quotes/v1'
+    description: Servidor de Homologação
+tags:
+  - name: Quotes
+    description: 'Operações para criação, consulta e notificação de cotações desejadas pelo cliente.'
+paths:
+  '/notifications':
+    post:
+      tags:
+        - Quotes
+      summary: Criar notificação sobre oportunidade de cotação.
+      operationId: quotesPostNotification
+      description: Método para a criação de uma nova notificação.
+      parameters:
+        - $ref: '#/components/parameters/Authorization'
+        - $ref: '#/components/parameters/xFapiAuthDate'
+        - $ref: '#/components/parameters/xFapiCustomerIpAddress'
+        - $ref: '#/components/parameters/xFapiInteractionId'
+        - $ref: '#/components/parameters/xCustomerUserAgent'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateNotification'
+        description: Payload para criação da notificação.
+        required: true
+      responses:
+        '202':
+          $ref: '#/components/responses/202QuoteAccepted'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '405':
+          $ref: '#/components/responses/MethodNotAllowed'
+        '406':
+          $ref: '#/components/responses/NotAcceptable'
+        '415':
+          $ref: '#/components/responses/UnsupportedMediaType'
+        '422':
+          $ref: '#/components/responses/UnprocessableEntityQuote'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+        default:
+          $ref: '#/components/responses/Default'
+      security:
+        - OAuth2Security:
+            - quotes
+  '/consent-requests':
+    post:
+      tags:
+        - Quotes
+      summary: Criar a solitação do pedido de consentimento.
+      operationId: quotesPostConsentsRequests
+      description: Método para a criação da solicitação de pedido de consentimento.
+      parameters:
+        - $ref: '#/components/parameters/Authorization'
+        - $ref: '#/components/parameters/xFapiAuthDate'
+        - $ref: '#/components/parameters/xFapiCustomerIpAddress'
+        - $ref: '#/components/parameters/xFapiInteractionId'
+        - $ref: '#/components/parameters/xCustomerUserAgent'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateConsentsRequests'
+        description: Payload para criação da solicitação de pedido de consentimento.
+        required: true
+      responses:
+        '202':
+          $ref: '#/components/responses/202ConsentsRequestsCreated'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '405':
+          $ref: '#/components/responses/MethodNotAllowed'
+        '406':
+          $ref: '#/components/responses/NotAcceptable'
+        '415':
+          $ref: '#/components/responses/UnsupportedMediaType'
+        '422':
+          $ref: '#/components/responses/UnprocessableEntity'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+        default:
+          $ref: '#/components/responses/Default'
+      security:
+        - OpenId:
+            - openid
+        - OAuth2Security:
+            - quotes
+components:
+  schemas:
+    422ResponseErrorCreateNotification:
+      type: object
+      required:
+        - errors
+      properties:
+        errors:
+          type: array
+          minItems: 1
+          maxItems: 3
+          items:
+            type: object
+            required:
+              - code
+              - title
+              - detail
+            properties:
+              code:
+                type: string
+                maxLength: 21
+                enum:
+                  - PRODUTO_NAO_COMERCIALIZADO
+                  - RISCO_NEGADO
+                  - DETALHE_COTACAO_INVALIDO
+                  - NAO_INFORMADO
+                example: PRODUTO_NAO_COMERCIALIZADO
+                description: |
+                  Códigos de erros previstos na criação de notificação para a iniciação de cotações:  
+                  • PRODUTO_NAO_COMERCIALIZADO: Produto não comercializado.  
+                  • RISCO_NEGADO: Risco em questão está fora das políticas de aceitação da Seguradora.  
+                  • DETALHE_COTACAO_INVALIDO: Detalhe da cotação inválido.  
+                  • NAO_INFORMADO: Não informado.   
+              title:
+                type: string
+                maxLength: 255
+                pattern: \w*\W*
+                example: Produto não comercializado.
+                description: |
+                  Título específico do erro reportado, de acordo com o código enviado:  
+                  • PRODUTO_NAO_COMERCIALIZADO: Produto não comercializado.  
+                  • RISCO_NEGADO: Risco em questão está fora das políticas de aceitação da Seguradora.  
+                  • DETALHE_COTACAO_INVALIDO: Detalhe da cotação inválido.  
+                  • NAO_INFORMADO: Não informado. 
+              detail:
+                type: string
+                maxLength: 2048
+                pattern: \w*\W*
+                example: O produto específico requisitado não é comercializado.
+                description: |
+                  Descrição específica do erro de acordo com o código reportado:  
+                  • PRODUTO_NAO_COMERCIALIZADO – O produto específico requisitado não é comercializado.  
+                  • RISCO_NEGADO: Risco em questão está fora das políticas de aceitação da Seguradora. 
+                  • DETALHE_COTACAO_INVALIDO: O campo [nome_campo] não atende os requisitos de preenchimento.  
+                  • NAO_INFORMADO – Não reportado/identificado pela instituição notificada.  
+            additionalProperties: false
+        meta:
+          $ref: '#/components/schemas/Meta'
+      additionalProperties: false
+    ResponseError:
+      type: object
+      required:
+        - errors
+      properties:
+        errors:
+          type: array
+          minItems: 1
+          maxItems: 13
+          items:
+            type: object
+            required:
+              - code
+              - title
+              - detail
+            properties:
+              code:
+                description: Código de erro específico do endpoint
+                type: string
+                pattern: '[\w\W\s]*'
+                maxLength: 255
+              title:
+                description: Título legível por humanos deste erro específico
+                type: string
+                pattern: '[\w\W\s]*'
+                maxLength: 255
+              detail:
+                description: Descrição legível por humanos deste erro específico
+                type: string
+                pattern: '[\w\W\s]*'
+                maxLength: 2048
+            additionalProperties: false
+        meta:
+          $ref: '#/components/schemas/Meta'
+      additionalProperties: false
+    XFapiInteractionId:
+      type: string
+      pattern: '^[a-zA-Z0-9][a-zA-Z0-9\-]{0,99}$'
+      maxLength: 100
+      description: 'Um UID [RFC4122](https://tools.ietf.org/html/rfc4122) usado como um ID de correlação. Se fornecido, o transmissor deve "reproduzir" esse valor no cabeçalho de resposta.'
+    Meta:
+      type: object
+      description: Meta informações referente à API requisitada.
+      required:
+        - totalRecords
+        - totalPages
+        - requestDateTime
+      properties:
+        totalRecords:
+          type: integer
+          format: int32
+          description: Número total de registros no resultado
+          example: 1
+        totalPages:
+          type: integer
+          format: int32
+          description: Número total de páginas no resultado
+          example: 1
+        requestDateTime:
+          description: 'Data e hora da consulta, conforme especificação RFC-3339, formato UTC.'
+          type: string
+          maxLength: 20
+          format: date-time
+          example: '2021-05-21T08:30:00Z'
+      additionalProperties: false
+    CreateNotification:
+      type: object
+      required:
+        - data
+      properties:
+        data:
+          $ref: '#/components/schemas/CreateNotificationData'
+      additionalProperties: false
+    CreateNotificationData:
+      type: object
+      description: Objeto contendo dados da notificação.
+      required:
+        - type
+      properties:
+        type:
+          type: string
+          maxLength: 30
+          enum:
+            - PATRIMONIAL
+            - AERONAUTICAL
+            - NAUTICAL
+            - NUCLEAR
+            - OIL
+            - RESPONSABILITY
+            - TRANSPORT
+            - FINANCIAL_RISKS
+            - RURAL
+            - AUTO
+            - HOUSING
+            - PEOPLE
+            - ACCEPTANCE_AND_BRANCHES_ABROAD
+            - PENSION_RISK
+            - PENSION_SURVIVAL
+            - CAPITALIZATION_TITLES
+          example: AUTO
+          description: |
+            Tipo de produto:
+            - CAPITALIZATION_TITLES - Produtos de Titulos de Capitalização
+            - PENSION_RISK - Produtos de Previdência Risco
+            - PENSION_SURVIVAL - Produtos de Previdência Sobrevivência
+            - PATRIMONIAL - Produtos de Patrimonial
+            - AERONAUTICAL - Produtos de Aeronáuticos
+            - NAUTICAL - Produtos de Marítimo
+            - NUCLEAR - Produtos de Nuclear
+            - OIL - Produtos de Petróleo
+            - RESPONSABILITY - Produtos de Responsabilidade
+            - TRANSPORT - Produtos de Transportes
+            - FINANCIAL_RISKS - Produtos de Riscos Financeiros
+            - RURAL - Produtos de Rural
+            - AUTO - Produtos de Automóveis
+            - HOUSING - Produtos de Habitacional
+            - PEOPLE - Produtos de Pessoas (Repartição simples)
+            - ACCEPTANCE_AND_BRANCHES_ABROAD - Aceitação e Sucursal no exterior
+      additionalProperties: false
+    CreateConsentsRequests:
+      type: object
+      required:
+        - data
+      properties:
+        data:
+          $ref: '#/components/schemas/CreateConsentsRequestsData'
+      additionalProperties: false
+    CreateConsentsRequestsData:
+      type: object
+      description: Objeto contendo dados da necessários para criação do consentimento.
+      required:
+        - correlationId
+        - loggedUser
+        - productType
+        - permissions
+      properties:
+        correlationId:
+          type: string
+          maxLength: 30
+          example: "ab342c34"
+          description: |
+            Id de correlação do consentimento.
+        loggedUser:
+          type: object
+          description: Usuário (pessoa natural) que encontra-se logado na iniciadora e que iniciará o processo de consentimento para compartilhamento de dados.
+          additionalProperties: false
+          required:
+            - document
+          properties:
+            document:
+              type: object
+              additionalProperties: false
+              required:
+                - identification
+                - rel
+              properties:
+                identification:
+                  type: string
+                  maxLength: 11
+                  description: Número do documento de identificação oficial do usuário.
+                  example: '11111111111'
+                  pattern: '^\d{11}$'
+                rel:
+                  type: string
+                  maxLength: 3
+                  description: Tipo do documento de identificação oficial do usuário.
+                  example: CPF
+                  pattern: '^[A-Z]{3}$'
+        businessEntity:
+          type: object
+          description: 'Titular, pessoa jurídica a quem se referem os dados que são objeto de compartilhamento.'
+          additionalProperties: false
+          required:
+            - document
+          properties:
+            document:
+              type: object
+              additionalProperties: false
+              required:
+                - identification
+                - rel
+              properties:
+                identification:
+                  type: string
+                  maxLength: 14
+                  description: Número do documento de identificação oficial do titular pessoa jurídica.
+                  example: '11111111111111'
+                  pattern: '^\d{14}$'
+                rel:
+                  type: string
+                  maxLength: 4
+                  description: Tipo do documento de identificação oficial do titular pessoa jurídica.
+                  example: CNPJ
+                  pattern: '^[A-Z]{4}$'
+        productType:
+          type: string
+          maxLength: 30
+          enum:
+            - PATRIMONIAL
+            - AERONAUTICAL
+            - NAUTICAL
+            - NUCLEAR
+            - OIL
+            - RESPONSABILITY
+            - TRANSPORT
+            - FINANCIAL_RISKS
+            - RURAL
+            - AUTO
+            - HOUSING
+            - PEOPLE
+            - ACCEPTANCE_AND_BRANCHES_ABROAD
+            - PENSION_RISK
+            - PENSION_SURVIVAL
+            - CAPITALIZATION_TITLES
+          example: AUTO
+          description: |
+            Tipo de produto:
+            - CAPITALIZATION_TITLES - Produtos de Titulos de Capitalização
+            - PENSION_RISK - Produtos de Previdência Risco
+            - PENSION_SURVIVAL - Produtos de Previdência Sobrevivência
+            - PATRIMONIAL - Produtos de Patrimonial
+            - AERONAUTICAL - Produtos de Aeronáuticos
+            - NAUTICAL - Produtos de Marítimo
+            - NUCLEAR - Produtos de Nuclear
+            - OIL - Produtos de Petróleo
+            - RESPONSABILITY - Produtos de Responsabilidade
+            - TRANSPORT - Produtos de Transportes
+            - FINANCIAL_RISKS - Produtos de Riscos Financeiros
+            - RURAL - Produtos de Rural
+            - AUTO - Produtos de Automóveis
+            - HOUSING - Produtos de Habitacional
+            - PEOPLE - Produtos de Pessoas (Repartição simples)
+            - ACCEPTANCE_AND_BRANCHES_ABROAD - Aceitação e Sucursal no exterior
+        permissions:
+              type: array
+              maxItems: 30
+              minItems: 1
+              description: 'Especifica os tipos de permissões de acesso às APIs no escopo do Open Insurance Brasil - Fase 2, de acordo com os blocos de consentimento fornecidos pelo usuário e necessários ao acesso a cada endpoint das APIs.'
+              items:
+                type: string
+                enum:
+                    - CUSTOMERS_PERSONAL_IDENTIFICATIONS_READ         
+                    - CUSTOMERS_PERSONAL_ADITTIONALINFO_READ         
+                    - CUSTOMERS_PERSONAL_QUALIFICATION_READ         
+                    - CUSTOMERS_BUSINESS_IDENTIFICATIONS_READ         
+                    - CUSTOMERS_BUSINESS_QUALIFICATION_READ         
+                    - CUSTOMERS_BUSINESS_ADITTIONALINFO_READ         
+                    - CAPITALIZATION_TITLES_READ                                        
+                    - CAPITALIZATION_TITLES_POLICYINFO_READ                             
+                    - CAPITALIZATION_TITLES_PREMIUM_READ                                      
+                    - CAPITALIZATION_TITLES_CLAIM_READ          
+                    - PENSION_RISK_READ                                                      
+                    - PENSION_RISK_CONTRACTINFO_READ                                           
+                    - PENSION_RISK_CONTRIBUTIONS_READ                                              
+                    - DAMAGES_AND_PEOPLE_PATRIMONIAL_READ                                          
+                    - DAMAGES_AND_PEOPLE_PATRIMONIAL_POLICYINFO_READ                    
+                    - DAMAGES_AND_PEOPLE_PATRIMONIAL_PREMIUM_READ                       
+                    - DAMAGES_AND_PEOPLE_PATRIMONIAL_CLAIM_READ         
+                    - DAMAGES_AND_PEOPLE_AERONAUTICAL_READ                                                               
+                    - DAMAGES_AND_PEOPLE_AERONAUTICAL_POLICYINFO_READ                   
+                    - DAMAGES_AND_PEOPLE_AERONAUTICAL_PREMIUM_READ                      
+                    - DAMAGES_AND_PEOPLE_AERONAUTICAL_CLAIM_READ         
+                    - DAMAGES_AND_PEOPLE_NAUTICAL_READ                                                               
+                    - DAMAGES_AND_PEOPLE_NAUTICAL_POLICYINFO_READ               
+                    - DAMAGES_AND_PEOPLE_NAUTICAL_PREMIUM_READ                  
+                    - DAMAGES_AND_PEOPLE_NAUTICAL_CLAIM_READ         
+                    - DAMAGES_AND_PEOPLE_NUCLEAR_READ                                                                                   
+                    - DAMAGES_AND_PEOPLE_NUCLEAR_POLICYINFO_READ                                
+                    - DAMAGES_AND_PEOPLE_NUCLEAR_PREMIUM_READ                                   
+                    - DAMAGES_AND_PEOPLE_NUCLEAR_CLAIM_READ          
+                    - DAMAGES_AND_PEOPLE_OIL_READ                                                                                                       
+                    - DAMAGES_AND_PEOPLE_OIL_POLICYINFO_READ                                
+                    - DAMAGES_AND_PEOPLE_OIL_PREMIUM_READ                                   
+                    - DAMAGES_AND_PEOPLE_OIL_CLAIM_READ          
+                    - DAMAGES_AND_PEOPLE_RESPONSIBILITY_READ                                                                                                                           
+                    - DAMAGES_AND_PEOPLE_RESPONSIBILITY_POLICYINFO_READ                                
+                    - DAMAGES_AND_PEOPLE_RESPONSIBILITY_PREMIUM_READ                                   
+                    - DAMAGES_AND_PEOPLE_RESPONSIBILITY_CLAIM_READ         
+                    - DAMAGES_AND_PEOPLE_TRANSPORT_READ                                                                                                                                               
+                    - DAMAGES_AND_PEOPLE_TRANSPORT_POLICYINFO_READ                                
+                    - DAMAGES_AND_PEOPLE_TRANSPORT_PREMIUM_READ                                   
+                    - DAMAGES_AND_PEOPLE_TRANSPORT_CLAIM_READ         
+                    - DAMAGES_AND_PEOPLE_FINANCIAL_READ                                                                                                                                                                   
+                    - DAMAGES_AND_PEOPLE_FINANCIAL_RISKS_POLICYINFO_READ                                
+                    - DAMAGES_AND_PEOPLE_FINANCIAL_RISKS_PREMIUM_READ                                   
+                    - DAMAGES_AND_PEOPLE_FINANCIAL_RISKS_CLAIM_READ         
+                    - DAMAGES_AND_PEOPLE_RURAL_READ                                                                                                                                                                                       
+                    - DAMAGES_AND_PEOPLE_RURAL_POLICYINFO_READ                                
+                    - DAMAGES_AND_PEOPLE_RURAL_PREMIUM_READ                                   
+                    - DAMAGES_AND_PEOPLE_RURAL_CLAIM_READ         
+                    - DAMAGES_AND_PEOPLE_AUTO_READ                                                                                                                                                                                                           
+                    - DAMAGES_AND_PEOPLE_AUTO_POLICYINFO_READ                                
+                    - DAMAGES_AND_PEOPLE_AUTO_PREMIUM_READ                                   
+                    - DAMAGES_AND_PEOPLE_AUTO_CLAIM_READ          
+                    - DAMAGES_AND_PEOPLE_HOUSING_READ                                                                                                                                                                                                                               
+                    - DAMAGES_AND_PEOPLE_HOUSING_POLICYINFO_READ                       
+                    - DAMAGES_AND_PEOPLE_HOUSING_PREMIUM_READ                          
+                    - DAMAGES_AND_PEOPLE_HOUSING_CLAIM_READ
+                    - DAMAGES_AND_PEOPLE_ACCEPTANCE_AND_BRANCHES_ABROAD_READ           
+                    - DAMAGES_AND_PEOPLE_ACCEPTANCE_AND_BRANCHES_ABROAD_POLICYINFO_READ
+                    - DAMAGES_AND_PEOPLE_ACCEPTANCE_AND_BRANCHES_ABROAD_PREMIUM_READ   
+                    - DAMAGES_AND_PEOPLE_ACCEPTANCE_AND_BRANCHES_ABROAD_CLAIM_READ            
+                    - DAMAGES_AND_PEOPLE_PERSON_READ                                                                                                                                                                                                                                                   
+                    - DAMAGES_AND_PEOPLE_PERSON_POLICYINFO_READ                        
+                    - DAMAGES_AND_PEOPLE_PERSON_PREMIUM_READ                           
+                    - DAMAGES_AND_PEOPLE_PERSON_CLAIM_READ                             
+                    - RESOURCES_READ         
+              example:
+                - DAMAGES_AND_PEOPLE_AUTO_CLAIM_READ
+      additionalProperties: false
+  parameters:
+    Authorization:
+      name: Authorization
+      in: header
+      description: Cabeçalho HTTP padrão. Permite que as credenciais sejam fornecidas dependendo do tipo de recurso solicitado
+      required: true
+      schema:
+        type: string
+        pattern: '[\w\W\s]*'
+        maxLength: 2048
+    xCustomerUserAgent:
+      name: x-customer-user-agent
+      in: header
+      description: Indica o user-agent que o usuário utiliza.
+      required: false
+      schema:
+        type: string
+        pattern: '[\w\W\s]*'
+        minLength: 1
+        maxLength: 100
+    xFapiAuthDate:
+      name: x-fapi-auth-date
+      in: header
+      description: 'Data em que o usuário logou pela última vez com o receptor. Representada de acordo com a [RFC7231](https://tools.ietf.org/html/rfc7231).Exemplo: Sun, 10 Sep 2017 19:43:31 UTC'
+      required: false
+      schema:
+        type: string
+        pattern: '^(Mon|Tue|Wed|Thu|Fri|Sat|Sun), \d{2} (Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec) \d{4} \d{2}:\d{2}:\d{2} (GMT|UTC)$'
+        minLength: 29
+        maxLength: 29
+    xFapiCustomerIpAddress:
+      name: x-fapi-customer-ip-address
+      in: header
+      description: O endereço IP do usuário se estiver atualmente logado com o receptor.
+      required: false
+      schema:
+        type: string
+        pattern: '[\w\W\s]*'
+        minLength: 1
+        maxLength: 100
+    xFapiInteractionId:
+      name: x-fapi-interaction-id
+      in: header
+      description: 'Um UID [RFC4122](https://tools.ietf.org/html/rfc4122) usado como um ID de correlação. Se fornecido, o transmissor deve "reproduzir" esse valor no cabeçalho de resposta.'
+      required: false
+      schema:
+        type: string
+        pattern: '^[a-zA-Z0-9][a-zA-Z0-9\-]{0,99}$'
+        minLength: 1
+        maxLength: 100
+  securitySchemes:
+    OpenId:
+      type: openIdConnect
+      openIdConnectUrl: 'https://auth.mockbank.poc.raidiam.io/.well-known/openid-configuration'
+    OAuth2Security:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: 'https://authserver.example/token'
+          scopes:
+            quotes: Escopo necessário para acesso à API Quotes.
+  responses:
+    UnsupportedMediaType:
+      description: O formato do payload não é um formato suportado.
+      content:
+        application/json; charset=utf-8:
+          schema:
+            $ref: '#/components/schemas/ResponseError'
+    BadRequest:
+      description: 'A requisição foi malformada, omitindo atributos obrigatórios, seja no payload ou através de atributos na URL.'
+      content:
+        application/json; charset=utf-8:
+          schema:
+            $ref: '#/components/schemas/ResponseError'
+    Forbidden:
+      description: O token tem escopo incorreto ou uma política de segurança foi violada
+      content:
+        application/json; charset=utf-8:
+          schema:
+            $ref: '#/components/schemas/ResponseError'
+    InternalServerError:
+      description: Ocorreu um erro no gateway da API ou no microsserviço
+      content:
+        application/json; charset=utf-8:
+          schema:
+            $ref: '#/components/schemas/ResponseError'
+    MethodNotAllowed:
+      description: O consumidor tentou acessar o recurso com um método não suportado
+      content:
+        application/json; charset=utf-8:
+          schema:
+            $ref: '#/components/schemas/ResponseError'
+    NotAcceptable:
+      description: A solicitação continha um cabeçalho Accept diferente dos tipos de mídia permitidos ou um conjunto de caracteres diferente de UTF-8
+      content:
+        application/json; charset=utf-8:
+          schema:
+            $ref: '#/components/schemas/ResponseError'
+    NotFound:
+      description: O recurso solicitado não existe ou não foi implementado
+      content:
+        application/json; charset=utf-8:
+          schema:
+            $ref: '#/components/schemas/ResponseError'
+    UnprocessableEntity:
+      description: 'A sintaxe da requisição esta correta, mas não foi possível processar as instruções presentes.'
+      content:
+        application/json; charset=utf-8:
+          schema:
+            $ref: '#/components/schemas/ResponseError'
+    TooManyRequests:
+      description: 'A operação foi recusada, pois muitas solicitações foram feitas dentro de um determinado período ou o limite global de requisições concorrentes foi atingido'
+      content:
+        application/json; charset=utf-8:
+          schema:
+            $ref: '#/components/schemas/ResponseError'
+    Unauthorized:
+      description: Cabeçalho de autenticação ausente/inválido ou token inválido
+      content:
+        application/json; charset=utf-8:
+          schema:
+            $ref: '#/components/schemas/ResponseError'
+    Default:
+      description: Erro inesperado.
+      content:
+        application/json; charset=utf-8:
+          schema:
+            $ref: '#/components/schemas/ResponseError'
+    UnprocessableEntityQuote:
+      description: 'A solicitação foi bem formada, mas não pôde ser processada devido à lógica de negócios específica da solicitação.'
+      content:
+        application/jwt:
+          schema:
+            $ref: '#/components/schemas/422ResponseErrorCreateNotification'
+          examples:
+            Produto nao comercializado:
+              summary: Produto não comercializado
+              value:
+                errors:
+                  - code: PRODUTO_NAO_COMERCIALIZADO
+                    title: Produto não comercializado.
+                    detail: O produto específico requisitado não é comercializado.
+                meta:
+                  totalRecords: 1
+                  totalPages: 1
+                  requestDateTime: '2021-05-21T08:30:00Z'
+      headers:
+        x-fapi-interaction-id:
+          description: |
+            Um UUID RFC4122 usado como um ID de correlação. O transmissor deve usar o mesmo valor recebido na requisição para o cabeçalho de resposta recebido na requisição, caso não tenha sido fornecido, deve se usar um UUID RFC4122.
+          schema:
+            $ref: '#/components/schemas/XFapiInteractionId'
+    202QuoteAccepted:
+      description: Notificação aceita.
+      headers:
+        x-fapi-interaction-id:
+          description: |
+            Um UID [RFC4122](https://tools.ietf.org/html/rfc4122) usado como um ID de correlação.  
+            Se fornecido, o transmissor deve "reproduzir" esse valor no cabeçalho de resposta.          
+          schema:
+            type: string
+            pattern: '^[a-zA-Z0-9][a-zA-Z0-9\-]{0,99}$'
+            minLength: 1
+            maxLength: 100
+            example: 85bac523-d3ae-2289-b106-330a6218710d
+    202ConsentsRequestsCreated:
+      description: Request de criação de consentimento aceita.
+      headers:
+        x-fapi-interaction-id:
+          description: |
+            Um UID [RFC4122](https://tools.ietf.org/html/rfc4122) usado como um ID de correlação.  
+            Se fornecido, o transmissor deve "reproduzir" esse valor no cabeçalho de resposta.          
+          schema:
+            type: string
+            pattern: '^[a-zA-Z0-9][a-zA-Z0-9\-]{0,99}$'
+            minLength: 1
+            maxLength: 100
+            example: 85bac523-d3ae-2289-b106-330a6218710d
