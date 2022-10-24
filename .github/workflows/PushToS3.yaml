@@ -5,6 +5,16 @@ on:
     branches:
       - s3
 jobs:
+  upload:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@master
+      - uses: shallwefootball/s3-upload-action@master
+        with:
+          aws_key_id: ${{ secrets.AWS_KEY_ID }}
+          aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY}}
+          aws_bucket: 'hml-dev-portal'
+          source_dir: 'documentation'
   run:
     runs-on: ubuntu-latest
 
@@ -42,6 +52,15 @@ jobs:
       - run: bundle exec middleman build --verbose
 
       - uses: actions/checkout@v3
+
+      - uses: shallwefootball/s3-upload-action@master
+        name: Upload S3
+        id: S3
+        with:
+          aws_key_id: ${{ secrets.AWS_KEY_ID }}
+          aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY}}
+          aws_bucket: 'hml-dev-portal'
+          source_dir: 'documentation'
 
       # - name: Push to S3
       #   uses: reggionick/s3-deploy@v3
