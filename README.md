@@ -13,7 +13,6 @@ de sistemas, com privacidade e segurança.
 
 ### Especificação
 
-
 As APIs devem ser especificadas com a versão 3.0.0 da linguagem OpenAPI
 (https://github.com/OAI/OpenAPI- Specification/blob/3.0.0/versions/3.0.0.md).
 
