@@ -1,0 +1,31 @@
+title Dynamic Client Registration
+participant Receptor as tpp
+participant Diretório\nAuth. Server as diras
+participant Diretório\nAPI as dir
+participant Diretório\nJWKS as jwks
+participant Seguradora\nAuth. Server as as
+participant ICP-Brasil as icp
+
+tpp->diras: OAuth 2.0 tls_client_auth 
+note left of tpp: Client Credentials concedem\no escopo directory:software
+diras->diras: Valida certificado
+diras->icp: Verifica status de revogação
+icp-->diras: Certificado OK
+diras-->tpp: Retorna Access Token
+tpp->dir: Recupera Authorisation Servers + Access Token
+dir-->tpp: Retorna Authorisation Servers
+tpp->as: Recupera OpenID Configuration
+as-->tpp: JSON OpenID Discovery Clause 4.2
+tpp->tpp: Extrai metadados desejados
+tpp->dir: Recupera Software Statement Assertion (SSA)
+dir-->tpp: SSA JWT
+tpp->as: Post RFC7591 com SSA JWT as software_statement
+as->icp: Verifica status de revogação
+icp-->as: Certificado OK
+as->jwks: Recupera Key Set
+jwks->as: Retorna Key Set
+as-->as: Valida SSA em Request RFC 7591
+as-->as: Valida Request RFC7591
+note left of tpp: Request deve ser feito para\nendpoint de token protegido por mutual tls
+as-->tpp: Retorna RFC7591 Client Configuration + RFC7592 Management Token
+tpp->tpp: Grava Management Token
