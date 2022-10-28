@@ -33,7 +33,7 @@ info:
     ### `/{policyId}/claim`
       - permissions:
         - GET: **DAMAGES_AND_PEOPLE_ACCEPTANCE_AND_BRANCHES_ABROAD_CLAIM_READ**
-  version: 1.0.0
+  version: 1.1.0
   contact:
     name: Governança do Open Insurance Brasil
     email: gt-interfaces@openinsurancebr.org
@@ -320,7 +320,8 @@ components:
                 BILHETE,
                 CERTIFICADO,
                 APOLICE_INDIVIDUAL_AUTOMOVEL,
-                APOLICE_FROTA_AUTOMOVEL]
+                APOLICE_FROTA_AUTOMOVEL,
+                CERTIFICADO_AUTOMOVEL]
           example: APOLICE_INDIVIDUAL
         policyId:
           description: Identificador da apólice ou bilhete
@@ -382,7 +383,7 @@ components:
         beneficiaries: 
           type: array
           items:
-            $ref: '#/components/schemas/PersonalInfo'
+            $ref: '#/components/schemas/BeneficiaryInfo'
         principals:
           type: array
           items:
@@ -402,7 +403,7 @@ components:
         coinsuranceRetainedPercentage:
           description: "Percentual Retido em Cosseguro (Quando há cosseguro)"
           type: number
-          pattern: '^\d{1,3}\.\d{1,9}$' 
+          pattern: '^\d{1,3}(\.\d{1,9})?$' 
           example: 10.00
         coinsurers:
           type: array
@@ -470,11 +471,36 @@ components:
           description: Endereço da Pessoa (restante do endereço, excluindo cidade, estado e país)
           type: string
           maxLength: 60
+    BeneficiaryInfo:
+      type: object
+      required:
+        - identification
+        - identificationType
+        - name
+      properties:
+        identification:
+          description: Documento de Identificação da Pessoa
+          type: string
+          maxLength: 60
+          example: "12345678900"
+        identificationType:
+          description: Tipo de Documento da Pessoa
+          type: string
+          maxLength: 6
+          enum: [
+            CPF,
+            CNPJ,
+            OUTROS
+          ]
+          example: CPF
+        name:
+          description: Nome ou Razão Social da Pessoa
+          type: string
+          maxLength: 60
+          example: Nome Sobrenome
     Intermediary:
       type: object
       required:
-        - identification 
-        - identificationType
         - name
       properties:
         type:
@@ -491,17 +517,17 @@ components:
           ]
           example: REPRESENTANTE
         identification:
-          description: Documento de Identificação da Intermediador
+          description: Documento de Identificação do Intermediador(a) (Caso Tipo de Intermediador não seja CORRETOR ou quando for CORRETOR, porém o identificador do intermediador não seja informado)
           type: string
           maxLength: 60
           pattern: '^\d{1,60}$'
           example: "12345678900"
         brokerId:
-          description: Identificador do Intermediador (Caso Tipo de Intermediador for CORRETOR)
+          description: Identificador do intermediador da apólice - código Susep do corretor(a) (Caso Tipo de Intermediador for CORRETOR)
           type: string
           maxLength: 100
         identificationType:
-          description: Tipo de Documento da Intermediador
+          description: Tipo de Documento do Intermediador(a) (Caso Tipo de Intermediador não seja CORRETOR ou quando for CORRETOR, porém o identificador do intermediador não seja informado)
           type: string
           maxLength: 6
           enum: [
@@ -544,7 +570,6 @@ components:
         - identification
         - type
         - description
-        - amount
         - coverages
       properties:
         identification:
@@ -560,6 +585,7 @@ components:
                 PROCESSO_JUDICIAL,
                 AUTOMOVEL,
                 CONDUTOR,
+                FROTA,
                 OUTROS]
         typeAdditionalInfo:
           type: string
@@ -570,7 +596,7 @@ components:
           maxLength: 1024
           description: Descrição do objeto segurado 
         amount:
-          description: "Valor do objeto segurado"
+          description: "Valor do objeto segurado (Caso Tipo do Objeto Segurado for "CONTRATO", "PROCESSO_ADMINISTRATIVO", "PROCESSO_JUDICIAL" e para coberturas dos ramos de seguro garantia e de fiança locatícia)"
           $ref: '#/components/schemas/AmountDetails'
         coverages:
           type: array
@@ -801,7 +827,7 @@ components:
         percentage:
           description: Percentual do POS
           type: number
-          pattern: '^\d{1,3}\.\d{1,9}$'
+          pattern: '^\d{1,3}(\.\d{1,9})?$'
           example: 10.00
     Coinsurer:
       type: object
@@ -816,7 +842,7 @@ components:
         cededPercentage:
           description: "Percentual cedido para a congênere para contratos de cosseguro cedido. Obs: Obrigatório quando há cosseguro"
           type: number
-          pattern: '^\d{1,3}\.\d{1,9}$'
+          pattern: '^\d{1,3}(\.\d{1,9})?$'
           example: 10.00
     ResponseInsuranceAcceptanceAndBranchesAbroadPremium:
       type: object
@@ -898,17 +924,15 @@ components:
           type: string
           enum: [LIQUIDACAO_DE_PREMIO,
                 LIQUIDACAO_DE_RESTITUICAO_DE_PREMIO,
-                LIQUIDACAO_DE_CUSTO_DE_AQUISICAO,
-                LIQUIDACAO_DE_RESTITUICAO_DE_CUSTO_DE_AQUISICAO,
                 ESTORNO_DE_PREMIO,
                 ESTORNO_DE_RESTITUICAO_DE_PREMIO,
-                ESTORNO_DE_CUSTO_DE_AQUISICAO,
                 EMISSAO_DE_PREMIO,
                 CANCELAMENTO_DE_PARCELA,
                 EMISSAO_DE_RESTITUICAO_DE_PREMIO,
                 REABERTURA_DE_PARCELA,
-                BAIXA_POR_PERDA]
-          maxLength: 47
+                BAIXA_POR_PERDA,
+                CANCELAMENTO_DE_PREMIO_E_PARCELA]
+          maxLength: 35
           example: LIQUIDACAO_DE_PREMIO
         movementOrigin:
           description: "Origem do Movimento. Obs: Obrigatório caso Tipo de Movimento for LIQUIDACAO_DE_PREMIO e ESTORNO_DE_PREMIO"
@@ -1099,7 +1123,7 @@ components:
         properties:
           amount:
             type: number
-            pattern: '^\d{1,16}\.\d{2}$'
+            pattern: '^\d{1,16}(\.\d{1,2})?$'
             example: 2000.00
           currency:
             description: Moeda da Parcela, de acordo com ISO-4217.
