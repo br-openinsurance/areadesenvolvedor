@@ -1,1 +1,87 @@
-Teste Teste Teste
+Para acessar as APIs do Diretório do Open Insurance, você precisará de um token de acesso. Esta seção descreve as etapas necessárias para adquirir tokens de acesso.
+
+**ETAPA 1**: Localizando o identificador do cliente
+
+#### Requisitos
+
+1. Necessário ter criado um *Software Statements* para sua organização.
+2. No Diretório, localize e selecione a sua organização.
+3. Vá até o menu *Software Statement*, acesse o artefato criado anteriormente clicando no símbolo do lápis.
+4. Na janela *Software Statement Details* localize o campo CLIENT ID, selecione e copie o valor.
+
+**ETAPA 2**: Localizando a URI de token no Diretório
+
+#### Requisitos
+
+![](../../../../images/manualDiretorio/ObtendoToken1.png)
+
+1. No navegador, acesse a URI de descoberta de conexão OpenID de acordo com o ambiente utilizado:<br/>
+
+*Sandbox*<br/>
+
+https://auth.sandbox.directory.opinbrasil.com.br/.well-known/openid-configuration<br/>
+
+*Produção*<br/>
+
+https://auth.directory.opinbrasil.com.br/.well-known/openid-configuration
+
+2. Localize o endpoint de token que será utilizado para trocar as credenciais de autenticação para tokens de acesso.
+
+**ETAPA 3**: Adicionando certificados SSL por domínio
+
+#### Requisitos
+
+![](../../../../images/manualDiretorio/ObtendoToken2.png)
+
+![](../../../../images/manualDiretorio/ObtendoToken3.png)
+
+1. Necessário ter criado uma Solicitação de Assinatura de Certificado (CSR).
+2. Será utilizado o Postman, com fins ilustrativos, para acessar as APIs do Diretório do Open Insurance Brasil. Assim, no Postman, selecione o menu *File* e em seguida o menu *Settings*. Um atalho para acessar esta janela é o comando: *Ctrl* + Vírgula.
+3. Na janela *Settings*, selecione o menu *Certificates* e clique no link *Add Certificate*.
+4. Na aba *Certificates*, no campo *Host* insira um dos valores descritos a seguir de acordo com o ambiente utilizado:<br/>
+
+    *Sandbox*<br/>
+
+    matls-auth.sandbox.directory.opinbrasil.com.br<br/>
+
+    e<br/>
+
+    matls-api.sandbox.directory.opinbrasil.com.br<br/>
+
+    *Produção*<br/>
+
+    Matls-auth.directory.opinbrasil.com.br<br/>
+
+    e<br/>
+
+    Matls-api.directory.opinbrasil.com.br
+
+5. Em CRT file, clique no botão Select file, e localize o arquivo.pem obtido na seção Criando uma solicitação de Assinatura de Certificado (CSR).
+6. No passo seguinte, clique no botão *KEY File* e localize o arquivo.Key criado no processo de geração de chaves na seção "Criando uma solicitação de Assinatura de Certificado (CSR)".
+7. Clique no botão *Add*.
+
+**ETAPA 4**: Obtendo um token de acesso
+
+#### Requisitos
+
+![](../../../../images/manualDiretorio/ObtendoToken4.png)
+
+![](../../../../images/manualDiretorio/ObtendoToken5.png)
+
+![](../../../../images/manualDiretorio/ObtendoToken6.png)
+
+
+1. Para adicionar uma nova requisição a uma coleção, vá no canto superior esquerdo em *Collection*, clique em ‘...’ na coleção e escolha *Add Request*. Você também pode criar uma solicitação clicando no menu File > New, e em seguida *Request*.
+2. No campo *Enter request URL*, digite o valor obtido da URI de token mencionado na etapa 2.
+3. Defina o tipo da operação para POST.
+4. Vá para a guia *Body* e selecione o botão de opção‘x-www-form-urlencoded’.
+5. Insira os parâmetros como descritos a seguir:<br/>
+
+    client_id = <valor obtido no CLIENT ID na etapa 1><br/>
+
+    grant_type = client_credentials<br/>
+
+    scope = directory:software<br/>
+
+6. Uma vez que todos os parâmetros e valores estejam preenchidos, clique no botão *Send*.
+7. Selecione e copie o valor retornado no atributo access_token.
