@@ -1,0 +1,54 @@
+# API – Transport v1.0.0
+
+### Obtem a lista dos produtos do tipo Transport
+> Scroll down for code samples, example requests and responses. Select a language for code samples from the tabs above or the mobile navigation menu.
+
+
+**Especificação em OAS** </br>
+<a href="files/swagger/insurance-transport.yaml" download="insurance-transport.yaml">Download da Especificação</a>
+
+**Detalhamento Técnico** </br>
+<a href="files/docs/insurance-transport.docx" download="insurance-transport.docx">Download do Detalhamento Técnico</a>
+
+API de Transport do Open Insurance Brasil - Fase 2.
+
+`GET /insurance-transport/v1/`
+
+Obtem a lista dos produtos do tipo Transport
+
+<h3>Parameters</h3>
+
+|Name|Required|Description|
+|---|---|---|---|---|
+|Content-Type|false|Representa o formato do payload de requisição, por padrão/default definido como application/json;charset UTF-8. Obrigatório para chamadas PUT e POST. Os transmissores poderão implementar tratamento para outros padrões, sendo obrigatório apenas o suporte ao padrão.|
+|Accept|false|Especifica o tipo de resposta. Se especificado, deve ser definido como application/json, a menos que o endpoint explicitamente suporte outro formato. Se for definido um valor não suportado pelo endpoint, será retornado o código HTTP 406. Se não especificado, o padrão será application/json.|
+|Accept-Encoding|false|Especifica os tipos de encoding(geralmente algoritmo de compressão) que são suportados pelo cliente, com previsão de suporte ao gzip por parte dos transmissores, sendo que o padrão é a transmissão dos dados não compactados e esta orientação aplica-se aos Dados Abertos.|
+|If-Modified-Since|false|Condiciona o resultado da requisição para que o recurso só seja enviado caso tenha sido atualizado após a data fornecida. Utiliza o padrão da RFC 7232, sessão 3.3: If-Modified-Since do protocolo HTTP.|
+|x-fapi-auth-date|Condicional|Data em que o usuário logou pela última vez com o receptor.|
+|x-fapi-customer-ip-address|Condicional|O endereço IP do usuário se estiver atualmente logado com o receptor.|
+|x-fapi-interaction-id|false|Um UUID RFC4122 usado como um ID de correlação. Se fornecido, o transmissor deve "reproduzir" esse valor no cabeçalho de resposta.|
+|Authorization|true|Cabeçalho HTTP padrão. Permite que as credenciais sejam fornecidas dependendo do tipo de recurso solicitado. Não obrigatório para APIs publicas.|
+|x-idempotency-key| Condicional | Cabeçalho HTTP personalizado. Identificador de solicitação exclusivo para suportar a idempotência.|
+|x-jws-signature|Condicional|Cabeçalho contendo uma assinatura JWS separada do corpo do payload.|
+|x-customer-user-agent|Condicional|Indica o user agent que o usuário utiliza.|
+
+<h3>Responses</h3>
+
+|Status|Meaning|Description|
+|200|OK|Consulta concluída com sucesso.|
+|201|Created|Execução normal. A solicitação foi bem sucedida.|
+|204|No Content| Operação de exclusão concluída com sucesso.|
+|304|Not|A resposta não foi|
+|400|Bad Request|A requisição foi malformada, omitindo atributos obrigatórios, seja no payload ou através de atributos na URL.|
+|401|Unauthorized|Cabeçalho de autenticação ausente/inválido ou token inválido.|
+|403|Forbidden|O token tem escopo incorreto ou uma política de segurança foi violada.|
+|404|Not Found|O recurso solicitado não existe ou não foi implementado.|
+|405|Method Not Allowed|O consumidor tentou acessar o recurso com um método não suportado.|
+|406|Not Acceptable|A solicitação continha um cabeçalho Accept diferente dos tipos de mídia permitidos ou um conjunto de caracteres diferente de UTF-8.|
+|410|Gone|Indica que o recurso não está mais disponível.|
+|415|Unsupported Media Type|A operação foi recusada porque o payload está em um formato não suportado pelo endpoint.|
+|422|Unprocessable Entity|A solicitação foi bem formada, mas não pôde ser processada devido à lógica de negócios específica da solicitação.|
+|429|Too Many Requests|A operação foi recusada, pois muitas solicitações foram feitas dentro de um determinado período ou o limite global de requisições concorrentes foi atingido.|
+|500|Internal Server Error|Ocorreu um erro no gateway da API ou no microsserviço.|
+|503|Service Unavailable|O serviço está indisponível no momento.|
+|504|Gateway Timeout|O servidor não pôde responder em tempo hábil.|
