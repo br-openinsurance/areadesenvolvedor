@@ -1,0 +1,57 @@
+# Requisitos Não Funcionais
+
+Este material tem como principal objetivo apresentar ao usuário quais são os requisitos 
+não funcionais presentes no OPIN (Open Insurance). Assim as sociedades participantes devem 
+observar tais pontos na implementação das APIs relacionadas ao OPIN.
+
+## Limites de tráfego
+
+As APIs deverão suportar, no mínimo:
+
+I - 300 requisições por segundo globalmente, ou seja, independente do endereço IP
+(Internet Protocol) do qual provêm as requisições; e
+
+II - 500 requisições por minuto originadas de um mesmo endereço IP.
+
+As requisições que excederem os limites poderão ser enfileiradas ou recusadas, caso em que 
+deverão ser respondidas com o código de status HTTP 429 (Too Many Requests). Por fim, as 
+requisições que ultrapassarem os limites deverão ser desprezadas no cálculo do tempo de resposta das implementações das APIs.
+
+## Desempenho
+
+Deverá ser medido o tempo de resposta de cada requisição, ou seja, o tempo 
+transcorrido entre o recebimento de uma requisição que não ultrapassa os 
+limites de tráfego e o momento em que a requisição é completamente respondida. 
+Adicionalmente, esta medição deverá ser feita de maneira que os tempos medidos 
+sejam os mais próximos possíveis dos tempos de resposta experimentados por quem 
+fez a requisição. Neste contexto, as APIs deverão manter o percentil 95 do tempo de resposta em no máximo:
+
+I - 1000ms, caso sejam classificadas como APIs de alta prioridade;
+
+II - 1500ms, caso sejam classificadas como APIs de média prioridade; e
+
+III - 4000ms, caso sejam APIs administrativas.
+
+Por exemplo, em um dia que uma API da alta prioridade receba 10.000 requisições,
+o tempo de resposta de pelo menos 9.500 requisições deve ser inferior a 1.000ms.
+
+## Disponibilidade
+
+As APIs “Produtos e Serviços”, “Canais de Atendimento” e “Situação do Ambiente” 
+deverão satisfazer requisitos mínimos de disponibilidade. Cada um de seus endpoints 
+deverá estar disponível:
+
+I - 85% do tempo a cada 24 horas; e
+
+II - 95% do tempo a cada 1 mês; e
+
+III - 99,5% do tempo a cada 3 meses.
+
+Há perspectiva de elevação dos requisitos mínimos de disponibilidade das APIs 
+destinadas ao compartilhamento de outros dados e serviços do escopo do Open 
+Insurance, conforme necessidade futura. O Portal do Open Insurance deverá 
+conter uma especificação detalhada de como a disponibilidade de cada endpoint será calculada.
+
+### Link para a última versão do manual de APIs
+
+<a target="_blank" href='https://www.gov.br/susep/pt-br/assuntos/open-insurance/arquivos/manual-de-apis-do-open-insurance-v1-2.pdf'>Manual de APIs do Open Insurance</a><br>
