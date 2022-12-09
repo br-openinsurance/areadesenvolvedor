@@ -11,15 +11,6 @@ Os testes são divididos em duas diferentes classes:
 Como os testes estão em desenvolvimento contínuo, até que as certificações iniciem podem ser encontrados erros durante as execuções pelas instituições. Estes erros podem ser relacionados a especificações incertas ou porque o teste está executando um comportamento que não está em linha com o definido nas especificacões. Em ambos os casos, as instituições devem abrir um [ticket de issue no GitLab](https://gitlab.com/openinsurancebrazil/conformance-suite/-/issues) para que o erro possa ser avaliado pelo time de engenharia da Conformance Suite.
 
 
-### Datas das releases
-
-- 15/09/22 - Testes Funcionais e Estruturais foram disponibilizados em uma versão Alpha, para as seguintes APIs:
-    - API de Consents, baseados na versão 1.0.0
-    - API de Resources, baseados na versão 1.0.0
-    - API de Customers, baseados na versão 1.1.0
-    - API de Patrimonial, baseados na versão 1.1.0
-
-
 ### Requisitos de amostra de dados
 
 Todos os testes necessitam que as instituições provisionem pelo menos um cliente Pessoa Física ou Pessoa Jurídica com o produto que está sendo testado. O CPF ou par de CPF/CNPJ do cliente testado deve ser provisionado na configuração do teste para que as APIs possam ser acessadas e o *payload* de resposta possa ser validado no escopo do teste.
@@ -72,11 +63,9 @@ A lista completa de *test plans* é disponibilizada no menu "Test Plans". Nele o
 
 Após selecionar um *test plan*, o usuário também será solicitado a preencher três opções:
 
-1. **Client Autenthication Type** - Como o cliente se autenticará no servidor para obter o token. FAPI suporta somente `private_key_jwt` e `tls_client_auth` dos [Métodos de Autenticação OAuth 2.0](https://darutk.medium.com/oauth-2-0-client-authentication-4b5f929305d4) disponíveis
+1. **Client Authentication Type** - Como o cliente se autenticará no servidor para obter o token. FAPI suporta somente `private_key_jwt` e `tls_client_auth` dos [Métodos de Autenticação OAuth 2.0](https://darutk.medium.com/oauth-2-0-client-authentication-4b5f929305d4) disponíveis
 
 2. **Request Object Method** - Se [PAR](https://datatracker.ietf.org/doc/rfc9126/) será ou não utilizado
-
-3. **FAPI Response Mode** - O Open Insurance Brazil não permite JARM, então testes devem ser sempre executados com "plain response"
 
 
 ### Preencher os campos de configuração
@@ -101,12 +90,15 @@ Estes campos são usados para definir informações gerais utilizadas pela Confo
 
 **publish:** Selecione se os resultados dos testes devem ser publicados ou mantidos privados - Caso sejam publicados será possível que outros usuários acessem seus *test plans* [ao pesquisar por logs de testes públicos](https://web.conformance.directory.openbankingbrasil.org.br/logs.html?public=true).
 
+
+### Server: 
+
+**discoveryUrl**: Providencie a [URI de Meta Dados do Authorisation Server](https://datatracker.ietf.org/doc/html/rfc8414), também conhecido como endereço *well-known*. Esse valor também deve ser registrado no Diretório de Sandbox do Open Insurance Brasil.
+
+
 ### Resource:
 
 **resourceUrl:** Providencie um URL que será utilizado para acessar o *endpoint* via Regex. É importante notar que o URL providenciado neste campo deve ser o que hospede as *payloads* que serão validadas no teste estrutural, portanto não deve ser protegido via MTLS. Exemplo: https://www.example.dummypayload.com/open-insurance/consents/v1/
-
-**Mock Policy ID:** 
-Providencie o *policyId* mockado que será utilizado para acessar os endpoints, quando necessário. O valor também será utilizado como *consentId* nos testes estruturais de consentimento. O usuário *deve providenciar somente o policyID e **não** a URI contendo o policyId*. Exemplo de URI que utilizará este campo: https://www.example.dummypayload.com/open-insurance/insurance-patrimonial/v1/{policyID}/policy-info
 
 
 ### Configuração dos testes funcionais
@@ -137,7 +129,7 @@ A `redirect_uri` terá o seguinte formato: "https://web.conformance.directory.op
 
 Estes campos são relacionados à configuração do servidor e suas URIs, incluindo tanto as URIs do Authorisation Server as URIs do Resource Server.
 
-**discoveryUrl:** Providencie a [URI de Meta Data do Authorisation Server](https://www.ietf.org/rfc/rfc5785.txt), também conhecida como o endereço *well-known*. *Este campo também deve ser cadastrado no diretório de Sandbox do Open Insurance Brasil*.
+**discoveryUrl:** Providencie a [URI de Meta Data do Authorisation Server](https://datatracker.ietf.org/doc/html/rfc8414), também conhecida como o endereço *well-known*. *Este campo também deve ser cadastrado no diretório de Sandbox do Open Insurance Brasil*.
 
 ### Client Details:
 
@@ -154,71 +146,6 @@ As chaves geradas seguindos as instruções do diretório serão geradas em um f
 **mtls.cert**: Providencie o conteúdo do certificado Public Transport (BRCAC) gerado no Diretório de Sandbox em formato PEM. Aqui você pode abrir o arquivo .pem com um editor de texto comum e colar os conteúdos neste campo. Para criar um certificado BRCAC na PKI do Diretório de Sandbox, refira-se ao [guia de geração do certificado BRCAC](https://br-openinsurance.github.io/areadesenvolvedor/files/OpenInsurance_Gerando_o_Certificado_BRCAC.pdf)
 
 **mtls.key**: Providencie o conteúdo da chave pública em formato .PEM. Similar ao campo mtls.cert, porém aqui deve ser providenciado o conteúdo da chave que foi gerada junto ao .csr.
-
-**mtls.ca**: Providencie a cadeia de certificados do Diretório de Sandbox, utilizada para assinar todas as chaves emitidas pela PKI de Sandbox. O arquivo é disponibilizado abaixo, cole todo seu conteúdo no campo.
-
-<div class="center-column"></div>
-
-```
------BEGIN CERTIFICATE-----
-MIIF+TCCBOGgAwIBAgIUREOZADRSvAehVYQQw8xHQ60nZ78wDQYJKoZIhvcNAQEL
-BQAwdDELMAkGA1UEBhMCQlIxHjAcBgNVBAoTFU9wZW4gSW5zdXJhbmNlIEJyYXNp
-bDEXMBUGA1UECxMOT3BlbiBJbnN1cmFuY2UxLDAqBgNVBAMTI09wZW4gSW5zdXJh
-bmNlIFJvb3QgUFJPRFVDVElPTiAtIEcxMB4XDTIxMTIwMTIyNTIwMFoXDTI2MTIw
-MTIyNTIwMFowejELMAkGA1UEBhMCQlIxHjAcBgNVBAoTFU9wZW4gSW5zdXJhbmNl
-IEJyYXNpbDEXMBUGA1UECxMOT3BlbiBJbnN1cmFuY2UxMjAwBgNVBAMTKU9wZW4g
-SW5zdXJhbmNlIFBST0RVQ1RJT04gSXNzdWluZyBDQSAtIEcxMIIBIjANBgkqhkiG
-9w0BAQEFAAOCAQ8AMIIBCgKCAQEA6TIU0IP+uAkcZELubrJX+XmBwbaRIciK0h7j
-6GAapcesiLK38yMYoaMDGrIFcBGVZel4obGt/zNgbPgf1DPgy5DiissfpXWiwSM5
-NmfQMzEkytng0VpZqRAadHo1do1s9pxe1GPrPPreS3F4yQgDw6muQxqOhSXFVSzF
-B/PMTBbxOc3UBWy0gTwzTTeRxtl/mxJ/pqeShHshx6aORyJ7jO9w10LR6VxsqaUO
-mZAx9uTYgqksqeude4Zey0+UJ596VwimqEPv5XlvSnZdxnZcL/CoD2utIejWFryz
-K9cf8Dj45QdmA5Zx7vUa0OFAePnOyp6vUtVxfvabuDhbwLqEqQIDAQABo4ICezCC
-AncwDgYDVR0PAQH/BAQDAgEGMBIGA1UdEwEB/wQIMAYBAf8CAQAwHQYDVR0OBBYE
-FPhBgaejhY3OmEaSm8czJEVVH7VnMB8GA1UdIwQYMBaAFMJpDULSOPWXMhRNUL00
-FUsCVtlbMD0GCCsGAQUFBwEBBDEwLzAtBggrBgEFBQcwAYYhaHR0cDovL29jc3Au
-cGtpLm9waW5icmFzaWwuY29tLmJyMDwGA1UdHwQ1MDMwMaAvoC2GK2h0dHA6Ly9j
-cmwucGtpLm9waW5icmFzaWwuY29tLmJyL2lzc3Vlci5jcmwwggGSBgNVHSAEggGJ
-MIIBhTCCAYEGCisGAQQBg7ovZAEwggFxMIIBNgYIKwYBBQUHAgIwggEoDIIBJFRo
-aXMgQ2VydGlmaWNhdGUgaXMgc29sZWx5IGZvciB1c2Ugd2l0aCBSYWlkaWFtIFNl
-cnZpY2VzIExpbWl0ZWQgYW5kIG90aGVyIHBhcnRpY2lwYXRpbmcgb3JnYW5pc2F0
-aW9ucyB1c2luZyBSYWlkaWFtIFNlcnZpY2VzIExpbWl0ZWRzIFRydXN0IEZyYW1l
-d29yayBTZXJ2aWNlcy4gSXRzIHJlY2VpcHQsIHBvc3Nlc3Npb24gb3IgdXNlIGNv
-bnN0aXR1dGVzIGFjY2VwdGFuY2Ugb2YgdGhlIFJhaWRpYW0gU2VydmljZXMgTHRk
-IENlcnRpY2ljYXRlIFBvbGljeSBhbmQgcmVsYXRlZCBkb2N1bWVudHMgdGhlcmVp
-bi4wNQYIKwYBBQUHAgEWKWh0dHA6Ly9jcHMucGtpLm9waW5icmFzaWwuY29tLmJy
-L3BvbGljaWVzMA0GCSqGSIb3DQEBCwUAA4IBAQAw9/XF3wYwCE321WVJBZZ8xHYE
-ze4umx9lTklw90x2gmOhjmxnU5V0eL0LaV+XcZjsRF7Hs8Du/vB7WiOELuAlw2Yq
-I+8/2xcdARfbgEQirhPTrogTUPFcoW9SJ1OS3IGRErsFEvhAaiq1Vh+l9VNWTJdp
-82vraRxR48DiWDPSq+H/qWtW+TrnbLloLu+lhIIGScmaRpPyQfPzGdRL8tmiRdW+
-zlpP9P6dM/Y1RS0LM1xfoSaLL2dxSWmr3w7qq0YgALv3HN7qTX+lUDf9IKU+Bq1U
-wGvtyBGSrL6/WYEAlpLHwZNbTbMcIYUSjerAZ6Pk/AJ825fE2vy3hwtJOQDW
------END CERTIFICATE-----
------BEGIN CERTIFICATE-----
-MIIDuDCCAqCgAwIBAgIUTJ8WRDgDO7xeSD9ZCWX390zO970wDQYJKoZIhvcNAQEL
-BQAwdDELMAkGA1UEBhMCQlIxHjAcBgNVBAoTFU9wZW4gSW5zdXJhbmNlIEJyYXNp
-bDEXMBUGA1UECxMOT3BlbiBJbnN1cmFuY2UxLDAqBgNVBAMTI09wZW4gSW5zdXJh
-bmNlIFJvb3QgUFJPRFVDVElPTiAtIEcxMB4XDTIxMTIwMTIyNTIwMFoXDTI2MTEz
-MDIyNTIwMFowdDELMAkGA1UEBhMCQlIxHjAcBgNVBAoTFU9wZW4gSW5zdXJhbmNl
-IEJyYXNpbDEXMBUGA1UECxMOT3BlbiBJbnN1cmFuY2UxLDAqBgNVBAMTI09wZW4g
-SW5zdXJhbmNlIFJvb3QgUFJPRFVDVElPTiAtIEcxMIIBIjANBgkqhkiG9w0BAQEF
-AAOCAQ8AMIIBCgKCAQEA2DpSVXawMOMvJgoLnNDjnVHSImyZXEwPNbvaEPW9oHUL
-8ZdcRGgwcqchlSnjle1xEDFSVC+ZX+y/mPuU5KgG/AYdfCa4wlpCgh4v+Cx9QoJS
-s1UsMVBvDjE9uUHh2UJb+aQAelOmaugJGhHnclW8Z29H5jV6gZpjkRPPhOfcOBXl
-K/4uy8JKnjEHofnN00c8qkF4FyHHfrqx6ULKrjJ+rhSLxCYwwklQorVuoASOblxy
-j28aCsuHUCwGUfSDG/mRpvEbZrDb9mjDml6A5IF+5kjaYu+FA44oK7MaKjuVLy4U
-mQ3jQJmLYfRZiiWHtFibuHkBKZthI9lP5d1xYyIN5QIDAQABo0IwQDAOBgNVHQ8B
-Af8EBAMCAQYwDwYDVR0TAQH/BAUwAwEB/zAdBgNVHQ4EFgQUwmkNQtI49ZcyFE1Q
-vTQVSwJW2VswDQYJKoZIhvcNAQELBQADggEBAHYj6cKCDqDF+hfaRS4XysyQcl2v
-mGtgE3a+g/stcFJzR508eVz6ycglYHAsNgAWszD+eLRZmBvo6cp4bpNPwEZkOpUd
-CHtCQeZEk3v5sP6I1xvMUSynwkMb0GfUK7Dj0XRlT+2Xr9XUJmJFDCVkYpQnWCcC
-Pdt5S8aBqEubFGMJjybVSO7Q0+7Ud4JoxdsMgr0J0mKwIhEv3o16YK2AInmfNSu2
-6FDpyQkPQnLyV1o1mNZSyZ4fao8ANxb75K9RrqRma5DQsM+mpw0z9MRd9usrKe3c
-X8XHUuNNi44GGS+bQWipEvaQo99znfRpETB6LNNHEwAqafuAEzbCSj3h5eo=
------END CERTIFICATE-----
-```
-
-Estes arquivos também são hospedados na PKI do diretório OPIN: [Root CA](http://crl.pki.opinbrasil.com.br/root-ca.pem) e [Issuing CA](http://crl.pki.opinbrasil.com.br/issuer-ca.pem)
 
 
 **client_id:** Neste campo, você deve providenciar o *client_id* que foi gerado ao realizar um [DCR](https://br-openinsurance.github.io/areadesenvolvedor/#dynamic-client-registration-dcr) contra o servidor a ser testado com as credenciais preenchidas acima.
