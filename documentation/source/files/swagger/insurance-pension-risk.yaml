@@ -1,0 +1,736 @@
+
+openapi: 3.0.0
+info:
+  title: API Previdência Risco - Open Insurance Brasil
+  description: |
+    API de Previdência Risco do Open Insurance Brasil - Fase 2.\
+    Traz informações de contrato e contribuições mantidas nas instituições transmissoras por seus clientes.\
+    Não possui segregação entre pessoa natural e pessoa jurídica.\
+    Requer consentimento do cliente para todos os 'endpoints'.
+
+    # Orientações
+    A `Role`  do diretório de participantes relacionada à presente API é a `DADOS`.\
+    Para todos os `endpoints` desta API é previsto o envio de um `token` através do header `Authorization`.\
+    Este token deverá estar relacionado ao consentimento (`consentId`) mantido na instituição transmissora dos dados, o qual permitirá a pesquisa e retorno, na API em questão, dos 
+    dados relacionados ao `consentId` específico relacionado.\
+    Os dados serão devolvidos na consulta desde que o `consentId` relacionado corresponda a um consentimento válido e com o status `AUTHORISED`.\
+    É também necessário que o recurso em questão (conta, contrato, etc) esteja disponível na instituição transmissora (ou seja, sem boqueios de qualquer natureza e com todas as autorizações/consentimentos já autorizados).    Além disso as `permissions` necessárias deverão ter sido solicitadas quando da criação do consentimento relacionado (`consentId`).\
+    Relacionamos a seguir as `permissions` necessárias para a consulta de dados em cada `endpoint` da presente API.
+
+    ## Permissions necessárias para a API InsurancePensionRisk
+
+    Para cada um dos paths desta API, além dos escopos (`scopes`) indicados existem `permissions` que deverão ser observadas:
+
+    ### `/`
+      - permissions:
+        - GET: **PENSION_RISK_READ**
+    ### `/{certificateNumber}/contract-info`
+      - permissions:
+        - GET: **PENSION_RISK_CONTRACTINFO_READ**
+    ### `/{certificateNumber}/contributions`
+      - permissions:
+        - GET: **PENSION_RISK_CONTRIBUTIONS_READ**
+  version: 1.0.1
+  contact: 
+    url: 'https://www.gov.br/susep'
+servers:
+  - url: 'https://api.organizacao.com.br/open-insurance/insurance-pension-risk/v1'
+    description: Servidor de Producao
+  - url: 'https://api.organizacao.com.br/open-insurance/insurance-pension-risk/v1'
+    description: Servidor de Homologacao 
+tags:
+- name: InsurancePensionRisk
+  description: Informações de Previdência Risco  
+
+paths:
+  /:
+    get:
+      tags:
+        - InsurancePensionRisk
+      summary: Obtem a lista do tipo InsurancePensionRisk
+      description: "Obtem a lista do tipo InsurancePensionRisk"
+      operationId: "getInsurancePensionRisk"
+      parameters:
+        - $ref: '#/components/parameters/Authorization'
+        - $ref: '#/components/parameters/xFapiAuthDate'
+        - $ref: '#/components/parameters/xFapiCustomerIpAddress'
+        - $ref: '#/components/parameters/xFapiInteractionId'
+        - $ref: '#/components/parameters/xCustomerUserAgent'
+        - $ref: "#/components/parameters/page"
+        - $ref: "#/components/parameters/pageSize"
+      responses:
+        '200':
+          description: InsurancePensionRisk
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseInsurancePensionRisk'
+        '204':
+          $ref: '#/components/responses/NoContent'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '405':
+          $ref: '#/components/responses/MethodNotAllowed'
+        '406':
+          $ref: '#/components/responses/NotAcceptable'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+        default:
+          description: Dados dos produtos de API de informações de Previdência Risco. Os recursos que podem ser consumidos pelos participantes conforme a regra 3.1.2 do manual de escopo de dados.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseInsurancePensionRisk'
+      security:
+        - OpenId:
+            - openid
+          OAuth2Security:
+            - 'consent:consentId'
+            - insurance-pension-risk         
+  /{certificateNumber}/contract-info:
+    get:
+      tags:
+        - InsurancePensionRisk
+      summary: Obtém os dados de identificação do contrato identificada por {certificateNumber}
+      description: "Método para obter os dados de identificação dos dados básicos do contrato."
+      operationId: "getInsurancePensionRiskcertificateNumberContractInfo"
+      parameters:
+        - $ref: '#/components/parameters/Authorization'
+        - $ref: '#/components/parameters/xFapiAuthDate'
+        - $ref: '#/components/parameters/xFapiCustomerIpAddress'
+        - $ref: '#/components/parameters/xFapiInteractionId'
+        - $ref: '#/components/parameters/xCustomerUserAgent'
+        - $ref: "#/components/parameters/certificateNumber"
+      responses:
+        '200':
+          description: InsurancePensionRisk
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseInsurancePensionRiskContractInfo'
+        '204':
+          $ref: '#/components/responses/NoContent'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '405':
+          $ref: '#/components/responses/MethodNotAllowed'
+        '406':
+          $ref: '#/components/responses/NotAcceptable'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+        default:
+          description: Dados dos produtos de API de informações de Previdência Risco. Os recursos que podem ser consumidos pelos participantes conforme a regra 3.1.2 do manual de escopo de dados.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseInsurancePensionRiskContractInfo'
+      security:
+        - OpenId:
+            - openid
+          OAuth2Security:
+            - 'consent:consentId'
+            - insurance-pension-risk        
+  /{certificateNumber}/contributions:
+    get:
+      tags:
+        - InsurancePensionRisk
+      summary: Obtém os dados de identificação do contrato identificada por {certificateNumber}
+      description: "Método para obter os dados de identificação dos dados básicos do contrato."
+      operationId: "getInsurancePensionRiskCertificateNumberContributions"
+      parameters:
+        - $ref: '#/components/parameters/Authorization'
+        - $ref: '#/components/parameters/xFapiAuthDate'
+        - $ref: '#/components/parameters/xFapiCustomerIpAddress'
+        - $ref: '#/components/parameters/xFapiInteractionId'
+        - $ref: '#/components/parameters/xCustomerUserAgent'
+        - $ref: "#/components/parameters/certificateNumber"
+      responses:
+        '200':
+          description: InsurancePensionRisk
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseInsurancePensionRiskContributions'
+        '204':
+          $ref: '#/components/responses/NoContent'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '405':
+          $ref: '#/components/responses/MethodNotAllowed'
+        '406':
+          $ref: '#/components/responses/NotAcceptable'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+        default:
+          description: Dados dos produtos de API de informações de Previdência Risco. Os recursos que podem ser consumidos pelos participantes conforme a regra 3.1.2 do manual de escopo de dados.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseInsurancePensionRiskContributions' 
+      security:
+        - OpenId:
+            - openid
+          OAuth2Security:
+              - 'consent:consentId'
+              - insurance-pension-risk  
+components:
+  schemas:
+    
+    InsurancePensionRiskCoverages:
+        type: array
+        items:
+          type: object
+          required:
+            - coverage
+            - susepProcessNumber
+            - lockedPlan
+            - termStart
+            - termEnd
+            - event
+            - paymentMethod
+            - amount
+            - financialArrangement
+            - gracePeriod
+          properties:
+            coverage:
+              type: string
+              maxLength: 500
+              description: Descrição / Nome da Cobertura.
+            susepProcessNumber:
+              type: string
+              maxLength: 50
+              description: Número do processo SUSEP relacionado à cobertura. Informação complementar - quando houver processo SUSEP, excluído os produtos de grandes riscos, conforme definição da regulamentação vigente
+            lockedPlan:
+              description: Plano bloqueado
+              type: string
+              enum: [SIM,
+                    NAO,
+                    NAO_APLICA]
+            termStart:
+              type: string
+              maxLength: 10
+              format: date
+              description: Data de início de vigência da cobertura contratada.
+              example: 2022-10-01
+            termEnd:
+              type: string
+              maxLength: 10
+              format: date
+              description: Data de fim de vigência da cobertura contratada.
+              example: 2022-10-01         
+            event:
+              type: array
+              description: Evento gerador.
+              items:
+                type: string
+                enum: [MORTE,
+                      INVALIDEZ]        
+            paymentMethod:
+              type: array
+              description: Forma de pagamento do benefício.
+              items:
+                type: string
+                enum: [UNICO,
+                      RENDA]        
+            amount:
+              description: Valor do benefício.
+              allOf:
+                - $ref: '#/components/schemas/InsurancePensionRiskCoverageAttributesDetails' 
+            financialArrangement:
+              type: string
+              maxLength: 33
+              description: Regime financeiro.
+              enum: [REGIME_REPARTICAO_SIMPLES,
+                    REGIME_REPARTICAO_CAPITAIS,
+                    REGIME_CAPITALIZACAO]
+            gracePeriod:
+              type: number
+              description: Período de carência.
+
+    InsurancePensionRiskContractInfo:    
+        type: object
+        required:
+          - certificateNumber
+          - contractingType
+          - termStart
+          - termEnd
+          - updateIndex
+          - atualizationFrequency
+          - indexLagging
+          - paymentFrequency            
+          - identification
+          - recipients
+          - coverages
+        properties:
+          certificateNumber:
+            type: string
+            description: Deve informado o número do contrato interno da seguradora. As cessionárias de cosseguro devem identificar inequivocamente a contrato da líder a que se refere o cosseguro aceito. Nesse caso, o fato gerador de registro é a data de notificação da líder sobre a emissão do contrato em cosseguro.
+            maxLength: 100
+          contractingType:
+            type: string
+            description: Campo deve ser preenchido com a indicação do modelo de contratação do contrato.
+            maxLength: 11
+            enum: [INDIVIDUAL,
+                  BILHETE,
+                  CERTIFICADO]
+            example: INDIVIDUAL
+          termStart:
+            type: string
+            maxLength: 10
+            format: date
+            description: Data de início de vigência do documento.
+            example: 2022-10-01
+          termEnd:
+            type: string
+            maxLength: 10
+            format: date
+            description: Data de fim de vigência do documento.
+            example: 2022-10-01 
+          updateIndex:
+            description: Índice de atualização dos valores de contribuição/benefício.            
+            type: string
+            maxLength: 21
+            enum: [IPCA_IBGE,
+                  IGP_M_FGV,
+                  INPC_IBGE,
+                  TR_TAXA_DE_REFERENCIA]
+            example: IPCA_IBGE   
+          atualizationFrequency:
+            description: Periodicidade de atualização dos valores de contribuição/benefício.
+            type: string
+            maxLength: 100
+          indexLagging:
+            description: Defasagem do índice de atualização dos valores de contribuição/benefício.
+            type: string
+            maxLength: 100
+          paymentFrequency:
+            description: Periodicidade de pagamento
+            type: string
+            enum: [MENSAL,    
+                  UNICA,     
+                  ANUAL,
+                  TRIMESTRAL,
+                  SEMESTRAL,
+                  BIMESTRAL,
+                  OUTRAS]
+          paymentFrequencyOthers:
+            description: Descrição condicional a seleção de 7. Outras no campo acima
+            type: string
+            maxLength: 100      
+          identification:
+            $ref: '#/components/schemas/InsurancePensionRiskIdentification'
+          recipients:
+            $ref: '#/components/schemas/InsurancePensionRiskRecipients' 
+          coverages:
+            $ref: '#/components/schemas/InsurancePensionRiskCoverages' 
+    
+    InsurancePensionRiskContributions:
+        type: object
+        required:
+          - commercialAmount
+          - loadingPercentage
+        properties:
+          commercialAmount:
+            description: Valores das contribuições comerciais por cobertura contratada.
+            allOf:
+              - $ref: '#/components/schemas/InsurancePensionRiskCoverageAttributesDetails'  
+          loadingPercentage:
+            description: Percentual do carregamento
+            type: number
+            pattern: '\d{0,16}[.]\d{0,2}' 
+    
+    InsurancePensionRiskIdentification:
+        type: object
+        required:
+          - name
+          - birthDate
+          - gender
+        properties:
+          name:
+            description: Nome do participante
+            type: string
+          birthDate:
+            description: Data de nascimento do participante          
+            type: string
+            format: date
+            maxLength: 10
+            example: 2022-10-01
+          gender:
+            description: Sexo do participante
+            type: string
+            example: FEMININO
+            enum: [FEMININO,
+                  MASCULINO] 
+    
+    InsurancePensionRiskRecipients:
+        type: object
+        required:
+          - relatedness
+        properties:
+          relatedness:
+            description: Grau de parentesco
+            type: string
+            example: FILHO_FILHA
+            enum: [FILHO_FILHA,
+                CONJUGE_COMPANHEIRO,
+                PAI_MAE,
+                IRMAO_IRMA,
+                OUTROS,
+                NAO_APLICA]
+          relatednessOthers:
+            description: Grau de parentesco - Outros         
+            type: string
+          birthDate:
+            description: Data de nascimento do beneficiário
+            type: string
+            format: date
+            maxLength: 10
+            example: 2022-10-01
+          gender:
+            description: Sexo do participante
+            type: string
+            example: FEMININO
+            enum: [FEMININO,
+                  MASCULINO]
+          percentage:
+            description: Percentual de participação de cada beneficiário
+            type: number
+            pattern: '\d{0,16}[.]\d{0,2}' 
+    
+    InsurancePensionRiskCoverageAttributesDetails:
+        type: object
+        required:
+          - amount
+          - unit
+        properties:
+          amount:
+            type: number
+          unit:
+            $ref: '#/components/schemas/InsurancePensionRiskCoverageAttributesDetailsUnit' 
+    
+    InsurancePensionRiskCoverageAttributesDetailsUnit:
+      type: object
+      required:
+        - code
+        - description
+      properties:
+        code:
+          type: string
+          maxLength: 2
+          example: R$
+        description:
+          type: string
+          maxLength: 5
+          example: REAL
+    
+    Links:
+      type: object
+      properties:
+        self:
+          type: string
+          description: URL da página atualmente requisitada
+          example: 'https://api.organizacao.com.br/open-insurance/insurance-pension-risk/v1'
+        first:
+          type: string
+          description: URL da primeira página de registros
+          example: 'https://api.organizacao.com.br/open-insurance/insurance-pension-risk/v1'
+        prev:
+          type: string
+          description: URL da página anterior de registros
+          example: 'https://api.organizacao.com.br/open-insurance/insurance-pension-risk/v1'
+        next:
+          type: string
+          description: URL da próxima página de registros
+          example: 'https://api.organizacao.com.br/open-insurance/insurance-pension-risk/v1'
+        last:
+          type: string
+          description: URL da última página de registros
+          example: 'https://api.organizacao.com.br/open-insurance/insurance-pension-risk/v1'
+    
+    Meta:
+      type: object
+      properties:
+        totalRecords:
+          type: integer
+          description: Total de registros encontrados
+          example: 10
+        totalPages:
+          type: integer
+          description: Total de páginas para os registros encontrados
+          example: 1
+      required:
+        - totalRecords
+        - totalPages
+    
+    ResponseInsurancePensionRisk:
+      type: object
+      required:
+        - data
+        - links
+        - meta
+      properties:
+        data:
+          type: array
+          items:
+            type: object
+            required:
+              - certificateNumber
+              - productCode
+              - productName
+            properties:              
+              certificateNumber:
+                type: string
+                description: Número de contrato.
+                example: "1232154"
+              productCode:
+                type: string
+                description: Código do produto.
+                example: "1232154-0"
+              productName:
+                type: string
+                description: Nome do produto.
+                example: Produto Seguro patrimonial I
+        links:
+            $ref: '#/components/schemas/Links'
+        meta:
+            $ref: '#/components/schemas/Meta'
+    
+    ResponseInsurancePensionRiskContractInfo:
+      type: object
+      required:
+        - data
+        - links
+        - meta
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/InsurancePensionRiskContractInfo'
+        links:
+            $ref: '#/components/schemas/Links'
+        meta:
+            $ref: '#/components/schemas/Meta'
+    
+    ResponseInsurancePensionRiskContributions:
+      type: object
+      required:
+        - data
+        - links
+        - meta
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/InsurancePensionRiskContributions'
+        links:
+            $ref: '#/components/schemas/Links'
+        meta:
+            $ref: '#/components/schemas/Meta'
+    
+    ResponseError:
+      type: object
+      required:
+        - errors
+      properties:
+        errors:
+          type: array
+          minItems: 1
+          maxItems: 13
+          items:
+            type: object
+            required:
+              - code
+              - title
+              - detail
+            properties:
+              code:
+                description: Código de erro específico do endpoint
+                type: string
+                pattern: '[\w\W\s]*'
+                maxLength: 255
+              title:
+                description: Título legível por humanos deste erro específico
+                type: string
+                maxLength: 255
+              detail:
+                description: Descrição legível por humanos deste erro específico
+                type: string
+                maxLength: 2048
+              requestDateTime:
+                description: 'Data e hora da consulta, conforme especificação RFC-3339, formato UTC.'
+                type: string
+                maxLength: 2048
+                format: date-time
+                example: '2021-08-20T08:30:00Z'
+            additionalProperties: false
+        meta:
+          $ref: '#/components/schemas/Meta'
+      additionalProperties: false
+    
+  parameters:
+    certificateNumber:
+        name: certificateNumber
+        in: path
+        required: true
+        schema:
+          type: string   
+    Authorization:
+      name: Authorization
+      in: header
+      description: Cabeçalho HTTP padrão. Permite que as credenciais sejam fornecidas dependendo do tipo de recurso solicitado
+      required: true
+      schema:
+        type: string
+        pattern: '[\w\W\s]*'
+        maxLength: 2048
+    page:
+      name: page
+      in: query
+      description: Número da página que está sendo requisitada (o valor da primeira página é 1).
+      schema:
+        type: integer
+        default: 1
+        minimum: 1
+        format: int32
+    pageSize:
+      name: page-size
+      in: query
+      description: Quantidade total de registros por páginas.
+      schema:
+        type: integer
+        default: 25
+        minimum: 1
+        format: int32
+        maximum: 1000
+    xCustomerUserAgent:
+      name: x-customer-user-agent
+      in: header
+      description: Indica o user-agent que o usuário utiliza.
+      required: false
+      schema:
+        type: string
+        pattern: '[\w\W\s]*'
+        minLength: 1
+        maxLength: 100
+    xFapiAuthDate:
+      name: x-fapi-auth-date
+      in: header
+      description: 'Data em que o usuário logou pela última vez com o receptor. Representada de acordo com a [RFC7231](https://tools.ietf.org/html/rfc7231).Exemplo: Sun, 10 Sep 2017 19:43:31 UTC'
+      required: false
+      schema:
+        type: string
+        pattern: '^(Mon|Tue|Wed|Thu|Fri|Sat|Sun), \d{2} (Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec) \d{4} \d{2}:\d{2}:\d{2} (GMT|UTC)$'
+        minLength: 29
+        maxLength: 29
+    xFapiCustomerIpAddress:
+      name: x-fapi-customer-ip-address
+      in: header
+      description: O endereço IP do usuário se estiver atualmente logado com o receptor.
+      required: false
+      schema:
+        type: string
+        pattern: '[\w\W\s]*'
+        minLength: 1
+        maxLength: 100
+    xFapiInteractionId:
+      name: x-fapi-interaction-id
+      in: header
+      description: 'Um UID [RFC4122](https://tools.ietf.org/html/rfc4122) usado como um ID de correlação. Se fornecido, o transmissor deve "reproduzir" esse valor no cabeçalho de resposta.'
+      required: false
+      schema:
+        type: string
+        pattern: '^[a-zA-Z0-9][a-zA-Z0-9\-]{0,99}$'
+        minLength: 1
+        maxLength: 100 
+  securitySchemes:
+    OpenId:
+      type: openIdConnect
+      openIdConnectUrl: 'https://auth.mockbank.poc.raidiam.io/.well-known/openid-configuration'
+    OAuth2Security:
+      type: oauth2
+      description: Fluxo OAuth necessário para que a receptora tenha acesso aos dados na instituição transmissora. Inclui o processo de redirecionamento e autenticação do usuário a que se referem os dados.
+      flows:
+        authorizationCode:
+          authorizationUrl: 'https://authserver.example/authorization'
+          tokenUrl: 'https://authserver.example/token'
+          scopes:
+            insurance-pension-risk: Escopo necessário para acesso à API. O controle dos endpoints específicos é feito via permissions. 
+  responses:
+    NoContent:
+      description: 'O recurso solicitado não existe ou não foi localizado.'
+      content:
+        application/json; charset=utf-8:
+          schema:
+            $ref: '#/components/schemas/ResponseError'
+    BadRequest:
+      description: 'A requisição foi malformada, omitindo atributos obrigatórios, seja no payload ou através de atributos na URL.'
+      content:
+        application/json; charset=utf-8:
+          schema:
+            $ref: '#/components/schemas/ResponseError'
+    Forbidden:
+      description: O token tem escopo incorreto ou uma política de segurança foi violada
+      content:
+        application/json; charset=utf-8:
+          schema:
+            $ref: '#/components/schemas/ResponseError'
+    InternalServerError:
+      description: Ocorreu um erro no gateway da API ou no microsserviço
+      content:
+        application/json; charset=utf-8:
+          schema:
+            $ref: '#/components/schemas/ResponseError'
+    MethodNotAllowed:
+      description: O consumidor tentou acessar o recurso com um método não suportado
+      content:
+        application/json; charset=utf-8:
+          schema:
+            $ref: '#/components/schemas/ResponseError'
+    NotAcceptable:
+      description: A solicitação continha um cabeçalho Accept diferente dos tipos de mídia permitidos ou um conjunto de caracteres diferente de UTF-8
+      content:
+        application/json; charset=utf-8:
+          schema:
+            $ref: '#/components/schemas/ResponseError'
+    NotFound:
+      description: O recurso solicitado não existe ou não foi implementado
+      content:
+        application/json; charset=utf-8:
+          schema:
+            $ref: '#/components/schemas/ResponseError'
+    TooManyRequests:
+      description: 'A operação foi recusada, pois muitas solicitações foram feitas dentro de um determinado período ou o limite global de requisições concorrentes foi atingido'
+      content:
+        application/json; charset=utf-8:
+          schema:
+            $ref: '#/components/schemas/ResponseError'
+    Unauthorized:
+      description: Cabeçalho de autenticação ausente/inválido ou token inválido
+      content:
+        application/json; charset=utf-8:
+          schema:
+            $ref: '#/components/schemas/ResponseError'
