@@ -38,20 +38,16 @@ A autenticação das requisições se dará com base na assinatura do body das r
 A validação da autenticidade será baseada no certificado de assinatura do body que
 será validado no keystore do diretório.
 
-Todas as requisições deveram ser enviadas com o Content-Type: application/jwt.<br />
-Para assinar uma requisição a organização deverá:
-    1) Identifique a chave privada e o certificado de assinatura correspondente a serem usados para assinar o payload
-    2) Geração do JOSE Header
-
-Montar um JSON com os campos obrigatórios:
-    * **alg** - Algoritmo que será usado para assinar o JWS. Deve ser preenchido com o valor **"PS256"**.
-    * **kid** - Valor do identificador da chave utilizado para a assinatura.
-    * **typ** - Tipo de conteúdo usado para trafegar mensagens na API. Deve ser preenchido com o valor **"JWT"**.
-
-E converter para Base64Url seguindo o padrão especificado na [RFC4648](https://datatracker.ietf.org/doc/html/rfc4648#section-5).
-    3) Montando o payload JWS Body da requisição no formato JSON convertido para Base64Url seguindo o padrão especificado na [RFC4648](https://datatracker.ietf.org/doc/html/rfc4648#section-5).
-    4) Gerar a assinatura digital conforme especificado na [RFC7515](https://datatracker.ietf.org/doc/html/rfc7515).
-    5) Juntar as partes concatenando com ponto (.) para formar o JWS
+Todas as requisições deverão ser enviadas com o Content-Type: application/jwt.<br />
+Para assinar uma requisição a organização deverá:<br>
+    1) Identifique a chave privada e o certificado de assinatura correspondente a serem usados para assinar o payload<br>
+    2) Geração do JOSE Header Montar um JSON com os campos obrigatórios:<br>
+    * **alg** - Algoritmo que será usado para assinar o JWS. Deve ser preenchido com o valor **"PS256"**.<br>
+    * **kid** - Valor do identificador da chave utilizado para a assinatura.<br>
+    * **typ** - Tipo de conteúdo usado para trafegar mensagens na API. Deve ser preenchido com o valor **"JWT"**. E converter para Base64Url seguindo o padrão especificado na [RFC4648](https://datatracker.ietf.org/doc/html/rfc4648#section-5).<br>
+    3) Montando o payload JWS Body da requisição no formato JSON convertido para Base64Url seguindo o padrão especificado na [RFC4648](https://datatracker.ietf.org/doc/html/rfc4648#section-5).<br>
+    4) Gerar a assinatura digital conforme especificado na [RFC7515](https://datatracker.ietf.org/doc/html/rfc7515).<br>
+    5) Juntar as partes concatenando com ponto (.) para formar o JWS<br>
     
     **JWS = Base64url(JOSEHeader) + "." + Base64url(payload JWT) + "." + Base64url(digital signature)**
 
