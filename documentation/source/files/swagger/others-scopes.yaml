@@ -4,19 +4,20 @@ info:
   title: APIs Open Data do Open Insurance Brasil
   description:
     API de informações de dados do produto Demais Escopos. Os recursos que podem ser consumidos pelos participantes conforme a regra 3.1.2 do manual de escopo de dados..
-  version: 1.0.0
+  version: 1.1.0
   contact:
-    url: 'http://novosite.susep.gov.br/'
+    url: 'https://www.gov.br/susep/'
 servers:
   - url: 'https://api.organizacao.com.br/open-insurance/products-services/v1'
     description: Servidor de Producao
   - url: 'https://api.organizacao.com.br/open-insurance/products-services/v1'
     description: Servidor de Homologacao
 tags:
-- name: "Demais Escopos" 
+  - name: "Demais Escopos"
+  - name: "OthersScopes"
 
 paths:
-  /others-scopes/:
+  /others-scopes:
     get:
       tags:
         - OthersScopes
@@ -53,6 +54,8 @@ paths:
           $ref: '#/components/responses/MethodNotAllowed'
         '406':
           $ref: '#/components/responses/NotAcceptable'
+        '422':
+          $ref: '#/components/responses/UnprocessableEntity'
         '429':
           $ref: '#/components/responses/TooManyRequests'
         '500':
@@ -154,32 +157,31 @@ components:
               properties:
                 coverage:
                   type: string
-                  maxLength: 115
                   description: Listagem de coberturas incluídas no produto que deve observar a relação discriminada de coberturas, conforme Tabela II.18 do Anexo II.
                   enum: [CASCO,
-                  RESPONSABILIDADE_CIVIL_FACULTATIVA,
-                  RESPONSABILIDADE_CIVIL_AEROPORTUARIA,
-                  RESPONSABILIDADE_DO_EXPLORADOR_E_TRANSPORTADOR_AEREO_RETA,
-                  BASICA_DANOS_MATERIAIS_A_EMBARCACAO_COBERTURA_DE_ASSISTENCIA_E_SALVAMENTO_COBERTURA_DE_COLOCACAO_E_RETIRADA_DA_AGUA,
-                  BASICA_DE_OPERADOR_PORTUARIO_DANOS_MATERIAIS_E_CORPORAIS_A_TERCEIROS,
-                  DANOS_ELETRICOS,
-                  DANOS_FISICOS_A_BENS_MOVEIS_E_IMOVEIS,
-                  DANOS_MORAIS,
-                  DESPESAS_COM_HONORARIOS_DE_ESPECIALISTAS,
-                  EXTENSAO_DO_LIMITE_DE_NAVEGACAO,
-                  GUARDA_DE_EMBARCACOES,
-                  LIMITE_DE_NAVEGACAO,
-                  PARTICIPACAO_EM_EVENTOS_FEIRAS_EXPOSICOES_REGATAS_A_VELA_COMPETICOES_DE_PESCA_OU_COMPETICOES_DE_VELOCIDADE,
-                  PERDA_DE_RECEITA_BRUTA_E_OU_DESPESAS_ADICIONAIS_OU_EXTRAORDINARIAS,
-                  PERDA_E_OU_PAGAMENTO_DE_ALUGUEL,
-                  REMOCAO_DE_DESTROCOS,
-                  RESPONSABILIDADE_CIVIL,
-                  ROUBO_E_OU_FURTO_QUALIFICADO_ACESSORIOS_FIXOS_OU_NAO_FIXOS_TOTAL_OU_PARCIAL,
-                  SEGURO_DE_CONSTRUTORES_NAVAIS,
-                  TRANSPORTE_TERRESTRE,
-                  RISCOS_DE_PETROLEO,
-                  RISCOS_NUCLEARES,
-                  OUTRAS]
+                    RESPONSABILIDADE_CIVIL_FACULTATIVA,
+                    RESPONSABILIDADE_CIVIL_AEROPORTUARIA,
+                    RESPONSABILIDADE_DO_EXPLORADOR_E_TRANSPORTADOR_AEREO_RETA,
+                    BASICA_DANOS_MATERIAIS_A_EMBARCACAO_COBERTURA_DE_ASSISTENCIA_E_SALVAMENTO_COBERTURA_DE_COLOCACAO_E_RETIRADA_DA_AGUA,
+                    BASICA_DE_OPERADOR_PORTUARIO_DANOS_MATERIAIS_E_CORPORAIS_A_TERCEIROS,
+                    DANOS_ELETRICOS,
+                    DANOS_FISICOS_A_BENS_MOVEIS_E_IMOVEIS,
+                    DANOS_MORAIS,
+                    DESPESAS_COM_HONORARIOS_DE_ESPECIALISTAS,
+                    EXTENSAO_DO_LIMITE_DE_NAVEGACAO,
+                    GUARDA_DE_EMBARCACOES,
+                    LIMITE_DE_NAVEGACAO,
+                    PARTICIPACAO_EM_EVENTOS_FEIRAS_EXPOSICOES_REGATAS_A_VELA_COMPETICOES_DE_PESCA_OU_COMPETICOES_DE_VELOCIDADE,
+                    PERDA_DE_RECEITA_BRUTA_E_OU_DESPESAS_ADICIONAIS_OU_EXTRAORDINARIAS,
+                    PERDA_E_OU_PAGAMENTO_DE_ALUGUEL,
+                    REMOCAO_DE_DESTROCOS,
+                    RESPONSABILIDADE_CIVIL,
+                    ROUBO_E_OU_FURTO_QUALIFICADO_ACESSORIOS_FIXOS_OU_NAO_FIXOS_TOTAL_OU_PARCIAL,
+                    SEGURO_DE_CONSTRUTORES_NAVAIS,
+                    TRANSPORTE_TERRESTRE,
+                    RISCOS_DE_PETROLEO,
+                    RISCOS_NUCLEARES,
+                    OUTRAS]
                   example: CASCO
                 coverageDescription:
                   type: string
@@ -215,8 +217,27 @@ components:
         - maxLMI
       properties:
         maxLMI:
-          $ref: '#/components/schemas/OthersScopesCoverageAttributesDetails' 
-    
+          $ref: '#/components/schemas/OthersScopesLimit' 
+
+    OthersScopesLimit:
+      type: object
+      description: Lista com valor de LMI aceito pela sociedade para cada cobertura.
+      required:
+        - type
+        - amount
+      properties:
+        type:
+          type: string
+          enum: [FINANCEIRO, PERCENTUAL]
+        amount:
+          $ref: '#/components/schemas/OthersScopesCoverageAttributesDetails'
+        index:
+          type: string
+          description: Indexador. Condicional, vinculado ao preenchimento do campo Tipo com Percentual
+          enum: [LMG, FINANCEIRO_COBERTURA, OUTRO]
+        maxIndexAmount:
+          $ref: '#/components/schemas/OthersScopesCoverageAttributesDetails'
+
     OthersScopesCoverageAttributesDetailsUnit:
       type: object
       required:
@@ -253,18 +274,17 @@ components:
           type: array
           items:
             type: string
-            maxLength: 23
             description: Prazo
             example: ANUAL
             enum: [ANUAL,
-            ANUAL_INTERMITENTE,
-            PLURIANUAL,
-            PLURIANUAL_INTERMITENTE,
-            MENSAL,
-            MENSAL_INTERMITENTE,
-            DIARIO,
-            DIARIO_INTERMITENTE,
-            OUTROS]
+              ANUAL_INTERMITENTE,
+              PLURIANUAL,
+              PLURIANUAL_INTERMITENTE,
+              MENSAL,
+              MENSAL_INTERMITENTE,
+              DIARIO,
+              DIARIO_INTERMITENTE,
+              OUTROS]
         termOthers:
           type: string
           description: Campo livre para descrição por cada participante ao selecionar o domínio “Outros” no campo Prazo (acima).
@@ -278,7 +298,7 @@ components:
           description: Número do processo Susep
           type: string
           maxLength: 20
-          example: 15414622222222222
+          example: '15414622222222222'
         definition:
           type: string
           description: Campo aberto (possibilidade de incluir uma url).
@@ -297,7 +317,6 @@ components:
           type: array
           items:
             type: string
-            maxLength: 15
             example: PESSOA_FISICA
             enum: [PESSOA_FISICA, PESSOA_JURIDICA]
     
@@ -307,23 +326,28 @@ components:
         self:
           type: string
           description: URL da página atualmente requisitada
-          example: 'https://api.organizacao.com.br/open-insurance/products-services/v1'
+          pattern: ^(https:\/\/)(.*?)(\/open-insurance\/products-services\/v\d+)(\/others-scopes.*)?$
+          example: 'https://api.organizacao.com.br/open-insurance/products-services/v1/others-scopes'
         first:
           type: string
           description: URL da primeira página de registros
-          example: 'https://api.organizacao.com.br/open-insurance/products-services/v1'
+          pattern: ^(https:\/\/)(.*?)(\/open-insurance\/products-services\/v\d+)(\/others-scopes.*)?$
+          example: 'https://api.organizacao.com.br/open-insurance/products-services/v1/others-scopes'
         prev:
           type: string
           description: URL da página anterior de registros
-          example: 'https://api.organizacao.com.br/open-insurance/products-services/v1'
+          pattern: ^(https:\/\/)(.*?)(\/open-insurance\/products-services\/v\d+)(\/others-scopes.*)?$
+          example: 'https://api.organizacao.com.br/open-insurance/products-services/v1/others-scopes'
         next:
           type: string
           description: URL da próxima página de registros
-          example: 'https://api.organizacao.com.br/open-insurance/products-services/v1'
+          pattern: ^(https:\/\/)(.*?)(\/open-insurance\/products-services\/v\d+)(\/others-scopes.*)?$
+          example: 'https://api.organizacao.com.br/open-insurance/products-services/v1/others-scopes'
         last:
           type: string
           description: URL da última página de registros
-          example: 'https://api.organizacao.com.br/open-insurance/products-services/v1'
+          pattern: ^(https:\/\/)(.*?)(\/open-insurance\/products-services\/v\d+)(\/others-scopes.*)?$
+          example: 'https://api.organizacao.com.br/open-insurance/products-services/v1/others-scopes'
     
     Meta:
       type: object
@@ -355,6 +379,7 @@ components:
               - code
               - title
               - detail
+              - requestDateTime
             properties:
               code:
                 description: Código de erro específico do endpoint
@@ -441,21 +466,13 @@ components:
             type: string
             pattern: '[\w\W\s]*'
     
-  securitySchemes:
-    OpenId:
-      type: openIdConnect
-      openIdConnectUrl: 'https://auth.mockbank.poc.raidiam.io/.well-known/openid-configuration'
-    OAuth2Security:
-      type: oauth2
-      description: Fluxo OAuth necessário para que a receptora tenha acesso aos dados na instituição transmissora. Inclui o processo de redirecionamento e autenticação do usuário a que se referem os dados.
-      flows:
-        authorizationCode:
-          authorizationUrl: 'https://authserver.example/authorization'
-          tokenUrl: 'https://authserver.example/token'
-          scopes:
-            financings: Escopo necessário para acesso à API. O controle dos endpoints específicos é feito via permissions.
-    
   responses:
+    UnprocessableEntity:
+      description: 'O servidor entende o tipo de conteúdo da entidade da requisição, e a sintaxe da requisição esta correta, mas não foi possível processar as instruções presente.'
+      content:
+        application/json; charset=utf-8:
+          schema:
+            $ref: '#/components/schemas/ResponseError'
     NoContent:
       description: 'O recurso solicitado não existe ou não foi localizado.'
       content:

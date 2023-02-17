@@ -22,14 +22,13 @@
       ### `/resources`
         - permissions:
           - GET: **RESOURCES_READ**
-    version: 1.1.0
+    version: 1.2.0
     license:
       name: Apache 2.0
       url: 'https://www.apache.org/licenses/LICENSE-2.0'
     contact:
       name: Governança do Open Insurance Brasil – Especificações
-      email: gt-interfaces@openbankingbr.org
-      url: 'https://openinsurance-brasil.github.io/areadesenvolvedor/'
+      url: 'https://www.gov.br/susep/'
   servers:
     - url: 'https://api.seguradora.com.br/open-insurance/resources/v1'
       description: Servidor de Produção
@@ -38,7 +37,7 @@
   tags:
     - name: Resources
   paths:
-    /:
+    /resources:
       get:
         tags:
           - Resources
@@ -56,6 +55,8 @@
         responses:
           '200':
             $ref: '#/components/responses/OKResponseResourceList'
+          '204':
+            $ref: '#/components/responses/NoContent'
           '400':
             $ref: '#/components/responses/BadRequest'
           '401':
@@ -75,7 +76,7 @@
           '500':
             $ref: '#/components/responses/InternalServerError'
           default:
-            $ref: '#/components/responses/Default'
+            $ref: '#/components/responses/OKResponseResourceList'
         security:
           - OpenId:
               - openid
@@ -123,17 +124,13 @@
                     - CAPITALIZATION_TITLES
                     - PENSION_RISK
                     - DAMAGES_AND_PEOPLE_PATRIMONIAL
-                    - DAMAGES_AND_PEOPLE_AERONAUTICAL
-                    - DAMAGES_AND_PEOPLE_NAUTICAL
-                    - DAMAGES_AND_PEOPLE_NUCLEAR
-                    - DAMAGES_AND_PEOPLE_OIL
                     - DAMAGES_AND_PEOPLE_RESPONSIBILITY
                     - DAMAGES_AND_PEOPLE_TRANSPORT
                     - DAMAGES_AND_PEOPLE_FINANCIAL_RISKS
                     - DAMAGES_AND_PEOPLE_RURAL
                     - DAMAGES_AND_PEOPLE_AUTO
                     - DAMAGES_AND_PEOPLE_HOUSING
-                    - DAMAGES_AND_PEOPLE_PEOPLE
+                    - DAMAGES_AND_PEOPLE_PERSON
                     - DAMAGES_AND_PEOPLE_ACCEPTANCE_AND_BRANCHES_ABROAD
 
                   description: |
@@ -147,17 +144,13 @@
                     - CAPITALIZATION_TITLES: Produtos de Titulos de Capitalização
                     - PENSION_RISK: Produtos de Previdência Risco                    
                     - DAMAGES_AND_PEOPLE_PATRIMONIAL: Produtos de Patrimonial
-                    - DAMAGES_AND_PEOPLE_AERONAUTICAL: Produtos de Aeronáuticos
-                    - DAMAGES_AND_PEOPLE_NAUTICAL: Produtos de Marítimo
-                    - DAMAGES_AND_PEOPLE_NUCLEAR: Produtos de Nuclear
-                    - DAMAGES_AND_PEOPLE_OIL: Produtos de Petróleo
                     - DAMAGES_AND_PEOPLE_RESPONSIBILITY: Produtos de Responsabilidade
                     - DAMAGES_AND_PEOPLE_TRANSPORT: Produtos de Transportes
                     - DAMAGES_AND_PEOPLE_FINANCIAL_RISKS: Produtos de Riscos Financeiros
                     - DAMAGES_AND_PEOPLE_RURAL: Produtos de Rural
                     - DAMAGES_AND_PEOPLE_AUTO: Produtos de Automóveis
                     - DAMAGES_AND_PEOPLE_HOUSING: Produtos de Habitacional
-                    - DAMAGES_AND_PEOPLE_PEOPLE: Produtos de Pessoas (Repartição simples)
+                    - DAMAGES_AND_PEOPLE_PERSON: Produtos de Pessoas (Repartição simples)
                     - DAMAGES_AND_PEOPLE_ACCEPTANCE_AND_BRANCHES_ABROAD: Aceitação e Sucursal no exterior
                   example: CAPITALIZATION_TITLES             
                 status:
@@ -193,36 +186,36 @@
             format: uri
             maxLength: 2000
             description: URI completo que gerou a resposta atual.
-            example: 'https://api.seguradora.com.br/open-insurance/api/v1/resource'
-            pattern: '^(https?:\/\/)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&\/\/=]*)$'
+            pattern: ^(https:\/\/)(.*?)(\/open-insurance\/resources\/v\d+)(\/resources.*)?$
+            example: 'https://api.organizacao.com.br/open-insurance/resources/v1/resources'
           first:
             type: string
             format: uri
             maxLength: 2000
             description: URI da primeira página que originou essa lista de resultados. Restrição - Obrigatório quando não for a primeira página da resposta
-            example: 'https://api.seguradora.com.br/open-insurance/api/v1/resource'
-            pattern: '^(https?:\/\/)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&\/\/=]*)$'
+            pattern: ^(https:\/\/)(.*?)(\/open-insurance\/resources\/v\d+)(\/resources.*)?$
+            example: 'https://api.organizacao.com.br/open-insurance/resources/v1/resources'
           prev:
             type: string
             format: uri
             maxLength: 2000
             description: "URI da página anterior dessa lista de resultados. Restrição - \tObrigatório quando não for a primeira página da resposta"
-            example: 'https://api.seguradora.com.br/open-insurance/api/v1/resource'
-            pattern: '^(https?:\/\/)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&\/\/=]*)$'
+            pattern: ^(https:\/\/)(.*?)(\/open-insurance\/resources\/v\d+)(\/resources.*)?$
+            example: 'https://api.organizacao.com.br/open-insurance/resources/v1/resources'
           next:
             type: string
             format: uri
             maxLength: 2000
             description: URI da próxima página dessa lista de resultados. Restrição - Obrigatório quando não for a última página da resposta
-            example: 'https://api.seguradora.com.br/open-insurance/api/v1/resource'
-            pattern: '^(https?:\/\/)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&\/\/=]*)$'
+            pattern: ^(https:\/\/)(.*?)(\/open-insurance\/resources\/v\d+)(\/resources.*)?$
+            example: 'https://api.organizacao.com.br/open-insurance/resources/v1/resources'
           last:
             type: string
             format: uri
             maxLength: 2000
             description: URI da última página dessa lista de resultados. Restrição - Obrigatório quando não for a última página da resposta
-            example: 'https://api.seguradora.com.br/open-insurance/api/v1/resource'
-            pattern: '^(https?:\/\/)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&\/\/=]*)$'
+            pattern: ^(https:\/\/)(.*?)(\/open-insurance\/resources\/v\d+)(\/resources.*)?$
+            example: 'https://api.organizacao.com.br/open-insurance/resources/v1/resources'
         additionalProperties: false
       Meta:
         type: object
@@ -230,7 +223,6 @@
         required:
           - totalRecords
           - totalPages
-          - requestDateTime
         properties:
           totalRecords:
             type: integer
@@ -242,12 +234,6 @@
             format: int32
             description: Número total de páginas no resultado
             example: 1
-          requestDateTime:
-            description: 'Data e hora da consulta, conforme especificação RFC-3339, formato UTC.'
-            type: string
-            maxLength: 20
-            format: date-time
-            example: '2021-05-21T08:30:00Z'
         additionalProperties: false
       ResponseError:
         type: object
@@ -264,6 +250,7 @@
                 - code
                 - title
                 - detail
+                - requestDateTime
               properties:
                 code:
                   description: Código de erro específico do endpoint
@@ -280,6 +267,12 @@
                   type: string
                   pattern: '[\w\W\s]*'
                   maxLength: 2048
+                requestDateTime:
+                  description: 'Data e hora da consulta, conforme especificação RFC-3339, formato UTC.'
+                  type: string
+                  maxLength: 20
+                  format: date-time
+                  example: '2021-05-21T08:30:00Z'
               additionalProperties: false
           meta:
             $ref: '#/components/schemas/Meta'
@@ -382,6 +375,18 @@
           application/json:
             schema:
               $ref: '#/components/schemas/ResponseResourceList'
+      UnprocessableEntity:
+        description: 'O servidor entende o tipo de conteúdo da entidade da requisição, e a sintaxe da requisição esta correta, mas não foi possível processar as instruções presente.'
+        content:
+          application/json; charset=utf-8:
+            schema:
+              $ref: '#/components/schemas/ResponseError'
+      NoContent:
+        description: 'O recurso solicitado não existe ou não foi localizado.'
+        content:
+          application/json; charset=utf-8:
+            schema:
+              $ref: '#/components/schemas/ResponseError'
       BadRequest:
         description: 'A requisição foi malformada, omitindo atributos obrigatórios, seja no payload ou através de atributos na URL.'
         content:
@@ -412,12 +417,6 @@
           application/json; charset=utf-8:
             schema:
               $ref: '#/components/schemas/ResponseError'
-      UnprocessableEntity:
-        description: 'A sintaxe da requisição esta correta, mas não foi possível processar as instruções presentes.'
-        content:
-          application/json; charset=utf-8:
-            schema:
-              $ref: '#/components/schemas/ResponseError'
       NotFound:
         description: O recurso solicitado não existe ou não foi implementado
         content:
@@ -432,12 +431,6 @@
               $ref: '#/components/schemas/ResponseError'
       Unauthorized:
         description: Cabeçalho de autenticação ausente/inválido ou token inválido
-        content:
-          application/json; charset=utf-8:
-            schema:
-              $ref: '#/components/schemas/ResponseError'
-      Default:
-        description: Erro inesperado.
         content:
           application/json; charset=utf-8:
             schema:

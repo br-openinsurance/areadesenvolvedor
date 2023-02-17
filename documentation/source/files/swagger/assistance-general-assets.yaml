@@ -4,9 +4,9 @@ info:
   title: APIs Open Data do Open Insurance Brasil
   description:
     API de informações de dados do produto Bens em geral. Os recursos que podem ser consumidos pelos participantes conforme a regra 3.1.2 do manual de escopo de dados..
-  version: 1.0.0
+  version: 1.1.0
   contact:
-    url: 'http://novosite.susep.gov.br/'
+    url: 'https://www.gov.br/susep/'
 servers:
   - url: 'https://api.organizacao.com.br/open-insurance/products-services/v1'
     description: Servidor de Producao
@@ -14,9 +14,10 @@ servers:
     description: Servidor de Homologacao
 tags:
 - name: "Bens em geral" 
+- name: "AssistanceGeneralAssets"
 
 paths:
-  /assistance-general-assets/:
+  /assistance-general-assets:
     get:
       tags:
         - AssistanceGeneralAssets
@@ -53,6 +54,8 @@ paths:
           $ref: '#/components/responses/MethodNotAllowed'
         '406':
           $ref: '#/components/responses/NotAcceptable'
+        '422':
+          $ref: '#/components/responses/UnprocessableEntity'
         '429':
           $ref: '#/components/responses/TooManyRequests'
         '500':
@@ -131,7 +134,6 @@ components:
           - coverages
           - assistanceServices
           - traits
-          - insuredGoodsType
           - microInsurance
           - validity
           - premiumPayment
@@ -153,19 +155,18 @@ components:
             description: Listagem de tipo de bem segurado
             items:  
               type: string
-              maxLength: 29
               enum: [SMARTPHONE,
-              NOTEBOOK,
-              TABLET,
-              EQUIPAMENTOS_PORTATEIS,
-              ELETRODOMESTICOS_LINHA_BRANCA,
-              ELETRODOMESTICOS_LINHA_MARROM,
-              AUTOMOVEL,
-              BICICLETA,
-              BICICLETA_ELETRICA,
-              EMPRESA,
-              RESIDENCIA,
-              OUTROS]
+                NOTEBOOK,
+                TABLET,
+                EQUIPAMENTOS_PORTATEIS,
+                ELETRODOMESTICOS_LINHA_BRANCA,
+                ELETRODOMESTICOS_LINHA_MARROM,
+                AUTOMOVEL,
+                BICICLETA,
+                BICICLETA_ELETRICA,
+                EMPRESA,
+                RESIDENCIA,
+                OUTROS]
           securityTypeOthers:
             type: string
             maxLength: 3000
@@ -183,7 +184,6 @@ components:
                 coverage:
                   description: Listagem de coberturas incluídas no produto que deve observar a relação discriminada de coberturas, conformeTabela II.8 do Anexo II.
                   type: string
-                  maxLength: 24
                   enum: [SERVICOS_EMERGENCIAIS,
                         SERVICOS_DE_CONVENIENCIA,
                         OUTRAS] 
@@ -197,7 +197,6 @@ components:
                   type: boolean
                   description: Indicação se a cobertura permite contratação separada (por cobertura selecionada).
                   example: true
-
           assistanceServices:
             $ref: '#/components/schemas/AssistanceGeneralAssetsAssistanceServices'
           traits:
@@ -214,7 +213,6 @@ components:
             type: array
             items:
               type: string
-              maxLength: 17
               enum: [REDE_REFERENCIADA,
                     LIVRE_ESCOLHA]
           premiumPayment:
@@ -241,7 +239,6 @@ components:
             items:
               type: string
               description: Para efeitos de comparabilidade considerar agrupamentos de serviços em 4 categorias, conforme os domínios
-              maxLength: 17
               example: ATE_10_SERVICOS
               enum: [ATE_10_SERVICOS, ATE_20_SERVICOS , ACIMA_20_SERVICOS, CUSTOMIZAVEL]
           complementaryAssistanceServicesDetail:
@@ -252,7 +249,6 @@ components:
           chargeTypeSignaling:
             type: string
             description: Indicação se o pacote de Assistência é gratuita ou contratada/paga.
-            maxLength: 8
             example: GRATUITO
             enum: [GRATUITO, PAGO]
     
@@ -267,7 +263,6 @@ components:
             type: array
             items:
               type: string
-              maxLength: 23
               example: ANUAL
               enum: [ANUAL , ANUAL_INTERMITENTE , PLURIANUAL , PLURIANUAL_INTERMITENTE , MENSAL, MENSAL_INTERMITENTE , DIARIO , DIARIO_INTERMITENTE, OUTROS]
           termOthers:
@@ -285,7 +280,6 @@ components:
         properties:
           paymentMethod:      
             type: string
-            maxLength: 33
             description: Metodo de pagamento
             enum: [CARTAO_DE_CREDITO, CARTAO_DE_DEBITO, DEBITO_EM_CONTA_CORRENTE, DEBITO_EM_CONTA_POUPANCA, BOLETO_BANCARIO ,PIX, CONSIGNACAO_EM_FOLHA_DE_PAGAMENTO, PONTOS_DE_PROGRAMA_DE_BENEFICIO, OUTROS]
           paymentDetail:
@@ -297,7 +291,6 @@ components:
             description: tipo de pagamento  
             items:
               type: string
-              maxLength: 9
               example: A_VISTA
               enum: [A_VISTA, PARCELADO]
           premiumRates:
@@ -335,7 +328,6 @@ components:
           type: array
           items:
             type: string
-            maxLength: 10
             example: COLETIVO
             enum: [COLETIVO, INDIVIDUAL]
         minimumRequirementDetails:
@@ -346,7 +338,6 @@ components:
           type: array
           items:
             type: string
-            maxLength: 15
             example: PESSOA_NATURAL
             enum: [PESSOA_NATURAL, PESSOA_JURIDICA]
     
@@ -358,14 +349,12 @@ components:
         - maxLMI
       properties:
         maxLMI:
-          description: Lista com valor de LMI aceito pela sociedade para cada cobertura.
-          $ref: '#/components/schemas/AssistanceGeneralAssetsCoverageAttributesDetails'
+          $ref: '#/components/schemas/AssistanceGeneralAssetsLimit'
         insuredParticipation:
           type: array
           description: Indicação se a participação do segurado (por cobertura selecionada) é por
           items:
             type: string
-            maxLength: 13
             example: FRANQUIA
             enum: [FRANQUIA, POS, NAO_SE_APLICA]
         insuredParticipationDescription:
@@ -373,6 +362,24 @@ components:
           maxLength: 1024
           description: Lista com descrição referente ao campo “Participação do Segurado” para cada cobertura.
 
+    AssistanceGeneralAssetsLimit:
+      type: object
+      description: Lista com valor de LMI aceito pela sociedade para cada cobertura.
+      required:
+        - type
+        - amount
+      properties:
+        type:
+          type: string
+          enum: [FINANCEIRO, PERCENTUAL]
+        amount:
+          $ref: '#/components/schemas/AssistanceGeneralAssetsCoverageAttributesDetails'
+        index:
+          type: string
+          description: Indexador. Condicional, vinculado ao preenchimento do campo Tipo com Percentual
+          enum: [LMG, FINANCEIRO_COBERTURA, OUTRO]
+        maxIndexAmount:
+          $ref: '#/components/schemas/AssistanceGeneralAssetsCoverageAttributesDetails'
     
     AssistanceGeneralAssetsCoverageAttributesDetails:
         type: object
@@ -399,56 +406,35 @@ components:
           type: string
           maxLength: 5
           example: REAL
-    
-    AssistanceGeneralAssetsCoverageAttributesPercentageDetails:
-        type: object
-        required:
-          - amount
-          - unit
-        properties:
-          amount:
-            type: number
-          unit:
-            $ref: '#/components/schemas/AssistanceGeneralAssetsCoverageAttributesPercentageDetailsUnit'
-    
-    AssistanceGeneralAssetsCoverageAttributesPercentageDetailsUnit:
-      type: object
-      required:
-        - code
-        - description
-      properties:
-        code:
-          type: string
-          maxLength: 1
-          example: '%'
-        description:
-          type: string
-          maxLength: 10
-          example: PERCENTUAL
-    
+
     Links:
       type: object
       properties:
         self:
           type: string
           description: URL da página atualmente requisitada
-          example: 'https://api.organizacao.com.br/open-insurance/products-services/v1'
+          pattern: ^(https:\/\/)(.*?)(\/open-insurance\/products-services\/v\d+)(\/assistance-general-assets.*)?$
+          example: 'https://api.organizacao.com.br/open-insurance/products-services/v1/assistance-general-assets'
         first:
           type: string
           description: URL da primeira página de registros
-          example: 'https://api.organizacao.com.br/open-insurance/products-services/v1'
+          pattern: ^(https:\/\/)(.*?)(\/open-insurance\/products-services\/v\d+)(\/assistance-general-assets.*)?$
+          example: 'https://api.organizacao.com.br/open-insurance/products-services/v1/assistance-general-assets'
         prev:
           type: string
           description: URL da página anterior de registros
-          example: 'https://api.organizacao.com.br/open-insurance/products-services/v1'
+          pattern: ^(https:\/\/)(.*?)(\/open-insurance\/products-services\/v\d+)(\/assistance-general-assets.*)?$
+          example: 'https://api.organizacao.com.br/open-insurance/products-services/v1/assistance-general-assets'
         next:
           type: string
           description: URL da próxima página de registros
-          example: 'https://api.organizacao.com.br/open-insurance/products-services/v1'
+          pattern: ^(https:\/\/)(.*?)(\/open-insurance\/products-services\/v\d+)(\/assistance-general-assets.*)?$
+          example: 'https://api.organizacao.com.br/open-insurance/products-services/v1/assistance-general-assets'
         last:
           type: string
           description: URL da última página de registros
-          example: 'https://api.organizacao.com.br/open-insurance/products-services/v1'
+          pattern: ^(https:\/\/)(.*?)(\/open-insurance\/products-services\/v\d+)(\/assistance-general-assets.*)?$
+          example: 'https://api.organizacao.com.br/open-insurance/products-services/v1/assistance-general-assets'
     
     Meta:
       type: object
@@ -480,6 +466,7 @@ components:
               - code
               - title
               - detail
+              - requestDateTime
             properties:
               code:
                 description: Código de erro específico do endpoint
@@ -565,22 +552,14 @@ components:
         schema:
             type: string
             pattern: '[\w\W\s]*'
-    
-  securitySchemes:
-    OpenId:
-      type: openIdConnect
-      openIdConnectUrl: 'https://auth.mockbank.poc.raidiam.io/.well-known/openid-configuration'
-    OAuth2Security:
-      type: oauth2
-      description: Fluxo OAuth necessário para que a receptora tenha acesso aos dados na instituição transmissora. Inclui o processo de redirecionamento e autenticação do usuário a que se referem os dados.
-      flows:
-        authorizationCode:
-          authorizationUrl: 'https://authserver.example/authorization'
-          tokenUrl: 'https://authserver.example/token'
-          scopes:
-            financings: Escopo necessário para acesso à API. O controle dos endpoints específicos é feito via permissions.
-    
+
   responses:
+    UnprocessableEntity:
+      description: 'O servidor entende o tipo de conteúdo da entidade da requisição, e a sintaxe da requisição esta correta, mas não foi possível processar as instruções presente.'
+      content:
+        application/json; charset=utf-8:
+          schema:
+            $ref: '#/components/schemas/ResponseError'
     NoContent:
       description: 'O recurso solicitado não existe ou não foi localizado.'
       content:

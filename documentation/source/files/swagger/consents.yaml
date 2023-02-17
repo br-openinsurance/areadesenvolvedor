@@ -7,12 +7,12 @@ info:
 
     # Orientações importantes
     A API Consents trata dos consentimentos exclusivamente para a fase 2 do Open Insurance Brasil.
-    - As informações da instituição receptora não trafegam na API Consents – a autenticação da receptora se dá através do [DCR](https://openbanking-brasil.github.io/specs-seguranca/open-banking-brasil-dynamic-client-registration-1_ID2-ptbr.html).   
+    - As informações da instituição receptora não trafegam na API Consents – a autenticação da receptora se dá através do [DCR](https://br-openinsurance.github.io/areadesenvolvedor/#dynamic-client-registration-dcr).   
     - Na chamada para a criação do consentimento deve-se utilizar um token gerado via `client_credentials`.
     - Após o `POST` de criação do consentimento, o `STATUS` devolvido na resposta deverá ser `AWAITING_AUTHORISATION`.
     - O `STATUS` será alterado para `AUTHORISED` somente após autenticação e confirmação por parte do usuário na instituição transmissora dos dados.
     - Todas as datas trafegadas nesta API seguem o padrão da [RFC3339](https://tools.ietf.org/html/rfc3339) e formato "zulu".
-    - A descrição do fluxo de consentimento encontra-se disponível no [Portal do desenvolvedor](https://openinsurance-brasil.github.io/areadesenvolvedor/#em-revisao-fluxo-de-consentimento).
+    - A descrição do fluxo de consentimento encontra-se disponível no [Portal do desenvolvedor](https://br-openinsurance.github.io/areadesenvolvedor/).
     - O arquivo com o mapeamento completo entre `Roles`, `scopes` e `permissions` está disponibilizado no Portal do desenvolvedor, no mesmo item acima - descrição do fluxo de consentimento.
     - A receptora deve enviar obrigatoriamente, no pedido de criação de consentimento, todas as permissions dos agrupamentos de dados as quais ela deseja consentimento, conforme tabela abaixo:
       
@@ -55,30 +55,6 @@ info:
       |                      |                                  | DAMAGES_AND_PEOPLE_PATRIMONIAL_CLAIM_READ                         |
       |                      |                                  | RESOURCES_READ                                                    | 
       |----------------------|----------------------------------|-------------------------------------------------------------------|
-      | Danos e Pessoas      | Aeronáuticos                     | DAMAGES_AND_PEOPLE_AERONAUTICAL_READ                              |
-      |                      |                                  | DAMAGES_AND_PEOPLE_AERONAUTICAL_POLICYINFO_READ                   |
-      |                      |                                  | DAMAGES_AND_PEOPLE_AERONAUTICAL_PREMIUM_READ                      |
-      |                      |                                  | DAMAGES_AND_PEOPLE_AERONAUTICAL_CLAIM_READ                        |
-      |                      |                                  | RESOURCES_READ                                                    | 
-      |----------------------|----------------------------------|-------------------------------------------------------------------|
-      | Danos e Pessoas      | Marítimo                         | DAMAGES_AND_PEOPLE_NAUTICAL_READ                                  |
-      |                      |                                  | DAMAGES_AND_PEOPLE_NAUTICAL_POLICYINFO_READ                       |
-      |                      |                                  | DAMAGES_AND_PEOPLE_NAUTICAL_PREMIUM_READ                          |
-      |                      |                                  | DAMAGES_AND_PEOPLE_NAUTICAL_CLAIM_READ                            |
-      |                      |                                  | RESOURCES_READ                                                    | 
-      |----------------------|----------------------------------|-------------------------------------------------------------------|
-      | Danos e Pessoas      | Nuclear                          | DAMAGES_AND_PEOPLE_NUCLEAR_READ                                   |
-      |                      |                                  | DAMAGES_AND_PEOPLE_NUCLEAR_POLICYINFO_READ                        |
-      |                      |                                  | DAMAGES_AND_PEOPLE_NUCLEAR_PREMIUM_READ                           |
-      |                      |                                  | DAMAGES_AND_PEOPLE_NUCLEAR_CLAIM_READ                             |
-      |                      |                                  | RESOURCES_READ                                                    | 
-      |----------------------|----------------------------------|-------------------------------------------------------------------|
-      | Danos e Pessoas      | Petróleo                         | DAMAGES_AND_PEOPLE_OIL_READ                                       |
-      |                      |                                  | DAMAGES_AND_PEOPLE_OIL_POLICYINFO_READ                            |
-      |                      |                                  | DAMAGES_AND_PEOPLE_OIL_PREMIUM_READ                               |
-      |                      |                                  | DAMAGES_AND_PEOPLE_OIL_CLAIM_READ                                 |
-      |                      |                                  | RESOURCES_READ                                                    | 
-      |----------------------|----------------------------------|-------------------------------------------------------------------|
       | Danos e Pessoas      | Responsabilidade                 | DAMAGES_AND_PEOPLE_RESPONSIBILITY_READ                            |
       |                      |                                  | DAMAGES_AND_PEOPLE_RESPONSIBILITY_POLICYINFO_READ                 |
       |                      |                                  | DAMAGES_AND_PEOPLE_RESPONSIBILITY_PREMIUM_READ                    |
@@ -91,7 +67,7 @@ info:
       |                      |                                  | DAMAGES_AND_PEOPLE_TRANSPORT_CLAIM_READ                           |
       |                      |                                  | RESOURCES_READ                                                    | 
       |----------------------|----------------------------------|-------------------------------------------------------------------|
-      | Danos e Pessoas      | Riscos Financeiros               | DAMAGES_AND_PEOPLE_FINANCIAL_RISKS_READ                           |
+      | Danos e Pessoas      | Riscos Financeiros               | DAMAGES_AND_PEOPLE_FINANCIAL_RISKS_READ                                 |
       |                      |                                  | DAMAGES_AND_PEOPLE_FINANCIAL_RISKS_POLICYINFO_READ                |
       |                      |                                  | DAMAGES_AND_PEOPLE_FINANCIAL_RISKS_PREMIUM_READ                   |
       |                      |                                  | DAMAGES_AND_PEOPLE_FINANCIAL_RISKS_CLAIM_READ                     |
@@ -131,14 +107,13 @@ info:
     - A instituição transmissora deve validar o preenchimento correto desses agrupamentos no momento da geração do consentimento.
     - Caso a instiuição receptora envie permissões divergentes ao agrupamento especificado na tabela, a transmissora deve rejeitar o pedido da receptora dando retorno HTTP Status Code 400.
     - A transmissora deve retornar, da lista de permissions requisitadas, apenas o subconjunto de permissions por ela suportada, removendo da lista as permissions de produtos não suportados e retornando HTTP Status Code 201. Caso não restem permissões funcionais, a instituição transmissora deve retornar o erro HTTP Code "422 Unprocessable Entity".
-  version: 1.0.5  
+  version: 1.1.0
   license:
     name: Apache 2.0
     url: 'http://www.apache.org/licenses/LICENSE-2.0'
   contact:
     name: Governança do Open Insurance Brasil - Especificações
-    email: gt-interfaces@openinsurancebr.org
-    url: 'https://http://novosite.susep.gov.br'
+    url: 'https://www.gov.br/susep/'
 servers:
   - url: 'https://api.seguro.com.br/open-insurance/consents/v1'
     description: Servidor de Produção
@@ -148,7 +123,7 @@ tags:
   - name: Consents
     description: 'Operações para criação, consulta e revogação do consentimento dado pelo cliente.'
 paths:
-  /:
+  /consents:
     post:
       tags:
         - Consents
@@ -171,6 +146,8 @@ paths:
       responses:
         '201':
           $ref: '#/components/responses/201ConsentsCreated'
+        '204':
+          $ref: '#/components/responses/NoContent'
         '400':
           $ref: '#/components/responses/BadRequest'
         '401':
@@ -183,8 +160,6 @@ paths:
           $ref: '#/components/responses/MethodNotAllowed'
         '406':
           $ref: '#/components/responses/NotAcceptable'
-        '415':
-          $ref: '#/components/responses/UnsupportedMediaType'
         '422':
           $ref: '#/components/responses/UnprocessableEntity'
         '429':
@@ -192,11 +167,11 @@ paths:
         '500':
           $ref: '#/components/responses/InternalServerError'
         default:
-          $ref: '#/components/responses/Default'
+          $ref: '#/components/responses/201ConsentsCreated'
       security:
         - OAuth2Security:
             - consents
-  '/{consentId}':
+  /consents/{consentId}:
     get:
       tags:
         - Consents
@@ -213,6 +188,8 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/200ConsentsConsentIdRead'
+        '204':
+          $ref: '#/components/responses/NoContent'
         '400':
           $ref: '#/components/responses/BadRequest'
         '401':
@@ -232,7 +209,7 @@ paths:
         '500':
           $ref: '#/components/responses/InternalServerError'
         default:
-          $ref: '#/components/responses/Default'
+          $ref: '#/components/responses/200ConsentsConsentIdRead'
       security:
         - OAuth2Security:
             - consents
@@ -251,7 +228,7 @@ paths:
         - $ref: '#/components/parameters/xCustomerUserAgent'
       responses:
         '204':
-          $ref: '#/components/responses/204ConsentsConsentIdDeleted'
+          $ref: '#/components/responses/NoContent'
         '400':
           $ref: '#/components/responses/BadRequest'
         '401':
@@ -271,7 +248,7 @@ paths:
         '500':
           $ref: '#/components/responses/InternalServerError'
         default:
-          $ref: '#/components/responses/Default'
+          $ref: '#/components/responses/204ConsentsConsentIdDeleted'
       security:
         - OAuth2Security:
             - consents
@@ -288,36 +265,36 @@ components:
           format: uri
           maxLength: 2000
           description: URI completo que gerou a resposta atual.
-          example: 'https://api.seguro.com.br/open-insurance/consents/v1'
-          pattern: '^(https?:\/\/)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&\/\/=]*)$'
+          pattern: ^(https:\/\/)(.*?)(\/open-insurance\/consents\/v\d+)(\/.*)?$
+          example: 'https://api.organizacao.com.br/open-insurance/consents/v1/consents'
         first:
           type: string
           format: uri
           maxLength: 2000
           description: URI da primeira página que originou essa lista de resultados. Restrição - Obrigatório quando não for a primeira página da resposta
-          example: 'https://api.seguro.com.br/open-insurance/consents/v1'
-          pattern: '^(https?:\/\/)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&\/\/=]*)$'
+          pattern: ^(https:\/\/)(.*?)(\/open-insurance\/consents\/v\d+)(\/.*)?$
+          example: 'https://api.organizacao.com.br/open-insurance/consents/v1/consents'
         prev:
           type: string
           format: uri
           maxLength: 2000
           description: "URI da página anterior dessa lista de resultados. Restrição - \tObrigatório quando não for a primeira página da resposta"
-          example: 'https://api.seguro.com.br/open-insurance/consents/v1'
-          pattern: '^(https?:\/\/)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&\/\/=]*)$'
+          pattern: ^(https:\/\/)(.*?)(\/open-insurance\/consents\/v\d+)(\/.*)?$
+          example: 'https://api.organizacao.com.br/open-insurance/consents/v1/consents'
         next:
           type: string
           format: uri
           maxLength: 2000
           description: URI da próxima página dessa lista de resultados. Restrição - Obrigatório quando não for a última página da resposta
-          example: 'https://api.seguro.com.br/open-insurance/consents/v1'
-          pattern: '^(https?:\/\/)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&\/\/=]*)$'
+          pattern: ^(https:\/\/)(.*?)(\/open-insurance\/consents\/v\d+)(\/.*)?$
+          example: 'https://api.organizacao.com.br/open-insurance/consents/v1/consents'
         last:
           type: string
           format: uri
           maxLength: 2000
           description: URI da última página dessa lista de resultados. Restrição - Obrigatório quando não for a última página da resposta
-          example: 'https://api.seguro.com.br/open-insurance/consents/v1'
-          pattern: '^(https?:\/\/)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&\/\/=]*)$'
+          pattern: ^(https:\/\/)(.*?)(\/open-insurance\/consents\/v\d+)(\/.*)?$
+          example: 'https://api.organizacao.com.br/open-insurance/consents/v1/consents'
       additionalProperties: false
     Meta:
       type: object
@@ -325,7 +302,6 @@ components:
       required:
         - totalRecords
         - totalPages
-        - requestDateTime
       properties:
         totalRecords:
           type: integer
@@ -337,12 +313,6 @@ components:
           format: int32
           description: Número total de páginas no resultado
           example: 1
-        requestDateTime:
-          description: 'Data e hora da consulta, conforme especificação RFC-3339, formato UTC.'
-          type: string
-          maxLength: 20
-          format: date-time
-          example: '2021-05-21T08:30:00Z'
       additionalProperties: false
     CreateConsent:
       type: object
@@ -383,22 +353,6 @@ components:
                     - DAMAGES_AND_PEOPLE_PATRIMONIAL_POLICYINFO_READ                    
                     - DAMAGES_AND_PEOPLE_PATRIMONIAL_PREMIUM_READ                       
                     - DAMAGES_AND_PEOPLE_PATRIMONIAL_CLAIM_READ         
-                    - DAMAGES_AND_PEOPLE_AERONAUTICAL_READ                                                               
-                    - DAMAGES_AND_PEOPLE_AERONAUTICAL_POLICYINFO_READ                   
-                    - DAMAGES_AND_PEOPLE_AERONAUTICAL_PREMIUM_READ                      
-                    - DAMAGES_AND_PEOPLE_AERONAUTICAL_CLAIM_READ         
-                    - DAMAGES_AND_PEOPLE_NAUTICAL_READ                                                               
-                    - DAMAGES_AND_PEOPLE_NAUTICAL_POLICYINFO_READ               
-                    - DAMAGES_AND_PEOPLE_NAUTICAL_PREMIUM_READ                  
-                    - DAMAGES_AND_PEOPLE_NAUTICAL_CLAIM_READ         
-                    - DAMAGES_AND_PEOPLE_NUCLEAR_READ                                                                                   
-                    - DAMAGES_AND_PEOPLE_NUCLEAR_POLICYINFO_READ                                
-                    - DAMAGES_AND_PEOPLE_NUCLEAR_PREMIUM_READ                                   
-                    - DAMAGES_AND_PEOPLE_NUCLEAR_CLAIM_READ          
-                    - DAMAGES_AND_PEOPLE_OIL_READ                                                                                                       
-                    - DAMAGES_AND_PEOPLE_OIL_POLICYINFO_READ                                
-                    - DAMAGES_AND_PEOPLE_OIL_PREMIUM_READ                                   
-                    - DAMAGES_AND_PEOPLE_OIL_CLAIM_READ          
                     - DAMAGES_AND_PEOPLE_RESPONSIBILITY_READ                                                                                                                           
                     - DAMAGES_AND_PEOPLE_RESPONSIBILITY_POLICYINFO_READ                                
                     - DAMAGES_AND_PEOPLE_RESPONSIBILITY_PREMIUM_READ                                   
@@ -531,22 +485,6 @@ components:
                     - DAMAGES_AND_PEOPLE_PATRIMONIAL_POLICYINFO_READ                    
                     - DAMAGES_AND_PEOPLE_PATRIMONIAL_PREMIUM_READ                       
                     - DAMAGES_AND_PEOPLE_PATRIMONIAL_CLAIM_READ         
-                    - DAMAGES_AND_PEOPLE_AERONAUTICAL_READ                                                               
-                    - DAMAGES_AND_PEOPLE_AERONAUTICAL_POLICYINFO_READ                   
-                    - DAMAGES_AND_PEOPLE_AERONAUTICAL_PREMIUM_READ                      
-                    - DAMAGES_AND_PEOPLE_AERONAUTICAL_CLAIM_READ         
-                    - DAMAGES_AND_PEOPLE_NAUTICAL_READ                                                               
-                    - DAMAGES_AND_PEOPLE_NAUTICAL_POLICYINFO_READ               
-                    - DAMAGES_AND_PEOPLE_NAUTICAL_PREMIUM_READ                  
-                    - DAMAGES_AND_PEOPLE_NAUTICAL_CLAIM_READ         
-                    - DAMAGES_AND_PEOPLE_NUCLEAR_READ                                                                                   
-                    - DAMAGES_AND_PEOPLE_NUCLEAR_POLICYINFO_READ                                
-                    - DAMAGES_AND_PEOPLE_NUCLEAR_PREMIUM_READ                                   
-                    - DAMAGES_AND_PEOPLE_NUCLEAR_CLAIM_READ          
-                    - DAMAGES_AND_PEOPLE_OIL_READ                                                                                                       
-                    - DAMAGES_AND_PEOPLE_OIL_POLICYINFO_READ                                
-                    - DAMAGES_AND_PEOPLE_OIL_PREMIUM_READ                                   
-                    - DAMAGES_AND_PEOPLE_OIL_CLAIM_READ          
                     - DAMAGES_AND_PEOPLE_RESPONSIBILITY_READ                                                                                                                           
                     - DAMAGES_AND_PEOPLE_RESPONSIBILITY_POLICYINFO_READ                                
                     - DAMAGES_AND_PEOPLE_RESPONSIBILITY_PREMIUM_READ                                   
@@ -623,6 +561,7 @@ components:
               - code
               - title
               - detail
+              - requestDateTime
             properties:
               code:
                 description: Código de erro específico do endpoint
@@ -639,6 +578,12 @@ components:
                 type: string
                 pattern: '[\w\W\s]*'
                 maxLength: 2048
+              requestDateTime:
+                description: 'Data e hora da consulta, conforme especificação RFC-3339, formato UTC.'
+                type: string
+                maxLength: 20
+                format: date-time
+                example: '2021-05-21T08:30:00Z'
             additionalProperties: false
         meta:
           $ref: '#/components/schemas/Meta'
@@ -764,8 +709,14 @@ components:
           scopes:
             consents: Criação do consentimento.
   responses:
-    UnsupportedMediaType:
-      description: O formato do payload não é um formato suportado.
+    UnprocessableEntity:
+      description: 'O servidor entende o tipo de conteúdo da entidade da requisição, e a sintaxe da requisição esta correta, mas não foi possível processar as instruções presente.'
+      content:
+        application/json; charset=utf-8:
+          schema:
+            $ref: '#/components/schemas/ResponseError'
+    NoContent:
+      description: 'O recurso solicitado não existe ou não foi localizado.'
       content:
         application/json; charset=utf-8:
           schema:
@@ -812,20 +763,8 @@ components:
         application/json; charset=utf-8:
           schema:
             $ref: '#/components/schemas/ResponseError'
-    UnprocessableEntity:
-      description: 'A sintaxe da requisição esta correta, mas não foi possível processar as instruções presentes.'
-      content:
-        application/json; charset=utf-8:
-          schema:
-            $ref: '#/components/schemas/ResponseError'
     Unauthorized:
       description: Cabeçalho de autenticação ausente/inválido ou token inválido
-      content:
-        application/json; charset=utf-8:
-          schema:
-            $ref: '#/components/schemas/ResponseError'
-    Default:
-      description: Erro inesperado.
       content:
         application/json; charset=utf-8:
           schema:

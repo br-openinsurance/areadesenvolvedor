@@ -3,9 +3,9 @@ info:
   title: APIs Open Data do Open Insurance Brasil
   description: 
     API de informações de Seguro de Automóveis. Os recursos que podem ser consumidos pelos participantes conforme a regra 3.2.2 do manual de escopo de dados.
-  version: 1.2.0
+  version: 1.3.0
   contact:
-    url: 'https://openinsurance.susep.gov.br/'
+    url: 'https://www.gov.br/susep/'
 servers:
   - url: 'https://api.organizacao.com.br/open-insurance/products-services/v1'
     description: Servidor de Produção
@@ -40,6 +40,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ResponseAutoInsuranceList'
+        '204':
+          $ref: '#/components/responses/NoContent'
         '400':
           $ref: '#/components/responses/BadRequest'
         '401':
@@ -128,7 +130,7 @@ components:
           - assistanceServices
           - termsAndConditions
           - terms
-          - customerService
+          - customerServices
           - premiumPayment
           - minimumRequirements
           - targetAudiences
@@ -173,7 +175,7 @@ components:
                 type: string
                 example: ANUAL
                 enum: [ANUAL , ANUAL_INTERMITENTE , PLURIANUAL, PLURIANUAL_INTERMITENTE, SEMESTRAL, SEMESTRAL_INTERMITENTE, MENSAL, MENSAL_INTERMITENTE, DIARIO, DIARIO_INTERMITENTE, OUTROS]
-          customerService:
+          customerServices:
             type: array 
             description: Rede de atendimento do seguro contratado.
             items:
@@ -188,10 +190,10 @@ components:
             type: array 
             description: Público-alvo.
             items:
-                type: string         
-                maxLength: 30
-                example: PESSOA_NATURAL
-                enum: [PESSOA_NATURAL, PESSOA_JURIDICA, AMBAS] 
+              type: string         
+              maxLength: 30
+              example: PESSOA_NATURAL
+              enum: [PESSOA_NATURAL, PESSOA_JURIDICA, AMBAS] 
     AutoInsuranceCoverage:     
       type: array
       description: Listagem de coberturas incluídas no produto que deve observar a relação discriminada de coberturas, conforme Tabela II.5 do Anexo II
@@ -200,8 +202,8 @@ components:
         required:
         - coverage
         - coverageDetail
-        - coveragePermissionSeparteAcquisition
-        - coverageAttribute
+        - allowApartPurchase
+        - coverageAttributes
         properties:
             coverage:
               type: string
@@ -234,13 +236,31 @@ components:
               description: Campo aberto para detalhamento de riscos possíveis dos produtos a ser feito para cada participante.
               maxLength: 1000
               example: Roubo total
-            coveragePermissionSeparteAcquisition:
+            allowApartPurchase:
               type: boolean
               description: Indicação se a cobertura permite contratação separada (por cobertura selecionada).
               example: true
             coverageAttributes:
               $ref: '#/components/schemas/AutoInsuranceCoverageAttributes'         
-    AutoInsuranceCovaregeAttibutesDetailsUnit:
+    AutoInsuranceLimit:
+      type: object
+      description: Lista com valor de LMI aceito pela sociedade para cada cobertura.
+      required:
+        - type
+        - amount
+      properties:
+        type:
+          type: string
+          enum: [FINANCEIRO, PERCENTUAL]
+        amount:
+          $ref: '#/components/schemas/AutoInsuranceCoverageAttributesDetails'
+        index:
+          type: string
+          description: Indexador. Condicional, vinculado ao preenchimento do campo Tipo com Percentual
+          enum: [LMG, FINANCEIRO_COBERTURA, OUTRO]
+        maxIndexAmount:
+          $ref: '#/components/schemas/AutoInsuranceCoverageAttributesDetails'
+    AutoInsuranceCoverageAttributesDetailsUnit:
       type: object
       required:
         - code
@@ -250,8 +270,9 @@ components:
           type: string
         description: 
           type: string
-    AutoInsuranceCovaregeAttibutesDetails:
+    AutoInsuranceCoverageAttributesDetails:
         type: object
+        description: Listagem percentual de franquia e/ou percentual de participação obrigatória do segurado estabelecida pela sociedade para cada tipo de cobertura de produto.
         required:
           - amount
           - unit
@@ -259,7 +280,7 @@ components:
           amount:
             type: number
           unit:
-            $ref: '#/components/schemas/AutoInsuranceCovaregeAttibutesDetailsUnit'
+            $ref: '#/components/schemas/AutoInsuranceCoverageAttributesDetailsUnit'
     AutoInsuranceContractBase:
       type: array
       description: Base de contratação.
@@ -268,17 +289,15 @@ components:
         required:
           - contractBaseType
         properties:
-            contractBaseType:
-              type: string
-              description: Incidência ao capital segurado da cobertura de casco.
-              example: VALOR_DETERMINADO
-              enum: [VALOR_DETERMINADO, VALOR_MERCADO, AMBOS]
-            contractBaseMinValue:
-              description: Valor Base de Contratação Mínimo.
-              $ref: '#/components/schemas/AutoInsuranceCovaregeAttibutesDetails'
-            contractBaseMaxValue:
-              description: Valor Base de Contratação Máximo.
-              $ref: '#/components/schemas/AutoInsuranceCovaregeAttibutesDetails'
+          contractBaseType:
+            type: string
+            description: Incidência ao capital segurado da cobertura de casco.
+            example: VALOR_DETERMINADO
+            enum: [VALOR_DETERMINADO, VALOR_MERCADO, AMBOS]
+          contractBaseMinValue:
+            $ref: '#/components/schemas/AutoInsuranceCoverageAttributesDetails'
+          contractBaseMaxValue:
+            $ref: '#/components/schemas/AutoInsuranceCoverageAttributesDetails'
     AutoInsuranceCoverageAttributes:
       type: object
       description: Atributos da cobertura.
@@ -296,14 +315,11 @@ components:
        - geographicScopeCoverage
       properties:
         minLMI:
-          $ref: '#/components/schemas/AutoInsuranceCovaregeAttibutesDetails'
-          description: Lista com valor mínimo de LMI aceito pela sociedade para cada cobertura.
+          $ref: '#/components/schemas/AutoInsuranceLimit'
         maxLMI:
-          $ref: '#/components/schemas/AutoInsuranceCovaregeAttibutesDetails'
-          description: Lista com valor máximo de LMI aceito pela sociedade para cada cobertura.
+          $ref: '#/components/schemas/AutoInsuranceLimit'
         contractBase:
           $ref: '#/components/schemas/AutoInsuranceContractBase'
-          description: Veículo Zero Km Base de Contratação
         newCarMaximumCalculatingPeriod:
           type: integer
           description: Prazo máximo para apuração do valor a ser indenizado para veículo zero quilômetro. Em meses.
@@ -311,10 +327,8 @@ components:
           example: 12
         newCarContractBase:
           $ref: '#/components/schemas/AutoInsuranceContractBase'
-          description: Semelhante ao campo “Atributos cobertura - base de contratação” aplicada ao veículo Zero Km. 
         fullIndemnityPercentage:
-          $ref: '#/components/schemas/AutoInsuranceCovaregeAttibutesDetails'
-          description: Percentual do Limite Máximo de Indenização para caracterização de indenização integral.
+          $ref: '#/components/schemas/AutoInsuranceCoverageAttributesDetails'
         deductibleType:
           type: array
           description: Listagem de tipo de franquia para cada tipo de cobertura do produto.
@@ -330,8 +344,7 @@ components:
           type: boolean
           description: Sinalização para cada cobertura se a seguradora exige pagamento de franquia.
         deductiblePercentage:
-          $ref: '#/components/schemas/AutoInsuranceCovaregeAttibutesDetails'
-          description: Listagem percentual de franquia e/ou percentual de participação obrigatória do segurado estabelecida pela sociedade para cada tipo de cobertura de produto.
+          $ref: '#/components/schemas/AutoInsuranceCoverageAttributesDetails'
         mandatoryParticipation:
           type: string
           description: Participação Obrigatória do Segurado.
@@ -458,48 +471,57 @@ components:
         required:
             - manufacturer
             - model
-            - year
             - fipeCode
         properties:
             manufacturer:
-                type: string
-                description: Fabricante
-                maxLength: 20
-                example: FORD 
+              type: string
+              description: Fabricante
+              maxLength: 20
+              example: FORD 
             model:
-                type: string
-                description: Modelo
-                maxLength: 80
-                example: KA 
+              type: string
+              description: Modelo
+              maxLength: 80
+              example: KA 
             year:
-                type: integer
-                description: Ano de fabricação.
-                maxLength: 4
-                example: 2018
+              type: number
+              description: Ano de fabricação.
+              example: 2018
+            zeroKM:
+              type: boolean
+              description: Identifica se o veículo é zero kilômetro
+              example: false
             fipeCode:
-                type: string
-                description: Código FIPE do veículo.
+              type: string
+              description: Código FIPE do veículo.
     Links:
       type: object
       properties:
         self:
           type: string
           description: URL da página atualmente requisitada
-          example: 'https://api.organizacao.com.br/open-insurance/products-services/v1'
+          pattern: ^(https:\/\/)(.*?)(\/open-insurance\/products-services\/v\d+)(\/auto-insurance.*)?$
+          example: 'https://api.organizacao.com.br/open-insurance/products-services/v1/auto-insurance'
         first:
           type: string
           description: URL da primeira página de registros
-          example: 'https://api.organizacao.com.br/open-insurance/products-services/v1'
+          pattern: ^(https:\/\/)(.*?)(\/open-insurance\/products-services\/v\d+)(\/auto-insurance.*)?$
+          example: 'https://api.organizacao.com.br/open-insurance/products-services/v1/auto-insurance'
         prev:
           type: string
           description: URL da página anterior de registros
+          pattern: ^(https:\/\/)(.*?)(\/open-insurance\/products-services\/v\d+)(\/auto-insurance.*)?$
+          example: 'https://api.organizacao.com.br/open-insurance/products-services/v1/auto-insurance'
         next:
           type: string
           description: URL da próxima página de registros
+          pattern: ^(https:\/\/)(.*?)(\/open-insurance\/products-services\/v\d+)(\/auto-insurance.*)?$
+          example: 'https://api.organizacao.com.br/open-insurance/products-services/v1/auto-insurance'
         last:
           type: string
           description: URL da última página de registros
-          example: 'https://api.organizacao.com.br/open-insurance/products-services/v1'
+          pattern: ^(https:\/\/)(.*?)(\/open-insurance\/products-services\/v\d+)(\/auto-insurance.*)?$
+          example: 'https://api.organizacao.com.br/open-insurance/products-services/v1/auto-insurance'
     Meta:
       type: object
       properties:
@@ -638,21 +660,20 @@ components:
       schema:
         type: string
         pattern: '[\w\W\s]*'
-  securitySchemes:
-    OpenId:
-      type: openIdConnect
-      openIdConnectUrl: 'https://auth.mockbank.poc.raidiam.io/.well-known/openid-configuration'
-    OAuth2Security:
-      type: oauth2
-      description: Fluxo OAuth necessário para que a receptora tenha acesso aos dados na instituição transmissora. Inclui o processo de redirecionamento e autenticação do usuário a que se referem os dados.
-      flows:
-        authorizationCode:
-          authorizationUrl: 'https://authserver.example/authorization'
-          tokenUrl: 'https://authserver.example/token'
-          scopes:
-            financings: Escopo necessário para acesso à API. O controle dos endpoints específicos é feito via permissions.    
-  responses:
 
+  responses:
+    UnprocessableEntity:
+      description: 'O servidor entende o tipo de conteúdo da entidade da requisição, e a sintaxe da requisição esta correta, mas não foi possível processar as instruções presente.'
+      content:
+        application/json; charset=utf-8:
+          schema:
+            $ref: '#/components/schemas/ResponseError'
+    NoContent:
+      description: 'O recurso solicitado não existe ou não foi localizado.'
+      content:
+        application/json; charset=utf-8:
+          schema:
+            $ref: '#/components/schemas/ResponseError'
     BadRequest:
       description: 'A requisição foi malformada, omitindo atributos obrigatórios, seja no payload ou através de atributos na URL.'
       content:
@@ -685,12 +706,6 @@ components:
             $ref: '#/components/schemas/ResponseError'
     NotFound:
       description: O recurso solicitado não existe ou não foi implementado
-      content:
-        application/json; charset=utf-8:
-          schema:
-            $ref: '#/components/schemas/ResponseError'
-    UnprocessableEntity:
-      description: O servidor entende o tipo de conteúdo da entidade da requisição, e a sintaxe da requisição esta correta, mas não foi possível processar as instruções presentes.
       content:
         application/json; charset=utf-8:
           schema:
