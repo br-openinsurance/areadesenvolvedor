@@ -13,7 +13,7 @@
       "company": [
         {
           "name": "ABCDE SEGUROS",
-          "cnpjNumber": 12345678901234,
+          "cnpjNumber": '12345678901234',
           "products": [
             {
               "name": "RESIDENCIAL XPTO",
@@ -22,7 +22,7 @@
                 {
                   "coverageType": "Escritório em Residência",
                   "coverageDetail": "Cobertura especial para escritório residenciais",
-                  "coveragePermissionSeparteAquisition": false,
+                  "allowApartPurchase": false,
                   "coverageAttributes": {
                     "minLMI": {},
                     "maxLMI": {},
@@ -94,11 +94,11 @@
     }
   },
   "links": {
-    "self": "https://api.organizacao.com.br/open-insurance/products-services/v1",
-    "first": "https://api.organizacao.com.br/open-insurance/products-services/v1",
-    "prev": "string",
-    "next": "string",
-    "last": "https://api.organizacao.com.br/open-insurance/products-services/v1"
+    "self": "https://api.organizacao.com.br/open-insurance/products-services/v1/home-insurance/commercializationArea",
+    "first": "https://api.organizacao.com.br/open-insurance/products-services/v1/home-insurance/commercializationArea",
+    "prev": "https://api.organizacao.com.br/open-insurance/products-services/v1/home-insurance/commercializationArea",
+    "next": "https://api.organizacao.com.br/open-insurance/products-services/v1/home-insurance/commercializationArea",
+    "last": "https://api.organizacao.com.br/open-insurance/products-services/v1/home-insurance/commercializationArea"
   },
   "meta": {
     "totalRecords": 10,
@@ -130,7 +130,7 @@
   "company": [
     {
       "name": "ABCDE SEGUROS",
-      "cnpjNumber": 12345678901234,
+      "cnpjNumber": '12345678901234',
       "products": [
         {
           "name": "RESIDENCIAL XPTO",
@@ -139,7 +139,7 @@
             {
               "coverageType": "Escritório em Residência",
               "coverageDetail": "Cobertura especial para escritório residenciais",
-              "coveragePermissionSeparteAquisition": false,
+              "allowApartPurchase": false,
               "coverageAttributes": {
                 "minLMI": {
                   "amount": 0,
@@ -235,7 +235,7 @@
 |Name|Type|Required|Restrictions|Description|
 |---|---|---|---|---|
 |name|string|true|none|Nome da marca reportada pelo participante do Open Insurance. O conceito a que se refere a marca é em essência uma promessa das sociedades sob ela em fornecer uma série específica de atributos, benefícios e serviços uniformes aos clientes.|
-|company|[HomeInsuranceCompany](#schemahomeinsurancecompany)|false|none|none|
+|companies|[HomeInsuranceCompany](#schemahomeinsurancecompany)|true|none|none|
 
 <h2 id="tocS_HomeInsuranceCompany">HomeInsuranceCompany</h2>
 <!-- backwards compatibility -->
@@ -248,7 +248,7 @@
 [
   {
     "name": "ABCDE SEGUROS",
-    "cnpjNumber": 12345678901234,
+    "cnpjNumber": '12345678901234',
     "products": [
       {
         "name": "RESIDENCIAL XPTO",
@@ -257,7 +257,7 @@
           {
             "coverageType": "Escritório em Residência",
             "coverageDetail": "Cobertura especial para escritório residenciais",
-            "coveragePermissionSeparteAquisition": false,
+            "allowApartPurchase": false,
             "coverageAttributes": {
               "minLMI": {
                 "amount": 0,
@@ -371,7 +371,7 @@
       {
         "coverageType": "Escritório em Residência",
         "coverageDetail": "Cobertura especial para escritório residenciais",
-        "coveragePermissionSeparteAquisition": false,
+        "allowApartPurchase": false,
         "coverageAttributes": {
           "minLMI": {
             "amount": 0,
@@ -477,10 +477,10 @@ Produtos de Seguro Residencial.
 |microInsurance|boolean|true|none|Indicação se o produto é classificado como microsseguro.|
 |termsAndConditions|[HomeInsuranceTermsAndConditions](#schemahomeinsurancetermsandconditions)|true|none|Informações dos termos e condições conforme número do processo SUSEP.|
 |validity|[HomeInsuranceValidity](#schemahomeinsurancevalidity)|true|none|Vigência|
-|customerServices|[string]|false|none|Informações de pagamento de prêmio.|
+|customerServices|[string]|true|none|Informações de pagamento de prêmio.|
 |premiumRates|[string]|false|none|Distribuição de frequência relativa aos valores referentes às taxas cobradas.|
 |premiumPayments|[HomeInsurancePremiumPayment](#schemahomeinsurancepremiumpayment)|true|none|Informações de pagamento de prêmio.|
-|minimumRequirements|[[HomeInsuranceMinimumRequirements](#schemahomeinsuranceminimumrequirements)]|false|none|[Produtos de Seguro Residencial.]|
+|minimumRequirements|[[HomeInsuranceMinimumRequirements](#schemahomeinsuranceminimumrequirements)]|true|none|[Produtos de Seguro Residencial.]|
 |targetAudiences|[string]|true|none|none|
 
 <h2 id="tocS_HomeInsuranceMinimumRequirements">HomeInsuranceMinimumRequirements</h2>
@@ -556,17 +556,17 @@ Informações de cobertura do Seguro Residencial.
 
 |Name|Type|Required|Restrictions|Description|
 |---|---|---|---|---|
-|minLMI|[HomeInsuranceCovaregeAttibutesDetails](#schemahomeinsurancecovaregeattibutesdetails)|true|none|Lista com valor mínimo de LMI aceito pela sociedade para cada cobertura.|
-|maxLMI|[HomeInsuranceCovaregeAttibutesDetails](#schemahomeinsurancecovaregeattibutesdetails)|true|none|Lista com valor máximo de LMI aceito pela sociedade para cada cobertura.|
-|minDeductibleAmount|[HomeInsuranceCovaregeAttibutesDetails](#schemahomeinsurancecovaregeattibutesdetails)|true|none|Valor mínimo de franquia e participação obrigatória do segurado - Listagem de valor mínimo da franquia (Reais) e/ou Participação Obrigatória do Segurado (Percentual) estabelecida pela sociedade para cada tipo de cobertura do produto.|
+|minLMI|[HomeInsuranceLimit](#schemahomeinsurancecovaregeattibutesdetailsunit)|true|none|Lista com valor mínimo de LMI aceito pela sociedade para cada cobertura.|
+|maxLMI|[HomeInsuranceLimit](#schemahomeinsurancecovaregeattibutesdetailsunit)|true|none|Lista com valor máximo de LMI aceito pela sociedade para cada cobertura.|
+|minDeductibleAmount|[HomeInsuranceLimit](#schemahomeinsurancecovaregeattibutesdetailsunit)|true|none|Valor mínimo de franquia e participação obrigatória do segurado - Listagem de valor mínimo da franquia (Reais) e/ou Participação Obrigatória do Segurado (Percentual) estabelecida pela sociedade para cada tipo de cobertura do produto.|
 |insuredMandatoryParticipationPercentage|number|true|none|Listagem percentual de franquia e/ou percentual de participação obrigatória do segurado estabelecida pela sociedade para cada tipo de cobertura de produto.|
 
-<h2 id="tocS_HomeInsuranceCovaregeAttibutesDetailsUnit">HomeInsuranceCovaregeAttibutesDetailsUnit</h2>
+<h2 id="tocS_HomeInsuranceCoverageAttributesDetailsUnit">HomeInsuranceCoverageAttributesDetailsUnit</h2>
 <!-- backwards compatibility -->
-<a id="schemahomeinsurancecovaregeattibutesdetailsunit"></a>
-<a id="schema_HomeInsuranceCovaregeAttibutesDetailsUnit"></a>
-<a id="tocShomeinsurancecovaregeattibutesdetailsunit"></a>
-<a id="tocshomeinsurancecovaregeattibutesdetailsunit"></a>
+<a id="schemahomeInsuranceCoverageAttributesDetailsUnit"></a>
+<a id="schema_HomeInsuranceCoverageAttributesDetailsUnit"></a>
+<a id="tocShomeInsuranceCoverageAttributesDetailsUnit"></a>
+<a id="tocshomeInsuranceCoverageAttributesDetailsUnit"></a>
 
 ```json
 {
@@ -583,12 +583,30 @@ Informações de cobertura do Seguro Residencial.
 |code|string|true|none|none|
 |description|string|true|none|none|
 
-<h2 id="tocS_HomeInsuranceCovaregeAttibutesDetails">HomeInsuranceCovaregeAttibutesDetails</h2>
+
+<h2 id="tocS_HomeInsuranceLimit">HomeInsuranceLimit</h2>
 <!-- backwards compatibility -->
-<a id="schemahomeinsurancecovaregeattibutesdetails"></a>
-<a id="schema_HomeInsuranceCovaregeAttibutesDetails"></a>
-<a id="tocShomeinsurancecovaregeattibutesdetails"></a>
-<a id="tocshomeinsurancecovaregeattibutesdetails"></a>
+<a id="schemahomeInsuranceLimit"></a>
+<a id="schema_HomeInsuranceLimit"></a>
+<a id="tocShomeInsuranceLimit"></a>
+<a id="tocshomeInsuranceLimit"></a>
+
+
+### Properties
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|type|string|true|none|none|
+|amount|[HomeInsuranceCoverageAttributesDetails](#schemahomeInsuranceCoverageAttributesDetails)|true|none|none|
+|index|string|false|none|Indexador. Condicional, vinculado ao preenchimento do campo Tipo com Percentual|
+|maxIndexAmount|[HomeInsuranceCoverageAttributesDetails](#schemahomeInsuranceCoverageAttributesDetails)|false|none|none|
+
+<h2 id="tocS_HomeInsuranceCoverageAttributesDetails">HomeInsuranceCoverageAttributesDetails</h2>
+<!-- backwards compatibility -->
+<a id="schemahomeInsuranceCoverageAttributesDetails"></a>
+<a id="schema_HomeInsuranceCoverageAttributesDetails"></a>
+<a id="tocShomeInsuranceCoverageAttributesDetails"></a>
+<a id="tocshomeInsuranceCoverageAttributesDetails"></a>
 
 ```json
 {
@@ -606,7 +624,7 @@ Informações de cobertura do Seguro Residencial.
 |Name|Type|Required|Restrictions|Description|
 |---|---|---|---|---|
 |amount|number|true|none|none|
-|unit|[HomeInsuranceCovaregeAttibutesDetailsUnit](#schemahomeinsurancecovaregeattibutesdetailsunit)|true|none|none|
+|unit|[HomeInsuranceCoverageAttributesDetailsUnit](#schemahomeInsuranceCoverageAttributesDetailsUnit)|true|none|none|
 
 <h2 id="tocS_HomeInsuranceTermsAndConditions">HomeInsuranceTermsAndConditions</h2>
 <!-- backwards compatibility -->
@@ -770,7 +788,7 @@ Agrupamento dos serviços de assistências disponíveis vinculado ao produto.
   {
     "coverageType": "Escritório em Residência",
     "coverageDetail": "Cobertura especial para escritório residenciais",
-    "coveragePermissionSeparteAquisition": false,
+    "allowApartPurchase": false,
     "coverageAttributes": {
       "minLMI": {
         "amount": 0,
@@ -808,7 +826,7 @@ Listagem de coberturas incluídas no produto.
 |---|---|---|---|---|
 |coverageType|string|true|none|Nome do tipo da cobertura.|
 |coverageDetail|string|true|none|Campo aberto para detalhamento por coberturas possíveis dos produtos a ser feito por cada participante.|
-|coveragePermissionSeparteAquisition|boolean|true|none|Indicação se a cobertura permite contratação separada (por cobertura selecionada).|
+|allowApartPurchase|boolean|true|none|Indicação se a cobertura permite contratação separada (por cobertura selecionada).|
 |coverageAttributes|[HomeInsuranceCoverageAttributes](#schemahomeinsurancecoverageattributes)|true|none|Informações de cobertura do Seguro Residencial.|
 
 #### Enumerated Values
@@ -906,11 +924,11 @@ Caracteristicas do imóvel.
 
 ```json
 {
-  "self": "https://api.organizacao.com.br/open-insurance/products-services/v1",
-  "first": "https://api.organizacao.com.br/open-insurance/products-services/v1",
-  "prev": "string",
-  "next": "string",
-  "last": "https://api.organizacao.com.br/open-insurance/products-services/v1"
+  "self": "https://api.organizacao.com.br/open-insurance/products-services/v1/home-insurance/commercializationArea",
+  "first": "https://api.organizacao.com.br/open-insurance/products-services/v1/home-insurance/commercializationArea",
+  "prev": "https://api.organizacao.com.br/open-insurance/products-services/v1/home-insurance/commercializationArea",
+  "next": "https://api.organizacao.com.br/open-insurance/products-services/v1/home-insurance/commercializationArea",
+  "last": "https://api.organizacao.com.br/open-insurance/products-services/v1/home-insurance/commercializationArea"
 }
 
 ```
