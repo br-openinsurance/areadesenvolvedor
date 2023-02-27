@@ -8,20 +8,20 @@
 ```json
 [
   {
-    "identification": {
-      "brand": "Brasilprev",
-      "societyName": "Brasilprev Seguros e Previdência S.A",
-      "cnpjNumber": "27665207000131"
-    },
-    "products": [
-      {
-        "name": "Brasilprev Private Multimercado 2020",
-        "code": "1234",
-        "segment": "PREVIDENCIA",
-        "type": "PGBL",
-        "modality": "CONTRIBUICAO_VARIAVEL",
-        "optionalCoverage": "string",
-        "productDetails": [
+    "data": {
+      "brand": {
+          "name": "EMPRESA",
+          "companies": [{
+              "name": "EMPRESA Seguros",
+              "cnpjNumber": "45086338000178",
+              "products": [{
+                "name": "Brasilprev Private Multimercado 2020",
+                "code": "1234",
+                "segment": "PREVIDENCIA",
+                "type": "PGBL",
+                "modality": "CONTRIBUICAO_VARIAVEL",
+                "optionalCoverage": "string",
+                "productDetails": [
           {
             "susepProcessNumber": "15414.614141/2020-71",
             "contractTermsConditions": "https://example.com/mobilebanking",
@@ -98,23 +98,26 @@
                 "minValue": 4.122,
                 "maxValue": 10
               }
-            }
+            },
+            "minimumRequirements": {
+              "contractType": "INDIVIDUAL",
+              "participantQualified": true,
+              "minRequirementsContract": "https://example.com/mobile-banking"
+           },
+           "targetAudience": "PESSOA_NATURAL"
           }
         ],
-        "minimumRequirements": {
-          "contractType": "INDIVIDUAL",
-          "participantQualified": true,
-          "minRequirementsContract": "https://example.com/mobile-banking"
-        },
-        "targetAudience": "PESSOA_NATURAL"
-      }
-    ],
+              }]
+          }]
+      } 
+    },
+
     "links": {
-      "self": "https://api.organizacao.com.br/open-insurance/products-services/v1",
-      "first": "https://api.organizacao.com.br/open-insurance/products-services/v1",
-      "prev": "string",
-      "next": "string",
-      "last": "https://api.organizacao.com.br/open-insurance/products-services/v1"
+      "self": "https://api.organizacao.com.br/open-insurance/products-services/v1/life-pension",
+      "first": "https://api.organizacao.com.br/open-insurance/products-services/v1/life-pension",
+      "prev": "https://api.organizacao.com.br/open-insurance/products-services/v1/life-pension",
+      "next": "https://api.organizacao.com.br/open-insurance/products-services/v1/life-pension",
+      "last": "https://api.organizacao.com.br/open-insurance/products-services/v1/life-pension"
     },
     "meta": {
       "totalRecords": 10,
@@ -129,21 +132,20 @@
 
 |Name|Type|Required|Restrictions|Description|
 |---|---|---|---|---|
-|identification|[LifePensionIdentification](#schemalifepensionidentification)|true|none|Organização controladora do grupo.|
-|products|[LifePensionProduct](#schemalifepensionproduct)|true|none|none|
+|data|[LifePensionBrand](#schemalifepensionbrand)|true|none|none|
 |links|[LinksPaginated](#schemalinkspaginated)|true|none|none|
 |meta|[MetaPaginated](#schemametapaginated)|true|none|none|
 
-<h2 id="tocS_LifePensionIdentification">LifePensionIdentification</h2>
+<h2 id="tocS_LifePensionBrand">LifePensionBrand</h2>
 <!-- backwards compatibility -->
-<a id="schemalifepensionidentification"></a>
-<a id="schema_LifePensionIdentification"></a>
-<a id="tocSlifepensionidentification"></a>
-<a id="tocslifepensionidentification"></a>
+<a id="schemalifepensionbrand"></a>
+<a id="schema_LifePensionBrand"></a>
+<a id="tocSlifepensionbrand"></a>
+<a id="tocslifepensionbrand"></a>
 
 ```json
 {
-  "brand": "Brasilprev",
+  "brand": "EMPRESA",
   "societyName": "Brasilprev Seguros e Previdência S.A",
   "cnpjNumber": "27665207000131"
 }
@@ -156,9 +158,22 @@ Organização controladora do grupo.
 
 |Name|Type|Required|Restrictions|Description|
 |---|---|---|---|---|
-|brand|string|true|none|Nome da marca reportada pelo participante do Open Insurance. O conceito a que se refere a marca é em essência uma promessa das sociedades sob ela em fornecer uma série específica de atributos, benefícios e serviços uniformes aos clientes.|
-|societyName|string|true|none|Nome da sociedade pertencente à marca.|
-|cnpjNumber|string|true|none|CNPJ da sociedade pertencente à marca.|
+|name|string|true|none|Nome da marca reportada pelo participante do Open Insurance. O conceito a que se refere a marca é em essência uma promessa das sociedades sob ela em fornecer uma série específica de atributos, benefícios e serviços uniformes aos clientes.|
+|companies|[LifePensionCompany](#lifepensioncompany)|true|none|Nome da sociedade pertencente à marca.|
+
+
+
+
+<h2 id="tocS_LifePensionCompany">LifePensionCompany</h2>
+<!-- backwards compatibility -->
+<a id="schemalifepensioncompany"></a>
+<a id="schema_LifePensionCompany"></a>
+<a id="tocSlifepensioncompany"></a>
+<a id="tocslifepensioncompany"></a>
+
+
+
+
 
 <h2 id="tocS_LifePensionProduct">LifePensionProduct</h2>
 <!-- backwards compatibility -->
@@ -570,7 +585,7 @@ Lista com as informações do(s) Fundo(s) de Investimento(s) disponíveis para o
 |Name|Type|Required|Restrictions|Description|
 |---|---|---|---|---|
 |incomeModality|[string]|true|none|none|
-|biometricTable|[string]|true|none|none|
+|biometricTable|[string]|false|none|Obrigatorio caso modalidade de renda seja diferente de (PAGAMENTO_UNICO, RENDA_PRAZO_CERTO). Tábua biométrica é o instrumento que mede a duração da vida humana (também conhecida como tábua de mortalidade) ou a probabilidade de entrada em invalidez e é um parâmetro utilizado para tarifar os planos de previdência complementar aberta.|
 |interestRate|number|true|none|Taxa de juros garantida utilizada para conversão em renda. Em %.|
 |updateIndex|string|true|none|É o índice contratado para atualização monetária dos valores relativos ao plano, na forma estabelecida por este regulamento.|
 |reversalResultsFinancial|number|true|none|Percentual de reversão de excedente financeiro na concessão. Em %.|
@@ -644,7 +659,10 @@ Lista com as informações do(s) Fundo(s) de Investimento(s) disponíveis para o
 
 ```json
 {
-  "contractType": "INDIVIDUAL",
+  "contractType": [
+    "INDIVIDUAL",
+    "COLETIVO_AVERBADO",
+    ],
   "participantQualified": true,
   "minRequirementsContract": "https://example.com/mobile-banking"
 }
@@ -655,7 +673,7 @@ Lista com as informações do(s) Fundo(s) de Investimento(s) disponíveis para o
 
 |Name|Type|Required|Restrictions|Description|
 |---|---|---|---|---|
-|contractType|string|true|none|O tipo de serviço contratado.|
+|contractType|array|true|none|Os tipos de serviços contratados|
 |participantQualified|boolean|true|none|Indicação se o plano é destinado para participante qualificado.|
 |minRequirementsContract|string|true|none|Campo aberto contendo todos os requisitos mínimos para contratação (possibilidade de incluir URL).|
 
@@ -676,11 +694,11 @@ Lista com as informações do(s) Fundo(s) de Investimento(s) disponíveis para o
 
 ```json
 {
-  "self": "https://api.organizacao.com.br/open-insurance/products-services/v1",
-  "first": "https://api.organizacao.com.br/open-insurance/products-services/v1",
-  "prev": "string",
-  "next": "string",
-  "last": "https://api.organizacao.com.br/open-insurance/products-services/v1"
+  "self": "https://api.organizacao.com.br/open-insurance/products-services/v1/life-pension",
+  "first": "https://api.organizacao.com.br/open-insurance/products-services/v1/life-pension",
+  "prev": "https://api.organizacao.com.br/open-insurance/products-services/v1/life-pension",
+  "next": "https://api.organizacao.com.br/open-insurance/products-services/v1/life-pension",
+  "last": "https://api.organizacao.com.br/open-insurance/products-services/v1/life-pension"
 }
 
 ```
