@@ -1,0 +1,240 @@
+<h1 id='api-endorsement-v1-1-0'>API Endorsement v1.1.0</h1>
+<blockquote>
+<p>Scroll down for code samples, example requests and responses. Select a language for code samples from the tabs above or the mobile navigation menu.</p>
+</blockquote>
+
+<p><strong>Especificação em OAS 3.0</strong> </br>
+<a href="files/swagger/endorsement.yaml" download="endorsement.yaml">Download da Especificação</a></p>
+
+<p><strong>Detalhamento Técnico</strong> </br>
+<a href="files/docs/cendorsement.docx" download="endorsement.docx">Download do Detalhamento Técnico</a></p>
+
+<p>API de solicitação de endosso do Open Insurance Brasil - Fase 3.</p>
+
+<p>Envia informações da solicitação do endosso manualmente escritas nas instituições transmissoras por seus clientes.</p>
+
+<p>Possui segregação entre pessoa natural e pessoa jurídica somente para os endPoints de dados customizáveis de cadastro.</p>
+
+<p>Requer consentimento do cliente para todos os &#39;endpoints&#39;.</p>
+
+<h2 id="api-endorsement-v100-orientacoes">Orientações</h2>
+
+<p>A <code>Role</code>  do diretório de participantes relacionada à presente API é a <code>DADOS</code>.</p>
+
+<p>Para todos os <code>endpoints</code> desta API é previsto o envio de um <code>token</code> através do header <code>Authorization</code>.</p>
+
+<p>Este <code>token</code> deverá estar relacionado ao consentimento (identificado pelo <code>consentId</code>) mantido na instituição transmissora dos dados, o qual permitirá a pesquisa e retorno, na API em questão, dos dados relacionados ao <code>consentId</code> específico.</p>
+
+<p>Os dados serão devolvidos na consulta desde que o <code>consentId</code> relacionado corresponda a um consentimento válido e com o status <code>AUTHORISED</code>.</p>
+
+<p>É também necessário que o recurso em questão (endosso, etc.) esteja disponível na instituição transmissora (ou seja, sem boqueios de qualquer natureza e com todas as autorizações/consentimentos já autorizados).</p>
+
+<p>Além disso, as <code>permissions</code> necessárias deverão ter sido solicitadas quando da criação do consentimento relacionado.</p>
+
+<p>Relacionamos a seguir as <code>permissions</code> necessárias para a consulta de dados em cada <code>endpoint</code> da presente API.</p>
+
+<h2 id="api-endorsement-v100-permissions-necessarias-para-a-api-endorsement">Permissions necessárias para a API Endorsement</h2>
+
+<p>Para cada um dos <code>paths</code> desta API, além dos escopos (<code>scopes</code>) indicados existem <code>permissions</code> que deverão ser observadas:</p>
+<h3 id='request-consentid'><code>/request/{consentId}</code></h3>
+<ul>
+<li>permissions:
+
+<ul>
+<li>POST: <strong>ENDORSEMENT_REQUEST_CREATE</strong></li>
+</ul></li>
+</ul>
+
+<p>Base URLs:</p>
+
+<p>Servidor de Produção </br>
+* <a href="https://api.organizacao.com.br/open-insurance/endorsement/v1">https://api.organizacao.com.br/open-insurance/endorsement/v1</a></p>
+
+<p>Servidor de Homologação </br>
+* <a href="https://api.organizacao.com.br/open-insurance/endorsement/v1">https://api.organizacao.com.br/open-insurance/endorsement/v1</a></p>
+
+<p>Email: <a href="mailto:gt-interfaces@openinsurancebr.org">Governança do Open Insurance Brasil</a></p>
+
+<p>Web: <a href="https://www.gov.br/susep">Governança do Open Insurance Brasil</a></p>
+<h3 id='authentication'>Authentication</h3>
+<ul>
+<li><p>oAuth2 authentication. Fluxo OAuth necessário para que a receptora tenha acesso aos dados na instituição transmissora. Inclui o processo de redirecionamento e autenticação do usuário a que se referem os dados.</p>
+
+<ul>
+<li>Flow: authorizationCode</li>
+<li>Authorization URL = <a href="https://authserver.example/authorization">https://authserver.example/authorization</a></li>
+<li>Token URL = <a href="https://authserver.example/token">https://authserver.example/token</a></li>
+</ul></li>
+</ul>
+
+<table><thead>
+<tr>
+<th>Scope</th>
+<th>Scope Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>endorsement</td>
+<td>Escopo necessário para acesso à API. O controle dos endpoints específicos é feito via permissions.</td>
+</tr>
+</tbody></table>
+
+<h2 id="API - Endorsement v1.0.0-Obtem a lista de identificação de endorsement">Envia os dados inseridos manualmente para a solicitação de endosso</h2>
+
+<p><a id="opIdgetendorsement"></a></p>
+
+<p><code>POST /request/{consentId}</code></p>
+
+<p>Método para a criação da solicitação de endosso.</p>
+
+<h3 id="obtem-a-lista-de-identificação-de-claimnotification-parameters">Parameters</h3>
+
+<table><thead>
+<tr>
+<th>Name</th>
+<th>In</th>
+<th>Type</th>
+<th>Required</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>Authorization</td>
+<td>header</td>
+<td>string</td>
+<td>true</td>
+<td>Cabeçalho HTTP padrão. Permite que as credenciais sejam fornecidas dependendo do tipo de recurso solicitado.</td>
+</tr>
+<tr>
+<td>consentId</td>
+<td>path</td>
+<td>string</td>
+<td>true</td>
+<td>O consentId é o identificador único do consentimento a ser revogado e deverá ser um URN - Uniform Resource Name.</td>
+</tr>
+<tr>
+<td>x-fapi-auth-date</td>
+<td>header</td>
+<td>string</td>
+<td>false</td>
+<td>Data em que o usuário logou pela última vez com o receptor. Representada de acordo com a <a href="https://tools.ietf.org/html/rfc7231">RFC7231</a>. Exemplo: Sun, 10 Sep 2017 19:43:31 UTC</td>
+</tr>
+<tr>
+<td>x-fapi-customer-ip-address</td>
+<td>header</td>
+<td>string</td>
+<td>false</td>
+<td>O endereço IP do usuário se estiver atualmente logado com o receptor.</td>
+</tr>
+<tr>
+<td>x-fapi-interaction-id</td>
+<td>header</td>
+<td>string</td>
+<td>false</td>
+<td>Um UID <a href="https://tools.ietf.org/html/rfc4122">RFC4122</a> usado como um ID de correlação. Se fornecido, o transmissor deve &quot;reproduzir&quot; esse valor no cabeçalho de resposta.</td>
+</tr>
+<tr>
+<td>x-customer-user-agent</td>
+<td>header</td>
+<td>string</td>
+<td>false</td>
+<td>Indica o user-agent que o usuário utiliza.</td>
+</tr>
+<tr>
+<td>page</td>
+<td>query</td>
+<td>integer(int32)</td>
+<td>false</td>
+<td>Número da página que está sendo requisitada (o valor da primeira página é 1).</td>
+</tr>
+<tr>
+<td>page-size</td>
+<td>query</td>
+<td>integer(int32)</td>
+<td>false</td>
+<td>Quantidade total de registros por páginas.</td>
+</tr>
+</tbody></table>
+
+<blockquote>
+<p>Example responses</p>
+
+<p>200 Response</p>
+</blockquote>
+<div class="highlight"><pre class="highlight json tab-json"><code><span class="p">{</span><span class="w">
+  </span><span class="nl">"data"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="nl">"policyNumber"</span><span class="p">:</span><span class="w"> </span><span class="s2">"111111"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"endorsementType"</span><span class="p">:</span><span class="w"> </span><span class="s2">"ALTERACAO"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"requestDescription"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Descrição adicional do endosso."</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"requestDate"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2022-11-01"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"customData"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+      </span><span class="nl">"customerIdentification"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+        </span><span class="p">{</span><span class="w">
+          </span><span class="nl">"fieldId"</span><span class="p">:</span><span class="w"> </span><span class="s2">"578-psd-71md6971kjh-2d414"</span><span class="p">,</span><span class="w">
+          </span><span class="nl">"value"</span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="w">
+        </span><span class="p">}</span><span class="w">
+      </span><span class="p">],</span><span class="w">
+      </span><span class="nl">"customerQualification"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+        </span><span class="p">{</span><span class="w">
+          </span><span class="nl">"fieldId"</span><span class="p">:</span><span class="w"> </span><span class="s2">"578-psd-71md6971kjh-2d414"</span><span class="p">,</span><span class="w">
+          </span><span class="nl">"value"</span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="w">
+        </span><span class="p">}</span><span class="w">
+      </span><span class="p">],</span><span class="w">
+      </span><span class="nl">"customerComplimentaryInfo"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+        </span><span class="p">{</span><span class="w">
+          </span><span class="nl">"fieldId"</span><span class="p">:</span><span class="w"> </span><span class="s2">"578-psd-71md6971kjh-2d414"</span><span class="p">,</span><span class="w">
+          </span><span class="nl">"value"</span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="w">
+        </span><span class="p">}</span><span class="w">
+      </span><span class="p">],</span><span class="w">
+      </span><span class="nl">"businessIdentification"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+        </span><span class="p">{</span><span class="w">
+          </span><span class="nl">"fieldId"</span><span class="p">:</span><span class="w"> </span><span class="s2">"578-psd-71md6971kjh-2d414"</span><span class="p">,</span><span class="w">
+          </span><span class="nl">"value"</span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="w">
+        </span><span class="p">}</span><span class="w">
+      </span><span class="p">],</span><span class="w">
+      </span><span class="nl">"businessQualification"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+        </span><span class="p">{</span><span class="w">
+          </span><span class="nl">"fieldId"</span><span class="p">:</span><span class="w"> </span><span class="s2">"578-psd-71md6971kjh-2d414"</span><span class="p">,</span><span class="w">
+          </span><span class="nl">"value"</span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="w">
+        </span><span class="p">}</span><span class="w">
+      </span><span class="p">],</span><span class="w">
+      </span><span class="nl">"businessComplimentaryInfo"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+        </span><span class="p">{</span><span class="w">
+          </span><span class="nl">"fieldId"</span><span class="p">:</span><span class="w"> </span><span class="s2">"578-psd-71md6971kjh-2d414"</span><span class="p">,</span><span class="w">
+          </span><span class="nl">"value"</span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="w">
+        </span><span class="p">}</span><span class="w">
+      </span><span class="p">],</span><span class="w">
+      </span><span class="nl">"generalQuoteInfo"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+        </span><span class="p">{</span><span class="w">
+          </span><span class="nl">"fieldId"</span><span class="p">:</span><span class="w"> </span><span class="s2">"578-psd-71md6971kjh-2d414"</span><span class="p">,</span><span class="w">
+          </span><span class="nl">"value"</span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="w">
+        </span><span class="p">}</span><span class="w">
+      </span><span class="p">],</span><span class="w">
+      </span><span class="nl">"riskLocationInfo"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+        </span><span class="p">{</span><span class="w">
+          </span><span class="nl">"fieldId"</span><span class="p">:</span><span class="w"> </span><span class="s2">"578-psd-71md6971kjh-2d414"</span><span class="p">,</span><span class="w">
+          </span><span class="nl">"value"</span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="w">
+        </span><span class="p">}</span><span class="w">
+      </span><span class="p">],</span><span class="w">
+      </span><span class="nl">"insuredObjects"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+        </span><span class="p">{</span><span class="w">
+          </span><span class="nl">"fieldId"</span><span class="p">:</span><span class="w"> </span><span class="s2">"578-psd-71md6971kjh-2d414"</span><span class="p">,</span><span class="w">
+          </span><span class="nl">"value"</span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="w">
+        </span><span class="p">}</span><span class="w">
+      </span><span class="p">],</span><span class="w">
+      </span><span class="nl">"beneficiaries"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+        </span><span class="p">{</span><span class="w">
+          </span><span class="nl">"fieldId"</span><span class="p">:</span><span class="w"> </span><span class="s2">"578-psd-71md6971kjh-2d414"</span><span class="p">,</span><span class="w">
+          </span><span class="nl">"value"</span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="w">
+        </span><span class="p">}</span><span class="w">
+      </span><span class="p">],</span><span class="w">
+      </span><span class="nl">"coverages"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+        </span><span class="p">{</span><span class="w">
+          </span><span class="nl">"fieldId"</span><span class="p">:</span><span class="w"> </span><span class="s2">"578-psd-71md6971kjh-2d414"</span><span class="p">,</span><span class="w">
+          </span><span class="nl">"value"</span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="w">
+        </span><span class="p">}</span><span class="w">
+      </span><span class="p">]</span><span class="w">
+    </span><span class="p">}</span><span class="w">
+  </span><span class="p">}</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div>
