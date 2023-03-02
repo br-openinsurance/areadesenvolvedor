@@ -1,0 +1,173 @@
+
+# API Endorsement v1.1.0
+
+> Scroll down for code samples, example requests and responses. Select a language for code samples from the tabs above or the mobile navigation menu.
+
+**Especificação em OAS 3.0** </br>
+<a href="files/swagger/endorsement.yaml" download="endorsement.yaml">Download da Especificação</a>
+
+**Detalhamento Técnico** </br>
+<a href="files/docs/endorsement.docx" download="endorsement.docx">Download do Detalhamento Técnico</a>
+
+API de solicitação de endosso do Open Insurance Brasil - Fase 3.
+
+Envia informações da solicitação do endosso manualmente escritas nas instituições transmissoras por seus clientes.
+
+Possui segregação entre pessoa natural e pessoa jurídica somente para os endPoints de dados customizáveis de cadastro.
+
+Requer consentimento do cliente para todos os 'endpoints'.
+
+<h2 id="api-endorsement-v100-orientacoes">Orientações</h2>
+
+A `Role`  do diretório de participantes relacionada à presente API é a `DADOS`.
+
+Para todos os `endpoints` desta API é previsto o envio de um `token` através do header `Authorization`.
+
+Este `token` deverá estar relacionado ao consentimento (identificado pelo `consentId`) mantido na instituição transmissora dos dados, o qual permitirá a pesquisa e retorno, na API em questão, dos dados relacionados ao `consentId` específico.
+
+Os dados serão devolvidos na consulta desde que o `consentId` relacionado corresponda a um consentimento válido e com o status `AUTHORISED`.
+
+É também necessário que o recurso em questão (endosso, etc.) esteja disponível na instituição transmissora (ou seja, sem boqueios de qualquer natureza e com todas as autorizações/consentimentos já autorizados).
+
+Além disso, as `permissions` necessárias deverão ter sido solicitadas quando da criação do consentimento relacionado.
+
+Relacionamos a seguir as `permissions` necessárias para a consulta de dados em cada `endpoint` da presente API.
+
+
+<h2 id="api-endorsement-v100-permissions-necessarias-para-a-api-endorsement">Permissions necessárias para a API Endorsement</h2>
+
+Para cada um dos `paths` desta API, além dos escopos (`scopes`) indicados existem `permissions` que deverão ser observadas:
+
+### `/request/{consentId}`
+  - permissions:
+    - POST: **ENDORSEMENT_REQUEST_CREATE**
+
+Base URLs:
+
+Servidor de Produção </br>
+* <a href="https://api.organizacao.com.br/open-insurance/endorsement/v1">https://api.organizacao.com.br/open-insurance/endorsement/v1</a>
+
+Servidor de Homologação </br>
+* <a href="https://api.organizacao.com.br/open-insurance/endorsement/v1">https://api.organizacao.com.br/open-insurance/endorsement/v1</a>
+
+Email: <a href="mailto:gt-interfaces@openinsurancebr.org">Governança do Open Insurance Brasil</a>
+
+Web: <a href="https://www.gov.br/susep">Governança do Open Insurance Brasil</a>
+
+
+### Authentication
+
+- oAuth2 authentication. Fluxo OAuth necessário para que a receptora tenha acesso aos dados na instituição transmissora. Inclui o processo de redirecionamento e autenticação do usuário a que se referem os dados.
+
+    - Flow: authorizationCode
+    - Authorization URL = [https://authserver.example/authorization](https://authserver.example/authorization)
+    - Token URL = [https://authserver.example/token](https://authserver.example/token)
+
+|Scope|Scope Description|
+|---|---|
+|endorsement|Escopo necessário para acesso à API. O controle dos endpoints específicos é feito via permissions.|
+
+<h2 id="API - Endorsement v1.0.0-Obtem a lista de identificação de endorsement">Envia os dados inseridos manualmente para a solicitação de endosso</h2>
+
+<a id="opIdgetendorsement"></a>
+
+`POST /request/{consentId}`
+
+Método para a criação da solicitação de endosso.
+
+<h3 id="obtem-a-lista-de-identificação-de-claimnotification-parameters">Parameters</h3>
+
+|Name|In|Type|Required|Description|
+|---|---|---|---|---|
+|Authorization|header|string|true|Cabeçalho HTTP padrão. Permite que as credenciais sejam fornecidas dependendo do tipo de recurso solicitado.|
+|consentId|path|string|true|O consentId é o identificador único do consentimento a ser revogado e deverá ser um URN - Uniform Resource Name.|
+|x-fapi-auth-date|header|string|false|Data em que o usuário logou pela última vez com o receptor. Representada de acordo com a [RFC7231](https://tools.ietf.org/html/rfc7231). Exemplo: Sun, 10 Sep 2017 19:43:31 UTC|
+|x-fapi-customer-ip-address|header|string|false|O endereço IP do usuário se estiver atualmente logado com o receptor.|
+|x-fapi-interaction-id|header|string|false|Um UID [RFC4122](https://tools.ietf.org/html/rfc4122) usado como um ID de correlação. Se fornecido, o transmissor deve "reproduzir" esse valor no cabeçalho de resposta.|
+|x-customer-user-agent|header|string|false|Indica o user-agent que o usuário utiliza.|
+|page|query|integer(int32)|false|Número da página que está sendo requisitada (o valor da primeira página é 1).|
+|page-size|query|integer(int32)|false|Quantidade total de registros por páginas.|
+
+> Example responses
+
+> 200 Response
+
+```json
+{
+  "data": {
+    "policyNumber": "111111",
+    "endorsementType": "ALTERACAO",
+    "requestDescription": "Descrição adicional do endosso.",
+    "requestDate": "2022-11-01",
+    "customData": {
+      "customerIdentification": [
+        {
+          "fieldId": "578-psd-71md6971kjh-2d414",
+          "value": "string"
+        }
+      ],
+      "customerQualification": [
+        {
+          "fieldId": "578-psd-71md6971kjh-2d414",
+          "value": "string"
+        }
+      ],
+      "customerComplimentaryInfo": [
+        {
+          "fieldId": "578-psd-71md6971kjh-2d414",
+          "value": "string"
+        }
+      ],
+      "businessIdentification": [
+        {
+          "fieldId": "578-psd-71md6971kjh-2d414",
+          "value": "string"
+        }
+      ],
+      "businessQualification": [
+        {
+          "fieldId": "578-psd-71md6971kjh-2d414",
+          "value": "string"
+        }
+      ],
+      "businessComplimentaryInfo": [
+        {
+          "fieldId": "578-psd-71md6971kjh-2d414",
+          "value": "string"
+        }
+      ],
+      "generalQuoteInfo": [
+        {
+          "fieldId": "578-psd-71md6971kjh-2d414",
+          "value": "string"
+        }
+      ],
+      "riskLocationInfo": [
+        {
+          "fieldId": "578-psd-71md6971kjh-2d414",
+          "value": "string"
+        }
+      ],
+      "insuredObjects": [
+        {
+          "fieldId": "578-psd-71md6971kjh-2d414",
+          "value": "string"
+        }
+      ],
+      "beneficiaries": [
+        {
+          "fieldId": "578-psd-71md6971kjh-2d414",
+          "value": "string"
+        }
+      ],
+      "coverages": [
+        {
+          "fieldId": "578-psd-71md6971kjh-2d414",
+          "value": "string"
+        }
+      ]
+    }
+  }
+}
+```
+

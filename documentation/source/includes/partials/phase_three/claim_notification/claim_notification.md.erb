@@ -1,0 +1,264 @@
+
+
+# API Claim Notification v1.1.0
+
+> Scroll down for code samples, example requests and responses. Select a language for code samples from the tabs above or the mobile navigation menu.
+
+**Especificação em OAS 3.0** </br>
+<a href="files/swagger/claim-notification.yaml" download="claim-notification.yaml">Download da Especificação</a>
+
+**Detalhamento Técnico** </br>
+<a href="files/docs/claim-notification.docx" download="claim-notification.docx">Download do Detalhamento Técnico</a>
+
+
+API de aviso de sinistro do Open Insurance Brasil - Fase 3.
+
+Envia informações do aviso de sinistro manualmente escritas nas instituições transmissoras por seus clientes.
+
+Possui segregação entre pessoa natural e pessoa jurídica somente para os endPoints de dados customizáveis de cadastro.
+
+Requer consentimento do cliente para todos os 'endpoints'.
+
+
+
+<h2 id="api-claimnotification-v100-orientacoes">Orientações</h2>
+A Role do diretório de participantes relacionada à presente API é a DADOS.
+
+Para todos os endpoints desta API é previsto o envio de um token através do header Authorization.
+
+Este token deverá estar relacionado ao consentimento (identificado pelo consentId) mantido na instituição transmissora dos dados, o qual permitirá a pesquisa e retorno, na API em questão, dos dados relacionados ao consentId específico.
+
+Os dados serão devolvidos na consulta desde que o consentId relacionado corresponda a um consentimento válido e com o status AUTHORISED.
+
+É também necessário que o recurso em questão (endosso, etc.) esteja disponível na instituição transmissora (ou seja, sem boqueios de qualquer natureza e com todas as autorizações/consentimentos já autorizados).
+
+Além disso, as permissions necessárias deverão ter sido solicitadas quando da criação do consentimento relacionado.
+
+Relacionamos a seguir as permissions necessárias para a consulta de dados em cada endpoint da presente API.
+
+<h2 id="api-claimnotification-v100-permissions-necessarias-para-a-api-claimnotification">Permissions necessárias para a API Claim Notification</h2>
+
+Para cada um dos paths desta API, além dos escopos (scopes) indicados existem permissions que deverão ser observadas:
+
+
+### `/request/damage`
+  - permissions:
+    - POST: **CLAIM_NOTIFICATION_REQUEST_DAMAGE_CREATE**
+
+### `/request/person`
+  - permissions:
+    - POST: **CLAIM_NOTIFICATION_REQUEST_PERSON_CREATE**
+
+
+Base URLs:
+
+Servidor de Produção </br>
+* <a href="https://api.seguro.com.br/open-insurance/claim-notification/v1">https://api.seguro.com.br/open-insurance/claim-notification/v1</a>
+
+Servidor de Homologação </br>
+* <a href="https://apih.seguro.com.br/open-insurance/claim-notification/v1">https://apih.seguro.com.br/open-insurance/claim-notification/v1</a>
+
+Email: <a href="mailto:gt-interfaces@openinsurancebr.org">Governança do Open Insurance Brasil</a>
+
+Web: <a href="https://www.gov.br/susep">Governança do Open Insurance Brasil</a>
+
+
+
+### Authentication
+
+- oAuth2 authentication. Fluxo OAuth necessário para que a receptora tenha acesso aos dados na instituição transmissora. Inclui o processo de redirecionamento e autenticação do usuário a que se referem os dados.
+
+    - Flow: authorizationCode
+    - Authorization URL = [https://authserver.example/authorization](https://authserver.example/authorization)
+    - Token URL = [https://authserver.example/token](https://authserver.example/token)
+
+|Scope|Scope Description|
+|---|---|
+|claim-notification|Escopo necessário para acesso à API Claim Notification.|
+
+
+<h2 id="API - ClaimNotification v1.0.0-Obtem a lista de identificação de claimnotification">Envia dados de solicitação de Aviso de Sinistro para Seguros de Danos</h2>
+
+<a id="opIdgetClaimNotification"></a>
+
+
+`POST /request/damage/{consentId}`
+
+Método para a criação de solicitação Aviso de Sinistro Danos.
+
+
+<h3 id="obtem-a-lista-de-identificação-de-claimnotification-parameters">Parameters</h3>
+
+|Name|In|Type|Required|Description|
+|---|---|---|---|---|
+|Authorization|header|string|true|Cabeçalho HTTP padrão. Permite que as credenciais sejam fornecidas dependendo do tipo de recurso solicitado.|
+|consentId|path|string|true|O consentId é o identificador único do consentimento a ser revogado e deverá ser um URN - Uniform Resource Name.|
+|x-fapi-auth-date|header|string|false|Data em que o usuário logou pela última vez com o receptor. Representada de acordo com a [RFC7231](https://tools.ietf.org/html/rfc7231). Exemplo: Sun, 10 Sep 2017 19:43:31 UTC|
+|x-fapi-customer-ip-address|header|string|false|O endereço IP do usuário se estiver atualmente logado com o receptor.|
+|x-fapi-interaction-id|header|string|false|Um UID [RFC4122](https://tools.ietf.org/html/rfc4122) usado como um ID de correlação. Se fornecido, o transmissor deve "reproduzir" esse valor no cabeçalho de resposta.|
+|x-customer-user-agent|header|string|false|Indica o user-agent que o usuário utiliza.|
+|page|query|integer(int32)|false|Número da página que está sendo requisitada (o valor da primeira página é 1).|
+|page-size|query|integer(int32)|false|Quantidade total de registros por páginas.|
+
+> Example responses
+
+> 200 Response
+
+```json
+{
+  "data": {
+    "documentType": "APOLICE_INDIVIDUAL",
+    "policyNumber": "111111",
+    "groupCertificateId": "string",
+    "occurrenceDate": "2022-01-01",
+    "occurrenceTime": "22:18:54",
+    "occurrenceDescription": "string",
+    "customData": {
+      "customerIdentification": [
+        {
+          "fieldId": "578-psd-71md6971kjh-2d414",
+          "value": null
+        }
+      ],
+      "customerQualification": [
+        {
+          "fieldId": "578-psd-71md6971kjh-2d414",
+          "value": null
+        }
+      ],
+      "customerComplimentaryInfo": [
+        {
+          "fieldId": "578-psd-71md6971kjh-2d414",
+          "value": null
+        }
+      ],
+      "businessIdentification": [
+        {
+          "fieldId": "578-psd-71md6971kjh-2d414",
+          "value": null
+        }
+      ],
+      "businessQualification": [
+        {
+          "fieldId": "578-psd-71md6971kjh-2d414",
+          "value": null
+        }
+      ],
+      "businessComplimentaryInfo": [
+        {
+          "fieldId": "578-psd-71md6971kjh-2d414",
+          "value": null
+        }
+      ],
+      "generalQuoteInfo": [
+        {
+          "fieldId": "578-psd-71md6971kjh-2d414",
+          "value": null
+        }
+      ],
+      "riskLocationInfo": [
+        {
+          "fieldId": "578-psd-71md6971kjh-2d414",
+          "value": null
+        }
+      ],
+      "insuredObjects": [
+        {
+          "fieldId": "578-psd-71md6971kjh-2d414",
+          "value": null
+        }
+      ],
+      "beneficiaries": [
+        {
+          "fieldId": "578-psd-71md6971kjh-2d414",
+          "value": null
+        }
+      ],
+      "coverages": [
+        {
+          "fieldId": "578-psd-71md6971kjh-2d414",
+          "value": null
+        }
+      ],
+      "generalClaimInfo": [
+        {
+          "fieldId": "578-psd-71md6971kjh-2d414",
+          "value": null
+        }
+      ]
+    }
+  }
+}
+```   
+<h3 id="obtem-a-lista-de-identificação-de-claimnotification-responses">Responses</h3>
+
+|Status|Meaning|Description|Schema|
+|---|---|---|---|
+|201|[Created](https://tools.ietf.org/html/rfc7231#section-6.3.2)|Aviso de Sinistro Danos enviado com sucesso|none|
+|400|[Bad Request](https://tools.ietf.org/html/rfc7231#section-6.5.1)|A requisição foi malformada, omitindo atributos obrigatórios, seja no payload ou através de atributos na URL.|[ResponseError](#schemaresponseerror)|
+|401|[Unauthorized](https://tools.ietf.org/html/rfc7235#section-3.1)|Cabeçalho de autenticação ausente/inválido ou token inválido|[ResponseError](#schemaresponseerror)|
+|403|[Forbidden](https://tools.ietf.org/html/rfc7231#section-6.5.3)|O token tem escopo incorreto ou uma política de segurança foi violada|[ResponseError](#schemaresponseerror)|
+|404|[Not Found](https://tools.ietf.org/html/rfc7231#section-6.5.4)|O recurso solicitado não existe ou não foi implementado|[ResponseError](#schemaresponseerror)|
+|405|[Method Not Allowed](https://tools.ietf.org/html/rfc7231#section-6.5.5)|O consumidor tentou acessar o recurso com um método não suportado|[ResponseError](#schemaresponseerror)|
+|406|[Not Acceptable](https://tools.ietf.org/html/rfc7231#section-6.5.6)|A solicitação continha um cabeçalho Accept diferente dos tipos de mídia permitidos ou um conjunto de caracteres diferente de UTF-8|[ResponseError](#schemaresponseerror)|
+|422|[Unprocessable Entity](https://tools.ietf.org/html/rfc2518#section-10.3)|O servidor entende o tipo de conteúdo da entidade da requisição, e a sintaxe da requisição esta correta, mas não foi possível processar as instruções presentes|[ResponseError](#schemaresponseerror)|
+|429|[Too Many Requests](https://tools.ietf.org/html/rfc6585#section-4)|A operação foi recusada, pois muitas solicitações foram feitas dentro de um determinado período ou o limite global de requisições concorrentes foi atingido|[ResponseError](#schemaresponseerror)|
+|500|[Internal Server Error](https://tools.ietf.org/html/rfc7231#section-6.6.1)|Ocorreu um erro no gateway da API ou no microsserviço|[ResponseError](#schemaresponseerror)|
+|default|Default|Erro inesperado.|[ResponseError](#schemaresponseerror)|
+
+<h2 id="API - ClaimNotification v1.0.0-Obtem a lista de identificação de claimnotification {consentId}">Envia dados de solicitação de Aviso de Sinistro para Seguros de Pessoas</h2>
+
+<a id="opIdgetClaimNotification"></a>
+
+`POST /request/person/{consentId}`
+
+Método para a criação de solicitação Aviso de Sinistro Pessoas
+
+<h3 id="obtem-a-lista-de-identificação-de-claimnotification-parameters">Parameters</h3>
+
+|Name|In|Type|Required|Description|
+|---|---|---|---|---|
+|Authorization|header|string|true|Cabeçalho HTTP padrão. Permite que as credenciais sejam fornecidas dependendo do tipo de recurso solicitado.|
+|consentId|path|string|true|O consentId é o identificador único do consentimento a ser revogado e deverá ser um URN - Uniform Resource Name.|
+|x-fapi-auth-date|header|string|false|Data em que o usuário logou pela última vez com o receptor. Representada de acordo com a [RFC7231](https://tools.ietf.org/html/rfc7231). Exemplo: Sun, 10 Sep 2017 19:43:31 UTC|
+|x-fapi-customer-ip-address|header|string|false|O endereço IP do usuário se estiver atualmente logado com o receptor.|
+|x-fapi-interaction-id|header|string|false|Um UID [RFC4122](https://tools.ietf.org/html/rfc4122) usado como um ID de correlação. Se fornecido, o transmissor deve "reproduzir" esse valor no cabeçalho de resposta.|
+|x-customer-user-agent|header|string|false|Indica o user-agent que o usuário utiliza.|
+|page|query|integer(int32)|false|Número da página que está sendo requisitada (o valor da primeira página é 1).|
+|page-size|query|integer(int32)|false|Quantidade total de registros por páginas.|
+
+> Example responses
+
+> 200 Response
+
+```json
+{
+  "data": {
+    "requestorIsInsured": false,
+    "requestor": {
+      "name": "string",
+      "documentType": "CNPJ",
+      "documentNumber": "73677831148",
+      "phones": [
+        {
+          "countryCallingCode": "55",
+          "areaCode": "11",
+          "number": "29875132"
+        }
+      ],
+      "emails": [
+        {
+          "email": "nome@br.net"
+        }
+      ]
+    },
+    "claimant": "CONJUGE",
+    "documentType": "APOLICE_INDIVIDUAL",
+    "policyNumber": "111111",
+    "groupCertificateId": "string",
+    "occurrenceDate": "2022-01-01",
+    "occurrenceTime": "22:18:54",
+    "occurrenceDescription": "string"
+  }
+}
+```
