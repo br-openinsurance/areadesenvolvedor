@@ -3,9 +3,9 @@ info:
   title: APIs Open Data do Open Insurance Brasil
   description: 
     Obtém a lista dos produtos Seguros de Pessoas – Coberturas de Risco (excluindo VGBL).
-  version: 1.2.0
+  version: 1.3.0
   contact:
-    url: 'https://openinsurance.susep.gov.br/'
+    url: 'https://www.gov.br/susep/'
 servers:
   - url: 'https://api.organizacao.com.br/open-insurance/products-services/v1'
     description: Servidor de Produção
@@ -14,7 +14,7 @@ servers:
 tags:
 - name: "person"
 paths:
-  /person/:
+  /person:
     get:
       tags:
         - person
@@ -37,6 +37,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ResponsePersonList'
+        '204':
+          $ref: '#/components/responses/NoContent'
         '400':
           $ref: '#/components/responses/BadRequest'
         '401':
@@ -78,9 +80,9 @@ components:
           brand:
             $ref: '#/components/schemas/PersonBrand'
        links:
-         $ref: '#/components/schemas/LinksPaginated'
+         $ref: '#/components/schemas/Links'
        meta:
-         $ref: '#/components/schemas/MetaPaginated'
+         $ref: '#/components/schemas/Meta'
     PersonBrand:
       type: object
       description: Organização controladora do grupo.
@@ -110,7 +112,7 @@ components:
           cnpjNumber:
             type: string
             description: CNPJ da sociedade pertencente à marca.
-            example: 45086338000178
+            example: '45086338000178'
           products:          
             $ref: '#/components/schemas/PersonProducts'
     PersonProducts:
@@ -133,7 +135,6 @@ components:
           - allowPortability
           - portabilityGraceTime
           - indemnityPaymentMethod
-          - indemnityPaymentIncome
           - targetAudience
         properties:
           name:
@@ -221,61 +222,61 @@ components:
             items:  
               type: string
               enum: [ACOMPANHANTE_CASO_HOSPITALIZACAO_PROLONGADA,
-ARQUITETO_VIRTUAL,
-ASSESSORIA_FINANCEIRA,
-AUTOMOVEL,
-AUXILIO_NATALIDADE,
-AVALIACAO_CLINICA_PREVENTIVA,
-BOLSA_PROTEGIDA,
-CESTA_BASICA,
-CHECKUP_ODONTOLOGICO,
-CLUBE_VANTAGENS_BENEFICIOS,
-CONVALESCENCIA,
-DECESSO,
-DESCONTO_FARMACIAS_MEDICAMENTOS,
-DESPESAS_FARMACEUTICAS_VIAGEM,
-DIGITAL,
-EDUCACIONAL,
-EMPRESARIAL,
-ENCANADOR,
-ENTRETENIMENTO,
-EQUIPAMENTOS_MEDICOS,
-FIANCAS_DESPESAS_LEGAIS,
-FISIOTERAPIA,
-FUNERAL,
-HELP_LINE,
-HOSPEDAGEM_ACOMPANHANTE,
-INTERRUPCAO_VIAGEM,
-INVENTARIO,
-MAIS_EM_VIDA,
-MAMAE_BEBE,
-MEDICA_ACIDENTE_DOENCA,
-MOTOCICLETA,
-MULHER,
-NUTRICIONISTA,
-ODONTOLOGICA,
-ORIENTACAO_FITNESS,
-ORIENTACAO_JURIDICA,
-ORIENTACAO_NUTRICIONAL,
-PERSONAL_FITNESS,
-ORIENTACAO_PSICOSSOCIAL_FAMILIAR,
-PERDA_ROUBO_CARTAO,
-PET,
-PRORROGACAO_ESTADIA,
-PROTECAO_DADOS,
-RECOLOCACAO_PROFISSIONAL,
-REDE_DESCONTO_NUTRICIONAL,
-RESIDENCIAL,
-RETORNO_MENORES_SEGURADO,
-SAQUE_COACAO,
-SAUDE_BEM_ESTAR,
-SEGUNDA_OPINIAO_MEDICA,
-SENIOR,
-SUSTENTAVEL_DESCARTE_ECOLOGICO,
-TELEMEDICINA,
-VIAGEM,
-VITIMA,
-OUTROS]  
+                ARQUITETO_VIRTUAL,
+                ASSESSORIA_FINANCEIRA,
+                AUTOMOVEL,
+                AUXILIO_NATALIDADE,
+                AVALIACAO_CLINICA_PREVENTIVA,
+                BOLSA_PROTEGIDA,
+                CESTA_BASICA,
+                CHECKUP_ODONTOLOGICO,
+                CLUBE_VANTAGENS_BENEFICIOS,
+                CONVALESCENCIA,
+                DECESSO,
+                DESCONTO_FARMACIAS_MEDICAMENTOS,
+                DESPESAS_FARMACEUTICAS_VIAGEM,
+                DIGITAL,
+                EDUCACIONAL,
+                EMPRESARIAL,
+                ENCANADOR,
+                ENTRETENIMENTO,
+                EQUIPAMENTOS_MEDICOS,
+                FIANCAS_DESPESAS_LEGAIS,
+                FISIOTERAPIA,
+                FUNERAL,
+                HELP_LINE,
+                HOSPEDAGEM_ACOMPANHANTE,
+                INTERRUPCAO_VIAGEM,
+                INVENTARIO,
+                MAIS_EM_VIDA,
+                MAMAE_BEBE,
+                MEDICA_ACIDENTE_DOENCA,
+                MOTOCICLETA,
+                MULHER,
+                NUTRICIONISTA,
+                ODONTOLOGICA,
+                ORIENTACAO_FITNESS,
+                ORIENTACAO_JURIDICA,
+                ORIENTACAO_NUTRICIONAL,
+                PERSONAL_FITNESS,
+                ORIENTACAO_PSICOSSOCIAL_FAMILIAR,
+                PERDA_ROUBO_CARTAO,
+                PET,
+                PRORROGACAO_ESTADIA,
+                PROTECAO_DADOS,
+                RECOLOCACAO_PROFISSIONAL,
+                REDE_DESCONTO_NUTRICIONAL,
+                RESIDENCIAL,
+                RETORNO_MENORES_SEGURADO,
+                SAQUE_COACAO,
+                SAUDE_BEM_ESTAR,
+                SEGUNDA_OPINIAO_MEDICA,
+                SENIOR,
+                SUSTENTAVEL_DESCARTE_ECOLOGICO,
+                TELEMEDICINA,
+                VIAGEM,
+                VITIMA,
+                OUTROS]  
           additional:         
             type: array
             items:
@@ -327,18 +328,19 @@ OUTROS]
               enum: [UNICO, SOB_FORMA_DE_RENDA]  
           indemnityPaymentIncome:
             type: array
+            description: Tipo de Renda (caso modalidade de pagamento de indenização seja sob a forma de renda)
             items:
               type: string
               enum: [CERTA,
-TEMPORARIA,
-TEMPORARIA_REVERSIVEL,
-TEMPORARIO_MINIMO_GARANTIDO,
-TEMPORARIA_REVERSIVEL_MINIMO_GARANTIDO,
-VITALICIA,
-VITALICIA_REVERSIVEL,
-VITALICIA_MINIMO_GARANTIDO,
-VITALICIA_REVERSIVEL_MINIMO_GARANTIDO
-]
+                TEMPORARIA,
+                TEMPORARIA_REVERSIVEL,
+                TEMPORARIO_MINIMO_GARANTIDO,
+                TEMPORARIA_REVERSIVEL_MINIMO_GARANTIDO,
+                VITALICIA,
+                VITALICIA_REVERSIVEL,
+                VITALICIA_MINIMO_GARANTIDO,
+                VITALICIA_REVERSIVEL_MINIMO_GARANTIDO
+                ]
           premiumPayment:
             $ref: '#/components/schemas/PersonPremiumPayment'
           minimunRequirements:
@@ -358,7 +360,7 @@ VITALICIA_REVERSIVEL_MINIMO_GARANTIDO
         definition:
           type: string
           description: Campo aberto (possibilidade de incluir URL).
-    PersonCoverageAttibutesDetailsUnit:
+    PersonCoverageAttributesDetailsUnit:
       type: object
       required:
         - code
@@ -372,7 +374,7 @@ VITALICIA_REVERSIVEL_MINIMO_GARANTIDO
           type: string
           description: Descrição da unidade de medida
           example: description
-    PersonCoverageAttibutesDetails:
+    PersonCoverageAttributesDetails:
         type: object
         required:
           - amount
@@ -383,24 +385,15 @@ VITALICIA_REVERSIVEL_MINIMO_GARANTIDO
             description: Valor.
             example: 60
           unit:
-            $ref: '#/components/schemas/PersonCoverageAttibutesDetailsUnit'
+            $ref: '#/components/schemas/PersonCoverageAttributesDetailsUnit'
     PersonGracePeriodUnit:
         type: object
         description: Período de carência
         properties:
-          amount:
-            type: number
-            description: Prazo de Carência
-            example: 60
-          unit:
+          details:
             type: string
-            description: Unidade do prazo (dias ou meses).
-            example: DIAS
-            enum: [DIAS, MESES, NAO_SE_APLICA]
-    personPortabilityGraceTime:
-        type: object
-        description: Prazo de carência em dias para Portabilidade
-        properties:
+            maxLength: 500
+            example: Descrições adicionais do período de carência
           amount:
             type: number
             description: Prazo de Carência
@@ -444,12 +437,12 @@ VITALICIA_REVERSIVEL_MINIMO_GARANTIDO
           type: array
           description: Listagem do valor mínimo de cobertura (Capital Segurado), diária ou parcela aceito pela  sociedade para cada  combinação de modalidade/cobertura do produto. Em reais
           items:
-           $ref: '#/components/schemas/PersonCoverageAttibutesDetails'
+           $ref: '#/components/schemas/PersonCoverageAttributesDetails'
         maxValue:
           type: array
           description: Listagem do valor máximo de cobertura (Capital Segurado), diária ou parcela aceito  pela sociedade para cada  combinação de modalidade/cobertura do produto. Em reais
           items:
-           $ref: '#/components/schemas/PersonCoverageAttibutesDetails'
+           $ref: '#/components/schemas/PersonCoverageAttributesDetails'
         indemnifiablePeriod:
           type: array
           description: Listagem de período indenizável para cada combinação de modalidade/cobertura do produto 
@@ -465,10 +458,12 @@ VITALICIA_REVERSIVEL_MINIMO_GARANTIDO
           example: BRL
           enum: [AED,AFN,ALL,AMD,ANG,AOA,ARS,AUD,AWG,AZN,BAM,BBD,BDT,BGN,BHD,BIF,BMD,BND,BOB,BOV,BRL,BSD,BTN,BWP,BYN,BZD,CAD,CDF,CHE,CHF,CHW,CLF,CLP,CNY,COP,COU,CRC,CUC,CUP,CVE,CZK,DJF,DKK,DOP,DZD,EGP,ERN,ETB,EUR,FJD,FKP,GBP,GEL,GHS,GIP,GMD,GNF,GTQ,GYD,HKD,HNL,HRK,HTG,HUF,IDR,ILS,INR,IQD,IRR,ISK,JMD,JOD,JPY,KES,KGS,KHR,KMF,KPW,KRW,KWD,KYD,KZT,LAK,LBP,LKR,LRD,LSL,LYD,MAD,MDL,MGA,MKD,MMK,MNT,MOP,MRU,MUR,MVR,MWK,MXN,MXV,MYR,MZN,NAD,NGN,NIO,NOK,NPR,NZD,OMR,PAB,PEN,PGK,PHP,PKR,PLN,PYG,QAR,RON,RSD,RUB,RWF,SAR,SBD,SCR,SDG,SEK,SGD,SHP,SLL,SOS,SRD,SSP,STN,SVC,SYP,SZL,THB,TJS,TMT,TND,TOP,TRY,TTD,TWD,TZS,UAH,UGX,USD,USN,UYI,UYU,UZS,VEF,VND,VUV,WST,XAF,XCD,XDR,XOF,XPF,XSU,XUA,YER,ZAR,ZMW,ZWL]
         gracePeriod:
-          $ref: '#/components/schemas/PersonGracePeriodUnit'
+          type: array
+          items:
+            $ref: '#/components/schemas/PersonGracePeriodUnit'
         differentiatedGracePeriod:
-          $ref: '#/components/schemas/PersonGracePeriodUnit'
-          description: Detalhamento do período de carência diferentes para cada cobertura que exista alguma especificidade. Caso a seguradora não tenha essa diferenciação, não retornará nada no campo
+          type: string
+          maxLength: 500
         deductibleDays:
           type: integer
           description: Listagem de franquia em dias para cada combinação de modalidade/cobertura do produto.         
@@ -600,28 +595,35 @@ VITALICIA_REVERSIVEL_MINIMO_GARANTIDO
              enum: [COLETIVO, INDIVIDUAL]
           contractingMinRequirement:
             type: string
-    LinksPaginated: 
+    Links: 
       type: object
       properties:
         self:
           type: string
           description: URL da página atualmente requisitada
-          example: 'https://api.organizacao.com.br/open-insurance/products-services/v1'
+          pattern: ^(https:\/\/)(.*?)(\/open-insurance\/products-services\/v\d+)(\/person.*)?$
+          example: 'https://api.organizacao.com.br/open-insurance/products-services/v1/person'
         first:
           type: string
           description: URL da primeira página de registros
-          example: 'https://api.organizacao.com.br/open-insurance/products-services/v1'
+          pattern: ^(https:\/\/)(.*?)(\/open-insurance\/products-services\/v\d+)(\/person.*)?$
+          example: 'https://api.organizacao.com.br/open-insurance/products-services/v1/person'
         prev:
           type: string
           description: URL da página anterior de registros
+          pattern: ^(https:\/\/)(.*?)(\/open-insurance\/products-services\/v\d+)(\/person.*)?$
+          example: 'https://api.organizacao.com.br/open-insurance/products-services/v1/person'
         next:
           type: string
           description: URL da próxima página de registros
+          pattern: ^(https:\/\/)(.*?)(\/open-insurance\/products-services\/v\d+)(\/person.*)?$
+          example: 'https://api.organizacao.com.br/open-insurance/products-services/v1/person'
         last:
           type: string
           description: URL da última página de registros
-          example: 'https://api.organizacao.com.br/open-insurance/products-services/v1'
-    MetaPaginated:
+          pattern: ^(https:\/\/)(.*?)(\/open-insurance\/products-services\/v\d+)(\/person.*)?$
+          example: 'https://api.organizacao.com.br/open-insurance/products-services/v1/person'
+    Meta:
       type: object
       properties:
         totalRecords:
@@ -676,7 +678,7 @@ VITALICIA_REVERSIVEL_MINIMO_GARANTIDO
                 example: '2021-08-20T08:30:00Z'
             additionalProperties: false
         meta:
-          $ref: '#/components/schemas/MetaPaginated'
+          $ref: '#/components/schemas/Meta'
       additionalProperties: false    
   parameters:
     page:
@@ -744,22 +746,21 @@ VITALICIA_REVERSIVEL_MINIMO_GARANTIDO
       description: Campo indica se o navegador deve ou não renderizar um frame.
       schema:
         type: string
-        pattern: '[\w\W\s]*'
-  securitySchemes:
-    OpenId:
-      type: openIdConnect
-      openIdConnectUrl: 'https://auth.mockbank.poc.raidiam.io/.well-known/openid-configuration'
-    OAuth2Security:
-      type: oauth2
-      description: Fluxo OAuth necessário para que a receptora tenha acesso aos dados na instituição transmissora. Inclui o processo de redirecionamento e autenticação do usuário a que se referem os dados.
-      flows:
-        authorizationCode:
-          authorizationUrl: 'https://authserver.example/authorization'
-          tokenUrl: 'https://authserver.example/token'
-          scopes:
-            financings: Escopo necessário para acesso à API. O controle dos endpoints específicos é feito via permissions.    
+        pattern: '[\w\W\s]*' 
+  
   responses:
-
+    UnprocessableEntity:
+      description: 'O servidor entende o tipo de conteúdo da entidade da requisição, e a sintaxe da requisição esta correta, mas não foi possível processar as instruções presente.'
+      content:
+        application/json; charset=utf-8:
+          schema:
+            $ref: '#/components/schemas/ResponseError'
+    NoContent:
+      description: 'O recurso solicitado não existe ou não foi localizado.'
+      content:
+        application/json; charset=utf-8:
+          schema:
+            $ref: '#/components/schemas/ResponseError'
     BadRequest:
       description: 'A requisição foi malformada, omitindo atributos obrigatórios, seja no payload ou através de atributos na URL.'
       content:
@@ -808,9 +809,3 @@ VITALICIA_REVERSIVEL_MINIMO_GARANTIDO
         application/json; charset=utf-8:
           schema:
             $ref: '#/components/schemas/ResponseError'
-    UnprocessableEntity:
-      description: O servidor entende o tipo de conteúdo da entidade da requisição, e a sintaxe da requisição esta correta, mas não foi possível processar as instruções presentes.
-      content:
-        application/json; charset=utf-8:
-          schema:
-            $ref: '#/components/schemas/ResponseError'      

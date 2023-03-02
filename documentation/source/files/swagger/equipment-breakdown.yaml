@@ -4,9 +4,9 @@ info:
   title: APIs Open Data do Open Insurance Brasil
   description:
     API de informações de dados do produto RD Equipamento. Os recursos que podem ser consumidos pelos participantes conforme a regra 3.1.2 do manual de escopo de dados..
-  version: 1.0.0
+  version: 1.1.0
   contact:
-    url: 'http://novosite.susep.gov.br/'
+    url: 'https://www.gov.br/susep/'
 servers:
   - url: 'https://api.organizacao.com.br/open-insurance/products-services/v1'
     description: Servidor de Producao
@@ -16,7 +16,7 @@ tags:
 - name: "EquipmentBreakdown" 
 
 paths:
-  /equipment-breakdown/:
+  /equipment-breakdown:
     get:
       tags:
         - EquipmentBreakdown
@@ -53,6 +53,8 @@ paths:
           $ref: '#/components/responses/MethodNotAllowed'
         '406':
           $ref: '#/components/responses/NotAcceptable'
+        '422':
+          $ref: '#/components/responses/UnprocessableEntity'
         '429':
           $ref: '#/components/responses/TooManyRequests'
         '500':
@@ -158,7 +160,6 @@ components:
                 coverage:
                   description: Listagem de coberturas incluídas no produto que deve observar a relação discriminada de coberturas, conforme Tabela II.8 do Anexo II.
                   type: string
-                  maxLength: 30
                   example: ROUBO
                   enum: [DANOS_DE_CAUSA_EXTERNA,
                         DANOS_DE_CAUSA_EXTERNA_E_ROUBO,
@@ -179,7 +180,6 @@ components:
             description: Tipo de bem segurado
             items:
               type: string
-              maxLength: 29
               example: SMARTPHONE
               enum: [SMARTPHONE,
                     NOTEBOOK,
@@ -205,8 +205,7 @@ components:
             type: array
             items:
                 type: string
-                maxLength: 33
-                example: LIVRE ESCOLHA
+                example: LIVRE_ESCOLHA
                 enum: [REDE_REFERENCIADA , LIVRE_ESCOLHA, REDE_REFERENCIADA_E_LIVRE_ESCOLHA]
           microInsurance:
             type: boolean
@@ -236,7 +235,6 @@ components:
           description: Metodo de pagamento
           items:
             type: string
-            maxLength: 33
             example: CARTAO_DE_CREDITO
             enum: [CARTAO_DE_CREDITO, CARTAO_DE_DEBITO, DEBITO_EM_CONTA_CORRENTE, DEBITO_EM_CONTA_POUPANCA, BOLETO_BANCARIO, PIX, CONSIGNACAO_EM_FOLHA_DE_PAGAMENTO, PONTOS_DE_PROGRAMA_DE_BENEFICIO, OUTROS]
         paymentDetail:
@@ -248,7 +246,6 @@ components:
           description: tipo de pagamento  
           items: 
             type: string
-            maxLength: 9
             example: A_VISTA
             enum: [A_VISTA, PARCELADO]
         premiumRates:
@@ -269,7 +266,6 @@ components:
             type: array
             items:
               type: string
-              maxLength: 23
               example: ANUAL
               enum: [ANUAL, ANUAL_INTERMITENTE, PLURIANUAL, PLURIANUAL_INTERMITENTE, MENSAL, MENSAL_INTERMITENTE, DIARIO, DIARIO_INTERMITENTE, OUTROS]
           termOthers:
@@ -293,7 +289,6 @@ components:
             type: array
             items:
               type: string
-              maxLength: 17
               description: Para efeitos de comparabilidade, considerar agrupamentos de serviços em 4 categorias
               example: ATE_10_SERVICOS
               enum: [ATE_10_SERVICOS, ATE_20_SERVICOS , ACIMA_20_SERVICOS, CUSTOMIZAVEL]
@@ -304,7 +299,6 @@ components:
           chargeTypeSignaling:
             description: Serviços de Assistências Complementares - Tipo de cobrança
             type: string
-            maxLength: 8
             example: GRATUITO
             enum: [GRATUITO, PAGO]
     
@@ -338,7 +332,6 @@ components:
           type: array
           items:
             type: string
-            maxLength: 10
             enum: [COLETIVO, INDIVIDUAL]
         minimumRequirementDetails:
           type: string
@@ -349,7 +342,6 @@ components:
           type: array
           items:
             type: string
-            maxLength: 15
             example: PESSOA_NATURAL
             enum: [PESSOA_NATURAL, PESSOA_JURIDICA]
     
@@ -361,23 +353,41 @@ components:
       - insuredParticipation
       properties:
         maxLMI:
-          description: Lista com valor de LMI aceito pela sociedade para cada cobertura
-          $ref: '#/components/schemas/EquipmentBreakdownCoverageAttributesDetails'
+          $ref: '#/components/schemas/EquipmentBreakdownLimit'
         insuredParticipation:
           type: array
           description: Lista com indicativo do tipo de participação do segurado para cada cobertura.
           items: 
             type: string
-            maxLength: 13
             example: FRANQUIA
             enum: [FRANQUIA, POS, NAO_SE_APLICA]
         insuredParticipationDescription:
           type: string
           maxLength: 1024
           description: Lista com descrição referente ao campo “Participação do Segurado” para cada cobertura.
+
+    EquipmentBreakdownLimit:
+      type: object
+      description: Lista com valor de LMI aceito pela sociedade para cada cobertura.
+      required:
+        - type
+        - amount
+      properties:
+        type:
+          type: string
+          enum: [FINANCEIRO, PERCENTUAL]
+        amount:
+          $ref: '#/components/schemas/EquipmentBreakdownCoverageAttributesDetails'
+        index:
+          type: string
+          description: Indexador. Condicional, vinculado ao preenchimento do campo Tipo com Percentual
+          enum: [LMG, FINANCEIRO_COBERTURA, OUTRO]
+        maxIndexAmount:
+          $ref: '#/components/schemas/EquipmentBreakdownCoverageAttributesDetails'
     
     EquipmentBreakdownCoverageAttributesDetails:
         type: object
+        description: Lista com valor de LMI aceito pela sociedade para cada cobertura
         required:
           - amount
           - unit
@@ -399,54 +409,35 @@ components:
         description:
           type: string
           example: REAL
-    
-    EquipmentBreakdownCoverageAttributesPercentageDetails:
-        type: object
-        required:
-          - amount
-          - unit
-        properties:
-          amount:
-            type: number
-          unit:
-            $ref: '#/components/schemas/EquipmentBreakdownCoverageAttributesPercentageDetailsUnit'
-    
-    EquipmentBreakdownCoverageAttributesPercentageDetailsUnit:
-      type: object
-      required:
-        - code
-        - description
-      properties:
-        code:
-          type: string
-          example: '%'
-        description:
-          type: string
-          example: PERCENTUAL
-    
+
     Links:
       type: object
       properties:
         self:
           type: string
           description: URL da página atualmente requisitada
-          example: 'https://api.organizacao.com.br/open-insurance/products-services/v1'
+          pattern: ^(https:\/\/)(.*?)(\/open-insurance\/products-services\/v\d+)(\/equipment-breakdown.*)?$
+          example: 'https://api.organizacao.com.br/open-insurance/products-services/v1/equipment-breakdown'
         first:
           type: string
           description: URL da primeira página de registros
-          example: 'https://api.organizacao.com.br/open-insurance/products-services/v1'
+          pattern: ^(https:\/\/)(.*?)(\/open-insurance\/products-services\/v\d+)(\/equipment-breakdown.*)?$
+          example: 'https://api.organizacao.com.br/open-insurance/products-services/v1/equipment-breakdown'
         prev:
           type: string
           description: URL da página anterior de registros
-          example: 'https://api.organizacao.com.br/open-insurance/products-services/v1'
+          pattern: ^(https:\/\/)(.*?)(\/open-insurance\/products-services\/v\d+)(\/equipment-breakdown.*)?$
+          example: 'https://api.organizacao.com.br/open-insurance/products-services/v1/equipment-breakdown'
         next:
           type: string
           description: URL da próxima página de registros
-          example: 'https://api.organizacao.com.br/open-insurance/products-services/v1'
+          pattern: ^(https:\/\/)(.*?)(\/open-insurance\/products-services\/v\d+)(\/equipment-breakdown.*)?$
+          example: 'https://api.organizacao.com.br/open-insurance/products-services/v1/equipment-breakdown'
         last:
           type: string
           description: URL da última página de registros
-          example: 'https://api.organizacao.com.br/open-insurance/products-services/v1'
+          pattern: ^(https:\/\/)(.*?)(\/open-insurance\/products-services\/v\d+)(\/equipment-breakdown.*)?$
+          example: 'https://api.organizacao.com.br/open-insurance/products-services/v1/equipment-breakdown'
     
     Meta:
       type: object
@@ -478,6 +469,7 @@ components:
               - code
               - title
               - detail
+              - requestDateTime
             properties:
               code:
                 description: Código de erro específico do endpoint
@@ -563,22 +555,14 @@ components:
         schema:
             type: string
             pattern: '[\w\W\s]*'
-    
-  securitySchemes:
-    OpenId:
-      type: openIdConnect
-      openIdConnectUrl: 'https://auth.mockbank.poc.raidiam.io/.well-known/openid-configuration'
-    OAuth2Security:
-      type: oauth2
-      description: Fluxo OAuth necessário para que a receptora tenha acesso aos dados na instituição transmissora. Inclui o processo de redirecionamento e autenticação do usuário a que se referem os dados.
-      flows:
-        authorizationCode:
-          authorizationUrl: 'https://authserver.example/authorization'
-          tokenUrl: 'https://authserver.example/token'
-          scopes:
-            financings: Escopo necessário para acesso à API. O controle dos endpoints específicos é feito via permissions.
-    
+     
   responses:
+    UnprocessableEntity:
+      description: 'O servidor entende o tipo de conteúdo da entidade da requisição, e a sintaxe da requisição esta correta, mas não foi possível processar as instruções presente.'
+      content:
+        application/json; charset=utf-8:
+          schema:
+            $ref: '#/components/schemas/ResponseError'
     NoContent:
       description: 'O recurso solicitado não existe ou não foi localizado.'
       content:

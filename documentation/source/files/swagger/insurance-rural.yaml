@@ -33,18 +33,19 @@ info:
     ### `/{policyId}/claim`
       - permissions:
         - GET: **DAMAGES_AND_PEOPLE_RURAL_CLAIM_READ**
-  version: 1.1.0
+  version: 1.2.0
   contact:
     name: Governança do Open Insurance Brasil
-    email: gt-interfaces@openinsurancebr.org
-    url: 'https://openinsurance-brasil.github.io/areadesenvolvedor/'
+    url: 'https://www.gov.br/susep/'
 servers:
   - url: 'https://api.organizacao.com.br/open-insurance/insurance-rural/v1'
     description: Servidor de Produção
   - url: 'https://api.organizacao.com.br/open-insurance/insurance-rural/v1'
     description: Servidor de Homologação
+tags:
+  - name: 'InsuranceRural'
 paths:
-  /:
+  /insurance-rural:
     get:
       tags:
         - InsuranceRural
@@ -62,6 +63,8 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/OKResponseInsuranceRural'
+        '204':
+          $ref: '#/components/responses/NoContent'
         '400':
           $ref: '#/components/responses/BadRequest'
         '401':
@@ -92,7 +95,7 @@ paths:
           OAuth2Security:
             - 'consent:consentId'
             - insurance-rural
-  /{policyId}/policy-info:
+  /insurance-rural/{policyId}/policy-info:
     get:
       tags:
         - InsuranceRural
@@ -109,6 +112,8 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/OKResponseInsuranceRuralPolicyInfo'
+        '204':
+          $ref: '#/components/responses/NoContent'
         '400':
           $ref: '#/components/responses/BadRequest'
         '401':
@@ -139,7 +144,7 @@ paths:
           OAuth2Security:
             - 'consent:consentId'
             - insurance-rural
-  /{policyId}/premium:
+  /insurance-rural/{policyId}/premium:
     get:
       tags:
         - InsuranceRural
@@ -156,6 +161,8 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/OKResponseInsuranceRuralPremium'
+        '204':
+          $ref: '#/components/responses/NoContent'
         '400':
           $ref: '#/components/responses/BadRequest'
         '401':
@@ -186,7 +193,7 @@ paths:
           OAuth2Security:
             - 'consent:consentId'
             - insurance-rural
-  /{policyId}/claim:
+  /insurance-rural/{policyId}/claim:
     get:
       tags:
         - InsuranceRural
@@ -203,6 +210,8 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/OKResponseInsuranceRuralClaims'
+        '204':
+          $ref: '#/components/responses/NoContent'
         '400':
           $ref: '#/components/responses/BadRequest'
         '401':
@@ -266,7 +275,7 @@ components:
                     companyName:
                       description: Nome da sociedade pertencente à marca
                       type: string
-                      maxLength: 80
+                      maxLength: 200
                     cnpjNumber:
                       description: CNPJ da sociedade pertencente à marca
                       type: string
@@ -315,7 +324,6 @@ components:
         documentType:
           description: Tipo de Documento Emitido
           type: string
-          maxLength: 28
           enum: [APOLICE_INDIVIDUAL,
                 BILHETE,
                 CERTIFICADO,
@@ -339,7 +347,6 @@ components:
         issuanceType: 
           description: "Tipo de Emissão"
           type: string
-          maxLength: 16
           enum: [EMISSAO_PROPRIA,
                 COSSEGURO_ACEITO]
           example: EMISSAO_PROPRIA
@@ -348,19 +355,19 @@ components:
           type: string
           format: date
           maxLength: 10
-          example: AAAA-MM-DD
+          example: '2022-12-31'
         termStartDate: 
           description: Data de início de vigência do documento
           type: string
           format: date
           maxLength: 10
-          example: AAAA-MM-DD
+          example: '2022-12-31'
         termEndDate:
           description: Data de fim de vigência do documento
           type: string
           format: date
           maxLength: 10
-          example: AAAA-MM-DD
+          example: '2022-12-31'
         leadInsurerCode:
           description: "Código da seguradora líder para contratos com arranjo de cosseguro"
           type: string
@@ -370,7 +377,6 @@ components:
           type: string
           maxLength: 1024
         maxLMG:
-          description: Limite Máximo de Garantia.
           $ref: '#/components/schemas/AmountDetails'
         proposalId:
           description: Identificador da Proposta
@@ -402,15 +408,14 @@ components:
             $ref: '#/components/schemas/InsuranceRuralCoverage'
         coinsuranceRetainedPercentage:
           description: "Percentual Retido em Cosseguro (Quando há cosseguro)"
-          type: number
-          pattern: '^\d{1,3}(\.\d{1,9})?$' 
-          example: 10.00
+          type: string
+          pattern: '^\d{1,3}\.\d{1,9}$' 
+          example: '10.00'
         coinsurers:
           type: array
           items:
             $ref: '#/components/schemas/Coinsurer'
         branchInfo:
-          description: Informações do Anexo Específico
           $ref: '#/components/schemas/InsuranceRuralSpecificPolicyInfo'
     PersonalInfo:
       type: object
@@ -432,7 +437,6 @@ components:
         identificationType:
           description: Tipo de Documento da Pessoa
           type: string
-          maxLength: 6
           enum: [
             CPF,
             CNPJ,
@@ -486,7 +490,6 @@ components:
         identificationType:
           description: Tipo de Documento da Pessoa
           type: string
-          maxLength: 6
           enum: [
             CPF,
             CNPJ,
@@ -506,11 +509,10 @@ components:
         type:
           description: Tipo do Intermediador
           type: string
-          maxLength: 23
           enum: [ 
             CORRETOR,
             REPRESENTANTE,
-            ESTIPULANTE,
+            ESTIPULANTE_AVERBADOR_INSTITUIDOR,
             CORRESPONDENTE,
             AGENTE_DE_MICROSSEGUROS,
             OUTROS
@@ -529,7 +531,6 @@ components:
         identificationType:
           description: Tipo de Documento do Intermediador(a) (Caso Tipo de Intermediador não seja CORRETOR ou quando for CORRETOR, porém o identificador do intermediador não seja informado)
           type: string
-          maxLength: 6
           enum: [
             CPF,
             CNPJ,
@@ -578,7 +579,6 @@ components:
           description: "Identificador do objeto segurado. Obs.: Para Fiança Locatícia, é a identificação do Contrato de Locação."
         type:
           type: string
-          maxLength: 23
           description: Tipo do objeto segurado
           enum: [CONTRATO,
                 PROCESSO_ADMINISTRATIVO,
@@ -586,6 +586,7 @@ components:
                 AUTOMOVEL,
                 CONDUTOR,
                 FROTA,
+                PESSOA,
                 OUTROS]
         typeAdditionalInfo:
           type: string
@@ -596,7 +597,6 @@ components:
           maxLength: 1024
           description: Descrição do objeto segurado 
         amount:
-          description: "Valor do objeto segurado (Caso Tipo do Objeto Segurado for "CONTRATO", "PROCESSO_ADMINISTRATIVO", "PROCESSO_JUDICIAL" e para coberturas dos ramos de seguro garantia e de fiança locatícia)"
           $ref: '#/components/schemas/AmountDetails'
         coverages:
           type: array
@@ -617,12 +617,11 @@ components:
         branch:
           type: string
           maxLength: 4
-          example: 0111
+          example: '0111'
           description: Grupo e Ramo da Cobertura (Conforme regulamentação Susep vigente)
         code:
             type: string
             description: Código da cobertura, conforme Anexo II do Manuel de Escopo de Dados
-            maxLength: 67
             enum: [
               GRANIZO,
               GEADA,
@@ -670,7 +669,6 @@ components:
             maxLength: 50
         LMI:          
           $ref: '#/components/schemas/AmountDetails'
-          description: Limite máximo de indenização (LMI)
         isLMISublimit:
           type: boolean
           description: Limite máximo de indenização (LMI) é sublimite (Caso aplicável)
@@ -678,27 +676,25 @@ components:
           type: string
           format: date
           maxLength: 10
-          example: AAAA-MM-DD
+          example: '2022-12-31'
           description: "Data de início de vigência da cobertura"
         termEndDate:  
           type: string
           format: date
           maxLength: 10
-          example: AAAA-MM-DD
+          example: '2022-12-31'
           description: "Data de fim de vigência da cobertura"
         isMainCoverage:
           type: boolean
           description: "Cobertura Principal"
         feature:
           type: string
-          maxLength: 25
           description: "Característica da cobertura"
           enum: [MASSIFICADOS,
                 MASSIFICADOS_MICROSEGUROS,
                 GRANDES_RISCOS]
         type:    
           type: string
-          maxLength: 26
           description: "Tipo de cobertura"
           enum: [PARAMETRICO,
                 INTERMITENTE,
@@ -711,14 +707,12 @@ components:
           description: "Período de carência. OBS: Obrigatório, se houver"       
         gracePeriodicity:
           type: string
-          maxLength: 3
           description: "Periodicidade da carência. OBS: Obrigatório, se houver"
           enum: [DIA,
                 MES,
                 ANO]     
         gracePeriodCountingMethod:   
           type: string
-          maxLength: 13
           description: "Indicador de dias úteis ou corridos da carência. OBS: Obrigatório, se houver"
           enum: [DIAS_UTEIS,
                 DIAS_CORRIDOS] 
@@ -726,13 +720,13 @@ components:
           type: string
           format: date
           maxLength: 10
-          example: AAAA-MM-DD
+          example: '2022-12-31'
           description: "Data de início da carência. OBS: Obrigatório, se houver"
         gracePeriodEndDate:            
           type: string
           format: date
           maxLength: 10
-          example: AAAA-MM-DD
+          example: '2022-12-31'
           description: "Data de fim da carência. OBS: Obrigatório, se houver"
     InsuranceRuralCoverage:
       type: object
@@ -745,11 +739,10 @@ components:
           description: Grupo e ramo da cobertura
           type: string
           maxLength: 4
-          example: 0111
+          example: '0111'
         code:
             type: string
             description: Código da cobertura, conforme Anexo II do Manuel de Escopo de Dados
-            maxLength: 67
             enum: [
               GRANIZO,
               GEADA,
@@ -789,13 +782,12 @@ components:
           type: string
           maxLength: 500
         deductible:
-          description: Informações de franquia
           $ref: '#/components/schemas/Deductible'
         POS:
-          description: Informações de franquia
           $ref: '#/components/schemas/POS'
     Deductible:
       type: object
+      description: Informações de franquia
       required:
         - type
         - amount
@@ -808,7 +800,6 @@ components:
         type:
           description: Tipo de Franquia
           type: string
-          maxLength: 9
           enum: [
             REDUZIDA,
             NORMAL,
@@ -822,7 +813,6 @@ components:
           type: string
           maxLength: 500
         amount:
-          description: Valor da Franquia
           $ref: '#/components/schemas/AmountDetails'
         period:
           description: Prazo da Franquia
@@ -832,7 +822,6 @@ components:
         periodicity:
           description: Periodicidade da Franquia
           type: string
-          maxLength: 3
           enum: [
             DIA,
             MES,
@@ -842,7 +831,6 @@ components:
         periodCountingMethod:
           description: Indicador de Dias Úteis ou Corridos (Caso aplicável)
           type: string
-          maxLength: 13
           enum: [
             DIAS_UTEIS,
             DIAS_CORRIDOS
@@ -865,6 +853,7 @@ components:
           example: Franquia de exemplo
     POS:
       type: object
+      description: Informações de franquia
       required:
         - applicationType
         - description
@@ -872,7 +861,6 @@ components:
         applicationType:
           description: Forma de Aplicação do POS
           type: string
-          maxLength: 10
           enum: [
             VALOR,
             PERCENTUAL,
@@ -885,16 +873,14 @@ components:
           maxLength: 60
           example: "Descrição de exemplo"
         minValue:
-          description: Valor Mínimo do POS
           $ref: '#/components/schemas/AmountDetails'
         maxValue:
-          description: Valor Máximo do POS
           $ref: '#/components/schemas/AmountDetails'
         percentage:
           description: Percentual do POS
-          type: number
-          pattern: '^\d{1,3}(\.\d{1,9})?$'
-          example: 10.00
+          type: string
+          pattern: '^\d{1,3}\.\d{1,9}$'
+          example: '10.00'
     Coinsurer:
       type: object
       required:
@@ -907,9 +893,9 @@ components:
           maxLength: 60
         cededPercentage:
           description: "Percentual cedido para a congênere para contratos de cosseguro cedido. Obs: Obrigatório quando há cosseguro"
-          type: number
-          pattern: '^\d{1,3}(\.\d{1,9})?$'
-          example: 10.00
+          type: string
+          pattern: '^\d{1,3}\.\d{1,9}$'
+          example: '10.00'
     ResponseInsuranceRuralPremium:
       type: object
       required:
@@ -937,7 +923,6 @@ components:
           maxLength: 3
           example: 4
         amount:
-          description: Valor total do prêmio do contrato
           $ref: '#/components/schemas/AmountDetails'
         coverages:
           type: array
@@ -958,11 +943,10 @@ components:
           description: Grupo e ramo da cobertura
           type: string
           maxLength: 4
-          example: 0111
+          example: '0111'
         code:
             type: string
             description: Código da cobertura, conforme Anexo II do Manuel de Escopo de Dados
-            maxLength: 67
             enum: [
               GRANIZO,
               GEADA,
@@ -1002,7 +986,6 @@ components:
           type: string
           maxLength: 500
         premiumAmount:
-          description: Valor de Prêmio da Cobertura
           $ref: '#/components/schemas/AmountDetails'
     Payment:
       type: object
@@ -1017,7 +1000,7 @@ components:
           description: Data do movimento de prêmio
           type: string
           format: date
-          example: AAAA-MM-DD
+          example: '2022-12-31'
         movementType:
           description: Tipo do Movimento
           type: string
@@ -1031,28 +1014,25 @@ components:
                 REABERTURA_DE_PARCELA,
                 BAIXA_POR_PERDA,
                 CANCELAMENTO_DE_PREMIO_E_PARCELA]
-          maxLength: 35
           example: LIQUIDACAO_DE_PREMIO
         movementOrigin:
           description: "Origem do Movimento. Obs: Obrigatório caso Tipo de Movimento for LIQUIDACAO_DE_PREMIO e ESTORNO_DE_PREMIO"
           type: string
           enum: [EMISSAO_DIRETA,
-          EMISSAO_ACEITA_DE_COSSEGURO,
-          EMISSAO_CEDIDA_DE_COSSEGURO]
-          maxLength: 27
+            EMISSAO_ACEITA_DE_COSSEGURO,
+            EMISSAO_CEDIDA_DE_COSSEGURO]
           example: EMISSAO_DIRETA
         movementPaymentsNumber:
           description: Identificador da parcela do movimento
           type: number
           maxLength: 3
         amount:
-          description: Valor da parcela
           $ref: '#/components/schemas/AmountDetails'
         maturityDate:
           description: Data de Vencimento da Parcela
           type: string
           format: date
-          example: AAAA-MM-DD
+          example: '2022-12-31'
         tellerId:
           description: "Documento do Pagador/Recebedor Obs: Obrigatório caso Tipo de Movimento for  LIQUIDACAO_DE_PREMIO e LIQUIDACAO_DE_CUSTO_DE_AQUISICAO"
           type: string
@@ -1061,9 +1041,8 @@ components:
           description: "Tipo do Documento do Pagador/Recebedor Obs: Obrigatório caso Tipo de Movimento for  LIQUIDACAO_DE_PREMIO e LIQUIDACAO_DE_CUSTO_DE_AQUISICAO"
           type: string
           enum: [CPF,
-          CNPJ,
-          OUTROS]
-          maxLength: 6
+            CNPJ,
+            OUTROS]
           example: CPF
         tellerName:
           description: "Nome ou Razão Social do Pagador/Recebedor Obs: Obrigatório caso Tipo de Movimento for  LIQUIDACAO_DE_PREMIO e LIQUIDACAO_DE_CUSTO_DE_AQUISICAO"
@@ -1086,7 +1065,6 @@ components:
                 PIX,
                 DINHEIRO_EM_ESPECIE,
                 OUTROS]
-          maxLength: 19
           example: BOLETO
     ResponseInsuranceRuralClaims:
       type: object
@@ -1098,7 +1076,8 @@ components:
         data:
           type: array
           items:
-            $ref: '#/components/schemas/InsuranceRuralClaim'                    
+            $ref: '#/components/schemas/InsuranceRuralClaim'
+          minItems: 0
         links:
             $ref: '#/components/schemas/Links'
         meta:
@@ -1123,11 +1102,10 @@ components:
           type: string
           format: date
           maxLength: 10
-          example: AAAA-MM-DD
+          example: '2022-12-31'
         status:
           description: Status do sinistro     
           type: string
-          maxLength: 30
           enum: [ABERTO,
                 ENCERRADO_COM_INDENIZACAO,
                 ENCERRADO_SEM_INDENIZACAO,
@@ -1139,39 +1117,37 @@ components:
           type: string
           format: date
           maxLength: 10
-          example: AAAA-MM-DD
+          example: '2022-12-31'
         occurrenceDate:
           description: Data de ocorrência do sinistro
           type: string
           format: date
           maxLength: 10
-          example: AAAA-MM-DD
+          example: '2022-12-31'
         warningDate:
           description: Data de aviso do sinistro
           type: string
           format: date
           maxLength: 10
-          example: AAAA-MM-DD
+          example: '2022-12-31'
         thirdPartyClaimDate:
           description: Data de reclamação do terceiro
           type: string
           format: date
           maxLength: 10
-          example: AAAA-MM-DD
+          example: '2022-12-31'
         amount:
-          description: "Valor total bruto do sinistro considerando todos os movimentos e suas reavaliações. Não devem ser considerados valores de deduções (por exemplo, redutores e ressarcimento salvado)"
           $ref: '#/components/schemas/AmountDetails'
         denialJustification:
           description: "Justificativa da Negativa(Caso Status do Sinistro for 'ENCERRADO_SEM_INDENIZACAO')"
           type: string
-          maxLength: 23
           enum: [RISCO_EXCLUIDO,
-          RISCO_AGRAVADO,
-          SEM_DOCUMENTACAO,
-          DOCUMENTACAO_INCOMPLETA,
-          PRESCRICAO,
-          FORA_COBERTURA,
-          OUTROS]
+            RISCO_AGRAVADO,
+            SEM_DOCUMENTACAO,
+            DOCUMENTACAO_INCOMPLETA,
+            PRESCRICAO,
+            FORA_COBERTURA,
+            OUTROS]
         denialJustificationDescription:
           description: "Descrição da Justificativa da Negativa(Caso Justificativa da Negativa for 'OUTROS')"
           type: string
@@ -1181,7 +1157,6 @@ components:
           items:
             $ref: '#/components/schemas/InsuranceRuralClaimCoverage'
         branchInfo:
-          description: Informações do Anexo Específico
           $ref: '#/components/schemas/InsuranceRuralSpecificClaim'
     InsuranceRuralClaimCoverage:
       type: object
@@ -1197,11 +1172,10 @@ components:
           description: Grupo e ramo da cobertura
           type: string
           maxLength: 4
-          example: 0111
+          example: '0111'
         code:
             type: string
             description: Código da cobertura, conforme Anexo II do Manuel de Escopo de Dados
-            maxLength: 67
             enum: [
               GRANIZO,
               GEADA,
@@ -1244,29 +1218,41 @@ components:
           description: Data de Aviso do Sinistro por Cobertura (Caso aplicável)
           type: string
           format: date
-          example: "2022-05-01"
+          example: '2022-12-31'
         thirdPartyClaimDate:
           description: Data de Reclamação do Terceiro por Cobertura (Caso aplicável)
           type: string
           format: date
-          example: "2022-05-01"
+          example: '2022-12-31'
     AmountDetails:
         type: object
+        description: Detalhes de valores/limites
         required:
           - amount
-          - currency
+          - unit
         properties:
           amount:
-            type: number
-            pattern: '^\d{1,16}(\.\d{1,2})?$'
-            example: 2000.00
-          currency:
-            description: Moeda da Parcela, de acordo com ISO-4217.
             type: string
-            pattern: '^(\w{3}){1}$'
-            example: BRL
+            pattern: '^\d{1,16}\.\d{2}$'  
+            example: '2000.00'
+          unit:
+            type: object
+            required:
+              - code
+              - description
+            properties:
+              code:
+                type: string
+                maxLength: 2
+                example: R$
+              description:
+                type: string
+                description: Moeda da Parcela, de acordo com ISO-4217.
+                pattern: ^(\w{3})$
+                example: BRL
     InsuranceRuralSpecificPolicyInfo:
       type: object
+      description: Informações do Anexo Específico
       properties:
         insuredObjects:
           type: array
@@ -1286,7 +1272,6 @@ components:
           type: boolean
           example: true
         subventionAmount:
-          description: Valor do prêmio subvencionado. Caso contrato for da modalidade "Agrícola", "Pecuário", "Aquícola" e "Florestas"
           $ref: '#/components/schemas/AmountDetails'
         subventionType:
           description: Origem da subvenção. Caso contrato for da modalidade "Agrícola", "Pecuário", "Aquícola" e "Florestas"
@@ -1320,20 +1305,18 @@ components:
                 TO,
                 BR,
                 XX]
-          maxLength: 2
           example: AC
         safeArea:
           description: Área Segurada Total. Caso aplicável
-          type: number
-          pattern: '^\d{1,18}(\.\d{1,2})?$'
-          example: 2000.00
+          type: string
+          pattern: '^\d{1,18}\.\d{2}$'
+          example: '2000.00'
         unitMeasure:
           description: Unidade de medida da área segurada. Caso aplicável
           type: string
           enum: [HECTAR,
                 METRO_QUADRADO,
                 OUTROS]
-          maxLength: 6
           example: HECTAR
         cultureCode:
           description: Código Culturas, Conforme padronização definida em regulamentação vigente. Caso contrato for da modalidade "Agrícola"
@@ -1351,7 +1334,6 @@ components:
                 AVES,
                 BUBALINOS,
                 OUTROS]
-          maxLength: 9
           example: BOVINOS
         forestCode:
           description: Código Florestas. Caso contrato for da modalidade "Florestas"
@@ -1361,13 +1343,12 @@ components:
                 TECA,
                 SERINGUEIRA,
                 OUTROS]
-          maxLength: 11
           example: PINUS
         surveyDate:
           description: Data da vistoria. Caso contrato for da modalidade "Agrícola", "Pecuário", "Aquícola" e "Florestas"
           type: string
           format: date
-          example: AAAA-MM-DD
+          example: '2022-12-31'
         surveyAddress:
           description: Local da vistoria. Caso contrato for da modalidade "Agrícola", "Pecuário", "Aquícola" e "Florestas"
           type: string
@@ -1402,13 +1383,12 @@ components:
                 SP,
                 SE,
                 TO]
-          maxLength: 2
           example: SP
         surveyPostCode:
           description: Código postal da vistoria. Caso contrato for da modalidade "Agrícola", "Pecuário", "Aquícola" e "Florestas"
           type: string
           maxLength: 30
-          example: 10000000
+          example: '10000000'
         surveyCountryCode:
           description: País da vistoria, de acordo com o código "alpha3" do ISO-3166. Caso contrato for da modalidade "Agrícola", "Pecuário", "Aquícola" e "Florestas"
           type: string
@@ -1421,13 +1401,12 @@ components:
           enum: [CPF,
                 CNPJ,
                 OUTROS]
-          maxLength: 6
           example: CPF
         surveyorId:
           description: CPF / CNPJ / Documento estrangeiro do vistoriador. Caso contrato for da modalidade "Agrícola", "Pecuário", "Aquícola" e "Florestas"
           type: string
           maxLength: 60
-          example: 40
+          example: '40'
         surveyorName:
           description: Nome ou razão social do vistoriador. Caso contrato for da modalidade "Agrícola", "Pecuário", "Aquícola" e "Florestas"
           type: string
@@ -1437,7 +1416,6 @@ components:
           type: string
           enum: [CLIMATICOS,
                 OUTROS]
-          maxLength: 10
           example: CLIMATICOS
         areAssetsCovered:
           description: Cobre bens que não foram dados em garantia de operação de crédito rural?. Caso contrato for relativo a "Benfeitorias" ou "Produtos Agropecuários"
@@ -1449,7 +1427,6 @@ components:
           enum: [CONSUMO,
                 PRODUCAO,
                 REPRODUCAO]
-          maxLength: 10
           example: CONSUMO
         animalType:
           description: Classificação dos animais cobertos para Animais. Caso contrato for da modalidade "Animais"
@@ -1457,17 +1434,17 @@ components:
           enum: [ELITE,
                 DOMESTICO,
                 SEGURANCA]
-          maxLength: 9
           example: ELITE
 
     InsuranceRuralSpecificClaim:
       type: object
+      description: Informações do Anexo Específico
       properties:
         surveyDate:
           description: Data da vistoria. Caso contrato for da modalidade "Agrícola", "Pecuário", "Aquícola" e "Florestas"
           type: string
           format: date
-          example: AAAA-MM-DD
+          example: '2022-12-31'
         surveyAddress:
           description: Local da vistoria. Caso contrato for da modalidade "Agrícola", "Pecuário", "Aquícola" e "Florestas"
           type: string
@@ -1502,13 +1479,12 @@ components:
                 SP,
                 SE,
                 TO]
-          maxLength: 2
           example: SP
         surveyPostCode:
           description: Código postal da vistoria. Caso contrato for da modalidade "Agrícola", "Pecuário", "Aquícola" e "Florestas"
           type: string
           maxLength: 30
-          example: 10000000
+          example: '10000000'
         surveyCountryCode:
           description: País da vistoria, de acordo com o código "alpha3" do ISO-3166. Caso contrato for da modalidade "Agrícola", "Pecuário", "Aquícola" e "Florestas"
           type: string
@@ -1521,23 +1497,28 @@ components:
         self:
           type: string
           description: URL da página atualmente requisitada
-          example: 'https://api.organizacao.com.br/open-insurance/insurance-rural/v1'
+          pattern: ^(https:\/\/)(.*?)(\/open-insurance\/insurance-rural\/v\d+)(\/insurance-rural.*)?$
+          example: 'https://api.organizacao.com.br/open-insurance/insurance-rural/v1/insurance-rural'
         first:
           type: string
           description: URL da primeira página de registros
-          example: 'https://api.organizacao.com.br/open-insurance/insurance-rural/v1'
+          pattern: ^(https:\/\/)(.*?)(\/open-insurance\/insurance-rural\/v\d+)(\/insurance-rural.*)?$
+          example: 'https://api.organizacao.com.br/open-insurance/insurance-rural/v1/insurance-rural'
         prev:
           type: string
           description: URL da página anterior de registros
-          example: 'https://api.organizacao.com.br/open-insurance/insurance-rural/v1'
+          pattern: ^(https:\/\/)(.*?)(\/open-insurance\/insurance-rural\/v\d+)(\/insurance-rural.*)?$
+          example: 'https://api.organizacao.com.br/open-insurance/insurance-rural/v1/insurance-rural'
         next:
           type: string
           description: URL da próxima página de registros
-          example: 'https://api.organizacao.com.br/open-insurance/insurance-rural/v1'
+          pattern: ^(https:\/\/)(.*?)(\/open-insurance\/insurance-rural\/v\d+)(\/insurance-rural.*)?$
+          example: 'https://api.organizacao.com.br/open-insurance/insurance-rural/v1/insurance-rural'
         last:
           type: string
           description: URL da última página de registros
-          example: 'https://api.organizacao.com.br/open-insurance/insurance-rural/v1'
+          pattern: ^(https:\/\/)(.*?)(\/open-insurance\/insurance-rural\/v\d+)(\/insurance-rural.*)?$
+          example: 'https://api.organizacao.com.br/open-insurance/insurance-rural/v1/insurance-rural'
     Meta:
       type: object
       properties:
@@ -1567,6 +1548,7 @@ components:
               - code
               - title
               - detail
+              - requestDateTime
             properties:
               code:
                 description: Código de erro específico do endpoint
@@ -1684,7 +1666,7 @@ components:
           authorizationUrl: 'https://authserver.example/authorization'
           tokenUrl: 'https://authserver.example/token'
           scopes:
-            insurance-rural: Escopo necessário para acesso à API. O controle dos endpoints específicos é feito via permissions.
+            insurance-rural: Escopo necessário para acesso à API. O controle dos endpoints específicos é feito via permissions.  
   responses:
     OKResponseInsuranceRural:
       description: Dados de ResponseInsuranceRural obtidos com sucesso
@@ -1726,8 +1708,20 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/ResponseInsuranceRuralPremium'
+    UnprocessableEntity:
+      description: 'O servidor entende o tipo de conteúdo da entidade da requisição, e a sintaxe da requisição esta correta, mas não foi possível processar as instruções presente.'
+      content:
+        application/json; charset=utf-8:
+          schema:
+            $ref: '#/components/schemas/ResponseError'
+    NoContent:
+      description: 'O recurso solicitado não existe ou não foi localizado.'
+      content:
+        application/json; charset=utf-8:
+          schema:
+            $ref: '#/components/schemas/ResponseError'
     BadRequest:
-      description: 'A requisição foi malformada, omitindo atributos obrigatórios, seja no payload ou através de atributos na URL'
+      description: 'A requisição foi malformada, omitindo atributos obrigatórios, seja no payload ou através de atributos na URL.'
       content:
         application/json; charset=utf-8:
           schema:
@@ -1770,12 +1764,6 @@ components:
             $ref: '#/components/schemas/ResponseError'
     Unauthorized:
       description: Cabeçalho de autenticação ausente/inválido ou token inválido
-      content:
-        application/json; charset=utf-8:
-          schema:
-            $ref: '#/components/schemas/ResponseError'
-    UnprocessableEntity:
-      description: O servidor entende o tipo de conteúdo da entidade da requisição, e a sintaxe da requisição esta correta, mas não foi possível processar as instruções presentes
       content:
         application/json; charset=utf-8:
           schema:

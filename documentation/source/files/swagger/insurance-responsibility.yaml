@@ -33,18 +33,19 @@ info:
     ### `/{policyId}/claim`
       - permissions:
         - GET: **DAMAGES_AND_PEOPLE_RESPONSIBILITY_CLAIM_READ**
-  version: 1.1.0
+  version: 1.2.0
   contact:
     name: Governança do Open Insurance Brasil
-    email: gt-interfaces@openinsurancebr.org
-    url: 'https://openinsurance-brasil.github.io/areadesenvolvedor/'
+    url: 'https://www.gov.br/susep/'
 servers:
   - url: 'https://api.organizacao.com.br/open-insurance/insurance-responsibility/v1'
     description: Servidor de Produção
   - url: 'https://api.organizacao.com.br/open-insurance/insurance-responsibility/v1'
     description: Servidor de Homologação
+tags:
+  - name: 'InsuranceResponsibility'
 paths:
-  /:
+  /insurance-responsibility:
     get:
       tags:
         - InsuranceResponsibility
@@ -62,6 +63,8 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/OKResponseInsuranceResponsibility'
+        '204':
+          $ref: '#/components/responses/NoContent'
         '400':
           $ref: '#/components/responses/BadRequest'
         '401':
@@ -92,7 +95,7 @@ paths:
           OAuth2Security:
             - 'consent:consentId'
             - insurance-responsibility
-  /{policyId}/policy-info:
+  /insurance-responsibility/{policyId}/policy-info:
     get:
       tags:
         - InsuranceResponsibility
@@ -109,6 +112,8 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/OKResponseInsuranceResponsibilityPolicyInfo'
+        '204':
+          $ref: '#/components/responses/NoContent'
         '400':
           $ref: '#/components/responses/BadRequest'
         '401':
@@ -139,7 +144,7 @@ paths:
           OAuth2Security:
             - 'consent:consentId'
             - insurance-responsibility
-  /{policyId}/premium:
+  /insurance-responsibility/{policyId}/premium:
     get:
       tags:
         - InsuranceResponsibility
@@ -156,6 +161,8 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/OKResponseInsuranceResponsibilityPremium'
+        '204':
+          $ref: '#/components/responses/NoContent'
         '400':
           $ref: '#/components/responses/BadRequest'
         '401':
@@ -186,7 +193,7 @@ paths:
           OAuth2Security:
             - 'consent:consentId'
             - insurance-responsibility
-  /{policyId}/claim:
+  /insurance-responsibility/{policyId}/claim:
     get:
       tags:
         - InsuranceResponsibility
@@ -203,6 +210,8 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/OKResponseInsuranceResponsibilityClaims'
+        '204':
+          $ref: '#/components/responses/NoContent'
         '400':
           $ref: '#/components/responses/BadRequest'
         '401':
@@ -266,7 +275,7 @@ components:
                     companyName:
                       description: Nome da sociedade pertencente à marca
                       type: string
-                      maxLength: 80
+                      maxLength: 200
                     cnpjNumber:
                       description: CNPJ da sociedade pertencente à marca
                       type: string
@@ -315,7 +324,6 @@ components:
         documentType:
           description: Tipo de Documento Emitido
           type: string
-          maxLength: 28
           enum: [APOLICE_INDIVIDUAL,
                 BILHETE,
                 CERTIFICADO,
@@ -339,7 +347,6 @@ components:
         issuanceType: 
           description: "Tipo de Emissão"
           type: string
-          maxLength: 16
           enum: [EMISSAO_PROPRIA,
                 COSSEGURO_ACEITO]
           example: EMISSAO_PROPRIA
@@ -348,19 +355,19 @@ components:
           type: string
           format: date
           maxLength: 10
-          example: AAAA-MM-DD
+          example: '2022-12-31'
         termStartDate: 
           description: Data de início de vigência do documento
           type: string
           format: date
           maxLength: 10
-          example: AAAA-MM-DD
+          example: '2022-12-31'
         termEndDate:
           description: Data de fim de vigência do documento
           type: string
           format: date
           maxLength: 10
-          example: AAAA-MM-DD
+          example: '2022-12-31'
         leadInsurerCode:
           description: "Código da seguradora líder para contratos com arranjo de cosseguro"
           type: string
@@ -370,7 +377,6 @@ components:
           type: string
           maxLength: 1024
         maxLMG:
-          description: Limite Máximo de Garantia.
           $ref: '#/components/schemas/AmountDetails'
         proposalId:
           description: Identificador da Proposta
@@ -402,15 +408,14 @@ components:
             $ref: '#/components/schemas/InsuranceResponsibilityCoverage'
         coinsuranceRetainedPercentage:
           description: "Percentual Retido em Cosseguro (Quando há cosseguro)"
-          type: number
-          pattern: '^\d{1,3}(\.\d{1,9})?$'
-          example: 10.00
+          type: string
+          pattern: '^\d{1,3}\.\d{1,9}$'
+          example: '10.00'
         coinsurers:
           type: array
           items:
             $ref: '#/components/schemas/Coinsurer'
         branchInfo:
-          description: Informações do Anexo Específico
           $ref: '#/components/schemas/InsuranceResponsibilitySpecificPolicyInfo'
     PersonalInfo:
       type: object
@@ -432,7 +437,6 @@ components:
         identificationType:
           description: Tipo de Documento da Pessoa
           type: string
-          maxLength: 6
           enum: [
             CPF,
             CNPJ,
@@ -486,7 +490,6 @@ components:
         identificationType:
           description: Tipo de Documento da Pessoa
           type: string
-          maxLength: 6
           enum: [
             CPF,
             CNPJ,
@@ -506,11 +509,10 @@ components:
         type:
           description: Tipo do Intermediador
           type: string
-          maxLength: 23
           enum: [ 
             CORRETOR,
             REPRESENTANTE,
-            ESTIPULANTE,
+            ESTIPULANTE_AVERBADOR_INSTITUIDOR,
             CORRESPONDENTE,
             AGENTE_DE_MICROSSEGUROS,
             OUTROS
@@ -529,7 +531,6 @@ components:
         identificationType:
           description: Tipo de Documento do Intermediador(a) (Caso Tipo de Intermediador não seja CORRETOR ou quando for CORRETOR, porém o identificador do intermediador não seja informado)
           type: string
-          maxLength: 6
           enum: [
             CPF,
             CNPJ,
@@ -578,7 +579,6 @@ components:
           description: "Identificador do objeto segurado. Obs.: Para Fiança Locatícia, é a identificação do Contrato de Locação."
         type:
           type: string
-          maxLength: 23
           description: Tipo do objeto segurado
           enum: [CONTRATO,
                 PROCESSO_ADMINISTRATIVO,
@@ -586,6 +586,7 @@ components:
                 AUTOMOVEL,
                 CONDUTOR,
                 FROTA,
+                PESSOA,
                 OUTROS]
         typeAdditionalInfo:
           type: string
@@ -596,7 +597,6 @@ components:
           maxLength: 1024
           description: Descrição do objeto segurado 
         amount:
-          description: "Valor do objeto segurado (Caso Tipo do Objeto Segurado for "CONTRATO", "PROCESSO_ADMINISTRATIVO", "PROCESSO_JUDICIAL" e para coberturas dos ramos de seguro garantia e de fiança locatícia)"
           $ref: '#/components/schemas/AmountDetails'
         coverages:
           type: array
@@ -617,12 +617,11 @@ components:
         branch:
           type: string
           maxLength: 4
-          example: 0111
+          example: '0111'
           description: Grupo e Ramo da Cobertura (Conforme regulamentação Susep vigente)
         code:
             type: string
             description: Código da cobertura, conforme Anexo II do Manuel de Escopo de Dados
-            maxLength: 103
             enum: [
               DANOS_CAUSADOS_A_TERCEIROS,
               INSTALACOES_FIXAS,
@@ -678,7 +677,6 @@ components:
             maxLength: 50
         LMI:          
           $ref: '#/components/schemas/AmountDetails'
-          description: Limite máximo de indenização (LMI)
         isLMISublimit:
           type: boolean
           description: Limite máximo de indenização (LMI) é sublimite (Caso aplicável)
@@ -686,27 +684,25 @@ components:
           type: string
           format: date
           maxLength: 10
-          example: AAAA-MM-DD
+          example: '2022-12-31'
           description: "Data de início de vigência da cobertura"
         termEndDate:  
           type: string
           format: date
           maxLength: 10
-          example: AAAA-MM-DD
+          example: '2022-12-31'
           description: "Data de fim de vigência da cobertura"
         isMainCoverage:
           type: boolean
           description: "Cobertura Principal"
         feature:
           type: string
-          maxLength: 25
           description: "Característica da cobertura"
           enum: [MASSIFICADOS,
                 MASSIFICADOS_MICROSEGUROS,
                 GRANDES_RISCOS]
         type:    
           type: string
-          maxLength: 26
           description: "Tipo de cobertura"
           enum: [PARAMETRICO,
                 INTERMITENTE,
@@ -719,14 +715,12 @@ components:
           description: "Período de carência. OBS: Obrigatório, se houver"       
         gracePeriodicity:
           type: string
-          maxLength: 3
           description: "Periodicidade da carência. OBS: Obrigatório, se houver"
           enum: [DIA,
                 MES,
                 ANO]     
         gracePeriodCountingMethod:   
           type: string
-          maxLength: 13
           description: "Indicador de dias úteis ou corridos da carência. OBS: Obrigatório, se houver"
           enum: [DIAS_UTEIS,
                 DIAS_CORRIDOS] 
@@ -734,13 +728,13 @@ components:
           type: string
           format: date
           maxLength: 10
-          example: AAAA-MM-DD
+          example: '2022-12-31'
           description: "Data de início da carência. OBS: Obrigatório, se houver"
         gracePeriodEndDate:            
           type: string
           format: date
           maxLength: 10
-          example: AAAA-MM-DD
+          example: '2022-12-31'
           description: "Data de fim da carência. OBS: Obrigatório, se houver"
     InsuranceResponsibilityCoverage:
       type: object
@@ -753,11 +747,10 @@ components:
           description: Grupo e ramo da cobertura
           type: string
           maxLength: 4
-          example: 0111
+          example: '0111'
         code:
             type: string
             description: Código da cobertura, conforme Anexo II do Manuel de Escopo de Dados
-            maxLength: 103
             enum: [
               DANOS_CAUSADOS_A_TERCEIROS,
               INSTALACOES_FIXAS,
@@ -805,13 +798,12 @@ components:
           type: string
           maxLength: 500
         deductible:
-          description: Informações de franquia
           $ref: '#/components/schemas/Deductible'
         POS:
-          description: Informações de franquia
           $ref: '#/components/schemas/POS'
     Deductible:
       type: object
+      description: Informações de franquia
       required:
         - type
         - amount
@@ -824,7 +816,6 @@ components:
         type:
           description: Tipo de Franquia
           type: string
-          maxLength: 9
           enum: [
             REDUZIDA,
             NORMAL,
@@ -838,7 +829,6 @@ components:
           type: string
           maxLength: 500
         amount:
-          description: Valor da Franquia
           $ref: '#/components/schemas/AmountDetails'
         period:
           description: Prazo da Franquia
@@ -848,7 +838,6 @@ components:
         periodicity:
           description: Periodicidade da Franquia
           type: string
-          maxLength: 3
           enum: [
             DIA,
             MES,
@@ -858,7 +847,6 @@ components:
         periodCountingMethod:
           description: Indicador de Dias Úteis ou Corridos (Caso aplicável)
           type: string
-          maxLength: 13
           enum: [
             DIAS_UTEIS,
             DIAS_CORRIDOS
@@ -881,6 +869,7 @@ components:
           example: Franquia de exemplo
     POS:
       type: object
+      description: Informações de franquia
       required:
         - applicationType
         - description
@@ -888,7 +877,6 @@ components:
         applicationType:
           description: Forma de Aplicação do POS
           type: string
-          maxLength: 10
           enum: [
             VALOR,
             PERCENTUAL,
@@ -901,16 +889,14 @@ components:
           maxLength: 60
           example: "Descrição de exemplo"
         minValue:
-          description: Valor Mínimo do POS
           $ref: '#/components/schemas/AmountDetails'
         maxValue:
-          description: Valor Máximo do POS
           $ref: '#/components/schemas/AmountDetails'
         percentage:
           description: Percentual do POS
-          type: number
-          pattern: '^\d{1,3}(\.\d{1,9})?$'
-          example: 10.00
+          type: string
+          pattern: '^\d{1,3}\.\d{1,9}$'
+          example: '10.00'
     Coinsurer:
       type: object
       required:
@@ -923,9 +909,9 @@ components:
           maxLength: 60
         cededPercentage:
           description: "Percentual cedido para a congênere para contratos de cosseguro cedido. Obs: Obrigatório quando há cosseguro"
-          type: number
-          pattern: '^\d{1,3}(\.\d{1,9})?$'
-          example: 10.00
+          type: string
+          pattern: '^\d{1,3}\.\d{1,9}$'
+          example: '10.00'
     ResponseInsuranceResponsibilityPremium:
       type: object
       required:
@@ -953,7 +939,6 @@ components:
           maxLength: 3
           example: 4
         amount:
-          description: Valor total do prêmio do contrato
           $ref: '#/components/schemas/AmountDetails'
         coverages:
           type: array
@@ -974,11 +959,10 @@ components:
           description: Grupo e ramo da cobertura
           type: string
           maxLength: 4
-          example: 0111
+          example: '0111'
         code:
             type: string
             description: Código da cobertura, conforme Anexo II do Manuel de Escopo de Dados
-            maxLength: 103
             enum: [
               DANOS_CAUSADOS_A_TERCEIROS,
               INSTALACOES_FIXAS,
@@ -1026,7 +1010,6 @@ components:
           type: string
           maxLength: 500
         premiumAmount:
-          description: Valor de Prêmio da Cobertura
           $ref: '#/components/schemas/AmountDetails'
     Payment:
       type: object
@@ -1041,7 +1024,7 @@ components:
           description: Data do movimento de prêmio
           type: string
           format: date
-          example: AAAA-MM-DD
+          example: '2022-12-31'
         movementType:
           description: Tipo do Movimento
           type: string
@@ -1055,28 +1038,25 @@ components:
                 REABERTURA_DE_PARCELA,
                 BAIXA_POR_PERDA,
                 CANCELAMENTO_DE_PREMIO_E_PARCELA]
-          maxLength: 35
           example: LIQUIDACAO_DE_PREMIO
         movementOrigin:
           description: "Origem do Movimento. Obs: Obrigatório caso Tipo de Movimento for LIQUIDACAO_DE_PREMIO e ESTORNO_DE_PREMIO"
           type: string
           enum: [EMISSAO_DIRETA,
-          EMISSAO_ACEITA_DE_COSSEGURO,
-          EMISSAO_CEDIDA_DE_COSSEGURO]
-          maxLength: 27
+            EMISSAO_ACEITA_DE_COSSEGURO,
+            EMISSAO_CEDIDA_DE_COSSEGURO]
           example: EMISSAO_DIRETA
         movementPaymentsNumber:
           description: Identificador da parcela do movimento
           type: number
           maxLength: 3
         amount:
-          description: Valor da parcela
           $ref: '#/components/schemas/AmountDetails'
         maturityDate:
           description: Data de Vencimento da Parcela
           type: string
           format: date
-          example: AAAA-MM-DD
+          example: '2022-12-31'
         tellerId:
           description: "Documento do Pagador/Recebedor Obs: Obrigatório caso Tipo de Movimento for  LIQUIDACAO_DE_PREMIO e LIQUIDACAO_DE_CUSTO_DE_AQUISICAO"
           type: string
@@ -1085,9 +1065,8 @@ components:
           description: "Tipo do Documento do Pagador/Recebedor Obs: Obrigatório caso Tipo de Movimento for  LIQUIDACAO_DE_PREMIO e LIQUIDACAO_DE_CUSTO_DE_AQUISICAO"
           type: string
           enum: [CPF,
-          CNPJ,
-          OUTROS]
-          maxLength: 6
+            CNPJ,
+            OUTROS]
           example: CPF
         tellerName:
           description: "Nome ou Razão Social do Pagador/Recebedor Obs: Obrigatório caso Tipo de Movimento for  LIQUIDACAO_DE_PREMIO e LIQUIDACAO_DE_CUSTO_DE_AQUISICAO"
@@ -1110,7 +1089,6 @@ components:
                 PIX,
                 DINHEIRO_EM_ESPECIE,
                 OUTROS]
-          maxLength: 19
           example: BOLETO
     ResponseInsuranceResponsibilityClaims:
       type: object
@@ -1122,7 +1100,8 @@ components:
         data:
           type: array
           items:
-            $ref: '#/components/schemas/InsuranceResponsibilityClaim'                    
+            $ref: '#/components/schemas/InsuranceResponsibilityClaim'
+          minItems: 0
         links:
             $ref: '#/components/schemas/Links'
         meta:
@@ -1147,11 +1126,10 @@ components:
           type: string
           format: date
           maxLength: 10
-          example: AAAA-MM-DD
+          example: '2022-12-31'
         status:
           description: Status do sinistro     
           type: string
-          maxLength: 30
           enum: [ABERTO,
                 ENCERRADO_COM_INDENIZACAO,
                 ENCERRADO_SEM_INDENIZACAO,
@@ -1163,39 +1141,37 @@ components:
           type: string
           format: date
           maxLength: 10
-          example: AAAA-MM-DD
+          example: '2022-12-31'
         occurrenceDate:
           description: Data de ocorrência do sinistro
           type: string
           format: date
           maxLength: 10
-          example: AAAA-MM-DD
+          example: '2022-12-31'
         warningDate:
           description: Data de aviso do sinistro
           type: string
           format: date
           maxLength: 10
-          example: AAAA-MM-DD
+          example: '2022-12-31'
         thirdPartyClaimDate:
           description: Data de reclamação do terceiro
           type: string
           format: date
           maxLength: 10
-          example: AAAA-MM-DD
+          example: '2022-12-31'
         amount:
-          description: "Valor total bruto do sinistro considerando todos os movimentos e suas reavaliações. Não devem ser considerados valores de deduções (por exemplo, redutores e ressarcimento salvado)"
           $ref: '#/components/schemas/AmountDetails'
         denialJustification:
           description: "Justificativa da Negativa(Caso Status do Sinistro for 'ENCERRADO_SEM_INDENIZACAO')"
           type: string
-          maxLength: 23
           enum: [RISCO_EXCLUIDO,
-          RISCO_AGRAVADO,
-          SEM_DOCUMENTACAO,
-          DOCUMENTACAO_INCOMPLETA,
-          PRESCRICAO,
-          FORA_COBERTURA,
-          OUTROS]
+            RISCO_AGRAVADO,
+            SEM_DOCUMENTACAO,
+            DOCUMENTACAO_INCOMPLETA,
+            PRESCRICAO,
+            FORA_COBERTURA,
+            OUTROS]
         denialJustificationDescription:
           description: "Descrição da Justificativa da Negativa(Caso Justificativa da Negativa for 'OUTROS')"
           type: string
@@ -1218,11 +1194,10 @@ components:
           description: Grupo e ramo da cobertura
           type: string
           maxLength: 4
-          example: 0111
+          example: '0111'
         code:
             type: string
             description: Código da cobertura, conforme Anexo II do Manuel de Escopo de Dados
-            maxLength: 103
             enum: [
               DANOS_CAUSADOS_A_TERCEIROS,
               INSTALACOES_FIXAS,
@@ -1273,29 +1248,41 @@ components:
           description: Data de Aviso do Sinistro por Cobertura (Caso aplicável)
           type: string
           format: date
-          example: "2022-05-01"
+          example: '2022-12-31'
         thirdPartyClaimDate:
           description: Data de Reclamação do Terceiro por Cobertura (Caso aplicável)
           type: string
           format: date
-          example: "2022-05-01"
+          example: '2022-12-31'
     AmountDetails:
         type: object
+        description: Detalhes de valores/limites
         required:
           - amount
-          - currency
+          - unit
         properties:
           amount:
-            type: number
-            pattern: '^\d{1,16}(\.\d{1,2})?$'
-            example: 2000.00
-          currency:
-            description: Moeda da Parcela, de acordo com ISO-4217.
             type: string
-            pattern: '^(\w{3}){1}$'
-            example: BRL
+            pattern: '^\d{1,16}\.\d{2}$'
+            example: '2000.00'
+          unit:
+            type: object
+            required:
+              - code
+              - description
+            properties:
+              code:
+                type: string
+                maxLength: 2
+                example: R$
+              description:
+                type: string
+                description: Moeda da Parcela, de acordo com ISO-4217.
+                pattern: ^(\w{3})$
+                example: BRL
     InsuranceResponsibilitySpecificPolicyInfo:
       type: object
+      description: Informações do Anexo Específico
       required:
         - coverages
         - insuredObjects
@@ -1318,11 +1305,10 @@ components:
           description: Grupo e ramo da cobertura
           type: string
           maxLength: 4
-          example: 0111
+          example: '0111'
         code:
             type: string
             description: Código da cobertura, conforme Anexo II do Manuel de Escopo de Dados
-            maxLength: 103
             enum: [
               DANOS_CAUSADOS_A_TERCEIROS,
               INSTALACOES_FIXAS,
@@ -1372,7 +1358,6 @@ components:
         type:
           description: Base de indenização
           type: string
-          maxLength: 14
           enum: [POR_OCORRENCIA,
                 POR_RECLAMACAO,
                 OUTRA]
@@ -1384,7 +1369,7 @@ components:
           description: "Data limite da retroatividade(Caso Base de Indenização for 'Por Reclamação')."
           type: string
           format: date
-          example: AAAA-MM-DD
+          example: '2022-12-31'
         retroactivityPeriod: 
           description: "Prazo de retroatividade(Caso Base de Indenização for 'Por Reclamação')"
           type: string
@@ -1392,7 +1377,6 @@ components:
         retroactivityTimeUnit:
           description: "Unidade de tempo de retroatividade(Caso Base de Indenização for 'Por Reclamação')"
           type: string
-          maxLength: 3
           enum: [DIA,
                 MES,
                 ANO]  
@@ -1400,7 +1384,6 @@ components:
         retroactivityWorkingDaysIndex: 
           description: "Indicador de dias úteis de retroatividade(Caso Base de Indenização for 'Por Reclamação')."
           type: string
-          maxLength: 13
           enum: [DIAS_UTEIS,
                 DIAS_CORRIDOS]
           example: DIAS_UTEIS
@@ -1408,12 +1391,12 @@ components:
           description: "Data de início do prazo Adicional complementar(Caso Base de Indenização for 'Por Reclamação')."
           type: string
           format: date
-          example: AAAA-MM-DD
+          example: '2022-12-31'
         complementaryTermEndDate:
           description: "Data de Fim do prazo Adicional complementar(Caso Base de Indenização for 'Por Reclamação')."
           type: string
           format: date
-          example: AAAA-MM-DD
+          example: '2022-12-31'
         complementaryTerm:
           description: "Prazo Adicional complementar(Caso Base de Indenização for 'Por Reclamação')"
           type: string
@@ -1421,7 +1404,6 @@ components:
         complementaryTermTimeUnit:  
           description: "Unidade do prazo Adicional complementar(Caso Base de Indenização for 'Por Reclamação')"
           type: string
-          maxLength: 3
           enum: [DIA,
                 MES,
                 ANO]
@@ -1429,7 +1411,6 @@ components:
         complementaryTermWorkingDaysIndex:        
           description: "Indicador de dias úteis do prazo Adicional complementar(Caso Base de Indenização for 'Por Reclamação')."
           type: string
-          maxLength: 13
           enum: [DIAS_UTEIS,
                 DIAS_CORRIDOS]
           example: DIAS_UTEIS
@@ -1437,12 +1418,12 @@ components:
           description: Data de início do prazo Adicional suplementar(Caso Base de Indenização for 'Por Reclamação').
           type: string
           format: date
-          example: AAAA-MM-DD          
+          example: '2022-12-31'          
         supplementaryTermEndDate:   
           description: Data de fim do prazo Adicional suplementar(Caso Base de Indenização for 'Por Reclamação').
           type: string
           format: date
-          example: AAAA-MM-DD 
+          example: '2022-12-31' 
         supplementaryTerm:
           description: "Prazo Adicional suplementar (Caso Base de Indenização for 'Por Reclamação')."
           type: string
@@ -1450,21 +1431,18 @@ components:
         supplementaryTermTimeUnit:  
           description: "Unidade do prazo Adicional suplementar(Caso Base de Indenização for 'Por Reclamação')"
           type: string
-          maxLength: 3
           enum: [DIA,
                 MES,
                 ANO] 
         supplementaryTermWorkingDaysIndex:        
           description: "Indicador de dias úteis do prazo Adicional complementar(Caso Base de Indenização for 'Por Reclamação')."
           type: string
-          maxLength: 13
           enum: [DIAS_UTEIS,
                 DIAS_CORRIDOS]
           example: DIAS_UTEIS
         lawyerRecommendation:
           description: "Indicação do advogado(Caso de coberturas de custos de defesa de honorários)"
           type: string
-          maxLength: 23
           enum: [ESCOLHIDO_PELO_SEGURADO,
                 OUTROS]
           example: ESCOLHIDO_PELO_SEGURADO
@@ -1486,21 +1464,19 @@ components:
           type: boolean
           example: true
         complementaryContractAmount:
-          description: "valor do contrato complementar entre segurado e executivo (Caso contrato de Responsabilidade Civil deAdministradores e Diretores – D&O)"
           $ref: '#/components/schemas/AmountDetails'    
         coveragesMaxAmount:
-          description: "Valor máximo da cobertura de passivos ambientais desconhecido (Caso contrato de Responsabilidade Civil Riscos Ambientais)"
           $ref: '#/components/schemas/AmountDetails'    
         coveragesTermStartDate:
           description: "Data de início da cobertura de passivos ambientais desconhecidos (Caso contrato de Responsabilidade Civil Riscos Ambientais)"
           type: string
           format: date
-          example: AAAA-MM-DD  
+          example: '2022-12-31'  
         coveragesTermEndDate:
           description: "Data de fim da cobertura de passivos ambientais desconhecidos (Caso contrato de Responsabilidade Civil Riscos Ambientais)"
           type: string
           format: date
-          example: AAAA-MM-DD 
+          example: '2022-12-31' 
         coveragesTerm:
           description: "Prazo da cobertura de passivos ambientais desconhecidos (Caso contrato de Responsabilidade Civil Riscos Ambientais)"
           type: integer
@@ -1509,14 +1485,12 @@ components:
         coveragesUnit: 
           description: "Unidade da cobertura de passivos ambientais desconhecidos (Caso contrato de Responsabilidade Civil Riscos Ambientais)"
           type: string
-          maxLength: 3
           enum: [DIA,
                 MES,
                 ANO] 
         coveragesWorkingDaysIndex:
           description: "Indicador de dias úteis da cobertura de passivos ambientais desconhecidos (Caso contrato de Responsabilidade Civil Riscos Ambientais)"
           type: string
-          maxLength: 13
           enum: [DIAS_UTEIS,
                 DIAS_CORRIDOS]
           example: DIAS_UTEIS
@@ -1531,7 +1505,6 @@ components:
         professionalClass:
           description: "Classe profissional (Caso contrato de Responsabilidade Civil Profissional)"
           type: string
-          maxLength: 80
           enum: [ADMINISTRADOR_IMOBILIARIO,
                 ESCRITORIOS_DE_ADVOCACIA,
                 CERTIFICACAO_DIGITAL,
@@ -1558,23 +1531,28 @@ components:
         self:
           type: string
           description: URL da página atualmente requisitada
-          example: 'https://api.organizacao.com.br/open-insurance/insurance-responsibility/v1'
+          pattern: ^(https:\/\/)(.*?)(\/open-insurance\/insurance-responsibility\/v\d+)(\/insurance-responsibility.*)?$
+          example: 'https://api.organizacao.com.br/open-insurance/insurance-responsibility/v1/insurance-responsibility'
         first:
           type: string
           description: URL da primeira página de registros
-          example: 'https://api.organizacao.com.br/open-insurance/insurance-responsibility/v1'
+          pattern: ^(https:\/\/)(.*?)(\/open-insurance\/insurance-responsibility\/v\d+)(\/insurance-responsibility.*)?$
+          example: 'https://api.organizacao.com.br/open-insurance/insurance-responsibility/v1/insurance-responsibility'
         prev:
           type: string
           description: URL da página anterior de registros
-          example: 'https://api.organizacao.com.br/open-insurance/insurance-responsibility/v1'
+          pattern: ^(https:\/\/)(.*?)(\/open-insurance\/insurance-responsibility\/v\d+)(\/insurance-responsibility.*)?$
+          example: 'https://api.organizacao.com.br/open-insurance/insurance-responsibility/v1/insurance-responsibility'
         next:
           type: string
           description: URL da próxima página de registros
-          example: 'https://api.organizacao.com.br/open-insurance/insurance-responsibility/v1'
+          pattern: ^(https:\/\/)(.*?)(\/open-insurance\/insurance-responsibility\/v\d+)(\/insurance-responsibility.*)?$
+          example: 'https://api.organizacao.com.br/open-insurance/insurance-responsibility/v1/insurance-responsibility'
         last:
           type: string
           description: URL da última página de registros
-          example: 'https://api.organizacao.com.br/open-insurance/insurance-responsibility/v1'
+          pattern: ^(https:\/\/)(.*?)(\/open-insurance\/insurance-responsibility\/v\d+)(\/insurance-responsibility.*)?$
+          example: 'https://api.organizacao.com.br/open-insurance/insurance-responsibility/v1/insurance-responsibility'
     Meta:
       type: object
       properties:
@@ -1604,6 +1582,7 @@ components:
               - code
               - title
               - detail
+              - requestDateTime
             properties:
               code:
                 description: Código de erro específico do endpoint
@@ -1763,8 +1742,20 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/ResponseInsuranceResponsibilityPremium'
+    UnprocessableEntity:
+      description: 'O servidor entende o tipo de conteúdo da entidade da requisição, e a sintaxe da requisição esta correta, mas não foi possível processar as instruções presente.'
+      content:
+        application/json; charset=utf-8:
+          schema:
+            $ref: '#/components/schemas/ResponseError'
+    NoContent:
+      description: 'O recurso solicitado não existe ou não foi localizado.'
+      content:
+        application/json; charset=utf-8:
+          schema:
+            $ref: '#/components/schemas/ResponseError'
     BadRequest:
-      description: 'A requisição foi malformada, omitindo atributos obrigatórios, seja no payload ou através de atributos na URL'
+      description: 'A requisição foi malformada, omitindo atributos obrigatórios, seja no payload ou através de atributos na URL.'
       content:
         application/json; charset=utf-8:
           schema:
@@ -1807,12 +1798,6 @@ components:
             $ref: '#/components/schemas/ResponseError'
     Unauthorized:
       description: Cabeçalho de autenticação ausente/inválido ou token inválido
-      content:
-        application/json; charset=utf-8:
-          schema:
-            $ref: '#/components/schemas/ResponseError'
-    UnprocessableEntity:
-      description: O servidor entende o tipo de conteúdo da entidade da requisição, e a sintaxe da requisição esta correta, mas não foi possível processar as instruções presentes
       content:
         application/json; charset=utf-8:
           schema:

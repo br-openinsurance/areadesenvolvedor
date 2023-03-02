@@ -4,19 +4,20 @@ info:
   title: APIs Open Data do Open Insurance Brasil
   description:
     API de informações de dados do produto Risco Financeiro. Os recursos que podem ser consumidos pelos participantes conforme a regra 3.1.2 do manual de escopo de dados..
-  version: 1.0.0
+  version: 1.1.0
   contact:
-    url: 'http://novosite.susep.gov.br/'
+    url: 'https://www.gov.br/susep/'
 servers:
   - url: 'https://api.organizacao.com.br/open-insurance/products-services/v1'
     description: Servidor de Producao
   - url: 'https://api.organizacao.com.br/open-insurance/products-services/v1'
     description: Servidor de Homologacao
 tags:
-- name: "Risco Financeiro" 
+  - name: "Risco Financeiro"
+  - name: "FinancialRisk"
 
 paths:
-  /financial-risk/:
+  /financial-risk:
     get:
       tags:
         - FinancialRisk
@@ -53,6 +54,8 @@ paths:
           $ref: '#/components/responses/MethodNotAllowed'
         '406':
           $ref: '#/components/responses/NotAcceptable'
+        '422':
+          $ref: '#/components/responses/UnprocessableEntity'
         '429':
           $ref: '#/components/responses/TooManyRequests'
         '500':
@@ -249,9 +252,27 @@ components:
         - maxLMI
       properties:
         maxLMI:
-          description: Lista com valor de LMI aceito pela sociedade para cada cobertura
+          $ref: '#/components/schemas/FinancialRiskLimit'
+
+    FinancialRiskLimit:
+      type: object
+      description: Lista com valor de LMI aceito pela sociedade para cada cobertura.
+      required:
+        - type
+        - amount
+      properties:
+        type:
+          type: string
+          enum: [FINANCEIRO, PERCENTUAL]
+        amount:
           $ref: '#/components/schemas/FinancialRiskCoverageAttributesDetails'
-    
+        index:
+          type: string
+          description: Indexador. Condicional, vinculado ao preenchimento do campo Tipo com Percentual
+          enum: [LMG, FINANCEIRO_COBERTURA, OUTRO]
+        maxIndexAmount:
+          $ref: '#/components/schemas/FinancialRiskCoverageAttributesDetails'
+
     FinancialRiskCoverageAttributesDetails:
         type: object
         required:
@@ -275,54 +296,35 @@ components:
         description:
           type: string
           example: REAL
-    
-    FinancialRiskCoverageAttributesPercentageDetails:
-        type: object
-        required:
-          - amount
-          - unit
-        properties:
-          amount:
-            type: number
-          unit:
-            $ref: '#/components/schemas/FinancialRiskCoverageAttributesPercentageDetailsUnit'
-    
-    FinancialRiskCoverageAttributesPercentageDetailsUnit:
-      type: object
-      required:
-        - code
-        - description
-      properties:
-        code:
-          type: string
-          example: '%'
-        description:
-          type: string
-          example: PERCENTUAL
-    
+
     Links:
       type: object
       properties:
         self:
           type: string
           description: URL da página atualmente requisitada
-          example: 'https://api.organizacao.com.br/open-insurance/products-services/v1'
+          pattern: ^(https:\/\/)(.*?)(\/open-insurance\/products-services\/v\d+)(\/financial-risk.*)?$
+          example: 'https://api.organizacao.com.br/open-insurance/products-services/v1/financial-risk'
         first:
           type: string
           description: URL da primeira página de registros
-          example: 'https://api.organizacao.com.br/open-insurance/products-services/v1'
+          pattern: ^(https:\/\/)(.*?)(\/open-insurance\/products-services\/v\d+)(\/financial-risk.*)?$
+          example: 'https://api.organizacao.com.br/open-insurance/products-services/v1/financial-risk'
         prev:
           type: string
           description: URL da página anterior de registros
-          example: 'https://api.organizacao.com.br/open-insurance/products-services/v1'
+          pattern: ^(https:\/\/)(.*?)(\/open-insurance\/products-services\/v\d+)(\/financial-risk.*)?$
+          example: 'https://api.organizacao.com.br/open-insurance/products-services/v1/financial-risk'
         next:
           type: string
           description: URL da próxima página de registros
-          example: 'https://api.organizacao.com.br/open-insurance/products-services/v1'
+          pattern: ^(https:\/\/)(.*?)(\/open-insurance\/products-services\/v\d+)(\/financial-risk.*)?$
+          example: 'https://api.organizacao.com.br/open-insurance/products-services/v1/financial-risk'
         last:
           type: string
           description: URL da última página de registros
-          example: 'https://api.organizacao.com.br/open-insurance/products-services/v1'
+          pattern: ^(https:\/\/)(.*?)(\/open-insurance\/products-services\/v\d+)(\/financial-risk.*)?$
+          example: 'https://api.organizacao.com.br/open-insurance/products-services/v1/financial-risk'
     
     Meta:
       type: object
@@ -354,6 +356,7 @@ components:
               - code
               - title
               - detail
+              - requestDateTime
             properties:
               code:
                 description: Código de erro específico do endpoint
@@ -440,21 +443,13 @@ components:
             type: string
             pattern: '[\w\W\s]*'
     
-  securitySchemes:
-    OpenId:
-      type: openIdConnect
-      openIdConnectUrl: 'https://auth.mockbank.poc.raidiam.io/.well-known/openid-configuration'
-    OAuth2Security:
-      type: oauth2
-      description: Fluxo OAuth necessário para que a receptora tenha acesso aos dados na instituição transmissora. Inclui o processo de redirecionamento e autenticação do usuário a que se referem os dados.
-      flows:
-        authorizationCode:
-          authorizationUrl: 'https://authserver.example/authorization'
-          tokenUrl: 'https://authserver.example/token'
-          scopes:
-            financings: Escopo necessário para acesso à API. O controle dos endpoints específicos é feito via permissions.
-    
   responses:
+    UnprocessableEntity:
+      description: 'O servidor entende o tipo de conteúdo da entidade da requisição, e a sintaxe da requisição esta correta, mas não foi possível processar as instruções presente.'
+      content:
+        application/json; charset=utf-8:
+          schema:
+            $ref: '#/components/schemas/ResponseError'
     NoContent:
       description: 'O recurso solicitado não existe ou não foi localizado.'
       content:

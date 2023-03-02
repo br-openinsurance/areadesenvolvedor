@@ -4,19 +4,20 @@ info:
   title: APIs Open Data do Open Insurance Brasil
   description:
     API de informações de dados do produto Garantia Pública. Os recursos que podem ser consumidos pelos participantes conforme a regra 3.1.2 do manual de escopo de dados..
-  version: 1.0.0
+  version: 1.1.0
   contact:
-    url: 'http://novosite.susep.gov.br/'
+    url: 'https://www.gov.br/susep/'
 servers:
   - url: 'https://api.organizacao.com.br/open-insurance/products-services/v1'
     description: Servidor de Producao
   - url: 'https://api.organizacao.com.br/open-insurance/products-services/v1'
     description: Servidor de Homologacao
 tags:
-- name: "Garantia Pública" 
+  - name: "Garantia Pública"
+  - name: "PublicGuarantee"
 
 paths:
-  /public-guarantee/:
+  /public-guarantee:
     get:
       tags:
         - PublicGuarantee
@@ -53,6 +54,8 @@ paths:
           $ref: '#/components/responses/MethodNotAllowed'
         '406':
           $ref: '#/components/responses/NotAcceptable'
+        '422':
+          $ref: '#/components/responses/UnprocessableEntity'
         '429':
           $ref: '#/components/responses/TooManyRequests'
         '500':
@@ -204,21 +207,38 @@ components:
         - maxLMI
       properties:
         maxLMI:
-          description: Lista com valor de LMI aceito pela sociedade para cada cobertura
-          $ref: '#/components/schemas/PublicGuaranteeCoverageAttributesDetails'
+          $ref: '#/components/schemas/PublicGuaranteeLimit'
         insuredParticipation:
           type: array
           description: Lista com indicativo do tipo de participação do segurado para cada cobertura.
           items:
             type: string
-            maxLength: 13
             example: FRANQUIA
             enum: [FRANQUIA, POS, NAO_SE_APLICA]
         insuredParticipationDescription:
           type: string
           maxLength: 1024
           description: Lista com descrição referente ao campo “Participação do Segurado” para cada cobertura.
-    
+
+    PublicGuaranteeLimit:
+      type: object
+      description: Lista com valor de LMI aceito pela sociedade para cada cobertura.
+      required:
+        - type
+        - amount
+      properties:
+        type:
+          type: string
+          enum: [FINANCEIRO, PERCENTUAL]
+        amount:
+          $ref: '#/components/schemas/PublicGuaranteeCoverageAttributesDetails'
+        index:
+          type: string
+          description: Indexador. Condicional, vinculado ao preenchimento do campo Tipo com Percentual
+          enum: [LMG, FINANCEIRO_COBERTURA, OUTRO]
+        maxIndexAmount:
+          $ref: '#/components/schemas/PublicGuaranteeCoverageAttributesDetails'
+
     PublicGuaranteeCoverageAttributesDetails:
         type: object
         required:
@@ -254,7 +274,6 @@ components:
             type: array
             items:
               type: string
-              maxLength: 23
               description: Prazo
               example: ANUAL
               enum: [ANUAL , ANUAL_INTERMITENTE , PLURIANUAL , PLURIANUAL_INTERMITENTE , MENSAL, MENSAL_INTERMITENTE , DIARIO , DIARIO_INTERMITENTE, OUTROS]
@@ -273,23 +292,21 @@ components:
         properties:
           paymentMethod:
             type: string
-            maxLength: 33
             description: Metodo de pagamento
             enum: [CARTAO_DE_CREDITO,
-            CARTAO_DE_DEBITO, DEBITO_EM_CONTA_CORRENTE,
-            DEBITO_EM_CONTA_POUPANCA,
-            BOLETO_BANCARIO,
-            PIX,
-            CONSIGNACAO_EM_FOLHA_DE_PAGAMENTO,
-            PONTOS_DE_PROGRAMA_DE_BENEFICIO,
-            OUTROS]
+              CARTAO_DE_DEBITO, DEBITO_EM_CONTA_CORRENTE,
+              DEBITO_EM_CONTA_POUPANCA,
+              BOLETO_BANCARIO,
+              PIX,
+              CONSIGNACAO_EM_FOLHA_DE_PAGAMENTO,
+              PONTOS_DE_PROGRAMA_DE_BENEFICIO,
+              OUTROS]
           paymentDetail:
             type: string  
             maxLength: 1024
             description: Campo livre para descrição por cada participante ao selecionar o domínio “Outros” no campo Meio de pagamento (acima) 
           paymentType:
             type: string
-            maxLength: 9
             description: tipo de pagamento  
             example: A_VISTA
             enum: [A_VISTA, PARCELADO]
@@ -310,7 +327,7 @@ components:
           type: string
           description: Número do processo SUSEP, se houver.
           maxLength: 20
-          example: 15414622222222222
+          example: '15414622222222222'
         definition:
           type: string
           description: Campo aberto (possibilidade de incluir uma url).
@@ -330,7 +347,6 @@ components:
           type: array
           items:
             type: string
-            maxLength: 10
             enum: [COLETIVO, INDIVIDUAL] 
         minimumRequirementDetails:
           type: string
@@ -342,7 +358,6 @@ components:
           type: array
           items:
             type: string
-            maxLength: 15
             example: PESSOA_NATURAL
             enum: [PESSOA_NATURAL, PESSOA_JURIDICA]
     
@@ -352,23 +367,28 @@ components:
         self:
           type: string
           description: URL da página atualmente requisitada
-          example: 'https://api.organizacao.com.br/open-insurance/products-services/v1'
+          pattern: ^(https:\/\/)(.*?)(\/open-insurance\/products-services\/v\d+)(\/public-guarantee.*)?$
+          example: 'https://api.organizacao.com.br/open-insurance/products-services/v1/public-guarantee'
         first:
           type: string
           description: URL da primeira página de registros
-          example: 'https://api.organizacao.com.br/open-insurance/products-services/v1'
+          pattern: ^(https:\/\/)(.*?)(\/open-insurance\/products-services\/v\d+)(\/public-guarantee.*)?$
+          example: 'https://api.organizacao.com.br/open-insurance/products-services/v1/public-guarantee'
         prev:
           type: string
           description: URL da página anterior de registros
-          example: 'https://api.organizacao.com.br/open-insurance/products-services/v1'
+          pattern: ^(https:\/\/)(.*?)(\/open-insurance\/products-services\/v\d+)(\/public-guarantee.*)?$
+          example: 'https://api.organizacao.com.br/open-insurance/products-services/v1/public-guarantee'
         next:
           type: string
           description: URL da próxima página de registros
-          example: 'https://api.organizacao.com.br/open-insurance/products-services/v1'
+          pattern: ^(https:\/\/)(.*?)(\/open-insurance\/products-services\/v\d+)(\/public-guarantee.*)?$
+          example: 'https://api.organizacao.com.br/open-insurance/products-services/v1/public-guarantee'
         last:
           type: string
           description: URL da última página de registros
-          example: 'https://api.organizacao.com.br/open-insurance/products-services/v1'
+          pattern: ^(https:\/\/)(.*?)(\/open-insurance\/products-services\/v\d+)(\/public-guarantee.*)?$
+          example: 'https://api.organizacao.com.br/open-insurance/products-services/v1/public-guarantee'
     
     Meta:
       type: object
@@ -400,6 +420,7 @@ components:
               - code
               - title
               - detail
+              - requestDateTime
             properties:
               code:
                 description: Código de erro específico do endpoint
@@ -486,21 +507,13 @@ components:
             type: string
             pattern: '[\w\W\s]*'
     
-  securitySchemes:
-    OpenId:
-      type: openIdConnect
-      openIdConnectUrl: 'https://auth.mockbank.poc.raidiam.io/.well-known/openid-configuration'
-    OAuth2Security:
-      type: oauth2
-      description: Fluxo OAuth necessário para que a receptora tenha acesso aos dados na instituição transmissora. Inclui o processo de redirecionamento e autenticação do usuário a que se referem os dados.
-      flows:
-        authorizationCode:
-          authorizationUrl: 'https://authserver.example/authorization'
-          tokenUrl: 'https://authserver.example/token'
-          scopes:
-            financings: Escopo necessário para acesso à API. O controle dos endpoints específicos é feito via permissions.
-    
   responses:
+    UnprocessableEntity:
+      description: 'O servidor entende o tipo de conteúdo da entidade da requisição, e a sintaxe da requisição esta correta, mas não foi possível processar as instruções presente.'
+      content:
+        application/json; charset=utf-8:
+          schema:
+            $ref: '#/components/schemas/ResponseError'
     NoContent:
       description: 'O recurso solicitado não existe ou não foi localizado.'
       content:

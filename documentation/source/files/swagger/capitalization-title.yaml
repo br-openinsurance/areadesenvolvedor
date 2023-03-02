@@ -3,9 +3,9 @@ info:
   title: APIs Open Data do Open Insurance Brasil
   description:
     API de informações de Título de Capitaliazação.
-  version: 1.0.2
+  version: 1.1.0
   contact:
-    url: 'http://novosite.susep.gov.br/'
+    url: 'https://www.gov.br/susep/'
 servers:
   - url: 'https://api.organizacao.com.br/open-insurance/products-services/v1'
     description: Servidor de Produção
@@ -37,6 +37,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ResponseCapitalizationTitleList'
+        '204':
+          $ref: '#/components/responses/NoContent'
         '400':
           $ref: '#/components/responses/BadRequest'
         '401':
@@ -49,6 +51,8 @@ paths:
           $ref: '#/components/responses/MethodNotAllowed'
         '406':
           $ref: '#/components/responses/NotAcceptable'
+        '422':
+          $ref: '#/components/responses/UnprocessableEntity'
         '429':
           $ref: '#/components/responses/TooManyRequests'
         '500':
@@ -65,7 +69,6 @@ components:
       type: object
       required:
         - data
-        - brand
         - links
         - meta
       properties:
@@ -76,8 +79,13 @@ components:
           maxLength: 2048
           format: date-time
           example: '2021-08-20T08:30:00Z'
-        brand:
-          $ref: '#/components/schemas/CapitalizationTitleBrand'
+        data:
+          type: object
+          required:
+            - brand
+          properties:
+            brand:
+              $ref: '#/components/schemas/CapitalizationTitleBrand'
         links:
           $ref: '#/components/schemas/Links'
         meta:
@@ -127,8 +135,8 @@ components:
           - code
           - modality
           - quotas
-          - coverages
           - costType
+          - termsAndConditions
         properties:
           name:
             type: string
@@ -184,10 +192,10 @@ components:
         - termsRegulations
       properties:
         susepProcessNumber:
-          type: number
+          type: string
           description: Número do processo SUSEP.
-          maxLength: 20
-          example: 15414622222222222
+          maxLength: 30
+          example: '15414622222222222'
         termsRegulations:
           type: string
           description: Campo aberto (possibilidade de incluir uma url).
@@ -254,18 +262,14 @@ components:
             maxLength: 7
             example: 0.25123
           updateIndex:
-            type: array
+            type: string
             description: Índice utilizado na correção que remunera a provisão matemática para capitalização
-            items:
-                type: string
-                example: IPCA
-                enum: [IPCA, IGPM, INPC, TR, INDICE_REMUNERACAO_DEPOSITOS_POUPANCA, OUTROS]
+            example: IPCA
+            enum: [IPCA, IGPM, INPC, TR, INDICE_REMUNERACAO_DEPOSITOS_POUPANCA, OUTROS]
           updateIndexOthers:
-            type: array
+            type: string
             description: Preenchida pelas participantes quando houver ‘Outros’ no campo.
-            items:
-                type: string
-                example: Índice de atualização
+            example: Índice de atualização
           contributionAmount:
             $ref: '#/components/schemas/CapitalizationTitleContributionAmount'
           earlyRedemption:
@@ -366,52 +370,52 @@ components:
                 maxLength: 6
                 example: 151.23
     CapitalizationTitleRaffle:
-      description: Sorteio
-      type: object
-      required:
-       - timeInterval
-       - raffleQty
-       - raffleValue
-       - earlySettlementRaffle
-       - mandatoryContemplation
-       - RuleDescription
-       - minimumContemplationProbability
-      properties:
-        raffleQty:
-          type: integer
-          description: Número da quantidade de sorteios previstos ao longo da vigência
-          maxLength: 5
-          example: 10000
-        timeInterval:
-          description: Intervalo de tempo regular previsto entre os sorteios.
-          type: array
-          items:
+      description: Sorteios
+      type: array
+      items:
+        type: object
+        required:
+          - timeInterval
+          - raffleQty
+          - raffleValue
+          - earlySettlementRaffle
+          - mandatoryContemplation
+          - ruleDescription
+          - minimumContemplationProbability
+        properties:
+          raffleQty:
+            type: integer
+            description: Número da quantidade de sorteios previstos ao longo da vigência
+            maxLength: 5
+            example: 10000
+          timeInterval:
+            description: Intervalo de tempo regular previsto entre os sorteios.
+            type: array
+            items:
+              type: string
+              example: QUINZENAL
+              enum: [UNICO, DIARIO, SEMANAL, QUINZENAL, MENSAL, BIMESTRAL, TRIMESTRAL, QUADRIMESTRAL, SEMESTRAL, ANUAL, OUTROS]
+          raffleValue:
+            type: number
+            description: Valor dos sorteios representado por múltiplo do valor de contribuição.
+            example: 5
+          earlySettlementRaffle:
+            type: boolean
+            description: Liquidação antecipada em Sorteio. Modelo de sorteio que acarreta, ao título contemplado, o seu resgate total obrigatório (Resolução Normativa 384/20).
+            example: true
+          mandatoryContemplation:
+            type: boolean
+            description: Contemplação obrigatória. Possibilidade de realização de sorteio com previsão de que o título sorteado seja obrigatoriamente um título comercializado, desde que atingidos os requisitos definidos nas condições gerais do plano.
+            example: true
+          ruleDescription:
             type: string
-            example: QUINZENAL
-            enum: [UNICO, DIARIO, SEMANAL, QUINZENAL, MENSAL, BIMESTRAL, TRIMESTRAL, QUADRIMESTRAL, SEMESTRAL, ANUAL, OUTROS]
-        raffleValue:
-          type: number
-          description: Valor dos sorteios representado por múltiplo do valor de contribuição.
-          maxLength: 6
-          example: 5
-        earlySettlementRaffle:
-          type: boolean
-          description: Liquidação antecipada em Sorteio. Modelo de sorteio que acarreta, ao título contemplado, o seu resgate total obrigatório (Resolução Normativa 384/20).
-          example: true
-        mandatoryContemplation:
-          type: boolean
-          description: Contemplação obrigatória. Possibilidade de realização de sorteio com previsão de que o título sorteado seja obrigatoriamente um título comercializado, desde que atingidos os requisitos definidos nas condições gerais do plano.
-          example: true
-        ruleDescription:
-          type: string
-          description: Campo aberto para descrição a ser feita por cada participante das regras dos sorteios do produto.
-          maxLength: 200
-          example: Sorteio às quartas-feiras
-        minimumContemplationProbability:
-          type: number
-          description: Número representativo da probabilidade mínima de contemplação nos sorteios, em porcentagem (%).
-          maxLength: 8
-          example: 0.000001
+            description: Campo aberto para descrição a ser feita por cada participante das regras dos sorteios do produto.
+            maxLength: 200
+            example: Sorteio às quartas-feiras
+          minimumContemplationProbability:
+            type: number
+            description: Número representativo da probabilidade mínima de contemplação nos sorteios, em porcentagem (%).
+            example: 0.000001
     CapitalizationTitleAdditionals:
       type: object
       required:
@@ -439,29 +443,36 @@ components:
           type: array
           items:
             type: string
-            example: PESSOAL_NATURAL
-            enum: [PESSOAL_NATURAL, PESSOA_JURIDICA]
+            example: PESSOA_NATURAL
+            enum: [PESSOA_NATURAL, PESSOA_JURIDICA]
     Links:
       type: object
       properties:
         self:
           type: string
           description: URL da página atualmente requisitada
-          example: 'https://api.organizacao.com.br/open-insurance/products-services/v1'
+          pattern: ^(https:\/\/)(.*?)(\/open-insurance\/products-services\/v\d+)(\/capitalization-title.*)?$
+          example: 'https://api.organizacao.com.br/open-insurance/products-services/v1/capitalization-title'
         first:
           type: string
           description: URL da primeira página de registros
-          example: 'https://api.organizacao.com.br/open-insurance/products-services/v1'
+          pattern: ^(https:\/\/)(.*?)(\/open-insurance\/products-services\/v\d+)(\/capitalization-title.*)?$
+          example: 'https://api.organizacao.com.br/open-insurance/products-services/v1/capitalization-title'
         prev:
           type: string
           description: URL da página anterior de registros
+          pattern: ^(https:\/\/)(.*?)(\/open-insurance\/products-services\/v\d+)(\/capitalization-title.*)?$
+          example: 'https://api.organizacao.com.br/open-insurance/products-services/v1/capitalization-title'
         next:
           type: string
           description: URL da próxima página de registros
+          pattern: ^(https:\/\/)(.*?)(\/open-insurance\/products-services\/v\d+)(\/capitalization-title.*)?$
+          example: 'https://api.organizacao.com.br/open-insurance/products-services/v1/capitalization-title'
         last:
           type: string
           description: URL da última página de registros
-          example: 'https://api.organizacao.com.br/open-insurance/products-services/v1'
+          pattern: ^(https:\/\/)(.*?)(\/open-insurance\/products-services\/v\d+)(\/capitalization-title.*)?$
+          example: 'https://api.organizacao.com.br/open-insurance/products-services/v1/capitalization-title'
     Meta:
       type: object
       properties:
@@ -586,21 +597,20 @@ components:
       schema:
         type: string
         pattern: '[\w\W\s]*'
-  securitySchemes:
-    OpenId:
-      type: openIdConnect
-      openIdConnectUrl: 'https://auth.mockbank.poc.raidiam.io/.well-known/openid-configuration'
-    OAuth2Security:
-      type: oauth2
-      description: Fluxo OAuth necessário para que a receptora tenha acesso aos dados na instituição transmissora. Inclui o processo de redirecionamento e autenticação do usuário a que se referem os dados.
-      flows:
-        authorizationCode:
-          authorizationUrl: 'https://authserver.example/authorization'
-          tokenUrl: 'https://authserver.example/token'
-          scopes:
-            financings: Escopo necessário para acesso à API. O controle dos endpoints específicos é feito via permissions.
-  responses:
 
+  responses:
+    UnprocessableEntity:
+      description: 'O servidor entende o tipo de conteúdo da entidade da requisição, e a sintaxe da requisição esta correta, mas não foi possível processar as instruções presente.'
+      content:
+        application/json; charset=utf-8:
+          schema:
+            $ref: '#/components/schemas/ResponseError'
+    NoContent:
+      description: 'O recurso solicitado não existe ou não foi localizado.'
+      content:
+        application/json; charset=utf-8:
+          schema:
+            $ref: '#/components/schemas/ResponseError' 
     BadRequest:
       description: 'A requisição foi malformada, omitindo atributos obrigatórios, seja no payload ou através de atributos na URL.'
       content:
