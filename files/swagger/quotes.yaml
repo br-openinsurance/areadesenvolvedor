@@ -4,14 +4,13 @@ info:
   description: |
     API que trata da criação, consulta e notificação de cotações para o Open Insurance Brasil Fase 3.  
     Não possui segregação entre pessoa natural e pessoa jurídica. 
-  version: 1.0.1  
+  version: 1.0.2
   license:
     name: Apache 2.0
     url: 'http://www.apache.org/licenses/LICENSE-2.0'
   contact:
     name: Governança do Open Insurance Brasil - Especificações
-    email: gt-interfaces@openinsurancebr.org
-    url: 'https://http://novosite.susep.gov.br'
+    url: 'https://www.gov.br/susep/'
 servers:
   - url: 'https://api.seguro.com.br/open-insurance/quotes/v1'
     description: Servidor de Produção
@@ -44,6 +43,8 @@ paths:
       responses:
         '202':
           $ref: '#/components/responses/202QuoteAccepted'
+        '204':
+          $ref: '#/components/responses/NoContent'
         '400':
           $ref: '#/components/responses/BadRequest'
         '401':
@@ -56,10 +57,8 @@ paths:
           $ref: '#/components/responses/MethodNotAllowed'
         '406':
           $ref: '#/components/responses/NotAcceptable'
-        '415':
-          $ref: '#/components/responses/UnsupportedMediaType'
         '422':
-          $ref: '#/components/responses/UnprocessableEntityQuote'
+          $ref: '#/components/responses/UnprocessableEntity'
         '429':
           $ref: '#/components/responses/TooManyRequests'
         '500':
@@ -104,8 +103,6 @@ paths:
           $ref: '#/components/responses/MethodNotAllowed'
         '406':
           $ref: '#/components/responses/NotAcceptable'
-        '415':
-          $ref: '#/components/responses/UnsupportedMediaType'
         '422':
           $ref: '#/components/responses/UnprocessableEntity'
         '429':
@@ -139,7 +136,6 @@ components:
             properties:
               code:
                 type: string
-                maxLength: 21
                 enum:
                   - PRODUTO_NAO_COMERCIALIZADO
                   - RISCO_NEGADO
@@ -193,6 +189,7 @@ components:
               - code
               - title
               - detail
+              - requestDateTime
             properties:
               code:
                 description: Código de erro específico do endpoint
@@ -209,6 +206,12 @@ components:
                 type: string
                 pattern: '[\w\W\s]*'
                 maxLength: 2048
+              requestDateTime:
+                description: 'Data e hora da consulta, conforme especificação RFC-3339, formato UTC.'
+                type: string
+                maxLength: 20
+                format: date-time
+                example: '2021-05-21T08:30:00Z'
             additionalProperties: false
         meta:
           $ref: '#/components/schemas/Meta'
@@ -224,7 +227,6 @@ components:
       required:
         - totalRecords
         - totalPages
-        - requestDateTime
       properties:
         totalRecords:
           type: integer
@@ -236,12 +238,6 @@ components:
           format: int32
           description: Número total de páginas no resultado
           example: 1
-        requestDateTime:
-          description: 'Data e hora da consulta, conforme especificação RFC-3339, formato UTC.'
-          type: string
-          maxLength: 20
-          format: date-time
-          example: '2021-05-21T08:30:00Z'
       additionalProperties: false
     CreateNotification:
       type: object
@@ -259,7 +255,6 @@ components:
       properties:
         type:
           type: string
-          maxLength: 30
           enum:
             - PATRIMONIAL
             - AERONAUTICAL
@@ -374,7 +369,6 @@ components:
                   pattern: '^[A-Z]{4}$'
         productType:
           type: string
-          maxLength: 30
           enum:
             - PATRIMONIAL
             - AERONAUTICAL
@@ -538,20 +532,16 @@ components:
         pattern: '^[a-zA-Z0-9][a-zA-Z0-9\-]{0,99}$'
         minLength: 1
         maxLength: 100
-  securitySchemes:
-    OpenId:
-      type: openIdConnect
-      openIdConnectUrl: 'https://auth.mockbank.poc.raidiam.io/.well-known/openid-configuration'
-    OAuth2Security:
-      type: oauth2
-      flows:
-        clientCredentials:
-          tokenUrl: 'https://authserver.example/token'
-          scopes:
-            quotes: Escopo necessário para acesso à API Quotes.
+
   responses:
-    UnsupportedMediaType:
-      description: O formato do payload não é um formato suportado.
+    UnprocessableEntity:
+      description: 'O servidor entende o tipo de conteúdo da entidade da requisição, e a sintaxe da requisição esta correta, mas não foi possível processar as instruções presente.'
+      content:
+        application/json; charset=utf-8:
+          schema:
+            $ref: '#/components/schemas/ResponseError'
+    NoContent:
+      description: 'O recurso solicitado não existe ou não foi localizado.'
       content:
         application/json; charset=utf-8:
           schema:
@@ -592,12 +582,6 @@ components:
         application/json; charset=utf-8:
           schema:
             $ref: '#/components/schemas/ResponseError'
-    UnprocessableEntity:
-      description: 'A sintaxe da requisição esta correta, mas não foi possível processar as instruções presentes.'
-      content:
-        application/json; charset=utf-8:
-          schema:
-            $ref: '#/components/schemas/ResponseError'
     TooManyRequests:
       description: 'A operação foi recusada, pois muitas solicitações foram feitas dentro de um determinado período ou o limite global de requisições concorrentes foi atingido'
       content:
@@ -633,7 +617,6 @@ components:
                 meta:
                   totalRecords: 1
                   totalPages: 1
-                  requestDateTime: '2021-05-21T08:30:00Z'
       headers:
         x-fapi-interaction-id:
           description: |

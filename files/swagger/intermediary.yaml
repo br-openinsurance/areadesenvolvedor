@@ -4,16 +4,17 @@ info:
   title: APIs Open Data do Open Insurance Brasil
   description:
     API de informações de dados do produto Intermediarios. Os recursos que podem ser consumidos pelos participantes conforme a regra 3.1.2 do manual de escopo de dados..
-  version: 1.1.0
+  version: 1.2.0
   contact:
-    url: 'http://novosite.susep.gov.br/'
+    url: 'https://www.gov.br/susep/'    
 servers:
   - url: 'https://api.organizacao.com.br/open-insurance/channels/v1'
     description: Servidor de Producao
   - url: 'https://api.organizacao.com.br/open-insurance/channels/v1'
     description: Servidor de Homologacao
 tags:
-- name: "Intermediarios"
+  - name: "Intermediarios"
+  - name: "Intermediary"
 
 paths:
   /intermediary/{countrySubDivision}:
@@ -55,6 +56,8 @@ paths:
           $ref: '#/components/responses/MethodNotAllowed'
         '406':
           $ref: '#/components/responses/NotAcceptable'
+        '422':
+          $ref: '#/components/responses/UnprocessableEntity'
         '429':
           $ref: '#/components/responses/TooManyRequests'
         '500':
@@ -126,10 +129,10 @@ components:
       items:
           description: Informações referente a identificação.
           required:
-          - name
-          - type
-          - postalAddress
-          - services
+            - name
+            - type
+            - postalAddress
+            - services
           properties:
             name:
                 type: string
@@ -147,22 +150,22 @@ components:
                 pattern: ^\d{11}|\d{14}$
                 description: "CPF ou CNPJ do intermediário
                   OBS: Opcional para pessoa natural"
-                example: 12341234123412
+                example: '12341234123412'
             type:
               type: string
-              maxLength: 39
               description: Relação de tipos de intermediário
-              enum: [CORRETOR_DE_SEGUROS,
-                    REPRESENTANTE_DE_SEGUROS,
+              enum: [CORRETOR,
+                    REPRESENTANTE,
                     AGENTES_DE_SEGUROS,
-                    DISTRIBUIDOR_DE_TITULO_DE_CAPITALIZACAO]
-              example: CORRETOR_DE_SEGUROS
+                    DISTRIBUIDOR_DE_TITULO_DE_CAPITALIZACAO,
+                    OUTROS]
+              example: CORRETOR
             SUSEP:
                 type: string
                 description: "Número de Registro SUSEP no caso de intermediário ser Corretor de Seguros.
                   OBS: Condicional a seleção de 1. Corretor de seguros no campo acima"
                 maxLength: 20
-                example: 15414622222222222
+                example: '15414622222222222'
             postalAddress:
                 $ref: '#/components/schemas/IntermediaryCoveragePostalAddress'
             access:
@@ -182,7 +185,7 @@ components:
           properties:
             address:
               type: string
-              maxLength: 150
+              maxLength: 200
               description: "Deverá trazer toda a informação referente ao endereço do intermediário: Tipo de logradouro + Nome do logradouro + Número do Logradouro (se não existir usar ' s/n') + complemento (se houver)"
               example: "'Rua Diamantina, 59, bloco 35'
                 Praça da Boa Vontade, s/n"
@@ -207,7 +210,6 @@ components:
               description: 7 dígitos (o último é um código verificador).
             countrySubDivision:
               type: string
-              maxLength: 2
               description: "Enumeração referente a cada sigla da unidade da federação que identifica o estado ou o distrito federal, no qual o endereço está localizado. p.ex. 'AC'. São consideradas apenas as siglas para os estados brasileiros:"
               example: AC
               enum: [AC,
@@ -241,10 +243,9 @@ components:
               type: string
               maxLength: 8
               description: "Código de Endereçamento Postal: Composto por um conjunto numérico de oito dígitos, o objetivo principal do CEP é orientar e acelerar o encaminhamento, o tratamento e a entrega de objetos postados nos Correios, por meio da sua atribuição a localidades, logradouros, unidades dos Correios, serviços, órgãos públicos, empresas e edifícios"
-              example: 1310200
+              example: '1310200'
             country:
               type: string
-              maxLength: 46
               description: Lista de países vide aba 'Lista de países'
               enum: [ANDORRA,
                     EMIRADOS_ARABES_UNIDOS,
@@ -509,14 +510,14 @@ components:
       properties:
         latitude:
           type: string
-          maxLength: 11
           description: Informação da Latitude referente a geolocalização informada. Entre -90 e 90. Formato numérico 2 casas antes da vírgula, 11 posições.
-          example: -89.8365180
+          example: '-89.8365180'
+          pattern: ^-?\d{1,3}\.\d{1,10}$
         longitude:
           type: string
-          maxLength: 11
           description: Informação da Longitude referente a geolocalização informada. Formato numérico 3 casas antes da vírgula, 11 posições. Entre -180 e 180.'
-          example: -179.836519
+          example: '-179.836519'
+          pattern: ^-?\d{1,3}\.\d{1,10}$
     IntermediaryAccess:
       type: object
       description: Forma de acesso.
@@ -554,7 +555,6 @@ components:
             description: Horário de encerramento
           weekday:
             type: string
-            maxLength: 13
             description: Dias de funcionamento
             enum: [DOMINGO,
                   SEGUNDA_FEIRA,
@@ -579,17 +579,17 @@ components:
             description: Número de DDI (Discagem Direta Internacional) para telefone de acesso ao Canal - se houver.
             type: string
             maxLength: 3
-            example: 55
+            example: '55'
           areaCode:
             description: Número de DDD (Discagem Direta à Distância) do telefone do intermediário - se houver. p.ex. '19'
             type: string
             maxLength: 2
-            example: 11
+            example: '11'
           number:
             description: Número de telefone do intermediário - se houver
             type: string
             maxLength: 11
-            example: 30041000
+            example: '30041000'
     IntermediaryServices:
       type: array
       items:
@@ -601,7 +601,6 @@ components:
           name:
             description: Relação dos serviços efetivamente prestados, conforme discriminado na Tabela II.3 do Anexo II
             type: string
-            maxLength: 164
             enum: [ANGARIACAO_PROMOCAO_INTERMEDIACAO_OU_DISTRIBUICAO_DE_PRODUTOS,
                   ACONSELHAMENTO_SOBRE_PRODUTOS_OFERTADOS,
                   RECEPCAO_DE_PROPOSTAS_E_EMISSAO_DE_DOCUMENTOS_CONTRATUAIS,
@@ -624,11 +623,14 @@ components:
             items:
               type: string
               description: Linha de negócio de atuação
-              maxLength: 93
               enum: [LISTAGEM_DE_RAMOS_DE_SEGUROS_CONFORME_REGULAMENTACAO_ESPECIFICA_SOBRE_CONTABILIZACAO_EM_RAMOS,
                     PREVIDENCIA_COMPLEMENTAR_ABERTA,
                     CAPITALIZACAO]
               example: CAPITALIZACAO
+          lineOthers:
+            description: Campo aberto para descrição em caso de seleção de LISTAGEM_DE_RAMOS_DE_SEGUROS_CONFORME_REGULAMENTACAO_ESPECIFICA_SOBRE_CONTABILIZACAO_EM_RAMOS na lista de Linha de negócio de atuação
+            type: string
+            maxLength: 100
 
     Links:
       type: object
@@ -636,23 +638,28 @@ components:
         self:
           type: string
           description: URL da página atualmente requisitada
-          example: 'https://api.organizacao.com.br/open-insurance/channels/v1'
+          pattern: ^(https:\/\/)(.*?)(\/open-insurance\/channels\/v\d+)(\/intermediary.*)?$
+          example: 'https://api.organizacao.com.br/open-insurance/channels/v1/intermediary'
         first:
           type: string
           description: URL da primeira página de registros
-          example: 'https://api.organizacao.com.br/open-insurance/channels/v1'
+          pattern: ^(https:\/\/)(.*?)(\/open-insurance\/channels\/v\d+)(\/intermediary.*)?$
+          example: 'https://api.organizacao.com.br/open-insurance/channels/v1/intermediary'
         prev:
           type: string
           description: URL da página anterior de registros
-          example: 'https://api.organizacao.com.br/open-insurance/channels/v1'
+          pattern: ^(https:\/\/)(.*?)(\/open-insurance\/channels\/v\d+)(\/intermediary.*)?$
+          example: 'https://api.organizacao.com.br/open-insurance/channels/v1/intermediary'
         next:
           type: string
           description: URL da próxima página de registros
-          example: 'https://api.organizacao.com.br/open-insurance/channels/v1'
+          pattern: ^(https:\/\/)(.*?)(\/open-insurance\/channels\/v\d+)(\/intermediary.*)?$
+          example: 'https://api.organizacao.com.br/open-insurance/channels/v1/intermediary'
         last:
           type: string
           description: URL da última página de registros
-          example: 'https://api.organizacao.com.br/open-insurance/channels/v1'
+          pattern: ^(https:\/\/)(.*?)(\/open-insurance\/channels\/v\d+)(\/intermediary.*)?$
+          example: 'https://api.organizacao.com.br/open-insurance/channels/v1/intermediary'
 
     Meta:
       type: object
@@ -684,6 +691,7 @@ components:
               - code
               - title
               - detail
+              - requestDateTime
             properties:
               code:
                 description: Código de erro específico do endpoint
@@ -784,21 +792,13 @@ components:
             type: string
             pattern: '[\w\W\s]*'
 
-  securitySchemes:
-    OpenId:
-      type: openIdConnect
-      openIdConnectUrl: 'https://auth.mockbank.poc.raidiam.io/.well-known/openid-configuration'
-    OAuth2Security:
-      type: oauth2
-      description: Fluxo OAuth necessário para que a receptora tenha acesso aos dados na instituição transmissora. Inclui o processo de redirecionamento e autenticação do usuário a que se referem os dados.
-      flows:
-        authorizationCode:
-          authorizationUrl: 'https://authserver.example/authorization'
-          tokenUrl: 'https://authserver.example/token'
-          scopes:
-            financings: Escopo necessário para acesso à API. O controle dos endpoints específicos é feito via permissions.
-
   responses:
+    UnprocessableEntity:
+      description: 'O servidor entende o tipo de conteúdo da entidade da requisição, e a sintaxe da requisição esta correta, mas não foi possível processar as instruções presente.'
+      content:
+        application/json; charset=utf-8:
+          schema:
+            $ref: '#/components/schemas/ResponseError'
     NoContent:
       description: 'O recurso solicitado não existe ou não foi localizado.'
       content:

@@ -3,30 +3,34 @@ info:
   title: Open Insurance Brasil - Dynamic Client Registration
   description: Especificação dos serviços de registro dinâmico de cliente (DCR) e manutenção dinâmica de cliente (DCM), baseados nas especificações a seguir<br/> <ul><li>RFC 7591 - https://datatracker.ietf.org/doc/html/rfc7591</li><li>RFC 7592 - https://datatracker.ietf.org/doc/html/rfc7592<li>OpenID Connect Dynamic Client Registration -  https://openid.net/specs/openid-connect-registration-1_0.html</li></ul>
   contact:
-    url: 'http://novosite.susep.gov.br/'
-  version: 1.0.0
+    url: 'https://www.gov.br/susep/'
+  version: 1.1.0
 externalDocs:
   description: Documentação do processo de DCR / DCM no portal do desenvolvedor do Open Insurance Brasil
   url: https://br-openinsurance.github.io/areadesenvolvedor/#dynamic-client-registration-dcr
 tags:
-- name: DCR
-  description: Operações de registro dinâmico de cliente (DCR)
-  externalDocs:
-    description: RFC 7591
-    url: https://datatracker.ietf.org/doc/html/rfc7591
-- name: DCM
-  description: Operações de manutenção dinâmica de cliente (DCM)
-  externalDocs:
-    description: RFC 7592
-    url: https://datatracker.ietf.org/doc/html/rfc7592  
+  - name: DCR
+    description: Operações de registro dinâmico de cliente (DCR)
+    externalDocs:
+      description: RFC 7591
+      url: https://datatracker.ietf.org/doc/html/rfc7591
+  - name: DCM
+    description: Operações de manutenção dinâmica de cliente (DCM)
+    externalDocs:
+      description: RFC 7592
+      url: https://datatracker.ietf.org/doc/html/rfc7592  
+servers:
+  - url: http://api.organizacao.com.br/open-insurance
 paths:
   /register:
     post:
       summary: Registro da aplicação cliente.
+      description: Registro da aplicação cliente.
       tags:
         - DCR
       security: 
         - OAuth2Security: [register]
+      operationId: "postRegister"
       requestBody:
         description: Objeto com os dados da aplicação cliente que será registrada, que também inclui o <i>Software Statement</i> emitido pelo Diretório de Participantes.
         content:
@@ -34,19 +38,19 @@ paths:
             schema:
               $ref: '#/components/schemas/ClientRegistrationRequest'
       responses:
-        201:
+        '201':
           description: Cliente registrado na instituição - inclui o <i>client_id</i> da aplicação para consumo das APIs da Seguradora.
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ClientRegistrationResponseSuccess'
-        400:
+        '400':
           description: Erro ao registrar a aplicação cliente.
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ClientRegistrationResponseError'
-        401:
+        '401':
           description: Access Token inválido, ou outro erro relacionado às validações de acesso a recursos protegidos OAuth 2.0.
           content:
             application/json:
@@ -61,43 +65,45 @@ paths:
                   error_description:
                     type: string
                     description: mensagem amigável com detalhes do erro ocorrido          
-        403: 
-          description: Escopo inválido
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  error:
-                    type: string
-                    enum: 
-                      - insufficient_scope
-                    description: códigos de erro de validação de access token OAuth 2.0, usados como descrito na seção 3.1 da RFC 6750
-                  error_description:
-                    type: string
-                    description: mensagem amigável com detalhes do erro ocorrido
+        '403': 
+            description: Escopo inválido
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    error:
+                      type: string
+                      enum: 
+                        - insufficient_scope
+                      description: códigos de erro de validação de access token OAuth 2.0, usados como descrito na seção 3.1 da RFC 6750
+                    error_description:
+                      type: string
+                      description: mensagem amigável com detalhes do erro ocorrido
     get: 
       summary: Consulta de dados do registro da aplicação cliente. Uma das implementações possíveis, como descritas no Apêndice B da RFC 7592
+      description: Consulta de dados do registro da aplicação cliente. Uma das implementações possíveis, como descritas no Apêndice B da RFC 7592
       tags:
-      - DCM
+        - DCM
       security:
         - DCMSecurity: []
+      operationId: "getRegister"
       parameters:
         - $ref: '#/components/parameters/clientIdQuerystring'
       responses:
-        200:
+        '200':
           description: Dados do cliente registrado na instituição - inclui o <i>client_id</i> da aplicação para consumo das APIs da Seguradora.
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ClientGetResponseSuccess'
-        400:
+        '400':
           description: Erro ao consultar dados da aplicação cliente.
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ClientRegistrationResponseError'
-        401:
+        '401':
           description: Cliente ou Registration Access Token inválido, ou ainda outro erro relacionado às validações de acesso a recursos protegidos OAuth 2.0.
           content:
             application/json:
@@ -110,7 +116,7 @@ paths:
                   error_description:
                     type: string
                     description: mensagem amigável com detalhes do erro ocorrido          
-        403: 
+        '403': 
           description: Sem permissão para atualizar o cliente informado
           content:
             application/json:
@@ -123,12 +129,14 @@ paths:
                   error_description:
                     type: string
                     description: mensagem amigável com detalhes do erro ocorrido
-    put: 
+    put:
       summary: Alteração de dados do registro da aplicação cliente. Uma das implementações possíveis, como descritas no Apêndice B da RFC 7592
+      description: Alteração de dados do registro da aplicação cliente. Uma das implementações possíveis, como descritas no Apêndice B da RFC 7592
       tags:
-      - DCM
+        - DCM
       security:
         - DCMSecurity: []
+      operationId: "putRegister"
       parameters:
         - $ref: '#/components/parameters/clientIdQuerystring'
       requestBody:
@@ -137,19 +145,19 @@ paths:
             schema:
               $ref: '#/components/schemas/ClientRegistrationRequest'        
       responses:
-        200:
+        '200':
           description: Dados do cliente registrado na instituição - inclui o <i>client_id</i> da aplicação para consumo das APIs da Seguradora.
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ClientGetResponseSuccess'
-        400:
+        '400':
           description: Erro ao atualizar dados da aplicação cliente.
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ClientRegistrationResponseError'
-        401:
+        '401':
           description: Cliente ou Registration Access Token inválido, ou ainda outro erro relacionado às validações de acesso a recursos protegidos OAuth 2.0.
           content:
             application/json:
@@ -162,7 +170,7 @@ paths:
                   error_description:
                     type: string
                     description: mensagem amigável com detalhes do erro ocorrido          
-        403: 
+        '403':
           description: Sem permissão para atualizar o cliente informado
           content:
             application/json:
@@ -177,22 +185,24 @@ paths:
                     description: mensagem amigável com detalhes do erro ocorrido    
     delete: 
       summary: Exclusão do registro da aplicação cliente. Uma das implementações possíveis, como descritas no Apêndice B da RFC 7592
+      description: Exclusão do registro da aplicação cliente. Uma das implementações possíveis, como descritas no Apêndice B da RFC 7592
       tags:
       - DCM
       security:
         - DCMSecurity: []
+      operationId: "deleteRegister"
       parameters:
         - $ref: '#/components/parameters/clientIdQuerystring'
       responses:
-        204:
+        '204':
           description: Sem conteúdo
-        400:
+        '400':
           description: Erro ao excluir o registro da aplicação cliente.
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ClientRegistrationResponseError'
-        401:
+        '401':
           description: Cliente ou Registration Access Token inválido, ou ainda outro erro relacionado às validações de acesso a recursos protegidos OAuth 2.0.
           content:
             application/json:
@@ -205,7 +215,7 @@ paths:
                   error_description:
                     type: string
                     description: mensagem amigável com detalhes do erro ocorrido          
-        403: 
+        '403':
           description: Sem permissão para atualizar o cliente informado
           content:
             application/json:
@@ -218,31 +228,33 @@ paths:
                   error_description:
                     type: string
                     description: mensagem amigável com detalhes do erro ocorrido
-        405: 
+        '405':
           description: Método não suportado    
   /register/{clientId}:
     get: 
       summary: Consulta de dados do registro da aplicação cliente. Uma das implementações possíveis, como descritas no Apêndice B da RFC 7592
+      description: Consulta de dados do registro da aplicação cliente. Uma das implementações possíveis, como descritas no Apêndice B da RFC 7592
       tags:
       - DCM
       security:
         - DCMSecurity: []
+      operationId: "getRegisterClientId"
       parameters:
         - $ref: '#/components/parameters/clientId'
       responses:
-        200:
+       '200':
           description: Dados do cliente registrado na instituição - inclui o <i>client_id</i> da aplicação para consumo das APIs da Seguradora.
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ClientGetResponseSuccess'
-        400:
+       '400':
           description: Erro ao consultar dados da aplicação cliente.
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ClientRegistrationResponseError'
-        401:
+       '401':
           description: Cliente ou Registration Access Token inválido, ou ainda outro erro relacionado às validações de acesso a recursos protegidos OAuth 2.0.
           content:
             application/json:
@@ -255,7 +267,7 @@ paths:
                   error_description:
                     type: string
                     description: mensagem amigável com detalhes do erro ocorrido          
-        403: 
+       '403':
           description: Sem permissão para atualizar o cliente informado
           content:
             application/json:
@@ -270,10 +282,12 @@ paths:
                     description: mensagem amigável com detalhes do erro ocorrido                
     put: 
       summary: Alteração de dados do registro da aplicação cliente. Uma das implementações possíveis, como descritas no Apêndice B da RFC 7592
+      description: Alteração de dados do registro da aplicação cliente. Uma das implementações possíveis, como descritas no Apêndice B da RFC 7592
       tags:
       - DCM
       security:
         - DCMSecurity: []
+      operationId: "putRegisterClientId"
       parameters:
         - $ref: '#/components/parameters/clientId'
       requestBody:
@@ -282,19 +296,19 @@ paths:
             schema:
               $ref: '#/components/schemas/ClientRegistrationRequest'
       responses:
-        200:
+       '200':
           description: Dados do cliente registrado na instituição - inclui o <i>client_id</i> da aplicação para consumo das APIs da Seguradora.
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ClientGetResponseSuccess'
-        400:
+       '400':
           description: Erro ao atualizar dados da aplicação cliente.
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ClientRegistrationResponseError'
-        401:
+       '401':
           description: Cliente ou Registration Access Token inválido, ou ainda outro erro relacionado às validações de acesso a recursos protegidos OAuth 2.0.
           content:
             application/json:
@@ -307,7 +321,7 @@ paths:
                   error_description:
                     type: string
                     description: mensagem amigável com detalhes do erro ocorrido          
-        403: 
+       '403':
           description: Sem permissão para atualizar o cliente informado
           content:
             application/json:
@@ -322,22 +336,24 @@ paths:
                     description: mensagem amigável com detalhes do erro ocorrido  
     delete: 
       summary: Exclusão do registro da aplicação cliente. Uma das implementações possíveis, como descritas no Apêndice B da RFC 7592
+      description: Exclusão do registro da aplicação cliente. Uma das implementações possíveis, como descritas no Apêndice B da RFC 7592
       tags:
       - DCM
       security:
         - DCMSecurity: []
+      operationId: "deleteRegisterClientId"
       parameters:
         - $ref: '#/components/parameters/clientId'
       responses:
-        204:
+        '204':
           description: Sem conteúdo
-        400:
+        '400':
           description: Erro ao excluir o registro da aplicação cliente.
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ClientRegistrationResponseError'
-        401:
+        '401':
           description: Cliente ou Registration Access Token inválido, ou ainda outro erro relacionado às validações de acesso a recursos protegidos OAuth 2.0.
           content:
             application/json:
@@ -350,7 +366,7 @@ paths:
                   error_description:
                     type: string
                     description: mensagem amigável com detalhes do erro ocorrido          
-        403: 
+        '403':
           description: Sem permissão para atualizar o cliente informado
           content:
             application/json:
@@ -363,7 +379,7 @@ paths:
                   error_description:
                     type: string
                     description: mensagem amigável com detalhes do erro ocorrido
-        405: 
+        '405':
           description: Método não suportado
 components:
   parameters:
@@ -474,10 +490,10 @@ components:
               - client_credentials
               - authorization_code
               - refresh_token
-            example:
-              - client_credentials
-              - authorization_code
-              - refresh_token
+          example:
+            - client_credentials
+            - authorization_code
+            - refresh_token
         id_token_signed_response_alg: 
           description: algorítmo de assinatura do id_token
           type: string
@@ -570,14 +586,7 @@ components:
           items:
             type: string
             example: "https://amazinginsurance.com.br/apis/callback"
-  securitySchemes:
-    OAuth2Security:
-      type: oauth2
-      flows:
-        clientCredentials:
-          tokenUrl: 'https://amazinginsurance.com.br/token'
-          scopes:
-            openid: OpenID Connect
+
     DCMSecurity:
       type: http
       description: Deve informar o registration_access_token obtido durante o processo de registro do cliente (DCR) para autorizar a operação

@@ -4,19 +4,20 @@ info:
   title: APIs Open Data do Open Insurance Brasil
   description:
     API de informações de dados do produto Engenharia. Os recursos que podem ser consumidos pelos participantes conforme a regra 3.1.2 do manual de escopo de dados..
-  version: 1.0.1
+  version: 1.1.0
   contact:
-    url: 'http://novosite.susep.gov.br/'
+    url: 'https://www.gov.br/susep/'
 servers:
   - url: 'https://api.organizacao.com.br/open-insurance/products-services/v1'
     description: Servidor de Producao
   - url: 'https://api.organizacao.com.br/open-insurance/products-services/v1'
     description: Servidor de Homologacao 
 tags:
-- name: "Engenharia" 
+  - name: "Engenharia"
+  - name: "Engineering"
 
 paths:
-  /engineering/:
+  /engineering:
     get:
       tags:
         - Engineering
@@ -53,6 +54,8 @@ paths:
           $ref: '#/components/responses/MethodNotAllowed'
         '406':
           $ref: '#/components/responses/NotAcceptable'
+        '422':
+          $ref: '#/components/responses/UnprocessableEntity'
         '429':
           $ref: '#/components/responses/TooManyRequests'
         '500':
@@ -185,7 +188,7 @@ components:
                     TRANSPORTE_TERRESTRE,
                     TUMULTOS_GREVES_E_LOCKOUT,
                     OUTRAS
-                  ]               
+                  ]        
                 coverageDescription:
                   type: string
                   maxLength: 3000
@@ -225,7 +228,6 @@ components:
             type: array
             items:
               type: string
-              maxLength: 23
               example: ANUAL
               enum: [ANUAL, ANUAL_INTERMITENTE, PLURIANUAL, PLURIANUAL_INTERMITENTE, MENSAL, MENSAL_INTERMITENTE, DIARIO, DIARIO_INTERMITENTE, OUTROS]
           termOthers:
@@ -243,7 +245,7 @@ components:
           type: string
           description: Número do processo SUSEP.
           maxLength: 20
-          example: 15414622222222222
+          example: '15414622222222222'
         definition:
           type: string
           description: Campo aberto (possibilidade de incluir uma url).
@@ -261,7 +263,6 @@ components:
           type: array
           items:
             type: string
-            maxLength: 15
             example: PESSOA_NATURAL
             enum: [PESSOA_NATURAL, PESSOA_JURIDICA]
     
@@ -272,9 +273,27 @@ components:
         - maxLMI
       properties:
         maxLMI:
-          description: Lista com valor de LMI aceito pela sociedade para cada cobertura.
+          $ref: '#/components/schemas/EngineeringLimit'
+
+    EngineeringLimit:
+      type: object
+      description: Lista com valor de LMI aceito pela sociedade para cada cobertura.
+      required:
+        - type
+        - amount
+      properties:
+        type:
+          type: string
+          enum: [FINANCEIRO, PERCENTUAL]
+        amount:
           $ref: '#/components/schemas/EngineeringCoverageAttributesDetails'
-    
+        index:
+          type: string
+          description: Indexador. Condicional, vinculado ao preenchimento do campo Tipo com Percentual
+          enum: [LMG, FINANCEIRO_COBERTURA, OUTRO]
+        maxIndexAmount:
+          $ref: '#/components/schemas/EngineeringCoverageAttributesDetails'
+
     EngineeringCoverageAttributesDetails:
         description: Valor de Limite Máximo de Indenização (LMI).
         type: object
@@ -286,18 +305,7 @@ components:
             type: number
           unit:
             $ref: '#/components/schemas/EngineeringCoverageAttributesDetailsUnit'
-    
-    EngineeringCoverageAttributesPercentageDetails:
-        type: object
-        required:
-          - amount
-          - unit
-        properties:
-          amount:
-            type: number
-          unit:
-            $ref: '#/components/schemas/EngineeringCoverageAttributesPercentageDetailsUnit'
-    
+
     EngineeringCoverageAttributesDetailsUnit:
       type: object
       required:
@@ -312,45 +320,35 @@ components:
           type: string
           maxLength: 5
           example: REAL
-    
-    EngineeringCoverageAttributesPercentageDetailsUnit:
-      type: object
-      required:
-        - code
-        - description
-      properties:
-        code: 
-          type: string
-          maxLength: 1
-          example: '%'
-        description: 
-          type: string
-          maxLength: 10
-          example: PERCENTUAL
-    
+
     Links:
       type: object
       properties:
         self:
           type: string
           description: URL da página atualmente requisitada
-          example: 'https://api.organizacao.com.br/open-insurance/products-services/v1'
+          pattern: ^(https:\/\/)(.*?)(\/open-insurance\/products-services\/v\d+)(\/engineering.*)?$
+          example: 'https://api.organizacao.com.br/open-insurance/products-services/v1/engineering'
         first:
           type: string
           description: URL da primeira página de registros
-          example: 'https://api.organizacao.com.br/open-insurance/products-services/v1'
+          pattern: ^(https:\/\/)(.*?)(\/open-insurance\/products-services\/v\d+)(\/engineering.*)?$
+          example: 'https://api.organizacao.com.br/open-insurance/products-services/v1/engineering'
         prev:
           type: string
           description: URL da página anterior de registros
-          example: 'https://api.organizacao.com.br/open-insurance/products-services/v1'
+          pattern: ^(https:\/\/)(.*?)(\/open-insurance\/products-services\/v\d+)(\/engineering.*)?$
+          example: 'https://api.organizacao.com.br/open-insurance/products-services/v1/engineering'
         next:
           type: string
           description: URL da próxima página de registros
-          example: 'https://api.organizacao.com.br/open-insurance/products-services/v1'
+          pattern: ^(https:\/\/)(.*?)(\/open-insurance\/products-services\/v\d+)(\/engineering.*)?$
+          example: 'https://api.organizacao.com.br/open-insurance/products-services/v1/engineering'
         last:
           type: string
           description: URL da última página de registros
-          example: 'https://api.organizacao.com.br/open-insurance/products-services/v1'
+          pattern: ^(https:\/\/)(.*?)(\/open-insurance\/products-services\/v\d+)(\/engineering.*)?$
+          example: 'https://api.organizacao.com.br/open-insurance/products-services/v1/engineering'
     
     Meta:
       type: object
@@ -382,6 +380,7 @@ components:
               - code
               - title
               - detail
+              - requestDateTime
             properties:
               code:
                 description: Código de erro específico do endpoint
@@ -468,21 +467,13 @@ components:
             type: string
             pattern: '[\w\W\s]*'
     
-  securitySchemes:
-    OpenId:
-      type: openIdConnect
-      openIdConnectUrl: 'https://auth.mockbank.poc.raidiam.io/.well-known/openid-configuration'
-    OAuth2Security:
-      type: oauth2
-      description: Fluxo OAuth necessário para que a receptora tenha acesso aos dados na instituição transmissora. Inclui o processo de redirecionamento e autenticação do usuário a que se referem os dados.
-      flows:
-        authorizationCode:
-          authorizationUrl: 'https://authserver.example/authorization'
-          tokenUrl: 'https://authserver.example/token'
-          scopes:
-            financings: Escopo necessário para acesso à API. O controle dos endpoints específicos é feito via permissions.
-    
   responses:
+    UnprocessableEntity:
+      description: 'O servidor entende o tipo de conteúdo da entidade da requisição, e a sintaxe da requisição esta correta, mas não foi possível processar as instruções presente.'
+      content:
+        application/json; charset=utf-8:
+          schema:
+            $ref: '#/components/schemas/ResponseError'
     NoContent:
       description: 'O recurso solicitado não existe ou não foi localizado.'
       content:

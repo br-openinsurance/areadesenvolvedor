@@ -3,9 +3,9 @@ info:
   title: APIs Open Data do Open Insurance Brasil
   description: 
     API de informações de Seguro Residencial. Os recursos que podem ser consumidos pelos participantes conforme a regra 3.2.2 do manual de escopo de dados.
-  version: 1.1.0
+  version: 1.2.0
   contact:
-    url: 'https://openinsurance.susep.gov.br/'
+    url: 'https://www.gov.br/susep/'
 servers:
   - url: 'https://api.organizacao.com.br/open-insurance/products-services/v1'
     description: Servidor de Produção
@@ -14,7 +14,7 @@ servers:
 tags:
 - name: "home-insurance"
 paths:
-  /home-insurance/commercializationArea/{commercializationArea}:  
+  /home-insurance/commercializationArea/{commercializationArea}:
     get:
       tags:
         - home-insurance
@@ -38,6 +38,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ResponseHomeInsuranceList'
+        '204':
+          $ref: '#/components/responses/NoContent'
         '400':
           $ref: '#/components/responses/BadRequest'
         '401':
@@ -74,7 +76,7 @@ components:
         data:
           type: object
           required:
-            - HomeInsuranceBrand
+            - brand
           properties:
             brand:
               $ref: '#/components/schemas/HomeInsuranceBrand'
@@ -86,13 +88,14 @@ components:
       type: object
       required:
         - name
+        - companies
       properties:
         name:
           type: string
           description: Nome da marca reportada pelo participante do Open Insurance. O conceito a que se refere a marca é em essência uma promessa das sociedades sob ela em fornecer uma série específica de atributos, benefícios e serviços uniformes aos clientes.
           maxLength: 80
           example: EMPRESA A seguros
-        company:
+        companies:
           $ref: '#/components/schemas/HomeInsuranceCompany'  
     HomeInsuranceCompany:
       type: array
@@ -111,10 +114,8 @@ components:
             type: string
             description: CNPJ da sociedade pertencente à marca.
             maxLength: 14
-            example: 12345678901234
-          products:  
-            type: object
-            description: Produtos de Seguro Residencial.
+            example: '12345678901234'
+          products:
             $ref: '#/components/schemas/HomeInsuranceProduct'
     HomeInsuranceProduct:
       type: array
@@ -133,9 +134,9 @@ components:
           - microInsurance
           - termsAndConditions
           - validity
-          - customerService
+          - customerServices
           - premiumPayments
-          - minimumRequirement
+          - minimumRequirements
           - targetAudiences
         properties:
           name:
@@ -147,7 +148,7 @@ components:
             type: string
             description: Código único a ser definido pela sociedade.
             maxLength: 80
-            example: 0000-0
+            example: '0000-0'
           coverages:
             $ref: '#/components/schemas/HomeInsuranceCoverages'          
           propertyCharacteristics:
@@ -233,19 +234,36 @@ components:
        - insuredMandatoryParticipationPercentage
       properties:
         minLMI:
-          description: Lista com valor mínimo de LMI aceito pela sociedade para cada cobertura.
-          $ref: '#/components/schemas/HomeInsuranceCovaregeAttibutesDetails'
+          $ref: '#/components/schemas/HomeInsuranceLimit'
         maxLMI:
-          description: Lista com valor máximo de LMI aceito pela sociedade para cada cobertura.
-          $ref: '#/components/schemas/HomeInsuranceCovaregeAttibutesDetails'
+          $ref: '#/components/schemas/HomeInsuranceLimit'
         minDeductibleAmount:
-          description: Valor mínimo de franquia e participação obrigatória do segurado - Listagem de valor mínimo da franquia (Reais) e/ou Participação Obrigatória do Segurado (Percentual) estabelecida pela sociedade para cada tipo de cobertura do produto.
-          $ref: '#/components/schemas/HomeInsuranceCovaregeAttibutesDetails'
+          $ref: '#/components/schemas/HomeInsuranceCoverageAttributesDetails'
         insuredMandatoryParticipationPercentage:
           type: number
           description: Listagem percentual de franquia e/ou percentual de participação obrigatória do segurado estabelecida pela sociedade para cada tipo de cobertura de produto.
           maxLength: 9
-    HomeInsuranceCovaregeAttibutesDetailsUnit:
+
+    HomeInsuranceLimit:
+      type: object
+      description: Lista com valor de LMI aceito pela sociedade para cada cobertura.
+      required:
+        - type
+        - amount
+      properties:
+        type:
+          type: string
+          enum: [FINANCEIRO, PERCENTUAL]
+        amount:
+          $ref: '#/components/schemas/HomeInsuranceCoverageAttributesDetails'
+        index:
+          type: string
+          description: Indexador. Condicional, vinculado ao preenchimento do campo Tipo com Percentual
+          enum: [LMG, FINANCEIRO_COBERTURA, OUTRO]
+        maxIndexAmount:
+          $ref: '#/components/schemas/HomeInsuranceCoverageAttributesDetails'
+
+    HomeInsuranceCoverageAttributesDetailsUnit:
       type: object
       required:
         - code
@@ -257,8 +275,9 @@ components:
         description: 
           type: string
           example: REAL
-    HomeInsuranceCovaregeAttibutesDetails:
+    HomeInsuranceCoverageAttributesDetails:
         type: object
+        description: Valor
         required:
           - amount
           - unit
@@ -266,7 +285,7 @@ components:
           amount:
             type: number
           unit:
-            $ref: '#/components/schemas/HomeInsuranceCovaregeAttibutesDetailsUnit'  
+            $ref: '#/components/schemas/HomeInsuranceCoverageAttributesDetailsUnit'  
     HomeInsuranceTermsAndConditions:
       type: array
       description: Informações dos termos e condições conforme número do processo SUSEP.
@@ -359,21 +378,20 @@ components:
         required:
             - coverageType
             - coverageDetail
-            - coveragePermissionSeparteAquisition
+            - allowApartPurchase
             - coverageAttributes
         properties:
           coverageType:
             type: string
             enum: [IMOVEL_BASICA , IMOVEL_AMPLA , DANOS_ELETRICOS , DANOS_POR_AGUA , ALAGAMENTO , RESPONSABILIDADE_CIVIL_FAMILIAR, RESPONSABILIDADE_CIVIL_DANOS_MORAIS , ROUBO_SUBTRACAO_BENS , ROUBO_SUBTRACAO_BENS_FORA_LOCAL_SEGURADO , TACOS_GOLFE_HOLE_ONE , PEQUENAS_REFORMAS_OBRAS , GREVES_TUMULTOS_LOCKOUT , MICROEMPREENDEDOR , ESCRITORIO_RESIDENCIA , DANOS_EQUIPAMENTOS_ELETRONICOS , QUEBRA_VIDROS , IMPACTO_VEICULOS , VENDAVAL , PERDA_PAGAMENTO_ALUGUEL , BICICLETA , RESPONSABILIDADE_CIVIL_BICICLETA , RC_EMPREGADOR , DESMORONAMENTO , DESPESAS_EXTRAORDINARIAS , JOIAS_OBRAS_ARTE , TERREMOTO , IMPACTO_AERONAVES , PAISAGISMO ,  INCENDIO , QUEDA_RAIO , EXPLOSAO, OUTRAS]
             description: Nome do tipo da cobertura.
-            maxLength: 1000
-            example:  Escritório em Residência
+            example: IMOVEL_BASICA
           coverageDetail:
             type: string
             description: Campo aberto para detalhamento por coberturas possíveis dos produtos a ser feito por cada participante.
             maxLength: 1000
             example: Cobertura especial para escritório residenciais
-          coveragePermissionSeparteAquisition:
+          allowApartPurchase:
             type: boolean
             description: Indicação se a cobertura permite contratação separada (por cobertura selecionada).
             example: false
@@ -416,21 +434,28 @@ components:
         self:
           type: string
           description: URL da página atualmente requisitada
-          example: 'https://api.organizacao.com.br/open-insurance/products-services/v1'
+          pattern: ^(https:\/\/)(.*?)(\/open-insurance\/products-services\/v\d+)(\/home-insurance.*)?$
+          example: 'https://api.organizacao.com.br/open-insurance/products-services/v1/home-insurance/commercializationArea'
         first:
           type: string
           description: URL da primeira página de registros
-          example: 'https://api.organizacao.com.br/open-insurance/products-services/v1'
+          pattern: ^(https:\/\/)(.*?)(\/open-insurance\/products-services\/v\d+)(\/home-insurance.*)?$
+          example: 'https://api.organizacao.com.br/open-insurance/products-services/v1/home-insurance/commercializationArea'
         prev:
           type: string
           description: URL da página anterior de registros
+          pattern: ^(https:\/\/)(.*?)(\/open-insurance\/products-services\/v\d+)(\/home-insurance.*)?$
+          example: 'https://api.organizacao.com.br/open-insurance/products-services/v1/home-insurance/commercializationArea'
         next:
           type: string
           description: URL da próxima página de registros
+          pattern: ^(https:\/\/)(.*?)(\/open-insurance\/products-services\/v\d+)(\/home-insurance.*)?$
+          example: 'https://api.organizacao.com.br/open-insurance/products-services/v1/home-insurance/commercializationArea'
         last:
           type: string
           description: URL da última página de registros
-          example: 'https://api.organizacao.com.br/open-insurance/products-services/v1'
+          pattern: ^(https:\/\/)(.*?)(\/open-insurance\/products-services\/v\d+)(\/home-insurance.*)?$
+          example: 'https://api.organizacao.com.br/open-insurance/products-services/v1/home-insurance/commercializationArea'
     Meta:
       type: object
       properties:
@@ -555,21 +580,20 @@ components:
       schema:
         type: string
         pattern: '[\w\W\s]*'
-  securitySchemes:
-    OpenId:
-      type: openIdConnect
-      openIdConnectUrl: 'https://auth.mockbank.poc.raidiam.io/.well-known/openid-configuration'
-    OAuth2Security:
-      type: oauth2
-      description: Fluxo OAuth necessário para que a receptora tenha acesso aos dados na instituição transmissora. Inclui o processo de redirecionamento e autenticação do usuário a que se referem os dados.
-      flows:
-        authorizationCode:
-          authorizationUrl: 'https://authserver.example/authorization'
-          tokenUrl: 'https://authserver.example/token'
-          scopes:
-            financings: Escopo necessário para acesso à API. O controle dos endpoints específicos é feito via permissions.    
+    
   responses:
-
+    UnprocessableEntity:
+      description: 'O servidor entende o tipo de conteúdo da entidade da requisição, e a sintaxe da requisição esta correta, mas não foi possível processar as instruções presente.'
+      content:
+        application/json; charset=utf-8:
+          schema:
+            $ref: '#/components/schemas/ResponseError'
+    NoContent:
+      description: 'O recurso solicitado não existe ou não foi localizado.'
+      content:
+        application/json; charset=utf-8:
+          schema:
+            $ref: '#/components/schemas/ResponseError'
     BadRequest:
       description: 'A requisição foi malformada, omitindo atributos obrigatórios, seja no payload ou através de atributos na URL.'
       content:
@@ -614,12 +638,6 @@ components:
             $ref: '#/components/schemas/ResponseError'
     Unauthorized:
       description: Cabeçalho de autenticação ausente/inválido ou token inválido
-      content:
-        application/json; charset=utf-8:
-          schema:
-            $ref: '#/components/schemas/ResponseError'
-    UnprocessableEntity:
-      description: O servidor entende o tipo de conteúdo da entidade da requisição, e a sintaxe da requisição esta correta, mas não foi possível processar as instruções presentes.
       content:
         application/json; charset=utf-8:
           schema:

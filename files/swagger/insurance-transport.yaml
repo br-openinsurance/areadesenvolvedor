@@ -33,11 +33,10 @@ info:
     ### `/{policyId}/claim`
       - permissions:
         - GET: **DAMAGES_AND_PEOPLE_TRANSPORT_CLAIM_READ**
-  version: 1.0.0
+  version: 1.1.0
   contact:
     name: Governança do Open Insurance Brasil
-    email: gt-interfaces@openinsurancebr.org
-    url: 'https://openinsurance-brasil.github.io/areadesenvolvedor/'
+    url: 'https://www.gov.br/susep/'
 servers:
   - url: 'https://api.organizacao.com.br/open-insurance/insurance-transport/v1'
     description: Servidor de Produção
@@ -46,7 +45,7 @@ servers:
 tags:
   - name: 'InsuranceTransport'
 paths:
-  /:
+  /insurance-transport:
     get:
       tags:
         - InsuranceTransport
@@ -64,6 +63,8 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/OKResponseInsuranceTransport'
+        '204':
+          $ref: '#/components/responses/NoContent'
         '400':
           $ref: '#/components/responses/BadRequest'
         '401':
@@ -94,7 +95,7 @@ paths:
           OAuth2Security:
             - 'consent:consentId'
             - insurance-transport
-  /{policyId}/policy-info:
+  /insurance-transport/{policyId}/policy-info:
     get:
       tags:
         - InsuranceTransport
@@ -111,6 +112,8 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/OKResponseInsuranceTransportPolicyInfo'
+        '204':
+          $ref: '#/components/responses/NoContent'
         '400':
           $ref: '#/components/responses/BadRequest'
         '401':
@@ -141,7 +144,7 @@ paths:
           OAuth2Security:
             - 'consent:consentId'
             - insurance-transport
-  /{policyId}/premium:
+  /insurance-transport/{policyId}/premium:
     get:
       tags:
         - InsuranceTransport
@@ -158,6 +161,8 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/OKResponseInsuranceTransportPremium'
+        '204':
+          $ref: '#/components/responses/NoContent'
         '400':
           $ref: '#/components/responses/BadRequest'
         '401':
@@ -188,7 +193,7 @@ paths:
           OAuth2Security:
             - 'consent:consentId'
             - insurance-transport
-  /{policyId}/claim:
+  /insurance-transport/{policyId}/claim:
     get:
       tags:
         - InsuranceTransport
@@ -205,6 +210,8 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/OKResponseInsuranceTransportClaims'
+        '204':
+          $ref: '#/components/responses/NoContent'
         '400':
           $ref: '#/components/responses/BadRequest'
         '401':
@@ -268,7 +275,7 @@ components:
                     companyName:
                       description: Nome da sociedade pertencente à marca
                       type: string
-                      maxLength: 150
+                      maxLength: 200
                     cnpjNumber:
                       description: CNPJ da sociedade pertencente à marca
                       type: string
@@ -401,9 +408,9 @@ components:
             $ref: '#/components/schemas/InsuranceTransportCoverage'
         coinsuranceRetainedPercentage:
           description: "Percentual Retido em Cosseguro (Quando há cosseguro)"
-          type: number
-          pattern: '^\d{1,3}(\.\d{1,9})?$'
-          example: 10.00
+          type: string
+          pattern: '^\d{1,3}\.\d{1,9}$' 
+          example: '10.00'
         coinsurers:
           type: array
           items:
@@ -506,7 +513,7 @@ components:
           enum: [ 
             CORRETOR,
             REPRESENTANTE,
-            ESTIPULANTE,
+            ESTIPULANTE_AVERBADOR_INSTITUIDOR,
             CORRESPONDENTE,
             AGENTE_DE_MICROSSEGUROS,
             OUTROS
@@ -580,6 +587,7 @@ components:
                 AUTOMOVEL,
                 CONDUTOR,
                 FROTA,
+                PESSOA,
                 OUTROS]
         typeAdditionalInfo:
           type: string
@@ -864,9 +872,9 @@ components:
           $ref: '#/components/schemas/AmountDetails'
         percentage:
           description: Percentual do POS
-          type: number
-          pattern: '^\d{1,3}(\.\d{1,9})?$'
-          example: 10.00
+          type: string
+          pattern: '^\d{1,3}\.\d{1,9}$'
+          example: '10.00'
     Coinsurer:
       type: object
       required:
@@ -879,9 +887,9 @@ components:
           maxLength: 60
         cededPercentage:
           description: "Percentual cedido para a congênere para contratos de cosseguro cedido. Obs: Obrigatório quando há cosseguro"
-          type: number
-          pattern: '^\d{1,3}(\.\d{1,9})?$'
-          example: 10.00
+          type: string
+          pattern: '^\d{1,3}\.\d{1,9}$'
+          example: '10.00'
     ResponseInsuranceTransportPremium:
       type: object
       required:
@@ -1056,7 +1064,8 @@ components:
         data:
           type: array
           items:
-            $ref: '#/components/schemas/InsuranceTransportClaim'                    
+            $ref: '#/components/schemas/InsuranceTransportClaim'
+          minItems: 0
         links:
             $ref: '#/components/schemas/Links'
         meta:
@@ -1200,17 +1209,27 @@ components:
         description: Detalhes de valores/limites
         required:
           - amount
-          - currency
+          - unit
         properties:
           amount:
-            type: number
-            pattern: '^\d{1,16}(\.\d{1,2})?$'
-            example: 2000.00
-          currency:
-            description: Moeda da Parcela, de acordo com ISO-4217.
             type: string
-            pattern: '^(\w{3}){1}$'
-            example: BRL
+            pattern: '^\d{1,16}\.\d{2}$'
+            example: '2000.00'
+          unit:
+            type: object
+            required:
+              - code
+              - description
+            properties:
+              code:
+                type: string
+                maxLength: 2
+                example: R$
+              description:
+                type: string
+                description: Moeda da Parcela, de acordo com ISO-4217.
+                pattern: ^(\w{3})$
+                example: BRL
     InsuranceTransportSpecificPolicyInfo:    
       type: object
       description: Informações do Anexo Específico
@@ -1263,9 +1282,9 @@ components:
                 $ref: '#/components/schemas/AmountDetails'
               shipmentsPremiumBRL:
                 description: Prêmio dos Embarques em reais
-                type: number
-                pattern: '^\d{1,16}(\.\d{1,2})?$'
-                example: 2000.00
+                type: string
+                pattern: '^\d{1,16}\.\d{2}$'
+                example: '2000.00'
               shipmentsInsuredsAmount:
                 $ref: '#/components/schemas/AmountDetails'
               minInsuredAmount:
@@ -1278,23 +1297,28 @@ components:
         self:
           type: string
           description: URL da página atualmente requisitada
-          example: 'https://api.organizacao.com.br/open-insurance/insurance-transport/v1'
+          pattern: ^(https:\/\/)(.*?)(\/open-insurance\/insurance-transport\/v\d+)(\/insurance-transport.*)?$
+          example: 'https://api.organizacao.com.br/open-insurance/insurance-transport/v1/insurance-transport'
         first:
           type: string
           description: URL da primeira página de registros
-          example: 'https://api.organizacao.com.br/open-insurance/insurance-transport/v1'
+          pattern: ^(https:\/\/)(.*?)(\/open-insurance\/insurance-transport\/v\d+)(\/insurance-transport.*)?$
+          example: 'https://api.organizacao.com.br/open-insurance/insurance-transport/v1/insurance-transport'
         prev:
           type: string
           description: URL da página anterior de registros
-          example: 'https://api.organizacao.com.br/open-insurance/insurance-transport/v1'
+          pattern: ^(https:\/\/)(.*?)(\/open-insurance\/insurance-transport\/v\d+)(\/insurance-transport.*)?$
+          example: 'https://api.organizacao.com.br/open-insurance/insurance-transport/v1/insurance-transport'
         next:
           type: string
           description: URL da próxima página de registros
-          example: 'https://api.organizacao.com.br/open-insurance/insurance-transport/v1'
+          pattern: ^(https:\/\/)(.*?)(\/open-insurance\/insurance-transport\/v\d+)(\/insurance-transport.*)?$
+          example: 'https://api.organizacao.com.br/open-insurance/insurance-transport/v1/insurance-transport'
         last:
           type: string
           description: URL da última página de registros
-          example: 'https://api.organizacao.com.br/open-insurance/insurance-transport/v1'
+          pattern: ^(https:\/\/)(.*?)(\/open-insurance\/insurance-transport\/v\d+)(\/insurance-transport.*)?$
+          example: 'https://api.organizacao.com.br/open-insurance/insurance-transport/v1/insurance-transport'
     Meta:
       type: object
       properties:
@@ -1324,6 +1348,7 @@ components:
               - code
               - title
               - detail
+              - requestDateTime
             properties:
               code:
                 description: Código de erro específico do endpoint
@@ -1483,8 +1508,20 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/ResponseInsuranceTransportPremium'
+    UnprocessableEntity:
+      description: 'O servidor entende o tipo de conteúdo da entidade da requisição, e a sintaxe da requisição esta correta, mas não foi possível processar as instruções presente.'
+      content:
+        application/json; charset=utf-8:
+          schema:
+            $ref: '#/components/schemas/ResponseError'
+    NoContent:
+      description: 'O recurso solicitado não existe ou não foi localizado.'
+      content:
+        application/json; charset=utf-8:
+          schema:
+            $ref: '#/components/schemas/ResponseError'
     BadRequest:
-      description: 'A requisição foi malformada, omitindo atributos obrigatórios, seja no payload ou através de atributos na URL'
+      description: 'A requisição foi malformada, omitindo atributos obrigatórios, seja no payload ou através de atributos na URL.'
       content:
         application/json; charset=utf-8:
           schema:
@@ -1527,12 +1564,6 @@ components:
             $ref: '#/components/schemas/ResponseError'
     Unauthorized:
       description: Cabeçalho de autenticação ausente/inválido ou token inválido
-      content:
-        application/json; charset=utf-8:
-          schema:
-            $ref: '#/components/schemas/ResponseError'
-    UnprocessableEntity:
-      description: O servidor entende o tipo de conteúdo da entidade da requisição, e a sintaxe da requisição esta correta, mas não foi possível processar as instruções presentes
       content:
         application/json; charset=utf-8:
           schema:

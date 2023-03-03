@@ -4,19 +4,20 @@ info:
   title: APIs Open Data do Open Insurance Brasil
   description:
     API de informações de dados do produto RD D&O.
-  version: 1.0.0
+  version: 1.1.0
   contact:
-    url: 'http://novosite.susep.gov.br/'
+    url: 'https://www.gov.br/susep/'
 servers:
   - url: 'https://api.organizacao.com.br/open-insurance/products-services/v1'
     description: Servidor de Producao
   - url: 'https://api.organizacao.com.br/open-insurance/products-services/v1'
     description: Servidor de Homologacao 
 tags:
-- name: "RD D&O" 
+- name: "RD D&O"
+- name: "DirectorsOfficersLiability"
 
 paths:
-  /directors-officers-liability/:
+  /directors-officers-liability:
     get:
       tags:
         - DirectorsOfficersLiability
@@ -53,6 +54,8 @@ paths:
           $ref: '#/components/responses/MethodNotAllowed'
         '406':
           $ref: '#/components/responses/NotAcceptable'
+        '422':
+          $ref: '#/components/responses/UnprocessableEntity'
         '429':
           $ref: '#/components/responses/TooManyRequests'
         '500':
@@ -116,7 +119,7 @@ components:
                 type: string
                 description: CNPJ da sociedade pertencente à marca.
                 maxLength: 14
-                example: "12345678901234"
+                example: '12345678901234'
             products:
                 $ref: '#/components/schemas/DirectorsOfficersLiabilityProduct'
     DirectorsOfficersLiabilityProduct:
@@ -146,7 +149,7 @@ components:
             type: string
             description: Código único a ser definido pela sociedade.
             maxLength: 100
-            example: "01234589-0"
+            example: '01234589-0'
           
           coverages:
             type: array
@@ -160,7 +163,6 @@ components:
                 coverage:
                   description: Listagem de coberturas incluídas no produto que deve observar a relação discriminada de coberturas
                   type: string
-                  maxLength: 370
                   enum: [DANOS_CAUSADOS_A_TERCEIROS_EM_CONSEQUENCIA_DE_ATOS_ILICITOS_CULPOSOS_PRATICADOS_NO_EXERCICIO_DAS_FUNCOES_PARA_AS_QUAIS_TENHA_SIDO_NOMEADO_ELEITO_OU_CONTRATADO_E_OBRIGADO_A_INDENIZA_LOS_POR_DECISAO_JUDICIAL_OU_DECISAO_EM_JUIZO_ARBITRAL_OU_POR_ACORDO_COM_OS_TERCEIROS_PREJUDICADOS_MEDIANTE_A_ANUENCIA_DA_SOCIEDADE_SEGURADORA_DESDE_QUE_ATENDIDAS_AS_DISPOSICOES_DO_CONTRATO,
                           OUTRAS]
                 coverageDescription:
@@ -178,19 +180,16 @@ components:
             maxLength: 1024
             description: Descritivo da composição do Limite Máximo de Garantia (LMG) por cobertura
           maxLMG:
-            type: number
-            maxLength: 36
-            description: Lista com valor de LMG aceito pela sociedade para cada produto
+            $ref: '#/components/schemas/DirectorsOfficersLiabilityLimitGuarantee'
           traits:
             type: boolean
             description: Indicação se o produto é classificado como destinado para cobertura de grandes riscos, sendo tal classificação de acordo com regulamentação específica.
           customerServices:
             type: array
             description: Rede de Atendimento.
-            example: REDE_REFERENCIADA
             items:
               type: string
-              maxLength: 17
+              example: REDE_REFERENCIADA
               enum: [REDE_REFERENCIADA, LIVRE_ESCOLHA]
           assistanceServices:
             $ref: '#/components/schemas/DirectorsOfficersLiabilityAssistanceServices'
@@ -220,7 +219,6 @@ components:
             items:
               description: Pacotes de Assistência
               example: ATE_10_SERVICOS
-              maxLength: 17
               enum: [ATE_10_SERVICOS, ATE_20_SERVICOS , ACIMA_20_SERVICOS, CUSTOMIZAVEL]
           complementaryAssistanceServicesDetail:
             type: string
@@ -230,7 +228,6 @@ components:
             type: string
             description: Indicação se o pacote de assistência é gratuito ou contratado/pago..
             example: GRATUITO
-            maxLength: 8
             enum: [GRATUITO, PAGO]
     
     DirectorsOfficersLiabilityPremiumPayment:
@@ -243,17 +240,16 @@ components:
         properties:
           paymentMethod:
             type: string
-            maxLength: 33
             example: CARTAO_DE_CREDITO
             enum: [CARTAO_DE_CREDITO,
-            CARTAO_DE_DEBITO,
-            DEBITO_EM_CONTA_CORRENTE,
-            DEBITO_EM_CONTA_POUPANCA,
-            BOLETO_BANCARIO,
-            PIX,
-            CONSIGNACAO_EM_FOLHA_DE_PAGAMENTO,
-            PONTOS_DE_PROGRAMA_DE_BENEFICIO,
-            OUTROS]
+              CARTAO_DE_DEBITO,
+              DEBITO_EM_CONTA_CORRENTE,
+              DEBITO_EM_CONTA_POUPANCA,
+              BOLETO_BANCARIO,
+              PIX,
+              CONSIGNACAO_EM_FOLHA_DE_PAGAMENTO,
+              PONTOS_DE_PROGRAMA_DE_BENEFICIO,
+              OUTROS]
           paymentDetail:
             type: string  
             maxLength: 1024
@@ -263,7 +259,6 @@ components:
             description: tipo de pagamento  
             items:
               type: string
-              maxLength: 9
               example: A_VISTA
               enum: [A_VISTA, PARCELADO]
           premiumRates:
@@ -282,7 +277,6 @@ components:
             type: array
             items:
               type: string
-              maxLength: 23
               description: Prazo
               example: ANUAL
               enum: [ANUAL , ANUAL_INTERMITENTE , PLURIANUAL , PLURIANUAL_INTERMITENTE , MENSAL, MENSAL_INTERMITENTE , DIARIO , DIARIO_INTERMITENTE, OUTROS]
@@ -302,7 +296,7 @@ components:
           type: string
           description: Número do processo SUSEP.
           maxLength: 20
-          example: 15414622222222222
+          example: '15414622222222222'
         definition:
           type: string
           description: Campo aberto (possibilidade de incluir uma url).
@@ -321,7 +315,6 @@ components:
           type: array
           items:
             type: string
-            maxLength: 10
             enum: [COLETIVO, INDIVIDUAL]
         minimumRequirementDetails:
           type: string
@@ -333,7 +326,6 @@ components:
           type: array
           items:
             type: string
-            maxLength: 15
             example: PESSOA_NATURAL
             enum: [PESSOA_NATURAL, PESSOA_JURIDICA]
     
@@ -346,15 +338,12 @@ components:
        - idenizationBasis
       properties:
         maxLMI:
-          type: number
-          description: Lista com valor de LMI aceito pela sociedade para cada cobertura
-          maxLength: 36
+          $ref: '#/components/schemas/DirectorsOfficersLiabilityLimit'          
         insuredParticipation:
           type: array
           description: Lista com indicativo do tipo de participação do segurado para cada cobertura
           items:
             type: string
-            maxLength: 13
             example: FRANQUIA
             enum: [FRANQUIA, POS, NAO_SE_APLICA]
         insuredParticipationDescription:
@@ -363,7 +352,6 @@ components:
           maxLength: 1024
         idenizationBasis:
           type: string
-          maxLength: 14
           description: Lista com o indicativo da base de indenização para cada cobertura
           example: POR_OCORRENCIA
           enum: [POR_OCORRENCIA, POR_RECLAMACAO, OUTRAS]
@@ -371,8 +359,45 @@ components:
           type: string
           description: Campo livre para descrição, caso o valor do campo "Base de indenização" seja 3. Outros
           maxLength: 3000
-          
-    
+
+    DirectorsOfficersLiabilityLimit:
+      type: object
+      description: Lista com valor de LMI aceito pela sociedade para cada cobertura.
+      required:
+        - type
+        - amount
+      properties:
+        type:
+          type: string
+          enum: [FINANCEIRO, PERCENTUAL]
+        amount:
+          $ref: '#/components/schemas/DirectorsOfficersLiabilityCoverageAttributesDetails'
+        index:
+          type: string
+          description: Indexador. Condicional, vinculado ao preenchimento do campo Tipo com Percentual
+          enum: [LMG, FINANCEIRO_COBERTURA, OUTRO]
+        maxIndexAmount:
+          $ref: '#/components/schemas/DirectorsOfficersLiabilityCoverageAttributesDetails'
+
+    DirectorsOfficersLiabilityLimitGuarantee:
+      type: object
+      description: Lista com valor de LMG aceito pela sociedade para cada produto
+      required:
+        - type
+        - amount
+      properties:
+        type:
+          type: string
+          enum: [FINANCEIRO, PERCENTUAL]
+        amount:
+          $ref: '#/components/schemas/DirectorsOfficersLiabilityCoverageAttributesDetails'
+        index:
+          type: string
+          description: Indexador. Condicional, vinculado ao preenchimento do campo Tipo com Percentual
+          enum: [FINANCEIRO_COBERTURA, OUTRO]
+        maxIndexAmount:
+          $ref: '#/components/schemas/DirectorsOfficersLiabilityCoverageAttributesDetails'
+
     DirectorsOfficersLiabilityCoverageAttributesDetails:
         type: object
         required:
@@ -396,54 +421,35 @@ components:
         description:
           type: string
           example: REAL
-    
-    DirectorsOfficersLiabilityCoverageAttributesPercentageDetails:
-        type: object
-        required:
-          - amount
-          - unit
-        properties:
-          amount:
-            type: number
-          unit:
-            $ref: '#/components/schemas/DirectorsOfficersLiabilityCoverageAttributesPercentageDetailsUnit'
-    
-    DirectorsOfficersLiabilityCoverageAttributesPercentageDetailsUnit:
-      type: object
-      required:
-        - code
-        - description
-      properties:
-        code:
-          type: string
-          example: '%'
-        description:
-          type: string
-          example: PERCENTUAL
-    
+
     Links:
       type: object
       properties:
         self:
           type: string
           description: URL da página atualmente requisitada
-          example: 'https://api.organizacao.com.br/open-insurance/products-services/v1'
+          pattern: ^(https:\/\/)(.*?)(\/open-insurance\/products-services\/v\d+)(\/directors-officers-liability.*)?$
+          example: 'https://api.organizacao.com.br/open-insurance/products-services/v1/directors-officers-liability'
         first:
           type: string
           description: URL da primeira página de registros
-          example: 'https://api.organizacao.com.br/open-insurance/products-services/v1'
+          pattern: ^(https:\/\/)(.*?)(\/open-insurance\/products-services\/v\d+)(\/directors-officers-liability.*)?$
+          example: 'https://api.organizacao.com.br/open-insurance/products-services/v1/directors-officers-liability'
         prev:
           type: string
           description: URL da página anterior de registros
-          example: 'https://api.organizacao.com.br/open-insurance/products-services/v1'
+          pattern: ^(https:\/\/)(.*?)(\/open-insurance\/products-services\/v\d+)(\/directors-officers-liability.*)?$
+          example: 'https://api.organizacao.com.br/open-insurance/products-services/v1/directors-officers-liability'
         next:
           type: string
           description: URL da próxima página de registros
-          example: 'https://api.organizacao.com.br/open-insurance/products-services/v1'
+          pattern: ^(https:\/\/)(.*?)(\/open-insurance\/products-services\/v\d+)(\/directors-officers-liability.*)?$
+          example: 'https://api.organizacao.com.br/open-insurance/products-services/v1/directors-officers-liability'
         last:
           type: string
           description: URL da última página de registros
-          example: 'https://api.organizacao.com.br/open-insurance/products-services/v1'
+          pattern: ^(https:\/\/)(.*?)(\/open-insurance\/products-services\/v\d+)(\/directors-officers-liability.*)?$
+          example: 'https://api.organizacao.com.br/open-insurance/products-services/v1/directors-officers-liability'
     
     Meta:
       type: object
@@ -475,6 +481,7 @@ components:
               - code
               - title
               - detail
+              - requestDateTime
             properties:
               code:
                 description: Código de erro específico do endpoint
@@ -561,21 +568,13 @@ components:
             type: string
             pattern: '[\w\W\s]*'
     
-  securitySchemes:
-    OpenId:
-      type: openIdConnect
-      openIdConnectUrl: 'https://auth.mockbank.poc.raidiam.io/.well-known/openid-configuration'
-    OAuth2Security:
-      type: oauth2
-      description: Fluxo OAuth necessário para que a receptora tenha acesso aos dados na instituição transmissora. Inclui o processo de redirecionamento e autenticação do usuário a que se referem os dados.
-      flows:
-        authorizationCode:
-          authorizationUrl: 'https://authserver.example/authorization'
-          tokenUrl: 'https://authserver.example/token'
-          scopes:
-            financings: Escopo necessário para acesso à API. O controle dos endpoints específicos é feito via permissions.
-    
   responses:
+    UnprocessableEntity:
+      description: 'O servidor entende o tipo de conteúdo da entidade da requisição, e a sintaxe da requisição esta correta, mas não foi possível processar as instruções presente.'
+      content:
+        application/json; charset=utf-8:
+          schema:
+            $ref: '#/components/schemas/ResponseError'
     NoContent:
       description: 'O recurso solicitado não existe ou não foi localizado.'
       content:
