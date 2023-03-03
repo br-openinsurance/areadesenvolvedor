@@ -37,7 +37,7 @@ Objeto que reúne as informações relativas ao relacionamento do cliente junto 
 |---|---|---|---|---|
 |updateDateTime|string(date-time)|true|none|Data e hora da atualização do bloco de Relacionamento, conforme especificação RFC-3339, formato UTC.|
 |startDate|string(date)|false|none|Data mais antiga de início de relacionamento, considerando todos os contratos (vigentes e não vigentes). Os contratos não vigentes considerados devem contemplar, no mínimo o período indicado na Tabela 4.1.|
-|relationshipBeginning|string(date)|true|none|Campo deve ser preenchido com a data da apólice/contrato vigente mais antiga.|
+|relationshipBeginning|string(date)|false|none|Campo deve ser preenchido com a data da apólice/contrato vigente mais antiga.(caso haja contrato vigente)|
 |productsServices|[object]|true|none|none|
 |» contract|string|true|none|Campo deve conter todos os contratos do cliente nos últimos 12 meses (número da apólice individual ou contrato ou certificado ou bilhete)|
 |» type|[EnumProductServiceType](#schemaenumproductservicetype)|true|none|Tipos de produtos.|
@@ -834,20 +834,20 @@ Tipos de produtos.
 |*anonymous*|PLANOS_DE_PREVIDENCIA_COMPLEMENTAR|
 |*anonymous*|SEGUROS_DE_DANOS|
 
-<h2 id="tocS_Links">Links</h2>
+<h2 id="tocS_LinksCustomers">Links</h2>
 <!-- backwards compatibility -->
-<a id="schemalinks"></a>
+<a id="schemalinkscustomers"></a>
 <a id="schema_Links"></a>
 <a id="tocSlinks"></a>
 <a id="tocslinks"></a>
 
 ```json
 {
-  "self": "https://api.seguro.com.br/open-insurance/customer/v1",
-  "first": "https://api.seguro.com.br/open-insurance/customer/v1",
-  "prev": "https://api.seguro.com.br/open-insurance/customer/v1",
-  "next": "https://api.seguro.com.br/open-insurance/customer/v1",
-  "last": "https://api.seguro.com.br/open-insurance/customer/v1"
+  "self": "https://api.organizacao.com.br/open-insurance/customer/v1/personal/identifications",
+  "first": "https://api.organizacao.com.br/open-insurance/customer/v1/personal/identifications",
+  "prev": "https://api.organizacao.com.br/open-insurance/customer/v1/personal/identifications",
+  "next": "https://api.organizacao.com.br/open-insurance/customer/v1/personal/identifications",
+  "last": "https://api.organizacao.com.br/open-insurance/customer/v1/personal/identifications"
 }
 
 ```
@@ -864,9 +864,9 @@ Referências para outros recusos da API requisitada.
 |next|string(uri)|false|none|URI da próxima página dessa lista de resultados. Restrição - Obrigatório quando não for a última página da resposta|
 |last|string(uri)|false|none|URI da última página dessa lista de resultados. Restrição - Obrigatório quando não for a última página da resposta|
 
-<h2 id="tocS_Meta">Meta</h2>
+<h2 id="tocS_MetaCustomers">Meta</h2>
 <!-- backwards compatibility -->
-<a id="schemameta"></a>
+<a id="schemametacustomers"></a>
 <a id="schema_Meta"></a>
 <a id="tocSmeta"></a>
 <a id="tocsmeta"></a>
@@ -874,8 +874,7 @@ Referências para outros recusos da API requisitada.
 ```json
 {
   "totalRecords": 1,
-  "totalPages": 1,
-  "requestDateTime": "2021-05-21T08:30:00Z"
+  "totalPages": 1
 }
 
 ```
@@ -888,7 +887,6 @@ Meta informações referente à API requisitada.
 |---|---|---|---|---|
 |totalRecords|integer(int32)|true|none|Número total de registros no resultado|
 |totalPages|integer(int32)|true|none|Número total de páginas no resultado|
-|requestDateTime|string(date-time)|true|none|Data e hora da consulta, conforme especificação RFC-3339, formato UTC.|
 
 <h2 id="tocS_PersonalDocuments">PersonalDocuments</h2>
 <!-- backwards compatibility -->
@@ -1012,8 +1010,8 @@ Objeto que reúne as informações relativas ao relacionamento do cliente junto 
 |Name|Type|Required|Restrictions|Description|
 |---|---|---|---|---|
 |updateDateTime|string(date-time)|true|none|Data e hora da atualização do bloco de Relacionamento, conforme especificação RFC-3339, formato UTC.|
-|startDate|string(date)|false|none|Data mais antiga de início de relacionamento, considerando todos os contratos (vigentes e não vigentes). Os contratos não vigentes considerados devem contemplar, no mínimo o período indicado na Tabela 4.1.|
-|relationshipBeginning|string(date)|true|none|Campo deve ser preenchido com a data da apólice/contrato vigente mais antiga|
+|startDate|string(date)|true|none|Data mais antiga de início de relacionamento, considerando todos os contratos (vigentes e não vigentes). Os contratos não vigentes considerados devem contemplar, no mínimo o período indicado na Tabela 4.1.|
+|relationshipBeginning|string(date)|false|none|Campo deve ser preenchido com a data da apólice/contrato vigente mais antiga.(caso haja contrato vigente)|
 |productsServices|[object]|true|none|none|
 |» contract|string|true|none|Campo deve conter todos os contratos do cliente nos últimos 12 meses (número da apólice individual ou contrato ou certificado ou bilhete)|
 |» type|[EnumProductServiceType](#schemaenumproductservicetype)|true|none|Tipos de produtos.|
@@ -1202,11 +1200,11 @@ Conjunto de informações relativas ao processo de qualificação.
 |informedRevenue|object|false|none|none|
 |» incomeFrequency|[EnumIncomeFrequency](#schemaenumincomefrequency)|false|none|Frequência da renda informada.|
 |» currency|string|false|none|Moeda referente ao valor do patrimônio, segundo modelo ISO-4217.|
-|» amount|number¦null|false|none|Valor da renda|
+|» amount|string¦null|false|none|Valor do rendimento|
 |» year|string(date-year)|false|none|Data de referência da renda, conforme especificação RFC-3339.|
 |informedPatrimony|object|false|none|none|
 |» currency|string|false|none|Moeda referente ao valor do patrimônio, segundo modelo ISO-4217.|
-|» amount|number¦null|false|none|Valor da renda|
+|» amount|string¦null|false|none|Valor do rendimento|
 |» year|string(date-year)|false|none|Data de referência da renda, conforme especificação RFC-3339.|
 
 #### Enumerated Values
@@ -1256,11 +1254,11 @@ Conjunto de informações relativas ao processo de qualificação.
     }
   ],
   "links": {
-    "self": "https://api.seguro.com.br/open-insurance/customer/v1",
-    "first": "https://api.seguro.com.br/open-insurance/customer/v1",
-    "prev": "https://api.seguro.com.br/open-insurance/customer/v1",
-    "next": "https://api.seguro.com.br/open-insurance/customer/v1",
-    "last": "https://api.seguro.com.br/open-insurance/customer/v1"
+    "self": "https://api.organizacao.com.br/open-insurance/customer/v1/personal/identifications",
+    "first": "https://api.organizacao.com.br/open-insurance/customer/v1/personal/identifications",
+    "prev": "https://api.organizacao.com.br/open-insurance/customer/v1/personal/identifications",
+    "next": "https://api.organizacao.com.br/open-insurance/customer/v1/personal/identifications",
+    "last": "https://api.organizacao.com.br/open-insurance/customer/v1/personal/identifications"
   },
   "meta": {
     "totalRecords": 1,
@@ -1276,8 +1274,8 @@ Conjunto de informações relativas ao processo de qualificação.
 |Name|Type|Required|Restrictions|Description|
 |---|---|---|---|---|
 |data|[[BusinessComplimentaryInformationData](#schemabusinesscomplimentaryinformationdata)]|true|none|[Objeto que reúne as informações relativas ao relacionamento do cliente junto à Instituição. Considera-se relacionamento as informações que permitam conhecer desde quando a pessoa consultada é cliente da instituição, bem como um indicador dos produtos e serviços que ela consome atualmente e seus representantes]|
-|links|[Links](#schemalinks)|true|none|Referências para outros recusos da API requisitada.|
-|meta|[Meta](#schemameta)|true|none|Meta informações referente à API requisitada.|
+|links|[Links](#schemalinkscustomers)|true|none|Referências para outros recusos da API requisitada.|
+|meta|[Meta](#schemametacustomers)|true|none|Meta informações referente à API requisitada.|
 
 <h2 id="tocS_ResponseBusinessCustomersIdentification">ResponseBusinessCustomersIdentification</h2>
 <!-- backwards compatibility -->
@@ -1355,11 +1353,11 @@ Conjunto de informações relativas ao processo de qualificação.
     }
   ],
   "links": {
-    "self": "https://api.seguro.com.br/open-insurance/customer/v1",
-    "first": "https://api.seguro.com.br/open-insurance/customer/v1",
-    "prev": "https://api.seguro.com.br/open-insurance/customer/v1",
-    "next": "https://api.seguro.com.br/open-insurance/customer/v1",
-    "last": "https://api.seguro.com.br/open-insurance/customer/v1"
+    "self": "https://api.organizacao.com.br/open-insurance/customer/v1/personal/identifications",
+    "first": "https://api.organizacao.com.br/open-insurance/customer/v1/personal/identifications",
+    "prev": "https://api.organizacao.com.br/open-insurance/customer/v1/personal/identifications",
+    "next": "https://api.organizacao.com.br/open-insurance/customer/v1/personal/identifications",
+    "last": "https://api.organizacao.com.br/open-insurance/customer/v1/personal/identifications"
   },
   "meta": {
     "totalRecords": 1,
@@ -1375,8 +1373,8 @@ Conjunto de informações relativas ao processo de qualificação.
 |Name|Type|Required|Restrictions|Description|
 |---|---|---|---|---|
 |data|[[BusinessIdentificationData](#schemabusinessidentificationdata)]|true|none|[Conjunto de informações relativas a Identificação ou seja a ação e o efeito de identificar de forma única a pessoa jurídica através de seus dados cadastrais]|
-|links|[Links](#schemalinks)|true|none|Referências para outros recusos da API requisitada.|
-|meta|[Meta](#schemameta)|true|none|Meta informações referente à API requisitada.|
+|links|[Links](#schemalinkscustomers)|true|none|Referências para outros recusos da API requisitada.|
+|meta|[Meta](#schemametacustomers)|true|none|Meta informações referente à API requisitada.|
 
 <h2 id="tocS_ResponseBusinessCustomersQualification">ResponseBusinessCustomersQualification</h2>
 <!-- backwards compatibility -->
@@ -1406,11 +1404,11 @@ Conjunto de informações relativas ao processo de qualificação.
     }
   ],
   "links": {
-    "self": "https://api.seguro.com.br/open-insurance/customer/v1",
-    "first": "https://api.seguro.com.br/open-insurance/customer/v1",
-    "prev": "https://api.seguro.com.br/open-insurance/customer/v1",
-    "next": "https://api.seguro.com.br/open-insurance/customer/v1",
-    "last": "https://api.seguro.com.br/open-insurance/customer/v1"
+    "self": "https://api.organizacao.com.br/open-insurance/customer/v1/personal/identifications",
+    "first": "https://api.organizacao.com.br/open-insurance/customer/v1/personal/identifications",
+    "prev": "https://api.organizacao.com.br/open-insurance/customer/v1/personal/identifications",
+    "next": "https://api.organizacao.com.br/open-insurance/customer/v1/personal/identifications",
+    "last": "https://api.organizacao.com.br/open-insurance/customer/v1/personal/identifications"
   },
   "meta": {
     "totalRecords": 1,
@@ -1426,10 +1424,10 @@ Conjunto de informações relativas ao processo de qualificação.
 |Name|Type|Required|Restrictions|Description|
 |---|---|---|---|---|
 |data|[[BusinessQualificationData](#schemabusinessqualificationdata)]|true|none|[Objeto que reúne as informações relativas ao processo de qualificação.]|
-|links|[Links](#schemalinks)|true|none|Referências para outros recusos da API requisitada.|
-|meta|[Meta](#schemameta)|true|none|Meta informações referente à API requisitada.|
+|links|[Links](#schemalinkscustomers)|true|none|Referências para outros recusos da API requisitada.|
+|meta|[Meta](#schemametacustomers)|true|none|Meta informações referente à API requisitada.|
 
-<h2 id="tocS_ResponseError">ResponseError</h2>
+<h2 id="tocS_ResponseErrorCustomers">ResponseError</h2>
 <!-- backwards compatibility -->
 <a id="schemaresponseerror"></a>
 <a id="schema_ResponseError"></a>
@@ -1462,7 +1460,7 @@ Conjunto de informações relativas ao processo de qualificação.
 |» code|string|true|none|Código de erro específico do endpoint|
 |» title|string|true|none|Título legível por humanos deste erro específico|
 |» detail|string|true|none|Descrição legível por humanos deste erro específico|
-|meta|[Meta](#schemameta)|false|none|Meta informações referente à API requisitada.|
+|meta|[Meta](#schemametacustomers)|false|none|Meta informações referente à API requisitada.|
 
 <h2 id="tocS_ResponsePersonalCustomersComplimentaryInformation">ResponsePersonalCustomersComplimentaryInformation</h2>
 <!-- backwards compatibility -->
@@ -1496,11 +1494,11 @@ Conjunto de informações relativas ao processo de qualificação.
     }
   ],
   "links": {
-    "self": "https://api.seguro.com.br/open-insurance/customer/v1",
-    "first": "https://api.seguro.com.br/open-insurance/customer/v1",
-    "prev": "https://api.seguro.com.br/open-insurance/customer/v1",
-    "next": "https://api.seguro.com.br/open-insurance/customer/v1",
-    "last": "https://api.seguro.com.br/open-insurance/customer/v1"
+    "self": "https://api.organizacao.com.br/open-insurance/customer/v1/personal/identifications",
+    "first": "https://api.organizacao.com.br/open-insurance/customer/v1/personal/identifications",
+    "prev": "https://api.organizacao.com.br/open-insurance/customer/v1/personal/identifications",
+    "next": "https://api.organizacao.com.br/open-insurance/customer/v1/personal/identifications",
+    "last": "https://api.organizacao.com.br/open-insurance/customer/v1/personal/identifications"
   },
   "meta": {
     "totalRecords": 1,
@@ -1516,8 +1514,8 @@ Conjunto de informações relativas ao processo de qualificação.
 |Name|Type|Required|Restrictions|Description|
 |---|---|---|---|---|
 |data|[[PersonalComplimentaryInformationData](#schemapersonalcomplimentaryinformationdata)]|true|none|[Objeto que reúne as informações relativas ao relacionamento do cliente junto à Instituição. Considera-se relacionamento as informações que permitam conhecer desde quando a pessoa consultada é cliente da instituição, bem como um indicador dos produtos e serviços que ela consome atualmente e seus representantes]|
-|links|[Links](#schemalinks)|true|none|Referências para outros recusos da API requisitada.|
-|meta|[Meta](#schemameta)|true|none|Meta informações referente à API requisitada.|
+|links|[Links](#schemalinkscustomers)|true|none|Referências para outros recusos da API requisitada.|
+|meta|[Meta](#schemametacustomers)|true|none|Meta informações referente à API requisitada.|
 
 <h2 id="tocS_ResponsePersonalCustomersIdentification">ResponsePersonalCustomersIdentification</h2>
 <!-- backwards compatibility -->
@@ -1596,11 +1594,11 @@ Conjunto de informações relativas ao processo de qualificação.
     }
   ],
   "links": {
-    "self": "https://api.seguro.com.br/open-insurance/customer/v1",
-    "first": "https://api.seguro.com.br/open-insurance/customer/v1",
-    "prev": "https://api.seguro.com.br/open-insurance/customer/v1",
-    "next": "https://api.seguro.com.br/open-insurance/customer/v1",
-    "last": "https://api.seguro.com.br/open-insurance/customer/v1"
+    "self": "https://api.organizacao.com.br/open-insurance/customer/v1/personal/identifications",
+    "first": "https://api.organizacao.com.br/open-insurance/customer/v1/personal/identifications",
+    "prev": "https://api.organizacao.com.br/open-insurance/customer/v1/personal/identifications",
+    "next": "https://api.organizacao.com.br/open-insurance/customer/v1/personal/identifications",
+    "last": "https://api.organizacao.com.br/open-insurance/customer/v1/personal/identifications"
   },
   "meta": {
     "totalRecords": 1,
@@ -1616,8 +1614,8 @@ Conjunto de informações relativas ao processo de qualificação.
 |Name|Type|Required|Restrictions|Description|
 |---|---|---|---|---|
 |data|[[PersonalIdentificationData](#schemapersonalidentificationdata)]|true|none|[Conjunto de informações relativas a Identificação ou seja a ação e o efeito de identificar de forma única a pessoa natural através de seus dados cadastrais.]|
-|links|[Links](#schemalinks)|true|none|Referências para outros recusos da API requisitada.|
-|meta|[Meta](#schemameta)|true|none|Meta informações referente à API requisitada.|
+|links|[Links](#schemalinkscustomers)|true|none|Referências para outros recusos da API requisitada.|
+|meta|[Meta](#schemametacustomers)|true|none|Meta informações referente à API requisitada.|
 
 <h2 id="tocS_ResponsePersonalCustomersQualification">ResponsePersonalCustomersQualification</h2>
 <!-- backwards compatibility -->
@@ -1654,11 +1652,11 @@ Conjunto de informações relativas ao processo de qualificação.
     }
   ],
   "links": {
-    "self": "https://api.seguro.com.br/open-insurance/customer/v1",
-    "first": "https://api.seguro.com.br/open-insurance/customer/v1",
-    "prev": "https://api.seguro.com.br/open-insurance/customer/v1",
-    "next": "https://api.seguro.com.br/open-insurance/customer/v1",
-    "last": "https://api.seguro.com.br/open-insurance/customer/v1"
+    "self": "https://api.organizacao.com.br/open-insurance/customer/v1/personal/identifications",
+    "first": "https://api.organizacao.com.br/open-insurance/customer/v1/personal/identifications",
+    "prev": "https://api.organizacao.com.br/open-insurance/customer/v1/personal/identifications",
+    "next": "https://api.organizacao.com.br/open-insurance/customer/v1/personal/identifications",
+    "last": "https://api.organizacao.com.br/open-insurance/customer/v1/personal/identifications"
   },
   "meta": {
     "totalRecords": 1,
@@ -1674,10 +1672,10 @@ Conjunto de informações relativas ao processo de qualificação.
 |Name|Type|Required|Restrictions|Description|
 |---|---|---|---|---|
 |data|[[PersonalQualificationData](#schemapersonalqualificationdata)]|true|none|[Conjunto de informações relativas ao processo de qualificação.]|
-|links|[Links](#schemalinks)|true|none|Referências para outros recusos da API requisitada.|
-|meta|[Meta](#schemameta)|true|none|Meta informações referente à API requisitada.|
+|links|[Links](#schemalinkscustomers)|true|none|Referências para outros recusos da API requisitada.|
+|meta|[Meta](#schemametacustomers)|true|none|Meta informações referente à API requisitada.|
 
-<h2 id="tocS_XFapiInteractionId">XFapiInteractionId</h2>
+<h2 id="tocS_XFapiInteractionIdCustomers">XFapiInteractionId</h2>
 <!-- backwards compatibility -->
 <a id="schemaxfapiinteractionid"></a>
 <a id="schema_XFapiInteractionId"></a>

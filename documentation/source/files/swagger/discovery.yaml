@@ -2,7 +2,7 @@ openapi: 3.0.0
 info:
   title: APIs Open Data do Open Insurance Brasil
   description: As APIs descritas neste documento são referentes as APIs da fase Open Data do Open Insurance Brasil.
-  version: 1.0.0
+  version: 1.1.0
   contact:
     email: "apiteam@swagger.io"
 servers:
@@ -27,6 +27,26 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ResponseDiscoveryStatusList'
+        '204':
+          $ref: '#/components/responses/NoContent'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '405':
+          $ref: '#/components/responses/MethodNotAllowed'
+        '406':
+          $ref: '#/components/responses/NotAcceptable'
+        '422':
+          $ref: '#/components/responses/UnprocessableEntity'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
   /outages:
     get:
       tags:
@@ -44,6 +64,26 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ResponseDiscoveryOutageList'
+        '204':
+          $ref: '#/components/responses/NoContent'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '405':
+          $ref: '#/components/responses/MethodNotAllowed'
+        '406':
+          $ref: '#/components/responses/NotAcceptable'
+        '422':
+          $ref: '#/components/responses/UnprocessableEntity'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
 components:
   schemas:
     ResponseDiscoveryStatusList:
@@ -90,6 +130,7 @@ components:
               duration:
                 type: string
                 description: Duração prevista da indisponibilidade
+                pattern: ^P(?!$)(\d+(?:\.\d+)?Y)?(\d+(?:\.\d+)?M)?(\d+(?:\.\d+)?W)?(\d+(?:\.\d+)?D)?(T(?=\d)(\d+(?:\.\d+)?H)?(\d+(?:\.\d+)?M)?(\d+(?:\.\d+)?S)?)?$
                 example: PT2H30M
               isPartial:
                 type: boolean
@@ -102,7 +143,8 @@ components:
               unavailableEndpoints:
                 type: array
                 description: Endpoints com indisponibilidade.
-                example: electronic-channels  
+                example:
+                  - electronic-channels  
         links:
           $ref: '#/components/schemas/Links'
         meta:
@@ -113,21 +155,28 @@ components:
         self:
           type: string
           description: URL da página atualmente requisitada
-          example: 'https://api.seguradora.com.br/open-insurance/channels/v1/<resource>'
+          pattern: ^(https:\/\/)(.*?)(\/open-insurance\/discovery\/v\d+)(\/status.*)?$
+          example: 'https://api.organizacao.com.br/open-insurance/discovery/v1/status'
         first:
           type: string
           description: URL da primeira página de registros
-          example: 'https://api.seguradora.com.br/open-insurance/channels/v1/<resource>'
+          pattern: ^(https:\/\/)(.*?)(\/open-insurance\/discovery\/v\d+)(\/status.*)?$
+          example: 'https://api.organizacao.com.br/open-insurance/discovery/v1/status'
         prev:
           type: string
           description: URL da página anterior de registros
+          pattern: ^(https:\/\/)(.*?)(\/open-insurance\/discovery\/v\d+)(\/status.*)?$
+          example: 'https://api.organizacao.com.br/open-insurance/discovery/v1/status'
         next:
           type: string
           description: URL da próxima página de registros
+          pattern: ^(https:\/\/)(.*?)(\/open-insurance\/discovery\/v\d+)(\/status.*)?$
+          example: 'https://api.organizacao.com.br/open-insurance/discovery/v1/status'
         last:
           type: string
           description: URL da última página de registros
-          example: 'https://api.seguradora.com.br/open-insurance/channels/v1/<resource>'
+          pattern: ^(https:\/\/)(.*?)(\/open-insurance\/discovery\/v\d+)(\/status.*)?$
+          example: 'https://api.organizacao.com.br/open-insurance/discovery/v1/status'
     Meta:
       type: object
       properties:
@@ -185,6 +234,47 @@ components:
             type: string
           example:
             - 'https://api.seguradora.com.br/open-insurance/channels/v1/electronic-channels'
+    ResponseError:
+      type: object
+      required:
+        - errors
+      properties:
+        errors:
+          type: array
+          minItems: 1
+          maxItems: 13
+          items:
+            type: object
+            required:
+              - code
+              - title
+              - detail
+              - requestDateTime
+            properties:
+              code:
+                description: Código de erro específico do endpoint
+                type: string
+                pattern: '[\w\W\s]*'
+                maxLength: 255
+              title:
+                description: Título legível por humanos deste erro específico
+                type: string
+                maxLength: 255
+              detail:
+                description: Descrição legível por humanos deste erro específico
+                type: string
+                maxLength: 2048
+              requestDateTime:
+                description: 'Data e hora da consulta, conforme especificação RFC-3339, formato UTC.'
+                type: string
+                maxLength: 2048
+                format: date-time
+                example: '2021-08-20T08:30:00Z'
+            additionalProperties: false
+        meta:
+          $ref: '#/components/schemas/Meta'
+      additionalProperties: false
+      
   parameters:
     page:
       name: page
@@ -202,3 +292,65 @@ components:
         type: integer
         default: 25
         minimum: 1
+        
+  responses:
+    UnprocessableEntity:
+      description: 'O servidor entende o tipo de conteúdo da entidade da requisição, e a sintaxe da requisição esta correta, mas não foi possível processar as instruções presente.'
+      content:
+        application/json; charset=utf-8:
+          schema:
+            $ref: '#/components/schemas/ResponseError'
+    NoContent:
+      description: 'O recurso solicitado não existe ou não foi localizado.'
+      content:
+        application/json; charset=utf-8:
+          schema:
+            $ref: '#/components/schemas/ResponseError'
+    BadRequest:
+      description: 'A requisição foi malformada, omitindo atributos obrigatórios, seja no payload ou através de atributos na URL.'
+      content:
+        application/json; charset=utf-8:
+          schema:
+            $ref: '#/components/schemas/ResponseError'
+    Forbidden:
+      description: O token tem escopo incorreto ou uma política de segurança foi violada
+      content:
+        application/json; charset=utf-8:
+          schema:
+            $ref: '#/components/schemas/ResponseError'
+    InternalServerError:
+      description: Ocorreu um erro no gateway da API ou no microsserviço
+      content:
+        application/json; charset=utf-8:
+          schema:
+            $ref: '#/components/schemas/ResponseError'
+    MethodNotAllowed:
+      description: O consumidor tentou acessar o recurso com um método não suportado
+      content:
+        application/json; charset=utf-8:
+          schema:
+            $ref: '#/components/schemas/ResponseError'
+    NotAcceptable:
+      description: A solicitação continha um cabeçalho Accept diferente dos tipos de mídia permitidos ou um conjunto de caracteres diferente de UTF-8
+      content:
+        application/json; charset=utf-8:
+          schema:
+            $ref: '#/components/schemas/ResponseError'
+    NotFound:
+      description: O recurso solicitado não existe ou não foi implementado
+      content:
+        application/json; charset=utf-8:
+          schema:
+            $ref: '#/components/schemas/ResponseError'
+    TooManyRequests:
+      description: 'A operação foi recusada, pois muitas solicitações foram feitas dentro de um determinado período ou o limite global de requisições concorrentes foi atingido'
+      content:
+        application/json; charset=utf-8:
+          schema:
+            $ref: '#/components/schemas/ResponseError'
+    Unauthorized:
+      description: Cabeçalho de autenticação ausente/inválido ou token inválido
+      content:
+        application/json; charset=utf-8:
+          schema:
+            $ref: '#/components/schemas/ResponseError'

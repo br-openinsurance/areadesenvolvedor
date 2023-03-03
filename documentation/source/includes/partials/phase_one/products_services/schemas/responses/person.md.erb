@@ -122,11 +122,11 @@
     }
   },
   "links": {
-    "self": "https://api.organizacao.com.br/open-insurance/products-services/v1",
-    "first": "https://api.organizacao.com.br/open-insurance/products-services/v1",
-    "prev": "string",
-    "next": "string",
-    "last": "https://api.organizacao.com.br/open-insurance/products-services/v1"
+    "self": "https://api.organizacao.com.br/open-insurance/products-services/v1/person",
+    "first": "https://api.organizacao.com.br/open-insurance/products-services/v1/person",
+    "prev": "https://api.organizacao.com.br/open-insurance/products-services/v1/person",
+    "next": "https://api.organizacao.com.br/open-insurance/products-services/v1/person",
+    "last": "https://api.organizacao.com.br/open-insurance/products-services/v1/person"
   },
   "meta": {
     "totalRecords": 10,
@@ -142,8 +142,8 @@
 |---|---|---|---|---|
 |data|object|true|none|none|
 |» brand|[PersonBrand](#schemapersonbrand)|true|none|Organização controladora do grupo.|
-|links|[LinksPaginated](#schemalinkspaginated)|true|none|none|
-|meta|[MetaPaginated](#schemametapaginated)|true|none|none|
+|links|[Links](#schemalinkspaginatedperson)|true|none|none|
+|meta|[Meta](#schemametapaginatedperson)|true|none|none|
 
 <h2 id="tocS_PersonBrand">PersonBrand</h2>
 <!-- backwards compatibility -->
@@ -734,7 +734,7 @@ Lista de Dependências de uma Instituição.
 |susepProcessNumber|string|true|none|Número do processo Susep.|
 |definition|string|true|none|Campo aberto (possibilidade de incluir URL).|
 
-<h2 id="tocS_PersonCoverageAttibutesDetailsUnit">PersonCoverageAttibutesDetailsUnit</h2>
+<h2 id="tocS_PersonCoverageAttibutesDetailsUnit">PersonCoverageAttributesDetailsUnit</h2>
 <!-- backwards compatibility -->
 <a id="schemapersoncoverageattibutesdetailsunit"></a>
 <a id="schema_PersonCoverageAttibutesDetailsUnit"></a>
@@ -756,7 +756,7 @@ Lista de Dependências de uma Instituição.
 |code|string|true|none|Tipo unidade de medida.|
 |description|string|true|none|Descrição da unidade de medida|
 
-<h2 id="tocS_PersonCoverageAttibutesDetails">PersonCoverageAttibutesDetails</h2>
+<h2 id="tocS_PersonCoverageAttibutesDetails">PersonCoverageAttributesDetails</h2>
 <!-- backwards compatibility -->
 <a id="schemapersoncoverageattibutesdetails"></a>
 <a id="schema_PersonCoverageAttibutesDetails"></a>
@@ -779,7 +779,7 @@ Lista de Dependências de uma Instituição.
 |Name|Type|Required|Restrictions|Description|
 |---|---|---|---|---|
 |amount|number|true|none|Valor.|
-|unit|[PersonCoverageAttibutesDetailsUnit](#schemapersoncoverageattibutesdetailsunit)|true|none|none|
+|unit|[PersonCoverageAttributesDetailsUnit](#schemapersoncoverageattibutesdetailsunit)|true|none|none|
 
 <h2 id="tocS_PersonGracePeriodUnit">PersonGracePeriodUnit</h2>
 <!-- backwards compatibility -->
@@ -790,7 +790,8 @@ Lista de Dependências de uma Instituição.
 
 ```json
 {
-  "amount": 60,
+  "details": "string",
+  "amount": "60",
   "unit": "DIAS"
 }
 
@@ -803,15 +804,15 @@ Período de carência
 |Name|Type|Required|Restrictions|Description|
 |---|---|---|---|---|
 |amount|number|false|none|Prazo de Carência|
-|unit|string|false|none|Unidade do prazo (dias ou meses).|
+|details|string|false|none|Descrições adicionais do período de carência.|
+|unit|string|false|none|nidade do prazo (dias ou meses).|
 
 #### Enumerated Values
 
 |Property|Value|
 |---|---|
-|unit|DIAS|
-|unit|MESES|
-|unit|NAO_SE_APLICA|
+|unit|DIAS, MESES, NAO_SE_APLICA|
+
 
 <h2 id="tocS_personPortabilityGraceTime">personPortabilityGraceTime</h2>
 <!-- backwards compatibility -->
@@ -910,13 +911,13 @@ Prazo de carência em dias para Portabilidade
 |---|---|---|---|---|
 |indemnityPaymentMethod|[string]|true|none|Listagem da forma de pagamento da indenização para cada combinação de  modalidade/cobertura do produto|
 |indemnityPaymentFrequency|[string]|true|none|Listagem de tipos de frequência de pagamento de indenização para cada combinação de modalidade/cobertura do produto|
-|minValue|[[PersonCoverageAttibutesDetails](#schemapersoncoverageattibutesdetails)]|true|none|Listagem do valor mínimo de cobertura (Capital Segurado), diária ou parcela aceito pela  sociedade para cada  combinação de modalidade/cobertura do produto. Em reais|
-|maxValue|[[PersonCoverageAttibutesDetails](#schemapersoncoverageattibutesdetails)]|true|none|Listagem do valor máximo de cobertura (Capital Segurado), diária ou parcela aceito  pela sociedade para cada  combinação de modalidade/cobertura do produto. Em reais|
+|minValue|[[PersonCoverageAttributesDetails](#schemapersoncoverageattibutesdetails)]|true|none|Listagem do valor mínimo de cobertura (Capital Segurado), diária ou parcela aceito pela  sociedade para cada  combinação de modalidade/cobertura do produto. Em reais|
+|maxValue|[[PersonCoverageAttributesDetails](#schemapersoncoverageattibutesdetails)]|true|none|Listagem do valor máximo de cobertura (Capital Segurado), diária ou parcela aceito  pela sociedade para cada  combinação de modalidade/cobertura do produto. Em reais|
 |indemnifiablePeriod|[string]|true|none|Listagem de período indenizável para cada combinação de modalidade/cobertura do produto|
 |maximumQtyIndemnifiableInstallments|integer|true|none|Caso o período indenizável seja relacionado a parcelas, listagem de número máximo de  parcelas indenizáveis para cada combinação de modalidade/ cobertura do produto|
 |currency|string|true|none|Moeda sobre a qual a cobertura se refere. De acordo com ISO-4217.|
 |gracePeriod|[PersonGracePeriodUnit](#schemapersongraceperiodunit)|true|none|Período de carência|
-|differentiatedGracePeriod|[PersonGracePeriodUnit](#schemapersongraceperiodunit)|false|none|Detalhamento do período de carência diferentes para cada cobertura que exista alguma especificidade. Caso a seguradora não tenha essa diferenciação, não retornará nada no campo|
+|differentiatedGracePeriod|string|false|none|Detalhamento do período de carência diferentes para cada cobertura que exista alguma especificidade. Caso a seguradora não tenha essa diferenciação, não retornará nada no campo|
 |deductibleDays|integer|true|none|Listagem de franquia em dias para cada combinação de modalidade/cobertura do produto.|
 |differentiatedDeductibleDays|number|false|none|Detalhamento da franquia em dias diferentes para cada cobertura que exista alguma especificidade. Caso a seguradora não tenha essa diferenciação, não retornará nada no campo.|
 |deductibleBRL|number|true|none|Listagem de franquia em reais para cada combinação de modalidade/cobertura do produto.|
@@ -1308,20 +1309,20 @@ Tabela Percentuais de resgate
 |contractingType|COLETIVO|
 |contractingType|INDIVIDUAL|
 
-<h2 id="tocS_LinksPaginated">LinksPaginated</h2>
+<h2 id="tocS_LinksPaginatedPerson">Links</h2>
 <!-- backwards compatibility -->
-<a id="schemalinkspaginated"></a>
+<a id="schemalinkspaginatedperson"></a>
 <a id="schema_LinksPaginated"></a>
 <a id="tocSlinkspaginated"></a>
 <a id="tocslinkspaginated"></a>
 
 ```json
 {
-  "self": "https://api.organizacao.com.br/open-insurance/products-services/v1",
-  "first": "https://api.organizacao.com.br/open-insurance/products-services/v1",
-  "prev": "string",
-  "next": "string",
-  "last": "https://api.organizacao.com.br/open-insurance/products-services/v1"
+  "self": "https://api.organizacao.com.br/open-insurance/products-services/v1/person",
+  "first": "https://api.organizacao.com.br/open-insurance/products-services/v1/person",
+  "prev": "https://api.organizacao.com.br/open-insurance/products-services/v1/person",
+  "next": "https://api.organizacao.com.br/open-insurance/products-services/v1/person",
+  "last": "https://api.organizacao.com.br/open-insurance/products-services/v1/person"
 }
 
 ```
@@ -1336,9 +1337,9 @@ Tabela Percentuais de resgate
 |next|string|false|none|URL da próxima página de registros|
 |last|string|false|none|URL da última página de registros|
 
-<h2 id="tocS_MetaPaginated">MetaPaginated</h2>
+<h2 id="tocS_MetaPaginatedPerson">Meta</h2>
 <!-- backwards compatibility -->
-<a id="schemametapaginated"></a>
+<a id="schemametapaginatedperson"></a>
 <a id="schema_MetaPaginated"></a>
 <a id="tocSmetapaginated"></a>
 <a id="tocsmetapaginated"></a>
@@ -1358,7 +1359,7 @@ Tabela Percentuais de resgate
 |totalRecords|integer|true|none|Total de registros encontrados|
 |totalPages|integer|true|none|Total de páginas para os registros encontrados|
 
-<h2 id="tocS_ResponseError">ResponseError</h2>
+<h2 id="tocS_ResponseErrorPerson">ResponseError</h2>
 <!-- backwards compatibility -->
 <a id="schemaresponseerror"></a>
 <a id="schema_ResponseError"></a>
@@ -1392,5 +1393,5 @@ Tabela Percentuais de resgate
 |» title|string|true|none|Título legível por humanos deste erro específico|
 |» detail|string|true|none|Descrição legível por humanos deste erro específico|
 |» requestDateTime|string(date-time)|true|none|Data e hora da consulta, conforme especificação RFC-3339, formato UTC.|
-|meta|[MetaPaginated](#schemametapaginated)|false|none|none|
+|meta|[Meta](#schemametapaginatedperson)|false|none|none|
 

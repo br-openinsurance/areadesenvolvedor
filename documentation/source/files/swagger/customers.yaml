@@ -38,14 +38,13 @@ info:
     ### `/business/complimentary-information`
       - permissions:
         - GET: **CUSTOMERS_BUSINESS_ADITTIONALINFO_READ**
-  version: 1.1.1
+  version: 1.2.0
   license:
     name: Apache 2.0
     url: 'http://www.apache.org/licenses/LICENSE-2.0'
   contact:
     name: Governança do Open Insurance Brasil - Especificações
-    email: gt-interfaces@openinsurancebr.org
-    url: 'https://http://novosite.susep.gov.br'
+    url: 'https://www.gov.br/susep/'
 servers:
   - url: 'https://api.seguro.com.br/open-insurance/customers/v1'
     description: Servidor de Produção
@@ -71,6 +70,8 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/OKResponsePersonalCustomersIdentification'
+        '204':
+          $ref: '#/components/responses/NoContent'
         '400':
           $ref: '#/components/responses/BadRequest'
         '401':
@@ -113,6 +114,8 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/OKResponsePersonalCustomersQualification'
+        '204':
+          $ref: '#/components/responses/NoContent'
         '400':
           $ref: '#/components/responses/BadRequest'
         '401':
@@ -155,6 +158,8 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/OKResponsePersonalCustomersComplimentaryInformation'
+        '204':
+          $ref: '#/components/responses/NoContent'
         '400':
           $ref: '#/components/responses/BadRequest'
         '401':
@@ -197,6 +202,8 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/OKResponseBusinessCustomersIdentification'
+        '204':
+          $ref: '#/components/responses/NoContent'
         '400':
           $ref: '#/components/responses/BadRequest'
         '401':
@@ -239,6 +246,8 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/OKResponseBusinessCustomersQualification'
+        '204':
+          $ref: '#/components/responses/NoContent'
         '400':
           $ref: '#/components/responses/BadRequest'
         '401':
@@ -281,6 +290,8 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/OKResponseBusinessCustomersComplimentaryInformation'
+        '204':
+          $ref: '#/components/responses/NoContent'
         '400':
           $ref: '#/components/responses/BadRequest'
         '401':
@@ -313,10 +324,9 @@ components:
       type: object
       description: 'Objeto que reúne as informações relativas ao relacionamento do cliente junto à Instituição. Considera-se relacionamento as informações que permitam conhecer desde quando a pessoa consultada é cliente da instituição, bem como um indicador dos produtos e serviços que ela consome atualmente e seus representantes'
       required:
+        - startDate
         - updateDateTime
         - productsServices
-        - procurators
-        - relationshipBeginning
       properties:
         updateDateTime:
           type: string
@@ -338,7 +348,7 @@ components:
           maxLength: 10
           pattern: '^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])$'
           example: '2014-05-21'
-          description: Campo deve ser preenchido com a data da apólice/contrato vigente mais antiga.
+          description: Campo deve ser preenchido com a data da apólice/contrato vigente mais antiga. (caso haja contrato vigente)
         productsServices:
           type: array
           minItems: 1
@@ -351,7 +361,7 @@ components:
             properties:
               contract:
                 type: string
-                maxLength: 17
+                maxLength: 60
                 description: Campo deve conter todos os contratos do cliente nos últimos 12 meses (número da apólice individual ou contrato ou certificado ou bilhete)
               type:
                 $ref: '#/components/schemas/EnumProductServiceType'
@@ -442,7 +452,6 @@ components:
           $ref: '#/components/schemas/BusinessDocument'
         type:
           type: string
-          maxLength: 7
           enum: 
             - PRIVADO 
             - PUBLICO 
@@ -460,7 +469,7 @@ components:
           $ref: '#/components/schemas/EnumProcuratorsNaturePersonal'
         cpfNumber:
           type: string
-          maxLength: 11
+          maxLength: 14
           example: '73677831148'
           description: '(Caso Natureza dos poderes vigentes de representantefor “Representante legal” ou “Procurador”) CPF ou CNPJ do representante'
         civilName:
@@ -507,12 +516,10 @@ components:
               example: BRL
               description: 'Moeda referente ao valor do faturamento, segundo modelo ISO-4217.'
             amount:
-              type: number
-              minLength: 0
-              maxLength: 20
+              type: string
               nullable: true
-              pattern: '^-?\d{1,15}(\.\d{1,4})?$'
-              example: 100000.04
+              pattern: '^-?\d{1,15}\.\d{2,4}$'
+              example: '100000.04'
               description: |
                 Valor do faturamento
             year:
@@ -532,12 +539,10 @@ components:
               example: BRL
               description: 'Moeda referente ao valor do patrimônio, segundo modelo ISO-4217.'
             amount:
-              type: number
-              minLength: 0
-              maxLength: 20
+              type: string
               nullable: true
-              pattern: '^-?\d{1,15}(\.\d{1,4})?$'
-              example: 100000.04
+              pattern: '^-?\d{1,15}\.\d{2,4}$'
+              example: '100000.04'
               description: |
                 Valor do patrimônio
             date:
@@ -715,7 +720,7 @@ components:
       properties:
         address:
           type: string
-          maxLength: 150
+          maxLength: 200
           pattern: '[\w\W\s]*'
           example: 'Av Naburo Ykesaki, 1270'
           description: Corresponde ao endereço residencial do cliente.
@@ -774,15 +779,13 @@ components:
           description: |
             Informação da Latitude referente a geolocalização informada. Entre -90 e 90.p.ex. '-23.5475000'. (2 casas antes da vírgula, 11 posições)
           type: string
-          pattern: '^-?\d{1,2}\.\d{1,9}$'
-          maxLength: 13
+          pattern: '^-?\d{1,3}\.\d{1,10}$'
           example: '-23.5475000'
         longitude:
           description: |
             Informação da Longitude referente a geolocalização informada. Entre -180 e 180. p.ex '-46.6361100'. (3 casas antes da vírgula, 11 posições)
           type: string
-          pattern: '^-?\d{1,3}\.\d{1,8}$'
-          maxLength: 13
+          pattern: '^-?\d{1,3}\.\d{1,10}$'
           example: '-46.6361100'
       additionalProperties: false      
     PersonalPostalAddress:
@@ -796,7 +799,7 @@ components:
       properties:
         address:
           type: string
-          maxLength: 150
+          maxLength: 200
           pattern: '[\w\W\s]*'
           example: 'Av Naburo Ykesaki, 1270'
           description: Corresponde ao endereço residencial do cliente.
@@ -838,7 +841,6 @@ components:
       type: string
       example: '19'
       description: Número de DDD (Discagem Direta à Distância) do telefone do cliente - se houver
-      maxLength: 2
       enum:
         - '11'
         - '12'
@@ -988,7 +990,6 @@ components:
       description: Tipo de filiação.    
     EnumProcuratorsNaturePersonal:
       type: string
-      maxLength: 19
       enum:
         - REPRESENTANTE_LEGAL
         - PROCURADOR
@@ -1017,36 +1018,36 @@ components:
           format: uri
           maxLength: 2000
           description: URI completo que gerou a resposta atual.
-          example: 'https://api.seguro.com.br/open-insurance/customer/v1'
-          pattern: '^(https?:\/\/)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&\/\/=]*)$'
+          pattern: ^(https:\/\/)(.*?)(\/open-insurance\/customer\/v\d+)(\/.*)?$
+          example: 'https://api.organizacao.com.br/open-insurance/customer/v1/personal/identifications'
         first:
           type: string
           format: uri
           maxLength: 2000
           description: URI da primeira página que originou essa lista de resultados. Restrição - Obrigatório quando não for a primeira página da resposta
-          example: 'https://api.seguro.com.br/open-insurance/customer/v1'
-          pattern: '^(https?:\/\/)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&\/\/=]*)$'
+          pattern: ^(https:\/\/)(.*?)(\/open-insurance\/customer\/v\d+)(\/.*)?$
+          example: 'https://api.organizacao.com.br/open-insurance/customer/v1/personal/identifications'
         prev:
           type: string
           format: uri
           maxLength: 2000
           description: "URI da página anterior dessa lista de resultados. Restrição - \tObrigatório quando não for a primeira página da resposta"
-          example: 'https://api.seguro.com.br/open-insurance/customer/v1'
-          pattern: '^(https?:\/\/)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&\/\/=]*)$'
+          pattern: ^(https:\/\/)(.*?)(\/open-insurance\/customer\/v\d+)(\/.*)?$
+          example: 'https://api.organizacao.com.br/open-insurance/customer/v1/personal/identifications'
         next:
           type: string
           format: uri
           maxLength: 2000
           description: URI da próxima página dessa lista de resultados. Restrição - Obrigatório quando não for a última página da resposta
-          example: 'https://api.seguro.com.br/open-insurance/customer/v1'
-          pattern: '^(https?:\/\/)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&\/\/=]*)$'
+          pattern: ^(https:\/\/)(.*?)(\/open-insurance\/customer\/v\d+)(\/.*)?$
+          example: 'https://api.organizacao.com.br/open-insurance/customer/v1/personal/identifications'
         last:
           type: string
           format: uri
           maxLength: 2000
           description: URI da última página dessa lista de resultados. Restrição - Obrigatório quando não for a última página da resposta
-          example: 'https://api.seguro.com.br/open-insurance/customer/v1'
-          pattern: '^(https?:\/\/)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&\/\/=]*)$'
+          pattern: ^(https:\/\/)(.*?)(\/open-insurance\/customer\/v\d+)(\/.*)?$
+          example: 'https://api.organizacao.com.br/open-insurance/customer/v1/personal/identifications'
       additionalProperties: false
     Meta:
       type: object
@@ -1054,7 +1055,6 @@ components:
       required:
         - totalRecords
         - totalPages
-        - requestDateTime
       properties:
         totalRecords:
           type: integer
@@ -1066,12 +1066,6 @@ components:
           format: int32
           description: Número total de páginas no resultado
           example: 1
-        requestDateTime:
-          description: 'Data e hora da consulta, conforme especificação RFC-3339, formato UTC.'
-          type: string
-          maxLength: 20
-          format: date-time
-          example: '2021-05-21T08:30:00Z'
       additionalProperties: false
     PersonalDocuments:
       type: array
@@ -1159,9 +1153,8 @@ components:
       description: 'Objeto que reúne as informações relativas ao relacionamento do cliente junto à Instituição. Considera-se relacionamento as informações que permitam conhecer desde quando a pessoa consultada é cliente da instituição, bem como um indicador dos produtos e serviços que ela consome atualmente e seus representantes'
       required:
         - updateDateTime
-        - relationshipBeginning
-        - procurators
         - productsServices
+        - startDate
       properties:
         updateDateTime:
           type: string
@@ -1183,7 +1176,7 @@ components:
           maxLength: 10
           pattern: '^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])$'
           example: '2014-05-21'
-          description: Campo deve ser preenchido com a data da apólice/contrato vigente mais antiga
+          description: Campo deve ser preenchido com a data da apólice/contrato vigente mais antiga (caso haja contrato vigente)
         productsServices:
           type: array
           minItems: 1
@@ -1196,7 +1189,7 @@ components:
             properties:
               contract:
                 type: string
-                maxLength: 17
+                maxLength: 60
                 description: Campo deve conter todos os contratos do cliente nos últimos 12 meses (número da apólice individual ou contrato ou certificado ou bilhete)
               type:
                 $ref: '#/components/schemas/EnumProductServiceType'
@@ -1414,7 +1407,6 @@ components:
                 description: 'Código da ocupação'
               occupationCodeType:
                 type: string
-                maxLength: 100
                 example: RFB
                 enum: 
                   - RFB 
@@ -1440,14 +1432,12 @@ components:
               example: BRL
               description: 'Moeda referente ao valor da renda, segundo modelo ISO-4217.'
             amount:
-              type: number
-              minLength: 0
-              maxLength: 20
+              type: string
               nullable: true
-              pattern: '^-?\d{1,15}(\.\d{1,4})?$'
-              example: 100000.04
+              pattern: '^-?\d{1,15}\.\d{2,4}$'
+              example: '100000.04'
               description: |
-                Valor da renda
+                Valor do rendimento
             date:
               type: string
               maxLength: 10
@@ -1466,12 +1456,10 @@ components:
               example: BRL
               description: 'Moeda referente ao valor do patrimônio, segundo modelo ISO-4217.'
             amount:
-              type: number
-              minLength: 0
-              maxLength: 20
+              type: string
               nullable: true
-              pattern: '^-?\d{1,15}(\.\d{1,4})?$'
-              example: 100000.04
+              pattern: '^-?\d{1,15}\.\d{2,4}$'
+              example: '100000.04'
               description: |
                 Valor do patrimônio
             year:
@@ -1545,6 +1533,7 @@ components:
               - code
               - title
               - detail
+              - requestDateTime
             properties:
               code:
                 description: Código de erro específico do endpoint
@@ -1561,6 +1550,12 @@ components:
                 type: string
                 pattern: '[\w\W\s]*'
                 maxLength: 2048
+              requestDateTime:
+                description: 'Data e hora da consulta, conforme especificação RFC-3339, formato UTC.'
+                type: string
+                maxLength: 20
+                format: date-time
+                example: '2021-05-21T08:30:00Z'
             additionalProperties: false
         meta:
           $ref: '#/components/schemas/Meta'
@@ -1811,6 +1806,12 @@ components:
             $ref: '#/components/schemas/ResponseError'
     Unauthorized:
       description: Cabeçalho de autenticação ausente/inválido ou token inválido
+      content:
+        application/json; charset=utf-8:
+          schema:
+            $ref: '#/components/schemas/ResponseError'
+    NoContent:
+      description: 'O recurso solicitado não existe ou não foi localizado.'
       content:
         application/json; charset=utf-8:
           schema:

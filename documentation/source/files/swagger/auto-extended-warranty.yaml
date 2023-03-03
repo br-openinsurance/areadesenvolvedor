@@ -4,9 +4,9 @@ info:
   title: APIs Open Data do Open Insurance Brasil
   description:
     API de informações de dados do produto Garantia Estendida - Auto. Os recursos que podem ser consumidos pelos participantes conforme a regra 3.1.2 do manual de escopo de dados..
-  version: 1.0.0
+  version: 1.1.0
   contact:
-    url: 'http://novosite.susep.gov.br/'
+    url: 'https://www.gov.br/susep/'
 servers:
   - url: 'https://api.organizacao.com.br/open-insurance/products-services/v1'
     description: Servidor de Producao
@@ -14,9 +14,10 @@ servers:
     description: Servidor de Homologacao 
 tags:
 - name: "Garantia Estendida - Auto" 
+- name: "AutoExtendedWarranty"
 
 paths:
-  /auto-extended-warranty/:
+  /auto-extended-warranty:
     get:
       tags:
         - AutoExtendedWarranty
@@ -40,7 +41,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ResponseAutoExtendedWarrantyList'
         '204':
-          $ref: '#/components/responses/NoContent'                
+          $ref: '#/components/responses/NoContent'
         '400':
           $ref: '#/components/responses/BadRequest'
         '401':
@@ -53,6 +54,8 @@ paths:
           $ref: '#/components/responses/MethodNotAllowed'
         '406':
           $ref: '#/components/responses/NotAcceptable'
+        '422':
+          $ref: '#/components/responses/UnprocessableEntity'
         '429':
           $ref: '#/components/responses/TooManyRequests'
         '500':
@@ -101,24 +104,24 @@ components:
     AutoExtendedWarrantyCompany:
       type: array
       items:
-          description: Informações referente a sociedade a qual a marca pertence.
-          required:
+        description: Informações referente a sociedade a qual a marca pertence.
+        required:
           - name
           - cnpjNumber
           - products
-          properties:
-            name:
-                type: string
-                description: Nome da sociedade pertencente à marca.
-                maxLength: 80
-                example: ACME Seguros
-            cnpjNumber:
-                type: string
-                description: CNPJ da sociedade pertencente à marca.
-                maxLength: 14
-                example: "12345678901234"
-            products:
-                $ref: '#/components/schemas/AutoExtendedWarrantyProduct'
+        properties:
+          name:
+              type: string
+              description: Nome da sociedade pertencente à marca.
+              maxLength: 80
+              example: ACME Seguros
+          cnpjNumber:
+              type: string
+              description: CNPJ da sociedade pertencente à marca.
+              maxLength: 14
+              example: '12345678901234'
+          products:
+              $ref: '#/components/schemas/AutoExtendedWarrantyProduct'
     AutoExtendedWarrantyProduct:
       type: array
       description: Lista de produtos de uma empresa.
@@ -147,7 +150,7 @@ components:
             type: string
             description: Código único a ser definido pela sociedade.
             maxLength: 100
-            example: "01234589-0"
+            example: '01234589-0'
           coverages:
             type: array
             items:
@@ -174,27 +177,25 @@ components:
                    $ref: '#/components/schemas/AutoExtendedWarrantyCoverageAttributes'
                 allowApartPurchase:
                   type: boolean
-                  description: Indicação se a cobertura permite contratação separada (por cobertura selecionada).   
-
+                  description: Indicação se a cobertura permite contratação separada (por cobertura selecionada).
           securityType:
             type: array
             description: Tipo de bem segurado
             items:
               type: string
-              maxLength: 29
-              example: LINHA_BRANCA
+              example: SMARTPHONE
               enum: [SMARTPHONE,
-              NOTEBOOK,
-              TABLET,
-              EQUIPAMENTOS_PORTATEIS,
-              ELETRODOMESTICOS_LINHA_BRANCA,
-              ELETRODOMESTICOS_LINHA_MARROM,
-              AUTOMOVEL,
-              BICICLETA,
-              BICICLETA_ELETRICA,
-              EMPRESA,
-              RESIDENCIA,
-              OUTROS]
+                NOTEBOOK,
+                TABLET,
+                EQUIPAMENTOS_PORTATEIS,
+                ELETRODOMESTICOS_LINHA_BRANCA,
+                ELETRODOMESTICOS_LINHA_MARROM,
+                AUTOMOVEL,
+                BICICLETA,
+                BICICLETA_ELETRICA,
+                EMPRESA,
+                RESIDENCIA,
+                OUTROS]
           securityTypeOthers:
             type: string
             description: Campo livre para descrição, caso o valor do campo "Tipo de bem" seja 12. Outros
@@ -203,11 +204,10 @@ components:
           customerServices:
             type: array
             description: Rede de Atendimento.
-            example: REDE_REFERENCIADA
             items:
               type: string
-              maxLength: 17
               enum: [REDE_REFERENCIADA, LIVRE_ESCOLHA]
+              example: REDE_REFERENCIADA
           microinsurance:
             type: boolean
             description: Indicação se o produto é classificado como microsseguro.
@@ -236,7 +236,6 @@ components:
           description: Para efeitos de comparabilidade, considerar agrupamentos de serviços em 4 categorias
           items:
             type: string
-            maxLength: 20
             example: ATE_10_SERVICOS
             enum: [
               ATE_10_SERVICOS,
@@ -251,7 +250,6 @@ components:
         chargeTypeSignaling:
           description: Serviços de Assistências Complementares - Tipo de cobrança
           type: string
-          maxLength: 8
           example: GRATUITO
           enum: [GRATUITO, PAGO]
 
@@ -267,7 +265,6 @@ components:
             type: array
             items:
               type: string
-              maxLength: 23
               description: Prazo
               example: ANUAL
               enum: [ANUAL , ANUAL_INTERMITENTE , PLURIANUAL , PLURIANUAL_INTERMITENTE , MENSAL, MENSAL_INTERMITENTE , DIARIO , DIARIO_INTERMITENTE, OUTROS]
@@ -287,17 +284,16 @@ components:
           paymentMethod:
             description: Metodo de pagamento
             type: string
-            maxLength: 33
             example: CARTAO_DE_CREDITO
             enum: [CARTAO_DE_CREDITO,
-            CARTAO_DE_DEBITO,
-            DEBITO_EM_CONTA_CORRENTE,
-            DEBITO_EM_CONTA_POUPANCA,
-            BOLETO_BANCARIO,
-            PIX,
-            CONSIGNACAO_EM_FOLHA_DE_PAGAMENTO,
-            PONTOS_DE_PROGRAMA_DE_BENEFICIO,
-            OUTROS]
+              CARTAO_DE_DEBITO,
+              DEBITO_EM_CONTA_CORRENTE,
+              DEBITO_EM_CONTA_POUPANCA,
+              BOLETO_BANCARIO,
+              PIX,
+              CONSIGNACAO_EM_FOLHA_DE_PAGAMENTO,
+              PONTOS_DE_PROGRAMA_DE_BENEFICIO,
+              OUTROS]
           paymentDetail:
             type: string  
             maxLength: 1024
@@ -307,7 +303,6 @@ components:
             description: tipo de pagamento  
             items:
               type: string
-              maxLength: 9
               example: A_VISTA
               enum: [A_VISTA, PARCELADO]
           premiumRates:
@@ -325,7 +320,7 @@ components:
           type: string
           description: Número do processo SUSEP.
           maxLength: 20
-          example: 15414622222222222
+          example: '15414622222222222'
         definition:
           type: string
           description: Campo aberto (possibilidade de incluir uma url).
@@ -345,7 +340,6 @@ components:
           type: array
           items:
             type: string
-            maxLength: 10
             example: COLETIVO
             enum: [COLETIVO, INDIVIDUAL]
         minimumRequirementDetails:
@@ -357,7 +351,6 @@ components:
           type: array
           items:
             type: string
-            maxLength: 15
             example: PESSOA_NATURAL
             enum: [PESSOA_NATURAL, PESSOA_JURIDICA]
     
@@ -369,21 +362,38 @@ components:
         - insuredParticipation
       properties:
         maxLMI:
-          description: Lista com valor de LMI aceito pela sociedade para cada cobertura
-          $ref: '#/components/schemas/AutoExtendedWarrantyCoverageAttributesDetails'
+          $ref: '#/components/schemas/AutoExtendedWarrantyLimit'
         insuredParticipation:
           type: array
           description: Lista com indicativo do tipo de participação do segurado para cada cobertura.
           items:
             type: string
-            maxLength: 13
             example: FRANQUIA
             enum: [FRANQUIA, POS, NAO_SE_APLICA]
         insuredParticipationDescription:
           type: string
           maxLength: 1024
           description: Lista com descrição referente ao campo “Participação do Segurado” para cada cobertura.
-    
+
+    AutoExtendedWarrantyLimit:
+      type: object
+      description: Lista com valor de LMI aceito pela sociedade para cada cobertura.
+      required:
+        - type
+        - amount
+      properties:
+        type:
+          type: string
+          enum: [FINANCEIRO, PERCENTUAL]
+        amount:
+          $ref: '#/components/schemas/AutoExtendedWarrantyCoverageAttributesDetails'
+        index:
+          type: string
+          description: Indexador. Condicional, vinculado ao preenchimento do campo Tipo com Percentual
+          enum: [LMG, FINANCEIRO_COBERTURA, OUTRO]
+        maxIndexAmount:
+          $ref: '#/components/schemas/AutoExtendedWarrantyCoverageAttributesDetails'
+
     AutoExtendedWarrantyCoverageAttributesDetails:
         type: object
         required:
@@ -394,18 +404,7 @@ components:
             type: number
           unit:
             $ref: '#/components/schemas/AutoExtendedWarrantyCoverageAttributesDetailsUnit'
-    
-    AutoExtendedWarrantyCoverageAttributesPercentageDetails:
-        type: object
-        required:
-          - amount
-          - unit
-        properties:
-          amount:
-            type: number
-          unit:
-            $ref: '#/components/schemas/AutoExtendedWarrantyCoverageAttributesPercentageDetailsUnit'
-    
+
     AutoExtendedWarrantyCoverageAttributesDetailsUnit:
       type: object
       required:
@@ -418,43 +417,35 @@ components:
         description: 
           type: string
           example: REAL
-    
-    AutoExtendedWarrantyCoverageAttributesPercentageDetailsUnit:
-      type: object
-      required:
-        - code
-        - description
-      properties:
-        code: 
-          type: string
-          example: '%'
-        description: 
-          type: string
-          example: PERCENTUAL
-    
+
     Links:
       type: object
       properties:
         self:
           type: string
           description: URL da página atualmente requisitada
-          example: 'https://api.organizacao.com.br/open-insurance/products-services/v1'
+          pattern: ^(https:\/\/)(.*?)(\/open-insurance\/products-services\/v\d+)(\/auto-extended-warranty.*)?$
+          example: 'https://api.organizacao.com.br/open-insurance/products-services/v1/auto-extended-warranty'
         first:
           type: string
           description: URL da primeira página de registros
-          example: 'https://api.organizacao.com.br/open-insurance/products-services/v1'
+          pattern: ^(https:\/\/)(.*?)(\/open-insurance\/products-services\/v\d+)(\/auto-extended-warranty.*)?$
+          example: 'https://api.organizacao.com.br/open-insurance/products-services/v1/auto-extended-warranty'
         prev:
           type: string
           description: URL da página anterior de registros
-          example: 'https://api.organizacao.com.br/open-insurance/products-services/v1'
+          pattern: ^(https:\/\/)(.*?)(\/open-insurance\/products-services\/v\d+)(\/auto-extended-warranty.*)?$
+          example: 'https://api.organizacao.com.br/open-insurance/products-services/v1/auto-extended-warranty'
         next:
           type: string
           description: URL da próxima página de registros
-          example: 'https://api.organizacao.com.br/open-insurance/products-services/v1'
+          pattern: ^(https:\/\/)(.*?)(\/open-insurance\/products-services\/v\d+)(\/auto-extended-warranty.*)?$
+          example: 'https://api.organizacao.com.br/open-insurance/products-services/v1/auto-extended-warranty'
         last:
           type: string
           description: URL da última página de registros
-          example: 'https://api.organizacao.com.br/open-insurance/products-services/v1'
+          pattern: ^(https:\/\/)(.*?)(\/open-insurance\/products-services\/v\d+)(\/auto-extended-warranty.*)?$
+          example: 'https://api.organizacao.com.br/open-insurance/products-services/v1/auto-extended-warranty'
     
     Meta:
       type: object
@@ -486,6 +477,7 @@ components:
               - code
               - title
               - detail
+              - requestDateTime
             properties:
               code:
                 description: Código de erro específico do endpoint
@@ -572,21 +564,13 @@ components:
             type: string
             pattern: '[\w\W\s]*'
     
-  securitySchemes:
-    OpenId:
-      type: openIdConnect
-      openIdConnectUrl: 'https://auth.mockbank.poc.raidiam.io/.well-known/openid-configuration'
-    OAuth2Security:
-      type: oauth2
-      description: Fluxo OAuth necessário para que a receptora tenha acesso aos dados na instituição transmissora. Inclui o processo de redirecionamento e autenticação do usuário a que se referem os dados.
-      flows:
-        authorizationCode:
-          authorizationUrl: 'https://authserver.example/authorization'
-          tokenUrl: 'https://authserver.example/token'
-          scopes:
-            financings: Escopo necessário para acesso à API. O controle dos endpoints específicos é feito via permissions.
-    
   responses:
+    UnprocessableEntity:
+      description: 'O servidor entende o tipo de conteúdo da entidade da requisição, e a sintaxe da requisição esta correta, mas não foi possível processar as instruções presente.'
+      content:
+        application/json; charset=utf-8:
+          schema:
+            $ref: '#/components/schemas/ResponseError'
     NoContent:
       description: 'O recurso solicitado não existe ou não foi localizado.'
       content:

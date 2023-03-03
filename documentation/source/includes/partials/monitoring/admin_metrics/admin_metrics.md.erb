@@ -10,16 +10,18 @@ Base URLs:
 
 * <a href="http://api.organizacao.com.br/open-insurance/admin/v1">http://api.organizacao.com.br/open-insurance/admin/v1</a>
 
-Web: <a href="http://novosite.susep.gov.br/">Support</a>
+Web: <a href="https://www.gov.br/susep/">Support</a>
 
 <a href="files/swagger/admin_metrics.yaml" download="admin_metrics.yaml">Especificação em OAS</a> <br>
 <a href="files/docs/admin_metrics.docx" download="admin_metrics.docx">Detalhamento Técnico</a> <br>
+
 Release Notes: 
 
 - <a href="./1.2.0.html#metricas-admin">07/02/2022</a>, 
-- <a href="./1.2.6.html#metricas-admin-metrics-v1.2.0">22/08/2022</a> <br>
+- <a href="./1.2.6.html#metricas-admin-metrics-v1.2.0">22/08/2022,</a> <br>
+- <a href="./1.3.0.html#metricas-admin-metrics-v1.3.0">03/03/2023</a> <br>
 
-## admin v1.2.0
+## admin v1.3.0
 
 ### Obtém as métricas de disponibilidade das APIs
 
@@ -91,6 +93,35 @@ HttpResponse<String> response = Unirest.get("http://api.organizacao.com.br/open-
 Obtém as métricas de disponibilidade das APIs
 
 <h3 id="obtém-as-métricas-de-disponibilidade-das-apis-parameters">Parameters</h3>
+
+|Name|In|Type|Required|Description|
+|---|---|---|---|---|
+|cache-control|header|string|true|Controle de cache para evitar que informações confidenciais sejam armazenadas em cache.|
+|Content-Security-Policy|header|string|false|Campo para proteção contra ataques clickjack do estilo - drag and drop.|
+|content-Type|header|string|false|Especificar o tipo de conteúdo da resposta.|
+|Strict-Transport-Security|header|string|false|Campo para exigir conexões por HTTPS e proteger contra certificados falsificados.|
+|X-Content-Type-Options|header|string|false|Campo para evitar que navegadores executem a detecção de MIME e interpretem respostas como HTML de forma inadequada.|
+|X-Frame-Options|header|string|false|Campo indica se o navegador deve ou não renderizar um frame.|
+|page|query|integer|false|Número da página que está sendo requisitada (o valor da primeira página é 1).|
+|page-size|query|integer|false|Quantidade total de registros por páginas.|
+|period|query|string|false|Período a ser consultado|
+
+
+<h3 id="obtém-as-métricas-de-disponibilidade-das-apis-parameters">Parameters</h3>
+
+|Name|In|Type|Required|Description|
+|---|---|---|---|---|
+|cache-control|header|string|true|Controle de cache para evitar que informações confidenciais sejam armazenadas em cache.|
+|Content-Security-Policy|header|string|false|Campo para proteção contra ataques clickjack do estilo - drag and drop.|
+|content-Type|header|string|false|Especificar o tipo de conteúdo da resposta.|
+|Strict-Transport-Security|header|string|false|Campo para exigir conexões por HTTPS e proteger contra certificados falsificados.|
+|X-Content-Type-Options|header|string|false|Campo para evitar que navegadores executem a detecção de MIME e interpretem respostas como HTML de forma inadequada.|
+|X-Frame-Options|header|string|false|Campo indica se o navegador deve ou não renderizar um frame.|
+|page|query|integer|false|Número da página que está sendo requisitada (o valor da primeira página é 1).|
+|page-size|query|integer|false|Quantidade total de registros por páginas.|
+|period|query|string|false|Período a ser consultado|
+
+<h3 id="obtém-as-métricas-de-disponibilidade-das-apis-responses">Responses</h3>
 
 |Name|In|Type|Required|Description|
 |---|---|---|---|---|
@@ -224,11 +255,11 @@ Obtém as métricas de disponibilidade das APIs
     }
   },
   "links": {
-    "self": "https://api.organizacao.com.br/open-insurance/admin/v1/<resource>",
-    "first": "https://api.organizacao.com.br/open-insurance/admin/v1/<resource>",
-    "prev": "string",
-    "next": "string",
-    "last": "https://api.organizacao.com.br/open-insurance/admin/v1/<resource>"
+    "self": "https://api.organizacao.com.br/open-insurance/admin/v1/metrics",
+    "first": "https://api.organizacao.com.br/open-insurance/admin/v1/metrics",
+    "prev": "https://api.organizacao.com.br/open-insurance/admin/v1/metrics",
+    "next": "https://api.organizacao.com.br/open-insurance/admin/v1/metrics",
+    "last": "https://api.organizacao.com.br/open-insurance/admin/v1/metrics"
   },
   "meta": {
     "totalRecords": 1,
@@ -242,6 +273,16 @@ Obtém as métricas de disponibilidade das APIs
 |Status|Meaning|Description|Schema|
 |---|---|---|---|
 |200|[OK](https://tools.ietf.org/html/rfc7231#section-6.3.1)|Dados das métricas|[ResponseMetricsList](#schemaresponsemetricslist)|
+|204|[No Content](https://rfc-editor.org/rfc/rfc7231#section-6.3.5)|O recurso solicitado não existe ou não foi localizado.|NoContent|
+|400|[Bad Request](https://tools.ietf.org/html/rfc7231#section-6.5.1)|A requisição foi malformada, omitindo atributos obrigatórios, seja no payload ou através de atributos na URL.|BadRequest|
+|401|[Unauthorized](https://tools.ietf.org/html/rfc7235#section-3.1)|Cabeçalho de autenticação ausente/inválido ou token inválido|Unauthorized|
+|403|[Forbidden](https://tools.ietf.org/html/rfc7231#section-6.5.3)|O token tem escopo incorreto ou uma política de segurança foi violada|Forbidden|
+|404|[Not Found](https://tools.ietf.org/html/rfc7231#section-6.5.3)|O recurso solicitado não existe ou não foi implementado|NotFound|
+|405|[Method Not Allowed](https://tools.ietf.org/html/rfc7231#section-6.5.5)|O consumidor tentou acessar o recurso com um método não suportado|MethodNotAllowed|
+|406|[Not Acceptable](https://tools.ietf.org/html/rfc7231#section-6.5.6)|A solicitação continha um cabeçalho Accept diferente dos tipos de mídia permitidos ou um conjunto de caracteres diferente de UTF-8|NotAcceptable|
+|422|Unprocessable Entity|O servidor entende o tipo de conteúdo da entidade da requisição, e a sintaxe da requisição esta correta, mas não foi possível processar as instruções presente.|UnprocessableEntity|
+|429|Too Many Requests|A operação foi recusada, pois muitas solicitações foram feitas dentro de um determinado período ou o limite global de requisições concorrentes foi atingido|TooManyRequests|
+|500|[Internal Server Error](https://tools.ietf.org/html/rfc7231#section-6.6.1)|Ocorreu um erro no gateway da API ou no microsserviço|InternalServerError|
 
 <aside class="success">
 This operation does not require authentication

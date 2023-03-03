@@ -1,22 +1,22 @@
-
 openapi: 3.0.0
 info:
   title: APIs Open Data do Open Insurance Brasil
   description:
     API de informações de dados do produto Risco Cibernético. Os recursos que podem ser consumidos pelos participantes conforme a regra 3.1.2 do manual de escopo de dados..
-  version: 1.0.0
+  version: 1.1.0
   contact:
-    url: 'http://novosite.susep.gov.br/'
+    url: 'https://www.gov.br/susep/'
 servers:
   - url: 'https://api.organizacao.com.br/open-insurance/products-services/v1'
     description: Servidor de Producao
   - url: 'https://api.organizacao.com.br/open-insurance/products-services/v1'
     description: Servidor de Homologacao
 tags:
-- name: "Risco Cibernético" 
+- name: "Risco Cibernético"
+- name: "CyberRisk"
 
 paths:
-  /cyber-risk/:
+  /cyber-risk:
     get:
       tags:
         - CyberRisk
@@ -53,6 +53,8 @@ paths:
           $ref: '#/components/responses/MethodNotAllowed'
         '406':
           $ref: '#/components/responses/NotAcceptable'
+        '422':
+          $ref: '#/components/responses/UnprocessableEntity'
         '429':
           $ref: '#/components/responses/TooManyRequests'
         '500':
@@ -159,7 +161,6 @@ components:
                 coverage:
                   type: string
                   description: Listagem de coberturas incluídas no produto que deve observar a relação discriminada de coberturas, conforme Tabela II.9 do Anexo II.
-                  maxLength: 55
                   enum: [ RESPONSABILIDADE_CIVIL_PERANTE_TERCEIROS,
                     PERDAS_DIRETAS_AO_SEGURADO,
                     GERENCIAMENTO_DE_CRISE,
@@ -182,8 +183,7 @@ components:
             type: string
             maxLength: 1024
           maxLMG:
-            description: Valor máximo de LMG aceito pela sociedade para o produto.
-            $ref: '#/components/schemas/CyberRiskCoverageAttributesDetails'
+            $ref: '#/components/schemas/CyberRiskLimitGuarantee'
           traits:
             type: boolean
             description: Indicação se o produto é classificado como destinado para cobertura de grandes riscos, sendo tal classificação de acordo com regulamentação específica.
@@ -194,7 +194,6 @@ components:
             type: array
             items:
               type: string
-              maxLength: 17
               example: REDE_REFERENCIADA
               enum: [REDE_REFERENCIADA, LIVRE_ESCOLHA]    
           premiumPayment:
@@ -215,7 +214,6 @@ components:
             type: array
             items:
               type: string
-              maxLength: 23
               example: ANUAL
               enum: [ANUAL, ANUAL_INTERMITENTE, PLURIANUAL, PLURIANUAL_INTERMITENTE, MENSAL, MENSAL_INTERMITENTE, DIARIO, DIARIO_INTERMITENTE, OUTROS]
           termOthers:
@@ -240,7 +238,6 @@ components:
             items:
               type: string
               description: Para efeitos de comparabilidade considerar agrupamentos de serviços em 4 categorias, conforme os domínios
-              maxLength: 17
               example: ATE_10_SERVICOS
               enum: [ATE_10_SERVICOS, ATE_20_SERVICOS, ACIMA_20_SERVICOS, CUSTOMIZAVEL]
           complementaryAssistanceServicesDetail:
@@ -250,7 +247,6 @@ components:
           chargeTypeSignaling:
             description: Indicação se o pacote de assistência é gratuito ou contratado/pago.
             type: string
-            maxLength: 8
             example: GRATUITO
             enum: [GRATUITO, PAGO]
     
@@ -265,7 +261,6 @@ components:
           paymentMethod:
             type: string
             description: Metodo de pagamento
-            maxLength: 33
             enum: [CARTAO_DE_CREDITO, CARTAO_DE_DEBITO, DEBITO_EM_CONTA_CORRENTE, DEBITO_EM_CONTA_POUPANCA, BOLETO_BANCARIO, PIX, CONSIGNACAO_EM_FOLHA_DE_PAGAMENTO, PONTOS_DE_PROGRAMA_DE_BENEFICIO, OUTROS]
           paymentDetail:
             type: string  
@@ -276,7 +271,6 @@ components:
             description: Forma de pagamento
             items:
               type: string
-              maxLength: 9
               example: A_VISTA
               enum: [A_VISTA, PARCELADO]
           premiumRates:
@@ -314,7 +308,6 @@ components:
           type: array
           items:
             type: string
-            maxLength: 10
             enum: [COLETIVO, INDIVIDUAL]
         minimumRequirementDetails:
           type: string
@@ -325,7 +318,6 @@ components:
           type: array
           items:
             type: string
-            maxLength: 15
             example: PESSOA_NATURAL
             enum: [PESSOA_NATURAL, PESSOA_JURIDICA]
     
@@ -339,17 +331,14 @@ components:
         - idenizationBasis
       properties:
         maxLMI:
-          description: Lista com valor de LMI aceito pela sociedade para cada cobertura.
-          $ref: '#/components/schemas/CyberRiskCoverageAttributesDetails'  
+          $ref: '#/components/schemas/CyberRiskLimit'  
         maxLA:
-          description: Lista com valor máximo de LA aceito pela sociedade para cada cobertura.
           $ref: '#/components/schemas/CyberRiskCoverageAttributesDetails'   
         insuredParticipation:
           type: array
           items:
             type: string
             description: Lista com indicativo do tipo de participação do segurado para cada cobertura.
-            maxLength: 13
             example: FRANQUIA
             enum: [FRANQUIA, POS, NAO_SE_APLICA]
         insuredParticipationDescription:
@@ -359,7 +348,6 @@ components:
         idenizationBasis:
           type: string
           description: Lista com o indicativo da base de indenização para cada cobertura
-          maxLength: 14
           example: POR_OCORRENCIA
           enum: [POR_OCORRENCIA, POR_RECLAMACAO, OUTRAS]
         idenizationBasisOthers:
@@ -367,7 +355,44 @@ components:
           maxLength: 100
           description: Campo livre para descrição, caso o valor do campo '"Base de indenização' seja 3. Outros
             
-    
+    CyberRiskLimit:
+      type: object
+      description: Lista com valor máximo/mínimo de LMI/LA aceito pela sociedade para cada cobertura.
+      required:
+        - type
+        - amount
+      properties:
+        type:
+          type: string
+          enum: [FINANCEIRO, PERCENTUAL]
+        amount:
+          $ref: '#/components/schemas/CyberRiskCoverageAttributesDetails'
+        index:
+          type: string
+          description: Indexador. Condicional, vinculado ao preenchimento do campo Tipo com Percentual
+          enum: [LMG, FINANCEIRO_COBERTURA, OUTRO]
+        maxIndexAmount:
+          $ref: '#/components/schemas/CyberRiskCoverageAttributesDetails'
+
+    CyberRiskLimitGuarantee:
+      type: object
+      description: Lista com valor de LMG aceito pela sociedade para cada produto
+      required:
+        - type
+        - amount
+      properties:
+        type:
+          type: string
+          enum: [FINANCEIRO, PERCENTUAL]
+        amount:
+          $ref: '#/components/schemas/CyberRiskCoverageAttributesDetails'
+        index:
+          type: string
+          description: Indexador. Condicional, vinculado ao preenchimento do campo Tipo com Percentual
+          enum: [FINANCEIRO_COBERTURA, OUTRO]
+        maxIndexAmount:
+          $ref: '#/components/schemas/CyberRiskCoverageAttributesDetails'
+
     CyberRiskCoverageAttributesDetails:
         type: object
         required:
@@ -393,56 +418,35 @@ components:
           type: string
           maxLength: 5
           example: REAL
-    
-    CyberRiskCoverageAttributesPercentageDetails:
-        type: object
-        required:
-          - amount
-          - unit
-        properties:
-          amount:
-            type: number
-          unit:
-            $ref: '#/components/schemas/CyberRiskCoverageAttributesPercentageDetailsUnit'
-       
-    CyberRiskCoverageAttributesPercentageDetailsUnit:
-      type: object
-      required:
-        - code
-        - description
-      properties:
-        code:
-          type: string
-          maxLength: 1
-          example: '%'
-        description:
-          type: string
-          maxLength: 10
-          example: PERCENTUAL
-    
+
     Links:
       type: object
       properties:
         self:
           type: string
           description: URL da página atualmente requisitada
-          example: 'https://api.organizacao.com.br/open-insurance/products-services/v1'
+          pattern: ^(https:\/\/)(.*?)(\/open-insurance\/products-services\/v\d+)(\/cyber-risk.*)?$
+          example: 'https://api.organizacao.com.br/open-insurance/products-services/v1/cyber-risk'
         first:
           type: string
           description: URL da primeira página de registros
-          example: 'https://api.organizacao.com.br/open-insurance/products-services/v1'
+          pattern: ^(https:\/\/)(.*?)(\/open-insurance\/products-services\/v\d+)(\/cyber-risk.*)?$
+          example: 'https://api.organizacao.com.br/open-insurance/products-services/v1/cyber-risk'
         prev:
           type: string
           description: URL da página anterior de registros
-          example: 'https://api.organizacao.com.br/open-insurance/products-services/v1'
+          pattern: ^(https:\/\/)(.*?)(\/open-insurance\/products-services\/v\d+)(\/cyber-risk.*)?$
+          example: 'https://api.organizacao.com.br/open-insurance/products-services/v1/cyber-risk'
         next:
           type: string
           description: URL da próxima página de registros
-          example: 'https://api.organizacao.com.br/open-insurance/products-services/v1'
+          pattern: ^(https:\/\/)(.*?)(\/open-insurance\/products-services\/v\d+)(\/cyber-risk.*)?$
+          example: 'https://api.organizacao.com.br/open-insurance/products-services/v1/cyber-risk'
         last:
           type: string
           description: URL da última página de registros
-          example: 'https://api.organizacao.com.br/open-insurance/products-services/v1'
+          pattern: ^(https:\/\/)(.*?)(\/open-insurance\/products-services\/v\d+)(\/cyber-risk.*)?$
+          example: 'https://api.organizacao.com.br/open-insurance/products-services/v1/cyber-risk'
     
     Meta:
       type: object
@@ -474,6 +478,7 @@ components:
               - code
               - title
               - detail
+              - requestDateTime
             properties:
               code:
                 description: Código de erro específico do endpoint
@@ -560,21 +565,13 @@ components:
             type: string
             pattern: '[\w\W\s]*'
     
-  securitySchemes:
-    OpenId:
-      type: openIdConnect
-      openIdConnectUrl: 'https://auth.mockbank.poc.raidiam.io/.well-known/openid-configuration'
-    OAuth2Security:
-      type: oauth2
-      description: Fluxo OAuth necessário para que a receptora tenha acesso aos dados na instituição transmissora. Inclui o processo de redirecionamento e autenticação do usuário a que se referem os dados.
-      flows:
-        authorizationCode:
-          authorizationUrl: 'https://authserver.example/authorization'
-          tokenUrl: 'https://authserver.example/token'
-          scopes:
-            financings: Escopo necessário para acesso à API. O controle dos endpoints específicos é feito via permissions.
-    
   responses:
+    UnprocessableEntity:
+      description: 'O servidor entende o tipo de conteúdo da entidade da requisição, e a sintaxe da requisição esta correta, mas não foi possível processar as instruções presente.'
+      content:
+        application/json; charset=utf-8:
+          schema:
+            $ref: '#/components/schemas/ResponseError'
     NoContent:
       description: 'O recurso solicitado não existe ou não foi localizado.'
       content:

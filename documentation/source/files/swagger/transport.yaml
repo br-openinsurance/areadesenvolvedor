@@ -4,19 +4,20 @@ info:
   title: APIs Open Data do Open Insurance Brasil
   description:
     API de informações de dados do produto Transportes. Os recursos que podem ser consumidos pelos participantes conforme a regra 3.1.2 do manual de escopo de dados..
-  version: 1.0.0
+  version: 1.1.0
   contact:
-    url: 'http://novosite.susep.gov.br/'
+    url: 'https://www.gov.br/susep/'
 servers:
   - url: 'https://api.organizacao.com.br/open-insurance/products-services/v1'
     description: Servidor de Producao
   - url: 'https://api.organizacao.com.br/open-insurance/products-services/v1'
     description: Servidor de Homologacao
 tags:
-- name: "Transportes" 
+  - name: "Transportes"
+  - name: "Transport"
 
 paths:
-  /transport/:
+  /transport:
     get:
       tags:
         - Transport
@@ -53,6 +54,8 @@ paths:
           $ref: '#/components/responses/MethodNotAllowed'
         '406':
           $ref: '#/components/responses/NotAcceptable'
+        '422':
+          $ref: '#/components/responses/UnprocessableEntity'
         '429':
           $ref: '#/components/responses/TooManyRequests'
         '500':
@@ -158,39 +161,38 @@ components:
                 coverage:
                   description: Listagem de coberturas incluídas no produto que deve observar a relação discriminada de coberturas, conforme Tabela II.15 do Anexo II.
                   type: string
-                  maxLength: 436
                   example: ACIDENTES_PESSOAIS_COM_PASSAGEIROS
                   enum: [ACIDENTES_PESSOAIS_COM_PASSAGEIROS,
-                  ACIDENTES_PESSOAIS_COM_TRIPULANTES,
-                  DANOS_CORPORAIS_PASSAGEIROS,
-                  DANOS_CORPORAIS_TERCEIROS,
-                  DANOS_CORPORAIS_TRIPULANTES,
-                  DANOS_ESTETICOS_PASSAGEIROS,
-                  DANOS_ESTETICOS_TERCEIROS,
-                  DANOS_ESTETICOS_TRIPULANTES,
-                  DANOS_MATERIAIS_PASSAGEIROS,
-                  DANOS_MATERIAIS_TERCEIROS,
-                  DANOS_MATERIAIS_TRIPULANTES,
-                  DANOS_MORAIS_PASSAGEIROS,
-                  DANOS_MORAIS_TERCEIROS,
-                  DANOS_MORAIS_TRIPULANTES,
-                  DESPESAS_COM_HONORARIOS,
-                  EMBARCADOR_AMPLA_A_RISCOS_DE_PERDA_OU_DANO_MATERIAL_SOFRIDOS_PELO_OBJETO_SEGURADO_EM_CONSEQUENCIA_DE_QUAISQUER_CAUSAS_EXTERNAS_EXCETO_AS_PREVISTAS_NA_CLAUSULA_DE_PREJUIZOS_NAO_INDENIZAVEIS,
-                  EMBARCADOR_RESTRITA_B_COBERTURAS_ELENCADAS_NA_EMBARCADOR_RESTRITA_C_E_INCLUI_INUNDACAO_TRANSBORDAMENTO_DE_CURSOS_DAGUA_REPRESAS_LAGOS_OU_LAGOAS_DURANTE_A_VIAGEM_TERRESTRE_DESMORONAMENTO_OU_QUEDA_DE_PEDRAS_TERRAS_OBRAS_DE_ARTE_DE_QUALQUER_NATUREZA_OU_OUTROS_OBJETOS_DURANTE_A_VIAGEM_TERRESTRE_TERREMOTO_OU_ERUPCAO_VULCANICA_E,
-                  ENTRADA_DE_AGUA_DO_MAR_LAGO_OU_RIO_NA_EMBARCACAO_OU_NO_NAVIO,
-                  VEICULO_CONTAINER_FURGAO_LIFTVAN_OU_LOCAL_DE_ARMAZENAGEM,
-                  EMBARCADOR_RESTRITA_C_PERDAS_E_DANOS_MATERIAIS_CAUSADOS_AO_OBJETO_SEGURADO_EXCLUSIVAMENTE_POR_INCENDIO_RAIO_OU_EXPLOSAO_ENCALHE,
-                  NAUFRAGIO_OU_SOCOBRAMENTO_DO_NAVIO_OU_EMBARCACAO_CAPOTAGEM_COLISAO_TOMBAMENTO_OU_DESCARRILAMENTO_DE_VEICULO_TERRESTRE_ABALROAMENTO_COLISAO_OU_CONTATO_DO_NAVIO_OU_EMBARCACAO_COM_QUALQUER_OBJETO_EXTERNO_QUE_NAO_SEJA_AGUA_COLISAO_QUEDA_E_OU_ATERRISSAGEM_FORCADA_DA_AERONAVE_DEVIDAMENTE_COMPROVADA_DESCARGA_DA_CARGA_EM_PORTO_DE_ARRIBADA_CARGA_LANCADA_AO_MAR_PERDA_TOTAL_DE_QUALQUER_VOLUME_DURANTE_AS_OPERACOES_DE_CARGA_E_DESCARGA_DO_NAVIO_E,
-                  PERDA_TOTAL_DECORRENTE_DE_FORTUNA_DO_MAR_E_OU_DE_ARREBATAMENTO_PELO_MAR,
-                  RESPONSABILIDADE_CIVIL_DO_OPERADOR_DE_TRANSPORTES_MULTIMODAL_CARGA_RCOTM_C,
-                  RESPONSABILIDADE_CIVIL_DO_TRANSPORTADOR_AEREO_CARGA_RCTA_C,
-                  RESPONSABILIDADE_CIVIL_DO_TRANSPORTADOR_AQUAVIARIO_CARGA_RCA_C,
-                  RESPONSABILIDADE_CIVIL_DO_TRANSPORTADOR_FERROVIARIO_CARGA_RCTF_C,
-                  RESPONSABILIDADE_CIVIL_DO_TRANSPORTADOR_RODOVIARIO_CARGA_RCTR,
-                  RESPONSABILIDADE_CIVIL_DO_TRANSPORTADOR_RODOVIARIO_EM_VIAGEM_INTERNACIONAL_DANOS_CAUSADOS_A_PESSOAS_OU_COISAS_TRANSPORTADAS_OU_NAO_A_EXCECAO_DA_CARGA_TRANSPORTADA_CARTA_AZUL,
-                  RESPONSABILIDADE_CIVIL_DO_TRANSPORTADOR_RODOVIARIO_EM_VIAGEM_INTERNACIONAL_DANOS_A_CARGA_TRANSPORTADA_RCTR_VI_C_,
-                  RESPONSABILIDADE_CIVIL_DO_TRANSPORTADOR_RODOVIARIO_POR_DESAPARECIMENTO_DE_CARGA_RCF_DC,
-                  OUTRAS]
+                    ACIDENTES_PESSOAIS_COM_TRIPULANTES,
+                    DANOS_CORPORAIS_PASSAGEIROS,
+                    DANOS_CORPORAIS_TERCEIROS,
+                    DANOS_CORPORAIS_TRIPULANTES,
+                    DANOS_ESTETICOS_PASSAGEIROS,
+                    DANOS_ESTETICOS_TERCEIROS,
+                    DANOS_ESTETICOS_TRIPULANTES,
+                    DANOS_MATERIAIS_PASSAGEIROS,
+                    DANOS_MATERIAIS_TERCEIROS,
+                    DANOS_MATERIAIS_TRIPULANTES,
+                    DANOS_MORAIS_PASSAGEIROS,
+                    DANOS_MORAIS_TERCEIROS,
+                    DANOS_MORAIS_TRIPULANTES,
+                    DESPESAS_COM_HONORARIOS,
+                    EMBARCADOR_AMPLA_A_RISCOS_DE_PERDA_OU_DANO_MATERIAL_SOFRIDOS_PELO_OBJETO_SEGURADO_EM_CONSEQUENCIA_DE_QUAISQUER_CAUSAS_EXTERNAS_EXCETO_AS_PREVISTAS_NA_CLAUSULA_DE_PREJUIZOS_NAO_INDENIZAVEIS,
+                    EMBARCADOR_RESTRITA_B_COBERTURAS_ELENCADAS_NA_EMBARCADOR_RESTRITA_C_E_INCLUI_INUNDACAO_TRANSBORDAMENTO_DE_CURSOS_DAGUA_REPRESAS_LAGOS_OU_LAGOAS_DURANTE_A_VIAGEM_TERRESTRE_DESMORONAMENTO_OU_QUEDA_DE_PEDRAS_TERRAS_OBRAS_DE_ARTE_DE_QUALQUER_NATUREZA_OU_OUTROS_OBJETOS_DURANTE_A_VIAGEM_TERRESTRE_TERREMOTO_OU_ERUPCAO_VULCANICA_E,
+                    ENTRADA_DE_AGUA_DO_MAR_LAGO_OU_RIO_NA_EMBARCACAO_OU_NO_NAVIO,
+                    VEICULO_CONTAINER_FURGAO_LIFTVAN_OU_LOCAL_DE_ARMAZENAGEM,
+                    EMBARCADOR_RESTRITA_C_PERDAS_E_DANOS_MATERIAIS_CAUSADOS_AO_OBJETO_SEGURADO_EXCLUSIVAMENTE_POR_INCENDIO_RAIO_OU_EXPLOSAO_ENCALHE,
+                    NAUFRAGIO_OU_SOCOBRAMENTO_DO_NAVIO_OU_EMBARCACAO_CAPOTAGEM_COLISAO_TOMBAMENTO_OU_DESCARRILAMENTO_DE_VEICULO_TERRESTRE_ABALROAMENTO_COLISAO_OU_CONTATO_DO_NAVIO_OU_EMBARCACAO_COM_QUALQUER_OBJETO_EXTERNO_QUE_NAO_SEJA_AGUA_COLISAO_QUEDA_E_OU_ATERRISSAGEM_FORCADA_DA_AERONAVE_DEVIDAMENTE_COMPROVADA_DESCARGA_DA_CARGA_EM_PORTO_DE_ARRIBADA_CARGA_LANCADA_AO_MAR_PERDA_TOTAL_DE_QUALQUER_VOLUME_DURANTE_AS_OPERACOES_DE_CARGA_E_DESCARGA_DO_NAVIO_E,
+                    PERDA_TOTAL_DECORRENTE_DE_FORTUNA_DO_MAR_E_OU_DE_ARREBATAMENTO_PELO_MAR,
+                    RESPONSABILIDADE_CIVIL_DO_OPERADOR_DE_TRANSPORTES_MULTIMODAL_CARGA_RCOTM_C,
+                    RESPONSABILIDADE_CIVIL_DO_TRANSPORTADOR_AEREO_CARGA_RCTA_C,
+                    RESPONSABILIDADE_CIVIL_DO_TRANSPORTADOR_AQUAVIARIO_CARGA_RCA_C,
+                    RESPONSABILIDADE_CIVIL_DO_TRANSPORTADOR_FERROVIARIO_CARGA_RCTF_C,
+                    RESPONSABILIDADE_CIVIL_DO_TRANSPORTADOR_RODOVIARIO_CARGA_RCTR,
+                    RESPONSABILIDADE_CIVIL_DO_TRANSPORTADOR_RODOVIARIO_EM_VIAGEM_INTERNACIONAL_DANOS_CAUSADOS_A_PESSOAS_OU_COISAS_TRANSPORTADAS_OU_NAO_A_EXCECAO_DA_CARGA_TRANSPORTADA_CARTA_AZUL,
+                    RESPONSABILIDADE_CIVIL_DO_TRANSPORTADOR_RODOVIARIO_EM_VIAGEM_INTERNACIONAL_DANOS_A_CARGA_TRANSPORTADA_RCTR_VI_C_,
+                    RESPONSABILIDADE_CIVIL_DO_TRANSPORTADOR_RODOVIARIO_POR_DESAPARECIMENTO_DE_CARGA_RCF_DC,
+                    OUTRAS]
                 coverageDescription:
                   type: string
                   maxLength: 3000
@@ -202,9 +204,7 @@ components:
                 coverageAttributes:
                   $ref: '#/components/schemas/TransportCoverageAttributes'
           maxLMG:
-            $ref: '#/components/schemas/TransportCoverageAttributesDetails'
-            description: "Lista com valor de LMG aceito pela sociedade para cada produto. Em reais (R$)
-              Importante: Campo de valor numérico relacionado ao produto que possui o campo. Quando não houver o campo, enviar o valor zerado."   
+            $ref: '#/components/schemas/TransportCoverageLimitGuarantee'
           assistanceServices:
             $ref: '#/components/schemas/TransportAssistanceServices'
           traits: 
@@ -222,7 +222,6 @@ components:
             type: array
             items:
               type: string
-              maxLength: 13
               example: AVULSA
               enum: [AVULSA, 
                     AVERBACAO,
@@ -249,9 +248,30 @@ components:
           type: string
           maxLength: 5
           example: REAL
-    
+
+    TransportCoverageLimitGuarantee:
+      type: object
+      description: Lista com valor de LMG aceito pela sociedade para cada produto
+      required:
+        - type
+        - amount
+      properties:
+        type:
+          type: string
+          enum: [FINANCEIRO, PERCENTUAL]
+        amount:
+          $ref: '#/components/schemas/TransportCoverageAttributesDetails'
+        index:
+          type: string
+          description: Indexador. Condicional, vinculado ao preenchimento do campo Tipo com Percentual
+          enum: [FINANCEIRO_COBERTURA, OUTRO]
+        maxIndexAmount:
+          $ref: '#/components/schemas/TransportCoverageAttributesDetails'
+
     TransportCoverageAttributesDetails:
         type: object
+        description: "Lista com valor de LMG aceito pela sociedade para cada produto. Em reais (R$)
+          Importante: Campo de valor numérico relacionado ao produto que possui o campo. Quando não houver o campo, enviar o valor zerado."   
         required:
           - amount
           - unit
@@ -279,7 +299,6 @@ components:
             items:
               type: string
               description: Para efeitos de comparabilidade considerar agrupamentos de serviços em 4 categorias, conforme os domínios
-              maxLength: 17
               example: ATE_10_SERVICOS
               enum: [ATE_10_SERVICOS, ATE_20_SERVICOS , ACIMA_20_SERVICOS, CUSTOMIZAVEL]
           complementaryAssistanceServicesDetail:
@@ -290,7 +309,6 @@ components:
           chargeTypeSignaling:
             type: string
             description: Indicação se o pacote de Assistência é gratuita ou contratada/paga.
-            maxLength: 8
             example: GRATUITO
             enum: [GRATUITO, PAGO]
     
@@ -303,7 +321,6 @@ components:
           type: array
           items:
             type: string
-            maxLength: 23
             description: Prazo
             example: ANUAL
             enum: [ANUAL, 
@@ -346,7 +363,6 @@ components:
           description: Lista com indicativo do tipo de participação do segurado para cada cobertura.
           items:
             type: string
-            maxLength: 13
             example: FRANQUIA
             enum: [FRANQUIA, POS, NAO_SE_APLICA, OUTROS]
         insuredParticipationDescription:
@@ -370,13 +386,9 @@ components:
           description: Público Alvo
           type: array
           items:
-            type: array
-            items:
-              type: string
-              maxLength: 15
-              example: PESSOA_FISICA
-              enum: [PESSOA_FISICA, 
-                    PESSOA_JURIDICA]
+            type: string
+            example: PESSOA_FISICA
+            enum: [PESSOA_FISICA, PESSOA_JURIDICA]
     
     Links:
       type: object
@@ -384,23 +396,28 @@ components:
         self:
           type: string
           description: URL da página atualmente requisitada
-          example: 'https://api.organizacao.com.br/open-insurance/products-services/v1'
+          pattern: ^(https:\/\/)(.*?)(\/open-insurance\/products-services\/v\d+)(\/transport.*)?$
+          example: 'https://api.organizacao.com.br/open-insurance/products-services/v1/transport'
         first:
           type: string
           description: URL da primeira página de registros
-          example: 'https://api.organizacao.com.br/open-insurance/products-services/v1'
+          pattern: ^(https:\/\/)(.*?)(\/open-insurance\/products-services\/v\d+)(\/transport.*)?$
+          example: 'https://api.organizacao.com.br/open-insurance/products-services/v1/transport'
         prev:
           type: string
           description: URL da página anterior de registros
-          example: 'https://api.organizacao.com.br/open-insurance/products-services/v1'
+          pattern: ^(https:\/\/)(.*?)(\/open-insurance\/products-services\/v\d+)(\/transport.*)?$
+          example: 'https://api.organizacao.com.br/open-insurance/products-services/v1/transport'
         next:
           type: string
           description: URL da próxima página de registros
-          example: 'https://api.organizacao.com.br/open-insurance/products-services/v1'
+          pattern: ^(https:\/\/)(.*?)(\/open-insurance\/products-services\/v\d+)(\/transport.*)?$
+          example: 'https://api.organizacao.com.br/open-insurance/products-services/v1/transport'
         last:
           type: string
           description: URL da última página de registros
-          example: 'https://api.organizacao.com.br/open-insurance/products-services/v1'
+          pattern: ^(https:\/\/)(.*?)(\/open-insurance\/products-services\/v\d+)(\/transport.*)?$
+          example: 'https://api.organizacao.com.br/open-insurance/products-services/v1/transport'
     
     Meta:
       type: object
@@ -432,6 +449,7 @@ components:
               - code
               - title
               - detail
+              - requestDateTime
             properties:
               code:
                 description: Código de erro específico do endpoint
@@ -518,21 +536,13 @@ components:
             type: string
             pattern: '[\w\W\s]*'
     
-  securitySchemes:
-    OpenId:
-      type: openIdConnect
-      openIdConnectUrl: 'https://auth.mockbank.poc.raidiam.io/.well-known/openid-configuration'
-    OAuth2Security:
-      type: oauth2
-      description: Fluxo OAuth necessário para que a receptora tenha acesso aos dados na instituição transmissora. Inclui o processo de redirecionamento e autenticação do usuário a que se referem os dados.
-      flows:
-        authorizationCode:
-          authorizationUrl: 'https://authserver.example/authorization'
-          tokenUrl: 'https://authserver.example/token'
-          scopes:
-            financings: Escopo necessário para acesso à API. O controle dos endpoints específicos é feito via permissions.
-    
   responses:
+    UnprocessableEntity:
+      description: 'O servidor entende o tipo de conteúdo da entidade da requisição, e a sintaxe da requisição esta correta, mas não foi possível processar as instruções presente.'
+      content:
+        application/json; charset=utf-8:
+          schema:
+            $ref: '#/components/schemas/ResponseError'
     NoContent:
       description: 'O recurso solicitado não existe ou não foi localizado.'
       content:

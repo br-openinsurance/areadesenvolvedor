@@ -4,9 +4,9 @@ info:
   title: APIs Open Data do Open Insurance Brasil
   description:
     API de informações de dados do produto Rural. Os recursos que podem ser consumidos pelos participantes conforme a regra 3.1.2 do manual de escopo de dados..
-  version: 1.0.0
+  version: 1.1.0
   contact:
-    url: 'http://novosite.susep.gov.br/'
+    url: 'https://www.gov.br/susep/'
 servers:
   - url: 'https://api.organizacao.com.br/open-insurance/products-services/v1'
     description: Servidor de Producao
@@ -16,7 +16,7 @@ tags:
 - name: "Rural" 
 
 paths:
-  /rural/:
+  /rural:
     get:
       tags:
         - Rural
@@ -53,6 +53,8 @@ paths:
           $ref: '#/components/responses/MethodNotAllowed'
         '406':
           $ref: '#/components/responses/NotAcceptable'
+        '422':
+          $ref: '#/components/responses/UnprocessableEntity'
         '429':
           $ref: '#/components/responses/TooManyRequests'
         '500':
@@ -149,7 +151,6 @@ components:
           modality:
             description: Modalidade
             type: string
-            maxLength: 37
             enum: [AGRICOLA,
                   PECUARIO,
                   AQUICOLA,
@@ -172,40 +173,39 @@ components:
                 coverage:
                   description: Listagem de coberturas incluídas no produto que deve observar a relação discriminada de coberturas, conforme Tabela II.17 do Anexo II.
                   type: string
-                  maxLength: 532
                   example: GRANIZO
                   enum: [GRANIZO,
-                  GEADA,
-                  GRANIZO_GEADA,
-                  GRANIZO_GEADA_CHUVA_EXCESSIVA,
-                  COMPREENSIVA_INCENDIO_E_RAIO_TROMBA_D_AGUA_VENTOS_FORTES_E_VENTOS_FRIOS_CHUVAS_EXCESSIVAS_SECA_VARIACAO_EXCESSIVA_DE_TEMPERATURA_GRANIZO_GEADA,
-                  COMPREENSIVA_INCENDIO_E_RAIO_TROMBA_D_AGUA_VENTOS_FORTES_E_VENTOS_FRIOS_CHUVAS_EXCESSIVAS_SECA_VARIACAO_EXCESSIVA_DE_TEMPERATURA_GRANIZO_GEADA_COM_DOENCAS_E_PRAGAS,
-                  CANCRO_CITRICO,
-                  COMPREENSIVA_PARA_A_MODALIDADE_BENFEITORIAS_E_PRODUTOS_AGROPECUARIOS_INCENDIO_RAIO_EXPLOSAO_VENDAVAL_GRANIZO_TREMORES_DE_TERRA_IMPACTO_DE_VEICULOS_DESMORONAMENTO_TOTAL_OU_PARCIAL_DANOS_AS_MERCADORIAS_DO_SEGURADO_EXCLUSIVAMENTE_PARA_OS_PRODUTOS_AGROPECUARIOS_DECORRENTES_DE_ACIDENTES_COM_O_VEICULO_TRANSPORTADOR_DANOS_AS_MAQUINAS_AGRICOLAS_E_SEUS_IMPLEMENTOS_DECORRENTES_DE_COLISAO_ABALROAMENTO_E_OU_CAPOTAGEM_QUEDA_DE_PONTES_VIADUTOS_OU_EM_PRECIPICIOS_ROUBO_OU_FURTO_TOTAL_CASO_FORTUITO_OU_FORCA_MAIOR_OCORRIDOS_DURANTE_O_TRANSPORTE,
-                  COMPREENSIVA_PARA_A_MODALIDADE_PENHOR_RURAL,
-                  MORTE_DE_ANIMAIS,
-                  CONFINAMENTO_SEMI_CONFINAMENTO_BOVINOS_DE_CORTE,
-                  CONFINAMENTO_BOVINOS_DE_LEITE,
-                  VIAGEM,
-                  EXPOSICAO_MOSTRA_E_LEILAO,
-                  CARREIRA,
-                  SALTO_E_ADESTRAMENTO,
-                  PROVAS_FUNCIONAIS,
-                  HIPISMO_RURAL,
-                  POLO,
-                  TROTE,
-                  VAQUEJADA,
-                  EXTENSAO_DE_COBERTURA_EM_TERRITORIO_ESTRANGEIRO,
-                  TRANSPORTE,
-                  RESPONSABILIDADE_CIVIL,
-                  PERDA_DE_FERTILIDADE_DE_GARANHAO,
-                  REEMBOLSO_CIRURGICO,
-                  COLETA_DE_SEMEN,
-                  PREMUNICAO,
-                  COMPREENSIVA_PARA_A_MODALIDADE_FLORESTAS,
-                  VIDA_DO_PRODUTOR_RURAL,
-                  BASICA_DE_FATURAMENTO_PARA_O_PECUARIO,
-                  OUTRAS]
+                    GEADA,
+                    GRANIZO_GEADA,
+                    GRANIZO_GEADA_CHUVA_EXCESSIVA,
+                    COMPREENSIVA_INCENDIO_E_RAIO_TROMBA_D_AGUA_VENTOS_FORTES_E_VENTOS_FRIOS_CHUVAS_EXCESSIVAS_SECA_VARIACAO_EXCESSIVA_DE_TEMPERATURA_GRANIZO_GEADA,
+                    COMPREENSIVA_INCENDIO_E_RAIO_TROMBA_D_AGUA_VENTOS_FORTES_E_VENTOS_FRIOS_CHUVAS_EXCESSIVAS_SECA_VARIACAO_EXCESSIVA_DE_TEMPERATURA_GRANIZO_GEADA_COM_DOENCAS_E_PRAGAS,
+                    CANCRO_CITRICO,
+                    COMPREENSIVA_PARA_A_MODALIDADE_BENFEITORIAS_E_PRODUTOS_AGROPECUARIOS_INCENDIO_RAIO_EXPLOSAO_VENDAVAL_GRANIZO_TREMORES_DE_TERRA_IMPACTO_DE_VEICULOS_DESMORONAMENTO_TOTAL_OU_PARCIAL_DANOS_AS_MERCADORIAS_DO_SEGURADO_EXCLUSIVAMENTE_PARA_OS_PRODUTOS_AGROPECUARIOS_DECORRENTES_DE_ACIDENTES_COM_O_VEICULO_TRANSPORTADOR_DANOS_AS_MAQUINAS_AGRICOLAS_E_SEUS_IMPLEMENTOS_DECORRENTES_DE_COLISAO_ABALROAMENTO_E_OU_CAPOTAGEM_QUEDA_DE_PONTES_VIADUTOS_OU_EM_PRECIPICIOS_ROUBO_OU_FURTO_TOTAL_CASO_FORTUITO_OU_FORCA_MAIOR_OCORRIDOS_DURANTE_O_TRANSPORTE,
+                    COMPREENSIVA_PARA_A_MODALIDADE_PENHOR_RURAL,
+                    MORTE_DE_ANIMAIS,
+                    CONFINAMENTO_SEMI_CONFINAMENTO_BOVINOS_DE_CORTE,
+                    CONFINAMENTO_BOVINOS_DE_LEITE,
+                    VIAGEM,
+                    EXPOSICAO_MOSTRA_E_LEILAO,
+                    CARREIRA,
+                    SALTO_E_ADESTRAMENTO,
+                    PROVAS_FUNCIONAIS,
+                    HIPISMO_RURAL,
+                    POLO,
+                    TROTE,
+                    VAQUEJADA,
+                    EXTENSAO_DE_COBERTURA_EM_TERRITORIO_ESTRANGEIRO,
+                    TRANSPORTE,
+                    RESPONSABILIDADE_CIVIL,
+                    PERDA_DE_FERTILIDADE_DE_GARANHAO,
+                    REEMBOLSO_CIRURGICO,
+                    COLETA_DE_SEMEN,
+                    PREMUNICAO,
+                    COMPREENSIVA_PARA_A_MODALIDADE_FLORESTAS,
+                    VIDA_DO_PRODUTOR_RURAL,
+                    BASICA_DE_FATURAMENTO_PARA_O_PECUARIO,
+                    OUTRAS]
                 coverageDescription:
                   type: string
                   maxLength: 3000
@@ -217,8 +217,7 @@ components:
                 coverageAttributes:
                       $ref: '#/components/schemas/RuralCoverageAttributes'
           maxLMG:
-            description: "Valor de LMG aceito pela sociedade para cada produto. Em reais (R$) Importante: Campo de valor numérico relacionado ao produto que possui o campo. Quando não houver o campo, enviar o valor zerado."
-            $ref: '#/components/schemas/RuralCoverageAttributesDetails'
+            $ref: '#/components/schemas/RuralCoverageLimitGuarantee'
           traits:
             description: Indicação se o produto é classificado como destinado para cobertura de grandes riscos, sendo tal classificação de acordo com regulamentação específica. 
             type: boolean
@@ -229,7 +228,6 @@ components:
             type: array
             items:
               type: string
-              maxLength: 16
               enum: [FRUTAS,
                     GRAOS_DE_VERAO,
                     GRAOS_DE_INVERNO,
@@ -247,7 +245,6 @@ components:
             type: array
             items:
               type: string
-              maxLength: 11
               enum: [PINUS,
                     EUCALIPITO,
                     TECA,
@@ -265,7 +262,6 @@ components:
             type: array
             items:
               type: string
-              maxLength: 9
               enum: [BOVINOS,
                     EQUINOS,
                     OVINOS,
@@ -286,7 +282,6 @@ components:
             type: array
             items:
               type: string
-              maxLength: 31
               enum: [PRODUCAO,
                     TRABALHO_DESTINADOS_A_SELA,    
                     TRABALHO_POR_TRACAO,
@@ -299,7 +294,6 @@ components:
             type: array
             items:
               type: string
-              maxLength: 30
               enum: [ANIMAIS_DESTINADOS_A_COMPANHIA,
                     CONVIVIO_FAMILIAR,
                     SEGURANCA,
@@ -307,7 +301,7 @@ components:
                     EXPOSICAO,
                     ATIVIDADES_ESPORTIVAS,
                     ATIVIDADE_REPRODUTIVA]
-              example: ELITE    
+              example: LAZER    
           subvention:
             type: boolean
             description: "Permite contratação por subvenção?
@@ -321,8 +315,28 @@ components:
             $ref: '#/components/schemas/RuralPremiumPayment'    
           minimumRequirements:
             $ref: '#/components/schemas/RuralMinimumRequirements'
-    
+
+    RuralCoverageLimitGuarantee:
+      type: object
+      description: Lista com valor de LMG aceito pela sociedade para cada produto
+      required:
+        - type
+        - amount
+      properties:
+        type:
+          type: string
+          enum: [FINANCEIRO, PERCENTUAL]
+        amount:
+          $ref: '#/components/schemas/RuralCoverageAttributesDetails'
+        index:
+          type: string
+          description: Indexador. Condicional, vinculado ao preenchimento do campo Tipo com Percentual
+          enum: [FINANCEIRO_COBERTURA, OUTRO]
+        maxIndexAmount:
+          $ref: '#/components/schemas/RuralCoverageAttributesDetails'
+
     RuralCoverageAttributesDetails:
+        description: "Valor de LMG aceito pela sociedade para cada produto. Em reais (R$) Importante: Campo de valor numérico relacionado ao produto que possui o campo. Quando não houver o campo, enviar o valor zerado."  
         type: object
         required:
           - amount
@@ -358,7 +372,6 @@ components:
           type: array
           items:
             type: string
-            maxLength: 23
             description: Prazo
             example: ANUAL
             enum: [ANUAL, ANUAL_INTERMITENTE, PLURIANUAL, PLURIANUAL_INTERMITENTE, MENSAL, MENSAL_INTERMITENTE, DIARIO, DIARIO_INTERMITENTE, OUTROS]
@@ -377,7 +390,6 @@ components:
           paymentMethod:
             description: Metodo de pagamento
             type: string
-            maxLength: 33
             enum: [CARTAO_DE_CREDITO,
                   CARTAO_DE_DEBITO,
                   DEBITO_EM_CONTA_CORRENTE,
@@ -395,8 +407,7 @@ components:
             type: array
             description: Forma de Pagamento  
             items:
-              type: string 
-              maxLength: 9
+              type: string
               example: A_VISTA
               enum: [A_VISTA, PARCELADO]
           premiumRates:
@@ -430,10 +441,10 @@ components:
         - targetAudiences
       properties:
         contractType:
-          type: string
-          maxLength: 10
-          enum: [COLETIVO, 
-                INDIVIDUAL]
+          type: array
+          items:
+            type: string
+            enum: [COLETIVO, INDIVIDUAL]
         minimumRequirementDetails:
           type: string
           maxLength: 1024
@@ -443,7 +454,6 @@ components:
           type: array
           items:
             type: string
-            maxLength: 15
             example: PESSOA_FISICA
             enum: [PESSOA_FISICA, PESSOA_JURIDICA]
     
@@ -458,7 +468,6 @@ components:
           description: Lista com indicativo do tipo de participação do segurado para cada cobertura.
           items:
             type: string
-            maxLength: 13
             example: FRANQUIA
             enum: [FRANQUIA, POS, NAO_SE_APLICA]
         insuredParticipationDescription:
@@ -474,23 +483,28 @@ components:
         self:
           type: string
           description: URL da página atualmente requisitada
-          example: 'https://api.organizacao.com.br/open-insurance/products-services/v1'
+          pattern: ^(https:\/\/)(.*?)(\/open-insurance\/products-services\/v\d+)(\/rural.*)?$
+          example: 'https://api.organizacao.com.br/open-insurance/products-services/v1/rural'
         first:
           type: string
           description: URL da primeira página de registros
-          example: 'https://api.organizacao.com.br/open-insurance/products-services/v1'
+          pattern: ^(https:\/\/)(.*?)(\/open-insurance\/products-services\/v\d+)(\/rural.*)?$
+          example: 'https://api.organizacao.com.br/open-insurance/products-services/v1/rural'
         prev:
           type: string
           description: URL da página anterior de registros
-          example: 'https://api.organizacao.com.br/open-insurance/products-services/v1'
+          pattern: ^(https:\/\/)(.*?)(\/open-insurance\/products-services\/v\d+)(\/rural.*)?$
+          example: 'https://api.organizacao.com.br/open-insurance/products-services/v1/rural'
         next:
           type: string
           description: URL da próxima página de registros
-          example: 'https://api.organizacao.com.br/open-insurance/products-services/v1'
+          pattern: ^(https:\/\/)(.*?)(\/open-insurance\/products-services\/v\d+)(\/rural.*)?$
+          example: 'https://api.organizacao.com.br/open-insurance/products-services/v1/rural'
         last:
           type: string
           description: URL da última página de registros
-          example: 'https://api.organizacao.com.br/open-insurance/products-services/v1'
+          pattern: ^(https:\/\/)(.*?)(\/open-insurance\/products-services\/v\d+)(\/rural.*)?$
+          example: 'https://api.organizacao.com.br/open-insurance/products-services/v1/rural'
     
     Meta:
       type: object
@@ -522,6 +536,7 @@ components:
               - code
               - title
               - detail
+              - requestDateTime
             properties:
               code:
                 description: Código de erro específico do endpoint
@@ -608,21 +623,13 @@ components:
             type: string
             pattern: '[\w\W\s]*'
     
-  securitySchemes:
-    OpenId:
-      type: openIdConnect
-      openIdConnectUrl: 'https://auth.mockbank.poc.raidiam.io/.well-known/openid-configuration'
-    OAuth2Security:
-      type: oauth2
-      description: Fluxo OAuth necessário para que a receptora tenha acesso aos dados na instituição transmissora. Inclui o processo de redirecionamento e autenticação do usuário a que se referem os dados.
-      flows:
-        authorizationCode:
-          authorizationUrl: 'https://authserver.example/authorization'
-          tokenUrl: 'https://authserver.example/token'
-          scopes:
-            financings: Escopo necessário para acesso à API. O controle dos endpoints específicos é feito via permissions.
-    
   responses:
+    UnprocessableEntity:
+      description: 'O servidor entende o tipo de conteúdo da entidade da requisição, e a sintaxe da requisição esta correta, mas não foi possível processar as instruções presente.'
+      content:
+        application/json; charset=utf-8:
+          schema:
+            $ref: '#/components/schemas/ResponseError'
     NoContent:
       description: 'O recurso solicitado não existe ou não foi localizado.'
       content:
