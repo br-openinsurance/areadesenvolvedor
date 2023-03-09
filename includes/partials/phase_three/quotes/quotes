@@ -1,0 +1,565 @@
+<h1 id="api-quotes-open-insurance-brasil">API Quotes v1.0.2</h1>
+
+<blockquote>
+<p>Scroll down for code samples, example requests and responses. Select a language for code samples from the tabs above or the mobile navigation menu.</p>
+</blockquote>
+
+<p>API que trata da criação, consulta e notificação de cotações para o Open Insurance Brasil Fase 3.<br>
+Não possui segregação entre pessoa natural e pessoa jurídica.</p>
+
+<p>Base URLs:</p>
+
+<ul>
+<li><p><a href="https://api.seguro.com.br/open-insurance/quotes/v1">https://api.seguro.com.br/open-insurance/quotes/v1</a></p></li>
+<li><p><a href="https://apih.seguro.com.br/open-insurance/quotes/v1">https://apih.seguro.com.br/open-insurance/quotes/v1</a></p></li>
+</ul>
+
+<p>Web: <a href="https://www.gov.br/susep/">Governança do Open Insurance Brasil - Especificações</a> </p>
+
+<p>Operações para criação, consulta e notificação de cotações desejadas pelo cliente.</p>
+<h2 id='criar-notificacao-sobre-oportunidade-de-cotacao'>Criar notificação sobre oportunidade de cotação.</h2>
+<p><a id="opIdquotesPostNotification"></a></p>
+
+<blockquote>
+<p>Code samples</p>
+</blockquote>
+<div class="highlight"><pre class="highlight javascript tab-javascript"><code><span class="kd">const</span> <span class="nx">inputBody</span> <span class="o">=</span> <span class="dl">'</span><span class="s1">{
+  "data": {
+    "type": "AUTO"
+  }
+}</span><span class="dl">'</span><span class="p">;</span>
+<span class="kd">const</span> <span class="nx">headers</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="dl">'</span><span class="s1">Content-Type</span><span class="dl">'</span><span class="p">:</span><span class="dl">'</span><span class="s1">application/json</span><span class="dl">'</span><span class="p">,</span>
+  <span class="dl">'</span><span class="s1">Accept</span><span class="dl">'</span><span class="p">:</span><span class="dl">'</span><span class="s1">application/json; charset=utf-8</span><span class="dl">'</span><span class="p">,</span>
+  <span class="dl">'</span><span class="s1">Authorization</span><span class="dl">'</span><span class="p">:</span><span class="dl">'</span><span class="s1">string</span><span class="dl">'</span><span class="p">,</span>
+  <span class="dl">'</span><span class="s1">x-fapi-auth-date</span><span class="dl">'</span><span class="p">:</span><span class="dl">'</span><span class="s1">stringstringstringstringstrin</span><span class="dl">'</span><span class="p">,</span>
+  <span class="dl">'</span><span class="s1">x-fapi-customer-ip-address</span><span class="dl">'</span><span class="p">:</span><span class="dl">'</span><span class="s1">string</span><span class="dl">'</span><span class="p">,</span>
+  <span class="dl">'</span><span class="s1">x-fapi-interaction-id</span><span class="dl">'</span><span class="p">:</span><span class="dl">'</span><span class="s1">string</span><span class="dl">'</span><span class="p">,</span>
+  <span class="dl">'</span><span class="s1">x-customer-user-agent</span><span class="dl">'</span><span class="p">:</span><span class="dl">'</span><span class="s1">string</span><span class="dl">'</span>
+<span class="p">};</span>
+
+<span class="nx">fetch</span><span class="p">(</span><span class="dl">'</span><span class="s1">https://api.seguro.com.br/open-insurance/quotes/v1/notifications</span><span class="dl">'</span><span class="p">,</span>
+<span class="p">{</span>
+  <span class="na">method</span><span class="p">:</span> <span class="dl">'</span><span class="s1">POST</span><span class="dl">'</span><span class="p">,</span>
+  <span class="na">body</span><span class="p">:</span> <span class="nx">inputBody</span><span class="p">,</span>
+  <span class="na">headers</span><span class="p">:</span> <span class="nx">headers</span>
+<span class="p">})</span>
+<span class="p">.</span><span class="nx">then</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">res</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nx">res</span><span class="p">.</span><span class="nx">json</span><span class="p">();</span>
+<span class="p">}).</span><span class="nx">then</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">body</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">body</span><span class="p">);</span>
+<span class="p">});</span>
+
+</code></pre></div><div class="highlight"><pre class="highlight python tab-python"><code><span class="kn">import</span> <span class="nn">requests</span>
+<span class="n">headers</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="s">'Content-Type'</span><span class="p">:</span> <span class="s">'application/json'</span><span class="p">,</span>
+  <span class="s">'Accept'</span><span class="p">:</span> <span class="s">'application/json; charset=utf-8'</span><span class="p">,</span>
+  <span class="s">'Authorization'</span><span class="p">:</span> <span class="s">'string'</span><span class="p">,</span>
+  <span class="s">'x-fapi-auth-date'</span><span class="p">:</span> <span class="s">'stringstringstringstringstrin'</span><span class="p">,</span>
+  <span class="s">'x-fapi-customer-ip-address'</span><span class="p">:</span> <span class="s">'string'</span><span class="p">,</span>
+  <span class="s">'x-fapi-interaction-id'</span><span class="p">:</span> <span class="s">'string'</span><span class="p">,</span>
+  <span class="s">'x-customer-user-agent'</span><span class="p">:</span> <span class="s">'string'</span>
+<span class="p">}</span>
+
+<span class="n">r</span> <span class="o">=</span> <span class="n">requests</span><span class="p">.</span><span class="n">post</span><span class="p">(</span><span class="s">'https://api.seguro.com.br/open-insurance/quotes/v1/notifications'</span><span class="p">,</span> <span class="n">headers</span> <span class="o">=</span> <span class="n">headers</span><span class="p">)</span>
+
+<span class="k">print</span><span class="p">(</span><span class="n">r</span><span class="p">.</span><span class="n">json</span><span class="p">())</span>
+
+</code></pre></div><div class="highlight"><pre class="highlight java tab-java"><code><span class="no">URL</span> <span class="n">obj</span> <span class="o">=</span> <span class="k">new</span> <span class="no">URL</span><span class="o">(</span><span class="s">"https://api.seguro.com.br/open-insurance/quotes/v1/notifications"</span><span class="o">);</span>
+<span class="nc">HttpURLConnection</span> <span class="n">con</span> <span class="o">=</span> <span class="o">(</span><span class="nc">HttpURLConnection</span><span class="o">)</span> <span class="n">obj</span><span class="o">.</span><span class="na">openConnection</span><span class="o">();</span>
+<span class="n">con</span><span class="o">.</span><span class="na">setRequestMethod</span><span class="o">(</span><span class="s">"POST"</span><span class="o">);</span>
+<span class="kt">int</span> <span class="n">responseCode</span> <span class="o">=</span> <span class="n">con</span><span class="o">.</span><span class="na">getResponseCode</span><span class="o">();</span>
+<span class="nc">BufferedReader</span> <span class="n">in</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">BufferedReader</span><span class="o">(</span>
+    <span class="k">new</span> <span class="nf">InputStreamReader</span><span class="o">(</span><span class="n">con</span><span class="o">.</span><span class="na">getInputStream</span><span class="o">()));</span>
+<span class="nc">String</span> <span class="n">inputLine</span><span class="o">;</span>
+<span class="nc">StringBuffer</span> <span class="n">response</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">StringBuffer</span><span class="o">();</span>
+<span class="k">while</span> <span class="o">((</span><span class="n">inputLine</span> <span class="o">=</span> <span class="n">in</span><span class="o">.</span><span class="na">readLine</span><span class="o">())</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+    <span class="n">response</span><span class="o">.</span><span class="na">append</span><span class="o">(</span><span class="n">inputLine</span><span class="o">);</span>
+<span class="o">}</span>
+<span class="n">in</span><span class="o">.</span><span class="na">close</span><span class="o">();</span>
+<span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">response</span><span class="o">.</span><span class="na">toString</span><span class="o">());</span>
+
+</code></pre></div>
+<p><code>POST /notifications</code></p>
+
+<p>Método para a criação de uma nova notificação.</p>
+
+<blockquote>
+<p>Body parameter</p>
+</blockquote>
+<div class="highlight"><pre class="highlight json tab-json"><code><span class="p">{</span><span class="w">
+  </span><span class="nl">"data"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="nl">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"AUTO"</span><span class="w">
+  </span><span class="p">}</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div>
+<h3 id="criar-notificação-sobre-oportunidade-de-cotação.-parameters">Parameters</h3>
+
+<table><thead>
+<tr>
+<th>Name</th>
+<th>In</th>
+<th>Type</th>
+<th>Required</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>Authorization</td>
+<td>header</td>
+<td>string</td>
+<td>true</td>
+<td>Cabeçalho HTTP padrão. Permite que as credenciais sejam fornecidas dependendo do tipo de recurso solicitado</td>
+</tr>
+<tr>
+<td>x-fapi-auth-date</td>
+<td>header</td>
+<td>string</td>
+<td>false</td>
+<td>Data em que o usuário logou pela última vez com o receptor. Representada de acordo com a <a href="https://tools.ietf.org/html/rfc7231">RFC7231</a>.Exemplo: Sun, 10 Sep 2017 19:43:31 UTC</td>
+</tr>
+<tr>
+<td>x-fapi-customer-ip-address</td>
+<td>header</td>
+<td>string</td>
+<td>false</td>
+<td>O endereço IP do usuário se estiver atualmente logado com o receptor.</td>
+</tr>
+<tr>
+<td>x-fapi-interaction-id</td>
+<td>header</td>
+<td>string</td>
+<td>false</td>
+<td>Um UID <a href="https://tools.ietf.org/html/rfc4122">RFC4122</a> usado como um ID de correlação. Se fornecido, o transmissor deve &quot;reproduzir&quot; esse valor no cabeçalho de resposta.</td>
+</tr>
+<tr>
+<td>x-customer-user-agent</td>
+<td>header</td>
+<td>string</td>
+<td>false</td>
+<td>Indica o user-agent que o usuário utiliza.</td>
+</tr>
+<tr>
+<td>body</td>
+<td>body</td>
+<td><a href="#schemacreatenotification">CreateNotification</a></td>
+<td>true</td>
+<td>Payload para criação da notificação.</td>
+</tr>
+</tbody></table>
+
+<blockquote>
+<p>Example responses</p>
+
+<p>204 Response</p>
+</blockquote>
+<div class="highlight"><pre class="highlight json tab-json"><code><span class="p">{</span><span class="w">
+  </span><span class="nl">"errors"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+    </span><span class="p">{</span><span class="w">
+      </span><span class="nl">"code"</span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"title"</span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"detail"</span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"requestDateTime"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2021-05-21T08:30:00Z"</span><span class="w">
+    </span><span class="p">}</span><span class="w">
+  </span><span class="p">],</span><span class="w">
+  </span><span class="nl">"meta"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="nl">"totalRecords"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"totalPages"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="w">
+  </span><span class="p">}</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div>
+<h3 id="criar-notificação-sobre-oportunidade-de-cotação.-responses">Responses</h3>
+
+<table><thead>
+<tr>
+<th>Status</th>
+<th>Meaning</th>
+<th>Description</th>
+<th>Schema</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>202</td>
+<td><a href="https://tools.ietf.org/html/rfc7231#section-6.3.3">Accepted</a></td>
+<td>Notificação aceita.</td>
+<td>None</td>
+</tr>
+<tr>
+<td>204</td>
+<td><a href="https://tools.ietf.org/html/rfc7231#section-6.3.5">No Content</a></td>
+<td>O recurso solicitado não existe ou não foi localizado.</td>
+<td><a href="#schemaresponseerror">ResponseError</a></td>
+</tr>
+<tr>
+<td>400</td>
+<td><a href="https://tools.ietf.org/html/rfc7231#section-6.5.1">Bad Request</a></td>
+<td>A requisição foi malformada, omitindo atributos obrigatórios, seja no payload ou através de atributos na URL.</td>
+<td><a href="#schemaresponseerror">ResponseError</a></td>
+</tr>
+<tr>
+<td>401</td>
+<td><a href="https://tools.ietf.org/html/rfc7235#section-3.1">Unauthorized</a></td>
+<td>Cabeçalho de autenticação ausente/inválido ou token inválido</td>
+<td><a href="#schemaresponseerror">ResponseError</a></td>
+</tr>
+<tr>
+<td>403</td>
+<td><a href="https://tools.ietf.org/html/rfc7231#section-6.5.3">Forbidden</a></td>
+<td>O token tem escopo incorreto ou uma política de segurança foi violada</td>
+<td><a href="#schemaresponseerror">ResponseError</a></td>
+</tr>
+<tr>
+<td>404</td>
+<td><a href="https://tools.ietf.org/html/rfc7231#section-6.5.4">Not Found</a></td>
+<td>O recurso solicitado não existe ou não foi implementado</td>
+<td><a href="#schemaresponseerror">ResponseError</a></td>
+</tr>
+<tr>
+<td>405</td>
+<td><a href="https://tools.ietf.org/html/rfc7231#section-6.5.5">Method Not Allowed</a></td>
+<td>O consumidor tentou acessar o recurso com um método não suportado</td>
+<td><a href="#schemaresponseerror">ResponseError</a></td>
+</tr>
+<tr>
+<td>406</td>
+<td><a href="https://tools.ietf.org/html/rfc7231#section-6.5.6">Not Acceptable</a></td>
+<td>A solicitação continha um cabeçalho Accept diferente dos tipos de mídia permitidos ou um conjunto de caracteres diferente de UTF-8</td>
+<td><a href="#schemaresponseerror">ResponseError</a></td>
+</tr>
+<tr>
+<td>422</td>
+<td><a href="https://tools.ietf.org/html/rfc2518#section-10.3">Unprocessable Entity</a></td>
+<td>O servidor entende o tipo de conteúdo da entidade da requisição, e a sintaxe da requisição esta correta, mas não foi possível processar as instruções presente.</td>
+<td><a href="#schemaresponseerror">ResponseError</a></td>
+</tr>
+<tr>
+<td>429</td>
+<td><a href="https://tools.ietf.org/html/rfc6585#section-4">Too Many Requests</a></td>
+<td>A operação foi recusada, pois muitas solicitações foram feitas dentro de um determinado período ou o limite global de requisições concorrentes foi atingido</td>
+<td><a href="#schemaresponseerror">ResponseError</a></td>
+</tr>
+<tr>
+<td>500</td>
+<td><a href="https://tools.ietf.org/html/rfc7231#section-6.6.1">Internal Server Error</a></td>
+<td>Ocorreu um erro no gateway da API ou no microsserviço</td>
+<td><a href="#schemaresponseerror">ResponseError</a></td>
+</tr>
+<tr>
+<td>default</td>
+<td>Default</td>
+<td>Erro inesperado.</td>
+<td><a href="#schemaresponseerror">ResponseError</a></td>
+</tr>
+</tbody></table>
+<h3 id='response-headers'>Response Headers</h3>
+<table><thead>
+<tr>
+<th>Status</th>
+<th>Header</th>
+<th>Type</th>
+<th>Format</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>202</td>
+<td>x-fapi-interaction-id</td>
+<td>string</td>
+<td></td>
+<td>Um UID <a href="https://tools.ietf.org/html/rfc4122">RFC4122</a> usado como um ID de correlação.</td>
+</tr>
+</tbody></table>
+
+<p>Se fornecido, o transmissor deve &quot;reproduzir&quot; esse valor no cabeçalho de resposta.
+|</p>
+
+<aside class="warning">
+To perform this operation, you must be authenticated by means of one of the following methods:
+None ( Scopes: quotes )
+</aside>
+<h2 id='criar-a-solitacao-do-pedido-de-consentimento'>Criar a solitação do pedido de consentimento.</h2>
+<p><a id="opIdquotesPostConsentsRequests"></a></p>
+
+<blockquote>
+<p>Code samples</p>
+</blockquote>
+<div class="highlight"><pre class="highlight javascript tab-javascript"><code><span class="kd">const</span> <span class="nx">inputBody</span> <span class="o">=</span> <span class="dl">'</span><span class="s1">{
+  "data": {
+    "correlationId": "ab342c34",
+    "loggedUser": {
+      "document": {
+        "identification": "11111111111",
+        "rel": "CPF"
+      }
+    },
+    "businessEntity": {
+      "document": {
+        "identification": "11111111111111",
+        "rel": "CNPJ"
+      }
+    },
+    "productType": "AUTO",
+    "permissions": [
+      "DAMAGES_AND_PEOPLE_AUTO_CLAIM_READ"
+    ]
+  }
+}</span><span class="dl">'</span><span class="p">;</span>
+<span class="kd">const</span> <span class="nx">headers</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="dl">'</span><span class="s1">Content-Type</span><span class="dl">'</span><span class="p">:</span><span class="dl">'</span><span class="s1">application/json</span><span class="dl">'</span><span class="p">,</span>
+  <span class="dl">'</span><span class="s1">Accept</span><span class="dl">'</span><span class="p">:</span><span class="dl">'</span><span class="s1">application/json; charset=utf-8</span><span class="dl">'</span><span class="p">,</span>
+  <span class="dl">'</span><span class="s1">Authorization</span><span class="dl">'</span><span class="p">:</span><span class="dl">'</span><span class="s1">string</span><span class="dl">'</span><span class="p">,</span>
+  <span class="dl">'</span><span class="s1">x-fapi-auth-date</span><span class="dl">'</span><span class="p">:</span><span class="dl">'</span><span class="s1">stringstringstringstringstrin</span><span class="dl">'</span><span class="p">,</span>
+  <span class="dl">'</span><span class="s1">x-fapi-customer-ip-address</span><span class="dl">'</span><span class="p">:</span><span class="dl">'</span><span class="s1">string</span><span class="dl">'</span><span class="p">,</span>
+  <span class="dl">'</span><span class="s1">x-fapi-interaction-id</span><span class="dl">'</span><span class="p">:</span><span class="dl">'</span><span class="s1">string</span><span class="dl">'</span><span class="p">,</span>
+  <span class="dl">'</span><span class="s1">x-customer-user-agent</span><span class="dl">'</span><span class="p">:</span><span class="dl">'</span><span class="s1">string</span><span class="dl">'</span>
+<span class="p">};</span>
+
+<span class="nx">fetch</span><span class="p">(</span><span class="dl">'</span><span class="s1">https://api.seguro.com.br/open-insurance/quotes/v1/consent-requests</span><span class="dl">'</span><span class="p">,</span>
+<span class="p">{</span>
+  <span class="na">method</span><span class="p">:</span> <span class="dl">'</span><span class="s1">POST</span><span class="dl">'</span><span class="p">,</span>
+  <span class="na">body</span><span class="p">:</span> <span class="nx">inputBody</span><span class="p">,</span>
+  <span class="na">headers</span><span class="p">:</span> <span class="nx">headers</span>
+<span class="p">})</span>
+<span class="p">.</span><span class="nx">then</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">res</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nx">res</span><span class="p">.</span><span class="nx">json</span><span class="p">();</span>
+<span class="p">}).</span><span class="nx">then</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">body</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">body</span><span class="p">);</span>
+<span class="p">});</span>
+
+</code></pre></div><div class="highlight"><pre class="highlight python tab-python"><code><span class="kn">import</span> <span class="nn">requests</span>
+<span class="n">headers</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="s">'Content-Type'</span><span class="p">:</span> <span class="s">'application/json'</span><span class="p">,</span>
+  <span class="s">'Accept'</span><span class="p">:</span> <span class="s">'application/json; charset=utf-8'</span><span class="p">,</span>
+  <span class="s">'Authorization'</span><span class="p">:</span> <span class="s">'string'</span><span class="p">,</span>
+  <span class="s">'x-fapi-auth-date'</span><span class="p">:</span> <span class="s">'stringstringstringstringstrin'</span><span class="p">,</span>
+  <span class="s">'x-fapi-customer-ip-address'</span><span class="p">:</span> <span class="s">'string'</span><span class="p">,</span>
+  <span class="s">'x-fapi-interaction-id'</span><span class="p">:</span> <span class="s">'string'</span><span class="p">,</span>
+  <span class="s">'x-customer-user-agent'</span><span class="p">:</span> <span class="s">'string'</span>
+<span class="p">}</span>
+
+<span class="n">r</span> <span class="o">=</span> <span class="n">requests</span><span class="p">.</span><span class="n">post</span><span class="p">(</span><span class="s">'https://api.seguro.com.br/open-insurance/quotes/v1/consent-requests'</span><span class="p">,</span> <span class="n">headers</span> <span class="o">=</span> <span class="n">headers</span><span class="p">)</span>
+
+<span class="k">print</span><span class="p">(</span><span class="n">r</span><span class="p">.</span><span class="n">json</span><span class="p">())</span>
+
+</code></pre></div><div class="highlight"><pre class="highlight java tab-java"><code><span class="no">URL</span> <span class="n">obj</span> <span class="o">=</span> <span class="k">new</span> <span class="no">URL</span><span class="o">(</span><span class="s">"https://api.seguro.com.br/open-insurance/quotes/v1/consent-requests"</span><span class="o">);</span>
+<span class="nc">HttpURLConnection</span> <span class="n">con</span> <span class="o">=</span> <span class="o">(</span><span class="nc">HttpURLConnection</span><span class="o">)</span> <span class="n">obj</span><span class="o">.</span><span class="na">openConnection</span><span class="o">();</span>
+<span class="n">con</span><span class="o">.</span><span class="na">setRequestMethod</span><span class="o">(</span><span class="s">"POST"</span><span class="o">);</span>
+<span class="kt">int</span> <span class="n">responseCode</span> <span class="o">=</span> <span class="n">con</span><span class="o">.</span><span class="na">getResponseCode</span><span class="o">();</span>
+<span class="nc">BufferedReader</span> <span class="n">in</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">BufferedReader</span><span class="o">(</span>
+    <span class="k">new</span> <span class="nf">InputStreamReader</span><span class="o">(</span><span class="n">con</span><span class="o">.</span><span class="na">getInputStream</span><span class="o">()));</span>
+<span class="nc">String</span> <span class="n">inputLine</span><span class="o">;</span>
+<span class="nc">StringBuffer</span> <span class="n">response</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">StringBuffer</span><span class="o">();</span>
+<span class="k">while</span> <span class="o">((</span><span class="n">inputLine</span> <span class="o">=</span> <span class="n">in</span><span class="o">.</span><span class="na">readLine</span><span class="o">())</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+    <span class="n">response</span><span class="o">.</span><span class="na">append</span><span class="o">(</span><span class="n">inputLine</span><span class="o">);</span>
+<span class="o">}</span>
+<span class="n">in</span><span class="o">.</span><span class="na">close</span><span class="o">();</span>
+<span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">response</span><span class="o">.</span><span class="na">toString</span><span class="o">());</span>
+
+</code></pre></div>
+<p><code>POST /consent-requests</code></p>
+
+<p>Método para a criação da solicitação de pedido de consentimento.</p>
+
+<blockquote>
+<p>Body parameter</p>
+</blockquote>
+<div class="highlight"><pre class="highlight json tab-json"><code><span class="p">{</span><span class="w">
+  </span><span class="nl">"data"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="nl">"correlationId"</span><span class="p">:</span><span class="w"> </span><span class="s2">"ab342c34"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"loggedUser"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+      </span><span class="nl">"document"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+        </span><span class="nl">"identification"</span><span class="p">:</span><span class="w"> </span><span class="s2">"11111111111"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"rel"</span><span class="p">:</span><span class="w"> </span><span class="s2">"CPF"</span><span class="w">
+      </span><span class="p">}</span><span class="w">
+    </span><span class="p">},</span><span class="w">
+    </span><span class="nl">"businessEntity"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+      </span><span class="nl">"document"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+        </span><span class="nl">"identification"</span><span class="p">:</span><span class="w"> </span><span class="s2">"11111111111111"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"rel"</span><span class="p">:</span><span class="w"> </span><span class="s2">"CNPJ"</span><span class="w">
+      </span><span class="p">}</span><span class="w">
+    </span><span class="p">},</span><span class="w">
+    </span><span class="nl">"productType"</span><span class="p">:</span><span class="w"> </span><span class="s2">"AUTO"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"permissions"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+      </span><span class="s2">"DAMAGES_AND_PEOPLE_AUTO_CLAIM_READ"</span><span class="w">
+    </span><span class="p">]</span><span class="w">
+  </span><span class="p">}</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div>
+<h3 id="criar-a-solitação-do-pedido-de-consentimento.-parameters">Parameters</h3>
+
+<table><thead>
+<tr>
+<th>Name</th>
+<th>In</th>
+<th>Type</th>
+<th>Required</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>Authorization</td>
+<td>header</td>
+<td>string</td>
+<td>true</td>
+<td>Cabeçalho HTTP padrão. Permite que as credenciais sejam fornecidas dependendo do tipo de recurso solicitado</td>
+</tr>
+<tr>
+<td>x-fapi-auth-date</td>
+<td>header</td>
+<td>string</td>
+<td>false</td>
+<td>Data em que o usuário logou pela última vez com o receptor. Representada de acordo com a <a href="https://tools.ietf.org/html/rfc7231">RFC7231</a>.Exemplo: Sun, 10 Sep 2017 19:43:31 UTC</td>
+</tr>
+<tr>
+<td>x-fapi-customer-ip-address</td>
+<td>header</td>
+<td>string</td>
+<td>false</td>
+<td>O endereço IP do usuário se estiver atualmente logado com o receptor.</td>
+</tr>
+<tr>
+<td>x-fapi-interaction-id</td>
+<td>header</td>
+<td>string</td>
+<td>false</td>
+<td>Um UID <a href="https://tools.ietf.org/html/rfc4122">RFC4122</a> usado como um ID de correlação. Se fornecido, o transmissor deve &quot;reproduzir&quot; esse valor no cabeçalho de resposta.</td>
+</tr>
+<tr>
+<td>x-customer-user-agent</td>
+<td>header</td>
+<td>string</td>
+<td>false</td>
+<td>Indica o user-agent que o usuário utiliza.</td>
+</tr>
+<tr>
+<td>body</td>
+<td>body</td>
+<td><a href="#schemacreateconsentsrequests">CreateConsentsRequests</a></td>
+<td>true</td>
+<td>Payload para criação da solicitação de pedido de consentimento.</td>
+</tr>
+</tbody></table>
+
+<blockquote>
+<p>Example responses</p>
+
+<p>400 Response</p>
+</blockquote>
+<div class="highlight"><pre class="highlight json tab-json"><code><span class="p">{</span><span class="w">
+  </span><span class="nl">"errors"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+    </span><span class="p">{</span><span class="w">
+      </span><span class="nl">"code"</span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"title"</span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"detail"</span><span class="p">:</span><span class="w"> </span><span class="s2">"string"</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"requestDateTime"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2021-05-21T08:30:00Z"</span><span class="w">
+    </span><span class="p">}</span><span class="w">
+  </span><span class="p">],</span><span class="w">
+  </span><span class="nl">"meta"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="nl">"totalRecords"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"totalPages"</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="w">
+  </span><span class="p">}</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div>
+<h3 id="criar-a-solitação-do-pedido-de-consentimento.-responses">Responses</h3>
+
+<table><thead>
+<tr>
+<th>Status</th>
+<th>Meaning</th>
+<th>Description</th>
+<th>Schema</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>202</td>
+<td><a href="https://tools.ietf.org/html/rfc7231#section-6.3.3">Accepted</a></td>
+<td>Request de criação de consentimento aceita.</td>
+<td>None</td>
+</tr>
+<tr>
+<td>400</td>
+<td><a href="https://tools.ietf.org/html/rfc7231#section-6.5.1">Bad Request</a></td>
+<td>A requisição foi malformada, omitindo atributos obrigatórios, seja no payload ou através de atributos na URL.</td>
+<td><a href="#schemaresponseerror">ResponseError</a></td>
+</tr>
+<tr>
+<td>401</td>
+<td><a href="https://tools.ietf.org/html/rfc7235#section-3.1">Unauthorized</a></td>
+<td>Cabeçalho de autenticação ausente/inválido ou token inválido</td>
+<td><a href="#schemaresponseerror">ResponseError</a></td>
+</tr>
+<tr>
+<td>403</td>
+<td><a href="https://tools.ietf.org/html/rfc7231#section-6.5.3">Forbidden</a></td>
+<td>O token tem escopo incorreto ou uma política de segurança foi violada</td>
+<td><a href="#schemaresponseerror">ResponseError</a></td>
+</tr>
+<tr>
+<td>404</td>
+<td><a href="https://tools.ietf.org/html/rfc7231#section-6.5.4">Not Found</a></td>
+<td>O recurso solicitado não existe ou não foi implementado</td>
+<td><a href="#schemaresponseerror">ResponseError</a></td>
+</tr>
+<tr>
+<td>405</td>
+<td><a href="https://tools.ietf.org/html/rfc7231#section-6.5.5">Method Not Allowed</a></td>
+<td>O consumidor tentou acessar o recurso com um método não suportado</td>
+<td><a href="#schemaresponseerror">ResponseError</a></td>
+</tr>
+<tr>
+<td>406</td>
+<td><a href="https://tools.ietf.org/html/rfc7231#section-6.5.6">Not Acceptable</a></td>
+<td>A solicitação continha um cabeçalho Accept diferente dos tipos de mídia permitidos ou um conjunto de caracteres diferente de UTF-8</td>
+<td><a href="#schemaresponseerror">ResponseError</a></td>
+</tr>
+<tr>
+<td>422</td>
+<td><a href="https://tools.ietf.org/html/rfc2518#section-10.3">Unprocessable Entity</a></td>
+<td>O servidor entende o tipo de conteúdo da entidade da requisição, e a sintaxe da requisição esta correta, mas não foi possível processar as instruções presente.</td>
+<td><a href="#schemaresponseerror">ResponseError</a></td>
+</tr>
+<tr>
+<td>429</td>
+<td><a href="https://tools.ietf.org/html/rfc6585#section-4">Too Many Requests</a></td>
+<td>A operação foi recusada, pois muitas solicitações foram feitas dentro de um determinado período ou o limite global de requisições concorrentes foi atingido</td>
+<td><a href="#schemaresponseerror">ResponseError</a></td>
+</tr>
+<tr>
+<td>500</td>
+<td><a href="https://tools.ietf.org/html/rfc7231#section-6.6.1">Internal Server Error</a></td>
+<td>Ocorreu um erro no gateway da API ou no microsserviço</td>
+<td><a href="#schemaresponseerror">ResponseError</a></td>
+</tr>
+<tr>
+<td>default</td>
+<td>Default</td>
+<td>Erro inesperado.</td>
+<td><a href="#schemaresponseerror">ResponseError</a></td>
+</tr>
+</tbody></table>
+<h3 id='response-headers-2'>Response Headers</h3>
+<table><thead>
+<tr>
+<th>Status</th>
+<th>Header</th>
+<th>Type</th>
+<th>Format</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>202</td>
+<td>x-fapi-interaction-id</td>
+<td>string</td>
+<td></td>
+<td>Um UID <a href="https://tools.ietf.org/html/rfc4122">RFC4122</a> usado como um ID de correlação.</td>
+</tr>
+</tbody></table>
+
+<p>Se fornecido, o transmissor deve &quot;reproduzir&quot; esse valor no cabeçalho de resposta.
+|</p>
+
+<aside class="warning">
+To perform this operation, you must be authenticated by means of one of the following methods:
+None ( Scopes: openid ), None ( Scopes: quotes )
+</aside>
