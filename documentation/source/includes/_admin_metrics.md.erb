@@ -23,62 +23,64 @@ Web: <a href="http://novosite.susep.gov.br/">Support</a>
 > Code samples
 
 ```javascript
-const data = null;
 
-const xhr = new XMLHttpRequest();
-xhr.withCredentials = true;
+const headers = {
+  'Accept':'application/json',
+  'cache-control':'string',
+  'Content-Security-Policy':'string',
+  'content-Type':'string',
+  'Strict-Transport-Security':'string',
+  'X-Content-Type-Options':'string',
+  'X-Frame-Options':'string'
+};
 
-xhr.addEventListener("readystatechange", function () {
-  if (this.readyState === this.DONE) {
-    console.log(this.responseText);
-  }
+fetch('http://api.organizacao.com.br/open-insurance/admin/v1/metrics',
+{
+  method: 'GET',
+
+  headers: headers
+})
+.then(function(res) {
+    return res.json();
+}).then(function(body) {
+    console.log(body);
 });
 
-xhr.open("GET", "http://api.organizacao.com.br/open-insurance/admin/v1/metrics");
-xhr.setRequestHeader("Accept", "application/json");
-xhr.setRequestHeader("cache-control", "string");
-xhr.setRequestHeader("Content-Security-Policy", "string");
-xhr.setRequestHeader("content-Type", "string");
-xhr.setRequestHeader("Strict-Transport-Security", "string");
-xhr.setRequestHeader("X-Content-Type-Options", "string");
-xhr.setRequestHeader("X-Frame-Options", "string");
-
-xhr.send(data);
 ```
 
 ```python
-import http.client
-
-conn = http.client.HTTPConnection("api.organizacao.com.br")
-
+import requests
 headers = {
-    'Accept': "application/json",
-    'cache-control': "string",
-    'Content-Security-Policy': "string",
-    'content-Type': "string",
-    'Strict-Transport-Security': "string",
-    'X-Content-Type-Options': "string",
-    'X-Frame-Options': "string"
-    }
+  'Accept': 'application/json',
+  'cache-control': 'string',
+  'Content-Security-Policy': 'string',
+  'content-Type': 'string',
+  'Strict-Transport-Security': 'string',
+  'X-Content-Type-Options': 'string',
+  'X-Frame-Options': 'string'
+}
 
-conn.request("GET", "/open-insurance/admin/v1/metrics", headers=headers)
+r = requests.get('http://api.organizacao.com.br/open-insurance/admin/v1/metrics', headers = headers)
 
-res = conn.getresponse()
-data = res.read()
+print(r.json())
 
-print(data.decode("utf-8"))
 ```
 
 ```java
-HttpResponse<String> response = Unirest.get("http://api.organizacao.com.br/open-insurance/admin/v1/metrics")
-  .header("Accept", "application/json")
-  .header("cache-control", "string")
-  .header("Content-Security-Policy", "string")
-  .header("content-Type", "string")
-  .header("Strict-Transport-Security", "string")
-  .header("X-Content-Type-Options", "string")
-  .header("X-Frame-Options", "string")
-  .asString();
+URL obj = new URL("http://api.organizacao.com.br/open-insurance/admin/v1/metrics");
+HttpURLConnection con = (HttpURLConnection) obj.openConnection();
+con.setRequestMethod("GET");
+int responseCode = con.getResponseCode();
+BufferedReader in = new BufferedReader(
+    new InputStreamReader(con.getInputStream()));
+String inputLine;
+StringBuffer response = new StringBuffer();
+while ((inputLine = in.readLine()) != null) {
+    response.append(inputLine);
+}
+in.close();
+System.out.println(response.toString());
+
 ```
 
 `GET /metrics`
@@ -119,7 +121,7 @@ Obtém as métricas de disponibilidade das APIs
 ```json
 {
   "data": {
-    "requestTime": "2022-04-18T19:24:40.842Z ou 2022-04-18T19:24:40+00:20 ou 2022-04-01T12:00:27-08:00 ou 2022-04-01T12:00:27Z",
+    "requestTime": "2022-04-18T19:24:40.842Z",
     "availability": {
       "uptime": {
         "generalUptimeRate": "string",
@@ -219,11 +221,11 @@ Obtém as métricas de disponibilidade das APIs
     }
   },
   "links": {
-    "self": "https://api.organizacao.com.br/open-insurance/admin/v1/<resource>",
-    "first": "https://api.organizacao.com.br/open-insurance/admin/v1/<resource>",
-    "prev": "string",
-    "next": "string",
-    "last": "https://api.organizacao.com.br/open-insurance/admin/v1/<resource>"
+    "self": "https://api.organizacao.com.br/open-insurance/admin/v1/metrics",
+    "first": "https://api.organizacao.com.br/open-insurance/admin/v1/metrics",
+    "prev": "https://api.organizacao.com.br/open-insurance/admin/v1/metrics",
+    "next": "https://api.organizacao.com.br/open-insurance/admin/v1/metrics",
+    "last": "https://api.organizacao.com.br/open-insurance/admin/v1/metrics"
   },
   "meta": {
     "totalRecords": 1,
@@ -237,6 +239,16 @@ Obtém as métricas de disponibilidade das APIs
 |Status|Meaning|Description|Schema|
 |---|---|---|---|
 |200|[OK](https://tools.ietf.org/html/rfc7231#section-6.3.1)|Dados das métricas|[ResponseMetricsList](#schemaresponsemetricslist)|
+|204|[No Content](https://tools.ietf.org/html/rfc7231#section-6.3.5)|O recurso solicitado não existe ou não foi localizado.|[ResponseError](#schemaresponseerror)|
+|400|[Bad Request](https://tools.ietf.org/html/rfc7231#section-6.5.1)|A requisição foi malformada, omitindo atributos obrigatórios, seja no payload ou através de atributos na URL.|[ResponseError](#schemaresponseerror)|
+|401|[Unauthorized](https://tools.ietf.org/html/rfc7235#section-3.1)|Cabeçalho de autenticação ausente/inválido ou token inválido|[ResponseError](#schemaresponseerror)|
+|403|[Forbidden](https://tools.ietf.org/html/rfc7231#section-6.5.3)|O token tem escopo incorreto ou uma política de segurança foi violada|[ResponseError](#schemaresponseerror)|
+|404|[Not Found](https://tools.ietf.org/html/rfc7231#section-6.5.4)|O recurso solicitado não existe ou não foi implementado|[ResponseError](#schemaresponseerror)|
+|405|[Method Not Allowed](https://tools.ietf.org/html/rfc7231#section-6.5.5)|O consumidor tentou acessar o recurso com um método não suportado|[ResponseError](#schemaresponseerror)|
+|406|[Not Acceptable](https://tools.ietf.org/html/rfc7231#section-6.5.6)|A solicitação continha um cabeçalho Accept diferente dos tipos de mídia permitidos ou um conjunto de caracteres diferente de UTF-8|[ResponseError](#schemaresponseerror)|
+|422|[Unprocessable Entity](https://tools.ietf.org/html/rfc2518#section-10.3)|O servidor entende o tipo de conteúdo da entidade da requisição, e a sintaxe da requisição esta correta, mas não foi possível processar as instruções presente.|[ResponseError](#schemaresponseerror)|
+|429|[Too Many Requests](https://tools.ietf.org/html/rfc6585#section-4)|A operação foi recusada, pois muitas solicitações foram feitas dentro de um determinado período ou o limite global de requisições concorrentes foi atingido|[ResponseError](#schemaresponseerror)|
+|500|[Internal Server Error](https://tools.ietf.org/html/rfc7231#section-6.6.1)|Ocorreu um erro no gateway da API ou no microsserviço|[ResponseError](#schemaresponseerror)|
 
 <aside class="success">
 This operation does not require authentication
@@ -254,7 +266,7 @@ This operation does not require authentication
 ```json
 {
   "data": {
-    "requestTime": "2022-04-18T19:24:40.842Z ou 2022-04-18T19:24:40+00:20 ou 2022-04-01T12:00:27-08:00 ou 2022-04-01T12:00:27Z",
+    "requestTime": "2022-04-18T19:24:40.842Z",
     "availability": {
       "uptime": {
         "generalUptimeRate": "string",
@@ -354,11 +366,11 @@ This operation does not require authentication
     }
   },
   "links": {
-    "self": "https://api.organizacao.com.br/open-insurance/admin/v1/<resource>",
-    "first": "https://api.organizacao.com.br/open-insurance/admin/v1/<resource>",
-    "prev": "string",
-    "next": "string",
-    "last": "https://api.organizacao.com.br/open-insurance/admin/v1/<resource>"
+    "self": "https://api.organizacao.com.br/open-insurance/admin/v1/metrics",
+    "first": "https://api.organizacao.com.br/open-insurance/admin/v1/metrics",
+    "prev": "https://api.organizacao.com.br/open-insurance/admin/v1/metrics",
+    "next": "https://api.organizacao.com.br/open-insurance/admin/v1/metrics",
+    "last": "https://api.organizacao.com.br/open-insurance/admin/v1/metrics"
   },
   "meta": {
     "totalRecords": 1,
@@ -680,20 +692,20 @@ This operation does not require authentication
 |currentDay|integer|true|none|Número de chamadas rejeitadas no dia atual.|
 |previousDays|[integer]|true|none|Número de chamadas rejeitadas nos dias anteriores. O primeiro item do array é referente a ontem, e assim por diante. Devem ser retornados no máximo sete dias caso estejam disponíveis.|
 
-<h2 id="tocS_Links">Links</h2>
+<h2 id="tocS_Linksadminmetricas">Links</h2>
 <!-- backwards compatibility -->
-<a id="schemalinks"></a>
+<a id="schemalinksadminmetricas"></a>
 <a id="schema_Links"></a>
 <a id="tocSlinks"></a>
 <a id="tocslinks"></a>
 
 ```json
 {
-  "self": "https://api.organizacao.com.br/open-insurance/admin/v1/<resource>",
-  "first": "https://api.organizacao.com.br/open-insurance/admin/v1/<resource>",
-  "prev": "string",
-  "next": "string",
-  "last": "https://api.organizacao.com.br/open-insurance/admin/v1/<resource>"
+  "self": "https://api.organizacao.com.br/open-insurance/admin/v1/metrics",
+  "first": "https://api.organizacao.com.br/open-insurance/admin/v1/metrics",
+  "prev": "https://api.organizacao.com.br/open-insurance/admin/v1/metrics",
+  "next": "https://api.organizacao.com.br/open-insurance/admin/v1/metrics",
+  "last": "https://api.organizacao.com.br/open-insurance/admin/v1/metrics"
 }
 
 ```
@@ -708,9 +720,9 @@ This operation does not require authentication
 |next|string|false|none|URL da próxima página de registros|
 |last|string|false|none|URL da última página de registros|
 
-<h2 id="tocS_Meta">Meta</h2>
+<h2 id="tocS_Metaadminmetricas">Meta</h2>
 <!-- backwards compatibility -->
-<a id="schemameta"></a>
+<a id="schemametaadminmetricas"></a>
 <a id="schema_Meta"></a>
 <a id="tocSmeta"></a>
 <a id="tocsmeta"></a>
@@ -729,4 +741,40 @@ This operation does not require authentication
 |---|---|---|---|---|
 |totalRecords|integer|true|none|Total de registros encontrados|
 |totalPages|integer|true|none|Total de páginas para os registros encontrados|
+
+<h2 id="tocS_ResponseErroradminmetricas">ResponseError</h2>
+<!-- backwards compatibility -->
+<a id="schemaresponseerroradminmetricas"></a>
+<a id="schema_ResponseError"></a>
+<a id="tocSresponseerror"></a>
+<a id="tocsresponseerror"></a>
+
+```json
+{
+  "errors": [
+    {
+      "code": "string",
+      "title": "string",
+      "detail": "string",
+      "requestDateTime": "2021-08-20T08:30:00Z"
+    }
+  ],
+  "meta": {
+    "totalRecords": 1,
+    "totalPages": 1
+  }
+}
+
+```
+
+### Properties
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|errors|[object]|true|none|none|
+|» code|string|true|none|Código de erro específico do endpoint|
+|» title|string|true|none|Título legível por humanos deste erro específico|
+|» detail|string|true|none|Descrição legível por humanos deste erro específico|
+|» requestDateTime|string(date-time)|true|none|Data e hora da consulta, conforme especificação RFC-3339, formato UTC.|
+|meta|[Meta](#schemameta)|false|none|none|
 
