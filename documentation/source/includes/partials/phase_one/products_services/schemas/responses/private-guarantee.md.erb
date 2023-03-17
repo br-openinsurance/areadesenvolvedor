@@ -116,10 +116,15 @@
               "coverageDescription": "string",
               "coverageAttributes": {
                 "maxLMI": {
-                  "amount": 0,
-                  "unit": {
-                    "code": "R$",
-                    "description": "REAL"
+                  "type": "FINANCEIRO",
+                  "amount": {
+                    "amount": 0,
+                    "unit": {}
+                  },
+                  "index": "LMG",
+                  "maxIndexAmount": {
+                    "amount": 0,
+                    "unit": {}
                   }
                 },
                 "insuredParticipation": [
@@ -201,10 +206,21 @@ Organizacao controladora do grupo.
             "coverageDescription": "string",
             "coverageAttributes": {
               "maxLMI": {
-                "amount": 0,
-                "unit": {
-                  "code": "R$",
-                  "description": "REAL"
+                "type": "FINANCEIRO",
+                "amount": {
+                  "amount": 0,
+                  "unit": {
+                    "code": "R$",
+                    "description": "REAL"
+                  }
+                },
+                "index": "LMG",
+                "maxIndexAmount": {
+                  "amount": 0,
+                  "unit": {
+                    "code": "R$",
+                    "description": "REAL"
+                  }
                 }
               },
               "insuredParticipation": [
@@ -280,10 +296,21 @@ Organizacao controladora do grupo.
         "coverageDescription": "string",
         "coverageAttributes": {
           "maxLMI": {
-            "amount": 0,
-            "unit": {
-              "code": "R$",
-              "description": "REAL"
+            "type": "FINANCEIRO",
+            "amount": {
+              "amount": 0,
+              "unit": {
+                "code": "R$",
+                "description": "REAL"
+              }
+            },
+            "index": "LMG",
+            "maxIndexAmount": {
+              "amount": 0,
+              "unit": {
+                "code": "R$",
+                "description": "REAL"
+              }
             }
           },
           "insuredParticipation": [
@@ -375,10 +402,21 @@ Lista de produtos de uma empresa.
 ```json
 {
   "maxLMI": {
-    "amount": 0,
-    "unit": {
-      "code": "R$",
-      "description": "REAL"
+    "type": "FINANCEIRO",
+    "amount": {
+      "amount": 0,
+      "unit": {
+        "code": "R$",
+        "description": "REAL"
+      }
+    },
+    "index": "LMG",
+    "maxIndexAmount": {
+      "amount": 0,
+      "unit": {
+        "code": "R$",
+        "description": "REAL"
+      }
     }
   },
   "insuredParticipation": [
@@ -395,11 +433,9 @@ Informações de cobertura do Seguro.
 
 |Name|Type|Required|Restrictions|Description|
 |---|---|---|---|---|
-|maxLMI|[PrivateGuaranteeLimit](#schemaprivateguaranteelimit)|true|none|Lista com valor de LMI aceito pela sociedade para cada cobertura|
+|maxLMI|[PrivateGuaranteeLimit](#schemaprivateguaranteelimit)|true|none|Lista com valor de LMI aceito pela sociedade para cada cobertura.|
 |insuredParticipation|[string]|true|none|Lista com indicativo do tipo de participação do segurado para cada cobertura.|
 |insuredParticipationDescription|string|false|none|Lista com descrição referente ao campo “Participação do Segurado” para cada cobertura.|
-
-
 
 <h2 id="tocS_PrivateGuaranteeLimit">PrivateGuaranteeLimit</h2>
 <!-- backwards compatibility -->
@@ -412,20 +448,20 @@ Informações de cobertura do Seguro.
 {
   "type": "FINANCEIRO",
   "amount": {
-    "amount": number,
+    "amount": 0,
     "unit": {
       "code": "R$",
       "description": "REAL"
-    },
-    "index": "LMG",
-    "maxIndexAmount": {
-      "amount": number,
-      "unit": {
-        "code": "R$",
+    }
+  },
+  "index": "LMG",
+  "maxIndexAmount": {
+    "amount": 0,
+    "unit": {
+      "code": "R$",
       "description": "REAL"
-    },
+    }
   }
-}
 }
 
 ```
@@ -437,11 +473,19 @@ Lista com valor de LMI aceito pela sociedade para cada cobertura.
 |Name|Type|Required|Restrictions|Description|
 |---|---|---|---|---|
 |type|string|true|none|none|
-|amount|[OthersScopesCoverageAttributesDetails](#schemaothersscopescoverageattributesdetails)|true|none|none|
+|amount|[PrivateGuaranteeCoverageAttributesDetails](#schemaprivateguaranteecoverageattributesdetails)|true|none|none|
 |index|string|false|none|Indexador. Condicional, vinculado ao preenchimento do campo Tipo com Percentual|
-|maxIndexAmount|[OthersScopesCoverageAttributesDetails](#schemaothersscopescoverageattributesdetails)|false|none|none|
+|maxIndexAmount|[PrivateGuaranteeCoverageAttributesDetails](#schemaprivateguaranteecoverageattributesdetails)|false|none|none|
 
+#### Enumerated Values
 
+|Property|Value|
+|---|---|
+|type|FINANCEIRO|
+|type|PERCENTUAL|
+|index|LMG|
+|index|FINANCEIRO_COBERTURA|
+|index|OUTRO|
 
 <h2 id="tocS_PrivateGuaranteeCoverageAttributesDetails">PrivateGuaranteeCoverageAttributesDetails</h2>
 <!-- backwards compatibility -->
@@ -697,6 +741,6 @@ Requisitos mínimos.
 |» code|string|true|none|Código de erro específico do endpoint|
 |» title|string|true|none|Título legível por humanos deste erro específico|
 |» detail|string|true|none|Descrição legível por humanos deste erro específico|
-|» requestDateTime|string(date-time)|false|none|Data e hora da consulta, conforme especificação RFC-3339, formato UTC.|
+|» requestDateTime|string(date-time)|true|none|Data e hora da consulta, conforme especificação RFC-3339, formato UTC.|
 |meta|[Meta](#schemametaprivateguara)|false|none|none|
 

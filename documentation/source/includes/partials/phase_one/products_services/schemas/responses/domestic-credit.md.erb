@@ -46,9 +46,7 @@
               },
               "minimumRequirements": {
                 "targetAudiences": [
-                  [
-                    "PESSOA_NATURAL"
-                  ]
+                  "PESSOA_NATURAL"
                 ]
               }
             }
@@ -105,10 +103,15 @@
               "coverageDescription": "string",
               "coverageAttributes": {
                 "maxLMI": {
-                  "amount": 0,
-                  "unit": {
-                    "code": "R$",
-                    "description": "REAL"
+                  "type": "FINANCEIRO",
+                  "amount": {
+                    "amount": 0,
+                    "unit": {}
+                  },
+                  "index": "LMG",
+                  "maxIndexAmount": {
+                    "amount": 0,
+                    "unit": {}
                   }
                 }
               },
@@ -133,9 +136,7 @@
           },
           "minimumRequirements": {
             "targetAudiences": [
-              [
-                "PESSOA_NATURAL"
-              ]
+              "PESSOA_NATURAL"
             ]
           }
         }
@@ -177,10 +178,21 @@ Organizacao controladora do grupo.
             "coverageDescription": "string",
             "coverageAttributes": {
               "maxLMI": {
-                "amount": 0,
-                "unit": {
-                  "code": "R$",
-                  "description": "REAL"
+                "type": "FINANCEIRO",
+                "amount": {
+                  "amount": 0,
+                  "unit": {
+                    "code": "R$",
+                    "description": "REAL"
+                  }
+                },
+                "index": "LMG",
+                "maxIndexAmount": {
+                  "amount": 0,
+                  "unit": {
+                    "code": "R$",
+                    "description": "REAL"
+                  }
                 }
               }
             },
@@ -205,9 +217,7 @@ Organizacao controladora do grupo.
         },
         "minimumRequirements": {
           "targetAudiences": [
-            [
-              "PESSOA_NATURAL"
-            ]
+            "PESSOA_NATURAL"
           ]
         }
       }
@@ -243,10 +253,21 @@ Organizacao controladora do grupo.
         "coverageDescription": "string",
         "coverageAttributes": {
           "maxLMI": {
-            "amount": 0,
-            "unit": {
-              "code": "R$",
-              "description": "REAL"
+            "type": "FINANCEIRO",
+            "amount": {
+              "amount": 0,
+              "unit": {
+                "code": "R$",
+                "description": "REAL"
+              }
+            },
+            "index": "LMG",
+            "maxIndexAmount": {
+              "amount": 0,
+              "unit": {
+                "code": "R$",
+                "description": "REAL"
+              }
             }
           }
         },
@@ -271,9 +292,7 @@ Organizacao controladora do grupo.
     },
     "minimumRequirements": {
       "targetAudiences": [
-        [
-          "PESSOA_NATURAL"
-        ]
+        "PESSOA_NATURAL"
       ]
     }
   }
@@ -367,9 +386,7 @@ Informações dos termos e condições conforme número do processo SUSEP.
 ```json
 {
   "targetAudiences": [
-    [
-      "PESSOA_NATURAL"
-    ]
+    "PESSOA_NATURAL"
   ]
 }
 
@@ -381,7 +398,7 @@ Requisitos mínimos.
 
 |Name|Type|Required|Restrictions|Description|
 |---|---|---|---|---|
-|targetAudiences|[array]|true|none|Público Alvo|
+|targetAudiences|[string]|true|none|Público Alvo|
 
 <h2 id="tocS_DomesticCreditCoverageAttributes">DomesticCreditCoverageAttributes</h2>
 <!-- backwards compatibility -->
@@ -393,10 +410,21 @@ Requisitos mínimos.
 ```json
 {
   "maxLMI": {
-    "amount": 0,
-    "unit": {
-      "code": "R$",
-      "description": "REAL"
+    "type": "FINANCEIRO",
+    "amount": {
+      "amount": 0,
+      "unit": {
+        "code": "R$",
+        "description": "REAL"
+      }
+    },
+    "index": "LMG",
+    "maxIndexAmount": {
+      "amount": 0,
+      "unit": {
+        "code": "R$",
+        "description": "REAL"
+      }
     }
   }
 }
@@ -409,36 +437,38 @@ Informações de cobertura do Seguro.
 
 |Name|Type|Required|Restrictions|Description|
 |---|---|---|---|---|
-|maxLMI|[DomesticCreditCoverageAttributesDetails](#schemadomesticcreditcoverageattributesdetails)|true|none|none|
-
-
+|maxLMI|[DomesticCreditLimit](#schemadomesticcreditlimit)|true|none|Lista com valor de LMI aceito pela sociedade para cada cobertura.|
 
 <h2 id="tocS_DomesticCreditLimit">DomesticCreditLimit</h2>
 <!-- backwards compatibility -->
-<a id="schemadomesticCreditLimit"></a>
+<a id="schemadomesticcreditlimit"></a>
 <a id="schema_DomesticCreditLimit"></a>
-<a id="tocSdomesticCreditLimit"></a>
-<a id="tocsdomesticCreditLimit"></a>
+<a id="tocSdomesticcreditlimit"></a>
+<a id="tocsdomesticcreditlimit"></a>
 
 ```json
 {
   "type": "FINANCEIRO",
   "amount": {
-    "amount": number,
+    "amount": 0,
     "unit": {
       "code": "R$",
       "description": "REAL"
-    },
-    "index": "LMG",
-    "maxIndexAmount": {
-      "amount": number,
-      "unit": {
-        "code": "R$",
+    }
+  },
+  "index": "LMG",
+  "maxIndexAmount": {
+    "amount": 0,
+    "unit": {
+      "code": "R$",
       "description": "REAL"
-    },
+    }
   }
 }
-}
+
+```
+
+Lista com valor de LMI aceito pela sociedade para cada cobertura.
 
 ### Properties
 
@@ -449,6 +479,15 @@ Informações de cobertura do Seguro.
 |index|string|false|none|Indexador. Condicional, vinculado ao preenchimento do campo Tipo com Percentual|
 |maxIndexAmount|[DomesticCreditCoverageAttributesDetails](#schemadomesticcreditcoverageattributesdetails)|false|none|none|
 
+#### Enumerated Values
+
+|Property|Value|
+|---|---|
+|type|FINANCEIRO|
+|type|PERCENTUAL|
+|index|LMG|
+|index|FINANCEIRO_COBERTURA|
+|index|OUTRO|
 
 <h2 id="tocS_DomesticCreditCoverageAttributesDetails">DomesticCreditCoverageAttributesDetails</h2>
 <!-- backwards compatibility -->
@@ -580,5 +619,6 @@ Informações de cobertura do Seguro.
 |» code|string|true|none|Código de erro específico do endpoint|
 |» title|string|true|none|Título legível por humanos deste erro específico|
 |» detail|string|true|none|Descrição legível por humanos deste erro específico|
-|» requestDateTime|string(date-time)|false|none|Data e hora da consulta, conforme especificação RFC-3339, formato UTC.|
+|» requestDateTime|string(date-time)|true|none|Data e hora da consulta, conforme especificação RFC-3339, formato UTC.|
 |meta|[Meta](#schemametadomesticdomestic)|false|none|none|
+
