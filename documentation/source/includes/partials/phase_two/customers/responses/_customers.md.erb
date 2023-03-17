@@ -1,3 +1,4 @@
+
 <h2 id="tocS_BusinessComplimentaryInformationData">BusinessComplimentaryInformationData</h2>
 <!-- backwards compatibility -->
 <a id="schemabusinesscomplimentaryinformationdata"></a>
@@ -36,8 +37,8 @@ Objeto que reúne as informações relativas ao relacionamento do cliente junto 
 |Name|Type|Required|Restrictions|Description|
 |---|---|---|---|---|
 |updateDateTime|string(date-time)|true|none|Data e hora da atualização do bloco de Relacionamento, conforme especificação RFC-3339, formato UTC.|
-|startDate|string(date)|false|none|Data mais antiga de início de relacionamento, considerando todos os contratos (vigentes e não vigentes). Os contratos não vigentes considerados devem contemplar, no mínimo o período indicado na Tabela 4.1.|
-|relationshipBeginning|string(date)|false|none|Campo deve ser preenchido com a data da apólice/contrato vigente mais antiga.(caso haja contrato vigente)|
+|startDate|string(date)|true|none|Data mais antiga de início de relacionamento, considerando todos os contratos (vigentes e não vigentes). Os contratos não vigentes considerados devem contemplar, no mínimo o período indicado na Tabela 4.1.|
+|relationshipBeginning|string(date)|false|none|Campo deve ser preenchido com a data da apólice/contrato vigente mais antiga. (caso haja contrato vigente)|
 |productsServices|[object]|true|none|none|
 |» contract|string|true|none|Campo deve conter todos os contratos do cliente nos últimos 12 meses (número da apólice individual ou contrato ou certificado ou bilhete)|
 |» type|[EnumProductServiceType](#schemaenumproductservicetype)|true|none|Tipos de produtos.|
@@ -168,9 +169,9 @@ Conjunto de informações relativas a Identificação ou seja a ação e o efeit
 |Name|Type|Required|Restrictions|Description|
 |---|---|---|---|---|
 |nature|[EnumProcuratorsNaturePersonal](#schemaenumprocuratorsnaturepersonal)|true|none|Natureza dos poderes vigentes de representante|
-|cpfNumber|string|true|none|Número completo do CPF. O CPF é o Cadastro de Pessoa natural. Ele é um documento feito pela Receita Federal e serve para identificar os contribuintes. O CPF é uma numeração com 11 dígitos, que só mudam por decisão judicial. O documento é emitido pela receita federal|
-|civilName|string|true|none|Nome civil completo da pessoa natural. (Direito fundamental da pessoa, o nome civil é aquele atribuído à pessoa natural desde o registro de seu nascimento, com o qual será identificada por toda a sua vida, bem como após a sua morte)|
-|socialName|string|false|none|Nome social da pessoa natural, se houver. <br>(aquele pelo qual travestis e transexuais se reconhecem, <br>bem como são identificados por sua comunidade e em seu meio social, conforme Decreto Local).|
+|cpfNumber|string|false|none|(Caso Natureza dos poderes vigentes de representantefor “Representante legal” ou “Procurador”) CPF ou CNPJ do representante|
+|civilName|string|false|none|(Caso Natureza dos poderes vigentes de representante for “Representante legal” ou “Procurador”) Nome ou razão social do representante|
+|socialName|string|false|none|(Caso Natureza dos poderes vigentes de representante for “Representante legal” ou “Procurador”) Nome social do representante|
 
 <h2 id="tocS_BusinessQualificationData">BusinessQualificationData</h2>
 <!-- backwards compatibility -->
@@ -187,13 +188,13 @@ Conjunto de informações relativas a Identificação ou seja a ação e o efeit
   "informedRevenue": {
     "incomeFrequency": "MENSAL",
     "currency": "BRL",
-    "amount": 100000.04,
+    "amount": "100000.04",
     "year": "2010"
   },
   "informedPatrimony": {
     "currency": "BRL",
-    "amount": 100000.04,
-    "year": "2010"
+    "amount": "100000.04",
+    "date": "2012-05-21"
   }
 }
 
@@ -210,13 +211,13 @@ Objeto que reúne as informações relativas ao processo de qualificação.
 |secondaryBranch|string|false|none|Códigos relativos às demais atividades econômicas da empresa, segundo padrão CNAE (Classificação Nacional de Atividades Econômicas). Se disponível.|
 |informedRevenue|object|false|none|none|
 |» incomeFrequency|[EnumIncomeFrequency](#schemaenumincomefrequency)|false|none|Frequência da renda informada.|
-|» currency|string|false|none|Moeda referente ao valor do patrimônio, segundo modelo ISO-4217.|
-|» amount|number¦null|false|none|Valor da renda|
-|» year|string(date-year)|false|none|Data de referência da renda, conforme especificação RFC-3339.|
+|» currency|string|false|none|Moeda referente ao valor do faturamento, segundo modelo ISO-4217.|
+|» amount|string¦null|false|none|Valor do faturamento|
+|» year|string(date-fullyear)|false|none|Ano de referência do faturamento, conforme especificação RFC-3339.|
 |informedPatrimony|object|false|none|none|
 |» currency|string|false|none|Moeda referente ao valor do patrimônio, segundo modelo ISO-4217.|
-|» amount|number¦null|false|none|Valor da renda|
-|» year|string(date-year)|false|none|Data de referência da renda, conforme especificação RFC-3339.|
+|» amount|string¦null|false|none|Valor do patrimônio|
+|» date|string(date)|false|none|Data de referência do patrimônio, conforme especificação RFC-3339.|
 
 <h2 id="tocS_BusinessParties">BusinessParties</h2>
 <!-- backwards compatibility -->
@@ -315,7 +316,7 @@ Conjunto de informações referentes às formas para contatar o cliente.
 |Name|Type|Required|Restrictions|Description|
 |---|---|---|---|---|
 |postalAddresses|[[BusinessPostalAddress](#schemabusinesspostaladdress)]|true|none|Lista de endereços da pessoa jurídica|
-|phones|[[CustomerPhone](#schemacustomerphone)]|true|none|Lista com telefones de contato da pessoa jurídica|
+|phones|[[CustomerPhone](#schemacustomerphone)]|false|none|Lista com telefones de contato da pessoa jurídica|
 |emails|[[CustomerEmail](#schemacustomeremail)]|false|none|Lista e-mails de contato|
 
 <h2 id="tocS_PersonalContact">PersonalContact</h2>
@@ -665,7 +666,7 @@ Enumeração referente a cada sigla da unidade da federação que identifica o e
 
 ```
 
-Estado civil do cliente. 
+Estado civil do cliente.
 
 ### Properties
 
@@ -730,7 +731,7 @@ Frequência da renda informada.
 
 ```
 
-Tipo do(s) documento(s) de identificação. 
+Tipo do(s) documento(s) de identificação.
 
 ### Properties
 
@@ -969,7 +970,7 @@ Objeto agrupador de informações relativas a Documentos da pessoa natural
 |---|---|---|---|---|
 |businesscnpjNumber|string|true|none|Número completo do CNPJ da Empresa consultada  - o CNPJ corresponde ao número de inscrição no Cadastro de Pessoa Jurídica. Deve-se ter apenas os números do CNPJ, sem máscara<br>Condicional ao Brasil no (BRA) campo País de emissão do documento de registro|
 |businessRegisterNumberOriginCountry|string|false|none|Aplicável somente as pessoas jurídicas com domicílio ou sede no exterior desobrigadas de inscrição no CNPJ.|
-|country|string|true|none|Código do pais de acordo com o código “alpha3” do ISO-3166.|
+|country|string|false|none|Código do pais de acordo com o código “alpha3” do ISO-3166.|
 |expirationDate|string(date)|false|none|Data de vigência do documento de registro - conforme especificação RFC-3339.|
 
 <h2 id="tocS_PersonalComplimentaryInformationData">PersonalComplimentaryInformationData</h2>
@@ -1011,7 +1012,7 @@ Objeto que reúne as informações relativas ao relacionamento do cliente junto 
 |---|---|---|---|---|
 |updateDateTime|string(date-time)|true|none|Data e hora da atualização do bloco de Relacionamento, conforme especificação RFC-3339, formato UTC.|
 |startDate|string(date)|true|none|Data mais antiga de início de relacionamento, considerando todos os contratos (vigentes e não vigentes). Os contratos não vigentes considerados devem contemplar, no mínimo o período indicado na Tabela 4.1.|
-|relationshipBeginning|string(date)|false|none|Campo deve ser preenchido com a data da apólice/contrato vigente mais antiga.(caso haja contrato vigente)|
+|relationshipBeginning|string(date)|false|none|Campo deve ser preenchido com a data da apólice/contrato vigente mais antiga (caso haja contrato vigente)|
 |productsServices|[object]|true|none|none|
 |» contract|string|true|none|Campo deve conter todos os contratos do cliente nos últimos 12 meses (número da apólice individual ou contrato ou certificado ou bilhete)|
 |» type|[EnumProductServiceType](#schemaenumproductservicetype)|true|none|Tipos de produtos.|
@@ -1119,7 +1120,7 @@ Conjunto de informações relativas a Identificação ou seja a ação e o efeit
 |birthDate|string(date)|false|none|Data de nascimento, conforme especificação RFC-3339|
 |filiation|object|false|none|none|
 |» type|[EnumFiliationType](#schemaenumfiliationtype)|false|none|Tipo de filiação.|
-|» civilName|string|true|none|Nome civil completo da pessoa relativa à filiação.<br>(Direito fundamental da pessoa, o nome civil é aquele atribuído à pessoa natural desde o registro de seu nascimento, <br>com o qual será identificada por toda a sua vida, bem como após a sua morte).|
+|» civilName|string|false|none|Nome civil completo da pessoa relativa à filiação.<br>(Direito fundamental da pessoa, o nome civil é aquele atribuído à pessoa natural desde o registro de seu nascimento, <br>com o qual será identificada por toda a sua vida, bem como após a sua morte).|
 |identificationDetails|object|false|none|Informações referente ao cônjuge.|
 |» civilName|string|false|none|Nome civil completo da pessoa natural (Direito fundamental da pessoa, o nome civil é aquele atribuído à pessoa natural desde o registro de seu nascimento, com o qual será identificada por toda a sua vida, bem como após a sua morte)|
 |» cpfNumber|string|false|none|Número completo do CPF. Atributo que corresponde às informações mínimas exigidas pela Regulamentação em vigor. O CPF é o Cadastro de Pessoa natural.  Ele é um documento feito pela Receita Federal e serve para identificar os contribuintes. O CPF é uma numeração com 11 dígitos, que só mudam por decisão judicial. O documento é emitido pela receita federal<br>Condicional a seleção de true em hasBrazilianNationality|
@@ -1146,9 +1147,9 @@ Conjunto de informações relativas a Identificação ou seja a ação e o efeit
 |Name|Type|Required|Restrictions|Description|
 |---|---|---|---|---|
 |nature|[EnumProcuratorsNaturePersonal](#schemaenumprocuratorsnaturepersonal)|true|none|Natureza dos poderes vigentes de representante|
-|cpfNumber|string|true|none|Número completo do CPF. O CPF é o Cadastro de Pessoa natural. Ele é um documento feito pela Receita Federal e serve para identificar os contribuintes. O CPF é uma numeração com 11 dígitos, que só mudam por decisão judicial. O documento é emitido pela receita federal|
-|civilName|string|true|none|Nome civil completo da pessoa natural. (Direito fundamental da pessoa, o nome civil é aquele atribuído à pessoa natural desde o registro de seu nascimento, com o qual será identificada por toda a sua vida, bem como após a sua morte)|
-|socialName|string|false|none|Nome social da pessoa natural, se houver. <br>(aquele pelo qual travestis e transexuais se reconhecem, <br>bem como são identificados por sua comunidade e em seu meio social, conforme Decreto Local).|
+|cpfNumber|string|false|none|(Caso Natureza dos poderes vigentes de representantefor “Representante legal” ou “Procurador”) CPF ou CNPJ do representante|
+|civilName|string|false|none|(Caso Natureza dos poderes vigentes de representante for “Representante legal” ou “Procurador”) Nome ou razão social do representante|
+|socialName|string|false|none|(Caso Natureza dos poderes vigentes de representante for “Representante legal” ou “Procurador”) Nome social do representante|
 
 <h2 id="tocS_PersonalQualificationData">PersonalQualificationData</h2>
 <!-- backwards compatibility -->
@@ -1172,12 +1173,12 @@ Conjunto de informações relativas a Identificação ou seja a ação e o efeit
   "informedRevenue": {
     "incomeFrequency": "MENSAL",
     "currency": "BRL",
-    "amount": 100000.04,
+    "amount": "100000.04",
     "date": "2012-05-21"
   },
   "informedPatrimony": {
     "currency": "BRL",
-    "amount": 100000.04,
+    "amount": "100000.04",
     "year": "2010"
   }
 }
@@ -1199,13 +1200,13 @@ Conjunto de informações relativas ao processo de qualificação.
 |lifePensionPlans|string|true|none|Condição de proponente qualificado, aplicável à contratação de planos de previdência e vida por sobrevivência|
 |informedRevenue|object|false|none|none|
 |» incomeFrequency|[EnumIncomeFrequency](#schemaenumincomefrequency)|false|none|Frequência da renda informada.|
-|» currency|string|false|none|Moeda referente ao valor do patrimônio, segundo modelo ISO-4217.|
+|» currency|string|false|none|Moeda referente ao valor da renda, segundo modelo ISO-4217.|
 |» amount|string¦null|false|none|Valor do rendimento|
 |» date|string(date)|false|none|Data de referência da renda, conforme especificação RFC-3339.|
 |informedPatrimony|object|false|none|none|
 |» currency|string|false|none|Moeda referente ao valor do patrimônio, segundo modelo ISO-4217.|
-|» amount|string¦null|false|none|Valor do rendimento|
-|» year|string(date-year)|false|none|Data de referência da renda, conforme especificação RFC-3339.|
+|» amount|string¦null|false|none|Valor do patrimônio|
+|» year|string(date-fullyear)|false|none|Ano de referência do patrimônio, conforme especificação RFC-3339.|
 
 #### Enumerated Values
 
@@ -1262,8 +1263,7 @@ Conjunto de informações relativas ao processo de qualificação.
   },
   "meta": {
     "totalRecords": 1,
-    "totalPages": 1,
-    "requestDateTime": "2021-05-21T08:30:00Z"
+    "totalPages": 1
   }
 }
 
@@ -1361,8 +1361,7 @@ Conjunto de informações relativas ao processo de qualificação.
   },
   "meta": {
     "totalRecords": 1,
-    "totalPages": 1,
-    "requestDateTime": "2021-05-21T08:30:00Z"
+    "totalPages": 1
   }
 }
 
@@ -1393,13 +1392,13 @@ Conjunto de informações relativas ao processo de qualificação.
       "informedRevenue": {
         "incomeFrequency": "MENSAL",
         "currency": "BRL",
-        "amount": 100000.04,
+        "amount": "100000.04",
         "year": "2010"
       },
       "informedPatrimony": {
         "currency": "BRL",
-        "amount": 100000.04,
-        "year": "2010"
+        "amount": "100000.04",
+        "date": "2012-05-21"
       }
     }
   ],
@@ -1412,8 +1411,7 @@ Conjunto de informações relativas ao processo de qualificação.
   },
   "meta": {
     "totalRecords": 1,
-    "totalPages": 1,
-    "requestDateTime": "2021-05-21T08:30:00Z"
+    "totalPages": 1
   }
 }
 
@@ -1440,13 +1438,13 @@ Conjunto de informações relativas ao processo de qualificação.
     {
       "code": "string",
       "title": "string",
-      "detail": "string"
+      "detail": "string",
+      "requestDateTime": "2021-05-21T08:30:00Z"
     }
   ],
   "meta": {
     "totalRecords": 1,
-    "totalPages": 1,
-    "requestDateTime": "2021-05-21T08:30:00Z"
+    "totalPages": 1
   }
 }
 
@@ -1460,6 +1458,7 @@ Conjunto de informações relativas ao processo de qualificação.
 |» code|string|true|none|Código de erro específico do endpoint|
 |» title|string|true|none|Título legível por humanos deste erro específico|
 |» detail|string|true|none|Descrição legível por humanos deste erro específico|
+|» requestDateTime|string(date-time)|true|none|Data e hora da consulta, conforme especificação RFC-3339, formato UTC.|
 |meta|[Meta](#schemametacustomers)|false|none|Meta informações referente à API requisitada.|
 
 <h2 id="tocS_ResponsePersonalCustomersComplimentaryInformation">ResponsePersonalCustomersComplimentaryInformation</h2>
@@ -1502,8 +1501,7 @@ Conjunto de informações relativas ao processo de qualificação.
   },
   "meta": {
     "totalRecords": 1,
-    "totalPages": 1,
-    "requestDateTime": "2021-05-21T08:30:00Z"
+    "totalPages": 1
   }
 }
 
@@ -1602,8 +1600,7 @@ Conjunto de informações relativas ao processo de qualificação.
   },
   "meta": {
     "totalRecords": 1,
-    "totalPages": 1,
-    "requestDateTime": "2021-05-21T08:30:00Z"
+    "totalPages": 1
   }
 }
 
@@ -1641,12 +1638,12 @@ Conjunto de informações relativas ao processo de qualificação.
       "informedRevenue": {
         "incomeFrequency": "MENSAL",
         "currency": "BRL",
-        "amount": 100000.04,
-        "year": "2010"
+        "amount": "100000.04",
+        "date": "2012-05-21"
       },
       "informedPatrimony": {
         "currency": "BRL",
-        "amount": 100000.04,
+        "amount": "100000.04",
         "year": "2010"
       }
     }
@@ -1660,8 +1657,7 @@ Conjunto de informações relativas ao processo de qualificação.
   },
   "meta": {
     "totalRecords": 1,
-    "totalPages": 1,
-    "requestDateTime": "2021-05-21T08:30:00Z"
+    "totalPages": 1
   }
 }
 

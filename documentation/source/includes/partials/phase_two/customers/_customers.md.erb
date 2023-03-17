@@ -51,17 +51,22 @@ Para cada um dos paths desta API, além dos escopos (`scopes`) indicados existem
 ### `/personal/identifications`
   - permissions:
     - GET: **CUSTOMERS_PERSONAL_IDENTIFICATIONS_READ**
+
 ### `/personal/qualifications`
   - permissions: **CUSTOMERS_PERSONAL_QUALIFICATION_READ**
+
 ### `/personal/complimentary-information`
   - permissions:
     - GET: **CUSTOMERS_PERSONAL_ADITTIONALINFO_READ**
+
 ### `/business/identifications`
   - permissions:
     - GET: **CUSTOMERS_BUSINESS_IDENTIFICATIONS_READ**
+
 ### `/business/qualifications`
   - permissions:
     - GET: **CUSTOMERS_BUSINESS_QUALIFICATION_READ**
+    
 ### `/business/complimentary-information`
   - permissions:
     - GET: **CUSTOMERS_BUSINESS_ADITTIONALINFO_READ**
@@ -97,59 +102,62 @@ License: <a href="http://www.apache.org/licenses/LICENSE-2.0">Apache 2.0</a>
 > Code samples
 
 ```javascript
-const data = null;
 
-const xhr = new XMLHttpRequest();
-xhr.withCredentials = true;
+const headers = {
+  'Accept':'application/json',
+  'Authorization':'string',
+  'x-fapi-auth-date':'stringstringstringstringstrin',
+  'x-fapi-customer-ip-address':'string',
+  'x-fapi-interaction-id':'string',
+  'x-customer-user-agent':'string'
+};
 
-xhr.addEventListener("readystatechange", function () {
-  if (this.readyState === this.DONE) {
-    console.log(this.responseText);
-  }
+fetch('https://api.seguro.com.br/open-insurance/customers/v1/personal/identifications',
+{
+  method: 'GET',
+
+  headers: headers
+})
+.then(function(res) {
+    return res.json();
+}).then(function(body) {
+    console.log(body);
 });
 
-xhr.open("GET", "https://api.seguro.com.br/open-insurance/customers/v1/personal/identifications");
-xhr.setRequestHeader("Accept", "application/json");
-xhr.setRequestHeader("Authorization", "string");
-xhr.setRequestHeader("x-fapi-auth-date", "stringstringstringstringstrin");
-xhr.setRequestHeader("x-fapi-customer-ip-address", "string");
-xhr.setRequestHeader("x-fapi-interaction-id", "string");
-xhr.setRequestHeader("x-customer-user-agent", "string");
-
-xhr.send(data);
 ```
 
 ```python
-import http.client
-
-conn = http.client.HTTPSConnection("api.seguro.com.br")
-
+import requests
 headers = {
-    'Accept': "application/json",
-    'Authorization': "string",
-    'x-fapi-auth-date': "stringstringstringstringstrin",
-    'x-fapi-customer-ip-address': "string",
-    'x-fapi-interaction-id': "string",
-    'x-customer-user-agent': "string"
-    }
+  'Accept': 'application/json',
+  'Authorization': 'string',
+  'x-fapi-auth-date': 'stringstringstringstringstrin',
+  'x-fapi-customer-ip-address': 'string',
+  'x-fapi-interaction-id': 'string',
+  'x-customer-user-agent': 'string'
+}
 
-conn.request("GET", "/open-insurance/customers/v1/personal/identifications", headers=headers)
+r = requests.get('https://api.seguro.com.br/open-insurance/customers/v1/personal/identifications', headers = headers)
 
-res = conn.getresponse()
-data = res.read()
+print(r.json())
 
-print(data.decode("utf-8"))
 ```
 
 ```java
-HttpResponse<String> response = Unirest.get("https://api.seguro.com.br/open-insurance/customers/v1/personal/identifications")
-  .header("Accept", "application/json")
-  .header("Authorization", "string")
-  .header("x-fapi-auth-date", "stringstringstringstringstrin")
-  .header("x-fapi-customer-ip-address", "string")
-  .header("x-fapi-interaction-id", "string")
-  .header("x-customer-user-agent", "string")
-  .asString();
+URL obj = new URL("https://api.seguro.com.br/open-insurance/customers/v1/personal/identifications");
+HttpURLConnection con = (HttpURLConnection) obj.openConnection();
+con.setRequestMethod("GET");
+int responseCode = con.getResponseCode();
+BufferedReader in = new BufferedReader(
+    new InputStreamReader(con.getInputStream()));
+String inputLine;
+StringBuffer response = new StringBuffer();
+while ((inputLine = in.readLine()) != null) {
+    response.append(inputLine);
+}
+in.close();
+System.out.println(response.toString());
+
 ```
 
 `GET /personal/identifications`
@@ -240,16 +248,15 @@ Método para obter os registros de identificação da pessoa natural mantidos na
     }
   ],
   "links": {
-    "self": "https://api.seguro.com.br/open-insurance/customer/v1",
-    "first": "https://api.seguro.com.br/open-insurance/customer/v1",
-    "prev": "https://api.seguro.com.br/open-insurance/customer/v1",
-    "next": "https://api.seguro.com.br/open-insurance/customer/v1",
-    "last": "https://api.seguro.com.br/open-insurance/customer/v1"
+    "self": "https://api.organizacao.com.br/open-insurance/customer/v1/personal/identifications",
+    "first": "https://api.organizacao.com.br/open-insurance/customer/v1/personal/identifications",
+    "prev": "https://api.organizacao.com.br/open-insurance/customer/v1/personal/identifications",
+    "next": "https://api.organizacao.com.br/open-insurance/customer/v1/personal/identifications",
+    "last": "https://api.organizacao.com.br/open-insurance/customer/v1/personal/identifications"
   },
   "meta": {
     "totalRecords": 1,
-    "totalPages": 1,
-    "requestDateTime": "2021-05-21T08:30:00Z"
+    "totalPages": 1
   }
 }
 ```
@@ -259,6 +266,7 @@ Método para obter os registros de identificação da pessoa natural mantidos na
 |Status|Meaning|Description|Schema|
 |---|---|---|---|
 |200|[OK](https://tools.ietf.org/html/rfc7231#section-6.3.1)|Dados sobre identificação pessoa física.|[ResponsePersonalCustomersIdentification](#schemaresponsepersonalcustomersidentification)|
+|204|[No Content](https://tools.ietf.org/html/rfc7231#section-6.3.5)|O recurso solicitado não existe ou não foi localizado.|[ResponseError](#schemaresponseerror)|
 |400|[Bad Request](https://tools.ietf.org/html/rfc7231#section-6.5.1)|A requisição foi malformada, omitindo atributos obrigatórios, seja no payload ou através de atributos na URL.|[ResponseError](#schemaresponseerror)|
 |401|[Unauthorized](https://tools.ietf.org/html/rfc7235#section-3.1)|Cabeçalho de autenticação ausente/inválido ou token inválido|[ResponseError](#schemaresponseerror)|
 |403|[Forbidden](https://tools.ietf.org/html/rfc7231#section-6.5.3)|O token tem escopo incorreto ou uma política de segurança foi violada|[ResponseError](#schemaresponseerror)|
@@ -281,66 +289,69 @@ To perform this operation, you must be authenticated by means of one of the foll
 OpenId ( Scopes: openid ) & OAuth2Security ( Scopes: consent:consentId customers )
 </aside>
 
-<h2 id="api-customers-v100-obtem-os-registros-de-qualificacao-da-pessoa-natural">Obtém os registros de qualificação da pessoa natural.</h2>
+## Obtém os registros de qualificação da pessoa natural.
 
 <a id="opIdcustomersGetPersonalQualifications"></a>
 
 > Code samples
 
 ```javascript
-const data = null;
 
-const xhr = new XMLHttpRequest();
-xhr.withCredentials = true;
+const headers = {
+  'Accept':'application/json',
+  'Authorization':'string',
+  'x-fapi-auth-date':'stringstringstringstringstrin',
+  'x-fapi-customer-ip-address':'string',
+  'x-fapi-interaction-id':'string',
+  'x-customer-user-agent':'string'
+};
 
-xhr.addEventListener("readystatechange", function () {
-  if (this.readyState === this.DONE) {
-    console.log(this.responseText);
-  }
+fetch('https://api.seguro.com.br/open-insurance/customers/v1/personal/qualifications',
+{
+  method: 'GET',
+
+  headers: headers
+})
+.then(function(res) {
+    return res.json();
+}).then(function(body) {
+    console.log(body);
 });
 
-xhr.open("GET", "https://api.seguro.com.br/open-insurance/customers/v1/personal/qualifications");
-xhr.setRequestHeader("Accept", "application/json");
-xhr.setRequestHeader("Authorization", "string");
-xhr.setRequestHeader("x-fapi-auth-date", "stringstringstringstringstrin");
-xhr.setRequestHeader("x-fapi-customer-ip-address", "string");
-xhr.setRequestHeader("x-fapi-interaction-id", "string");
-xhr.setRequestHeader("x-customer-user-agent", "string");
-
-xhr.send(data);
 ```
 
 ```python
-import http.client
-
-conn = http.client.HTTPSConnection("api.seguro.com.br")
-
+import requests
 headers = {
-    'Accept': "application/json",
-    'Authorization': "string",
-    'x-fapi-auth-date': "stringstringstringstringstrin",
-    'x-fapi-customer-ip-address': "string",
-    'x-fapi-interaction-id': "string",
-    'x-customer-user-agent': "string"
-    }
+  'Accept': 'application/json',
+  'Authorization': 'string',
+  'x-fapi-auth-date': 'stringstringstringstringstrin',
+  'x-fapi-customer-ip-address': 'string',
+  'x-fapi-interaction-id': 'string',
+  'x-customer-user-agent': 'string'
+}
 
-conn.request("GET", "/open-insurance/customers/v1/personal/qualifications", headers=headers)
+r = requests.get('https://api.seguro.com.br/open-insurance/customers/v1/personal/qualifications', headers = headers)
 
-res = conn.getresponse()
-data = res.read()
+print(r.json())
 
-print(data.decode("utf-8"))
 ```
 
 ```java
-HttpResponse<String> response = Unirest.get("https://api.seguro.com.br/open-insurance/customers/v1/personal/qualifications")
-  .header("Accept", "application/json")
-  .header("Authorization", "string")
-  .header("x-fapi-auth-date", "stringstringstringstringstrin")
-  .header("x-fapi-customer-ip-address", "string")
-  .header("x-fapi-interaction-id", "string")
-  .header("x-customer-user-agent", "string")
-  .asString();
+URL obj = new URL("https://api.seguro.com.br/open-insurance/customers/v1/personal/qualifications");
+HttpURLConnection con = (HttpURLConnection) obj.openConnection();
+con.setRequestMethod("GET");
+int responseCode = con.getResponseCode();
+BufferedReader in = new BufferedReader(
+    new InputStreamReader(con.getInputStream()));
+String inputLine;
+StringBuffer response = new StringBuffer();
+while ((inputLine = in.readLine()) != null) {
+    response.append(inputLine);
+}
+in.close();
+System.out.println(response.toString());
+
 ```
 
 `GET /personal/qualifications`
@@ -378,27 +389,26 @@ Método para obter os registros de qualificação da pessoa natural mantidos na 
       "informedRevenue": {
         "incomeFrequency": "MENSAL",
         "currency": "BRL",
-        "amount": 100000.04,
-        "year": "2010"
+        "amount": "100000.04",
+        "date": "2012-05-21"
       },
       "informedPatrimony": {
         "currency": "BRL",
-        "amount": 100000.04,
+        "amount": "100000.04",
         "year": "2010"
       }
     }
   ],
   "links": {
-    "self": "https://api.seguro.com.br/open-insurance/customer/v1",
-    "first": "https://api.seguro.com.br/open-insurance/customer/v1",
-    "prev": "https://api.seguro.com.br/open-insurance/customer/v1",
-    "next": "https://api.seguro.com.br/open-insurance/customer/v1",
-    "last": "https://api.seguro.com.br/open-insurance/customer/v1"
+    "self": "https://api.organizacao.com.br/open-insurance/customer/v1/personal/identifications",
+    "first": "https://api.organizacao.com.br/open-insurance/customer/v1/personal/identifications",
+    "prev": "https://api.organizacao.com.br/open-insurance/customer/v1/personal/identifications",
+    "next": "https://api.organizacao.com.br/open-insurance/customer/v1/personal/identifications",
+    "last": "https://api.organizacao.com.br/open-insurance/customer/v1/personal/identifications"
   },
   "meta": {
     "totalRecords": 1,
-    "totalPages": 1,
-    "requestDateTime": "2021-05-21T08:30:00Z"
+    "totalPages": 1
   }
 }
 ```
@@ -408,6 +418,7 @@ Método para obter os registros de qualificação da pessoa natural mantidos na 
 |Status|Meaning|Description|Schema|
 |---|---|---|---|
 |200|[OK](https://tools.ietf.org/html/rfc7231#section-6.3.1)|Dados sobre qualificação da pessoa física|[ResponsePersonalCustomersQualification](#schemaresponsepersonalcustomersqualification)|
+|204|[No Content](https://tools.ietf.org/html/rfc7231#section-6.3.5)|O recurso solicitado não existe ou não foi localizado.|[ResponseError](#schemaresponseerror)|
 |400|[Bad Request](https://tools.ietf.org/html/rfc7231#section-6.5.1)|A requisição foi malformada, omitindo atributos obrigatórios, seja no payload ou através de atributos na URL.|[ResponseError](#schemaresponseerror)|
 |401|[Unauthorized](https://tools.ietf.org/html/rfc7235#section-3.1)|Cabeçalho de autenticação ausente/inválido ou token inválido|[ResponseError](#schemaresponseerror)|
 |403|[Forbidden](https://tools.ietf.org/html/rfc7231#section-6.5.3)|O token tem escopo incorreto ou uma política de segurança foi violada|[ResponseError](#schemaresponseerror)|
@@ -430,66 +441,69 @@ To perform this operation, you must be authenticated by means of one of the foll
 OpenId ( Scopes: openid ) & OAuth2Security ( Scopes: consent:consentId customers )
 </aside>
 
-<h2 id="api-customers-v100-obtem-os-registros-de-relacionamentos-com-a-instituicao-e-de-representantes-da-pessoa-natural">Obtém os registros de relacionamentos com a instituição e de representantes da pessoa natural.</h2>
+## Obtém os registros de relacionamentos com a instituição e de representantes da pessoa natural.
 
 <a id="opIdcustomersGetPersonalComplimentaryInformation"></a>
 
 > Code samples
 
 ```javascript
-const data = null;
 
-const xhr = new XMLHttpRequest();
-xhr.withCredentials = true;
+const headers = {
+  'Accept':'application/json',
+  'Authorization':'string',
+  'x-fapi-auth-date':'stringstringstringstringstrin',
+  'x-fapi-customer-ip-address':'string',
+  'x-fapi-interaction-id':'string',
+  'x-customer-user-agent':'string'
+};
 
-xhr.addEventListener("readystatechange", function () {
-  if (this.readyState === this.DONE) {
-    console.log(this.responseText);
-  }
+fetch('https://api.seguro.com.br/open-insurance/customers/v1/personal/complimentary-information',
+{
+  method: 'GET',
+
+  headers: headers
+})
+.then(function(res) {
+    return res.json();
+}).then(function(body) {
+    console.log(body);
 });
 
-xhr.open("GET", "https://api.seguro.com.br/open-insurance/customers/v1/personal/complimentary-information");
-xhr.setRequestHeader("Accept", "application/json");
-xhr.setRequestHeader("Authorization", "string");
-xhr.setRequestHeader("x-fapi-auth-date", "stringstringstringstringstrin");
-xhr.setRequestHeader("x-fapi-customer-ip-address", "string");
-xhr.setRequestHeader("x-fapi-interaction-id", "string");
-xhr.setRequestHeader("x-customer-user-agent", "string");
-
-xhr.send(data);
 ```
 
 ```python
-import http.client
-
-conn = http.client.HTTPSConnection("api.seguro.com.br")
-
+import requests
 headers = {
-    'Accept': "application/json",
-    'Authorization': "string",
-    'x-fapi-auth-date': "stringstringstringstringstrin",
-    'x-fapi-customer-ip-address': "string",
-    'x-fapi-interaction-id': "string",
-    'x-customer-user-agent': "string"
-    }
+  'Accept': 'application/json',
+  'Authorization': 'string',
+  'x-fapi-auth-date': 'stringstringstringstringstrin',
+  'x-fapi-customer-ip-address': 'string',
+  'x-fapi-interaction-id': 'string',
+  'x-customer-user-agent': 'string'
+}
 
-conn.request("GET", "/open-insurance/customers/v1/personal/complimentary-information", headers=headers)
+r = requests.get('https://api.seguro.com.br/open-insurance/customers/v1/personal/complimentary-information', headers = headers)
 
-res = conn.getresponse()
-data = res.read()
+print(r.json())
 
-print(data.decode("utf-8"))
 ```
 
 ```java
-HttpResponse<String> response = Unirest.get("https://api.seguro.com.br/open-insurance/customers/v1/personal/complimentary-information")
-  .header("Accept", "application/json")
-  .header("Authorization", "string")
-  .header("x-fapi-auth-date", "stringstringstringstringstrin")
-  .header("x-fapi-customer-ip-address", "string")
-  .header("x-fapi-interaction-id", "string")
-  .header("x-customer-user-agent", "string")
-  .asString();
+URL obj = new URL("https://api.seguro.com.br/open-insurance/customers/v1/personal/complimentary-information");
+HttpURLConnection con = (HttpURLConnection) obj.openConnection();
+con.setRequestMethod("GET");
+int responseCode = con.getResponseCode();
+BufferedReader in = new BufferedReader(
+    new InputStreamReader(con.getInputStream()));
+String inputLine;
+StringBuffer response = new StringBuffer();
+while ((inputLine = in.readLine()) != null) {
+    response.append(inputLine);
+}
+in.close();
+System.out.println(response.toString());
+
 ```
 
 `GET /personal/complimentary-information`
@@ -535,16 +549,15 @@ Método para obter registros de relacionamentos com a instituição e de represe
     }
   ],
   "links": {
-    "self": "https://api.seguro.com.br/open-insurance/customer/v1",
-    "first": "https://api.seguro.com.br/open-insurance/customer/v1",
-    "prev": "https://api.seguro.com.br/open-insurance/customer/v1",
-    "next": "https://api.seguro.com.br/open-insurance/customer/v1",
-    "last": "https://api.seguro.com.br/open-insurance/customer/v1"
+    "self": "https://api.organizacao.com.br/open-insurance/customer/v1/personal/identifications",
+    "first": "https://api.organizacao.com.br/open-insurance/customer/v1/personal/identifications",
+    "prev": "https://api.organizacao.com.br/open-insurance/customer/v1/personal/identifications",
+    "next": "https://api.organizacao.com.br/open-insurance/customer/v1/personal/identifications",
+    "last": "https://api.organizacao.com.br/open-insurance/customer/v1/personal/identifications"
   },
   "meta": {
     "totalRecords": 1,
-    "totalPages": 1,
-    "requestDateTime": "2021-05-21T08:30:00Z"
+    "totalPages": 1
   }
 }
 ```
@@ -554,6 +567,7 @@ Método para obter registros de relacionamentos com a instituição e de represe
 |Status|Meaning|Description|Schema|
 |---|---|---|---|
 |200|[OK](https://tools.ietf.org/html/rfc7231#section-6.3.1)|Dados sobre relacionamento da pessoa física|[ResponsePersonalCustomersComplimentaryInformation](#schemaresponsepersonalcustomerscomplimentaryinformation)|
+|204|[No Content](https://tools.ietf.org/html/rfc7231#section-6.3.5)|O recurso solicitado não existe ou não foi localizado.|[ResponseError](#schemaresponseerror)|
 |400|[Bad Request](https://tools.ietf.org/html/rfc7231#section-6.5.1)|A requisição foi malformada, omitindo atributos obrigatórios, seja no payload ou através de atributos na URL.|[ResponseError](#schemaresponseerror)|
 |401|[Unauthorized](https://tools.ietf.org/html/rfc7235#section-3.1)|Cabeçalho de autenticação ausente/inválido ou token inválido|[ResponseError](#schemaresponseerror)|
 |403|[Forbidden](https://tools.ietf.org/html/rfc7231#section-6.5.3)|O token tem escopo incorreto ou uma política de segurança foi violada|[ResponseError](#schemaresponseerror)|
@@ -576,66 +590,69 @@ To perform this operation, you must be authenticated by means of one of the foll
 OpenId ( Scopes: openid ) & OAuth2Security ( Scopes: consent:consentId customers )
 </aside>
 
-<h2 id="api-customers-v100-obtem-os-registros-de-identificacao-da-pessoa-juridica">Obtém os registros de identificação da pessoa jurídica.</h2>
+## Obtém os registros de identificação da pessoa jurídica.
 
 <a id="opIdcustomersGetBusinessIdentifications"></a>
 
 > Code samples
 
 ```javascript
-const data = null;
 
-const xhr = new XMLHttpRequest();
-xhr.withCredentials = true;
+const headers = {
+  'Accept':'application/json',
+  'Authorization':'string',
+  'x-fapi-auth-date':'stringstringstringstringstrin',
+  'x-fapi-customer-ip-address':'string',
+  'x-fapi-interaction-id':'string',
+  'x-customer-user-agent':'string'
+};
 
-xhr.addEventListener("readystatechange", function () {
-  if (this.readyState === this.DONE) {
-    console.log(this.responseText);
-  }
+fetch('https://api.seguro.com.br/open-insurance/customers/v1/business/identifications',
+{
+  method: 'GET',
+
+  headers: headers
+})
+.then(function(res) {
+    return res.json();
+}).then(function(body) {
+    console.log(body);
 });
 
-xhr.open("GET", "https://api.seguro.com.br/open-insurance/customers/v1/business/identifications");
-xhr.setRequestHeader("Accept", "application/json");
-xhr.setRequestHeader("Authorization", "string");
-xhr.setRequestHeader("x-fapi-auth-date", "stringstringstringstringstrin");
-xhr.setRequestHeader("x-fapi-customer-ip-address", "string");
-xhr.setRequestHeader("x-fapi-interaction-id", "string");
-xhr.setRequestHeader("x-customer-user-agent", "string");
-
-xhr.send(data);
 ```
 
 ```python
-import http.client
-
-conn = http.client.HTTPSConnection("api.seguro.com.br")
-
+import requests
 headers = {
-    'Accept': "application/json",
-    'Authorization': "string",
-    'x-fapi-auth-date': "stringstringstringstringstrin",
-    'x-fapi-customer-ip-address': "string",
-    'x-fapi-interaction-id': "string",
-    'x-customer-user-agent': "string"
-    }
+  'Accept': 'application/json',
+  'Authorization': 'string',
+  'x-fapi-auth-date': 'stringstringstringstringstrin',
+  'x-fapi-customer-ip-address': 'string',
+  'x-fapi-interaction-id': 'string',
+  'x-customer-user-agent': 'string'
+}
 
-conn.request("GET", "/open-insurance/customers/v1/business/identifications", headers=headers)
+r = requests.get('https://api.seguro.com.br/open-insurance/customers/v1/business/identifications', headers = headers)
 
-res = conn.getresponse()
-data = res.read()
+print(r.json())
 
-print(data.decode("utf-8"))
 ```
 
 ```java
-HttpResponse<String> response = Unirest.get("https://api.seguro.com.br/open-insurance/customers/v1/business/identifications")
-  .header("Accept", "application/json")
-  .header("Authorization", "string")
-  .header("x-fapi-auth-date", "stringstringstringstringstrin")
-  .header("x-fapi-customer-ip-address", "string")
-  .header("x-fapi-interaction-id", "string")
-  .header("x-customer-user-agent", "string")
-  .asString();
+URL obj = new URL("https://api.seguro.com.br/open-insurance/customers/v1/business/identifications");
+HttpURLConnection con = (HttpURLConnection) obj.openConnection();
+con.setRequestMethod("GET");
+int responseCode = con.getResponseCode();
+BufferedReader in = new BufferedReader(
+    new InputStreamReader(con.getInputStream()));
+String inputLine;
+StringBuffer response = new StringBuffer();
+while ((inputLine = in.readLine()) != null) {
+    response.append(inputLine);
+}
+in.close();
+System.out.println(response.toString());
+
 ```
 
 `GET /business/identifications`
@@ -725,16 +742,15 @@ Método para obter os registros de identificação da pessoa jurídica mantidos 
     }
   ],
   "links": {
-    "self": "https://api.seguro.com.br/open-insurance/customer/v1",
-    "first": "https://api.seguro.com.br/open-insurance/customer/v1",
-    "prev": "https://api.seguro.com.br/open-insurance/customer/v1",
-    "next": "https://api.seguro.com.br/open-insurance/customer/v1",
-    "last": "https://api.seguro.com.br/open-insurance/customer/v1"
+    "self": "https://api.organizacao.com.br/open-insurance/customer/v1/personal/identifications",
+    "first": "https://api.organizacao.com.br/open-insurance/customer/v1/personal/identifications",
+    "prev": "https://api.organizacao.com.br/open-insurance/customer/v1/personal/identifications",
+    "next": "https://api.organizacao.com.br/open-insurance/customer/v1/personal/identifications",
+    "last": "https://api.organizacao.com.br/open-insurance/customer/v1/personal/identifications"
   },
   "meta": {
     "totalRecords": 1,
-    "totalPages": 1,
-    "requestDateTime": "2021-05-21T08:30:00Z"
+    "totalPages": 1
   }
 }
 ```
@@ -744,6 +760,7 @@ Método para obter os registros de identificação da pessoa jurídica mantidos 
 |Status|Meaning|Description|Schema|
 |---|---|---|---|
 |200|[OK](https://tools.ietf.org/html/rfc7231#section-6.3.1)|Dados sobre identificação pessoa jurídica|[ResponseBusinessCustomersIdentification](#schemaresponsebusinesscustomersidentification)|
+|204|[No Content](https://tools.ietf.org/html/rfc7231#section-6.3.5)|O recurso solicitado não existe ou não foi localizado.|[ResponseError](#schemaresponseerror)|
 |400|[Bad Request](https://tools.ietf.org/html/rfc7231#section-6.5.1)|A requisição foi malformada, omitindo atributos obrigatórios, seja no payload ou através de atributos na URL.|[ResponseError](#schemaresponseerror)|
 |401|[Unauthorized](https://tools.ietf.org/html/rfc7235#section-3.1)|Cabeçalho de autenticação ausente/inválido ou token inválido|[ResponseError](#schemaresponseerror)|
 |403|[Forbidden](https://tools.ietf.org/html/rfc7231#section-6.5.3)|O token tem escopo incorreto ou uma política de segurança foi violada|[ResponseError](#schemaresponseerror)|
@@ -766,66 +783,69 @@ To perform this operation, you must be authenticated by means of one of the foll
 OpenId ( Scopes: openid ) & OAuth2Security ( Scopes: consent:consentId customers )
 </aside>
 
-<h2 id="api-customers-v100-obtem-os-registros-de-qualificacao-da-pessoa-juridica">Obtém os registros de qualificação da pessoa jurídica.</h2>
+## Obtém os registros de qualificação da pessoa jurídica.
 
 <a id="opIdcustomersGetBusinessQualifications"></a>
 
 > Code samples
 
 ```javascript
-const data = null;
 
-const xhr = new XMLHttpRequest();
-xhr.withCredentials = true;
+const headers = {
+  'Accept':'application/json',
+  'Authorization':'string',
+  'x-fapi-auth-date':'stringstringstringstringstrin',
+  'x-fapi-customer-ip-address':'string',
+  'x-fapi-interaction-id':'string',
+  'x-customer-user-agent':'string'
+};
 
-xhr.addEventListener("readystatechange", function () {
-  if (this.readyState === this.DONE) {
-    console.log(this.responseText);
-  }
+fetch('https://api.seguro.com.br/open-insurance/customers/v1/business/qualifications',
+{
+  method: 'GET',
+
+  headers: headers
+})
+.then(function(res) {
+    return res.json();
+}).then(function(body) {
+    console.log(body);
 });
 
-xhr.open("GET", "https://api.seguro.com.br/open-insurance/customers/v1/business/qualifications");
-xhr.setRequestHeader("Accept", "application/json");
-xhr.setRequestHeader("Authorization", "string");
-xhr.setRequestHeader("x-fapi-auth-date", "stringstringstringstringstrin");
-xhr.setRequestHeader("x-fapi-customer-ip-address", "string");
-xhr.setRequestHeader("x-fapi-interaction-id", "string");
-xhr.setRequestHeader("x-customer-user-agent", "string");
-
-xhr.send(data);
 ```
 
 ```python
-import http.client
-
-conn = http.client.HTTPSConnection("api.seguro.com.br")
-
+import requests
 headers = {
-    'Accept': "application/json",
-    'Authorization': "string",
-    'x-fapi-auth-date': "stringstringstringstringstrin",
-    'x-fapi-customer-ip-address': "string",
-    'x-fapi-interaction-id': "string",
-    'x-customer-user-agent': "string"
-    }
+  'Accept': 'application/json',
+  'Authorization': 'string',
+  'x-fapi-auth-date': 'stringstringstringstringstrin',
+  'x-fapi-customer-ip-address': 'string',
+  'x-fapi-interaction-id': 'string',
+  'x-customer-user-agent': 'string'
+}
 
-conn.request("GET", "/open-insurance/customers/v1/business/qualifications", headers=headers)
+r = requests.get('https://api.seguro.com.br/open-insurance/customers/v1/business/qualifications', headers = headers)
 
-res = conn.getresponse()
-data = res.read()
+print(r.json())
 
-print(data.decode("utf-8"))
 ```
 
 ```java
-HttpResponse<String> response = Unirest.get("https://api.seguro.com.br/open-insurance/customers/v1/business/qualifications")
-  .header("Accept", "application/json")
-  .header("Authorization", "string")
-  .header("x-fapi-auth-date", "stringstringstringstringstrin")
-  .header("x-fapi-customer-ip-address", "string")
-  .header("x-fapi-interaction-id", "string")
-  .header("x-customer-user-agent", "string")
-  .asString();
+URL obj = new URL("https://api.seguro.com.br/open-insurance/customers/v1/business/qualifications");
+HttpURLConnection con = (HttpURLConnection) obj.openConnection();
+con.setRequestMethod("GET");
+int responseCode = con.getResponseCode();
+BufferedReader in = new BufferedReader(
+    new InputStreamReader(con.getInputStream()));
+String inputLine;
+StringBuffer response = new StringBuffer();
+while ((inputLine = in.readLine()) != null) {
+    response.append(inputLine);
+}
+in.close();
+System.out.println(response.toString());
+
 ```
 
 `GET /business/qualifications`
@@ -856,27 +876,26 @@ Método para obter os registros de qualificação da pessoa jurídica mantidos n
       "informedRevenue": {
         "incomeFrequency": "MENSAL",
         "currency": "BRL",
-        "amount": 100000.04,
+        "amount": "100000.04",
         "year": "2010"
       },
       "informedPatrimony": {
         "currency": "BRL",
-        "amount": 100000.04,
-        "year": "2010"
+        "amount": "100000.04",
+        "date": "2012-05-21"
       }
     }
   ],
   "links": {
-    "self": "https://api.seguro.com.br/open-insurance/customer/v1",
-    "first": "https://api.seguro.com.br/open-insurance/customer/v1",
-    "prev": "https://api.seguro.com.br/open-insurance/customer/v1",
-    "next": "https://api.seguro.com.br/open-insurance/customer/v1",
-    "last": "https://api.seguro.com.br/open-insurance/customer/v1"
+    "self": "https://api.organizacao.com.br/open-insurance/customer/v1/personal/identifications",
+    "first": "https://api.organizacao.com.br/open-insurance/customer/v1/personal/identifications",
+    "prev": "https://api.organizacao.com.br/open-insurance/customer/v1/personal/identifications",
+    "next": "https://api.organizacao.com.br/open-insurance/customer/v1/personal/identifications",
+    "last": "https://api.organizacao.com.br/open-insurance/customer/v1/personal/identifications"
   },
   "meta": {
     "totalRecords": 1,
-    "totalPages": 1,
-    "requestDateTime": "2021-05-21T08:30:00Z"
+    "totalPages": 1
   }
 }
 ```
@@ -886,6 +905,7 @@ Método para obter os registros de qualificação da pessoa jurídica mantidos n
 |Status|Meaning|Description|Schema|
 |---|---|---|---|
 |200|[OK](https://tools.ietf.org/html/rfc7231#section-6.3.1)|Dados sobre qualificação pessoa jurídica|[ResponseBusinessCustomersQualification](#schemaresponsebusinesscustomersqualification)|
+|204|[No Content](https://tools.ietf.org/html/rfc7231#section-6.3.5)|O recurso solicitado não existe ou não foi localizado.|[ResponseError](#schemaresponseerror)|
 |400|[Bad Request](https://tools.ietf.org/html/rfc7231#section-6.5.1)|A requisição foi malformada, omitindo atributos obrigatórios, seja no payload ou através de atributos na URL.|[ResponseError](#schemaresponseerror)|
 |401|[Unauthorized](https://tools.ietf.org/html/rfc7235#section-3.1)|Cabeçalho de autenticação ausente/inválido ou token inválido|[ResponseError](#schemaresponseerror)|
 |403|[Forbidden](https://tools.ietf.org/html/rfc7231#section-6.5.3)|O token tem escopo incorreto ou uma política de segurança foi violada|[ResponseError](#schemaresponseerror)|
@@ -908,66 +928,69 @@ To perform this operation, you must be authenticated by means of one of the foll
 OpenId ( Scopes: openid ) & OAuth2Security ( Scopes: consent:consentId customers )
 </aside>
 
-<h2 id="api-customers-v100-obtem-os-registros-de-relacionamentos-com-a-instituicao-e-de-representantes-da-pessoa-juridica">Obtém os registros de relacionamentos com a instituição e de representantes da pessoa jurídica.</h2>
+## Obtém os registros de relacionamentos com a instituição e de representantes da pessoa jurídica.
 
 <a id="opIdcustomersGetBusinessComplimentaryInformation"></a>
 
 > Code samples
 
 ```javascript
-const data = null;
 
-const xhr = new XMLHttpRequest();
-xhr.withCredentials = true;
+const headers = {
+  'Accept':'application/json',
+  'Authorization':'string',
+  'x-fapi-auth-date':'stringstringstringstringstrin',
+  'x-fapi-customer-ip-address':'string',
+  'x-fapi-interaction-id':'string',
+  'x-customer-user-agent':'string'
+};
 
-xhr.addEventListener("readystatechange", function () {
-  if (this.readyState === this.DONE) {
-    console.log(this.responseText);
-  }
+fetch('https://api.seguro.com.br/open-insurance/customers/v1/business/complimentary-information',
+{
+  method: 'GET',
+
+  headers: headers
+})
+.then(function(res) {
+    return res.json();
+}).then(function(body) {
+    console.log(body);
 });
 
-xhr.open("GET", "https://api.seguro.com.br/open-insurance/customers/v1/business/complimentary-information");
-xhr.setRequestHeader("Accept", "application/json");
-xhr.setRequestHeader("Authorization", "string");
-xhr.setRequestHeader("x-fapi-auth-date", "stringstringstringstringstrin");
-xhr.setRequestHeader("x-fapi-customer-ip-address", "string");
-xhr.setRequestHeader("x-fapi-interaction-id", "string");
-xhr.setRequestHeader("x-customer-user-agent", "string");
-
-xhr.send(data);
 ```
 
 ```python
-import http.client
-
-conn = http.client.HTTPSConnection("api.seguro.com.br")
-
+import requests
 headers = {
-    'Accept': "application/json",
-    'Authorization': "string",
-    'x-fapi-auth-date': "stringstringstringstringstrin",
-    'x-fapi-customer-ip-address': "string",
-    'x-fapi-interaction-id': "string",
-    'x-customer-user-agent': "string"
-    }
+  'Accept': 'application/json',
+  'Authorization': 'string',
+  'x-fapi-auth-date': 'stringstringstringstringstrin',
+  'x-fapi-customer-ip-address': 'string',
+  'x-fapi-interaction-id': 'string',
+  'x-customer-user-agent': 'string'
+}
 
-conn.request("GET", "/open-insurance/customers/v1/business/complimentary-information", headers=headers)
+r = requests.get('https://api.seguro.com.br/open-insurance/customers/v1/business/complimentary-information', headers = headers)
 
-res = conn.getresponse()
-data = res.read()
+print(r.json())
 
-print(data.decode("utf-8"))
 ```
 
 ```java
-HttpResponse<String> response = Unirest.get("https://api.seguro.com.br/open-insurance/customers/v1/business/complimentary-information")
-  .header("Accept", "application/json")
-  .header("Authorization", "string")
-  .header("x-fapi-auth-date", "stringstringstringstringstrin")
-  .header("x-fapi-customer-ip-address", "string")
-  .header("x-fapi-interaction-id", "string")
-  .header("x-customer-user-agent", "string")
-  .asString();
+URL obj = new URL("https://api.seguro.com.br/open-insurance/customers/v1/business/complimentary-information");
+HttpURLConnection con = (HttpURLConnection) obj.openConnection();
+con.setRequestMethod("GET");
+int responseCode = con.getResponseCode();
+BufferedReader in = new BufferedReader(
+    new InputStreamReader(con.getInputStream()));
+String inputLine;
+StringBuffer response = new StringBuffer();
+while ((inputLine = in.readLine()) != null) {
+    response.append(inputLine);
+}
+in.close();
+System.out.println(response.toString());
+
 ```
 
 `GET /business/complimentary-information`
@@ -1013,16 +1036,15 @@ Método para obter registros de relacionamentos com a instituição e de represe
     }
   ],
   "links": {
-    "self": "https://api.seguro.com.br/open-insurance/customer/v1",
-    "first": "https://api.seguro.com.br/open-insurance/customer/v1",
-    "prev": "https://api.seguro.com.br/open-insurance/customer/v1",
-    "next": "https://api.seguro.com.br/open-insurance/customer/v1",
-    "last": "https://api.seguro.com.br/open-insurance/customer/v1"
+    "self": "https://api.organizacao.com.br/open-insurance/customer/v1/personal/identifications",
+    "first": "https://api.organizacao.com.br/open-insurance/customer/v1/personal/identifications",
+    "prev": "https://api.organizacao.com.br/open-insurance/customer/v1/personal/identifications",
+    "next": "https://api.organizacao.com.br/open-insurance/customer/v1/personal/identifications",
+    "last": "https://api.organizacao.com.br/open-insurance/customer/v1/personal/identifications"
   },
   "meta": {
     "totalRecords": 1,
-    "totalPages": 1,
-    "requestDateTime": "2021-05-21T08:30:00Z"
+    "totalPages": 1
   }
 }
 ```
@@ -1032,6 +1054,7 @@ Método para obter registros de relacionamentos com a instituição e de represe
 |Status|Meaning|Description|Schema|
 |---|---|---|---|
 |200|[OK](https://tools.ietf.org/html/rfc7231#section-6.3.1)|Dados sobre relacionamento pessoa jurídica|[ResponseBusinessCustomersComplimentaryInformation](#schemaresponsebusinesscustomerscomplimentaryinformation)|
+|204|[No Content](https://tools.ietf.org/html/rfc7231#section-6.3.5)|O recurso solicitado não existe ou não foi localizado.|[ResponseError](#schemaresponseerror)|
 |400|[Bad Request](https://tools.ietf.org/html/rfc7231#section-6.5.1)|A requisição foi malformada, omitindo atributos obrigatórios, seja no payload ou através de atributos na URL.|[ResponseError](#schemaresponseerror)|
 |401|[Unauthorized](https://tools.ietf.org/html/rfc7235#section-3.1)|Cabeçalho de autenticação ausente/inválido ou token inválido|[ResponseError](#schemaresponseerror)|
 |403|[Forbidden](https://tools.ietf.org/html/rfc7231#section-6.5.3)|O token tem escopo incorreto ou uma política de segurança foi violada|[ResponseError](#schemaresponseerror)|

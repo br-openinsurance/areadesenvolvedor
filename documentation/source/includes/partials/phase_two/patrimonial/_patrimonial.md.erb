@@ -27,12 +27,13 @@ Release Notes:
 - <a href="./1.3.0.html#patrimonial-insurance-patrimonial">03/03/2023 </a>
 
 
-<h2 id="api-patrimonial-v1.1.0-orientacoes">Orientações</h2>
+## Orientações
+
 A `Role`  do diretório de participantes relacionada à presente API é a `DADOS`.
 
 Para todos os `endpoints` desta API é previsto o envio de um `token` através do header `Authorization`.
 
-Este `token` deverá estar relacionado ao consentimento (identificado pelo `consentId`) mantido na instituição transmissora dos dados, o qual permitirá a pesquisa e retorno, na API em questão, dos
+Este `token` deverá estar relacionado ao consentimento (identificado pelo `consentId`) mantido na instituição transmissora dos dados, o qual permitirá a pesquisa e retorno, na API em questão, dos 
 dados relacionados ao `consentId` específico.
 
 Os dados serão devolvidos na consulta desde que o `consentId` relacionado corresponda a um consentimento válido e com o status `AUTHORISED`.
@@ -43,33 +44,33 @@ Além disso, as `permissions` necessárias deverão ter sido solicitadas quando 
 
 Relacionamos a seguir as `permissions` necessárias para a consulta de dados em cada `endpoint` da presente API.
 
-<h2 id="api-patrimonial-v1.1.0-permissions-necessárias-para-a-api-insurancepatrimonial">Permissions necessárias para a API InsurancePatrimonial</h2>
+## Permissions necessárias para a API InsurancePatrimonial
 
 Para cada um dos `paths` desta API, além dos escopos (`scopes`) indicados existem `permissions` que deverão ser observadas:
 
 ### `/`
   - permissions:
     - GET: **DAMAGES_AND_PEOPLE_PATRIMONIAL_READ**
+
 ### `/{policyId}/policy-info`
   - permissions:
     - GET: **DAMAGES_AND_PEOPLE_PATRIMONIAL_POLICYINFO_READ**
+
 ### `/{policyId}/premium`
   - permissions:
     - GET: **DAMAGES_AND_PEOPLE_PATRIMONIAL_PREMIUM_READ**
+
 ### `/{policyId}/claim`
   - permissions:
     - GET: **DAMAGES_AND_PEOPLE_PATRIMONIAL_CLAIM_READ**
 
 Base URLs:
 
-Servidor de Produção </br>
 * <a href="https://api.organizacao.com.br/open-insurance/insurance-patrimonial/v1">https://api.organizacao.com.br/open-insurance/insurance-patrimonial/v1</a>
 
-Servidor de Homologação </br>
-* <a href="https://apih.organizacao.com.br/open-insurance/insurance-patrimonial/v1">https://apih.organizacao.com.br/open-insurance/insurance-patrimonial/v1</a>
+* <a href="https://api.organizacao.com.br/open-insurance/insurance-patrimonial/v1">https://api.organizacao.com.br/open-insurance/insurance-patrimonial/v1</a>
 
-
-Web: <a href="https://openinsurance.susep.gov.br/documentos-de-referencia/">Governança do Open Insurance Brasil</a>
+Web: <a href="https://www.gov.br/susep/">Governança do Open Insurance Brasil</a> 
 
 ### Authentication
 
@@ -83,73 +84,52 @@ Web: <a href="https://openinsurance.susep.gov.br/documentos-de-referencia/">Gove
 |---|---|
 |insurance-patrimonial|Escopo necessário para acesso à API. O controle dos endpoints específicos é feito via permissions.|
 
-<h2 id="api-patrimonial-v1.1.0-obtem-a-lista-de-identificacao-de-insurancepatrimonial">Obtem a lista de identificação de InsurancePatrimonial</h2>
+
+## Obtem a lista de identificação de InsurancePatrimonial
 
 <a id="opIdgetInsurancePatrimonial"></a>
 
 > Code samples
 
-```javascript
-const data = null;
-
-const xhr = new XMLHttpRequest();
-xhr.withCredentials = true;
-
-xhr.addEventListener("readystatechange", function () {
-  if (this.readyState === this.DONE) {
-    console.log(this.responseText);
-  }
-});
-
-xhr.open("GET", "https://api.organizacao.com.br/open-insurance/insurance-patrimonial/v1/");
-xhr.setRequestHeader("Accept", "application/json");
-xhr.setRequestHeader("Authorization", "string");
-xhr.setRequestHeader("x-fapi-auth-date", "stringstringstringstringstrin");
-xhr.setRequestHeader("x-fapi-customer-ip-address", "string");
-xhr.setRequestHeader("x-fapi-interaction-id", "string");
-xhr.setRequestHeader("x-customer-user-agent", "string");
-
-xhr.send(data);
-```
-
 ```python
-import http.client
-
-conn = http.client.HTTPSConnection("api.organizacao.com.br")
-
+import requests
 headers = {
-    'Accept': "application/json",
-    'Authorization': "string",
-    'x-fapi-auth-date': "stringstringstringstringstrin",
-    'x-fapi-customer-ip-address': "string",
-    'x-fapi-interaction-id': "string",
-    'x-customer-user-agent': "string"
-    }
+  'Accept': 'application/json',
+  'Authorization': 'string',
+  'x-fapi-auth-date': 'stringstringstringstringstrin',
+  'x-fapi-customer-ip-address': 'string',
+  'x-fapi-interaction-id': 'string',
+  'x-customer-user-agent': 'string'
+}
 
-conn.request("GET", "/open-insurance/insurance-patrimonial/v1/", headers=headers)
+r = requests.get('https://api.organizacao.com.br/open-insurance/insurance-patrimonial/v1/insurance-patrimonial', headers = headers)
 
-res = conn.getresponse()
-data = res.read()
+print(r.json())
 
-print(data.decode("utf-8"))
 ```
 
 ```java
-HttpResponse<String> response = Unirest.get("https://api.organizacao.com.br/open-insurance/insurance-patrimonial/v1/")
-  .header("Accept", "application/json")
-  .header("Authorization", "string")
-  .header("x-fapi-auth-date", "stringstringstringstringstrin")
-  .header("x-fapi-customer-ip-address", "string")
-  .header("x-fapi-interaction-id", "string")
-  .header("x-customer-user-agent", "string")
-  .asString();
+URL obj = new URL("https://api.organizacao.com.br/open-insurance/insurance-patrimonial/v1/insurance-patrimonial");
+HttpURLConnection con = (HttpURLConnection) obj.openConnection();
+con.setRequestMethod("GET");
+int responseCode = con.getResponseCode();
+BufferedReader in = new BufferedReader(
+    new InputStreamReader(con.getInputStream()));
+String inputLine;
+StringBuffer response = new StringBuffer();
+while ((inputLine = in.readLine()) != null) {
+    response.append(inputLine);
+}
+in.close();
+System.out.println(response.toString());
+
 ```
 
 `GET /insurance-patrimonial`
 
 Método para obter a lista de identificação de InsurancePatrimonial
 
-<h3 id="obtem-a-lista-de-identificacao-de-insurancepatrimonial-parameters">Parameters</h3>
+<h3 id="obtem-a-lista-de-identificação-de-insurancepatrimonial-parameters">Parameters</h3>
 
 |Name|In|Type|Required|Description|
 |---|---|---|---|---|
@@ -195,18 +175,19 @@ Método para obter a lista de identificação de InsurancePatrimonial
 }
 ```
 
-<h3 id="obtem-a-lista-de-identificacao-de-insurancepatrimonial-responses">Responses</h3>
+<h3 id="obtem-a-lista-de-identificação-de-insurancepatrimonial-responses">Responses</h3>
 
 |Status|Meaning|Description|Schema|
 |---|---|---|---|
 |200|[OK](https://tools.ietf.org/html/rfc7231#section-6.3.1)|Dados de ResponseInsurancePatrimonial obtidos com sucesso|[ResponseInsurancePatrimonial](#schemaresponseinsurancepatrimonial)|
-|400|[Bad Request](https://tools.ietf.org/html/rfc7231#section-6.5.1)|A requisição foi malformada, omitindo atributos obrigatórios, seja no payload ou através de atributos na URL|[ResponseError](#schemaresponseerror)|
+|204|[No Content](https://tools.ietf.org/html/rfc7231#section-6.3.5)|O recurso solicitado não existe ou não foi localizado.|[ResponseError](#schemaresponseerror)|
+|400|[Bad Request](https://tools.ietf.org/html/rfc7231#section-6.5.1)|A requisição foi malformada, omitindo atributos obrigatórios, seja no payload ou através de atributos na URL.|[ResponseError](#schemaresponseerror)|
 |401|[Unauthorized](https://tools.ietf.org/html/rfc7235#section-3.1)|Cabeçalho de autenticação ausente/inválido ou token inválido|[ResponseError](#schemaresponseerror)|
 |403|[Forbidden](https://tools.ietf.org/html/rfc7231#section-6.5.3)|O token tem escopo incorreto ou uma política de segurança foi violada|[ResponseError](#schemaresponseerror)|
 |404|[Not Found](https://tools.ietf.org/html/rfc7231#section-6.5.4)|O recurso solicitado não existe ou não foi implementado|[ResponseError](#schemaresponseerror)|
 |405|[Method Not Allowed](https://tools.ietf.org/html/rfc7231#section-6.5.5)|O consumidor tentou acessar o recurso com um método não suportado|[ResponseError](#schemaresponseerror)|
 |406|[Not Acceptable](https://tools.ietf.org/html/rfc7231#section-6.5.6)|A solicitação continha um cabeçalho Accept diferente dos tipos de mídia permitidos ou um conjunto de caracteres diferente de UTF-8|[ResponseError](#schemaresponseerror)|
-|422|[Unprocessable Entity](https://tools.ietf.org/html/rfc2518#section-10.3)|O servidor entende o tipo de conteúdo da entidade da requisição, e a sintaxe da requisição esta correta, mas não foi possível processar as instruções presentes|[ResponseError](#schemaresponseerror)|
+|422|[Unprocessable Entity](https://tools.ietf.org/html/rfc2518#section-10.3)|O servidor entende o tipo de conteúdo da entidade da requisição, e a sintaxe da requisição esta correta, mas não foi possível processar as instruções presente.|[ResponseError](#schemaresponseerror)|
 |429|[Too Many Requests](https://tools.ietf.org/html/rfc6585#section-4)|A operação foi recusada, pois muitas solicitações foram feitas dentro de um determinado período ou o limite global de requisições concorrentes foi atingido|[ResponseError](#schemaresponseerror)|
 |500|[Internal Server Error](https://tools.ietf.org/html/rfc7231#section-6.6.1)|Ocorreu um erro no gateway da API ou no microsserviço|[ResponseError](#schemaresponseerror)|
 |default|Default|Erro inesperado.|[ResponseError](#schemaresponseerror)|
@@ -222,73 +203,51 @@ To perform this operation, you must be authenticated by means of one of the foll
 OpenId ( Scopes: openid ) & OAuth2Security ( Scopes: consent:consentId insurance-patrimonial )
 </aside>
 
-<h2 id="api-patrimonial-v1.1.0-obtem-as-informacoes-gerais-da-apolice-identificada-por-policyid">Obtém as informações gerais da apólice identificada por {policyId}</h2>
+## Obtém as informações gerais da apólice identificada por {policyId}
 
 <a id="opIdgetInsurancePatrimonialpolicyIdPolicyInfo"></a>
 
 > Code samples
 
-```javascript
-const data = null;
-
-const xhr = new XMLHttpRequest();
-xhr.withCredentials = true;
-
-xhr.addEventListener("readystatechange", function () {
-  if (this.readyState === this.DONE) {
-    console.log(this.responseText);
-  }
-});
-
-xhr.open("GET", "https://api.organizacao.com.br/open-insurance/insurance-patrimonial/v1/string/policy-info");
-xhr.setRequestHeader("Accept", "application/json");
-xhr.setRequestHeader("Authorization", "string");
-xhr.setRequestHeader("x-fapi-auth-date", "stringstringstringstringstrin");
-xhr.setRequestHeader("x-fapi-customer-ip-address", "string");
-xhr.setRequestHeader("x-fapi-interaction-id", "string");
-xhr.setRequestHeader("x-customer-user-agent", "string");
-
-xhr.send(data);
-```
-
 ```python
-import http.client
-
-conn = http.client.HTTPSConnection("api.organizacao.com.br")
-
+import requests
 headers = {
-    'Accept': "application/json",
-    'Authorization': "string",
-    'x-fapi-auth-date': "stringstringstringstringstrin",
-    'x-fapi-customer-ip-address': "string",
-    'x-fapi-interaction-id': "string",
-    'x-customer-user-agent': "string"
-    }
+  'Accept': 'application/json',
+  'Authorization': 'string',
+  'x-fapi-auth-date': 'stringstringstringstringstrin',
+  'x-fapi-customer-ip-address': 'string',
+  'x-fapi-interaction-id': 'string',
+  'x-customer-user-agent': 'string'
+}
 
-conn.request("GET", "/open-insurance/insurance-patrimonial/v1/string/policy-info", headers=headers)
+r = requests.get('https://api.organizacao.com.br/open-insurance/insurance-patrimonial/v1/insurance-patrimonial/{policyId}/policy-info', headers = headers)
 
-res = conn.getresponse()
-data = res.read()
+print(r.json())
 
-print(data.decode("utf-8"))
 ```
 
 ```java
-HttpResponse<String> response = Unirest.get("https://api.organizacao.com.br/open-insurance/insurance-patrimonial/v1/string/policy-info")
-  .header("Accept", "application/json")
-  .header("Authorization", "string")
-  .header("x-fapi-auth-date", "stringstringstringstringstrin")
-  .header("x-fapi-customer-ip-address", "string")
-  .header("x-fapi-interaction-id", "string")
-  .header("x-customer-user-agent", "string")
-  .asString();
+URL obj = new URL("https://api.organizacao.com.br/open-insurance/insurance-patrimonial/v1/insurance-patrimonial/{policyId}/policy-info");
+HttpURLConnection con = (HttpURLConnection) obj.openConnection();
+con.setRequestMethod("GET");
+int responseCode = con.getResponseCode();
+BufferedReader in = new BufferedReader(
+    new InputStreamReader(con.getInputStream()));
+String inputLine;
+StringBuffer response = new StringBuffer();
+while ((inputLine = in.readLine()) != null) {
+    response.append(inputLine);
+}
+in.close();
+System.out.println(response.toString());
+
 ```
 
-`GET  /insurance-patrimonial/{policyId}/policy-info`
+`GET /insurance-patrimonial/{policyId}/policy-info`
 
 Método para obter as informações gerais da apólice
 
-<h3 id="obtem-as-informacoes-gerais-da-apolice-identificada-por-policyid-parameters">Parameters</h3>
+<h3 id="obtém-as-informações-gerais-da-apólice-identificada-por-{policyid}-parameters">Parameters</h3>
 
 |Name|In|Type|Required|Description|
 |---|---|---|---|---|
@@ -311,14 +270,17 @@ Método para obter as informações gerais da apólice
     "susepProcessNumber": "string",
     "groupCertificateId": "string",
     "issuanceType": "EMISSAO_PROPRIA",
-    "issuanceDate": "AAAA-MM-DD",
-    "termStartDate": "AAAA-MM-DD",
-    "termEndDate": "AAAA-MM-DD",
+    "issuanceDate": "2022-12-31",
+    "termStartDate": "2022-12-31",
+    "termEndDate": "2022-12-31",
     "leadInsurerCode": "string",
     "leadInsurerPolicyId": "string",
     "maxLMG": {
-      "amount": 2000,
-      "currency": "BRL"
+      "amount": "2000.00",
+      "unit": {
+        "code": "R$",
+        "description": "BRL"
+      }
     },
     "proposalId": "string",
     "insureds": [
@@ -338,13 +300,7 @@ Método para obter as informações gerais da apólice
       {
         "identification": "12345678900",
         "identificationType": "CPF",
-        "name": "Nome Sobrenome",
-        "postCode": "10000000",
-        "email": "string",
-        "city": "string",
-        "state": "string",
-        "country": "BRA",
-        "address": "string"
+        "name": "Nome Sobrenome"
       }
     ],
     "principals": [
@@ -381,46 +337,55 @@ Método para obter as informações gerais da apólice
         "typeAdditionalInfo": "string",
         "description": "string",
         "amount": {
-          "amount": 2000,
-          "currency": "BRL"
+          "amount": "2000.00",
+          "unit": {
+            "code": "R$",
+            "description": "BRL"
+          }
         },
         "coverages": [
           {
-            "branch": 111,
-            "code": "LUCRO_BRUTO",
+            "branch": "0111",
+            "code": "IMOVEL_BASICA",
             "description": "string",
             "internalCode": "string",
             "susepProcessNumber": "string",
             "LMI": {
-              "amount": 2000,
-              "currency": "BRL"
+              "amount": "2000.00",
+              "unit": {
+                "code": "R$",
+                "description": "BRL"
+              }
             },
             "isLMISublimit": true,
-            "termStartDate": "AAAA-MM-DD",
-            "termEndDate": "AAAA-MM-DD",
+            "termStartDate": "2022-12-31",
+            "termEndDate": "2022-12-31",
             "isMainCoverage": true,
             "feature": "MASSIFICADOS",
             "type": "PARAMETRICO",
             "gracePeriod": 0,
             "gracePeriodicity": "DIA",
             "gracePeriodCountingMethod": "DIAS_UTEIS",
-            "gracePeriodStartDate": "AAAA-MM-DD",
-            "gracePeriodEndDate": "AAAA-MM-DD"
+            "gracePeriodStartDate": "2022-12-31",
+            "gracePeriodEndDate": "2022-12-31"
           }
         ]
       }
     ],
     "coverages": [
       {
-        "branch": 111,
-        "code": "LUCRO_BRUTO",
+        "branch": "0111",
+        "code": "IMOVEL_BASICA",
         "description": "string",
         "deductible": {
           "type": "DEDUTIVEL",
           "typeAdditionalInfo": "string",
           "amount": {
-            "amount": 2000,
-            "currency": "BRL"
+            "amount": "2000.00",
+            "unit": {
+              "code": "R$",
+              "description": "BRL"
+            }
           },
           "period": 10,
           "periodicity": "DIA",
@@ -433,22 +398,28 @@ Método para obter as informações gerais da apólice
           "applicationType": "VALOR",
           "description": "Descrição de exemplo",
           "minValue": {
-            "amount": 2000,
-            "currency": "BRL"
+            "amount": "2000.00",
+            "unit": {
+              "code": "R$",
+              "description": "BRL"
+            }
           },
           "maxValue": {
-            "amount": 2000,
-            "currency": "BRL"
+            "amount": "2000.00",
+            "unit": {
+              "code": "R$",
+              "description": "BRL"
+            }
           },
-          "percentage": 10
+          "percentage": "10.00"
         }
       }
     ],
-    "coinsuranceRetainedPercentage": "10",
+    "coinsuranceRetainedPercentage": "10.00",
     "coinsurers": [
       {
         "identification": "string",
-        "cededPercentage": 10
+        "cededPercentage": "10.00"
       }
     ],
     "branchInfo": {
@@ -478,18 +449,19 @@ Método para obter as informações gerais da apólice
 }
 ```
 
-<h3 id="obtem-as-informacoes-gerais-da-apolice-identificada-por-policyid-responses">Responses</h3>
+<h3 id="obtém-as-informações-gerais-da-apólice-identificada-por-{policyid}-responses">Responses</h3>
 
 |Status|Meaning|Description|Schema|
 |---|---|---|---|
 |200|[OK](https://tools.ietf.org/html/rfc7231#section-6.3.1)|Dados de ResponseInsurancePatrimonialPolicyInfo obtidos com sucesso|[ResponseInsurancePatrimonialPolicyInfo](#schemaresponseinsurancepatrimonialpolicyinfo)|
-|400|[Bad Request](https://tools.ietf.org/html/rfc7231#section-6.5.1)|A requisição foi malformada, omitindo atributos obrigatórios, seja no payload ou através de atributos na URL|[ResponseError](#schemaresponseerror)|
+|204|[No Content](https://tools.ietf.org/html/rfc7231#section-6.3.5)|O recurso solicitado não existe ou não foi localizado.|[ResponseError](#schemaresponseerror)|
+|400|[Bad Request](https://tools.ietf.org/html/rfc7231#section-6.5.1)|A requisição foi malformada, omitindo atributos obrigatórios, seja no payload ou através de atributos na URL.|[ResponseError](#schemaresponseerror)|
 |401|[Unauthorized](https://tools.ietf.org/html/rfc7235#section-3.1)|Cabeçalho de autenticação ausente/inválido ou token inválido|[ResponseError](#schemaresponseerror)|
 |403|[Forbidden](https://tools.ietf.org/html/rfc7231#section-6.5.3)|O token tem escopo incorreto ou uma política de segurança foi violada|[ResponseError](#schemaresponseerror)|
 |404|[Not Found](https://tools.ietf.org/html/rfc7231#section-6.5.4)|O recurso solicitado não existe ou não foi implementado|[ResponseError](#schemaresponseerror)|
 |405|[Method Not Allowed](https://tools.ietf.org/html/rfc7231#section-6.5.5)|O consumidor tentou acessar o recurso com um método não suportado|[ResponseError](#schemaresponseerror)|
 |406|[Not Acceptable](https://tools.ietf.org/html/rfc7231#section-6.5.6)|A solicitação continha um cabeçalho Accept diferente dos tipos de mídia permitidos ou um conjunto de caracteres diferente de UTF-8|[ResponseError](#schemaresponseerror)|
-|422|[Unprocessable Entity](https://tools.ietf.org/html/rfc2518#section-10.3)|O servidor entende o tipo de conteúdo da entidade da requisição, e a sintaxe da requisição esta correta, mas não foi possível processar as instruções presentes|[ResponseError](#schemaresponseerror)|
+|422|[Unprocessable Entity](https://tools.ietf.org/html/rfc2518#section-10.3)|O servidor entende o tipo de conteúdo da entidade da requisição, e a sintaxe da requisição esta correta, mas não foi possível processar as instruções presente.|[ResponseError](#schemaresponseerror)|
 |429|[Too Many Requests](https://tools.ietf.org/html/rfc6585#section-4)|A operação foi recusada, pois muitas solicitações foram feitas dentro de um determinado período ou o limite global de requisições concorrentes foi atingido|[ResponseError](#schemaresponseerror)|
 |500|[Internal Server Error](https://tools.ietf.org/html/rfc7231#section-6.6.1)|Ocorreu um erro no gateway da API ou no microsserviço|[ResponseError](#schemaresponseerror)|
 |default|Default|Erro inesperado.|[ResponseError](#schemaresponseerror)|
@@ -505,73 +477,51 @@ To perform this operation, you must be authenticated by means of one of the foll
 OpenId ( Scopes: openid ) & OAuth2Security ( Scopes: consent:consentId insurance-patrimonial )
 </aside>
 
-<h2 id="api-patrimonial-v1.1.0-obtem-os-dados-de-premio-da-apolice-identificada-por-policyid">Obtém os dados de prêmio da apólice identificada por {policyId}</h2>
+## Obtém os dados de prêmio da apólice identificada por {policyId}
 
 <a id="opIdgetInsurancePatrimonialpolicyIdPremium"></a>
 
 > Code samples
 
-```javascript
-const data = null;
-
-const xhr = new XMLHttpRequest();
-xhr.withCredentials = true;
-
-xhr.addEventListener("readystatechange", function () {
-  if (this.readyState === this.DONE) {
-    console.log(this.responseText);
-  }
-});
-
-xhr.open("GET", "https://api.organizacao.com.br/open-insurance/insurance-patrimonial/v1/string/premium");
-xhr.setRequestHeader("Accept", "application/json");
-xhr.setRequestHeader("Authorization", "string");
-xhr.setRequestHeader("x-fapi-auth-date", "stringstringstringstringstrin");
-xhr.setRequestHeader("x-fapi-customer-ip-address", "string");
-xhr.setRequestHeader("x-fapi-interaction-id", "string");
-xhr.setRequestHeader("x-customer-user-agent", "string");
-
-xhr.send(data);
-```
-
 ```python
-import http.client
-
-conn = http.client.HTTPSConnection("api.organizacao.com.br")
-
+import requests
 headers = {
-    'Accept': "application/json",
-    'Authorization': "string",
-    'x-fapi-auth-date': "stringstringstringstringstrin",
-    'x-fapi-customer-ip-address': "string",
-    'x-fapi-interaction-id': "string",
-    'x-customer-user-agent': "string"
-    }
+  'Accept': 'application/json',
+  'Authorization': 'string',
+  'x-fapi-auth-date': 'stringstringstringstringstrin',
+  'x-fapi-customer-ip-address': 'string',
+  'x-fapi-interaction-id': 'string',
+  'x-customer-user-agent': 'string'
+}
 
-conn.request("GET", "/open-insurance/insurance-patrimonial/v1/string/premium", headers=headers)
+r = requests.get('https://api.organizacao.com.br/open-insurance/insurance-patrimonial/v1/insurance-patrimonial/{policyId}/premium', headers = headers)
 
-res = conn.getresponse()
-data = res.read()
+print(r.json())
 
-print(data.decode("utf-8"))
 ```
 
 ```java
-HttpResponse<String> response = Unirest.get("https://api.organizacao.com.br/open-insurance/insurance-patrimonial/v1/string/premium")
-  .header("Accept", "application/json")
-  .header("Authorization", "string")
-  .header("x-fapi-auth-date", "stringstringstringstringstrin")
-  .header("x-fapi-customer-ip-address", "string")
-  .header("x-fapi-interaction-id", "string")
-  .header("x-customer-user-agent", "string")
-  .asString();
+URL obj = new URL("https://api.organizacao.com.br/open-insurance/insurance-patrimonial/v1/insurance-patrimonial/{policyId}/premium");
+HttpURLConnection con = (HttpURLConnection) obj.openConnection();
+con.setRequestMethod("GET");
+int responseCode = con.getResponseCode();
+BufferedReader in = new BufferedReader(
+    new InputStreamReader(con.getInputStream()));
+String inputLine;
+StringBuffer response = new StringBuffer();
+while ((inputLine = in.readLine()) != null) {
+    response.append(inputLine);
+}
+in.close();
+System.out.println(response.toString());
+
 ```
 
-`GET  /insurance-patrimonial/{policyId}/premium`
+`GET /insurance-patrimonial/{policyId}/premium`
 
 Método para obter os dados de prêmio da apólice.
 
-<h3 id="obtem-os-dados-de-premio-da-apolice-identificada-por-policyid-parameters">Parameters</h3>
+<h3 id="obtém-os-dados-de-prêmio-da-apólice-identificada-por-{policyid}-parameters">Parameters</h3>
 
 |Name|In|Type|Required|Description|
 |---|---|---|---|---|
@@ -591,31 +541,40 @@ Método para obter os dados de prêmio da apólice.
   "data": {
     "paymentsQuantity": 4,
     "amount": {
-      "amount": 2000,
-      "currency": "BRL"
+      "amount": "2000.00",
+      "unit": {
+        "code": "R$",
+        "description": "BRL"
+      }
     },
     "coverages": [
       {
-        "branch": 111,
-        "code": "LUCRO_BRUTO",
+        "branch": "0111",
+        "code": "IMOVEL_BASICA",
         "description": "string",
         "premiumAmount": {
-          "amount": 2000,
-          "currency": "BRL"
+          "amount": "2000.00",
+          "unit": {
+            "code": "R$",
+            "description": "BRL"
+          }
         }
       }
     ],
     "payments": [
       {
-        "movementDate": "AAAA-MM-DD",
+        "movementDate": "2022-12-31",
         "movementType": "LIQUIDACAO_DE_PREMIO",
         "movementOrigin": "EMISSAO_DIRETA",
         "movementPaymentsNumber": 0,
         "amount": {
-          "amount": 2000,
-          "currency": "BRL"
+          "amount": "2000.00",
+          "unit": {
+            "code": "R$",
+            "description": "BRL"
+          }
         },
-        "maturityDate": "AAAA-MM-DD",
+        "maturityDate": "2022-12-31",
         "tellerId": "string",
         "tellerIdType": "CPF",
         "tellerName": "string",
@@ -638,18 +597,19 @@ Método para obter os dados de prêmio da apólice.
 }
 ```
 
-<h3 id="obtem-os-dados-de-premio-da-apolice-identificada-por-policyid-responses">Responses</h3>
+<h3 id="obtém-os-dados-de-prêmio-da-apólice-identificada-por-{policyid}-responses">Responses</h3>
 
 |Status|Meaning|Description|Schema|
 |---|---|---|---|
 |200|[OK](https://tools.ietf.org/html/rfc7231#section-6.3.1)|Dados de ResponseInsurancePatrimonialPremium obtidos com sucesso|[ResponseInsurancePatrimonialPremium](#schemaresponseinsurancepatrimonialpremium)|
-|400|[Bad Request](https://tools.ietf.org/html/rfc7231#section-6.5.1)|A requisição foi malformada, omitindo atributos obrigatórios, seja no payload ou através de atributos na URL|[ResponseError](#schemaresponseerror)|
+|204|[No Content](https://tools.ietf.org/html/rfc7231#section-6.3.5)|O recurso solicitado não existe ou não foi localizado.|[ResponseError](#schemaresponseerror)|
+|400|[Bad Request](https://tools.ietf.org/html/rfc7231#section-6.5.1)|A requisição foi malformada, omitindo atributos obrigatórios, seja no payload ou através de atributos na URL.|[ResponseError](#schemaresponseerror)|
 |401|[Unauthorized](https://tools.ietf.org/html/rfc7235#section-3.1)|Cabeçalho de autenticação ausente/inválido ou token inválido|[ResponseError](#schemaresponseerror)|
 |403|[Forbidden](https://tools.ietf.org/html/rfc7231#section-6.5.3)|O token tem escopo incorreto ou uma política de segurança foi violada|[ResponseError](#schemaresponseerror)|
 |404|[Not Found](https://tools.ietf.org/html/rfc7231#section-6.5.4)|O recurso solicitado não existe ou não foi implementado|[ResponseError](#schemaresponseerror)|
 |405|[Method Not Allowed](https://tools.ietf.org/html/rfc7231#section-6.5.5)|O consumidor tentou acessar o recurso com um método não suportado|[ResponseError](#schemaresponseerror)|
 |406|[Not Acceptable](https://tools.ietf.org/html/rfc7231#section-6.5.6)|A solicitação continha um cabeçalho Accept diferente dos tipos de mídia permitidos ou um conjunto de caracteres diferente de UTF-8|[ResponseError](#schemaresponseerror)|
-|422|[Unprocessable Entity](https://tools.ietf.org/html/rfc2518#section-10.3)|O servidor entende o tipo de conteúdo da entidade da requisição, e a sintaxe da requisição esta correta, mas não foi possível processar as instruções presentes|[ResponseError](#schemaresponseerror)|
+|422|[Unprocessable Entity](https://tools.ietf.org/html/rfc2518#section-10.3)|O servidor entende o tipo de conteúdo da entidade da requisição, e a sintaxe da requisição esta correta, mas não foi possível processar as instruções presente.|[ResponseError](#schemaresponseerror)|
 |429|[Too Many Requests](https://tools.ietf.org/html/rfc6585#section-4)|A operação foi recusada, pois muitas solicitações foram feitas dentro de um determinado período ou o limite global de requisições concorrentes foi atingido|[ResponseError](#schemaresponseerror)|
 |500|[Internal Server Error](https://tools.ietf.org/html/rfc7231#section-6.6.1)|Ocorreu um erro no gateway da API ou no microsserviço|[ResponseError](#schemaresponseerror)|
 |default|Default|Erro inesperado.|[ResponseError](#schemaresponseerror)|
@@ -665,73 +625,51 @@ To perform this operation, you must be authenticated by means of one of the foll
 OpenId ( Scopes: openid ) & OAuth2Security ( Scopes: consent:consentId insurance-patrimonial )
 </aside>
 
-<h2 id="api-patrimonial-v1.1.0-Obtém os dados de sinistro da apólice identificada por {policyId}">Obtém os dados de sinistro da apólice identificada por {policyId}</h2>
+## Obtém os dados de sinistro da apólice identificada por {policyId}
 
 <a id="opIdgetInsurancePatrimonialpolicyIdClaims"></a>
 
 > Code samples
 
-```javascript
-const data = null;
-
-const xhr = new XMLHttpRequest();
-xhr.withCredentials = true;
-
-xhr.addEventListener("readystatechange", function () {
-  if (this.readyState === this.DONE) {
-    console.log(this.responseText);
-  }
-});
-
-xhr.open("GET", "https://api.organizacao.com.br/open-insurance/insurance-patrimonial/v1/string/claim");
-xhr.setRequestHeader("Accept", "application/json");
-xhr.setRequestHeader("Authorization", "string");
-xhr.setRequestHeader("x-fapi-auth-date", "stringstringstringstringstrin");
-xhr.setRequestHeader("x-fapi-customer-ip-address", "string");
-xhr.setRequestHeader("x-fapi-interaction-id", "string");
-xhr.setRequestHeader("x-customer-user-agent", "string");
-
-xhr.send(data);
-```
-
 ```python
-import http.client
-
-conn = http.client.HTTPSConnection("api.organizacao.com.br")
-
+import requests
 headers = {
-    'Accept': "application/json",
-    'Authorization': "string",
-    'x-fapi-auth-date': "stringstringstringstringstrin",
-    'x-fapi-customer-ip-address': "string",
-    'x-fapi-interaction-id': "string",
-    'x-customer-user-agent': "string"
-    }
+  'Accept': 'application/json',
+  'Authorization': 'string',
+  'x-fapi-auth-date': 'stringstringstringstringstrin',
+  'x-fapi-customer-ip-address': 'string',
+  'x-fapi-interaction-id': 'string',
+  'x-customer-user-agent': 'string'
+}
 
-conn.request("GET", "/open-insurance/insurance-patrimonial/v1/string/claim", headers=headers)
+r = requests.get('https://api.organizacao.com.br/open-insurance/insurance-patrimonial/v1/insurance-patrimonial/{policyId}/claim', headers = headers)
 
-res = conn.getresponse()
-data = res.read()
+print(r.json())
 
-print(data.decode("utf-8"))
 ```
 
 ```java
-HttpResponse<String> response = Unirest.get("https://api.organizacao.com.br/open-insurance/insurance-patrimonial/v1/string/claim")
-  .header("Accept", "application/json")
-  .header("Authorization", "string")
-  .header("x-fapi-auth-date", "stringstringstringstringstrin")
-  .header("x-fapi-customer-ip-address", "string")
-  .header("x-fapi-interaction-id", "string")
-  .header("x-customer-user-agent", "string")
-  .asString();
+URL obj = new URL("https://api.organizacao.com.br/open-insurance/insurance-patrimonial/v1/insurance-patrimonial/{policyId}/claim");
+HttpURLConnection con = (HttpURLConnection) obj.openConnection();
+con.setRequestMethod("GET");
+int responseCode = con.getResponseCode();
+BufferedReader in = new BufferedReader(
+    new InputStreamReader(con.getInputStream()));
+String inputLine;
+StringBuffer response = new StringBuffer();
+while ((inputLine = in.readLine()) != null) {
+    response.append(inputLine);
+}
+in.close();
+System.out.println(response.toString());
+
 ```
 
-`GET  /insurance-patrimonial/{policyId}/claim`
+`GET /insurance-patrimonial/{policyId}/claim`
 
 Método para obter os dados de sinistro associados à apólice
 
-<h3 id="obtem-os-dados-de-sinistro-da-apolice-identificada-por-policyid-parameters">Parameters</h3>
+<h3 id="obtém-os-dados-de-sinistro-da-apólice-identificada-por-{policyid}-parameters">Parameters</h3>
 
 |Name|In|Type|Required|Description|
 |---|---|---|---|---|
@@ -751,26 +689,29 @@ Método para obter os dados de sinistro associados à apólice
   "data": [
     {
       "identification": "string",
-      "documentationDeliveryDate": "AAAA-MM-DD",
+      "documentationDeliveryDate": "2022-12-31",
       "status": "ABERTO",
-      "statusAlterationDate": "AAAA-MM-DD",
-      "occurrenceDate": "AAAA-MM-DD",
-      "warningDate": "AAAA-MM-DD",
-      "thirdPartyClaimDate": "AAAA-MM-DD",
+      "statusAlterationDate": "2022-12-31",
+      "occurrenceDate": "2022-12-31",
+      "warningDate": "2022-12-31",
+      "thirdPartyClaimDate": "2022-12-31",
       "amount": {
-        "amount": 2000,
-        "currency": "BRL"
+        "amount": "2000.00",
+        "unit": {
+          "code": "R$",
+          "description": "BRL"
+        }
       },
       "denialJustification": "RISCO_EXCLUIDO",
       "denialJustificationDescription": "string",
       "coverages": [
         {
           "insuredObjectId": "string",
-          "branch": 111,
-          "code": "LUCRO_BRUTO",
+          "branch": "0111",
+          "code": "IMOVEL_BASICA",
           "description": "string",
-          "warningDate": "2022-05-01",
-          "thirdPartyClaimDate": "2022-05-01"
+          "warningDate": "2022-12-31",
+          "thirdPartyClaimDate": "2022-12-31"
         }
       ]
     }
@@ -789,19 +730,19 @@ Método para obter os dados de sinistro associados à apólice
 }
 ```
 
-<h3 id="obtem-os-dados-de-sinistro-da-apolice-identificada-por-policyid-responses">Responses</h3>
+<h3 id="obtém-os-dados-de-sinistro-da-apólice-identificada-por-{policyid}-responses">Responses</h3>
 
 |Status|Meaning|Description|Schema|
 |---|---|---|---|
 |200|[OK](https://tools.ietf.org/html/rfc7231#section-6.3.1)|Dados de ResponseInsurancePatrimonialClaims obtidos com sucesso|[ResponseInsurancePatrimonialClaims](#schemaresponseinsurancepatrimonialclaims)|
 |204|[No Content](https://tools.ietf.org/html/rfc7231#section-6.3.5)|O recurso solicitado não existe ou não foi localizado.|[ResponseError](#schemaresponseerror)|
-|400|[Bad Request](https://tools.ietf.org/html/rfc7231#section-6.5.1)|A requisição foi malformada, omitindo atributos obrigatórios, seja no payload ou através de atributos na URL|[ResponseError](#schemaresponseerror)|
+|400|[Bad Request](https://tools.ietf.org/html/rfc7231#section-6.5.1)|A requisição foi malformada, omitindo atributos obrigatórios, seja no payload ou através de atributos na URL.|[ResponseError](#schemaresponseerror)|
 |401|[Unauthorized](https://tools.ietf.org/html/rfc7235#section-3.1)|Cabeçalho de autenticação ausente/inválido ou token inválido|[ResponseError](#schemaresponseerror)|
 |403|[Forbidden](https://tools.ietf.org/html/rfc7231#section-6.5.3)|O token tem escopo incorreto ou uma política de segurança foi violada|[ResponseError](#schemaresponseerror)|
 |404|[Not Found](https://tools.ietf.org/html/rfc7231#section-6.5.4)|O recurso solicitado não existe ou não foi implementado|[ResponseError](#schemaresponseerror)|
 |405|[Method Not Allowed](https://tools.ietf.org/html/rfc7231#section-6.5.5)|O consumidor tentou acessar o recurso com um método não suportado|[ResponseError](#schemaresponseerror)|
 |406|[Not Acceptable](https://tools.ietf.org/html/rfc7231#section-6.5.6)|A solicitação continha um cabeçalho Accept diferente dos tipos de mídia permitidos ou um conjunto de caracteres diferente de UTF-8|[ResponseError](#schemaresponseerror)|
-|422|[Unprocessable Entity](https://tools.ietf.org/html/rfc2518#section-10.3)|O servidor entende o tipo de conteúdo da entidade da requisição, e a sintaxe da requisição esta correta, mas não foi possível processar as instruções presentes|[ResponseError](#schemaresponseerror)|
+|422|[Unprocessable Entity](https://tools.ietf.org/html/rfc2518#section-10.3)|O servidor entende o tipo de conteúdo da entidade da requisição, e a sintaxe da requisição esta correta, mas não foi possível processar as instruções presente.|[ResponseError](#schemaresponseerror)|
 |429|[Too Many Requests](https://tools.ietf.org/html/rfc6585#section-4)|A operação foi recusada, pois muitas solicitações foram feitas dentro de um determinado período ou o limite global de requisições concorrentes foi atingido|[ResponseError](#schemaresponseerror)|
 |500|[Internal Server Error](https://tools.ietf.org/html/rfc7231#section-6.6.1)|Ocorreu um erro no gateway da API ou no microsserviço|[ResponseError](#schemaresponseerror)|
 |default|Default|Erro inesperado.|[ResponseError](#schemaresponseerror)|

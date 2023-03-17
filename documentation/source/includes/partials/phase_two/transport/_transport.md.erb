@@ -8,9 +8,7 @@
 **Detalhamento Técnico** </br>
 <a href="files/docs/insurance-transport.docx" download="insurance-transport.docx">Download do Detalhamento Técnico</a>
 
-API de Transport do Open Insurance Brasil - Fase 2.
-
-
+API de Transportes do Open Insurance Brasil - Fase 2.
 
 Traz informações de apólice, prêmio e sinistro mantidas nas instituições transmissoras por seus clientes.
 
@@ -18,18 +16,12 @@ Não possui segregação entre pessoa natural e pessoa jurídica.
 
 Requer consentimento do cliente para todos os 'endpoints'.
 
-  Release Notes:
-
-  - <a href="./1.3.0.html#transport-insurance-transport">03/03/2023 </a>
-
-
-<h2 id="API - Transport v1.0.0-Orientações">Orientações</h2>
-
+## Orientações
 A `Role`  do diretório de participantes relacionada à presente API é a `DADOS`.
 
 Para todos os `endpoints` desta API é previsto o envio de um `token` através do header `Authorization`.
 
-Este `token` deverá estar relacionado ao consentimento (identificado pelo `consentId`) mantido na instituição transmissora dos dados, o qual permitirá a pesquisa e retorno, na API em questão, dos
+Este `token` deverá estar relacionado ao consentimento (identificado pelo `consentId`) mantido na instituição transmissora dos dados, o qual permitirá a pesquisa e retorno, na API em questão, dos 
 dados relacionados ao `consentId` específico.
 
 Os dados serão devolvidos na consulta desde que o `consentId` relacionado corresponda a um consentimento válido e com o status `AUTHORISED`.
@@ -40,38 +32,35 @@ Além disso, as `permissions` necessárias deverão ter sido solicitadas quando 
 
 Relacionamos a seguir as `permissions` necessárias para a consulta de dados em cada `endpoint` da presente API.
 
-
-
-<h2 id="API - Transport v1.0.0-Permissions necessárias para a API InsuranceTransport">Permissions necessárias para a API InsuranceTransport</h2>
+## Permissions necessárias para a API InsuranceTransport
 
 Para cada um dos `paths` desta API, além dos escopos (`scopes`) indicados existem `permissions` que deverão ser observadas:
 
 ### `/`
-    - permissions:
+  - permissions:
     - GET: **DAMAGES_AND_PEOPLE_TRANSPORT_READ**
+
 ### `/{policyId}/policy-info`
   - permissions:
     - GET: **DAMAGES_AND_PEOPLE_TRANSPORT_POLICYINFO_READ**
+
 ### `/{policyId}/premium`
   - permissions:
     - GET: **DAMAGES_AND_PEOPLE_TRANSPORT_PREMIUM_READ**
+
 ### `/{policyId}/claim`
   - permissions:
     - GET: **DAMAGES_AND_PEOPLE_TRANSPORT_CLAIM_READ**
 
 Base URLs:
 
-Servidor de Produção </br>
-* <a href="https://api.organizacao.com.br/open-insurance/insurance-transport/v1" target="_blank">https://api.organizacao.com.br/open-insurance/insurance-transport/v1</a>
+* <a href="https://api.organizacao.com.br/open-insurance/insurance-transport/v1">https://api.organizacao.com.br/open-insurance/insurance-transport/v1</a>
 
-Servidor de Homologação </br>
-* <a href="https://apih.organizacao.com.br/open-insurance/insurance-transport/v1" target="_blank">https://apih.organizacao.com.br/open-insurance/insurance-transport/v1</a>
+* <a href="https://api.organizacao.com.br/open-insurance/insurance-transport/v1">https://api.organizacao.com.br/open-insurance/insurance-transport/v1</a>
 
+Web: <a href="https://www.gov.br/susep/">Governança do Open Insurance Brasil</a> 
 
-Web: <a href="https://openinsurance.susep.gov.br/documentos-de-referencia/" target="_blank">Governança do Open Insurance Brasil</a>
-
-
-### Authentication
+## Authentication
 
 - oAuth2 authentication. Fluxo OAuth necessário para que a receptora tenha acesso aos dados na instituição transmissora. Inclui o processo de redirecionamento e autenticação do usuário a que se referem os dados.
 
@@ -79,12 +68,77 @@ Web: <a href="https://openinsurance.susep.gov.br/documentos-de-referencia/" targ
     - Authorization URL = [https://authserver.example/authorization](https://authserver.example/authorization)
     - Token URL = [https://authserver.example/token](https://authserver.example/token)
 
-
 |Scope|Scope Description|
 |---|---|
 |insurance-transport|Escopo necessário para acesso à API. O controle dos endpoints específicos é feito via permissions.|
 
-### `GET /insurance-transport/v1/`
+
+## Obtem a lista de identificação de InsuranceTransport
+
+<a id="opIdgetInsuranceTransport"></a>
+
+> Code samples
+
+```javascript
+
+const headers = {
+  'Accept':'application/json',
+  'Authorization':'string',
+  'x-fapi-auth-date':'stringstringstringstringstrin',
+  'x-fapi-customer-ip-address':'string',
+  'x-fapi-interaction-id':'string',
+  'x-customer-user-agent':'string'
+};
+
+fetch('https://api.organizacao.com.br/open-insurance/insurance-transport/v1/insurance-transport',
+{
+  method: 'GET',
+
+  headers: headers
+})
+.then(function(res) {
+    return res.json();
+}).then(function(body) {
+    console.log(body);
+});
+
+```
+
+```python
+import requests
+headers = {
+  'Accept': 'application/json',
+  'Authorization': 'string',
+  'x-fapi-auth-date': 'stringstringstringstringstrin',
+  'x-fapi-customer-ip-address': 'string',
+  'x-fapi-interaction-id': 'string',
+  'x-customer-user-agent': 'string'
+}
+
+r = requests.get('https://api.organizacao.com.br/open-insurance/insurance-transport/v1/insurance-transport', headers = headers)
+
+print(r.json())
+
+```
+
+```java
+URL obj = new URL("https://api.organizacao.com.br/open-insurance/insurance-transport/v1/insurance-transport");
+HttpURLConnection con = (HttpURLConnection) obj.openConnection();
+con.setRequestMethod("GET");
+int responseCode = con.getResponseCode();
+BufferedReader in = new BufferedReader(
+    new InputStreamReader(con.getInputStream()));
+String inputLine;
+StringBuffer response = new StringBuffer();
+while ((inputLine = in.readLine()) != null) {
+    response.append(inputLine);
+}
+in.close();
+System.out.println(response.toString());
+
+```
+
+`GET /insurance-transport`
 
 Método para obter a lista de identificação de InsuranceTransport
 
@@ -100,26 +154,56 @@ Método para obter a lista de identificação de InsuranceTransport
 |page|query|integer(int32)|false|Número da página que está sendo requisitada (o valor da primeira página é 1).|
 |page-size|query|integer(int32)|false|Quantidade total de registros por páginas.|
 
+> Example responses
 
+> 200 Response
 
-Obtém a lista dos produtos do tipo Transport
+```json
+{
+  "data": [
+    {
+      "brand": "string",
+      "companies": [
+        {
+          "companyName": "string",
+          "cnpjNumber": "12345678901234",
+          "policies": [
+            "42"
+          ]
+        }
+      ]
+    }
+  ],
+  "links": {
+    "self": "https://api.organizacao.com.br/open-insurance/insurance-transport/v1/insurance-transport",
+    "first": "https://api.organizacao.com.br/open-insurance/insurance-transport/v1/insurance-transport",
+    "prev": "https://api.organizacao.com.br/open-insurance/insurance-transport/v1/insurance-transport",
+    "next": "https://api.organizacao.com.br/open-insurance/insurance-transport/v1/insurance-transport",
+    "last": "https://api.organizacao.com.br/open-insurance/insurance-transport/v1/insurance-transport"
+  },
+  "meta": {
+    "totalRecords": 10,
+    "totalPages": 1
+  }
+}
+```
 
-### Responses
+<h3 id="obtem-a-lista-de-identificação-de-insurancetransport-responses">Responses</h3>
 
 |Status|Meaning|Description|Schema|
 |---|---|---|---|
 |200|[OK](https://tools.ietf.org/html/rfc7231#section-6.3.1)|Dados de ResponseInsuranceTransport obtidos com sucesso|[ResponseInsuranceTransport](#schemaresponseinsurancetransport)|
-|400|[Bad Request](https://tools.ietf.org/html/rfc7231#section-6.5.1)|A requisição foi malformada, omitindo atributos obrigatórios, seja no payload ou através de atributos na URL|[ResponseError](#schemaresponseerror)|
+|204|[No Content](https://tools.ietf.org/html/rfc7231#section-6.3.5)|O recurso solicitado não existe ou não foi localizado.|[ResponseError](#schemaresponseerror)|
+|400|[Bad Request](https://tools.ietf.org/html/rfc7231#section-6.5.1)|A requisição foi malformada, omitindo atributos obrigatórios, seja no payload ou através de atributos na URL.|[ResponseError](#schemaresponseerror)|
 |401|[Unauthorized](https://tools.ietf.org/html/rfc7235#section-3.1)|Cabeçalho de autenticação ausente/inválido ou token inválido|[ResponseError](#schemaresponseerror)|
 |403|[Forbidden](https://tools.ietf.org/html/rfc7231#section-6.5.3)|O token tem escopo incorreto ou uma política de segurança foi violada|[ResponseError](#schemaresponseerror)|
 |404|[Not Found](https://tools.ietf.org/html/rfc7231#section-6.5.4)|O recurso solicitado não existe ou não foi implementado|[ResponseError](#schemaresponseerror)|
 |405|[Method Not Allowed](https://tools.ietf.org/html/rfc7231#section-6.5.5)|O consumidor tentou acessar o recurso com um método não suportado|[ResponseError](#schemaresponseerror)|
 |406|[Not Acceptable](https://tools.ietf.org/html/rfc7231#section-6.5.6)|A solicitação continha um cabeçalho Accept diferente dos tipos de mídia permitidos ou um conjunto de caracteres diferente de UTF-8|[ResponseError](#schemaresponseerror)|
-|422|[Unprocessable Entity](https://tools.ietf.org/html/rfc2518#section-10.3)|O servidor entende o tipo de conteúdo da entidade da requisição, e a sintaxe da requisição esta correta, mas não foi possível processar as instruções presentes|[ResponseError](#schemaresponseerror)|
+|422|[Unprocessable Entity](https://tools.ietf.org/html/rfc2518#section-10.3)|O servidor entende o tipo de conteúdo da entidade da requisição, e a sintaxe da requisição esta correta, mas não foi possível processar as instruções presente.|[ResponseError](#schemaresponseerror)|
 |429|[Too Many Requests](https://tools.ietf.org/html/rfc6585#section-4)|A operação foi recusada, pois muitas solicitações foram feitas dentro de um determinado período ou o limite global de requisições concorrentes foi atingido|[ResponseError](#schemaresponseerror)|
 |500|[Internal Server Error](https://tools.ietf.org/html/rfc7231#section-6.6.1)|Ocorreu um erro no gateway da API ou no microsserviço|[ResponseError](#schemaresponseerror)|
 |default|Default|Erro inesperado.|[ResponseError](#schemaresponseerror)|
-
 
 ### Response Headers
 
@@ -127,18 +211,82 @@ Obtém a lista dos produtos do tipo Transport
 |---|---|---|---|---|
 |200|x-fapi-interaction-id|string||none|
 
+<aside class="warning">
+To perform this operation, you must be authenticated by means of one of the following methods:
+OpenId ( Scopes: openid ) & OAuth2Security ( Scopes: consent:consentId insurance-transport )
+</aside>
 
-<h2 id="API - Transport v1.0.0-Obtém as informações gerais da apólice identificada por {policyId}">Obtém as informações gerais da apólice identificada por {policyId}</h2>
+## Obtém as informações gerais da apólice identificada por {policyId}
 
 <a id="opIdgetInsuranceTransportpolicyIdPolicyInfo"></a>
 
-`GET  /insurance-transport/{policyId}/policy-info`
+> Code samples
+
+```javascript
+
+const headers = {
+  'Accept':'application/json',
+  'Authorization':'string',
+  'x-fapi-auth-date':'stringstringstringstringstrin',
+  'x-fapi-customer-ip-address':'string',
+  'x-fapi-interaction-id':'string',
+  'x-customer-user-agent':'string'
+};
+
+fetch('https://api.organizacao.com.br/open-insurance/insurance-transport/v1/insurance-transport/{policyId}/policy-info',
+{
+  method: 'GET',
+
+  headers: headers
+})
+.then(function(res) {
+    return res.json();
+}).then(function(body) {
+    console.log(body);
+});
+
+```
+
+```python
+import requests
+headers = {
+  'Accept': 'application/json',
+  'Authorization': 'string',
+  'x-fapi-auth-date': 'stringstringstringstringstrin',
+  'x-fapi-customer-ip-address': 'string',
+  'x-fapi-interaction-id': 'string',
+  'x-customer-user-agent': 'string'
+}
+
+r = requests.get('https://api.organizacao.com.br/open-insurance/insurance-transport/v1/insurance-transport/{policyId}/policy-info', headers = headers)
+
+print(r.json())
+
+```
+
+```java
+URL obj = new URL("https://api.organizacao.com.br/open-insurance/insurance-transport/v1/insurance-transport/{policyId}/policy-info");
+HttpURLConnection con = (HttpURLConnection) obj.openConnection();
+con.setRequestMethod("GET");
+int responseCode = con.getResponseCode();
+BufferedReader in = new BufferedReader(
+    new InputStreamReader(con.getInputStream()));
+String inputLine;
+StringBuffer response = new StringBuffer();
+while ((inputLine = in.readLine()) != null) {
+    response.append(inputLine);
+}
+in.close();
+System.out.println(response.toString());
+
+```
+
+`GET /insurance-transport/{policyId}/policy-info`
 
 Método para obter as informações gerais da apólice
 
 <h3 id="obtém-as-informações-gerais-da-apólice-identificada-por-{policyid}-parameters">Parameters</h3>
 
-
 |Name|In|Type|Required|Description|
 |---|---|---|---|---|
 |Authorization|header|string|true|Cabeçalho HTTP padrão. Permite que as credenciais sejam fornecidas dependendo do tipo de recurso solicitado.|
@@ -153,213 +301,232 @@ Método para obter as informações gerais da apólice
 > 200 Response
 
 ```json
-
 {
- "data": {
-    "documentType"       : "APOLICE_INDIVIDUAL",
-    "policyId"           : "111111",
-    "susepProcessNumber" : "string",
-    "groupCertificateId" : "string",
-    "issuanceType"       : "EMISSAO_PROPRIA",
-    "issuanceDate"       : "AAAA-MM-DD",
-    "termStartDate"      : "AAAA-MM-DD",
-    "termEndDate"        : "AAAA-MM-DD",
-    "leadInsurerCode"    : "string",
+  "data": {
+    "documentType": "APOLICE_INDIVIDUAL",
+    "policyId": "111111",
+    "susepProcessNumber": "string",
+    "groupCertificateId": "string",
+    "issuanceType": "EMISSAO_PROPRIA",
+    "issuanceDate": "2022-12-31",
+    "termStartDate": "2022-12-31",
+    "termEndDate": "2022-12-31",
+    "leadInsurerCode": "string",
     "leadInsurerPolicyId": "string",
-    "maxLMG"             : {
-    "amount"  : 2000,
-    "currency": "BRL"
+    "maxLMG": {
+      "amount": "2000.00",
+      "unit": {
+        "code": "R$",
+        "description": "BRL"
+      }
     },
     "proposalId": "string",
-    "insureds"  : [
-    {
-        "identification"    : "12345678900",
+    "insureds": [
+      {
+        "identification": "12345678900",
         "identificationType": "CPF",
-        "name"              : "Nome Sobrenome",
-        "postCode"          : "10000000",
-        "email"             : "string",
-        "city"              : "string",
-        "state"             : "string",
-        "country"           : "BRA",
-        "address"           : "string"
-    }
+        "name": "Nome Sobrenome",
+        "postCode": "10000000",
+        "email": "string",
+        "city": "string",
+        "state": "string",
+        "country": "BRA",
+        "address": "string"
+      }
     ],
-        "beneficiaries": [
-        {
-
-            "identification"    : "12345678900",
-            "identificationType": "CPF",
-            "name"              : "Nome",
-                }
-        ],
-        "principals": [
-        {
-            "identification"    : "12345678900",
-            "identificationType": "CPF",
-            "name"              : "Nome Sobrenome",
-            "postCode"          : "10000000",
-            "email"             : "string",
-            "city"              : "string",
-            "state"             : "string",
-            "country"           : "BRA",
-            "address"           : "string"
-        }
-        ],
-      "intermediaries": [
-       {
-        "type"              : "REPRESENTANTE",
-        "identification"    : "12345678900",
-        "brokerId"          : "string",
+    "beneficiaries": [
+      {
+        "identification": "12345678900",
         "identificationType": "CPF",
-        "name"              : "Nome Sobrenome",
-        "postCode"          : "10000000",
-        "city"              : "string",
-        "state"             : "string",
-        "country"           : "BRA",
-        "address"           : "string"
-       }
-      ],
-      "insuredObjects": [
-       {
-        "identification"    : "string",
-        "type"              : "CONTRATO",
+        "name": "Nome Sobrenome"
+      }
+    ],
+    "principals": [
+      {
+        "identification": "12345678900",
+        "identificationType": "CPF",
+        "name": "Nome Sobrenome",
+        "postCode": "10000000",
+        "email": "string",
+        "city": "string",
+        "state": "string",
+        "country": "BRA",
+        "address": "string"
+      }
+    ],
+    "intermediaries": [
+      {
+        "type": "REPRESENTANTE",
+        "identification": "12345678900",
+        "brokerId": "string",
+        "identificationType": "CPF",
+        "name": "Nome Sobrenome",
+        "postCode": "10000000",
+        "city": "string",
+        "state": "string",
+        "country": "BRA",
+        "address": "string"
+      }
+    ],
+    "insuredObjects": [
+      {
+        "identification": "string",
+        "type": "CONTRATO",
         "typeAdditionalInfo": "string",
-        "description"       : "string",
-        "amount"            : {
-     "amount"  : 2000,
-     "currency": "BRL"
+        "description": "string",
+        "amount": {
+          "amount": "2000.00",
+          "unit": {
+            "code": "R$",
+            "description": "BRL"
+          }
         },
         "coverages": [
-     {
-      "branch"            : "111",
-      "code"              : "ACIDENTES_PESSOAIS_COM_PASSAGEIROS",
-      "description"       : "string",
-      "internalCode"      : "string",
-      "susepProcessNumber": "string",
-      "LMI"               : 
-        {
-            "amount"  : 2000,
-            "currency": "BRL"
-        },
-        "isLMISublimit"            : true,
-        "termStartDate"            : "AAAA-MM-DD",
-        "termEndDate"              : "AAAA-MM-DD",
-        "isMainCoverage"           : true,
-        "feature"                  : "MASSIFICADOS",
-        "type"                     : "PARAMETRICO",
-        "gracePeriod"              : 0,
-        "gracePeriodicity"         : "DIA",
-        "gracePeriodCountingMethod": "DIAS_UTEIS",
-        "gracePeriodStartDate"     : "AAAA-MM-DD",   "gracePeriodEndDate": "AAAA-MM-DD"
-        }
-        ]
-        }
-        ],
-        "coverages": 
-        [
-            {
-            "branch"     : "111",
-            "code"       : "ACIDENTES_PESSOAIS_COM_PASSAGEIROS",
+          {
+            "branch": "0111",
+            "code": "ACIDENTES_PESSOAIS_COM_PASSAGEIROS",
             "description": "string",
-            "deductible" : 
-            {
-            "type"              : "DEDUTIVEL",
-            "typeAdditionalInfo": "string",
-            "amount"            : 
-            {
-                "amount"  : 2000,
-                "currency": "BRL"
-                },
-                "period"              : 10,
-                "periodicity"         : "DIA",
-                "periodCountingMethod": "DIAS_UTEIS",
-                "periodStartDate"     : "2022-05-16",
-                "periodEndDate"       : "2022-05-17",
-                "description"         : "Franquia de exemplo"
-                },
-                "POS": 
-                {
-                    "applicationType": "VALOR",
-                    "description"    : "Descrição de exemplo",
-                    "minValue"       : {
-                        "amount"  : 2000,
-                        "currency": "BRL"
-                    },
-                    "maxValue": 
-                    {
-                      "amount"      : 2000,
-                      "currency"    : "BRL"
-                    },  "percentage": 10
-                    }
-                    }
-                    ],
-                    "coinsuranceRetainedPercentage": 10,
-                    "coinsurers"                   : 
-                    [   
-                        {    
-                            "identification" : "string",
-                            "cededPercentage": 10
-                    }  ],  
-                    "branchInfo": 
-                    {      
-                        "endorsements": 
-                        [    
-                            { 
-                                "travelType"      : "INTERNACIONAL_IMPORTACAO",
-                                "transportType"   : "AEREO",
-                                "shipmentsNumber" : 10,
-                                "shipmentsPremium": 
-                                {        
-"amount"  : 2000,
-"currency": "BRL"
-                                },       
-                                "shipmentsPremiumBRL"    : 2000,
-                                "shipmentsInsuredsAmount": {        
-"amount"  : 2000,
-"currency": "BRL"
-                                },       
-                                "minInsuredAmount": 
-                                {      
-                                  "amount"               : 2000,
-                                  "currency"             : "BRL"
-                                },     "maxInsuredAmount": 
-                                {        
-        "amount"  : 2000,
-        "currency": "BRL"
-        }    
-        }      
-        ]     
-        } 
-        },  
-        "links": 
-        {    
-            "self" : "https://api.organizacao.com.br/open-insurance/insurance-transport/v1",
-            "first": "https://api.organizacao.com.br/open-insurance/insurance-transport/v1",
-            "prev" : "https://api.organizacao.com.br/open-insurance/insurance-transport/v1",
-            "next" : "https://api.organizacao.com.br/open-insurance/insurance-transport/v1",
-            "last" : "https://api.organizacao.com.br/open-insurance/insurance-transport/v1"  
+            "internalCode": "string",
+            "susepProcessNumber": "string",
+            "LMI": {
+              "amount": "2000.00",
+              "unit": {
+                "code": "R$",
+                "description": "BRL"
+              }
+            },
+            "isLMISublimit": true,
+            "termStartDate": "2022-12-31",
+            "termEndDate": "2022-12-31",
+            "isMainCoverage": true,
+            "feature": "MASSIFICADOS",
+            "type": "PARAMETRICO",
+            "gracePeriod": 0,
+            "gracePeriodicity": "DIA",
+            "gracePeriodCountingMethod": "DIAS_UTEIS",
+            "gracePeriodStartDate": "2022-12-31",
+            "gracePeriodEndDate": "2022-12-31"
+          }
+        ]
+      }
+    ],
+    "coverages": [
+      {
+        "branch": "0111",
+        "code": "ACIDENTES_PESSOAIS_COM_PASSAGEIROS",
+        "description": "string",
+        "deductible": {
+          "type": "DEDUTIVEL",
+          "typeAdditionalInfo": "string",
+          "amount": {
+            "amount": "2000.00",
+            "unit": {
+              "code": "R$",
+              "description": "BRL"
+            }
+          },
+          "period": 10,
+          "periodicity": "DIA",
+          "periodCountingMethod": "DIAS_UTEIS",
+          "periodStartDate": "2022-05-16",
+          "periodEndDate": "2022-05-17",
+          "description": "Franquia de exemplo"
         },
-            "meta": 
-            {  
-                "totalRecords": 10,
-                "totalPages"  : 1
-            } 
+        "POS": {
+          "applicationType": "VALOR",
+          "description": "Descrição de exemplo",
+          "minValue": {
+            "amount": "2000.00",
+            "unit": {
+              "code": "R$",
+              "description": "BRL"
+            }
+          },
+          "maxValue": {
+            "amount": "2000.00",
+            "unit": {
+              "code": "R$",
+              "description": "BRL"
+            }
+          },
+          "percentage": "10.00"
+        }
+      }
+    ],
+    "coinsuranceRetainedPercentage": "10.00",
+    "coinsurers": [
+      {
+        "identification": "string",
+        "cededPercentage": "10.00"
+      }
+    ],
+    "branchInfo": {
+      "endorsements": [
+        {
+          "travelType": "INTERNACIONAL_IMPORTACAO",
+          "transportType": "AEREO",
+          "shipmentsNumber": 10,
+          "branch": "0111",
+          "shipmentsPremium": {
+            "amount": "2000.00",
+            "unit": {
+              "code": "R$",
+              "description": "BRL"
+            }
+          },
+          "shipmentsPremiumBRL": "2000.00",
+          "shipmentsInsuredsAmount": {
+            "amount": "2000.00",
+            "unit": {
+              "code": "R$",
+              "description": "BRL"
+            }
+          },
+          "minInsuredAmount": {
+            "amount": "2000.00",
+            "unit": {
+              "code": "R$",
+              "description": "BRL"
+            }
+          },
+          "maxInsuredAmount": {
+            "amount": "2000.00",
+            "unit": {
+              "code": "R$",
+              "description": "BRL"
+            }
+          }
+        }
+      ]
+    }
+  },
+  "links": {
+    "self": "https://api.organizacao.com.br/open-insurance/insurance-transport/v1/insurance-transport",
+    "first": "https://api.organizacao.com.br/open-insurance/insurance-transport/v1/insurance-transport",
+    "prev": "https://api.organizacao.com.br/open-insurance/insurance-transport/v1/insurance-transport",
+    "next": "https://api.organizacao.com.br/open-insurance/insurance-transport/v1/insurance-transport",
+    "last": "https://api.organizacao.com.br/open-insurance/insurance-transport/v1/insurance-transport"
+  },
+  "meta": {
+    "totalRecords": 10,
+    "totalPages": 1
+  }
 }
 ```
 
 <h3 id="obtém-as-informações-gerais-da-apólice-identificada-por-{policyid}-responses">Responses</h3>
 
-
 |Status|Meaning|Description|Schema|
 |---|---|---|---|
 |200|[OK](https://tools.ietf.org/html/rfc7231#section-6.3.1)|Dados de ResponseInsuranceTransportPolicyInfo obtidos com sucesso|[ResponseInsuranceTransportPolicyInfo](#schemaresponseinsurancetransportpolicyinfo)|
-|400|[Bad Request](https://tools.ietf.org/html/rfc7231#section-6.5.1)|A requisição foi malformada, omitindo atributos obrigatórios, seja no payload ou através de atributos na URL|[ResponseError](#schemaresponseerror)|
+|204|[No Content](https://tools.ietf.org/html/rfc7231#section-6.3.5)|O recurso solicitado não existe ou não foi localizado.|[ResponseError](#schemaresponseerror)|
+|400|[Bad Request](https://tools.ietf.org/html/rfc7231#section-6.5.1)|A requisição foi malformada, omitindo atributos obrigatórios, seja no payload ou através de atributos na URL.|[ResponseError](#schemaresponseerror)|
 |401|[Unauthorized](https://tools.ietf.org/html/rfc7235#section-3.1)|Cabeçalho de autenticação ausente/inválido ou token inválido|[ResponseError](#schemaresponseerror)|
 |403|[Forbidden](https://tools.ietf.org/html/rfc7231#section-6.5.3)|O token tem escopo incorreto ou uma política de segurança foi violada|[ResponseError](#schemaresponseerror)|
 |404|[Not Found](https://tools.ietf.org/html/rfc7231#section-6.5.4)|O recurso solicitado não existe ou não foi implementado|[ResponseError](#schemaresponseerror)|
 |405|[Method Not Allowed](https://tools.ietf.org/html/rfc7231#section-6.5.5)|O consumidor tentou acessar o recurso com um método não suportado|[ResponseError](#schemaresponseerror)|
 |406|[Not Acceptable](https://tools.ietf.org/html/rfc7231#section-6.5.6)|A solicitação continha um cabeçalho Accept diferente dos tipos de mídia permitidos ou um conjunto de caracteres diferente de UTF-8|[ResponseError](#schemaresponseerror)|
-|422|[Unprocessable Entity](https://tools.ietf.org/html/rfc2518#section-10.3)|O servidor entende o tipo de conteúdo da entidade da requisição, e a sintaxe da requisição esta correta, mas não foi possível processar as instruções presentes|[ResponseError](#schemaresponseerror)|
+|422|[Unprocessable Entity](https://tools.ietf.org/html/rfc2518#section-10.3)|O servidor entende o tipo de conteúdo da entidade da requisição, e a sintaxe da requisição esta correta, mas não foi possível processar as instruções presente.|[ResponseError](#schemaresponseerror)|
 |429|[Too Many Requests](https://tools.ietf.org/html/rfc6585#section-4)|A operação foi recusada, pois muitas solicitações foram feitas dentro de um determinado período ou o limite global de requisições concorrentes foi atingido|[ResponseError](#schemaresponseerror)|
 |500|[Internal Server Error](https://tools.ietf.org/html/rfc7231#section-6.6.1)|Ocorreu um erro no gateway da API ou no microsserviço|[ResponseError](#schemaresponseerror)|
 |default|Default|Erro inesperado.|[ResponseError](#schemaresponseerror)|
@@ -370,19 +537,81 @@ Método para obter as informações gerais da apólice
 |---|---|---|---|---|
 |200|x-fapi-interaction-id|string||none|
 
+<aside class="warning">
+To perform this operation, you must be authenticated by means of one of the following methods:
+OpenId ( Scopes: openid ) & OAuth2Security ( Scopes: consent:consentId insurance-transport )
+</aside>
 
-<h2 id="API - Transport v1.0.0-Obtém os dados de sinistro da apólice identificada por {policyId}">Obtém os dados de sinistro da apólice identificada por {policyId}</h2>
+## Obtém os dados de prêmio da apólice identificada por {policyId}
 
-<a id="opIdgetInsuranceTransportpolicyIdClaims"></a>
+<a id="opIdgetInsuranceTransportpolicyIdPremium"></a>
 
+> Code samples
 
+```javascript
 
-`GET  /insurance-transport/{policyId}/claim`
+const headers = {
+  'Accept':'application/json',
+  'Authorization':'string',
+  'x-fapi-auth-date':'stringstringstringstringstrin',
+  'x-fapi-customer-ip-address':'string',
+  'x-fapi-interaction-id':'string',
+  'x-customer-user-agent':'string'
+};
 
-Método para obter os dados de sinistro associados à apólice
+fetch('https://api.organizacao.com.br/open-insurance/insurance-transport/v1/insurance-transport/{policyId}/premium',
+{
+  method: 'GET',
 
-<h3 id="obtém-os-dados-de-sinistro-da-apólice-identificada-por-{policyid}-parameters">Parameters</h3>
+  headers: headers
+})
+.then(function(res) {
+    return res.json();
+}).then(function(body) {
+    console.log(body);
+});
 
+```
+
+```python
+import requests
+headers = {
+  'Accept': 'application/json',
+  'Authorization': 'string',
+  'x-fapi-auth-date': 'stringstringstringstringstrin',
+  'x-fapi-customer-ip-address': 'string',
+  'x-fapi-interaction-id': 'string',
+  'x-customer-user-agent': 'string'
+}
+
+r = requests.get('https://api.organizacao.com.br/open-insurance/insurance-transport/v1/insurance-transport/{policyId}/premium', headers = headers)
+
+print(r.json())
+
+```
+
+```java
+URL obj = new URL("https://api.organizacao.com.br/open-insurance/insurance-transport/v1/insurance-transport/{policyId}/premium");
+HttpURLConnection con = (HttpURLConnection) obj.openConnection();
+con.setRequestMethod("GET");
+int responseCode = con.getResponseCode();
+BufferedReader in = new BufferedReader(
+    new InputStreamReader(con.getInputStream()));
+String inputLine;
+StringBuffer response = new StringBuffer();
+while ((inputLine = in.readLine()) != null) {
+    response.append(inputLine);
+}
+in.close();
+System.out.println(response.toString());
+
+```
+
+`GET /insurance-transport/{policyId}/premium`
+
+Método para obter os dados de prêmio da apólice.
+
+<h3 id="obtém-os-dados-de-prêmio-da-apólice-identificada-por-{policyid}-parameters">Parameters</h3>
 
 |Name|In|Type|Required|Description|
 |---|---|---|---|---|
@@ -393,90 +622,253 @@ Método para obter os dados de sinistro associados à apólice
 |x-customer-user-agent|header|string|false|Indica o user-agent que o usuário utiliza.|
 |policyId|path|string|true|none|
 
+> Example responses
+
+> 200 Response
+
+```json
+{
+  "data": {
+    "paymentsQuantity": 4,
+    "amount": {
+      "amount": "2000.00",
+      "unit": {
+        "code": "R$",
+        "description": "BRL"
+      }
+    },
+    "coverages": [
+      {
+        "branch": "0111",
+        "code": "ACIDENTES_PESSOAIS_COM_PASSAGEIROS",
+        "description": "string",
+        "premiumAmount": {
+          "amount": "2000.00",
+          "unit": {
+            "code": "R$",
+            "description": "BRL"
+          }
+        }
+      }
+    ],
+    "payments": [
+      {
+        "movementDate": "2022-12-31",
+        "movementType": "LIQUIDACAO_DE_PREMIO",
+        "movementOrigin": "EMISSAO_DIRETA",
+        "movementPaymentsNumber": 0,
+        "amount": {
+          "amount": "2000.00",
+          "unit": {
+            "code": "R$",
+            "description": "BRL"
+          }
+        },
+        "maturityDate": "2022-12-31",
+        "tellerId": "string",
+        "tellerIdType": "CPF",
+        "tellerName": "string",
+        "financialInstitutionCode": "string",
+        "paymentType": "BOLETO"
+      }
+    ]
+  },
+  "links": {
+    "self": "https://api.organizacao.com.br/open-insurance/insurance-transport/v1/insurance-transport",
+    "first": "https://api.organizacao.com.br/open-insurance/insurance-transport/v1/insurance-transport",
+    "prev": "https://api.organizacao.com.br/open-insurance/insurance-transport/v1/insurance-transport",
+    "next": "https://api.organizacao.com.br/open-insurance/insurance-transport/v1/insurance-transport",
+    "last": "https://api.organizacao.com.br/open-insurance/insurance-transport/v1/insurance-transport"
+  },
+  "meta": {
+    "totalRecords": 10,
+    "totalPages": 1
+  }
+}
+```
+
+<h3 id="obtém-os-dados-de-prêmio-da-apólice-identificada-por-{policyid}-responses">Responses</h3>
+
+|Status|Meaning|Description|Schema|
+|---|---|---|---|
+|200|[OK](https://tools.ietf.org/html/rfc7231#section-6.3.1)|Dados de ResponseInsuranceTransportPremium obtidos com sucesso|[ResponseInsuranceTransportPremium](#schemaresponseinsurancetransportpremium)|
+|204|[No Content](https://tools.ietf.org/html/rfc7231#section-6.3.5)|O recurso solicitado não existe ou não foi localizado.|[ResponseError](#schemaresponseerror)|
+|400|[Bad Request](https://tools.ietf.org/html/rfc7231#section-6.5.1)|A requisição foi malformada, omitindo atributos obrigatórios, seja no payload ou através de atributos na URL.|[ResponseError](#schemaresponseerror)|
+|401|[Unauthorized](https://tools.ietf.org/html/rfc7235#section-3.1)|Cabeçalho de autenticação ausente/inválido ou token inválido|[ResponseError](#schemaresponseerror)|
+|403|[Forbidden](https://tools.ietf.org/html/rfc7231#section-6.5.3)|O token tem escopo incorreto ou uma política de segurança foi violada|[ResponseError](#schemaresponseerror)|
+|404|[Not Found](https://tools.ietf.org/html/rfc7231#section-6.5.4)|O recurso solicitado não existe ou não foi implementado|[ResponseError](#schemaresponseerror)|
+|405|[Method Not Allowed](https://tools.ietf.org/html/rfc7231#section-6.5.5)|O consumidor tentou acessar o recurso com um método não suportado|[ResponseError](#schemaresponseerror)|
+|406|[Not Acceptable](https://tools.ietf.org/html/rfc7231#section-6.5.6)|A solicitação continha um cabeçalho Accept diferente dos tipos de mídia permitidos ou um conjunto de caracteres diferente de UTF-8|[ResponseError](#schemaresponseerror)|
+|422|[Unprocessable Entity](https://tools.ietf.org/html/rfc2518#section-10.3)|O servidor entende o tipo de conteúdo da entidade da requisição, e a sintaxe da requisição esta correta, mas não foi possível processar as instruções presente.|[ResponseError](#schemaresponseerror)|
+|429|[Too Many Requests](https://tools.ietf.org/html/rfc6585#section-4)|A operação foi recusada, pois muitas solicitações foram feitas dentro de um determinado período ou o limite global de requisições concorrentes foi atingido|[ResponseError](#schemaresponseerror)|
+|500|[Internal Server Error](https://tools.ietf.org/html/rfc7231#section-6.6.1)|Ocorreu um erro no gateway da API ou no microsserviço|[ResponseError](#schemaresponseerror)|
+|default|Default|Erro inesperado.|[ResponseError](#schemaresponseerror)|
+
+### Response Headers
+
+|Status|Header|Type|Format|Description|
+|---|---|---|---|---|
+|200|x-fapi-interaction-id|string||none|
+
+<aside class="warning">
+To perform this operation, you must be authenticated by means of one of the following methods:
+OpenId ( Scopes: openid ) & OAuth2Security ( Scopes: consent:consentId insurance-transport )
+</aside>
+
+## Obtém os dados de sinistro da apólice identificada por {policyId}
+
+<a id="opIdgetInsuranceTransportpolicyIdClaims"></a>
+
+> Code samples
+
+```javascript
+
+const headers = {
+  'Accept':'application/json',
+  'Authorization':'string',
+  'x-fapi-auth-date':'stringstringstringstringstrin',
+  'x-fapi-customer-ip-address':'string',
+  'x-fapi-interaction-id':'string',
+  'x-customer-user-agent':'string'
+};
+
+fetch('https://api.organizacao.com.br/open-insurance/insurance-transport/v1/insurance-transport/{policyId}/claim',
+{
+  method: 'GET',
+
+  headers: headers
+})
+.then(function(res) {
+    return res.json();
+}).then(function(body) {
+    console.log(body);
+});
+
+```
+
+```python
+import requests
+headers = {
+  'Accept': 'application/json',
+  'Authorization': 'string',
+  'x-fapi-auth-date': 'stringstringstringstringstrin',
+  'x-fapi-customer-ip-address': 'string',
+  'x-fapi-interaction-id': 'string',
+  'x-customer-user-agent': 'string'
+}
+
+r = requests.get('https://api.organizacao.com.br/open-insurance/insurance-transport/v1/insurance-transport/{policyId}/claim', headers = headers)
+
+print(r.json())
+
+```
+
+```java
+URL obj = new URL("https://api.organizacao.com.br/open-insurance/insurance-transport/v1/insurance-transport/{policyId}/claim");
+HttpURLConnection con = (HttpURLConnection) obj.openConnection();
+con.setRequestMethod("GET");
+int responseCode = con.getResponseCode();
+BufferedReader in = new BufferedReader(
+    new InputStreamReader(con.getInputStream()));
+String inputLine;
+StringBuffer response = new StringBuffer();
+while ((inputLine = in.readLine()) != null) {
+    response.append(inputLine);
+}
+in.close();
+System.out.println(response.toString());
+
+```
+
+`GET /insurance-transport/{policyId}/claim`
+
+Método para obter os dados de sinistro associados à apólice
+
+<h3 id="obtém-os-dados-de-sinistro-da-apólice-identificada-por-{policyid}-parameters">Parameters</h3>
+
+|Name|In|Type|Required|Description|
+|---|---|---|---|---|
+|Authorization|header|string|true|Cabeçalho HTTP padrão. Permite que as credenciais sejam fornecidas dependendo do tipo de recurso solicitado.|
+|x-fapi-auth-date|header|string|false|Data em que o usuário logou pela última vez com o receptor. Representada de acordo com a [RFC7231](https://tools.ietf.org/html/rfc7231). Exemplo: Sun, 10 Sep 2017 19:43:31 UTC|
+|x-fapi-customer-ip-address|header|string|false|O endereço IP do usuário se estiver atualmente logado com o receptor.|
+|x-fapi-interaction-id|header|string|false|Um UID [RFC4122](https://tools.ietf.org/html/rfc4122) usado como um ID de correlação. Se fornecido, o transmissor deve "reproduzir" esse valor no cabeçalho de resposta.|
+|x-customer-user-agent|header|string|false|Indica o user-agent que o usuário utiliza.|
+|policyId|path|string|true|none|
 
 > Example responses
 
 > 200 Response
 
 ```json
-
 {
-      "data": [
-       {
-        "identification"           : "string",
-        "documentationDeliveryDate": "AAAA-MM-DD",
-        "status"                   : "ABERTO",
-        "statusAlterationDate"     : "AAAA-MM-DD",
-        "occurrenceDate"           : "AAAA-MM-DD",
-        "warningDate"              : "AAAA-MM-DD",
-        "thirdPartyClaimDate"      : "AAAA-MM-DD",
-        "amount"                   : {
-         "amount"  : 2000,
-         "currency": "BRL"
-        },
-        "denialJustification"           : "RISCO_EXCLUIDO",
-        "denialJustificationDescription": "string",
-        "coverages"                     : [
-         {
-      "insuredObjectId"    : "string",
-      "branch"             : "111",
-      "code"               : "ACIDENTES_PESSOAIS_COM_PASSAGEIROS",
-      "description"        : "string",
-      "warningDate"        : "2022-05-01",
-      "thirdPartyClaimDate": "2022-05-01"
-     }
-    ]
-   }
+  "data": [
+    {
+      "identification": "string",
+      "documentationDeliveryDate": "2022-12-31",
+      "status": "ABERTO",
+      "statusAlterationDate": "2022-12-31",
+      "occurrenceDate": "2022-12-31",
+      "warningDate": "2022-12-31",
+      "thirdPartyClaimDate": "2022-12-31",
+      "amount": {
+        "amount": "2000.00",
+        "unit": {
+          "code": "R$",
+          "description": "BRL"
+        }
+      },
+      "denialJustification": "RISCO_EXCLUIDO",
+      "denialJustificationDescription": "string",
+      "coverages": [
+        {
+          "insuredObjectId": "string",
+          "branch": "0111",
+          "code": "ACIDENTES_PESSOAIS_COM_PASSAGEIROS",
+          "description": "string",
+          "warningDate": "2022-12-31",
+          "thirdPartyClaimDate": "2022-12-31"
+        }
+      ]
+    }
   ],
   "links": {
-   "self" : "https://api.organizacao.com.br/open-insurance/insurance-transport/v1",
-   "first": "https://api.organizacao.com.br/open-insurance/insurance-transport/v1",
-   "prev" : "https://api.organizacao.com.br/open-insurance/insurance-transport/v1",
-   "next" : "https://api.organizacao.com.br/open-insurance/insurance-transport/v1",
-   "last" : "https://api.organizacao.com.br/open-insurance/insurance-transport/v1"
+    "self": "https://api.organizacao.com.br/open-insurance/insurance-transport/v1/insurance-transport",
+    "first": "https://api.organizacao.com.br/open-insurance/insurance-transport/v1/insurance-transport",
+    "prev": "https://api.organizacao.com.br/open-insurance/insurance-transport/v1/insurance-transport",
+    "next": "https://api.organizacao.com.br/open-insurance/insurance-transport/v1/insurance-transport",
+    "last": "https://api.organizacao.com.br/open-insurance/insurance-transport/v1/insurance-transport"
   },
   "meta": {
-   "totalRecords": 10,
-   "totalPages"  : 1
+    "totalRecords": 10,
+    "totalPages": 1
   }
- }
-
+}
 ```
 
-|Name|Required|Description|
-|---|---|---|
-|Content-Type|false|Representa o formato do payload de requisição, por padrão/default definido como application/json;charset UTF-8. Obrigatório para chamadas PUT e POST. Os transmissores poderão implementar tratamento para outros padrões, sendo obrigatório apenas o suporte ao padrão.|
-|Accept|false|Especifica o tipo de resposta. Se especificado, deve ser definido como application/json, a menos que o endpoint explicitamente suporte outro formato. Se for definido um valor não suportado pelo endpoint, será retornado o código HTTP 406. Se não especificado, o padrão será application/json.|
-|Accept-Encoding|false|Especifica os tipos de encoding(geralmente algoritmo de compressão) que são suportados pelo cliente, com previsão de suporte ao gzip por parte dos transmissores, sendo que o padrão é a transmissão dos dados não compactados e esta orientação aplica-se aos Dados Abertos.|
-|If-Modified-Since|false|Condiciona o resultado da requisição para que o recurso só seja enviado caso tenha sido atualizado após a data fornecida. Utiliza o padrão da RFC 7232, sessão 3.3: If-Modified-Since do protocolo HTTP.|
-|x-fapi-auth-date|Condicional|Data em que o usuário logou pela última vez com o receptor.|
-|x-fapi-customer-ip-address|Condicional|O endereço IP do usuário se estiver atualmente logado com o receptor.|
-|x-fapi-interaction-id|false|Um UUID RFC4122 usado como um ID de correlação. Se fornecido, o transmissor deve "reproduzir" esse valor no cabeçalho de resposta.|
-|Authorization|true|Cabeçalho HTTP padrão. Permite que as credenciais sejam fornecidas dependendo do tipo de recurso solicitado. Não obrigatório para APIs publicas.|
-|x-idempotency-key| Condicional | Cabeçalho HTTP personalizado. Identificador de solicitação exclusivo para suportar a idempotência.|
-|x-jws-signature|Condicional|Cabeçalho contendo uma assinatura JWS separada do corpo do payload.|
-|x-customer-user-agent|Condicional|Indica o user agent que o usuário utiliza.|
+<h3 id="obtém-os-dados-de-sinistro-da-apólice-identificada-por-{policyid}-responses">Responses</h3>
 
-### Responses
+|Status|Meaning|Description|Schema|
+|---|---|---|---|
+|200|[OK](https://tools.ietf.org/html/rfc7231#section-6.3.1)|Dados de ResponseInsuranceTransportClaims obtidos com sucesso|[ResponseInsuranceTransportClaims](#schemaresponseinsurancetransportclaims)|
+|204|[No Content](https://tools.ietf.org/html/rfc7231#section-6.3.5)|O recurso solicitado não existe ou não foi localizado.|[ResponseError](#schemaresponseerror)|
+|400|[Bad Request](https://tools.ietf.org/html/rfc7231#section-6.5.1)|A requisição foi malformada, omitindo atributos obrigatórios, seja no payload ou através de atributos na URL.|[ResponseError](#schemaresponseerror)|
+|401|[Unauthorized](https://tools.ietf.org/html/rfc7235#section-3.1)|Cabeçalho de autenticação ausente/inválido ou token inválido|[ResponseError](#schemaresponseerror)|
+|403|[Forbidden](https://tools.ietf.org/html/rfc7231#section-6.5.3)|O token tem escopo incorreto ou uma política de segurança foi violada|[ResponseError](#schemaresponseerror)|
+|404|[Not Found](https://tools.ietf.org/html/rfc7231#section-6.5.4)|O recurso solicitado não existe ou não foi implementado|[ResponseError](#schemaresponseerror)|
+|405|[Method Not Allowed](https://tools.ietf.org/html/rfc7231#section-6.5.5)|O consumidor tentou acessar o recurso com um método não suportado|[ResponseError](#schemaresponseerror)|
+|406|[Not Acceptable](https://tools.ietf.org/html/rfc7231#section-6.5.6)|A solicitação continha um cabeçalho Accept diferente dos tipos de mídia permitidos ou um conjunto de caracteres diferente de UTF-8|[ResponseError](#schemaresponseerror)|
+|422|[Unprocessable Entity](https://tools.ietf.org/html/rfc2518#section-10.3)|O servidor entende o tipo de conteúdo da entidade da requisição, e a sintaxe da requisição esta correta, mas não foi possível processar as instruções presente.|[ResponseError](#schemaresponseerror)|
+|429|[Too Many Requests](https://tools.ietf.org/html/rfc6585#section-4)|A operação foi recusada, pois muitas solicitações foram feitas dentro de um determinado período ou o limite global de requisições concorrentes foi atingido|[ResponseError](#schemaresponseerror)|
+|500|[Internal Server Error](https://tools.ietf.org/html/rfc7231#section-6.6.1)|Ocorreu um erro no gateway da API ou no microsserviço|[ResponseError](#schemaresponseerror)|
+|default|Default|Erro inesperado.|[ResponseError](#schemaresponseerror)|
 
-|Status|Meaning|Description|
-|---|---|---|
-|200|OK|Consulta concluída com sucesso.|
-|201|Created|Execução normal. A solicitação foi bem sucedida.|
-|204|No Content| Operação de exclusão concluída com sucesso.|
-|304|Not|A resposta não foi|
-|400|Bad Request|A requisição foi malformada, omitindo atributos obrigatórios, seja no payload ou através de atributos na URL.|
-|401|Unauthorized|Cabeçalho de autenticação ausente/inválido ou token inválido.|
-|403|Forbidden|O token tem escopo incorreto ou uma política de segurança foi violada.|
-|404|Not Found|O recurso solicitado não existe ou não foi implementado.|
-|405|Method Not Allowed|O consumidor tentou acessar o recurso com um método não suportado.|
-|406|Not Acceptable|A solicitação continha um cabeçalho Accept diferente dos tipos de mídia permitidos ou um conjunto de caracteres diferente de UTF-8.|
-|410|Gone|Indica que o recurso não está mais disponível.|
-|415|Unsupported Media Type|A operação foi recusada porque o payload está em um formato não suportado pelo endpoint.|
-|422|Unprocessable Entity|A solicitação foi bem formada, mas não pôde ser processada devido à lógica de negócios específica da solicitação.|
-|429|Too Many Requests|A operação foi recusada, pois muitas solicitações foram feitas dentro de um determinado período ou o limite global de requisições concorrentes foi atingido.|
-|500|Internal Server Error|Ocorreu um erro no gateway da API ou no microsserviço.|
-|503|Service Unavailable|O serviço está indisponível no momento.|
-|504|Gateway Timeout|O servidor não pôde responder em tempo hábil.|
+### Response Headers
 
+|Status|Header|Type|Format|Description|
+|---|---|---|---|---|
+|200|x-fapi-interaction-id|string||none|
 
+<aside class="warning">
+To perform this operation, you must be authenticated by means of one of the following methods:
+OpenId ( Scopes: openid ) & OAuth2Security ( Scopes: consent:consentId insurance-transport )
+</aside>
