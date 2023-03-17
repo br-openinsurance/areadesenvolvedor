@@ -1,3 +1,4 @@
+
 <h2 id="tocS_ResponseEquipmentBreakdownList">ResponseEquipmentBreakdownList</h2>
 <!-- backwards compatibility -->
 <a id="schemaresponseequipmentbreakdownlist"></a>
@@ -45,7 +46,7 @@
                 }
               ],
               "customerServices": [
-                "LIVRE ESCOLHA"
+                "LIVRE_ESCOLHA"
               ],
               "microInsurance": true,
               "traits": true,
@@ -136,10 +137,15 @@
               "coverageDescription": "string",
               "coverageAttributes": {
                 "maxLMI": {
-                  "amount": 0,
-                  "unit": {
-                    "code": "R$",
-                    "description": "REAL"
+                  "type": "FINANCEIRO",
+                  "amount": {
+                    "amount": 0,
+                    "unit": {}
+                  },
+                  "index": "LMG",
+                  "maxIndexAmount": {
+                    "amount": 0,
+                    "unit": {}
                   }
                 },
                 "insuredParticipation": [
@@ -165,7 +171,7 @@
             }
           ],
           "customerServices": [
-            "LIVRE ESCOLHA"
+            "LIVRE_ESCOLHA"
           ],
           "microInsurance": true,
           "traits": true,
@@ -241,10 +247,21 @@ Organizacao controladora do grupo.
             "coverageDescription": "string",
             "coverageAttributes": {
               "maxLMI": {
-                "amount": 0,
-                "unit": {
-                  "code": "R$",
-                  "description": "REAL"
+                "type": "FINANCEIRO",
+                "amount": {
+                  "amount": 0,
+                  "unit": {
+                    "code": "R$",
+                    "description": "REAL"
+                  }
+                },
+                "index": "LMG",
+                "maxIndexAmount": {
+                  "amount": 0,
+                  "unit": {
+                    "code": "R$",
+                    "description": "REAL"
+                  }
                 }
               },
               "insuredParticipation": [
@@ -270,7 +287,7 @@ Organizacao controladora do grupo.
           }
         ],
         "customerServices": [
-          "LIVRE ESCOLHA"
+          "LIVRE_ESCOLHA"
         ],
         "microInsurance": true,
         "traits": true,
@@ -340,10 +357,21 @@ Organizacao controladora do grupo.
         "coverageDescription": "string",
         "coverageAttributes": {
           "maxLMI": {
-            "amount": 0,
-            "unit": {
-              "code": "R$",
-              "description": "REAL"
+            "type": "FINANCEIRO",
+            "amount": {
+              "amount": 0,
+              "unit": {
+                "code": "R$",
+                "description": "REAL"
+              }
+            },
+            "index": "LMG",
+            "maxIndexAmount": {
+              "amount": 0,
+              "unit": {
+                "code": "R$",
+                "description": "REAL"
+              }
             }
           },
           "insuredParticipation": [
@@ -369,7 +397,7 @@ Organizacao controladora do grupo.
       }
     ],
     "customerServices": [
-      "LIVRE ESCOLHA"
+      "LIVRE_ESCOLHA"
     ],
     "microInsurance": true,
     "traits": true,
@@ -605,10 +633,21 @@ Requisitos mínimos.
 ```json
 {
   "maxLMI": {
-    "amount": 0,
-    "unit": {
-      "code": "R$",
-      "description": "REAL"
+    "type": "FINANCEIRO",
+    "amount": {
+      "amount": 0,
+      "unit": {
+        "code": "R$",
+        "description": "REAL"
+      }
+    },
+    "index": "LMG",
+    "maxIndexAmount": {
+      "amount": 0,
+      "unit": {
+        "code": "R$",
+        "description": "REAL"
+      }
     }
   },
   "insuredParticipation": [
@@ -625,80 +664,93 @@ Informações de cobertura do Seguro.
 
 |Name|Type|Required|Restrictions|Description|
 |---|---|---|---|---|
-|maxLMI|[EquipmentBreakdownLimit](#schemaequipmentBreakdownLimit)|true|none|none|
+|maxLMI|[EquipmentBreakdownLimit](#schemaequipmentbreakdownlimit)|true|none|Lista com valor de LMI aceito pela sociedade para cada cobertura.|
 |insuredParticipation|[string]|true|none|Lista com indicativo do tipo de participação do segurado para cada cobertura.|
 |insuredParticipationDescription|string|false|none|Lista com descrição referente ao campo “Participação do Segurado” para cada cobertura.|
 
-
 <h2 id="tocS_EquipmentBreakdownLimit">EquipmentBreakdownLimit</h2>
 <!-- backwards compatibility -->
-<a id="schemaequipmentBreakdownLimit"></a>
+<a id="schemaequipmentbreakdownlimit"></a>
 <a id="schema_EquipmentBreakdownLimit"></a>
-<a id="tocSequipmentBreakdownLimit"></a>
-<a id="tocsequipmentBreakdownLimit"></a>
+<a id="tocSequipmentbreakdownlimit"></a>
+<a id="tocsequipmentbreakdownlimit"></a>
 
 ```json
 {
   "type": "FINANCEIRO",
   "amount": {
-    "amount": number,
+    "amount": 0,
     "unit": {
       "code": "R$",
       "description": "REAL"
-    },
-    "index": "LMG",
-    "maxIndexAmount": {
-      "amount": number,
-      "unit": {
-        "code": "R$",
+    }
+  },
+  "index": "LMG",
+  "maxIndexAmount": {
+    "amount": 0,
+    "unit": {
+      "code": "R$",
       "description": "REAL"
-    },
+    }
   }
 }
-}
+
+```
+
+Lista com valor de LMI aceito pela sociedade para cada cobertura.
 
 ### Properties
 
 |Name|Type|Required|Restrictions|Description|
 |---|---|---|---|---|
 |type|string|true|none|none|
-|amount|[EngineeringCoverageAttributesDetails](#schemaengineeringcoverageattributesdetails)|true|none|none|
+|amount|[EquipmentBreakdownCoverageAttributesDetails](#schemaequipmentbreakdowncoverageattributesdetails)|true|none|Lista com valor de LMI aceito pela sociedade para cada cobertura|
 |index|string|false|none|Indexador. Condicional, vinculado ao preenchimento do campo Tipo com Percentual|
-|maxIndexAmount|[EngineeringCoverageAttributesDetails](#schemaengineeringcoverageattributesdetails)|false|none|none|
+|maxIndexAmount|[EquipmentBreakdownCoverageAttributesDetails](#schemaequipmentbreakdowncoverageattributesdetails)|false|none|Lista com valor de LMI aceito pela sociedade para cada cobertura|
 
+#### Enumerated Values
 
+|Property|Value|
+|---|---|
+|type|FINANCEIRO|
+|type|PERCENTUAL|
+|index|LMG|
+|index|FINANCEIRO_COBERTURA|
+|index|OUTRO|
 
 <h2 id="tocS_EquipmentBreakdownCoverageAttributesDetails">EquipmentBreakdownCoverageAttributesDetails</h2>
 <!-- backwards compatibility -->
-<a id="schemaequipmentBreakdownCoverageAttributesDetails"></a>
+<a id="schemaequipmentbreakdowncoverageattributesdetails"></a>
 <a id="schema_EquipmentBreakdownCoverageAttributesDetails"></a>
-<a id="tocSequipmentBreakdownCoverageAttributesDetails"></a>
-<a id="tocsequipmentBreakdownCoverageAttributesDetails"></a>
+<a id="tocSequipmentbreakdowncoverageattributesdetails"></a>
+<a id="tocsequipmentbreakdowncoverageattributesdetails"></a>
 
 ```json
 {
   "amount": 0,
   "unit": {
-    "code": "%",
-    "description": "PERCENTUAL"
+    "code": "R$",
+    "description": "REAL"
   }
 }
 
 ```
+
+Lista com valor de LMI aceito pela sociedade para cada cobertura
 
 ### Properties
 
 |Name|Type|Required|Restrictions|Description|
 |---|---|---|---|---|
 |amount|number|true|none|none|
-|unit|[EquipmentBreakdownCoverageAttributesDetailsUnit](#schemaequipmentBreakdownCoverageAttributesDetailsUnit)|true|none|none|
+|unit|[EquipmentBreakdownCoverageAttributesDetailsUnit](#schemaequipmentbreakdowncoverageattributesdetailsunit)|true|none|none|
 
 <h2 id="tocS_EquipmentBreakdownCoverageAttributesDetailsUnit">EquipmentBreakdownCoverageAttributesDetailsUnit</h2>
 <!-- backwards compatibility -->
-<a id="schemaequipmentBreakdownCoverageAttributesDetailsUnit"></a>
+<a id="schemaequipmentbreakdowncoverageattributesdetailsunit"></a>
 <a id="schema_EquipmentBreakdownCoverageAttributesDetailsUnit"></a>
-<a id="tocSequipmentBreakdownCoverageAttributesDetailsUnit"></a>
-<a id="tocsequipmentBreakdownCoverageAttributesDetailsUnit"></a>
+<a id="tocSequipmentbreakdowncoverageattributesdetailsunit"></a>
+<a id="tocsequipmentbreakdowncoverageattributesdetailsunit"></a>
 
 ```json
 {
@@ -798,5 +850,6 @@ Informações de cobertura do Seguro.
 |» code|string|true|none|Código de erro específico do endpoint|
 |» title|string|true|none|Título legível por humanos deste erro específico|
 |» detail|string|true|none|Descrição legível por humanos deste erro específico|
-|» requestDateTime|string(date-time)|false|none|Data e hora da consulta, conforme especificação RFC-3339, formato UTC.|
+|» requestDateTime|string(date-time)|true|none|Data e hora da consulta, conforme especificação RFC-3339, formato UTC.|
 |meta|[Meta](#schemametaequipment)|false|none|none|
+

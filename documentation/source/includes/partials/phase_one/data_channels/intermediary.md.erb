@@ -13,66 +13,51 @@ Release Notes:
 - <a href="./1.3.0.html#intermediarios-intermediary">03/03/2023 </a>
 
 
+Base URLs:
+
+* <a href="https://api.organizacao.com.br/open-insurance/channels/v1">https://api.organizacao.com.br/open-insurance/channels/v1</a>
+
+* <a href="https://api.organizacao.com.br/open-insurance/channels/v1">https://api.organizacao.com.br/open-insurance/channels/v1</a>
+
+Web: <a href="https://www.gov.br/susep/">Support</a> 
+
+<a id="opIdgetIntermediary"></a>
 
 > Code samples
 
-```javascript
-const data = null;
-
-const xhr = new XMLHttpRequest();
-xhr.withCredentials = true;
-
-xhr.addEventListener("readystatechange", function () {
-  if (this.readyState === this.DONE) {
-    console.log(this.responseText);
-  }
-});
-
-xhr.open("GET", "https://api.organizacao.com.br/open-insurance/channels/v1/intermediary/string");
-xhr.setRequestHeader("Accept", "application/json");
-xhr.setRequestHeader("cache-control", "string");
-xhr.setRequestHeader("Content-Security-Policy", "string");
-xhr.setRequestHeader("content-Type", "string");
-xhr.setRequestHeader("Strict-Transport-Security", "string");
-xhr.setRequestHeader("X-Content-Type-Options", "string");
-xhr.setRequestHeader("X-Frame-Options", "string");
-
-xhr.send(data);
-```
-
 ```python
-import http.client
-
-conn = http.client.HTTPSConnection("api.organizacao.com.br")
-
+import requests
 headers = {
-    'Accept': "application/json",
-    'cache-control': "string",
-    'Content-Security-Policy': "string",
-    'content-Type': "string",
-    'Strict-Transport-Security': "string",
-    'X-Content-Type-Options': "string",
-    'X-Frame-Options': "string"
-    }
+  'Accept': 'application/json',
+  'cache-control': 'string',
+  'Content-Security-Policy': 'string',
+  'content-Type': 'string',
+  'Strict-Transport-Security': 'string',
+  'X-Content-Type-Options': 'string',
+  'X-Frame-Options': 'string'
+}
 
-conn.request("GET", "/open-insurance/channels/v1/intermediary/string", headers=headers)
+r = requests.get('https://api.organizacao.com.br/open-insurance/channels/v1/intermediary/{countrySubDivision}', headers = headers)
 
-res = conn.getresponse()
-data = res.read()
+print(r.json())
 
-print(data.decode("utf-8"))
 ```
 
 ```java
-HttpResponse<String> response = Unirest.get("https://api.organizacao.com.br/open-insurance/channels/v1/intermediary/string")
-  .header("Accept", "application/json")
-  .header("cache-control", "string")
-  .header("Content-Security-Policy", "string")
-  .header("content-Type", "string")
-  .header("Strict-Transport-Security", "string")
-  .header("X-Content-Type-Options", "string")
-  .header("X-Frame-Options", "string")
-  .asString();
+URL obj = new URL("https://api.organizacao.com.br/open-insurance/channels/v1/intermediary/{countrySubDivision}");
+HttpURLConnection con = (HttpURLConnection) obj.openConnection();
+con.setRequestMethod("GET");
+int responseCode = con.getResponseCode();
+BufferedReader in = new BufferedReader(
+    new InputStreamReader(con.getInputStream()));
+String inputLine;
+StringBuffer response = new StringBuffer();
+while ((inputLine = in.readLine()) != null) {
+    response.append(inputLine);
+}
+in.close();
+System.out.println(response.toString());
+
 ```
 
 `GET /intermediary/{countrySubDivision}`
@@ -111,9 +96,9 @@ Obtem a lista dos produtos do tipo Intermediarios
             {
               "name": "Intermediário C",
               "nameOther": "Intermediário D",
-              "documentNumber": 12341234123412,
-              "type": "CORRETOR_DE_SEGUROS",
-              "SUSEP": 15414622222222222,
+              "documentNumber": "12341234123412",
+              "type": "CORRETOR",
+              "SUSEP": "15414622222222222",
               "postalAddress": [
                 {
                   "address": "'Rua Diamantina, 59, bloco 35' Praça da Boa Vontade, s/n",
@@ -122,12 +107,12 @@ Obtem a lista dos produtos do tipo Intermediarios
                   "townName": "São Paulo",
                   "ibgeCode": "string",
                   "countrySubDivision": "AC",
-                  "postCode": 1310200,
+                  "postCode": "1310200",
                   "country": "ANDORRA",
                   "countryCode": "BRA",
                   "geographicCoordinates": {
-                    "latitude": -89.836518,
-                    "longitude": -179.836519
+                    "latitude": "-89.8365180",
+                    "longitude": "-179.836519"
                   }
                 }
               ],
@@ -144,9 +129,9 @@ Obtem a lista dos produtos do tipo Intermediarios
                 "phones": [
                   {
                     "type": "FIXO",
-                    "countryCallingCode": 55,
-                    "areaCode": 11,
-                    "number": 30041000
+                    "countryCallingCode": "55",
+                    "areaCode": "11",
+                    "number": "30041000"
                   }
                 ]
               },
@@ -156,7 +141,8 @@ Obtem a lista dos produtos do tipo Intermediarios
                   "nameOthers": "string",
                   "line": [
                     "CAPITALIZACAO"
-                  ]
+                  ],
+                  "lineOthers": "string"
                 }
               ]
             }
@@ -191,7 +177,7 @@ Obtem a lista dos produtos do tipo Intermediarios
 |404|[Not Found](https://tools.ietf.org/html/rfc7231#section-6.5.4)|O recurso solicitado não existe ou não foi implementado|[ResponseError](#schemaresponseerror)|
 |405|[Method Not Allowed](https://tools.ietf.org/html/rfc7231#section-6.5.5)|O consumidor tentou acessar o recurso com um método não suportado|[ResponseError](#schemaresponseerror)|
 |406|[Not Acceptable](https://tools.ietf.org/html/rfc7231#section-6.5.6)|A solicitação continha um cabeçalho Accept diferente dos tipos de mídia permitidos ou um conjunto de caracteres diferente de UTF-8|[ResponseError](#schemaresponseerror)|
-|422|[Unprocessable Entity](https://tools.ietf.org/html/rfc2518#section-10.3)|O servidor entende o tipo de conteúdo da entidade da requisição, e a sintaxe da requisição esta correta, mas não foi possível processar as instruções presentes.|[ResponseError](#schemaresponseerror)|
+|422|[Unprocessable Entity](https://tools.ietf.org/html/rfc2518#section-10.3)|O servidor entende o tipo de conteúdo da entidade da requisição, e a sintaxe da requisição esta correta, mas não foi possível processar as instruções presente.|[ResponseError](#schemaresponseerror)|
 |429|[Too Many Requests](https://tools.ietf.org/html/rfc6585#section-4)|A operação foi recusada, pois muitas solicitações foram feitas dentro de um determinado período ou o limite global de requisições concorrentes foi atingido|[ResponseError](#schemaresponseerror)|
 |500|[Internal Server Error](https://tools.ietf.org/html/rfc7231#section-6.6.1)|Ocorreu um erro no gateway da API ou no microsserviço|[ResponseError](#schemaresponseerror)|
 |default|Default|Dados dos produtos de API de informações de dados do produto Intermediarios. Os recursos que podem ser consumidos pelos participantes conforme a regra 3.1.2 do manual de escopo de dados.|[ResponseIntermediaryList](#schemaresponseintermediarylist)|
