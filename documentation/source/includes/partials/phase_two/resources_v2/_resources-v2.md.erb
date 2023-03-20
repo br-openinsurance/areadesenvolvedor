@@ -1,0 +1,173 @@
+# API - Resources v2.2.0
+
+> Scroll down for code samples, example requests and responses. Select a language for code samples from the tabs above or the mobile navigation menu.
+
+**Especificação em OAS 3.0** </br>
+<a href="files/swagger/resources_v2.yaml" download="resources_v2.yaml">Download da Especificação</a>
+
+**Detalhamento Técnico** </br>
+<a href="files/docs/resources_v2.docx" download="resources_v2.docx">Download do Detalhamento Técnico</a>
+
+API que trata da consulta do status de recursos para o Open Insurance Brasil - Fase 2 e 3.
+
+Não possui segregação entre pessoa natural e pessoa jurídica.
+
+
+<h2 id="Orientações-importantes-resources-v2"></h2>
+
+- A API resources lista os recursos vinculados ao consentimento específico, identificado por `consentId` e vinculado ao token enviado no header `Authorization`.
+
+- Os `STATUS` dos recursos listados DEVEM considerar não apenas o consentimento vinculado mas também a disponibilidade do recurso na instituição transmissora dos dados.
+
+- A `permission` específica desta API  - `RESOURCES_READ` - DEVE ser solicitada pela instituição receptora na ocasião do pedido de criação do consentimento.
+
+- A consulta à API Resources não é obrigatória por parte das instituições receptoras - esta API foi criada para dar visibilidade da existência de ocorrências que possam impedir o compartilhamento de determinados recursos por parte da instituição transmissora dos dados.
+
+- O identificador do recurso devolvido na API Resources - `resourceId` - quando apresentado corresponde ao mesmo identificador designado para o recurso em sua API específica.
+
+## Status previstos para os recursos listados na API Resources
+- AVAILABLE: indica que o recurso encontra-se disponível e o(s) consentimento(s) associado(s) possui(em) status `AUTHORISED`.
+
+- UNAVAILABLE: indica que o recurso não está mais disponível.
+
+- TEMPORARILY_UNAVAILABLE: indica que o recurso encontra-se temporariamente indisponível, embora o(s) consentimento(s) associado(s) possua(m) status `AUTHORISED`.  
+
+- PENDING_AUTHORISATION: indica a existência de pendências para o compartilhamento do recurso, por exemplo, em caso de alçada dupla, quando é necessário o consentimento de mais de um titular.
+
+## Permissions necessárias para a API Resources
+
+### `/resources`
+  - permissions:
+    - GET: **RESOURCES_READ**
+
+Base URLs:
+
+* <a href="https://api.seguradora.com.br/open-insurance/resources/v2">https://api.seguradora.com.br/open-insurance/resources/v2</a>
+
+* <a href="https://apih.seguradora.com.br/open-insurance/resources/v2">https://apih.seguradora.com.br/open-insurance/resources/v2</a>
+
+Web: <a href="https://www.gov.br/susep/">Governança do Open Insurance Brasil – Especificações</a> 
+
+
+### Authentication
+
+- oAuth2 authentication. Fluxo OAuth necessário para que a receptora tenha acesso aos dados na instituição transmissora. Requer o processo de redirecionamento e autenticação do usuário a que se referem os dados.
+
+    - Flow: authorizationCode
+    - Authorization URL = [https://authserver.example/authorization](https://authserver.example/authorization)
+    - Token URL = [https://authserver.example/token](https://authserver.example/token)
+
+|Scope|Scope Description|
+|---|---|
+|resources|Escopo necessário para acesso à API Resources. O controle dos endpoints específicos é feito via permissions.|
+
+
+<h2 id="opIdresourcesGetResourcesv2">Obtém a lista de recursos consentidos pelo cliente.</h2>
+
+> Code samples
+
+```python
+import requests
+headers = {
+  'Accept': 'application/json',
+  'Authorization': 'string',
+  'x-fapi-auth-date': 'stringstringstringstringstrin',
+  'x-fapi-customer-ip-address': 'string',
+  'x-fapi-interaction-id': 'string',
+  'x-customer-user-agent': 'string'
+}
+
+r = requests.get('https://api.seguradora.com.br/open-insurance/resources/v2/resources', headers = headers)
+
+print(r.json())
+
+```
+
+```java
+URL obj = new URL("https://api.seguradora.com.br/open-insurance/resources/v2/resources");
+HttpURLConnection con = (HttpURLConnection) obj.openConnection();
+con.setRequestMethod("GET");
+int responseCode = con.getResponseCode();
+BufferedReader in = new BufferedReader(
+    new InputStreamReader(con.getInputStream()));
+String inputLine;
+StringBuffer response = new StringBuffer();
+while ((inputLine = in.readLine()) != null) {
+    response.append(inputLine);
+}
+in.close();
+System.out.println(response.toString());
+
+```
+
+`GET /resources`
+
+Método para obter a lista de recursos mantidos pelo cliente na instituição transmissora e para as quais ele tenha fornecido consentimento.
+
+<h3 id="obtém-a-lista-de-recursos-consentidos-pelo-cliente.-parameters">Parameters</h3>
+
+|Name|In|Type|Required|Description|
+|---|---|---|---|---|
+|Authorization|header|string|true|Cabeçalho HTTP padrão. Permite que as credenciais sejam fornecidas dependendo do tipo de recurso solicitado|
+|x-fapi-auth-date|header|string|false|Data em que o usuário logou pela última vez com o receptor. Representada de acordo com a [RFC7231](https://tools.ietf.org/html/rfc7231).Exemplo: Sun, 10 Sep 2017 19:43:31 UTC|
+|x-fapi-customer-ip-address|header|string|false|O endereço IP do usuário se estiver atualmente logado com o receptor.|
+|x-fapi-interaction-id|header|string|false|Um UID [RFC4122](https://tools.ietf.org/html/rfc4122) usado como um ID de correlação. Se fornecido, o transmissor deve "reproduzir" esse valor no cabeçalho de resposta.|
+|x-customer-user-agent|header|string|false|Indica o user-agent que o usuário utiliza.|
+|page|query|integer(int32)|false|Número da página que está sendo requisitada (o valor da primeira página é 1).|
+|page-size|query|integer(int32)|false|Quantidade total de registros por páginas.|
+
+> Example responses
+
+> 200 Response
+
+```json
+{
+  "data": [
+    {
+      "resourceId": "25cac914-d8ae-6789-b215-650a6215820d",
+      "type": "CAPITALIZATION_TITLES",
+      "status": "AVAILABLE"
+    }
+  ],
+  "links": {
+    "self": "https://api.organizacao.com.br/open-insurance/resources/v2/resources",
+    "first": "https://api.organizacao.com.br/open-insurance/resources/v2/resources",
+    "prev": "https://api.organizacao.com.br/open-insurance/resources/v2/resources",
+    "next": "https://api.organizacao.com.br/open-insurance/resources/v2/resources",
+    "last": "https://api.organizacao.com.br/open-insurance/resources/v2/resources"
+  },
+  "meta": {
+    "totalRecords": 1,
+    "totalPages": 1
+  }
+}
+```
+
+<h3 id="obtém-a-lista-de-recursos-consentidos-pelo-cliente.-responses">Responses</h3>
+
+|Status|Meaning|Description|Schema|
+|---|---|---|---|
+|200|[OK](https://tools.ietf.org/html/rfc7231#section-6.3.1)|Dados de status dos recursos obtidos com sucesso.|[ResponseResourceList](#schemaresponseresourcelist)|
+|204|[No Content](https://tools.ietf.org/html/rfc7231#section-6.3.5)|O recurso solicitado não existe ou não foi localizado.|[ResponseError](#schemaresponseerror)|
+|400|[Bad Request](https://tools.ietf.org/html/rfc7231#section-6.5.1)|A requisição foi malformada, omitindo atributos obrigatórios, seja no payload ou através de atributos na URL.|[ResponseError](#schemaresponseerror)|
+|401|[Unauthorized](https://tools.ietf.org/html/rfc7235#section-3.1)|Cabeçalho de autenticação ausente/inválido ou token inválido|[ResponseError](#schemaresponseerror)|
+|403|[Forbidden](https://tools.ietf.org/html/rfc7231#section-6.5.3)|O token tem escopo incorreto ou uma política de segurança foi violada|[ResponseError](#schemaresponseerror)|
+|404|[Not Found](https://tools.ietf.org/html/rfc7231#section-6.5.4)|O recurso solicitado não existe ou não foi implementado|[ResponseError](#schemaresponseerror)|
+|405|[Method Not Allowed](https://tools.ietf.org/html/rfc7231#section-6.5.5)|O consumidor tentou acessar o recurso com um método não suportado|[ResponseError](#schemaresponseerror)|
+|406|[Not Acceptable](https://tools.ietf.org/html/rfc7231#section-6.5.6)|A solicitação continha um cabeçalho Accept diferente dos tipos de mídia permitidos ou um conjunto de caracteres diferente de UTF-8|[ResponseError](#schemaresponseerror)|
+|422|[Unprocessable Entity](https://tools.ietf.org/html/rfc2518#section-10.3)|O servidor entende o tipo de conteúdo da entidade da requisição, e a sintaxe da requisição esta correta, mas não foi possível processar as instruções presente.|[ResponseError](#schemaresponseerror)|
+|429|[Too Many Requests](https://tools.ietf.org/html/rfc6585#section-4)|A operação foi recusada, pois muitas solicitações foram feitas dentro de um determinado período ou o limite global de requisições concorrentes foi atingido|[ResponseError](#schemaresponseerror)|
+|500|[Internal Server Error](https://tools.ietf.org/html/rfc7231#section-6.6.1)|Ocorreu um erro no gateway da API ou no microsserviço|[ResponseError](#schemaresponseerror)|
+|default|Default|Dados de status dos recursos obtidos com sucesso.|[ResponseResourceList](#schemaresponseresourcelist)|
+
+### Response Headers
+
+|Status|Header|Type|Format|Description|
+|---|---|---|---|---|
+|200|x-fapi-interaction-id|string||none|
+|default|x-fapi-interaction-id|string||none|
+
+<aside class="warning">
+To perform this operation, you must be authenticated by means of one of the following methods:
+OpenId ( Scopes: openid ) & OAuth2Security ( Scopes: consent:consentId resources )
+</aside>
