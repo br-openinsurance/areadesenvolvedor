@@ -18,62 +18,64 @@ Release Notes:
 > Code samples
 
 ```javascript
-const data = null;
 
-const xhr = new XMLHttpRequest();
-xhr.withCredentials = true;
+const headers = {
+  'Accept':'application/json',
+  'cache-control':'string',
+  'Content-Security-Policy':'string',
+  'content-Type':'string',
+  'Strict-Transport-Security':'string',
+  'X-Content-Type-Options':'string',
+  'X-Frame-Options':'string'
+};
 
-xhr.addEventListener("readystatechange", function () {
-  if (this.readyState === this.DONE) {
-    console.log(this.responseText);
-  }
+fetch('https://api.organizacao.com.br/open-insurance/products-services/v1/domestic-credit',
+{
+  method: 'GET',
+
+  headers: headers
+})
+.then(function(res) {
+    return res.json();
+}).then(function(body) {
+    console.log(body);
 });
 
-xhr.open("GET", "https://api.organizacao.com.br/open-insurance/products-services/v1/domestic-credit/");
-xhr.setRequestHeader("Accept", "application/json");
-xhr.setRequestHeader("cache-control", "string");
-xhr.setRequestHeader("Content-Security-Policy", "string");
-xhr.setRequestHeader("content-Type", "string");
-xhr.setRequestHeader("Strict-Transport-Security", "string");
-xhr.setRequestHeader("X-Content-Type-Options", "string");
-xhr.setRequestHeader("X-Frame-Options", "string");
-
-xhr.send(data);
 ```
 
 ```python
-import http.client
-
-conn = http.client.HTTPSConnection("api.organizacao.com.br")
-
+import requests
 headers = {
-    'Accept': "application/json",
-    'cache-control': "string",
-    'Content-Security-Policy': "string",
-    'content-Type': "string",
-    'Strict-Transport-Security': "string",
-    'X-Content-Type-Options': "string",
-    'X-Frame-Options': "string"
-    }
+  'Accept': 'application/json',
+  'cache-control': 'string',
+  'Content-Security-Policy': 'string',
+  'content-Type': 'string',
+  'Strict-Transport-Security': 'string',
+  'X-Content-Type-Options': 'string',
+  'X-Frame-Options': 'string'
+}
 
-conn.request("GET", "/open-insurance/products-services/v1/domestic-credit/", headers=headers)
+r = requests.get('https://api.organizacao.com.br/open-insurance/products-services/v1/domestic-credit', headers = headers)
 
-res = conn.getresponse()
-data = res.read()
+print(r.json())
 
-print(data.decode("utf-8"))
 ```
 
 ```java
-HttpResponse<String> response = Unirest.get("https://api.organizacao.com.br/open-insurance/products-services/v1/domestic-credit/")
-  .header("Accept", "application/json")
-  .header("cache-control", "string")
-  .header("Content-Security-Policy", "string")
-  .header("content-Type", "string")
-  .header("Strict-Transport-Security", "string")
-  .header("X-Content-Type-Options", "string")
-  .header("X-Frame-Options", "string")
-  .asString();
+URL obj = new URL("https://api.organizacao.com.br/open-insurance/products-services/v1/domestic-credit");
+HttpURLConnection con = (HttpURLConnection) obj.openConnection();
+con.setRequestMethod("GET");
+int responseCode = con.getResponseCode();
+BufferedReader in = new BufferedReader(
+    new InputStreamReader(con.getInputStream()));
+String inputLine;
+StringBuffer response = new StringBuffer();
+while ((inputLine = in.readLine()) != null) {
+    response.append(inputLine);
+}
+in.close();
+System.out.println(response.toString());
+
 ```
 
 `GET /domestic-credit`
@@ -138,9 +140,7 @@ Obtem a lista dos produtos do tipo Credito Interno
               },
               "minimumRequirements": {
                 "targetAudiences": [
-                  [
-                    "PESSOA_NATURAL"
-                  ]
+                  "PESSOA_NATURAL"
                 ]
               }
             }
@@ -175,7 +175,7 @@ Obtem a lista dos produtos do tipo Credito Interno
 |404|[Not Found](https://tools.ietf.org/html/rfc7231#section-6.5.4)|O recurso solicitado não existe ou não foi implementado|[ResponseError](#schemaresponseerror)|
 |405|[Method Not Allowed](https://tools.ietf.org/html/rfc7231#section-6.5.5)|O consumidor tentou acessar o recurso com um método não suportado|[ResponseError](#schemaresponseerror)|
 |406|[Not Acceptable](https://tools.ietf.org/html/rfc7231#section-6.5.6)|A solicitação continha um cabeçalho Accept diferente dos tipos de mídia permitidos ou um conjunto de caracteres diferente de UTF-8|[ResponseError](#schemaresponseerror)|
-|422|[Unprocessable Entity](https://tools.ietf.org/html/rfc2518#section-10.3)|O servidor entende o tipo de conteúdo da entidade da requisição, e a sintaxe da requisição esta correta, mas não foi possível processar as instruções presentes.|[ResponseError](#schemaresponseerror)|
+|422|[Unprocessable Entity](https://tools.ietf.org/html/rfc2518#section-10.3)|O servidor entende o tipo de conteúdo da entidade da requisição, e a sintaxe da requisição esta correta, mas não foi possível processar as instruções presente.|[ResponseError](#schemaresponseerror)|
 |429|[Too Many Requests](https://tools.ietf.org/html/rfc6585#section-4)|A operação foi recusada, pois muitas solicitações foram feitas dentro de um determinado período ou o limite global de requisições concorrentes foi atingido|[ResponseError](#schemaresponseerror)|
 |500|[Internal Server Error](https://tools.ietf.org/html/rfc7231#section-6.6.1)|Ocorreu um erro no gateway da API ou no microsserviço|[ResponseError](#schemaresponseerror)|
 |default|Default|Dados dos produtos de API de informações de dados do produto Credito Interno. Os recursos que podem ser consumidos pelos participantes conforme a regra 3.1.2 do manual de escopo de dados.|[ResponseDomestictCreditList](#schemaresponsedomestictcreditlist)|

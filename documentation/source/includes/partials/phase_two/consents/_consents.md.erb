@@ -1,5 +1,3 @@
-<!-- Generator: Widdershins v4.0.1 -->
-
 # API - Consents v1.1.0
 
 > Scroll down for code samples, example requests and responses. Select a language for code samples from the tabs above or the mobile navigation menu.
@@ -10,19 +8,21 @@
 **Detalhamento Técnico** </br>
 <a href="files/docs/consents.docx" download="consents.docx">Download do Detalhamento Técnico</a>
 
-API que trata da criação, consulta e revogação de consentimentos para o Open Insurance Brasil Fase 2 - customer-data.
-Não possui segregação entre pessoa natural e pessoa jurídica.
+  Release Notes:
 
-Release Notes:
-
-- <a href="./1.2.5.html#disponibilizacao-das-swaggers">15/07/2022</a>
-- <a href="./1.2.8.html#consents-consents-v1-0-5">24/10/2022,</a><br>
-- <a href="./1.3.0.html#consents-consents">03/03/2023 </a>
+  - <a href="./1.3.0.html#consents-consents">03/03/2023 </a>
 
 
-### Orientações importantes
+API que trata da criação, consulta e revogação de consentimentos para o Open Insurance Brasil Fase 2 - customer-data.  
+
+Não possui segregação entre pessoa natural e pessoa jurídica.    
+
+
+<h2 id="orientacoes-importantes-consents">Orientações importantes </h2>
+
 A API Consents trata dos consentimentos exclusivamente para a fase 2 do Open Insurance Brasil.
-- As informações da instituição receptora não trafegam na API Consents – a autenticação da receptora se dá através do <a href="#dynamic-client-registration-dcr" target="_blank">DCR</a>.
+
+- As informações da instituição receptora não trafegam na API Consents – a autenticação da receptora se dá através do [DCR](https://br-openinsurance.github.io/areadesenvolvedor/#dynamic-client-registration-dcr).   
 
 - Na chamada para a criação do consentimento deve-se utilizar um token gerado via `client_credentials`.
 
@@ -32,97 +32,118 @@ A API Consents trata dos consentimentos exclusivamente para a fase 2 do Open Ins
 
 - Todas as datas trafegadas nesta API seguem o padrão da [RFC3339](https://tools.ietf.org/html/rfc3339) e formato "zulu".
 
+- A descrição do fluxo de consentimento encontra-se disponível no [Portal do desenvolvedor](https://br-openinsurance.github.io/areadesenvolvedor/).
+
+- O arquivo com o mapeamento completo entre `Roles`, `scopes` e `permissions` está disponibilizado no Portal do desenvolvedor, no mesmo item acima - descrição do fluxo de consentimento.
+
 - A receptora deve enviar obrigatoriamente, no pedido de criação de consentimento, todas as permissions dos agrupamentos de dados as quais ela deseja consentimento, conforme tabela abaixo:
-
-| CATEGORIA DE DADOS   | AGRUPAMENTO                      | PERMISSIONS                                                       |
-|----------------------|----------------------------------|-------------------------------------------------------------------|
-| Cadastro             | Dados Cadastrais PF              | CUSTOMERS_PERSONAL_IDENTIFICATIONS_READ                           |
-|                      |                                  | RESOURCES_READ                                                    |
-| Cadastro             | Qualificação PF                  | CUSTOMERS_PERSONAL_QUALIFICATION_READ                             |
-|                      |                                  | RESOURCES_READ                                                    |
-| Cadastro             | Informações complementares PF    | CUSTOMERS_PERSONAL_ADITTIONALINFO_READ                            |
-|                      |                                  | RESOURCES_READ                                                    |
-| Cadastro             | Dados Cadastrais PJ              | CUSTOMERS_BUSINESS_IDENTIFICATIONS_READ                           |
-|                      |                                  | RESOURCES_READ                                                    |
-| Cadastro             | Qualificação PJ                  | CUSTOMERS_BUSINESS_QUALIFICATION_READ                             |
-|                      |                                  | RESOURCES_READ                                                    |
-| Cadastro             | Informações complementares PJ    | CUSTOMERS_BUSINESS_ADITTIONALINFO_READ                            |
-|                      |                                  | RESOURCES_READ                                                    |
-| Títulos de Cap.      | Produtos de Títulos de Cap.      | CAPITALIZATION_TITLES_READ                                        |
-|                      |                                  | CAPITALIZATION_TITLES_POLICYINFO_READ                             |
-|                      |                                  | CAPITALIZATION_TITLES_PREMIUM_READ                                |
-|                      |                                  | CAPITALIZATION_TITLES_CLAIM_READ                                  |
-|                      |                                  | RESOURCES_READ                                                    |
-| Previdência          | Produtos de Previdência Risco    | PENSION_RISK_READ                                                 |
-|                      |                                  | PENSION_RISK_CONTRACTINFO_READ                                    |
-|                      |                                  | PENSION_RISK_CONTRIBUTIONS_READ                                   |
-|                      |                                  | RESOURCES_READ                                                    |
-| Danos e Pessoas      | Patrimonial                      | DAMAGES_AND_PEOPLE_PATRIMONIAL_READ                               |
-|                      |                                  | DAMAGES_AND_PEOPLE_PATRIMONIAL_POLICYINFO_READ                    |
-|                      |                                  | DAMAGES_AND_PEOPLE_PATRIMONIAL_PREMIUM_READ                       |
-|                      |                                  | DAMAGES_AND_PEOPLE_PATRIMONIAL_CLAIM_READ                         |
-|                      |                                  | RESOURCES_READ                                                    |
-| Danos e Pessoas      | Responsabilidade                 | DAMAGES_AND_PEOPLE_RESPONSIBILITY_READ                            |
-|                      |                                  | DAMAGES_AND_PEOPLE_RESPONSIBILITY_POLICYINFO_READ                 |
-|                      |                                  | DAMAGES_AND_PEOPLE_RESPONSIBILITY_PREMIUM_READ                    |
-|                      |                                  | DAMAGES_AND_PEOPLE_RESPONSIBILITY_CLAIM_READ                      |
-|                      |                                  | RESOURCES_READ                                                    |
-| Danos e Pessoas      | Transportes                      | DAMAGES_AND_PEOPLE_TRANSPORT_READ                                 |
-|                      |                                  | DAMAGES_AND_PEOPLE_TRANSPORT_POLICYINFO_READ                      |
-|                      |                                  | DAMAGES_AND_PEOPLE_TRANSPORT_PREMIUM_READ                         |
-|                      |                                  | DAMAGES_AND_PEOPLE_TRANSPORT_CLAIM_READ                           |
-|                      |                                  | RESOURCES_READ                                                    |
-| Danos e Pessoas      | Riscos Financeiros               | DAMAGES_AND_PEOPLE_FINANCIAL_RISKS_READ                           |
-|                      |                                  | DAMAGES_AND_PEOPLE_FINANCIAL_RISKS_POLICYINFO_READ                |
-|                      |                                  | DAMAGES_AND_PEOPLE_FINANCIAL_RISKS_PREMIUM_READ                   |
-|                      |                                  | DAMAGES_AND_PEOPLE_FINANCIAL_RISKS_CLAIM_READ                     |
-|                      |                                  | RESOURCES_READ                                                    |
-| Danos e Pessoas      | Rural                            | DAMAGES_AND_PEOPLE_RURAL_READ                                     |
-|                      |                                  | DAMAGES_AND_PEOPLE_RURAL_POLICYINFO_READ                          |
-|                      |                                  | DAMAGES_AND_PEOPLE_RURAL_PREMIUM_READ                             |
-|                      |                                  | DAMAGES_AND_PEOPLE_RURAL_CLAIM_READ                               |
-|                      |                                  | RESOURCES_READ                                                    |
-| Danos e Pessoas      | Automóveis                       | DAMAGES_AND_PEOPLE_AUTO_READ                                      |
-|                      |                                  | DAMAGES_AND_PEOPLE_AUTO_POLICYINFO_READ                           |
-|                      |                                  | DAMAGES_AND_PEOPLE_AUTO_PREMIUM_READ                              |
-|                      |                                  | DAMAGES_AND_PEOPLE_AUTO_CLAIM_READ                                |
-|                      |                                  | RESOURCES_READ                                                    |
-| Danos e Pessoas      | Habitacional                     | DAMAGES_AND_PEOPLE_HOUSING_READ                                   |
-|                      |                                  | DAMAGES_AND_PEOPLE_HOUSING_POLICYINFO_READ                        |
-|                      |                                  | DAMAGES_AND_PEOPLE_HOUSING_PREMIUM_READ                           |
-|                      |                                  | DAMAGES_AND_PEOPLE_HOUSING_CLAIM_READ                             |
-|                      |                                  | RESOURCES_READ                                                    |
-| Danos e Pessoas      | Aceitação e Sucursal no exterior | DAMAGES_AND_PEOPLE_ACCEPTANCE_AND_BRANCHES_ABROAD_READ            |
-|                      |                                  | DAMAGES_AND_PEOPLE_ACCEPTANCE_AND_BRANCHES_ABROAD_POLICYINFO_READ |
-|                      |                                  | DAMAGES_AND_PEOPLE_ACCEPTANCE_AND_BRANCHES_ABROAD_PREMIUM_READ    |
-|                      |                                  | DAMAGES_AND_PEOPLE_ACCEPTANCE_AND_BRANCHES_ABROAD_CLAIM_READ      |
-|                      |                                  | RESOURCES_READ                                                    |
-| Danos e Pessoas      | Pessoas                          | DAMAGES_AND_PEOPLE_PERSON_READ                                    |
-|                      |                                  | DAMAGES_AND_PEOPLE_PERSON_POLICYINFO_READ                         |
-|                      |                                  | DAMAGES_AND_PEOPLE_PERSON_PREMIUM_READ                            |
-|                      |                                  | DAMAGES_AND_PEOPLE_PERSON_CLAIM_READ                              |
-|                      |                                  | RESOURCES_READ                                                    |
-
+  
+    ```
+  |----------------------|----------------------------------|-------------------------------------------------------------------|
+  | CATEGORIA DE DADOS   | AGRUPAMENTO                      | PERMISSIONS                                                       |
+  |----------------------|----------------------------------|-------------------------------------------------------------------|
+  | Cadastro             | Dados Cadastrais PF              | CUSTOMERS_PERSONAL_IDENTIFICATIONS_READ                           |
+  |                      |                                  | RESOURCES_READ                                                    |
+  |----------------------|----------------------------------|-------------------------------------------------------------------|
+  | Cadastro             | Qualificação PF                  | CUSTOMERS_PERSONAL_QUALIFICATION_READ                             |
+  |                      |                                  | RESOURCES_READ                                                    |
+  |----------------------|----------------------------------|-------------------------------------------------------------------|
+  | Cadastro             | Informações complementares PF    | CUSTOMERS_PERSONAL_ADITTIONALINFO_READ                            |
+  |                      |                                  | RESOURCES_READ                                                    |
+  |----------------------|----------------------------------|-------------------------------------------------------------------|
+  | Cadastro             | Dados Cadastrais PJ              | CUSTOMERS_BUSINESS_IDENTIFICATIONS_READ                           |
+  |                      |                                  | RESOURCES_READ                                                    |
+  |----------------------|----------------------------------|-------------------------------------------------------------------|
+  | Cadastro             | Qualificação PJ                  | CUSTOMERS_BUSINESS_QUALIFICATION_READ                             |
+  |                      |                                  | RESOURCES_READ                                                    |
+  |----------------------|----------------------------------|-------------------------------------------------------------------|
+  | Cadastro             | Informações complementares PJ    | CUSTOMERS_BUSINESS_ADITTIONALINFO_READ                            |
+  |                      |                                  | RESOURCES_READ                                                    |
+  |----------------------|----------------------------------|-------------------------------------------------------------------|
+  | Títulos de Cap.      | Produtos de Títulos de Cap.      | CAPITALIZATION_TITLES_READ                                        |
+  |                      |                                  | CAPITALIZATION_TITLES_POLICYINFO_READ                             |
+  |                      |                                  | CAPITALIZATION_TITLES_PREMIUM_READ                                |      
+  |                      |                                  | CAPITALIZATION_TITLES_CLAIM_READ                                  |
+  |                      |                                  | RESOURCES_READ                                                    |
+  |----------------------|----------------------------------|--------------------- ---------------------------------------------|
+  | Previdência          | Produtos de Previdência Risco    | PENSION_RISK_READ                                                 |
+  |                      |                                  | PENSION_RISK_CONTRACTINFO_READ                                    |
+  |                      |                                  | PENSION_RISK_CONTRIBUTIONS_READ                                   |
+  |                      |                                  | RESOURCES_READ                                                    |
+  |----------------------|----------------------------------|-------------------------------------------------------------------|
+  | Danos e Pessoas      | Patrimonial                      | DAMAGES_AND_PEOPLE_PATRIMONIAL_READ                               |
+  |                      |                                  | DAMAGES_AND_PEOPLE_PATRIMONIAL_POLICYINFO_READ                    |
+  |                      |                                  | DAMAGES_AND_PEOPLE_PATRIMONIAL_PREMIUM_READ                       |
+  |                      |                                  | DAMAGES_AND_PEOPLE_PATRIMONIAL_CLAIM_READ                         |
+  |                      |                                  | RESOURCES_READ                                                    | 
+  |----------------------|----------------------------------|-------------------------------------------------------------------|
+  | Danos e Pessoas      | Responsabilidade                 | DAMAGES_AND_PEOPLE_RESPONSIBILITY_READ                            |
+  |                      |                                  | DAMAGES_AND_PEOPLE_RESPONSIBILITY_POLICYINFO_READ                 |
+  |                      |                                  | DAMAGES_AND_PEOPLE_RESPONSIBILITY_PREMIUM_READ                    |
+  |                      |                                  | DAMAGES_AND_PEOPLE_RESPONSIBILITY_CLAIM_READ                      |
+  |                      |                                  | RESOURCES_READ                                                    | 
+  |----------------------|----------------------------------|-------------------------------------------------------------------|
+  | Danos e Pessoas      | Transportes                      | DAMAGES_AND_PEOPLE_TRANSPORT_READ                                 |
+  |                      |                                  | DAMAGES_AND_PEOPLE_TRANSPORT_POLICYINFO_READ                      |
+  |                      |                                  | DAMAGES_AND_PEOPLE_TRANSPORT_PREMIUM_READ                         |
+  |                      |                                  | DAMAGES_AND_PEOPLE_TRANSPORT_CLAIM_READ                           |
+  |                      |                                  | RESOURCES_READ                                                    | 
+  |----------------------|----------------------------------|-------------------------------------------------------------------|
+  | Danos e Pessoas      | Riscos Financeiros               | DAMAGES_AND_PEOPLE_FINANCIAL_RISKS_READ                                 |
+  |                      |                                  | DAMAGES_AND_PEOPLE_FINANCIAL_RISKS_POLICYINFO_READ                |
+  |                      |                                  | DAMAGES_AND_PEOPLE_FINANCIAL_RISKS_PREMIUM_READ                   |
+  |                      |                                  | DAMAGES_AND_PEOPLE_FINANCIAL_RISKS_CLAIM_READ                     |
+  |                      |                                  | RESOURCES_READ                                                    | 
+  |----------------------|----------------------------------|-------------------------------------------------------------------|
+  | Danos e Pessoas      | Rural                            | DAMAGES_AND_PEOPLE_RURAL_READ                                     |
+  |                      |                                  | DAMAGES_AND_PEOPLE_RURAL_POLICYINFO_READ                          |
+  |                      |                                  | DAMAGES_AND_PEOPLE_RURAL_PREMIUM_READ                             |
+  |                      |                                  | DAMAGES_AND_PEOPLE_RURAL_CLAIM_READ                               |
+  |                      |                                  | RESOURCES_READ                                                    | 
+  |----------------------|----------------------------------|-------------------------------------------------------------------|
+  | Danos e Pessoas      | Automóveis                       | DAMAGES_AND_PEOPLE_AUTO_READ                                      |
+  |                      |                                  | DAMAGES_AND_PEOPLE_AUTO_POLICYINFO_READ                           |
+  |                      |                                  | DAMAGES_AND_PEOPLE_AUTO_PREMIUM_READ                              |
+  |                      |                                  | DAMAGES_AND_PEOPLE_AUTO_CLAIM_READ                                |
+  |                      |                                  | RESOURCES_READ                                                    |
+  |----------------------|----------------------------------|-------------------------------------------------------------------|
+  | Danos e Pessoas      | Habitacional                     | DAMAGES_AND_PEOPLE_HOUSING_READ                                   |
+  |                      |                                  | DAMAGES_AND_PEOPLE_HOUSING_POLICYINFO_READ                        |
+  |                      |                                  | DAMAGES_AND_PEOPLE_HOUSING_PREMIUM_READ                           |
+  |                      |                                  | DAMAGES_AND_PEOPLE_HOUSING_CLAIM_READ                             |
+  |                      |                                  | RESOURCES_READ                                                    |
+  |----------------------|----------------------------------|-------------------------------------------------------------------|
+  | Danos e Pessoas      | Aceitação e Sucursal no exterior | DAMAGES_AND_PEOPLE_ACCEPTANCE_AND_BRANCHES_ABROAD_READ            |
+  |                      |                                  | DAMAGES_AND_PEOPLE_ACCEPTANCE_AND_BRANCHES_ABROAD_POLICYINFO_READ |
+  |                      |                                  | DAMAGES_AND_PEOPLE_ACCEPTANCE_AND_BRANCHES_ABROAD_PREMIUM_READ    |
+  |                      |                                  | DAMAGES_AND_PEOPLE_ACCEPTANCE_AND_BRANCHES_ABROAD_CLAIM_READ      |
+  |                      |                                  | RESOURCES_READ                                                    |
+  |----------------------|----------------------------------|-------------------------------------------------------------------|
+  | Danos e Pessoas      | Pessoas                          | DAMAGES_AND_PEOPLE_PERSON_READ                                    |
+  |                      |                                  | DAMAGES_AND_PEOPLE_PERSON_POLICYINFO_READ                         |
+  |                      |                                  | DAMAGES_AND_PEOPLE_PERSON_PREMIUM_READ                            |
+  |                      |                                  | DAMAGES_AND_PEOPLE_PERSON_CLAIM_READ                              |
+  |                      |                                  | RESOURCES_READ                                                    | 
+  |----------------------|----------------------------------|-------------------------------------------------------------------|
+  ```
 - A instituição transmissora deve validar o preenchimento correto desses agrupamentos no momento da geração do consentimento.
+
 - Caso a instiuição receptora envie permissões divergentes ao agrupamento especificado na tabela, a transmissora deve rejeitar o pedido da receptora dando retorno HTTP Status Code 400.
+
 - A transmissora deve retornar, da lista de permissions requisitadas, apenas o subconjunto de permissions por ela suportada, removendo da lista as permissions de produtos não suportados e retornando HTTP Status Code 201. Caso não restem permissões funcionais, a instituição transmissora deve retornar o erro HTTP Code "422 Unprocessable Entity".
 
 Base URLs:
 
-Servidor de Produção </br>
 * <a href="https://api.seguro.com.br/open-insurance/consents/v1">https://api.seguro.com.br/open-insurance/consents/v1</a>
 
-Servidor de Homologação </br>
 * <a href="https://apih.seguro.com.br/open-insurance/consents/v1">https://apih.seguro.com.br/open-insurance/consents/v1</a>
 
+Web: <a href="https://www.gov.br/susep/">Governança do Open Insurance Brasil - Especificações</a> 
 
-Web: <a href="https://openinsurance.susep.gov.br/documentos-de-referencia/">Governança do Open Insurance Brasil - Especificações</a>
-
-License: <a href="http://www.apache.org/licenses/LICENSE-2.0">Apache 2.0</a>
 
 ### Authentication
 
-- oAuth2 authentication.
+- oAuth2 authentication. 
 
     - Flow: clientCredentials
 
@@ -132,14 +153,16 @@ License: <a href="http://www.apache.org/licenses/LICENSE-2.0">Apache 2.0</a>
 |---|---|
 |consents|Criação do consentimento.|
 
-<h2 id="api-consents-v100-criar-novo-pedido-de-consentimento">Criar novo pedido de consentimento.</h2>
 
-<a id="opIdconsentsPostConsents"></a>
+Operações para criação, consulta e revogação do consentimento dado pelo cliente.
+
+
+<h2 id="criar-novo-pedido-de-consentimento-consentspostconsents">Criar novo pedido de consentimento.</h2>
 
 > Code samples
 
 ```javascript
-const data = JSON.stringify({
+const inputBody = '{
   "data": {
     "loggedUser": {
       "document": {
@@ -162,68 +185,67 @@ const data = JSON.stringify({
     "transactionFromDateTime": "2021-01-01T00:00:00Z",
     "transactionToDateTime": "2021-02-01T23:59:59Z"
   }
+}';
+const headers = {
+  'Content-Type':'application/json',
+  'Accept':'application/json',
+  'Authorization':'string',
+  'x-fapi-auth-date':'stringstringstringstringstrin',
+  'x-fapi-customer-ip-address':'string',
+  'x-fapi-interaction-id':'string',
+  'x-customer-user-agent':'string'
+};
+
+fetch('https://api.seguro.com.br/open-insurance/consents/v1/consents',
+{
+  method: 'POST',
+  body: inputBody,
+  headers: headers
+})
+.then(function(res) {
+    return res.json();
+}).then(function(body) {
+    console.log(body);
 });
 
-const xhr = new XMLHttpRequest();
-xhr.withCredentials = true;
-
-xhr.addEventListener("readystatechange", function () {
-  if (this.readyState === this.DONE) {
-    console.log(this.responseText);
-  }
-});
-
-xhr.open("POST", "https://api.seguro.com.br/open-insurance/consents/v1/");
-xhr.setRequestHeader("Content-Type", "application/json");
-xhr.setRequestHeader("Accept", "application/json");
-xhr.setRequestHeader("Authorization", "string");
-xhr.setRequestHeader("x-fapi-auth-date", "stringstringstringstringstrin");
-xhr.setRequestHeader("x-fapi-customer-ip-address", "string");
-xhr.setRequestHeader("x-fapi-interaction-id", "string");
-xhr.setRequestHeader("x-customer-user-agent", "string");
-
-xhr.send(data);
 ```
 
 ```python
-import http.client
-
-conn = http.client.HTTPSConnection("api.seguro.com.br")
-
-payload = "{\"data\":{\"loggedUser\":{\"document\":{\"identification\":\"11111111111\",\"rel\":\"CPF\"}},\"businessEntity\":{\"document\":{\"identification\":\"11111111111111\",\"rel\":\"CNPJ\"}},\"permissions\":[\"PENSION_RISK_READ\",\"CAPITALIZATION_TITLES_READ\",\"RESOURCES_READ\"],\"expirationDateTime\":\"2021-05-21T08:30:00Z\",\"transactionFromDateTime\":\"2021-01-01T00:00:00Z\",\"transactionToDateTime\":\"2021-02-01T23:59:59Z\"}}"
-
+import requests
 headers = {
-    'Content-Type': "application/json",
-    'Accept': "application/json",
-    'Authorization': "string",
-    'x-fapi-auth-date': "stringstringstringstringstrin",
-    'x-fapi-customer-ip-address': "string",
-    'x-fapi-interaction-id': "string",
-    'x-customer-user-agent': "string"
-    }
+  'Content-Type': 'application/json',
+  'Accept': 'application/json',
+  'Authorization': 'string',
+  'x-fapi-auth-date': 'stringstringstringstringstrin',
+  'x-fapi-customer-ip-address': 'string',
+  'x-fapi-interaction-id': 'string',
+  'x-customer-user-agent': 'string'
+}
 
-conn.request("POST", "/open-insurance/consents/v1/", payload, headers)
+r = requests.post('https://api.seguro.com.br/open-insurance/consents/v1/consents', headers = headers)
 
-res = conn.getresponse()
-data = res.read()
+print(r.json())
 
-print(data.decode("utf-8"))
 ```
 
 ```java
-HttpResponse<String> response = Unirest.post("https://api.seguro.com.br/open-insurance/consents/v1/")
-  .header("Content-Type", "application/json")
-  .header("Accept", "application/json")
-  .header("Authorization", "string")
-  .header("x-fapi-auth-date", "stringstringstringstringstrin")
-  .header("x-fapi-customer-ip-address", "string")
-  .header("x-fapi-interaction-id", "string")
-  .header("x-customer-user-agent", "string")
-  .body("{\"data\":{\"loggedUser\":{\"document\":{\"identification\":\"11111111111\",\"rel\":\"CPF\"}},\"businessEntity\":{\"document\":{\"identification\":\"11111111111111\",\"rel\":\"CNPJ\"}},\"permissions\":[\"PENSION_RISK_READ\",\"CAPITALIZATION_TITLES_READ\",\"RESOURCES_READ\"],\"expirationDateTime\":\"2021-05-21T08:30:00Z\",\"transactionFromDateTime\":\"2021-01-01T00:00:00Z\",\"transactionToDateTime\":\"2021-02-01T23:59:59Z\"}}")
-  .asString();
+URL obj = new URL("https://api.seguro.com.br/open-insurance/consents/v1/consents");
+HttpURLConnection con = (HttpURLConnection) obj.openConnection();
+con.setRequestMethod("POST");
+int responseCode = con.getResponseCode();
+BufferedReader in = new BufferedReader(
+    new InputStreamReader(con.getInputStream()));
+String inputLine;
+StringBuffer response = new StringBuffer();
+while ((inputLine = in.readLine()) != null) {
+    response.append(inputLine);
+}
+in.close();
+System.out.println(response.toString());
+
 ```
 
-`POST /`
+`POST /consents`
 
 Método para a criação de um novo consentimento.
 
@@ -296,8 +318,7 @@ Método para a criação de um novo consentimento.
   },
   "meta": {
     "totalRecords": 1,
-    "totalPages": 1,
-    "requestDateTime": "2021-05-21T08:30:00Z"
+    "totalPages": 1
   }
 }
 ```
@@ -307,23 +328,26 @@ Método para a criação de um novo consentimento.
 |Status|Meaning|Description|Schema|
 |---|---|---|---|
 |201|[Created](https://tools.ietf.org/html/rfc7231#section-6.3.2)|Consentimento criado com sucesso.|[ResponseConsent](#schemaresponseconsent)|
+|204|[No Content](https://tools.ietf.org/html/rfc7231#section-6.3.5)|O recurso solicitado não existe ou não foi localizado.|[ResponseError](#schemaresponseerror)|
 |400|[Bad Request](https://tools.ietf.org/html/rfc7231#section-6.5.1)|A requisição foi malformada, omitindo atributos obrigatórios, seja no payload ou através de atributos na URL.|[ResponseError](#schemaresponseerror)|
 |401|[Unauthorized](https://tools.ietf.org/html/rfc7235#section-3.1)|Cabeçalho de autenticação ausente/inválido ou token inválido|[ResponseError](#schemaresponseerror)|
 |403|[Forbidden](https://tools.ietf.org/html/rfc7231#section-6.5.3)|O token tem escopo incorreto ou uma política de segurança foi violada|[ResponseError](#schemaresponseerror)|
 |404|[Not Found](https://tools.ietf.org/html/rfc7231#section-6.5.4)|O recurso solicitado não existe ou não foi implementado|[ResponseError](#schemaresponseerror)|
 |405|[Method Not Allowed](https://tools.ietf.org/html/rfc7231#section-6.5.5)|O consumidor tentou acessar o recurso com um método não suportado|[ResponseError](#schemaresponseerror)|
 |406|[Not Acceptable](https://tools.ietf.org/html/rfc7231#section-6.5.6)|A solicitação continha um cabeçalho Accept diferente dos tipos de mídia permitidos ou um conjunto de caracteres diferente de UTF-8|[ResponseError](#schemaresponseerror)|
-|415|[Unsupported Media Type](https://tools.ietf.org/html/rfc7231#section-6.5.13)|O formato do payload não é um formato suportado.|[ResponseError](#schemaresponseerror)|
-|422|[Unprocessable Entity](https://tools.ietf.org/html/rfc2518#section-10.3)|A sintaxe da requisição esta correta, mas não foi possível processar as instruções presentes.|[ResponseError](#schemaresponseerror)|
+|422|[Unprocessable Entity](https://tools.ietf.org/html/rfc2518#section-10.3)|O servidor entende o tipo de conteúdo da entidade da requisição, e a sintaxe da requisição esta correta, mas não foi possível processar as instruções presente.|[ResponseError](#schemaresponseerror)|
 |429|[Too Many Requests](https://tools.ietf.org/html/rfc6585#section-4)|A operação foi recusada, pois muitas solicitações foram feitas dentro de um determinado período ou o limite global de requisições concorrentes foi atingido|[ResponseError](#schemaresponseerror)|
 |500|[Internal Server Error](https://tools.ietf.org/html/rfc7231#section-6.6.1)|Ocorreu um erro no gateway da API ou no microsserviço|[ResponseError](#schemaresponseerror)|
-|default|Default|Erro inesperado.|[ResponseError](#schemaresponseerror)|
+|default|Default|Consentimento criado com sucesso.|[ResponseConsent](#schemaresponseconsent)|
 
 ### Response Headers
 
 |Status|Header|Type|Format|Description|
 |---|---|---|---|---|
-|201|x-fapi-interaction-id|string||Um UID [RFC4122](https://tools.ietf.org/html/rfc4122) usado como um ID de correlação.
+|201|x-fapi-interaction-id|string||Um UID [RFC4122](https://tools.ietf.org/html/rfc4122) usado como um ID de correlação.  
+Se fornecido, o transmissor deve "reproduzir" esse valor no cabeçalho de resposta.
+|
+|default|x-fapi-interaction-id|string||Um UID [RFC4122](https://tools.ietf.org/html/rfc4122) usado como um ID de correlação.  
 Se fornecido, o transmissor deve "reproduzir" esse valor no cabeçalho de resposta.
 |
 
@@ -332,73 +356,75 @@ To perform this operation, you must be authenticated by means of one of the foll
 OAuth2Security ( Scopes: consents )
 </aside>
 
-<h2 id="api-consents-v100-obter-detalhes-do-consentimento-identificado-por-consentid">Obter detalhes do consentimento identificado por consentId.</h2>
 
-<a id="opIdconsentsGetConsentsConsentId"></a>
+<h2 id="obter-detalhes-do-consentimento-identificado-por-consentid">Obter detalhes do consentimento identificado por consentId.</h2>
 
 > Code samples
 
 ```javascript
-const data = null;
 
-const xhr = new XMLHttpRequest();
-xhr.withCredentials = true;
+const headers = {
+  'Accept':'application/json',
+  'Authorization':'string',
+  'x-fapi-auth-date':'stringstringstringstringstrin',
+  'x-fapi-customer-ip-address':'string',
+  'x-fapi-interaction-id':'string',
+  'x-customer-user-agent':'string'
+};
 
-xhr.addEventListener("readystatechange", function () {
-  if (this.readyState === this.DONE) {
-    console.log(this.responseText);
-  }
+fetch('https://api.seguro.com.br/open-insurance/consents/v1/consents/{consentId}',
+{
+  method: 'GET',
+
+  headers: headers
+})
+.then(function(res) {
+    return res.json();
+}).then(function(body) {
+    console.log(body);
 });
 
-xhr.open("GET", "https://api.seguro.com.br/open-insurance/consents/v1/string");
-xhr.setRequestHeader("Accept", "application/json");
-xhr.setRequestHeader("Authorization", "string");
-xhr.setRequestHeader("x-fapi-auth-date", "stringstringstringstringstrin");
-xhr.setRequestHeader("x-fapi-customer-ip-address", "string");
-xhr.setRequestHeader("x-fapi-interaction-id", "string");
-xhr.setRequestHeader("x-customer-user-agent", "string");
-
-xhr.send(data);
 ```
 
 ```python
-import http.client
-
-conn = http.client.HTTPSConnection("api.seguro.com.br")
-
+import requests
 headers = {
-    'Accept': "application/json",
-    'Authorization': "string",
-    'x-fapi-auth-date': "stringstringstringstringstrin",
-    'x-fapi-customer-ip-address': "string",
-    'x-fapi-interaction-id': "string",
-    'x-customer-user-agent': "string"
-    }
+  'Accept': 'application/json',
+  'Authorization': 'string',
+  'x-fapi-auth-date': 'stringstringstringstringstrin',
+  'x-fapi-customer-ip-address': 'string',
+  'x-fapi-interaction-id': 'string',
+  'x-customer-user-agent': 'string'
+}
 
-conn.request("GET", "/open-insurance/consents/v1/string", headers=headers)
+r = requests.get('https://api.seguro.com.br/open-insurance/consents/v1/consents/{consentId}', headers = headers)
 
-res = conn.getresponse()
-data = res.read()
+print(r.json())
 
-print(data.decode("utf-8"))
 ```
 
 ```java
-HttpResponse<String> response = Unirest.get("https://api.seguro.com.br/open-insurance/consents/v1/string")
-  .header("Accept", "application/json")
-  .header("Authorization", "string")
-  .header("x-fapi-auth-date", "stringstringstringstringstrin")
-  .header("x-fapi-customer-ip-address", "string")
-  .header("x-fapi-interaction-id", "string")
-  .header("x-customer-user-agent", "string")
-  .asString();
+URL obj = new URL("https://api.seguro.com.br/open-insurance/consents/v1/consents/{consentId}");
+HttpURLConnection con = (HttpURLConnection) obj.openConnection();
+con.setRequestMethod("GET");
+int responseCode = con.getResponseCode();
+BufferedReader in = new BufferedReader(
+    new InputStreamReader(con.getInputStream()));
+String inputLine;
+StringBuffer response = new StringBuffer();
+while ((inputLine = in.readLine()) != null) {
+    response.append(inputLine);
+}
+in.close();
+System.out.println(response.toString());
+
 ```
 
 `GET /consents/{consentId}`
 
 Método para obter detalhes do consentimento identificado por consentId.
 
-<h3 id="obter-detalhes-do-consentimento-identificado-por-consentid.-parameters">Parameters</h3>
+<h3 id="obter-detalhes-do-consentimento-identificado-por-consentid-parameters">Parameters</h3>
 
 |Name|In|Type|Required|Description|
 |---|---|---|---|---|
@@ -442,33 +468,36 @@ Método para obter detalhes do consentimento identificado por consentId.
   },
   "meta": {
     "totalRecords": 1,
-    "totalPages": 1,
-    "requestDateTime": "2021-05-21T08:30:00Z"
+    "totalPages": 1
   }
 }
 ```
 
-<h3 id="obter-detalhes-do-consentimento-identificado-por-consentid.-responses">Responses</h3>
+<h3 id="obter-detalhes-do-consentimento-identificado-por-consentid-responses">Responses</h3>
 
 |Status|Meaning|Description|Schema|
 |---|---|---|---|
 |200|[OK](https://tools.ietf.org/html/rfc7231#section-6.3.1)|Consentimento consultado com sucesso.|[ResponseConsent](#schemaresponseconsent)|
+|204|[No Content](https://tools.ietf.org/html/rfc7231#section-6.3.5)|O recurso solicitado não existe ou não foi localizado.|[ResponseError](#schemaresponseerror)|
 |400|[Bad Request](https://tools.ietf.org/html/rfc7231#section-6.5.1)|A requisição foi malformada, omitindo atributos obrigatórios, seja no payload ou através de atributos na URL.|[ResponseError](#schemaresponseerror)|
 |401|[Unauthorized](https://tools.ietf.org/html/rfc7235#section-3.1)|Cabeçalho de autenticação ausente/inválido ou token inválido|[ResponseError](#schemaresponseerror)|
 |403|[Forbidden](https://tools.ietf.org/html/rfc7231#section-6.5.3)|O token tem escopo incorreto ou uma política de segurança foi violada|[ResponseError](#schemaresponseerror)|
 |404|[Not Found](https://tools.ietf.org/html/rfc7231#section-6.5.4)|O recurso solicitado não existe ou não foi implementado|[ResponseError](#schemaresponseerror)|
 |405|[Method Not Allowed](https://tools.ietf.org/html/rfc7231#section-6.5.5)|O consumidor tentou acessar o recurso com um método não suportado|[ResponseError](#schemaresponseerror)|
 |406|[Not Acceptable](https://tools.ietf.org/html/rfc7231#section-6.5.6)|A solicitação continha um cabeçalho Accept diferente dos tipos de mídia permitidos ou um conjunto de caracteres diferente de UTF-8|[ResponseError](#schemaresponseerror)|
-|422|[Unprocessable Entity](https://tools.ietf.org/html/rfc2518#section-10.3)|A sintaxe da requisição esta correta, mas não foi possível processar as instruções presentes.|[ResponseError](#schemaresponseerror)|
+|422|[Unprocessable Entity](https://tools.ietf.org/html/rfc2518#section-10.3)|O servidor entende o tipo de conteúdo da entidade da requisição, e a sintaxe da requisição esta correta, mas não foi possível processar as instruções presente.|[ResponseError](#schemaresponseerror)|
 |429|[Too Many Requests](https://tools.ietf.org/html/rfc6585#section-4)|A operação foi recusada, pois muitas solicitações foram feitas dentro de um determinado período ou o limite global de requisições concorrentes foi atingido|[ResponseError](#schemaresponseerror)|
 |500|[Internal Server Error](https://tools.ietf.org/html/rfc7231#section-6.6.1)|Ocorreu um erro no gateway da API ou no microsserviço|[ResponseError](#schemaresponseerror)|
-|default|Default|Erro inesperado.|[ResponseError](#schemaresponseerror)|
+|default|Default|Consentimento consultado com sucesso.|[ResponseConsent](#schemaresponseconsent)|
 
 ### Response Headers
 
 |Status|Header|Type|Format|Description|
 |---|---|---|---|---|
-|200|x-fapi-interaction-id|string||Um UID [RFC4122](https://tools.ietf.org/html/rfc4122) usado como um ID de correlação.
+|200|x-fapi-interaction-id|string||Um UID [RFC4122](https://tools.ietf.org/html/rfc4122) usado como um ID de correlação.  
+Se fornecido, o transmissor deve "reproduzir" esse valor no cabeçalho de resposta.
+|
+|default|x-fapi-interaction-id|string||Um UID [RFC4122](https://tools.ietf.org/html/rfc4122) usado como um ID de correlação.  
 Se fornecido, o transmissor deve "reproduzir" esse valor no cabeçalho de resposta.
 |
 
@@ -477,69 +506,71 @@ To perform this operation, you must be authenticated by means of one of the foll
 OAuth2Security ( Scopes: consents )
 </aside>
 
-<h2 id="api-consents-v100-deletar-revogar-o-consentimento-identificado-por-consentid">Deletar / Revogar o consentimento identificado por consentId.</h2>
 
-<a id="opIdconsentsDeleteConsentsConsentId"></a>
+<h2 id="deletar-revogar-o-consentimento-identificado-por-consentIdopIdconsentsDeleteConsentsConsentId">Deletar / Revogar o consentimento identificado por consentId.</h2>
 
 > Code samples
 
 ```javascript
-const data = null;
 
-const xhr = new XMLHttpRequest();
-xhr.withCredentials = true;
+const headers = {
+  'Accept':'application/json; charset=utf-8',
+  'Authorization':'string',
+  'x-fapi-auth-date':'stringstringstringstringstrin',
+  'x-fapi-customer-ip-address':'string',
+  'x-fapi-interaction-id':'string',
+  'x-customer-user-agent':'string'
+};
 
-xhr.addEventListener("readystatechange", function () {
-  if (this.readyState === this.DONE) {
-    console.log(this.responseText);
-  }
+fetch('https://api.seguro.com.br/open-insurance/consents/v1/consents/{consentId}',
+{
+  method: 'DELETE',
+
+  headers: headers
+})
+.then(function(res) {
+    return res.json();
+}).then(function(body) {
+    console.log(body);
 });
 
-xhr.open("DELETE", "https://api.seguro.com.br/open-insurance/consents/v1/string");
-xhr.setRequestHeader("Accept", "application/json; charset=utf-8");
-xhr.setRequestHeader("Authorization", "string");
-xhr.setRequestHeader("x-fapi-auth-date", "stringstringstringstringstrin");
-xhr.setRequestHeader("x-fapi-customer-ip-address", "string");
-xhr.setRequestHeader("x-fapi-interaction-id", "string");
-xhr.setRequestHeader("x-customer-user-agent", "string");
-
-xhr.send(data);
 ```
 
 ```python
-import http.client
-
-conn = http.client.HTTPSConnection("api.seguro.com.br")
-
+import requests
 headers = {
-    'Accept': "application/json; charset=utf-8",
-    'Authorization': "string",
-    'x-fapi-auth-date': "stringstringstringstringstrin",
-    'x-fapi-customer-ip-address': "string",
-    'x-fapi-interaction-id': "string",
-    'x-customer-user-agent': "string"
-    }
+  'Accept': 'application/json; charset=utf-8',
+  'Authorization': 'string',
+  'x-fapi-auth-date': 'stringstringstringstringstrin',
+  'x-fapi-customer-ip-address': 'string',
+  'x-fapi-interaction-id': 'string',
+  'x-customer-user-agent': 'string'
+}
 
-conn.request("DELETE", "/open-insurance/consents/v1/string", headers=headers)
+r = requests.delete('https://api.seguro.com.br/open-insurance/consents/v1/consents/{consentId}', headers = headers)
 
-res = conn.getresponse()
-data = res.read()
+print(r.json())
 
-print(data.decode("utf-8"))
 ```
 
 ```java
-HttpResponse<String> response = Unirest.delete("https://api.seguro.com.br/open-insurance/consents/v1/string")
-  .header("Accept", "application/json; charset=utf-8")
-  .header("Authorization", "string")
-  .header("x-fapi-auth-date", "stringstringstringstringstrin")
-  .header("x-fapi-customer-ip-address", "string")
-  .header("x-fapi-interaction-id", "string")
-  .header("x-customer-user-agent", "string")
-  .asString();
+URL obj = new URL("https://api.seguro.com.br/open-insurance/consents/v1/consents/{consentId}");
+HttpURLConnection con = (HttpURLConnection) obj.openConnection();
+con.setRequestMethod("DELETE");
+int responseCode = con.getResponseCode();
+BufferedReader in = new BufferedReader(
+    new InputStreamReader(con.getInputStream()));
+String inputLine;
+StringBuffer response = new StringBuffer();
+while ((inputLine = in.readLine()) != null) {
+    response.append(inputLine);
+}
+in.close();
+System.out.println(response.toString());
+
 ```
 
-`DELETE /{consentId}`
+`DELETE /consents/{consentId}`
 
 Método para deletar / revogar o consentimento identificado por consentId.
 
@@ -560,7 +591,7 @@ Método para deletar / revogar o consentimento identificado por consentId.
 
 > Example responses
 
-> 400 Response
+> 204 Response
 
 ```json
 {
@@ -568,13 +599,13 @@ Método para deletar / revogar o consentimento identificado por consentId.
     {
       "code": "string",
       "title": "string",
-      "detail": "string"
+      "detail": "string",
+      "requestDateTime": "2021-05-21T08:30:00Z"
     }
   ],
   "meta": {
     "totalRecords": 1,
-    "totalPages": 1,
-    "requestDateTime": "2021-05-21T08:30:00Z"
+    "totalPages": 1
   }
 }
 ```
@@ -583,23 +614,23 @@ Método para deletar / revogar o consentimento identificado por consentId.
 
 |Status|Meaning|Description|Schema|
 |---|---|---|---|
-|204|[No Content](https://tools.ietf.org/html/rfc7231#section-6.3.5)|Consentimento revogado com sucesso.|None|
+|204|[No Content](https://tools.ietf.org/html/rfc7231#section-6.3.5)|O recurso solicitado não existe ou não foi localizado.|[ResponseError](#schemaresponseerror)|
 |400|[Bad Request](https://tools.ietf.org/html/rfc7231#section-6.5.1)|A requisição foi malformada, omitindo atributos obrigatórios, seja no payload ou através de atributos na URL.|[ResponseError](#schemaresponseerror)|
 |401|[Unauthorized](https://tools.ietf.org/html/rfc7235#section-3.1)|Cabeçalho de autenticação ausente/inválido ou token inválido|[ResponseError](#schemaresponseerror)|
 |403|[Forbidden](https://tools.ietf.org/html/rfc7231#section-6.5.3)|O token tem escopo incorreto ou uma política de segurança foi violada|[ResponseError](#schemaresponseerror)|
 |404|[Not Found](https://tools.ietf.org/html/rfc7231#section-6.5.4)|O recurso solicitado não existe ou não foi implementado|[ResponseError](#schemaresponseerror)|
 |405|[Method Not Allowed](https://tools.ietf.org/html/rfc7231#section-6.5.5)|O consumidor tentou acessar o recurso com um método não suportado|[ResponseError](#schemaresponseerror)|
 |406|[Not Acceptable](https://tools.ietf.org/html/rfc7231#section-6.5.6)|A solicitação continha um cabeçalho Accept diferente dos tipos de mídia permitidos ou um conjunto de caracteres diferente de UTF-8|[ResponseError](#schemaresponseerror)|
-|422|[Unprocessable Entity](https://tools.ietf.org/html/rfc2518#section-10.3)|A sintaxe da requisição esta correta, mas não foi possível processar as instruções presentes.|[ResponseError](#schemaresponseerror)|
+|422|[Unprocessable Entity](https://tools.ietf.org/html/rfc2518#section-10.3)|O servidor entende o tipo de conteúdo da entidade da requisição, e a sintaxe da requisição esta correta, mas não foi possível processar as instruções presente.|[ResponseError](#schemaresponseerror)|
 |429|[Too Many Requests](https://tools.ietf.org/html/rfc6585#section-4)|A operação foi recusada, pois muitas solicitações foram feitas dentro de um determinado período ou o limite global de requisições concorrentes foi atingido|[ResponseError](#schemaresponseerror)|
 |500|[Internal Server Error](https://tools.ietf.org/html/rfc7231#section-6.6.1)|Ocorreu um erro no gateway da API ou no microsserviço|[ResponseError](#schemaresponseerror)|
-|default|Default|Erro inesperado.|[ResponseError](#schemaresponseerror)|
+|default|Default|Consentimento revogado com sucesso.|None|
 
 ### Response Headers
 
 |Status|Header|Type|Format|Description|
 |---|---|---|---|---|
-|204|x-fapi-interaction-id|string||Um UID [RFC4122](https://tools.ietf.org/html/rfc4122) usado como um ID de correlação.
+|default|x-fapi-interaction-id|string||Um UID [RFC4122](https://tools.ietf.org/html/rfc4122) usado como um ID de correlação.  
 Se fornecido, o transmissor deve "reproduzir" esse valor no cabeçalho de resposta.
 |
 
