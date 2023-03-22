@@ -36,20 +36,26 @@ será validado no keystore do diretório.
 
 Todas as requisições deveram ser enviadas com o Content-Type: application/jwt.<br />
 Para assinar uma requisição a organização deverá:
-  1) Identifique a chave privada e o certificado de assinatura correspondente a serem usados para assinar o payload
+
+  1) Identifique a chave privada e o certificado de assinatura correspondente a serem usados para assinar o payload.
+
   2) Geração do JOSE Header
 
       Montar um JSON com os campos obrigatórios:
+
       * **alg** - Algoritmo que será usado para assinar o JWS. Deve ser preenchido com o valor **"PS256"**.
+
       * **kid** - Valor do identificador da chave utilizado para a assinatura.
+
       * **typ** - Tipo de conteúdo usado para trafegar mensagens na API. Deve ser preenchido com o valor **"JWT"**.
 
       E converter para Base64Url seguindo o padrão especificado na [RFC4648](https://datatracker.ietf.org/doc/html/rfc4648#section-5).
-  3) Montando o payload JWS
 
-      Body da requisição no formato JSON convertido para Base64Url seguindo o padrão especificado na [RFC4648](https://datatracker.ietf.org/doc/html/rfc4648#section-5).
+  3) Montando o payload 
+      JWS Body da requisição no formato JSON convertido para Base64Url seguindo o padrão especificado na [RFC4648](https://datatracker.ietf.org/doc/html/rfc4648#section-5).
 
   4) Gerar a assinatura digital conforme especificado na [RFC7515](https://datatracker.ietf.org/doc/html/rfc7515).
+
   5) Juntar as partes concatenando com ponto (.) para formar o JWS
 
       **JWS = Base64url(JOSEHeader) + "." + Base64url(payload JWT) + "." + Base64url(digital signature)**
@@ -311,24 +317,12 @@ O limite de registros de cada lote é 5.000 registros.
 
 |Status|Meaning|Description|Schema|
 |---|---|---|---|
-|200|[OK](https://tools.ietf.org/html/rfc7231#section-6.3.1)|O status 200 representa a situação onde todos os registros enviados no lote foram validados
-e serão direcionados para processamento.
-
-A operação vai devolver um array com todos os resultados, e garantir que ele esteja na mesma
-ordem do array de requisição.|Inline|
-|207|[Multi-Status](https://tools.ietf.org/html/rfc2518#section-10.2)|O status 207 (Multi-Status) informa ao solicitante que o formato da solicitação está
-correto, mas que entradas do array da solicitação contém erro de validação, independente
-da quantidade. Ou seja, se todos os elementos do array informado estiverem com falha
-de validação, a operação vai devolver o status 207, e no corpo da resposta todos os
-elementos do array estarão com o status DISCARDED e com suas respectivas mensagens.
-
-A operação vai devolver um array com todos os resultados, e garantir que ele esteja na mesma
-ordem do array de requisição.|Inline|
+|200|[OK](https://tools.ietf.org/html/rfc7231#section-6.3.1)|O status 200 representa a situação onde todos os registros enviados no lote foram validados e serão direcionados para processamento. A operação vai devolver um array com todos os resultados, e garantir que ele esteja na mesma ordem do array de requisição.|Inline|
+|207|[Multi-Status](https://tools.ietf.org/html/rfc2518#section-10.2)|O status 207 (Multi-Status) informa ao solicitante que o formato da solicitação está correto, mas que entradas do array da solicitação contém erro de validação, independente da quantidade. Ou seja, se todos os elementos do array informado estiverem com falha de validação, a operação vai devolver o status 207, e no corpo da resposta todos os elementos do array estarão com o status DISCARDED e com suas respectivas mensagens. A operação vai devolver um array com todos os resultados, e garantir que ele esteja na mesma ordem do array de requisição.|Inline|
 |400|[Bad Request](https://tools.ietf.org/html/rfc7231#section-6.5.1)|O formato do corpo da requisição não é um array.|Inline|
 |401|[Unauthorized](https://tools.ietf.org/html/rfc7235#section-3.1)|Ocorre quando uma requisição não é autorizada.|[response401](#schemaresponse401)|
 |406|[Not Acceptable](https://tools.ietf.org/html/rfc7231#section-6.5.6)|Ocorre quando um cliente espera uma resposta diferente de application/json usando o header Accept.|[response406](#schemaresponse406)|
-|413|[Payload Too Large](https://tools.ietf.org/html/rfc7231#section-6.5.11)|A quantidade de registros enviados excede o limite da operação, ou o tamanho do payload
-excede o limite configurado no servidor http.|[response413](#schemaresponse413)|
+|413|[Payload Too Large](https://tools.ietf.org/html/rfc7231#section-6.5.11)|A quantidade de registros enviados excede o limite da operação, ou o tamanho do payload excede o limite configurado no servidor http.|[response413](#schemaresponse413)|
 |415|[Unsupported Media Type](https://tools.ietf.org/html/rfc7231#section-6.5.13)|Ocorre quando uma requisição envia um Content-Type diferente de application/jwt.|[response415](#schemaresponse415)|
 |500|[Internal Server Error](https://tools.ietf.org/html/rfc7231#section-6.6.1)|É devolvido quando ocorre um erro não identificado no servidor.|[response500](#schemaresponse500)|
 
@@ -510,24 +504,12 @@ O limite de registros de cada lote é de 5.000 registros.
 
 |Status|Meaning|Description|Schema|
 |---|---|---|---|
-|200|[OK](https://tools.ietf.org/html/rfc7231#section-6.3.1)|O status 200 representa a situação onde todos os registros enviados no lote foram validados
-e serão direcionados para processamento.
-
-A operação vai devolver um array com todos os resultados, e garantir que ele esteja na mesma
-ordem do array de requisição.|Inline|
-|207|[Multi-Status](https://tools.ietf.org/html/rfc2518#section-10.2)|O status 207 (Multi-Status) informa ao solicitante que o formato da solicitação está
-correto, mas que entradas do array da solicitação contém erro de validação, independente
-da quantidade. Ou seja, se todos os elementos do array informado estiverem com falha
-de validação, a operação vai devolver o status 207, e no corpo da resposta todos os
-elementos do array estarão com o status DISCARDED e com suas respectivas mensagens.
-
-A operação vai devolver um array com todos os resultados, e garantir que ele esteja na mesma
-ordem do array de requisição.|Inline|
+|200|[OK](https://tools.ietf.org/html/rfc7231#section-6.3.1)|O status 200 representa a situação onde todos os registros enviados no lote foram validados e serão direcionados para processamento. A operação vai devolver um array com todos os resultados, e garantir que ele esteja na mesma ordem do array de requisição.|Inline|
+|207|[Multi-Status](https://tools.ietf.org/html/rfc2518#section-10.2)|O status 207 (Multi-Status) informa ao solicitante que o formato da solicitação está correto, mas que entradas do array da solicitação contém erro de validação, independente da quantidade. Ou seja, se todos os elementos do array informado estiverem com falha de validação, a operação vai devolver o status 207, e no corpo da resposta todos os elementos do array estarão com o status DISCARDED e com suas respectivas mensagens. A operação vai devolver um array com todos os resultados, e garantir que ele esteja na mesma ordem do array de requisição.|Inline|
 |400|[Bad Request](https://tools.ietf.org/html/rfc7231#section-6.5.1)|O formato do corpo da requisição não é um array.|Inline|
 |401|[Unauthorized](https://tools.ietf.org/html/rfc7235#section-3.1)|Ocorre quando uma requisição não é autorizada.|[response401](#schemaresponse401)|
 |406|[Not Acceptable](https://tools.ietf.org/html/rfc7231#section-6.5.6)|Ocorre quando um cliente espera uma resposta diferente de application/json usando o header Accept.|[response406](#schemaresponse406)|
-|413|[Payload Too Large](https://tools.ietf.org/html/rfc7231#section-6.5.11)|A quantidade de registros enviados excede o limite da operação, ou o tamanho do payload
-excede o limite configurado no servidor http.|[response413](#schemaresponse413)|
+|413|[Payload Too Large](https://tools.ietf.org/html/rfc7231#section-6.5.11)|A quantidade de registros enviados excede o limite da operação, ou o tamanho do payload excede o limite configurado no servidor http.|[response413](#schemaresponse413)|
 |415|[Unsupported Media Type](https://tools.ietf.org/html/rfc7231#section-6.5.13)|Ocorre quando uma requisição envia um Content-Type diferente de application/jwt.|[response415](#schemaresponse415)|
 |500|[Internal Server Error](https://tools.ietf.org/html/rfc7231#section-6.6.1)|É devolvido quando ocorre um erro não identificado no servidor.|[response500](#schemaresponse500)|
 
