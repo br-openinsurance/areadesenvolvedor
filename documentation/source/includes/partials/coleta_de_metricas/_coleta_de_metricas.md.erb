@@ -1,0 +1,545 @@
+# API - Métricas Transacionais v1.0.2
+
+> Scroll down for code samples, example requests and responses. Select a language for code samples from the tabs above or the mobile navigation menu.
+
+**Especificação em OAS** </br>
+<a href="files/swagger/ingestion-metric.yaml" download="ingestion-metric.yaml">Download da Especificação</a>
+
+**Detalhamento Técnico** </br>
+<a href="files/docs/ingestion-metric.docx" download="ingestion-metric.docx">Download do Detalhamento Técnico</a>
+
+API que recebe os logs da troca de dados para geração de métricas.
+
+A API de reporte fornece operações que permitem a inclusão dos
+registros de chamada na plataforma de Coleta de Métricas.
+
+A inclusão de reportes pode ser feita de maneira individual ou em
+lote, conforme respectivas documentações.
+
+Os dados que são inseridos na API de Reporte são sempre
+processados de maneira assíncrona, e sua persistência se utiliza
+de consistência posterior (eventual consistency), portanto, um
+registro tem um tempo de processamento em que ele não estará
+disponível para consulta até que ele seja persistido.
+
+<h2 id="api-coleta-de-metricas-seguranca">Segurança</h2>
+
+A autenticação das requisições se dará com base na assinatura do body das requisições.
+
+Requisitos:
+
+  * Organização devidamente registrada no diretório
+  * Certificado de assinatura devidamente cadastrado no diretório a nivel de organização
+
+A validação da autenticidade será baseada no certificado de assinatura do body que
+será validado no keystore do diretório.
+
+Todas as requisições deveram ser enviadas com o Content-Type: application/jwt.<br />
+Para assinar uma requisição a organização deverá:
+
+  1) Identifique a chave privada e o certificado de assinatura correspondente a serem usados para assinar o payload.
+
+  2) Geração do JOSE Header
+
+      Montar um JSON com os campos obrigatórios:
+
+      * **alg** - Algoritmo que será usado para assinar o JWS. Deve ser preenchido com o valor **"PS256"**.
+
+      * **kid** - Valor do identificador da chave utilizado para a assinatura.
+
+      * **typ** - Tipo de conteúdo usado para trafegar mensagens na API. Deve ser preenchido com o valor **"JWT"**.
+
+      E converter para Base64Url seguindo o padrão especificado na [RFC4648](https://datatracker.ietf.org/doc/html/rfc4648#section-5).
+
+  3) Montando o payload 
+      JWS Body da requisição no formato JSON convertido para Base64Url seguindo o padrão especificado na [RFC4648](https://datatracker.ietf.org/doc/html/rfc4648#section-5).
+
+  4) Gerar a assinatura digital conforme especificado na [RFC7515](https://datatracker.ietf.org/doc/html/rfc7515).
+
+  5) Juntar as partes concatenando com ponto (.) para formar o JWS
+
+      **JWS = Base64url(JOSEHeader) + "." + Base64url(payload JWT) + "." + Base64url(digital signature)**
+
+A assinatura do body deve seguir o padrão JWS definido na [RFC7515](https://datatracker.ietf.org/doc/html/rfc7515).
+
+
+<h2 id="coleta-de-metricas-grupos-de-endpoints">Grupos de endpoints</h2>
+
+### OpenID (FAPI)
+  - /register
+  - /token
+
+### Fase 1
+  - /open-insurance/channels/v1/branches
+  - /open-insurance/channels/v1/electronic-channels
+  - /open-insurance/channels/v1/intermediary/{countrySubDivision}
+  - /open-insurance/channels/v1/phone-channels
+  - /open-insurance/channels/v1/referenced-network/{countrySubDivision}/{serviceType}
+  - /open-insurance/products-services/v1/assistance-general-assets
+  - /open-insurance/products-services/v1/auto-extended-warranty
+  - /open-insurance/products-services/v1/auto-insurance/{commercializationArea}/{fipeCode}/{year}
+  - /open-insurance/products-services/v1/business
+  - /open-insurance/products-services/v1/capitalization-title
+  - /open-insurance/products-services/v1/condominium
+  - /open-insurance/products-services/v1/cyber-risk
+  - /open-insurance/products-services/v1/directors-officers-liability
+  - /open-insurance/products-services/v1/domestic-credit
+  - /open-insurance/products-services/v1/engineering
+  - /open-insurance/products-services/v1/environmental-liability
+  - /open-insurance/products-services/v1/equipment-breakdown
+  - /open-insurance/products-services/v1/errors-omissions-liability
+  - /open-insurance/products-services/v1/export-credit
+  - /open-insurance/products-services/v1/extended-warranty
+  - /open-insurance/products-services/v1/financial-risk
+  - /open-insurance/products-services/v1/general-liability
+  - /open-insurance/products-services/v1/global-banking
+  - /open-insurance/products-services/v1/home-insurance/commercializationArea/{commercializationArea}
+  - /open-insurance/products-services/v1/housing
+  - /open-insurance/products-services/v1/life-pension
+  - /open-insurance/products-services/v1/lost-profit
+  - /open-insurance/products-services/v1/named-operational-risks
+  - /open-insurance/products-services/v1/pension-plan
+  - /open-insurance/products-services/v1/person
+  - /open-insurance/products-services/v1/private-guarantee
+  - /open-insurance/products-services/v1/public-guarantee
+  - /open-insurance/products-services/v1/rent-guarantee
+  - /open-insurance/products-services/v1/rural
+  - /open-insurance/products-services/v1/stop-loss
+  - /open-insurance/products-services/v1/transport
+
+### Fase 2
+  - /open-insurance/consents/v1/
+  - /open-insurance/consents/v1/{consentId}
+  - /open-insurance/resources/v1/
+  - /open-insurance/customers/v1/personal/identifications
+  - /open-insurance/customers/v1/personal/qualifications
+  - /open-insurance/customers/v1/personal/complimentary-information
+  - /open-insurance/customers/v1/business/identifications
+  - /open-insurance/customers/v1/business/qualifications
+  - /open-insurance/customers/v1/business/complimentary-information
+  - /open-insurance/insurance-acceptance-and-branches-abroad/v1/
+  - /open-insurance/insurance-acceptance-and-branches-abroad/v1/{policyId}/policy-info
+  - /open-insurance/insurance-acceptance-and-branches-abroad/v1/{policyId}/premium
+  - /open-insurance/insurance-acceptance-and-branches-abroad/v1/{policyId}/claim
+  - /open-insurance/insurance-auto/v1/
+  - /open-insurance/insurance-auto/v1/{policyId}/policy-info
+  - /open-insurance/insurance-auto/v1/{policyId}/premium
+  - /open-insurance/insurance-auto/v1/{policyId}/claim
+  - /open-insurance/insurance-financial-risk/v1/
+  - /open-insurance/insurance-financial-risk/v1/{policyId}/policy-info
+  - /open-insurance/insurance-financial-risk/v1/{policyId}/premium
+  - /open-insurance/insurance-financial-risk/v1/{policyId}/claim
+  - /open-insurance/insurance-patrimonial/v1/
+  - /open-insurance/insurance-patrimonial/v1/{policyId}/policy-info
+  - /open-insurance/insurance-patrimonial/v1/{policyId}/premium
+  - /open-insurance/insurance-patrimonial/v1/{policyId}/claim
+  - /open-insurance/insurance-responsibility/v1/
+  - /open-insurance/insurance-responsibility/v1/{policyId}/policy-info
+  - /open-insurance/insurance-responsibility/v1/{policyId}/premium
+  - /open-insurance/insurance-responsibility/v1/{policyId}/claim
+  - /open-insurance/insurance-rural/v1/
+  - /open-insurance/insurance-rural/v1/{policyId}/policy-info
+  - /open-insurance/insurance-rural/v1/{policyId}/premium
+  - /open-insurance/insurance-rural/v1/{policyId}/claim
+  - /open-insurance/insurance-housing/v1/
+  - /open-insurance/insurance-housing/v1/{policyId}/policy-info
+  - /open-insurance/insurance-housing/v1/{policyId}/premium
+  - /open-insurance/insurance-housing/v1/{policyId}/claim
+  - /open-insurance/insurance-transport/v1/
+  - /open-insurance/insurance-transport/v1/{policyId}/policy-info
+  - /open-insurance/insurance-transport/v1/{policyId}/premium
+  - /open-insurance/insurance-transport/v1/{policyId}/claim
+
+### Fase 3
+  - /open-insurance/claim-notification/v1/request/damage/{consentId}
+  - /open-insurance/claim-notification/v1/request/person/{consentId}
+  - /open-insurance/endorsement/v1/request/{consentId}
+  - /open-insurance/quote-patrimonial/v1/lead/request
+  - /open-insurance/quote-patrimonial/v1/lead/request/{consentId}
+  - /open-insurance/quote-patrimonial/v1/home/request/{consentId}/quote-status
+  - /open-insurance/quote-patrimonial/v1/home/request
+  - /open-insurance/quote-patrimonial/v1/home/request/{consentId}
+  - /open-insurance/quote-patrimonial/v1/condominium/request/{consentId}/quote-status
+  - /open-insurance/quote-patrimonial/v1/condominium/request
+  - /open-insurance/quote-patrimonial/v1/condominium/request/{consentId}
+  - /open-insurance/quote-patrimonial/v1/business/request/{consentId}/quote-status
+  - /open-insurance/quote-patrimonial/v1/business/request
+  - /open-insurance/quote-patrimonial/v1/business/request/{consentId}
+  - /open-insurance/quote-patrimonial/v1/diverse-risks/request/{consentId}/quote-status
+  - /open-insurance/quote-patrimonial/v1/diverse-risks/request
+  - /open-insurance/quote-patrimonial/v1/diverse-risks/request/{consentId}
+
+
+  <h2 id="coleta-metricas-inclusao-unitaria-de-reporte-pelo-servidor">Inclusão unitária de reporte pelo servidor</h2>
+
+  <a id="opIdreportServerEvent"></a>
+
+> Code samples
+
+```python
+import requests
+headers = {
+  'Content-Type': 'application/jwt',
+  'Accept': 'application/json'
+}
+
+r = requests.post('/report-api/v1/server-event', headers = headers)
+
+print(r.json())
+
+```
+
+```java
+URL obj = new URL("/report-api/v1/server-event");
+HttpURLConnection con = (HttpURLConnection) obj.openConnection();
+con.setRequestMethod("POST");
+int responseCode = con.getResponseCode();
+BufferedReader in = new BufferedReader(
+    new InputStreamReader(con.getInputStream()));
+String inputLine;
+StringBuffer response = new StringBuffer();
+while ((inputLine = in.readLine()) != null) {
+    response.append(inputLine);
+}
+in.close();
+System.out.println(response.toString());
+
+```
+
+`POST /report-api/v1/server-event`
+
+Inclusão de reporte individual na plataforma por um participante no papel de transmissor (lado que recebeu a chamada).
+
+> Body parameter
+
+<h3 id="inclusão-unitária-de-reporte-pelo-servidor-parameters">Parameters</h3>
+
+|Name|In|Type|Required|Description|
+|---|---|---|---|---|
+|body|body|[eventBody](#schemaeventbody)|false|none|
+
+> Example responses
+
+> 200 Response
+
+```json
+{
+  "reportId": "7eb81ba1-9011-4c58-9d5b-1098550d2fca",
+  "correlationId": "FWUCp4yOA1b87LUJpgn1Mf52wi9KEF11",
+  "status": "ACCEPTED"
+}
+```
+
+<h3 id="inclusão-unitária-de-reporte-pelo-servidor-responses">Responses</h3>
+
+|Status|Meaning|Description|Schema|
+|---|---|---|---|
+|200|[OK](https://tools.ietf.org/html/rfc7231#section-6.3.1)|Registro recebido com sucesso.|[success](#schemasuccess)|
+|400|[Bad Request](https://tools.ietf.org/html/rfc7231#section-6.5.1)|Ocorre quando uma requisição não envia os dados obrigatórios.|[response400](#schemaresponse400)|
+|401|[Unauthorized](https://tools.ietf.org/html/rfc7235#section-3.1)|Ocorre quando uma requisição não é autorizada.|[response401](#schemaresponse401)|
+|406|[Not Acceptable](https://tools.ietf.org/html/rfc7231#section-6.5.6)|Ocorre quando um cliente espera uma resposta diferente de application/json usando o header Accept.|[response406](#schemaresponse406)|
+|415|[Unsupported Media Type](https://tools.ietf.org/html/rfc7231#section-6.5.13)|Ocorre quando uma requisição envia um Content-Type diferente de application/jwt.|[response415](#schemaresponse415)|
+|500|[Internal Server Error](https://tools.ietf.org/html/rfc7231#section-6.6.1)|É devolvido quando ocorre um erro não identificado no servidor.|[response500](#schemaresponse500)|
+
+<aside class="success">
+This operation does not require authentication
+</aside>
+
+<h2 id="coleta-de-metricas-inclusao-em-massa-de-reportes-pelo-transmissor">Inclusão em massa de reportes pelo transmissor</h2>
+
+<a id="opIdreportServerBatch"></a>
+
+> Code samples
+
+```python
+import requests
+headers = {
+  'Content-Type': 'application/jwt',
+  'Accept': 'application/json'
+}
+
+r = requests.post('/report-api/v1/server-batch', headers = headers)
+
+print(r.json())
+
+```
+
+```java
+URL obj = new URL("/report-api/v1/server-batch");
+HttpURLConnection con = (HttpURLConnection) obj.openConnection();
+con.setRequestMethod("POST");
+int responseCode = con.getResponseCode();
+BufferedReader in = new BufferedReader(
+    new InputStreamReader(con.getInputStream()));
+String inputLine;
+StringBuffer response = new StringBuffer();
+while ((inputLine = in.readLine()) != null) {
+    response.append(inputLine);
+}
+in.close();
+System.out.println(response.toString());
+
+```
+
+`POST /report-api/v1/server-batch`
+
+Inclusão de reportes em massa na plataforma. Ao enviar um lote de reportes,
+a plataforma vai fazer o processo de validação de cada reporte de maneira síncrona
+e devolver o resultado dessa validação na resposta, sendo que o status HTTP de
+retorno vai refletir esse resultado (vide documentação de cada status de retorno).
+No entanto, o processamento de cada reporte ocorrerá de maneira assíncrona.
+
+O limite de registros de cada lote é 5.000 registros.
+
+> Body parameter
+
+<h3 id="inclusão-em-massa-de-reportes-pelo-transmissor-parameters">Parameters</h3>
+
+|Name|In|Type|Required|Description|
+|---|---|---|---|---|
+|body|body|[batchBody](#schemabatchbody)|false|none|
+
+> Example responses
+
+> 200 Response
+
+```json
+[
+  {
+    "reportId": "7eb81ba1-9011-4c58-9d5b-1098550d2fca",
+    "correlationId": "FWUCp4yOA1b87LUJpgn1Mf52wi9KEF11",
+    "status": "ACCEPTED"
+  }
+]
+```
+
+<h3 id="inclusão-em-massa-de-reportes-pelo-transmissor-responses">Responses</h3>
+
+|Status|Meaning|Description|Schema|
+|---|---|---|---|
+|200|[OK](https://tools.ietf.org/html/rfc7231#section-6.3.1)|O status 200 representa a situação onde todos os registros enviados no lote foram validados e serão direcionados para processamento. A operação vai devolver um array com todos os resultados, e garantir que ele esteja na mesma ordem do array de requisição.|Inline|
+|207|[Multi-Status](https://tools.ietf.org/html/rfc2518#section-10.2)|O status 207 (Multi-Status) informa ao solicitante que o formato da solicitação está correto, mas que entradas do array da solicitação contém erro de validação, independente da quantidade. Ou seja, se todos os elementos do array informado estiverem com falha de validação, a operação vai devolver o status 207, e no corpo da resposta todos os elementos do array estarão com o status DISCARDED e com suas respectivas mensagens. A operação vai devolver um array com todos os resultados, e garantir que ele esteja na mesma ordem do array de requisição.|Inline|
+|400|[Bad Request](https://tools.ietf.org/html/rfc7231#section-6.5.1)|O formato do corpo da requisição não é um array.|Inline|
+|401|[Unauthorized](https://tools.ietf.org/html/rfc7235#section-3.1)|Ocorre quando uma requisição não é autorizada.|[response401](#schemaresponse401)|
+|406|[Not Acceptable](https://tools.ietf.org/html/rfc7231#section-6.5.6)|Ocorre quando um cliente espera uma resposta diferente de application/json usando o header Accept.|[response406](#schemaresponse406)|
+|413|[Payload Too Large](https://tools.ietf.org/html/rfc7231#section-6.5.11)|A quantidade de registros enviados excede o limite da operação, ou o tamanho do payload excede o limite configurado no servidor http.|[response413](#schemaresponse413)|
+|415|[Unsupported Media Type](https://tools.ietf.org/html/rfc7231#section-6.5.13)|Ocorre quando uma requisição envia um Content-Type diferente de application/jwt.|[response415](#schemaresponse415)|
+|500|[Internal Server Error](https://tools.ietf.org/html/rfc7231#section-6.6.1)|É devolvido quando ocorre um erro não identificado no servidor.|[response500](#schemaresponse500)|
+
+<h3 id="inclusão-em-massa-de-reportes-pelo-transmissor-responseschema">Response Schema</h3>
+
+Status Code **200**
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|*anonymous*|[[success](#schemasuccess)]|false|none|none|
+|» reportId|string|true|none|none|
+|» correlationId|string|true|none|none|
+|» status|string|true|none|none|
+
+Status Code **207**
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|*anonymous*|[[response400](#schemaresponse400)]|false|none|none|
+|» correlationId|string|false|none|none|
+|» status|string|true|none|none|
+|» message|string|true|none|none|
+
+Status Code **400**
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|» message|string|true|none|none|
+
+<aside class="success">
+This operation does not require authentication
+</aside>
+
+
+<h2 id="coleta-de-metricas-inclusao-unitaria-de-reporte-pelo-cliente">Inclusão unitária de reporte pelo cliente</h2>
+
+<a id="opIdreportClientEvent"></a>
+
+> Code samples
+
+```python
+import requests
+headers = {
+  'Content-Type': 'application/jwt',
+  'Accept': 'application/json'
+}
+
+r = requests.post('/report-api/v1/client-event', headers = headers)
+
+print(r.json())
+
+```
+
+```java
+URL obj = new URL("/report-api/v1/client-event");
+HttpURLConnection con = (HttpURLConnection) obj.openConnection();
+con.setRequestMethod("POST");
+int responseCode = con.getResponseCode();
+BufferedReader in = new BufferedReader(
+    new InputStreamReader(con.getInputStream()));
+String inputLine;
+StringBuffer response = new StringBuffer();
+while ((inputLine = in.readLine()) != null) {
+    response.append(inputLine);
+}
+in.close();
+System.out.println(response.toString());
+
+```
+
+`POST /report-api/v1/client-event`
+
+Inclusão de reporte individual na plataforma por um participante no papel de receptor (lado que iniciou a chamada).
+
+> Body parameter
+
+<h3 id="inclusão-unitária-de-reporte-pelo-cliente-parameters">Parameters</h3>
+
+|Name|In|Type|Required|Description|
+|---|---|---|---|---|
+|body|body|[eventBody](#schemaeventbody)|false|none|
+
+> Example responses
+
+> 200 Response
+
+```json
+{
+  "reportId": "7eb81ba1-9011-4c58-9d5b-1098550d2fca",
+  "correlationId": "FWUCp4yOA1b87LUJpgn1Mf52wi9KEF11",
+  "status": "ACCEPTED"
+}
+```
+
+<h3 id="inclusão-unitária-de-reporte-pelo-cliente-responses">Responses</h3>
+
+|Status|Meaning|Description|Schema|
+|---|---|---|---|
+|200|[OK](https://tools.ietf.org/html/rfc7231#section-6.3.1)|Registro recebido com sucesso.|[success](#schemasuccess)|
+|400|[Bad Request](https://tools.ietf.org/html/rfc7231#section-6.5.1)|Ocorre quando uma requisição não envia os dados obrigatórios.|[response400](#schemaresponse400)|
+|401|[Unauthorized](https://tools.ietf.org/html/rfc7235#section-3.1)|Ocorre quando uma requisição não é autorizada.|[response401](#schemaresponse401)|
+|406|[Not Acceptable](https://tools.ietf.org/html/rfc7231#section-6.5.6)|Ocorre quando um cliente espera uma resposta diferente de application/json usando o header Accept.|[response406](#schemaresponse406)|
+|415|[Unsupported Media Type](https://tools.ietf.org/html/rfc7231#section-6.5.13)|Ocorre quando uma requisição envia um Content-Type diferente de application/jwt.|[response415](#schemaresponse415)|
+|500|[Internal Server Error](https://tools.ietf.org/html/rfc7231#section-6.6.1)|É devolvido quando ocorre um erro não identificado no servidor.|[response500](#schemaresponse500)|
+
+<aside class="success">
+This operation does not require authentication
+</aside>
+
+<h2 id="coleta-de-metricas-inclusao-em-massa-de-reportes-pelo-lado-do-cliente">Inclusão em massa de reportes pelo lado do cliente (iniciador de chamada)</h2>
+
+<a id="opIdreportClientBatch"></a>
+
+> Code samples
+
+```python
+import requests
+headers = {
+  'Content-Type': 'application/jwt',
+  'Accept': 'application/json'
+}
+
+r = requests.post('/report-api/v1/client-batch', headers = headers)
+
+print(r.json())
+
+```
+
+```java
+URL obj = new URL("/report-api/v1/client-batch");
+HttpURLConnection con = (HttpURLConnection) obj.openConnection();
+con.setRequestMethod("POST");
+int responseCode = con.getResponseCode();
+BufferedReader in = new BufferedReader(
+    new InputStreamReader(con.getInputStream()));
+String inputLine;
+StringBuffer response = new StringBuffer();
+while ((inputLine = in.readLine()) != null) {
+    response.append(inputLine);
+}
+in.close();
+System.out.println(response.toString());
+
+```
+
+`POST /report-api/v1/client-batch`
+
+Inclusão de reportes em massa na plataforma. Ao enviar um lote de reportes, a plataforma
+vai fazer o processo de validação de cada reporte de maneira síncrona e devolver o resultado
+dessa validação na resposta, sendo que o status HTTP de retorno vai refletir esse resultado
+(vide documentação de cada status de retorno). No entanto, o processamento de cada reporte
+ocorrerá de maneira assíncrona.
+
+O limite de registros de cada lote é de 5.000 registros.
+
+> Body parameter
+
+<h3 id="inclusão-em-massa-de-reportes-pelo-lado-do-cliente-(iniciador-de-chamada)-parameters">Parameters</h3>
+
+|Name|In|Type|Required|Description|
+|---|---|---|---|---|
+|body|body|[batchBody](#schemabatchbody)|false|none|
+
+> Example responses
+
+> 200 Response
+
+```json
+[
+  {
+    "reportId": "7eb81ba1-9011-4c58-9d5b-1098550d2fca",
+    "correlationId": "FWUCp4yOA1b87LUJpgn1Mf52wi9KEF11",
+    "status": "ACCEPTED"
+  }
+]
+```
+
+<h3 id="inclusão-em-massa-de-reportes-pelo-lado-do-cliente-(iniciador-de-chamada)-responses">Responses</h3>
+
+|Status|Meaning|Description|Schema|
+|---|---|---|---|
+|200|[OK](https://tools.ietf.org/html/rfc7231#section-6.3.1)|O status 200 representa a situação onde todos os registros enviados no lote foram validados e serão direcionados para processamento. A operação vai devolver um array com todos os resultados, e garantir que ele esteja na mesma ordem do array de requisição.|Inline|
+|207|[Multi-Status](https://tools.ietf.org/html/rfc2518#section-10.2)|O status 207 (Multi-Status) informa ao solicitante que o formato da solicitação está correto, mas que entradas do array da solicitação contém erro de validação, independente da quantidade. Ou seja, se todos os elementos do array informado estiverem com falha de validação, a operação vai devolver o status 207, e no corpo da resposta todos os elementos do array estarão com o status DISCARDED e com suas respectivas mensagens. A operação vai devolver um array com todos os resultados, e garantir que ele esteja na mesma ordem do array de requisição.|Inline|
+|400|[Bad Request](https://tools.ietf.org/html/rfc7231#section-6.5.1)|O formato do corpo da requisição não é um array.|Inline|
+|401|[Unauthorized](https://tools.ietf.org/html/rfc7235#section-3.1)|Ocorre quando uma requisição não é autorizada.|[response401](#schemaresponse401)|
+|406|[Not Acceptable](https://tools.ietf.org/html/rfc7231#section-6.5.6)|Ocorre quando um cliente espera uma resposta diferente de application/json usando o header Accept.|[response406](#schemaresponse406)|
+|413|[Payload Too Large](https://tools.ietf.org/html/rfc7231#section-6.5.11)|A quantidade de registros enviados excede o limite da operação, ou o tamanho do payload excede o limite configurado no servidor http.|[response413](#schemaresponse413)|
+|415|[Unsupported Media Type](https://tools.ietf.org/html/rfc7231#section-6.5.13)|Ocorre quando uma requisição envia um Content-Type diferente de application/jwt.|[response415](#schemaresponse415)|
+|500|[Internal Server Error](https://tools.ietf.org/html/rfc7231#section-6.6.1)|É devolvido quando ocorre um erro não identificado no servidor.|[response500](#schemaresponse500)|
+
+<h3 id="inclusão-em-massa-de-reportes-pelo-lado-do-cliente-(iniciador-de-chamada)-responseschema">Response Schema</h3>
+
+Status Code **200**
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|*anonymous*|[[success](#schemasuccess)]|false|none|none|
+|» reportId|string|true|none|none|
+|» correlationId|string|true|none|none|
+|» status|string|true|none|none|
+
+Status Code **207**
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|*anonymous*|[[response400](#schemaresponse400)]|false|none|none|
+|» correlationId|string|false|none|none|
+|» status|string|true|none|none|
+|» message|string|true|none|none|
+
+Status Code **400**
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|» message|string|true|none|none|
+
+<aside class="success">
+This operation does not require authentication
+</aside>
+
