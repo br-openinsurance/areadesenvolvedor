@@ -333,7 +333,7 @@ O Diretório suporta vários certificados, tipos de chave e um comando e configu
 Lembre-se de seguir as práticas de gerenciamento de chaves de sua organização para a geração de certificados. Essas credenciais e chaves precisam ser manuseadas com cuidado. Um evento significativo de comprometimento de chave pode levar ao comprometimento dos dados do cliente.
 
 ### 1.5.2 Produção
-Os certificados para acesso e assinatura em ambiente de produção devem ser fornecidos pelo ICP Brasil. Os detalhes sobre os certificados e os requisitos para os certificados estão detalhados no [Padrão de Certificados Open Insurance Brasil](#padrão-de-certificados).
+Os certificados para acesso e assinatura em ambiente de produção devem ser fornecidos pelo ICP Brasil. Os detalhes sobre os certificados e os requisitos para os certificados estão detalhados no [Padrão de Certificados Open Insurance Brasil](#padrao-de-certificados).
 
 ### 1.5.3 O que é um JWT, JWE, JWS e JWK
 Quando os certificados são carregados para o Diretório, o framework de confiança os anuncia em [JSON Web Key Sets](https://tools.ietf.org/html/rfc7517) com cada JSON Web Key (JWK) tendo um ‘KID’ ou um Key ID. Os JWKs, além de ter propriedades específicas que descrevem o algoritmo e os conjuntos de criptografia que eles suportam, também anunciam seu “uso”, que pode ser do tipo ‘enc’ para criptografia ou ‘sig’ para assinatura.
@@ -742,7 +742,7 @@ Consulte o [Dynamic Client Registration do Open Insurance Brasil](#dynamic-clien
 
 ![Consent](../images/consent-process-redirect.png)
 
-Para todas as opções, incluindo todos os códigos de permissão, consulte o [Consent API](). Os exemplos a seguir são exemplos mínimos, mas funcionais para demonstrar o fluxo de ponta a ponta. Esses exemplos pressupõem que o cliente está se comunicando com um provedor de OpenID, aproveitando o mecanismo de autenticação de endpoint do token `tls_client_auth`. Exemplos alternativos estão disponíveis no apêndice.
+Para todas as opções, incluindo todos os códigos de permissão, consulte o [Consent API](#api-consents-v1-1-0). Os exemplos a seguir são exemplos mínimos, mas funcionais para demonstrar o fluxo de ponta a ponta. Esses exemplos pressupõem que o cliente está se comunicando com um provedor de OpenID, aproveitando o mecanismo de autenticação de endpoint do token `tls_client_auth`. Exemplos alternativos estão disponíveis no apêndice.
 
 ### 4.1 Pré-requisitos
 
@@ -1132,7 +1132,7 @@ Além disso, o servidor de autorização
 11. se for compatível com o mecanismo de autenticação do cliente `tls_client_auth`, conforme definido em [RFC8705](https://tools.ietf.org/html/rfc8705), somente deve aceitar `tls_client_auth_subject_dn` como uma indicação do valor do atributo _subject_ do certificado, conforme definido na cláusula 2.1.2 [RFC8705](https://tools.ietf.org/html/rfc8705);
 12. o valor do campo *UID* do certificado deve coincidir com o enviado no SSA, onde o campo *UID* deve conter o valor do campo *software_id* do SSA.
 13. o valor do campo *organizationIdentifier* do certificado deve conter  o prefixo correspondente ao Registration Reference *OPIBR-* seguido do valor do campo *org_id* do SSA.
-14. deve, durante o processo de handshake TLS, usar a regra `distinguishedNameMatch` para comparar os valores DN conforme definido na [RFC4517].
+14. deve, durante o processo de handshake TLS, usar a regra `distinguishedNameMatch` para comparar os valores DN conforme definido na [RFC4517](https://tools.ietf.org/html/rfc4517).
 15. deve garantir a integridade do estoque de consentimentos ativos, mesmo após eventuais mudanças sistêmicas, para que taís alterações sejam transparentes para as instituições receptora de dados.
 16. deve realizar recertificação FAPI e DCR da OIDF após eventuais mudanças sistêmicas.
 
@@ -1146,7 +1146,7 @@ Quando as propriedades de uma solicitação DCR não estão incluídas e não s�
 2. deve preencher *defaults* a partir de valores da afirmação de _software\_statement_, sempre que possível;
 3. deve conceder ao cliente permissão para o conjunto completo de escopos potenciais com base nas permissões regulatórias de softwares incluídas no _software\_statement_;
 
-### 7.1.2 Análise do Distinguished Name do Certificado
+<h2 id="712-analise-do-distinguished-name-do-certificado">7.1.2 Análise do Distinguished Name do Certificado</h2>
 
 A cláusula 3 do [Lightweight Directory Access Protocol (LDAP): String Representation of Distinguished Names](https://www.rfc-editor.org/rfc/rfc4514) define os OIDs obrigatórios cujas as _strings_ do AttributeType (descritores) devem ser reconhecidos pelos implementadores. Esta lista obrigatória não inclui vários dos OIDs definidos em [Open Insurance Brasil x.509 Certificate Standards](#padrão-de-certificados), nem existe um mecanismo definido para os Servidores de Autorização publicarem informações sobre o formato que eles esperam de uma Solicitação Dinâmica de Registro do Cliente (_Dynamic Client Registrarion_) que inclui um `tls_client_auth_subject_dn`.
 
@@ -1190,7 +1190,7 @@ A tabela a seguir descreve as funções regulatórias do Open Insurance e o mape
 É necessário validar as _roles_ ativas no _software\_statement_ da aplicação. Na validação dessa informação deve ser utilizado o campo _software\_statement\_roles_, e deve ser verificado se as _roles_ listadas estão ativas.
 
 ### 7.3 Registro do Cliente
-No processo de registro do cliente, utilizando-se o método de autenticação _tls\_client\_auth_, o cliente deve encaminhar o campo _tls\_client\_auth\_subject\_dn_ com os AttibuteTypes(Descritores) em formato definido no item [7.1.2 Análise do Distinguished Name do Certificado](#712-análise-do-distinguished-name-do-certificado). Em caso de não aderencia a este padrão o registro será rejeitado.
+No processo de registro do cliente, utilizando-se o método de autenticação _tls\_client\_auth_, o cliente deve encaminhar o campo _tls\_client\_auth\_subject\_dn_ com os AttibuteTypes(Descritores) em formato definido no item [7.1.2 Análise do Distinguished Name do Certificado](#712-analise-do-distinguished-name-do-certificado). Em caso de não aderencia a este padrão o registro será rejeitado.
 
 ### 8. Declaração de Software
 
@@ -1406,7 +1406,8 @@ Para o propósito deste documento os termos definidos na [RFC5280](https://datat
 * **TLS** – Transport Layer Security
 * **mTLS** – Mutual Transport Layer Security
 
-### 5. Padrão de Certificados Open Insurance Brasil
+
+<h2 id="padrao-de-certificados">5. Padrão de Certificados Open Insurance Brasil</h2>
 
 ### 5.1 Introdução
 
