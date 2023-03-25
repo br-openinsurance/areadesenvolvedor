@@ -1,5 +1,9 @@
 # API - Consents v1.1.0
 
+<aside class="info">
+A API – Consents/Resources v1 estará vigente no motor de conformidade até 07/04
+</aside>
+
 > Scroll down for code samples, example requests and responses. Select a language for code samples from the tabs above or the mobile navigation menu.
 
 **Especificação em OAS 3.0** </br>
@@ -8,14 +12,15 @@
 **Detalhamento Técnico** </br>
 <a href="files/docs/consents.docx" download="consents.docx">Download do Detalhamento Técnico</a>
 
-  Release Notes:
-
-  - <a href="./1.3.0.html#consents-consents">03/03/2023 </a>
-
 
 API que trata da criação, consulta e revogação de consentimentos para o Open Insurance Brasil Fase 2 - customer-data.  
 
 Não possui segregação entre pessoa natural e pessoa jurídica.    
+
+Release Notes:
+
+  - <a href="./1.3.0.html#consents-consents">03/03/2023 </a>
+
 
 
 <h2 id="orientacoes-importantes-consents">Orientações importantes </h2>
@@ -37,95 +42,77 @@ A API Consents trata dos consentimentos exclusivamente para a fase 2 do Open Ins
 - O arquivo com o mapeamento completo entre `Roles`, `scopes` e `permissions` está disponibilizado no Portal do desenvolvedor, no mesmo item acima - descrição do fluxo de consentimento.
 
 - A receptora deve enviar obrigatoriamente, no pedido de criação de consentimento, todas as permissions dos agrupamentos de dados as quais ela deseja consentimento, conforme tabela abaixo:
-  
-    ```
-  |----------------------|----------------------------------|-------------------------------------------------------------------|
-  | CATEGORIA DE DADOS   | AGRUPAMENTO                      | PERMISSIONS                                                       |
-  |----------------------|----------------------------------|-------------------------------------------------------------------|
-  | Cadastro             | Dados Cadastrais PF              | CUSTOMERS_PERSONAL_IDENTIFICATIONS_READ                           |
-  |                      |                                  | RESOURCES_READ                                                    |
-  |----------------------|----------------------------------|-------------------------------------------------------------------|
-  | Cadastro             | Qualificação PF                  | CUSTOMERS_PERSONAL_QUALIFICATION_READ                             |
-  |                      |                                  | RESOURCES_READ                                                    |
-  |----------------------|----------------------------------|-------------------------------------------------------------------|
-  | Cadastro             | Informações complementares PF    | CUSTOMERS_PERSONAL_ADITTIONALINFO_READ                            |
-  |                      |                                  | RESOURCES_READ                                                    |
-  |----------------------|----------------------------------|-------------------------------------------------------------------|
-  | Cadastro             | Dados Cadastrais PJ              | CUSTOMERS_BUSINESS_IDENTIFICATIONS_READ                           |
-  |                      |                                  | RESOURCES_READ                                                    |
-  |----------------------|----------------------------------|-------------------------------------------------------------------|
-  | Cadastro             | Qualificação PJ                  | CUSTOMERS_BUSINESS_QUALIFICATION_READ                             |
-  |                      |                                  | RESOURCES_READ                                                    |
-  |----------------------|----------------------------------|-------------------------------------------------------------------|
-  | Cadastro             | Informações complementares PJ    | CUSTOMERS_BUSINESS_ADITTIONALINFO_READ                            |
-  |                      |                                  | RESOURCES_READ                                                    |
-  |----------------------|----------------------------------|-------------------------------------------------------------------|
-  | Títulos de Cap.      | Produtos de Títulos de Cap.      | CAPITALIZATION_TITLES_READ                                        |
-  |                      |                                  | CAPITALIZATION_TITLES_POLICYINFO_READ                             |
-  |                      |                                  | CAPITALIZATION_TITLES_PREMIUM_READ                                |      
-  |                      |                                  | CAPITALIZATION_TITLES_CLAIM_READ                                  |
-  |                      |                                  | RESOURCES_READ                                                    |
-  |----------------------|----------------------------------|--------------------- ---------------------------------------------|
-  | Previdência          | Produtos de Previdência Risco    | PENSION_RISK_READ                                                 |
-  |                      |                                  | PENSION_RISK_CONTRACTINFO_READ                                    |
-  |                      |                                  | PENSION_RISK_CONTRIBUTIONS_READ                                   |
-  |                      |                                  | RESOURCES_READ                                                    |
-  |----------------------|----------------------------------|-------------------------------------------------------------------|
-  | Danos e Pessoas      | Patrimonial                      | DAMAGES_AND_PEOPLE_PATRIMONIAL_READ                               |
-  |                      |                                  | DAMAGES_AND_PEOPLE_PATRIMONIAL_POLICYINFO_READ                    |
-  |                      |                                  | DAMAGES_AND_PEOPLE_PATRIMONIAL_PREMIUM_READ                       |
-  |                      |                                  | DAMAGES_AND_PEOPLE_PATRIMONIAL_CLAIM_READ                         |
-  |                      |                                  | RESOURCES_READ                                                    | 
-  |----------------------|----------------------------------|-------------------------------------------------------------------|
-  | Danos e Pessoas      | Responsabilidade                 | DAMAGES_AND_PEOPLE_RESPONSIBILITY_READ                            |
-  |                      |                                  | DAMAGES_AND_PEOPLE_RESPONSIBILITY_POLICYINFO_READ                 |
-  |                      |                                  | DAMAGES_AND_PEOPLE_RESPONSIBILITY_PREMIUM_READ                    |
-  |                      |                                  | DAMAGES_AND_PEOPLE_RESPONSIBILITY_CLAIM_READ                      |
-  |                      |                                  | RESOURCES_READ                                                    | 
-  |----------------------|----------------------------------|-------------------------------------------------------------------|
-  | Danos e Pessoas      | Transportes                      | DAMAGES_AND_PEOPLE_TRANSPORT_READ                                 |
-  |                      |                                  | DAMAGES_AND_PEOPLE_TRANSPORT_POLICYINFO_READ                      |
-  |                      |                                  | DAMAGES_AND_PEOPLE_TRANSPORT_PREMIUM_READ                         |
-  |                      |                                  | DAMAGES_AND_PEOPLE_TRANSPORT_CLAIM_READ                           |
-  |                      |                                  | RESOURCES_READ                                                    | 
-  |----------------------|----------------------------------|-------------------------------------------------------------------|
-  | Danos e Pessoas      | Riscos Financeiros               | DAMAGES_AND_PEOPLE_FINANCIAL_RISKS_READ                                 |
-  |                      |                                  | DAMAGES_AND_PEOPLE_FINANCIAL_RISKS_POLICYINFO_READ                |
-  |                      |                                  | DAMAGES_AND_PEOPLE_FINANCIAL_RISKS_PREMIUM_READ                   |
-  |                      |                                  | DAMAGES_AND_PEOPLE_FINANCIAL_RISKS_CLAIM_READ                     |
-  |                      |                                  | RESOURCES_READ                                                    | 
-  |----------------------|----------------------------------|-------------------------------------------------------------------|
-  | Danos e Pessoas      | Rural                            | DAMAGES_AND_PEOPLE_RURAL_READ                                     |
-  |                      |                                  | DAMAGES_AND_PEOPLE_RURAL_POLICYINFO_READ                          |
-  |                      |                                  | DAMAGES_AND_PEOPLE_RURAL_PREMIUM_READ                             |
-  |                      |                                  | DAMAGES_AND_PEOPLE_RURAL_CLAIM_READ                               |
-  |                      |                                  | RESOURCES_READ                                                    | 
-  |----------------------|----------------------------------|-------------------------------------------------------------------|
-  | Danos e Pessoas      | Automóveis                       | DAMAGES_AND_PEOPLE_AUTO_READ                                      |
-  |                      |                                  | DAMAGES_AND_PEOPLE_AUTO_POLICYINFO_READ                           |
-  |                      |                                  | DAMAGES_AND_PEOPLE_AUTO_PREMIUM_READ                              |
-  |                      |                                  | DAMAGES_AND_PEOPLE_AUTO_CLAIM_READ                                |
-  |                      |                                  | RESOURCES_READ                                                    |
-  |----------------------|----------------------------------|-------------------------------------------------------------------|
-  | Danos e Pessoas      | Habitacional                     | DAMAGES_AND_PEOPLE_HOUSING_READ                                   |
-  |                      |                                  | DAMAGES_AND_PEOPLE_HOUSING_POLICYINFO_READ                        |
-  |                      |                                  | DAMAGES_AND_PEOPLE_HOUSING_PREMIUM_READ                           |
-  |                      |                                  | DAMAGES_AND_PEOPLE_HOUSING_CLAIM_READ                             |
-  |                      |                                  | RESOURCES_READ                                                    |
-  |----------------------|----------------------------------|-------------------------------------------------------------------|
-  | Danos e Pessoas      | Aceitação e Sucursal no exterior | DAMAGES_AND_PEOPLE_ACCEPTANCE_AND_BRANCHES_ABROAD_READ            |
-  |                      |                                  | DAMAGES_AND_PEOPLE_ACCEPTANCE_AND_BRANCHES_ABROAD_POLICYINFO_READ |
-  |                      |                                  | DAMAGES_AND_PEOPLE_ACCEPTANCE_AND_BRANCHES_ABROAD_PREMIUM_READ    |
-  |                      |                                  | DAMAGES_AND_PEOPLE_ACCEPTANCE_AND_BRANCHES_ABROAD_CLAIM_READ      |
-  |                      |                                  | RESOURCES_READ                                                    |
-  |----------------------|----------------------------------|-------------------------------------------------------------------|
-  | Danos e Pessoas      | Pessoas                          | DAMAGES_AND_PEOPLE_PERSON_READ                                    |
-  |                      |                                  | DAMAGES_AND_PEOPLE_PERSON_POLICYINFO_READ                         |
-  |                      |                                  | DAMAGES_AND_PEOPLE_PERSON_PREMIUM_READ                            |
-  |                      |                                  | DAMAGES_AND_PEOPLE_PERSON_CLAIM_READ                              |
-  |                      |                                  | RESOURCES_READ                                                    | 
-  |----------------------|----------------------------------|-------------------------------------------------------------------|
-  ```
+
+
+| CATEGORIA DE DADOS   | AGRUPAMENTO                      | PERMISSIONS                                                       |
+|----------------------|----------------------------------|-------------------------------------------------------------------|
+| Cadastro             | Dados Cadastrais PF              | CUSTOMERS_PERSONAL_IDENTIFICATIONS_READ                           |
+|                      |                                  | RESOURCES_READ                                                    |
+| Cadastro             | Qualificação PF                  | CUSTOMERS_PERSONAL_QUALIFICATION_READ                             |
+|                      |                                  | RESOURCES_READ                                                    |
+| Cadastro             | Informações complementares PF    | CUSTOMERS_PERSONAL_ADITTIONALINFO_READ                            |
+|                      |                                  | RESOURCES_READ                                                    |
+| Cadastro             | Dados Cadastrais PJ              | CUSTOMERS_BUSINESS_IDENTIFICATIONS_READ                           |
+|                      |                                  | RESOURCES_READ                                                    |
+| Cadastro             | Qualificação PJ                  | CUSTOMERS_BUSINESS_QUALIFICATION_READ                             |
+|                      |                                  | RESOURCES_READ                                                    |
+| Cadastro             | Informações complementares PJ    | CUSTOMERS_BUSINESS_ADITTIONALINFO_READ                            |
+|                      |                                  | RESOURCES_READ                                                    |
+| Títulos de Cap.      | Produtos de Títulos de Cap.      | CAPITALIZATION_TITLES_READ                                        |
+|                      |                                  | CAPITALIZATION_TITLES_POLICYINFO_READ                             |
+|                      |                                  | CAPITALIZATION_TITLES_PREMIUM_READ                                |
+|                      |                                  | CAPITALIZATION_TITLES_CLAIM_READ                                  |
+|                      |                                  | RESOURCES_READ                                                    |
+| Previdência          | Produtos de Previdência Risco    | PENSION_RISK_READ                                                 |
+|                      |                                  | PENSION_RISK_CONTRACTINFO_READ                                    |
+|                      |                                  | PENSION_RISK_CONTRIBUTIONS_READ                                   |
+|                      |                                  | RESOURCES_READ                                                    |
+| Danos e Pessoas      | Patrimonial                      | DAMAGES_AND_PEOPLE_PATRIMONIAL_READ                               |
+|                      |                                  | DAMAGES_AND_PEOPLE_PATRIMONIAL_POLICYINFO_READ                    |
+|                      |                                  | DAMAGES_AND_PEOPLE_PATRIMONIAL_PREMIUM_READ                       |
+|                      |                                  | DAMAGES_AND_PEOPLE_PATRIMONIAL_CLAIM_READ                         |
+|                      |                                  | RESOURCES_READ                                                    |
+| Danos e Pessoas      | Responsabilidade                 | DAMAGES_AND_PEOPLE_RESPONSIBILITY_READ                            |
+|                      |                                  | DAMAGES_AND_PEOPLE_RESPONSIBILITY_POLICYINFO_READ                 |
+|                      |                                  | DAMAGES_AND_PEOPLE_RESPONSIBILITY_PREMIUM_READ                    |
+|                      |                                  | DAMAGES_AND_PEOPLE_RESPONSIBILITY_CLAIM_READ                      |
+|                      |                                  | RESOURCES_READ                                                    |
+| Danos e Pessoas      | Transportes                      | DAMAGES_AND_PEOPLE_TRANSPORT_READ                                 |
+|                      |                                  | DAMAGES_AND_PEOPLE_TRANSPORT_POLICYINFO_READ                      |
+|                      |                                  | DAMAGES_AND_PEOPLE_TRANSPORT_PREMIUM_READ                         |
+|                      |                                  | DAMAGES_AND_PEOPLE_TRANSPORT_CLAIM_READ                           |
+|                      |                                  | RESOURCES_READ                                                    |
+| Danos e Pessoas      | Riscos Financeiros               | DAMAGES_AND_PEOPLE_FINANCIAL_RISKS_READ                           |
+|                      |                                  | DAMAGES_AND_PEOPLE_FINANCIAL_RISKS_POLICYINFO_READ                |
+|                      |                                  | DAMAGES_AND_PEOPLE_FINANCIAL_RISKS_PREMIUM_READ                   |
+|                      |                                  | DAMAGES_AND_PEOPLE_FINANCIAL_RISKS_CLAIM_READ                     |
+|                      |                                  | RESOURCES_READ                                                    |
+| Danos e Pessoas      | Rural                            | DAMAGES_AND_PEOPLE_RURAL_READ                                     |
+|                      |                                  | DAMAGES_AND_PEOPLE_RURAL_POLICYINFO_READ                          |
+|                      |                                  | DAMAGES_AND_PEOPLE_RURAL_PREMIUM_READ                             |
+|                      |                                  | DAMAGES_AND_PEOPLE_RURAL_CLAIM_READ                               |
+|                      |                                  | RESOURCES_READ                                                    |
+| Danos e Pessoas      | Automóveis                       | DAMAGES_AND_PEOPLE_AUTO_READ                                      |
+|                      |                                  | DAMAGES_AND_PEOPLE_AUTO_POLICYINFO_READ                           |
+|                      |                                  | DAMAGES_AND_PEOPLE_AUTO_PREMIUM_READ                              |
+|                      |                                  | DAMAGES_AND_PEOPLE_AUTO_CLAIM_READ                                |
+|                      |                                  | RESOURCES_READ                                                    |
+| Danos e Pessoas      | Habitacional                     | DAMAGES_AND_PEOPLE_HOUSING_READ                                   |
+|                      |                                  | DAMAGES_AND_PEOPLE_HOUSING_POLICYINFO_READ                        |
+|                      |                                  | DAMAGES_AND_PEOPLE_HOUSING_PREMIUM_READ                           |
+|                      |                                  | DAMAGES_AND_PEOPLE_HOUSING_CLAIM_READ                             |
+|                      |                                  | RESOURCES_READ                                                    |
+| Danos e Pessoas      | Aceitação e Sucursal no exterior | DAMAGES_AND_PEOPLE_ACCEPTANCE_AND_BRANCHES_ABROAD_READ            |
+|                      |                                  | DAMAGES_AND_PEOPLE_ACCEPTANCE_AND_BRANCHES_ABROAD_POLICYINFO_READ |
+|                      |                                  | DAMAGES_AND_PEOPLE_ACCEPTANCE_AND_BRANCHES_ABROAD_PREMIUM_READ    |
+|                      |                                  | DAMAGES_AND_PEOPLE_ACCEPTANCE_AND_BRANCHES_ABROAD_CLAIM_READ      |
+|                      |                                  | RESOURCES_READ                                                    |
+| Danos e Pessoas      | Pessoas                          | DAMAGES_AND_PEOPLE_PERSON_READ                                    |
+|                      |                                  | DAMAGES_AND_PEOPLE_PERSON_POLICYINFO_READ                         |
+|                      |                                  | DAMAGES_AND_PEOPLE_PERSON_PREMIUM_READ                            |
+|                      |                                  | DAMAGES_AND_PEOPLE_PERSON_CLAIM_READ                              |
+|                      |                                  | RESOURCES_READ                                                    |
+
 - A instituição transmissora deve validar o preenchimento correto desses agrupamentos no momento da geração do consentimento.
 
 - Caso a instiuição receptora envie permissões divergentes ao agrupamento especificado na tabela, a transmissora deve rejeitar o pedido da receptora dando retorno HTTP Status Code 400.

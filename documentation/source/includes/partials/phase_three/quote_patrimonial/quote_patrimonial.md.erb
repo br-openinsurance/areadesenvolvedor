@@ -1,4 +1,4 @@
-<h1 id="api-patrimonial-open-insurance-brasil">API Quote Patrimonial v1.4.0</h1>
+<h1 id="api-patrimonial-open-insurance-brasil">API Quote Patrimonial 1.4.1</h1>
 
 > Scroll down for code samples, example requests and responses. Select a language for code samples from the tabs above or the mobile navigation menu.
 
@@ -17,9 +17,12 @@ Possui um conjunto de endpoints por ramo de produto e um conjunto específico de
 
 Requer consentimento do cliente para todos os 'endpoints'.
 
-<h2 id="api-quotepatrimonial-v100-orientacoes">Orientações</h2>
+Release Notes:
 
-A `Role`  do diretório de participantes relacionada à presente API é a ``.
+  - <a href="./1.3.1.html#quote-patrimonial-quote-patrimonial-v1-4-1">27/03/2023 </a>
+
+<h2 id="api-quotepatrimonial-v100-orientacoes">Orientações</h2>
+A `Role` do diretório de participantes relacionada à presente API é a `ICS`.
 
 Para todos os `endpoints` desta API é previsto o envio de um `token` através do header `Authorization`.
 
@@ -31,6 +34,7 @@ Os dados serão entregues pela iniciadora na seguradora desde que o `consentId` 
 Além disso, as `permissions` necessárias deverão ter sido solicitadas quando da criação do consentimento relacionado.
 
 Relacionamos a seguir as `permissions` necessárias para o envio de dados em cada `endpoint` da presente API.
+
 
 <h2 id="api-quotepatrimonial-v100-permissions-necessarias-para-a-api-quotepatrimonial">Permissions necessárias para a API Patrimonial</h2>
 
@@ -51,7 +55,7 @@ Para cada um dos `paths` desta API, além dos escopos (`scopes`) indicados exist
 ### `/home/request`
   - permissions:   
     - POST: **QUOTE_PATRIMONIAL_HOME_CREATE**
-
+    
 ### `/home/request/{consentId}`
   - permissions:   
     - PATCH: **QUOTE_PATRIMONIAL_HOME_UPDATE**
@@ -94,13 +98,9 @@ Para cada um dos `paths` desta API, além dos escopos (`scopes`) indicados exist
 
 Base URLs:
 
-Servidor de Produção </br>
 * <a href="https://api.organizacao.com.br/open-insurance/quote-patrimonial/v1">https://api.organizacao.com.br/open-insurance/quote-patrimonial/v1</a>
 
-Servidor de Homologação </br>
 * <a href="https://api.organizacao.com.br/open-insurance/quote-patrimonial/v1">https://api.organizacao.com.br/open-insurance/quote-patrimonial/v1</a>
-
-Email: <a href="mailto:gt-interfaces@openinsurancebr.org">Governança do Open Insurance Brasil</a> 
 
 Web: <a href="https://www.gov.br/susep">Governança do Open Insurance Brasil</a> 
 
@@ -114,512 +114,21 @@ Web: <a href="https://www.gov.br/susep">Governança do Open Insurance Brasil</a>
 
 |Scope|Scope Description|
 |---|---|
-|notifications|Escopo necessário para acesso à API Notifications.|
+|quote-patrimonial-lead|Escopo necessário para acesso à API Patrimonial.|
+|quote-patrimonial-home|Escopo necessário para acesso à API Patrimonial.|
+|quote-patrimonial-condominium|Escopo necessário para acesso à API Patrimonial.|
+|quote-patrimonial-business|Escopo necessário para acesso à API Patrimonial.|
+|quote-patrimonial-diverse-risks|Escopo necessário para acesso à API Patrimonial.|
 
 <h2 id="api-patrimonial-open-insurance-brasil-patrimoniallead">PatrimonialLead</h2>
 
-Serviços de seguro PatrimonialLead
+Iniciação de serviços de seguro Cotação Patrimonial (PatrimonialLead)
 
-### Obtem dados de cotação e contratação de Seguro de Cotação Patrimonial
+### Envia dados de cotação e contratação de PatrimonialLead
 
 <a id="opIdpostQuotePatrimonialLead"></a>
 
 > Code samples
-
-```javascript
-const inputBody = '{
-  "data": {
-    "quoteCustomer": {
-      "identificationData": {
-        "updateDateTime": "2021-05-21T08:30:00Z",
-        "personalId": "578-psd-71md6971kjh-2d414",
-        "brandName": "Organização A",
-        "civilName": "Juan Kaique Cláudio Fernandes",
-        "socialName": "string",
-        "cpfNumber": "string",
-        "companyInfo": {
-          "cnpjNumber": "01773247000563",
-          "name": "Empresa da Organização A"
-        },
-        "documents": [
-          {
-            "type": "CNH",
-            "number": "15291908",
-            "expirationDate": "2023-05-21",
-            "issueLocation": "string"
-          }
-        ],
-        "hasBrazilianNationality": false,
-        "otherNationalitiesInfo": "CAN",
-        "otherDocuments": {
-          "type": "SOCIAL SEC",
-          "number": "15291908",
-          "country": "string",
-          "expirationDate": "2023-05-21"
-        },
-        "contact": {
-          "postalAddresses": [
-            {
-              "address": "Av Naburo Ykesaki, 1270",
-              "additionalInfo": "Fundos",
-              "districtName": "Centro",
-              "townName": "Marília",
-              "countrySubDivision": "SP",
-              "postCode": "17500001",
-              "country": "BRA"
-            }
-          ],
-          "phones": [
-            {
-              "countryCallingCode": "55",
-              "areaCode": "19",
-              "number": "29875132",
-              "phoneExtension": "932"
-            }
-          ],
-          "emails": [
-            {
-              "email": "nome@br.net"
-            }
-          ]
-        },
-        "civilStatusCode": "SOLTEIRO",
-        "sex": "FEMININO",
-        "birthDate": "2021-05-21",
-        "filiation": {
-          "type": "MAE",
-          "civilName": "Marcelo Cláudio Fernandes"
-        },
-        "identificationDetails": {
-          "civilName": "Juan Kaique Cláudio Fernandes",
-          "cpfNumber": "string"
-        }
-      },
-      "qualificationData": {
-        "updateDateTime": "2021-05-21T08:30:00Z",
-        "pepIdentification": "NAO_EXPOSTO",
-        "occupation": [
-          {
-            "details": "string",
-            "occupationCode": "RECEITA_FEDERAL",
-            "occupationCodeType": "RFB"
-          }
-        ],
-        "lifePensionPlans": "SIM",
-        "informedRevenue": {
-          "incomeFrequency": "DIARIA",
-          "currency": "BRL",
-          "amount": "100000.04",
-          "date": "2012-05-21"
-        },
-        "informedPatrimony": {
-          "currency": "BRL",
-          "amount": "100000.04",
-          "year": "2010"
-        }
-      },
-      "complimentaryInformationData": {
-        "updateDateTime": "2021-05-21T08:30:00Z",
-        "startDate": "2014-05-21",
-        "relationshipBeginning": "2014-05-21",
-        "productsServices": [
-          {
-            "contract": "string",
-            "type": "MICROSSEGUROS",
-            "insuranceLineCode": "6272",
-            "procurators": [
-              {
-                "nature": "PROCURADOR",
-                "cpfNumber": "73677831148",
-                "civilName": "Elza Milena Stefany Teixeira",
-                "socialName": "string"
-              }
-            ]
-          }
-        ]
-      },
-      "customData": [
-        {
-          "fieldCategory": "IDENTIFICATION",
-          "fields": [
-            {
-              "fieldId": "578-psd-71md6971kjh-2d414",
-              "value": null
-            }
-          ]
-        }
-      ]
-    },
-    "historicalData": {
-      "customer": {
-        "identificationData": {
-          "updateDateTime": "2021-05-21T08:30:00Z",
-          "personalId": "578-psd-71md6971kjh-2d414",
-          "brandName": "Organização A",
-          "civilName": "Juan Kaique Cláudio Fernandes",
-          "socialName": "string",
-          "cpfNumber": "string",
-          "companyInfo": {
-            "cnpjNumber": "01773247000563",
-            "name": "Empresa da Organização A"
-          },
-          "documents": [
-            {
-              "type": "CNH",
-              "number": "15291908",
-              "expirationDate": "2023-05-21",
-              "issueLocation": "string"
-            }
-          ],
-          "hasBrazilianNationality": false,
-          "otherNationalitiesInfo": "CAN",
-          "otherDocuments": {
-            "type": "SOCIAL SEC",
-            "number": "15291908",
-            "country": "string",
-            "expirationDate": "2023-05-21"
-          },
-          "contact": {
-            "postalAddresses": [
-              {
-                "address": "Av Naburo Ykesaki, 1270",
-                "additionalInfo": "Fundos",
-                "districtName": "Centro",
-                "townName": "Marília",
-                "countrySubDivision": "SP",
-                "postCode": "17500001",
-                "country": "BRA"
-              }
-            ],
-            "phones": [
-              {
-                "countryCallingCode": "55",
-                "areaCode": "19",
-                "number": "29875132",
-                "phoneExtension": "932"
-              }
-            ],
-            "emails": [
-              {
-                "email": "nome@br.net"
-              }
-            ]
-          },
-          "civilStatusCode": "SOLTEIRO",
-          "sex": "FEMININO",
-          "birthDate": "2021-05-21",
-          "filiation": {
-            "type": "MAE",
-            "civilName": "Marcelo Cláudio Fernandes"
-          },
-          "identificationDetails": {
-            "civilName": "Juan Kaique Cláudio Fernandes",
-            "cpfNumber": "string"
-          }
-        },
-        "qualificationData": {
-          "updateDateTime": "2021-05-21T08:30:00Z",
-          "pepIdentification": "NAO_EXPOSTO",
-          "occupation": [
-            {
-              "details": "string",
-              "occupationCode": "RECEITA_FEDERAL",
-              "occupationCodeType": "RFB"
-            }
-          ],
-          "lifePensionPlans": "SIM",
-          "informedRevenue": {
-            "incomeFrequency": "DIARIA",
-            "currency": "BRL",
-            "amount": "100000.04",
-            "date": "2012-05-21"
-          },
-          "informedPatrimony": {
-            "currency": "BRL",
-            "amount": "100000.04",
-            "year": "2010"
-          }
-        },
-        "complimentaryInformationData": {
-          "updateDateTime": "2021-05-21T08:30:00Z",
-          "startDate": "2014-05-21",
-          "relationshipBeginning": "2014-05-21",
-          "productsServices": [
-            {
-              "contract": "string",
-              "type": "MICROSSEGUROS",
-              "insuranceLineCode": "6272",
-              "procurators": [
-                {
-                  "nature": "PROCURADOR",
-                  "cpfNumber": "73677831148",
-                  "civilName": "Elza Milena Stefany Teixeira",
-                  "socialName": "string"
-                }
-              ]
-            }
-          ]
-        }
-      },
-      "policies": [
-        {
-          "policyInfo": {
-            "documentType": "APOLICE_INDIVIDUAL",
-            "policyId": "111111",
-            "susepProcessNumber": "string",
-            "groupCertificateId": "string",
-            "issuanceType": "EMISSAO_PROPRIA",
-            "issuanceDate": "2022-12-31",
-            "termStartDate": "2022-12-31",
-            "termEndDate": "2022-12-31",
-            "leadInsurerCode": "string",
-            "leadInsurerPolicyId": "string",
-            "maxLMG": {
-              "amount": "2000.00",
-              "unit": {
-                "code": "R$",
-                "description": "BRL"
-              }
-            },
-            "proposalId": "string",
-            "insureds": [
-              {
-                "identification": "12345678900",
-                "identificationType": "CPF",
-                "name": "Nome Sobrenome",
-                "postCode": "10000000",
-                "email": "string",
-                "city": "string",
-                "state": "string",
-                "country": "BRA",
-                "address": "string"
-              }
-            ],
-            "beneficiaries": [
-              {
-                "identification": "12345678900",
-                "identificationType": "CPF",
-                "name": "Nome Sobrenome"
-              }
-            ],
-            "principals": [
-              {
-                "identification": "12345678900",
-                "identificationType": "CPF",
-                "name": "Nome Sobrenome",
-                "postCode": "10000000",
-                "email": "string",
-                "city": "string",
-                "state": "string",
-                "country": "BRA",
-                "address": "string"
-              }
-            ],
-            "intermediaries": [
-              {
-                "type": "REPRESENTANTE",
-                "identification": "12345678900",
-                "brokerId": "string",
-                "identificationType": "CPF",
-                "name": "Nome Sobrenome",
-                "postCode": "10000000",
-                "city": "string",
-                "state": "string",
-                "country": "BRA",
-                "address": "string"
-              }
-            ],
-            "insuredObjects": [
-              {
-                "identification": "string",
-                "type": "CONTRATO",
-                "typeAdditionalInfo": "string",
-                "description": "string",
-                "amount": {
-                  "amount": "2000.00",
-                  "unit": {
-                    "code": "R$",
-                    "description": "BRL"
-                  }
-                },
-                "coverages": [
-                  {
-                    "branch": "0111",
-                    "code": "IMOVEL_BASICA",
-                    "description": "string",
-                    "internalCode": "string",
-                    "susepProcessNumber": "string",
-                    "LMI": {},
-                    "isLMISublimit": true,
-                    "termStartDate": "2022-12-31",
-                    "termEndDate": "2022-12-31",
-                    "isMainCoverage": true,
-                    "feature": "MASSIFICADOS",
-                    "type": "PARAMETRICO",
-                    "gracePeriod": 0,
-                    "gracePeriodicity": "DIA",
-                    "gracePeriodCountingMethod": "DIAS_UTEIS",
-                    "gracePeriodStartDate": "2022-12-31",
-                    "gracePeriodEndDate": "2022-12-31"
-                  }
-                ]
-              }
-            ],
-            "coverages": [
-              {
-                "branch": "0111",
-                "code": "IMOVEL_BASICA",
-                "description": "string",
-                "deductible": {
-                  "type": "DEDUTIVEL",
-                  "typeAdditionalInfo": "string",
-                  "amount": {
-                    "amount": "2000.00",
-                    "unit": {}
-                  },
-                  "period": 10,
-                  "periodicity": "DIA",
-                  "periodCountingMethod": "DIAS_UTEIS",
-                  "periodStartDate": "2022-05-16",
-                  "periodEndDate": "2022-05-17",
-                  "description": "Franquia de exemplo"
-                },
-                "POS": {
-                  "applicationType": "VALOR",
-                  "description": "Descrição de exemplo",
-                  "minValue": {
-                    "amount": "2000.00",
-                    "unit": {}
-                  },
-                  "maxValue": {
-                    "amount": "2000.00",
-                    "unit": {}
-                  },
-                  "percentage": "10.00"
-                }
-              }
-            ],
-            "coinsuranceRetainedPercentage": "10.00",
-            "coinsurers": [
-              {
-                "identification": "string",
-                "cededPercentage": "10.00"
-              }
-            ],
-            "branchInfo": {
-              "basicCoverageIndex": "SIMPLES",
-              "insuredObjects": [
-                {
-                  "identification": "string",
-                  "propertyType": "CASA",
-                  "structuringType": "CONDOMINIO_VERTICAL",
-                  "postCode": "10000000",
-                  "businessActivity": "1234567"
-                }
-              ]
-            }
-          },
-          "premium": {
-            "paymentsQuantity": 4,
-            "amount": {
-              "amount": "2000.00",
-              "unit": {
-                "code": "R$",
-                "description": "BRL"
-              }
-            },
-            "coverages": [
-              {
-                "branch": "0111",
-                "code": "IMOVEL_BASICA",
-                "description": "string",
-                "premiumAmount": {
-                  "amount": "2000.00",
-                  "unit": {
-                    "code": "R$",
-                    "description": "BRL"
-                  }
-                }
-              }
-            ],
-            "payments": [
-              {
-                "movementDate": "2022-12-31",
-                "movementType": "LIQUIDACAO_DE_PREMIO",
-                "movementOrigin": "EMISSAO_DIRETA",
-                "movementPaymentsNumber": 0,
-                "amount": {
-                  "amount": "2000.00",
-                  "unit": {
-                    "code": "R$",
-                    "description": "BRL"
-                  }
-                },
-                "maturityDate": "2022-12-31",
-                "tellerId": "string",
-                "tellerIdType": "CPF",
-                "tellerName": "string",
-                "financialInstitutionCode": "string",
-                "paymentType": "BOLETO"
-              }
-            ]
-          },
-          "claim": {
-            "identification": "string",
-            "documentationDeliveryDate": "2022-12-31",
-            "status": "ABERTO",
-            "statusAlterationDate": "2022-12-31",
-            "occurrenceDate": "2022-12-31",
-            "warningDate": "2022-12-31",
-            "thirdPartyClaimDate": "2022-12-31",
-            "amount": {
-              "amount": "2000.00",
-              "unit": {
-                "code": "R$",
-                "description": "BRL"
-              }
-            },
-            "denialJustification": "RISCO_EXCLUIDO",
-            "denialJustificationDescription": "string",
-            "coverages": [
-              {
-                "insuredObjectId": "string",
-                "branch": "0111",
-                "code": "IMOVEL_BASICA",
-                "description": "string",
-                "warningDate": "2022-12-31",
-                "thirdPartyClaimDate": "2022-12-31"
-              }
-            ]
-          }
-        }
-      ]
-    }
-  }
-}';
-const headers = {
-  'Content-Type':'application/json',
-  'Accept':'application/json',
-  'Authorization':'string',
-  'x-fapi-auth-date':'stringstringstringstringstrin',
-  'x-fapi-customer-ip-address':'string',
-  'x-fapi-interaction-id':'string',
-  'x-customer-user-agent':'string'
-};
-
-fetch('https://api.organizacao.com.br/open-insurance/quote-patrimonial/v1/lead/request',
-{
-  method: 'POST',
-  body: inputBody,
-  headers: headers
-})
-.then(function(res) {
-    return res.json();
-}).then(function(body) {
-    console.log(body);
-});
-
-```
 
 ```python
 import requests
@@ -658,7 +167,7 @@ System.out.println(response.toString());
 
 `POST /lead/request`
 
-Método para obter dados para cotação e contratação
+Método para criação de solicitação de cotação e contratação de PatrimonialLead
 
 > Body parameter
 
@@ -1135,7 +644,7 @@ Método para obter dados para cotação e contratação
 }
 ```
 
-<h3 id="obtem-dados-de-cotação-e-contratação-de-seguro-de-cotação-patrimonial-parameters">Parameters</h3>
+<h3 id="envia-dados-de-cotação-e-contratação-de-patrimoniallead-parameters">Parameters</h3>
 
 |Name|In|Type|Required|Description|
 |---|---|---|---|---|
@@ -1172,21 +681,21 @@ Método para obter dados para cotação e contratação
 }
 ```
 
-<h3 id="obtem-dados-de-cotação-e-contratação-de-seguro-de-cotação-patrimonial-responses">Responses</h3>
+<h3 id="envia-dados-de-cotação-e-contratação-de-patrimoniallead-responses">Responses</h3>
 
 |Status|Meaning|Description|Schema|
 |---|---|---|---|
-|201|[Created](https://tools.ietf.org/html/rfc7231#section-6.3.2)|Dados de ResponseQuotePatrimonial obtidos com sucesso|[ResponseQuotePatrimonialLead](#schemaresponsequotepatrimoniallead)|
-|400|[Bad Request](https://tools.ietf.org/html/rfc7231#section-6.5.1)|A requisição foi malformada, omitindo atributos obrigatórios, seja no payload ou através de atributos na URL|[ResponseError](#schemaresponseerror)|
-|401|[Unauthorized](https://tools.ietf.org/html/rfc7235#section-3.1)|Cabeçalho de autenticação ausente/inválido ou token inválido|[ResponseError](#schemaresponseerror)|
-|403|[Forbidden](https://tools.ietf.org/html/rfc7231#section-6.5.3)|O token tem escopo incorreto ou uma política de segurança foi violada|[ResponseError](#schemaresponseerror)|
-|404|[Not Found](https://tools.ietf.org/html/rfc7231#section-6.5.4)|O recurso solicitado não existe ou não foi implementado|[ResponseError](#schemaresponseerror)|
-|405|[Method Not Allowed](https://tools.ietf.org/html/rfc7231#section-6.5.5)|O consumidor tentou acessar o recurso com um método não suportado|[ResponseError](#schemaresponseerror)|
-|406|[Not Acceptable](https://tools.ietf.org/html/rfc7231#section-6.5.6)|A solicitação continha um cabeçalho Accept diferente dos tipos de mídia permitidos ou um conjunto de caracteres diferente de UTF-8|[ResponseError](#schemaresponseerror)|
-|422|[Unprocessable Entity](https://tools.ietf.org/html/rfc2518#section-10.3)|O servidor entende o tipo de conteúdo da entidade da requisição, e a sintaxe da requisição esta correta, mas não foi possível processar as instruções presentes|[ResponseError](#schemaresponseerror)|
-|429|[Too Many Requests](https://tools.ietf.org/html/rfc6585#section-4)|A operação foi recusada, pois muitas solicitações foram feitas dentro de um determinado período ou o limite global de requisições concorrentes foi atingido|[ResponseError](#schemaresponseerror)|
-|500|[Internal Server Error](https://tools.ietf.org/html/rfc7231#section-6.6.1)|Ocorreu um erro no gateway da API ou no microsserviço|[ResponseError](#schemaresponseerror)|
-|default|Default|Erro inesperado.|[ResponseError](#schemaresponseerror)|
+|201|[Created](https://tools.ietf.org/html/rfc7231#section-6.3.2)|Dados de PatrimonialLead criados com sucesso|[ResponseQuotePatrimonialLead](#schemaresponsequotepatrimoniallead)|
+|400|[Bad Request](https://tools.ietf.org/html/rfc7231#section-6.5.1)|A requisição foi malformada, omitindo atributos obrigatórios, seja no payload ou através de atributos na URL|[ResponseError](#schemaresponseerrorquotepatri)|
+|401|[Unauthorized](https://tools.ietf.org/html/rfc7235#section-3.1)|Cabeçalho de autenticação ausente/inválido ou token inválido|[ResponseError](#schemaresponseerrorquotepatri)|
+|403|[Forbidden](https://tools.ietf.org/html/rfc7231#section-6.5.3)|O token tem escopo incorreto ou uma política de segurança foi violada|[ResponseError](#schemaresponseerrorquotepatri)|
+|404|[Not Found](https://tools.ietf.org/html/rfc7231#section-6.5.4)|O recurso solicitado não existe ou não foi implementado|[ResponseError](#schemaresponseerrorquotepatri)|
+|405|[Method Not Allowed](https://tools.ietf.org/html/rfc7231#section-6.5.5)|O consumidor tentou acessar o recurso com um método não suportado|[ResponseError](#schemaresponseerrorquotepatri)|
+|406|[Not Acceptable](https://tools.ietf.org/html/rfc7231#section-6.5.6)|A solicitação continha um cabeçalho Accept diferente dos tipos de mídia permitidos ou um conjunto de caracteres diferente de UTF-8|[ResponseError](#schemaresponseerrorquotepatri)|
+|422|[Unprocessable Entity](https://tools.ietf.org/html/rfc2518#section-10.3)|O servidor entende o tipo de conteúdo da entidade da requisição, e a sintaxe da requisição esta correta, mas não foi possível processar as instruções presentes|[ResponseError](#schemaresponseerrorquotepatri)|
+|429|[Too Many Requests](https://tools.ietf.org/html/rfc6585#section-4)|A operação foi recusada, pois muitas solicitações foram feitas dentro de um determinado período ou o limite global de requisições concorrentes foi atingido|[ResponseError](#schemaresponseerrorquotepatri)|
+|500|[Internal Server Error](https://tools.ietf.org/html/rfc7231#section-6.6.1)|Ocorreu um erro no gateway da API ou no microsserviço|[ResponseError](#schemaresponseerrorquotepatri)|
+|default|Default|Erro inesperado.|[ResponseError](#schemaresponseerrorquotepatri)|
 
 ### Response Headers
 
@@ -1196,49 +705,14 @@ Método para obter dados para cotação e contratação
 
 <aside class="warning">
 To perform this operation, you must be authenticated by means of one of the following methods:
-OpenId ( Scopes: openid ) & OAuth2Security ( Scopes: consent:consentId quote-patrimonial )
+OAuth2Security ( Scopes: consent:consentId quote-patrimonial-lead )
 </aside>
 
-### Envia justificativa para recusa de risco para cotação e contratação de Seguro de Cotação Patrimonial
+## Atualiza dados de cotação e contratação de PatrimonialLead identificado por consentId
 
 <a id="opIdpatchQuotePatrimonialLead"></a>
 
 > Code samples
-
-```javascript
-const inputBody = '{
-  "data": {
-    "status": "stri",
-    "quoteIdentification": "string",
-    "author": {
-      "identificationType": "CPF",
-      "identificationNumber": "73677831148"
-    }
-  }
-}';
-const headers = {
-  'Content-Type':'application/json',
-  'Accept':'application/json; charset=utf-8',
-  'Authorization':'string',
-  'x-fapi-auth-date':'stringstringstringstringstrin',
-  'x-fapi-customer-ip-address':'string',
-  'x-fapi-interaction-id':'string',
-  'x-customer-user-agent':'string'
-};
-
-fetch('https://api.organizacao.com.br/open-insurance/quote-patrimonial/v1/lead/request/{consentId}',
-{
-  method: 'PATCH',
-  body: inputBody,
-  headers: headers
-})
-.then(function(res) {
-    return res.json();
-}).then(function(body) {
-    console.log(body);
-});
-
-```
 
 ```python
 import requests
@@ -1277,7 +751,7 @@ System.out.println(response.toString());
 
 `PATCH /lead/request/{consentId}`
 
-Método para retornar a recusa de proposta para cotação e contratação
+Método para atualização de solicitação de cotação e contratação de PatrimonialLead
 
 > Body parameter
 
@@ -1294,7 +768,7 @@ Método para retornar a recusa de proposta para cotação e contratação
 }
 ```
 
-<h3 id="envia-justificativa-para-recusa-de-risco-para-cotação-e-contratação-de-seguro-de-cotação-patrimonial-parameters">Parameters</h3>
+<h3 id="atualiza-dados-de-cotação-e-contratação-de-patrimoniallead-identificado-por-consentid-parameters">Parameters</h3>
 
 |Name|In|Type|Required|Description|
 |---|---|---|---|---|
@@ -1329,21 +803,21 @@ Método para retornar a recusa de proposta para cotação e contratação
 }
 ```
 
-<h3 id="envia-justificativa-para-recusa-de-risco-para-cotação-e-contratação-de-seguro-de-cotação-patrimonial-responses">Responses</h3>
+<h3 id="atualiza-dados-de-cotação-e-contratação-de-patrimoniallead-identificado-por-consentid-responses">Responses</h3>
 
 |Status|Meaning|Description|Schema|
 |---|---|---|---|
-|204|[No Content](https://tools.ietf.org/html/rfc7231#section-6.3.5)|Revogação de consentimento na seguradora.|None|
-|400|[Bad Request](https://tools.ietf.org/html/rfc7231#section-6.5.1)|A requisição foi malformada, omitindo atributos obrigatórios, seja no payload ou através de atributos na URL|[ResponseError](#schemaresponseerror)|
-|401|[Unauthorized](https://tools.ietf.org/html/rfc7235#section-3.1)|Cabeçalho de autenticação ausente/inválido ou token inválido|[ResponseError](#schemaresponseerror)|
-|403|[Forbidden](https://tools.ietf.org/html/rfc7231#section-6.5.3)|O token tem escopo incorreto ou uma política de segurança foi violada|[ResponseError](#schemaresponseerror)|
-|404|[Not Found](https://tools.ietf.org/html/rfc7231#section-6.5.4)|O recurso solicitado não existe ou não foi implementado|[ResponseError](#schemaresponseerror)|
-|405|[Method Not Allowed](https://tools.ietf.org/html/rfc7231#section-6.5.5)|O consumidor tentou acessar o recurso com um método não suportado|[ResponseError](#schemaresponseerror)|
-|406|[Not Acceptable](https://tools.ietf.org/html/rfc7231#section-6.5.6)|A solicitação continha um cabeçalho Accept diferente dos tipos de mídia permitidos ou um conjunto de caracteres diferente de UTF-8|[ResponseError](#schemaresponseerror)|
-|422|[Unprocessable Entity](https://tools.ietf.org/html/rfc2518#section-10.3)|O servidor entende o tipo de conteúdo da entidade da requisição, e a sintaxe da requisição esta correta, mas não foi possível processar as instruções presentes|[ResponseError](#schemaresponseerror)|
-|429|[Too Many Requests](https://tools.ietf.org/html/rfc6585#section-4)|A operação foi recusada, pois muitas solicitações foram feitas dentro de um determinado período ou o limite global de requisições concorrentes foi atingido|[ResponseError](#schemaresponseerror)|
-|500|[Internal Server Error](https://tools.ietf.org/html/rfc7231#section-6.6.1)|Ocorreu um erro no gateway da API ou no microsserviço|[ResponseError](#schemaresponseerror)|
-|default|Default|Erro inesperado.|[ResponseError](#schemaresponseerror)|
+|204|[No Content](https://tools.ietf.org/html/rfc7231#section-6.3.5)|Atualização de PatrimonialLead feita com sucesso|None|
+|400|[Bad Request](https://tools.ietf.org/html/rfc7231#section-6.5.1)|A requisição foi malformada, omitindo atributos obrigatórios, seja no payload ou através de atributos na URL|[ResponseError](#schemaresponseerrorquotepatri)|
+|401|[Unauthorized](https://tools.ietf.org/html/rfc7235#section-3.1)|Cabeçalho de autenticação ausente/inválido ou token inválido|[ResponseError](#schemaresponseerrorquotepatri)|
+|403|[Forbidden](https://tools.ietf.org/html/rfc7231#section-6.5.3)|O token tem escopo incorreto ou uma política de segurança foi violada|[ResponseError](#schemaresponseerrorquotepatri)|
+|404|[Not Found](https://tools.ietf.org/html/rfc7231#section-6.5.4)|O recurso solicitado não existe ou não foi implementado|[ResponseError](#schemaresponseerrorquotepatri)|
+|405|[Method Not Allowed](https://tools.ietf.org/html/rfc7231#section-6.5.5)|O consumidor tentou acessar o recurso com um método não suportado|[ResponseError](#schemaresponseerrorquotepatri)|
+|406|[Not Acceptable](https://tools.ietf.org/html/rfc7231#section-6.5.6)|A solicitação continha um cabeçalho Accept diferente dos tipos de mídia permitidos ou um conjunto de caracteres diferente de UTF-8|[ResponseError](#schemaresponseerrorquotepatri)|
+|422|[Unprocessable Entity](https://tools.ietf.org/html/rfc2518#section-10.3)|O servidor entende o tipo de conteúdo da entidade da requisição, e a sintaxe da requisição esta correta, mas não foi possível processar as instruções presentes|[ResponseError](#schemaresponseerrorquotepatri)|
+|429|[Too Many Requests](https://tools.ietf.org/html/rfc6585#section-4)|A operação foi recusada, pois muitas solicitações foram feitas dentro de um determinado período ou o limite global de requisições concorrentes foi atingido|[ResponseError](#schemaresponseerrorquotepatri)|
+|500|[Internal Server Error](https://tools.ietf.org/html/rfc7231#section-6.6.1)|Ocorreu um erro no gateway da API ou no microsserviço|[ResponseError](#schemaresponseerrorquotepatri)|
+|default|Default|Erro inesperado.|[ResponseError](#schemaresponseerrorquotepatri)|
 
 ### Response Headers
 
@@ -1355,594 +829,18 @@ Se fornecido, o transmissor deve "reproduzir" esse valor no cabeçalho de respos
 
 <aside class="warning">
 To perform this operation, you must be authenticated by means of one of the following methods:
-OpenId ( Scopes: openid ) & OAuth2Security ( Scopes: consent:consentId quote-patrimonial )
+OAuth2Security ( Scopes: consent:consentId quote-patrimonial-lead )
 </aside>
 
 <h2 id="api-patrimonial-open-insurance-brasil-patrimonialhome">PatrimonialHome</h2>
 
-Serviços de seguro PatrimonialHome
+Iniciação de serviços de seguro Cotação Patrimonial (PatrimonialHome)
 
-### Obtem dados de cotação e contratação de Seguro de Cotação Patrimonial
+### Envia dados de cotação e contratação de PatrimonialHome
 
 <a id="opIdpostQuotePatrimonialHome"></a>
 
 > Code samples
-
-```javascript
-const inputBody = '{
-  "data": {
-    "quoteCustomer": {
-      "identificationData": {
-        "updateDateTime": "2021-05-21T08:30:00Z",
-        "personalId": "578-psd-71md6971kjh-2d414",
-        "brandName": "Organização A",
-        "civilName": "Juan Kaique Cláudio Fernandes",
-        "socialName": "string",
-        "cpfNumber": "string",
-        "companyInfo": {
-          "cnpjNumber": "01773247000563",
-          "name": "Empresa da Organização A"
-        },
-        "documents": [
-          {
-            "type": "CNH",
-            "number": "15291908",
-            "expirationDate": "2023-05-21",
-            "issueLocation": "string"
-          }
-        ],
-        "hasBrazilianNationality": false,
-        "otherNationalitiesInfo": "CAN",
-        "otherDocuments": {
-          "type": "SOCIAL SEC",
-          "number": "15291908",
-          "country": "string",
-          "expirationDate": "2023-05-21"
-        },
-        "contact": {
-          "postalAddresses": [
-            {
-              "address": "Av Naburo Ykesaki, 1270",
-              "additionalInfo": "Fundos",
-              "districtName": "Centro",
-              "townName": "Marília",
-              "countrySubDivision": "SP",
-              "postCode": "17500001",
-              "country": "BRA"
-            }
-          ],
-          "phones": [
-            {
-              "countryCallingCode": "55",
-              "areaCode": "19",
-              "number": "29875132",
-              "phoneExtension": "932"
-            }
-          ],
-          "emails": [
-            {
-              "email": "nome@br.net"
-            }
-          ]
-        },
-        "civilStatusCode": "SOLTEIRO",
-        "sex": "FEMININO",
-        "birthDate": "2021-05-21",
-        "filiation": {
-          "type": "MAE",
-          "civilName": "Marcelo Cláudio Fernandes"
-        },
-        "identificationDetails": {
-          "civilName": "Juan Kaique Cláudio Fernandes",
-          "cpfNumber": "string"
-        }
-      },
-      "qualificationData": {
-        "updateDateTime": "2021-05-21T08:30:00Z",
-        "pepIdentification": "NAO_EXPOSTO",
-        "occupation": [
-          {
-            "details": "string",
-            "occupationCode": "RECEITA_FEDERAL",
-            "occupationCodeType": "RFB"
-          }
-        ],
-        "lifePensionPlans": "SIM",
-        "informedRevenue": {
-          "incomeFrequency": "DIARIA",
-          "currency": "BRL",
-          "amount": "100000.04",
-          "date": "2012-05-21"
-        },
-        "informedPatrimony": {
-          "currency": "BRL",
-          "amount": "100000.04",
-          "year": "2010"
-        }
-      },
-      "complimentaryInformationData": {
-        "updateDateTime": "2021-05-21T08:30:00Z",
-        "startDate": "2014-05-21",
-        "relationshipBeginning": "2014-05-21",
-        "productsServices": [
-          {
-            "contract": "string",
-            "type": "MICROSSEGUROS",
-            "insuranceLineCode": "6272",
-            "procurators": [
-              {
-                "nature": "PROCURADOR",
-                "cpfNumber": "73677831148",
-                "civilName": "Elza Milena Stefany Teixeira",
-                "socialName": "string"
-              }
-            ]
-          }
-        ]
-      },
-      "customData": [
-        {
-          "fieldCategory": "IDENTIFICATION",
-          "fields": [
-            {
-              "fieldId": "578-psd-71md6971kjh-2d414",
-              "value": null
-            }
-          ]
-        }
-      ]
-    },
-    "quoteData": {
-      "hasCommercialActivity": true,
-      "isCollectiveStipulated": true,
-      "hasOneRiskLocation": true,
-      "termStartDate": "2022-10-02",
-      "termEndDate": "2022-10-02",
-      "quoteId": "12345678",
-      "insuranceType": "NOVO",
-      "policyId": "111111",
-      "insurerId": "string",
-      "currency": "BRL",
-      "maxLMG": {
-        "amount": "2000.00",
-        "unit": {
-          "code": "R$",
-          "description": "BRL"
-        }
-      },
-      "includesAssistanceServices": true,
-      "insuredObjects": [
-        {
-          "identification": "string",
-          "propertyType": "CASA",
-          "geographicRegion": "ZONA_URBANA",
-          "propertiesForCoverage": "PREDIO_E_CONTEUDO",
-          "indenizationWithoutDepreciation": true,
-          "riskLocationInfo": {
-            "isSameAsTheProponent": true,
-            "address": "Avenida Paulista, 2000",
-            "additionalInfo": "Apartamento 1304",
-            "districtName": "Cerqueira César",
-            "townName": "São Paulo",
-            "countrySubDivision": "AC",
-            "postCode": "1310200",
-            "propertyUsageType": "HABITUAL",
-            "propertyBuildType": "ALVENARIA",
-            "isListedDisappropriatedCondemned": true,
-            "isUnderConstructionRenovation": true,
-            "securityProtection": [
-              "CAMERA_CFTV"
-            ],
-            "fireProtection": [
-              "EXTINTOR"
-            ],
-            "propertyUseType": "PROPRIO"
-          },
-          "coverages": [
-            {
-              "branch": "0111",
-              "code": "RESIDENCIAL_IMOVEL_BASICA",
-              "description": "string",
-              "internalCode": "string"
-            }
-          ],
-          "wasThereAClaim": true
-        }
-      ],
-      "beneficiaries": [
-        {
-          "identification": "12345678900",
-          "identificationType": "CPF",
-          "name": "Nome Sobrenome"
-        }
-      ],
-      "coverages": [
-        {
-          "branch": "0111",
-          "code": "RESIDENCIAL_IMOVEL_BASICA",
-          "description": "string",
-          "isSeparateContractingAllowed": true,
-          "maxLMI": {
-            "amount": "2000.00",
-            "unit": {
-              "code": "R$",
-              "description": "BRL"
-            }
-          },
-          "internalCode": "string"
-        }
-      ]
-    },
-    "historicalData": {
-      "customer": {
-        "identificationData": {
-          "updateDateTime": "2021-05-21T08:30:00Z",
-          "personalId": "578-psd-71md6971kjh-2d414",
-          "brandName": "Organização A",
-          "civilName": "Juan Kaique Cláudio Fernandes",
-          "socialName": "string",
-          "cpfNumber": "string",
-          "companyInfo": {
-            "cnpjNumber": "01773247000563",
-            "name": "Empresa da Organização A"
-          },
-          "documents": [
-            {
-              "type": "CNH",
-              "number": "15291908",
-              "expirationDate": "2023-05-21",
-              "issueLocation": "string"
-            }
-          ],
-          "hasBrazilianNationality": false,
-          "otherNationalitiesInfo": "CAN",
-          "otherDocuments": {
-            "type": "SOCIAL SEC",
-            "number": "15291908",
-            "country": "string",
-            "expirationDate": "2023-05-21"
-          },
-          "contact": {
-            "postalAddresses": [
-              {
-                "address": "Av Naburo Ykesaki, 1270",
-                "additionalInfo": "Fundos",
-                "districtName": "Centro",
-                "townName": "Marília",
-                "countrySubDivision": "SP",
-                "postCode": "17500001",
-                "country": "BRA"
-              }
-            ],
-            "phones": [
-              {
-                "countryCallingCode": "55",
-                "areaCode": "19",
-                "number": "29875132",
-                "phoneExtension": "932"
-              }
-            ],
-            "emails": [
-              {
-                "email": "nome@br.net"
-              }
-            ]
-          },
-          "civilStatusCode": "SOLTEIRO",
-          "sex": "FEMININO",
-          "birthDate": "2021-05-21",
-          "filiation": {
-            "type": "MAE",
-            "civilName": "Marcelo Cláudio Fernandes"
-          },
-          "identificationDetails": {
-            "civilName": "Juan Kaique Cláudio Fernandes",
-            "cpfNumber": "string"
-          }
-        },
-        "qualificationData": {
-          "updateDateTime": "2021-05-21T08:30:00Z",
-          "pepIdentification": "NAO_EXPOSTO",
-          "occupation": [
-            {
-              "details": "string",
-              "occupationCode": "RECEITA_FEDERAL",
-              "occupationCodeType": "RFB"
-            }
-          ],
-          "lifePensionPlans": "SIM",
-          "informedRevenue": {
-            "incomeFrequency": "DIARIA",
-            "currency": "BRL",
-            "amount": "100000.04",
-            "date": "2012-05-21"
-          },
-          "informedPatrimony": {
-            "currency": "BRL",
-            "amount": "100000.04",
-            "year": "2010"
-          }
-        },
-        "complimentaryInformationData": {
-          "updateDateTime": "2021-05-21T08:30:00Z",
-          "startDate": "2014-05-21",
-          "relationshipBeginning": "2014-05-21",
-          "productsServices": [
-            {
-              "contract": "string",
-              "type": "MICROSSEGUROS",
-              "insuranceLineCode": "6272",
-              "procurators": [
-                {
-                  "nature": "PROCURADOR",
-                  "cpfNumber": "73677831148",
-                  "civilName": "Elza Milena Stefany Teixeira",
-                  "socialName": "string"
-                }
-              ]
-            }
-          ]
-        }
-      },
-      "policies": [
-        {
-          "policyInfo": {
-            "documentType": "APOLICE_INDIVIDUAL",
-            "policyId": "111111",
-            "susepProcessNumber": "string",
-            "groupCertificateId": "string",
-            "issuanceType": "EMISSAO_PROPRIA",
-            "issuanceDate": "2022-12-31",
-            "termStartDate": "2022-12-31",
-            "termEndDate": "2022-12-31",
-            "leadInsurerCode": "string",
-            "leadInsurerPolicyId": "string",
-            "maxLMG": {
-              "amount": "2000.00",
-              "unit": {
-                "code": "R$",
-                "description": "BRL"
-              }
-            },
-            "proposalId": "string",
-            "insureds": [
-              {
-                "identification": "12345678900",
-                "identificationType": "CPF",
-                "name": "Nome Sobrenome",
-                "postCode": "10000000",
-                "email": "string",
-                "city": "string",
-                "state": "string",
-                "country": "BRA",
-                "address": "string"
-              }
-            ],
-            "beneficiaries": [
-              {
-                "identification": "12345678900",
-                "identificationType": "CPF",
-                "name": "Nome Sobrenome"
-              }
-            ],
-            "principals": [
-              {
-                "identification": "12345678900",
-                "identificationType": "CPF",
-                "name": "Nome Sobrenome",
-                "postCode": "10000000",
-                "email": "string",
-                "city": "string",
-                "state": "string",
-                "country": "BRA",
-                "address": "string"
-              }
-            ],
-            "intermediaries": [
-              {
-                "type": "REPRESENTANTE",
-                "identification": "12345678900",
-                "brokerId": "string",
-                "identificationType": "CPF",
-                "name": "Nome Sobrenome",
-                "postCode": "10000000",
-                "city": "string",
-                "state": "string",
-                "country": "BRA",
-                "address": "string"
-              }
-            ],
-            "insuredObjects": [
-              {
-                "identification": "string",
-                "type": "CONTRATO",
-                "typeAdditionalInfo": "string",
-                "description": "string",
-                "amount": {
-                  "amount": "2000.00",
-                  "unit": {
-                    "code": "R$",
-                    "description": "BRL"
-                  }
-                },
-                "coverages": [
-                  {
-                    "branch": "0111",
-                    "code": "IMOVEL_BASICA",
-                    "description": "string",
-                    "internalCode": "string",
-                    "susepProcessNumber": "string",
-                    "LMI": {},
-                    "isLMISublimit": true,
-                    "termStartDate": "2022-12-31",
-                    "termEndDate": "2022-12-31",
-                    "isMainCoverage": true,
-                    "feature": "MASSIFICADOS",
-                    "type": "PARAMETRICO",
-                    "gracePeriod": 0,
-                    "gracePeriodicity": "DIA",
-                    "gracePeriodCountingMethod": "DIAS_UTEIS",
-                    "gracePeriodStartDate": "2022-12-31",
-                    "gracePeriodEndDate": "2022-12-31"
-                  }
-                ]
-              }
-            ],
-            "coverages": [
-              {
-                "branch": "0111",
-                "code": "IMOVEL_BASICA",
-                "description": "string",
-                "deductible": {
-                  "type": "DEDUTIVEL",
-                  "typeAdditionalInfo": "string",
-                  "amount": {
-                    "amount": "2000.00",
-                    "unit": {}
-                  },
-                  "period": 10,
-                  "periodicity": "DIA",
-                  "periodCountingMethod": "DIAS_UTEIS",
-                  "periodStartDate": "2022-05-16",
-                  "periodEndDate": "2022-05-17",
-                  "description": "Franquia de exemplo"
-                },
-                "POS": {
-                  "applicationType": "VALOR",
-                  "description": "Descrição de exemplo",
-                  "minValue": {
-                    "amount": "2000.00",
-                    "unit": {}
-                  },
-                  "maxValue": {
-                    "amount": "2000.00",
-                    "unit": {}
-                  },
-                  "percentage": "10.00"
-                }
-              }
-            ],
-            "coinsuranceRetainedPercentage": "10.00",
-            "coinsurers": [
-              {
-                "identification": "string",
-                "cededPercentage": "10.00"
-              }
-            ],
-            "branchInfo": {
-              "basicCoverageIndex": "SIMPLES",
-              "insuredObjects": [
-                {
-                  "identification": "string",
-                  "propertyType": "CASA",
-                  "structuringType": "CONDOMINIO_VERTICAL",
-                  "postCode": "10000000",
-                  "businessActivity": "1234567"
-                }
-              ]
-            }
-          },
-          "premium": {
-            "paymentsQuantity": 4,
-            "amount": {
-              "amount": "2000.00",
-              "unit": {
-                "code": "R$",
-                "description": "BRL"
-              }
-            },
-            "coverages": [
-              {
-                "branch": "0111",
-                "code": "IMOVEL_BASICA",
-                "description": "string",
-                "premiumAmount": {
-                  "amount": "2000.00",
-                  "unit": {
-                    "code": "R$",
-                    "description": "BRL"
-                  }
-                }
-              }
-            ],
-            "payments": [
-              {
-                "movementDate": "2022-12-31",
-                "movementType": "LIQUIDACAO_DE_PREMIO",
-                "movementOrigin": "EMISSAO_DIRETA",
-                "movementPaymentsNumber": 0,
-                "amount": {
-                  "amount": "2000.00",
-                  "unit": {
-                    "code": "R$",
-                    "description": "BRL"
-                  }
-                },
-                "maturityDate": "2022-12-31",
-                "tellerId": "string",
-                "tellerIdType": "CPF",
-                "tellerName": "string",
-                "financialInstitutionCode": "string",
-                "paymentType": "BOLETO"
-              }
-            ]
-          },
-          "claim": {
-            "identification": "string",
-            "documentationDeliveryDate": "2022-12-31",
-            "status": "ABERTO",
-            "statusAlterationDate": "2022-12-31",
-            "occurrenceDate": "2022-12-31",
-            "warningDate": "2022-12-31",
-            "thirdPartyClaimDate": "2022-12-31",
-            "amount": {
-              "amount": "2000.00",
-              "unit": {
-                "code": "R$",
-                "description": "BRL"
-              }
-            },
-            "denialJustification": "RISCO_EXCLUIDO",
-            "denialJustificationDescription": "string",
-            "coverages": [
-              {
-                "insuredObjectId": "string",
-                "branch": "0111",
-                "code": "IMOVEL_BASICA",
-                "description": "string",
-                "warningDate": "2022-12-31",
-                "thirdPartyClaimDate": "2022-12-31"
-              }
-            ]
-          }
-        }
-      ]
-    }
-  }
-}';
-const headers = {
-  'Content-Type':'application/json',
-  'Accept':'application/json',
-  'Authorization':'string',
-  'x-fapi-auth-date':'stringstringstringstringstrin',
-  'x-fapi-customer-ip-address':'string',
-  'x-fapi-interaction-id':'string',
-  'x-customer-user-agent':'string'
-};
-
-fetch('https://api.organizacao.com.br/open-insurance/quote-patrimonial/v1/home/request',
-{
-  method: 'POST',
-  body: inputBody,
-  headers: headers
-})
-.then(function(res) {
-    return res.json();
-}).then(function(body) {
-    console.log(body);
-});
-
-```
 
 ```python
 import requests
@@ -1981,7 +879,7 @@ System.out.println(response.toString());
 
 `POST /home/request`
 
-Método para obter dados para cotação e contratação
+Método para criação de solicitação de cotação e contratação de PatrimonialHome
 
 > Body parameter
 
@@ -2539,7 +1437,7 @@ Método para obter dados para cotação e contratação
 }
 ```
 
-<h3 id="obtem-dados-de-cotação-e-contratação-de-seguro-de-cotação-patrimonial-parameters">Parameters</h3>
+<h3 id="envia-dados-de-cotação-e-contratação-de-patrimonialhome-parameters">Parameters</h3>
 
 |Name|In|Type|Required|Description|
 |---|---|---|---|---|
@@ -2576,21 +1474,21 @@ Método para obter dados para cotação e contratação
 }
 ```
 
-<h3 id="obtem-dados-de-cotação-e-contratação-de-seguro-de-cotação-patrimonial-responses">Responses</h3>
+<h3 id="envia-dados-de-cotação-e-contratação-de-patrimonialhome-responses">Responses</h3>
 
 |Status|Meaning|Description|Schema|
 |---|---|---|---|
-|201|[Created](https://tools.ietf.org/html/rfc7231#section-6.3.2)|Dados de ResponseQuotePatrimonial obtidos com sucesso|[ResponseQuotePatrimonialHome](#schemaresponsequotepatrimonialhome)|
-|400|[Bad Request](https://tools.ietf.org/html/rfc7231#section-6.5.1)|A requisição foi malformada, omitindo atributos obrigatórios, seja no payload ou através de atributos na URL|[ResponseError](#schemaresponseerror)|
-|401|[Unauthorized](https://tools.ietf.org/html/rfc7235#section-3.1)|Cabeçalho de autenticação ausente/inválido ou token inválido|[ResponseError](#schemaresponseerror)|
-|403|[Forbidden](https://tools.ietf.org/html/rfc7231#section-6.5.3)|O token tem escopo incorreto ou uma política de segurança foi violada|[ResponseError](#schemaresponseerror)|
-|404|[Not Found](https://tools.ietf.org/html/rfc7231#section-6.5.4)|O recurso solicitado não existe ou não foi implementado|[ResponseError](#schemaresponseerror)|
-|405|[Method Not Allowed](https://tools.ietf.org/html/rfc7231#section-6.5.5)|O consumidor tentou acessar o recurso com um método não suportado|[ResponseError](#schemaresponseerror)|
-|406|[Not Acceptable](https://tools.ietf.org/html/rfc7231#section-6.5.6)|A solicitação continha um cabeçalho Accept diferente dos tipos de mídia permitidos ou um conjunto de caracteres diferente de UTF-8|[ResponseError](#schemaresponseerror)|
-|422|[Unprocessable Entity](https://tools.ietf.org/html/rfc2518#section-10.3)|O servidor entende o tipo de conteúdo da entidade da requisição, e a sintaxe da requisição esta correta, mas não foi possível processar as instruções presentes|[ResponseError](#schemaresponseerror)|
-|429|[Too Many Requests](https://tools.ietf.org/html/rfc6585#section-4)|A operação foi recusada, pois muitas solicitações foram feitas dentro de um determinado período ou o limite global de requisições concorrentes foi atingido|[ResponseError](#schemaresponseerror)|
-|500|[Internal Server Error](https://tools.ietf.org/html/rfc7231#section-6.6.1)|Ocorreu um erro no gateway da API ou no microsserviço|[ResponseError](#schemaresponseerror)|
-|default|Default|Erro inesperado.|[ResponseError](#schemaresponseerror)|
+|201|[Created](https://tools.ietf.org/html/rfc7231#section-6.3.2)|Dados de PatrimonialHome criados com sucesso|[ResponseQuotePatrimonialHome](#schemaresponsequotepatrimonialhome)|
+|400|[Bad Request](https://tools.ietf.org/html/rfc7231#section-6.5.1)|A requisição foi malformada, omitindo atributos obrigatórios, seja no payload ou através de atributos na URL|[ResponseError](#schemaresponseerrorquotepatri)|
+|401|[Unauthorized](https://tools.ietf.org/html/rfc7235#section-3.1)|Cabeçalho de autenticação ausente/inválido ou token inválido|[ResponseError](#schemaresponseerrorquotepatri)|
+|403|[Forbidden](https://tools.ietf.org/html/rfc7231#section-6.5.3)|O token tem escopo incorreto ou uma política de segurança foi violada|[ResponseError](#schemaresponseerrorquotepatri)|
+|404|[Not Found](https://tools.ietf.org/html/rfc7231#section-6.5.4)|O recurso solicitado não existe ou não foi implementado|[ResponseError](#schemaresponseerrorquotepatri)|
+|405|[Method Not Allowed](https://tools.ietf.org/html/rfc7231#section-6.5.5)|O consumidor tentou acessar o recurso com um método não suportado|[ResponseError](#schemaresponseerrorquotepatri)|
+|406|[Not Acceptable](https://tools.ietf.org/html/rfc7231#section-6.5.6)|A solicitação continha um cabeçalho Accept diferente dos tipos de mídia permitidos ou um conjunto de caracteres diferente de UTF-8|[ResponseError](#schemaresponseerrorquotepatri)|
+|422|[Unprocessable Entity](https://tools.ietf.org/html/rfc2518#section-10.3)|O servidor entende o tipo de conteúdo da entidade da requisição, e a sintaxe da requisição esta correta, mas não foi possível processar as instruções presentes|[ResponseError](#schemaresponseerrorquotepatri)|
+|429|[Too Many Requests](https://tools.ietf.org/html/rfc6585#section-4)|A operação foi recusada, pois muitas solicitações foram feitas dentro de um determinado período ou o limite global de requisições concorrentes foi atingido|[ResponseError](#schemaresponseerrorquotepatri)|
+|500|[Internal Server Error](https://tools.ietf.org/html/rfc7231#section-6.6.1)|Ocorreu um erro no gateway da API ou no microsserviço|[ResponseError](#schemaresponseerrorquotepatri)|
+|default|Default|Erro inesperado.|[ResponseError](#schemaresponseerrorquotepatri)|
 
 ### Response Headers
 
@@ -2600,39 +1498,14 @@ Método para obter dados para cotação e contratação
 
 <aside class="warning">
 To perform this operation, you must be authenticated by means of one of the following methods:
-OpenId ( Scopes: openid ) & OAuth2Security ( Scopes: consent:consentId quote-patrimonial )
+OAuth2Security ( Scopes: consent:consentId quote-patrimonial-home )
 </aside>
 
-### Retorna os dados de cotação e contratação de Seguro de Cotação Patrimonial
+### Obtém os dados de cotação e contratação de PatrimonialHome identificado por consentId
 
 <a id="opIdgetQuotePatrimonialHome"></a>
 
 > Code samples
-
-```javascript
-
-const headers = {
-  'Accept':'application/json',
-  'Authorization':'string',
-  'x-fapi-auth-date':'stringstringstringstringstrin',
-  'x-fapi-customer-ip-address':'string',
-  'x-fapi-interaction-id':'string',
-  'x-customer-user-agent':'string'
-};
-
-fetch('https://api.organizacao.com.br/open-insurance/quote-patrimonial/v1/home/request/{consentId}/quote-status',
-{
-  method: 'GET',
-
-  headers: headers
-})
-.then(function(res) {
-    return res.json();
-}).then(function(body) {
-    console.log(body);
-});
-
-```
 
 ```python
 import requests
@@ -2670,9 +1543,9 @@ System.out.println(response.toString());
 
 `GET /home/request/{consentId}/quote-status`
 
-Método para retornar os dados para cotação e contratação
+Método para consulta dos dados de solicitação de cotação e contratação de PatrimonialHome
 
-<h3 id="retorna-os-dados-de-cotação-e-contratação-de-seguro-de-cotação-patrimonial-parameters">Parameters</h3>
+<h3 id="obtém-os-dados-de-cotação-e-contratação-de-patrimonialhome-identificado-por-consentid-parameters">Parameters</h3>
 
 |Name|In|Type|Required|Description|
 |---|---|---|---|---|
@@ -3072,21 +1945,21 @@ Método para retornar os dados para cotação e contratação
 }
 ```
 
-<h3 id="retorna-os-dados-de-cotação-e-contratação-de-seguro-de-cotação-patrimonial-responses">Responses</h3>
+<h3 id="obtém-os-dados-de-cotação-e-contratação-de-patrimonialhome-identificado-por-consentid-responses">Responses</h3>
 
 |Status|Meaning|Description|Schema|
 |---|---|---|---|
-|200|[OK](https://tools.ietf.org/html/rfc7231#section-6.3.1)|Cotação postado com sucesso.|[ResponseQuoteStatusPatrimonialHome](#schemaresponsequotestatuspatrimonialhome)|
-|400|[Bad Request](https://tools.ietf.org/html/rfc7231#section-6.5.1)|A requisição foi malformada, omitindo atributos obrigatórios, seja no payload ou através de atributos na URL|[ResponseError](#schemaresponseerror)|
-|401|[Unauthorized](https://tools.ietf.org/html/rfc7235#section-3.1)|Cabeçalho de autenticação ausente/inválido ou token inválido|[ResponseError](#schemaresponseerror)|
-|403|[Forbidden](https://tools.ietf.org/html/rfc7231#section-6.5.3)|O token tem escopo incorreto ou uma política de segurança foi violada|[ResponseError](#schemaresponseerror)|
-|404|[Not Found](https://tools.ietf.org/html/rfc7231#section-6.5.4)|O recurso solicitado não existe ou não foi implementado|[ResponseError](#schemaresponseerror)|
-|405|[Method Not Allowed](https://tools.ietf.org/html/rfc7231#section-6.5.5)|O consumidor tentou acessar o recurso com um método não suportado|[ResponseError](#schemaresponseerror)|
-|406|[Not Acceptable](https://tools.ietf.org/html/rfc7231#section-6.5.6)|A solicitação continha um cabeçalho Accept diferente dos tipos de mídia permitidos ou um conjunto de caracteres diferente de UTF-8|[ResponseError](#schemaresponseerror)|
-|422|[Unprocessable Entity](https://tools.ietf.org/html/rfc2518#section-10.3)|O servidor entende o tipo de conteúdo da entidade da requisição, e a sintaxe da requisição esta correta, mas não foi possível processar as instruções presentes|[ResponseError](#schemaresponseerror)|
-|429|[Too Many Requests](https://tools.ietf.org/html/rfc6585#section-4)|A operação foi recusada, pois muitas solicitações foram feitas dentro de um determinado período ou o limite global de requisições concorrentes foi atingido|[ResponseError](#schemaresponseerror)|
-|500|[Internal Server Error](https://tools.ietf.org/html/rfc7231#section-6.6.1)|Ocorreu um erro no gateway da API ou no microsserviço|[ResponseError](#schemaresponseerror)|
-|default|Default|Erro inesperado.|[ResponseError](#schemaresponseerror)|
+|200|[OK](https://tools.ietf.org/html/rfc7231#section-6.3.1)|Dados de PatrimonialHome obtidos com sucesso|[ResponseQuoteStatusPatrimonialHome](#schemaresponsequotestatuspatrimonialhome)|
+|400|[Bad Request](https://tools.ietf.org/html/rfc7231#section-6.5.1)|A requisição foi malformada, omitindo atributos obrigatórios, seja no payload ou através de atributos na URL|[ResponseError](#schemaresponseerrorquotepatri)|
+|401|[Unauthorized](https://tools.ietf.org/html/rfc7235#section-3.1)|Cabeçalho de autenticação ausente/inválido ou token inválido|[ResponseError](#schemaresponseerrorquotepatri)|
+|403|[Forbidden](https://tools.ietf.org/html/rfc7231#section-6.5.3)|O token tem escopo incorreto ou uma política de segurança foi violada|[ResponseError](#schemaresponseerrorquotepatri)|
+|404|[Not Found](https://tools.ietf.org/html/rfc7231#section-6.5.4)|O recurso solicitado não existe ou não foi implementado|[ResponseError](#schemaresponseerrorquotepatri)|
+|405|[Method Not Allowed](https://tools.ietf.org/html/rfc7231#section-6.5.5)|O consumidor tentou acessar o recurso com um método não suportado|[ResponseError](#schemaresponseerrorquotepatri)|
+|406|[Not Acceptable](https://tools.ietf.org/html/rfc7231#section-6.5.6)|A solicitação continha um cabeçalho Accept diferente dos tipos de mídia permitidos ou um conjunto de caracteres diferente de UTF-8|[ResponseError](#schemaresponseerrorquotepatri)|
+|422|[Unprocessable Entity](https://tools.ietf.org/html/rfc2518#section-10.3)|O servidor entende o tipo de conteúdo da entidade da requisição, e a sintaxe da requisição esta correta, mas não foi possível processar as instruções presentes|[ResponseError](#schemaresponseerrorquotepatri)|
+|429|[Too Many Requests](https://tools.ietf.org/html/rfc6585#section-4)|A operação foi recusada, pois muitas solicitações foram feitas dentro de um determinado período ou o limite global de requisições concorrentes foi atingido|[ResponseError](#schemaresponseerrorquotepatri)|
+|500|[Internal Server Error](https://tools.ietf.org/html/rfc7231#section-6.6.1)|Ocorreu um erro no gateway da API ou no microsserviço|[ResponseError](#schemaresponseerrorquotepatri)|
+|default|Default|Erro inesperado.|[ResponseError](#schemaresponseerrorquotepatri)|
 
 ### Response Headers
 
@@ -3098,49 +1971,14 @@ Se fornecido, o transmissor deve "reproduzir" esse valor no cabeçalho de respos
 
 <aside class="warning">
 To perform this operation, you must be authenticated by means of one of the following methods:
-OpenId ( Scopes: openid ) & OAuth2Security ( Scopes: consent:consentId quote-patrimonial )
+OAuth2Security ( Scopes: consent:consentId quote-patrimonial-home )
 </aside>
 
-### Envia justificativa para recusa de risco para cotação e contratação de Seguro de Cotação Patrimonial
+## Atualiza dados de cotação e contratação de PatrimonialHome identificado por consentId
 
 <a id="opIdpatchQuotePatrimonialHome"></a>
 
 > Code samples
-
-```javascript
-const inputBody = '{
-  "data": {
-    "status": "stri",
-    "quoteIdentification": "string",
-    "author": {
-      "identificationType": "CPF",
-      "identificationNumber": "73677831148"
-    }
-  }
-}';
-const headers = {
-  'Content-Type':'application/json',
-  'Accept':'application/json; charset=utf-8',
-  'Authorization':'string',
-  'x-fapi-auth-date':'stringstringstringstringstrin',
-  'x-fapi-customer-ip-address':'string',
-  'x-fapi-interaction-id':'string',
-  'x-customer-user-agent':'string'
-};
-
-fetch('https://api.organizacao.com.br/open-insurance/quote-patrimonial/v1/home/request/{consentId}',
-{
-  method: 'PATCH',
-  body: inputBody,
-  headers: headers
-})
-.then(function(res) {
-    return res.json();
-}).then(function(body) {
-    console.log(body);
-});
-
-```
 
 ```python
 import requests
@@ -3179,7 +2017,7 @@ System.out.println(response.toString());
 
 `PATCH /home/request/{consentId}`
 
-Método para retornar a recusa de proposta para cotação e contratação
+Método para atualização de solicitação de cotação e contratação de PatrimonialHome
 
 > Body parameter
 
@@ -3196,7 +2034,7 @@ Método para retornar a recusa de proposta para cotação e contratação
 }
 ```
 
-<h3 id="envia-justificativa-para-recusa-de-risco-para-cotação-e-contratação-de-seguro-de-cotação-patrimonial-parameters">Parameters</h3>
+<h3 id="atualiza-dados-de-cotação-e-contratação-de-patrimonialhome-identificado-por-consentid-parameters">Parameters</h3>
 
 |Name|In|Type|Required|Description|
 |---|---|---|---|---|
@@ -3231,21 +2069,21 @@ Método para retornar a recusa de proposta para cotação e contratação
 }
 ```
 
-<h3 id="envia-justificativa-para-recusa-de-risco-para-cotação-e-contratação-de-seguro-de-cotação-patrimonial-responses">Responses</h3>
+<h3 id="atualiza-dados-de-cotação-e-contratação-de-patrimonialhome-identificado-por-consentid-responses">Responses</h3>
 
 |Status|Meaning|Description|Schema|
 |---|---|---|---|
-|204|[No Content](https://tools.ietf.org/html/rfc7231#section-6.3.5)|Revogação de consentimento na seguradora.|None|
-|400|[Bad Request](https://tools.ietf.org/html/rfc7231#section-6.5.1)|A requisição foi malformada, omitindo atributos obrigatórios, seja no payload ou através de atributos na URL|[ResponseError](#schemaresponseerror)|
-|401|[Unauthorized](https://tools.ietf.org/html/rfc7235#section-3.1)|Cabeçalho de autenticação ausente/inválido ou token inválido|[ResponseError](#schemaresponseerror)|
-|403|[Forbidden](https://tools.ietf.org/html/rfc7231#section-6.5.3)|O token tem escopo incorreto ou uma política de segurança foi violada|[ResponseError](#schemaresponseerror)|
-|404|[Not Found](https://tools.ietf.org/html/rfc7231#section-6.5.4)|O recurso solicitado não existe ou não foi implementado|[ResponseError](#schemaresponseerror)|
-|405|[Method Not Allowed](https://tools.ietf.org/html/rfc7231#section-6.5.5)|O consumidor tentou acessar o recurso com um método não suportado|[ResponseError](#schemaresponseerror)|
-|406|[Not Acceptable](https://tools.ietf.org/html/rfc7231#section-6.5.6)|A solicitação continha um cabeçalho Accept diferente dos tipos de mídia permitidos ou um conjunto de caracteres diferente de UTF-8|[ResponseError](#schemaresponseerror)|
-|422|[Unprocessable Entity](https://tools.ietf.org/html/rfc2518#section-10.3)|O servidor entende o tipo de conteúdo da entidade da requisição, e a sintaxe da requisição esta correta, mas não foi possível processar as instruções presentes|[ResponseError](#schemaresponseerror)|
-|429|[Too Many Requests](https://tools.ietf.org/html/rfc6585#section-4)|A operação foi recusada, pois muitas solicitações foram feitas dentro de um determinado período ou o limite global de requisições concorrentes foi atingido|[ResponseError](#schemaresponseerror)|
-|500|[Internal Server Error](https://tools.ietf.org/html/rfc7231#section-6.6.1)|Ocorreu um erro no gateway da API ou no microsserviço|[ResponseError](#schemaresponseerror)|
-|default|Default|Erro inesperado.|[ResponseError](#schemaresponseerror)|
+|204|[No Content](https://tools.ietf.org/html/rfc7231#section-6.3.5)|Atualização de PatrimonialHome feita com sucesso|None|
+|400|[Bad Request](https://tools.ietf.org/html/rfc7231#section-6.5.1)|A requisição foi malformada, omitindo atributos obrigatórios, seja no payload ou através de atributos na URL|[ResponseError](#schemaresponseerrorquotepatri)|
+|401|[Unauthorized](https://tools.ietf.org/html/rfc7235#section-3.1)|Cabeçalho de autenticação ausente/inválido ou token inválido|[ResponseError](#schemaresponseerrorquotepatri)|
+|403|[Forbidden](https://tools.ietf.org/html/rfc7231#section-6.5.3)|O token tem escopo incorreto ou uma política de segurança foi violada|[ResponseError](#schemaresponseerrorquotepatri)|
+|404|[Not Found](https://tools.ietf.org/html/rfc7231#section-6.5.4)|O recurso solicitado não existe ou não foi implementado|[ResponseError](#schemaresponseerrorquotepatri)|
+|405|[Method Not Allowed](https://tools.ietf.org/html/rfc7231#section-6.5.5)|O consumidor tentou acessar o recurso com um método não suportado|[ResponseError](#schemaresponseerrorquotepatri)|
+|406|[Not Acceptable](https://tools.ietf.org/html/rfc7231#section-6.5.6)|A solicitação continha um cabeçalho Accept diferente dos tipos de mídia permitidos ou um conjunto de caracteres diferente de UTF-8|[ResponseError](#schemaresponseerrorquotepatri)|
+|422|[Unprocessable Entity](https://tools.ietf.org/html/rfc2518#section-10.3)|O servidor entende o tipo de conteúdo da entidade da requisição, e a sintaxe da requisição esta correta, mas não foi possível processar as instruções presentes|[ResponseError](#schemaresponseerrorquotepatri)|
+|429|[Too Many Requests](https://tools.ietf.org/html/rfc6585#section-4)|A operação foi recusada, pois muitas solicitações foram feitas dentro de um determinado período ou o limite global de requisições concorrentes foi atingido|[ResponseError](#schemaresponseerrorquotepatri)|
+|500|[Internal Server Error](https://tools.ietf.org/html/rfc7231#section-6.6.1)|Ocorreu um erro no gateway da API ou no microsserviço|[ResponseError](#schemaresponseerrorquotepatri)|
+|default|Default|Erro inesperado.|[ResponseError](#schemaresponseerrorquotepatri)|
 
 ### Response Headers
 
@@ -3257,603 +2095,18 @@ Se fornecido, o transmissor deve "reproduzir" esse valor no cabeçalho de respos
 
 <aside class="warning">
 To perform this operation, you must be authenticated by means of one of the following methods:
-OpenId ( Scopes: openid ) & OAuth2Security ( Scopes: consent:consentId quote-patrimonial )
+OAuth2Security ( Scopes: consent:consentId quote-patrimonial-home )
 </aside>
 
 <h2 id="api-patrimonial-open-insurance-brasil-patrimonialcondominium">PatrimonialCondominium</h2>
 
-Serviços de seguro PatrimonialCondominium
+Iniciação de serviços de seguro Cotação Patrimonial (PatrimonialCondominium)
 
-### Obtem dados de cotação e contratação de Seguro de Cotação Patrimonial
+### Envia dados de cotação e contratação de PatrimonialCondominium
 
 <a id="opIdpostQuotePatrimonialCondominium"></a>
 
 > Code samples
-
-```javascript
-const inputBody = '{
-  "data": {
-    "quoteCustomer": {
-      "identificationData": {
-        "updateDateTime": "2021-05-21T08:30:00Z",
-        "personalId": "578-psd-71md6971kjh-2d414",
-        "brandName": "Organização A",
-        "civilName": "Juan Kaique Cláudio Fernandes",
-        "socialName": "string",
-        "cpfNumber": "string",
-        "companyInfo": {
-          "cnpjNumber": "01773247000563",
-          "name": "Empresa da Organização A"
-        },
-        "documents": [
-          {
-            "type": "CNH",
-            "number": "15291908",
-            "expirationDate": "2023-05-21",
-            "issueLocation": "string"
-          }
-        ],
-        "hasBrazilianNationality": false,
-        "otherNationalitiesInfo": "CAN",
-        "otherDocuments": {
-          "type": "SOCIAL SEC",
-          "number": "15291908",
-          "country": "string",
-          "expirationDate": "2023-05-21"
-        },
-        "contact": {
-          "postalAddresses": [
-            {
-              "address": "Av Naburo Ykesaki, 1270",
-              "additionalInfo": "Fundos",
-              "districtName": "Centro",
-              "townName": "Marília",
-              "countrySubDivision": "SP",
-              "postCode": "17500001",
-              "country": "BRA"
-            }
-          ],
-          "phones": [
-            {
-              "countryCallingCode": "55",
-              "areaCode": "19",
-              "number": "29875132",
-              "phoneExtension": "932"
-            }
-          ],
-          "emails": [
-            {
-              "email": "nome@br.net"
-            }
-          ]
-        },
-        "civilStatusCode": "SOLTEIRO",
-        "sex": "FEMININO",
-        "birthDate": "2021-05-21",
-        "filiation": {
-          "type": "MAE",
-          "civilName": "Marcelo Cláudio Fernandes"
-        },
-        "identificationDetails": {
-          "civilName": "Juan Kaique Cláudio Fernandes",
-          "cpfNumber": "string"
-        }
-      },
-      "qualificationData": {
-        "updateDateTime": "2021-05-21T08:30:00Z",
-        "pepIdentification": "NAO_EXPOSTO",
-        "occupation": [
-          {
-            "details": "string",
-            "occupationCode": "RECEITA_FEDERAL",
-            "occupationCodeType": "RFB"
-          }
-        ],
-        "lifePensionPlans": "SIM",
-        "informedRevenue": {
-          "incomeFrequency": "DIARIA",
-          "currency": "BRL",
-          "amount": "100000.04",
-          "date": "2012-05-21"
-        },
-        "informedPatrimony": {
-          "currency": "BRL",
-          "amount": "100000.04",
-          "year": "2010"
-        }
-      },
-      "complimentaryInformationData": {
-        "updateDateTime": "2021-05-21T08:30:00Z",
-        "startDate": "2014-05-21",
-        "relationshipBeginning": "2014-05-21",
-        "productsServices": [
-          {
-            "contract": "string",
-            "type": "MICROSSEGUROS",
-            "insuranceLineCode": "6272",
-            "procurators": [
-              {
-                "nature": "PROCURADOR",
-                "cpfNumber": "73677831148",
-                "civilName": "Elza Milena Stefany Teixeira",
-                "socialName": "string"
-              }
-            ]
-          }
-        ]
-      },
-      "customData": [
-        {
-          "fieldCategory": "IDENTIFICATION",
-          "fields": [
-            {
-              "fieldId": "578-psd-71md6971kjh-2d414",
-              "value": null
-            }
-          ]
-        }
-      ]
-    },
-    "quoteData": {
-      "mainActivity": "COMERCIO",
-      "isLegallyConstituted": true,
-      "condominiumType": true,
-      "termStartDate": "2022-10-02",
-      "termEndDate": "2022-10-02",
-      "quoteId": "12345678",
-      "insuranceTermStartDate": "2022-10-02",
-      "insuranceType": "NOVO",
-      "policyId": "111111",
-      "insurerId": "string",
-      "currency": "BRL",
-      "basicCoverageIndex": "SIMPLES",
-      "maxLMG": {
-        "amount": "2000.00",
-        "unit": {
-          "code": "R$",
-          "description": "BRL"
-        }
-      },
-      "includesAssistanceServices": true,
-      "claimAmount": {
-        "amount": "2000.00",
-        "unit": {
-          "code": "R$",
-          "description": "BRL"
-        }
-      },
-      "claimDescription": "string",
-      "insuredObjects": [
-        {
-          "structuringType": "CONDOMINIO_VERTICAL",
-          "propertyType": "CONDOMINIO_RESIDENCIAL_COM_COMERCIO_NO_TERREO",
-          "hasElevator": true,
-          "isFullyOrPartiallyListed": true,
-          "numberOfBlocks": "3",
-          "condominiumAge": "20",
-          "hasReuseOfWater": true,
-          "securityProtection": [
-            "CAMERA_CFTV"
-          ],
-          "riskLocationInfo": {
-            "address": "Avenida Paulista, 2000",
-            "additionalInfo": "Apartamento 1304",
-            "districtName": "Cerqueira César",
-            "townName": "São Paulo",
-            "countrySubDivision": "AC",
-            "postCode": "1310200"
-          },
-          "indenizationWithoutDepreciation": true,
-          "coverages": [
-            {
-              "branch": "0111",
-              "code": "RESIDENCIAL_IMOVEL_BASICA",
-              "description": "string",
-              "internalCode": "string"
-            }
-          ],
-          "wasThereAClaim": true,
-          "claimNotifications": [
-            {
-              "claimAmount": {
-                "amount": "2000.00",
-                "unit": {
-                  "code": "R$",
-                  "description": "BRL"
-                }
-              },
-              "claimDescription": "string"
-            }
-          ]
-        }
-      ],
-      "coverages": [
-        {
-          "branch": "0111",
-          "code": "RESIDENCIAL_IMOVEL_BASICA",
-          "description": "string",
-          "isSeparateContractingAllowed": true,
-          "maxLMI": {
-            "amount": "2000.00",
-            "unit": {
-              "code": "R$",
-              "description": "BRL"
-            }
-          },
-          "internalCode": "string"
-        }
-      ]
-    },
-    "historicalData": {
-      "customer": {
-        "identificationData": {
-          "updateDateTime": "2021-05-21T08:30:00Z",
-          "personalId": "578-psd-71md6971kjh-2d414",
-          "brandName": "Organização A",
-          "civilName": "Juan Kaique Cláudio Fernandes",
-          "socialName": "string",
-          "cpfNumber": "string",
-          "companyInfo": {
-            "cnpjNumber": "01773247000563",
-            "name": "Empresa da Organização A"
-          },
-          "documents": [
-            {
-              "type": "CNH",
-              "number": "15291908",
-              "expirationDate": "2023-05-21",
-              "issueLocation": "string"
-            }
-          ],
-          "hasBrazilianNationality": false,
-          "otherNationalitiesInfo": "CAN",
-          "otherDocuments": {
-            "type": "SOCIAL SEC",
-            "number": "15291908",
-            "country": "string",
-            "expirationDate": "2023-05-21"
-          },
-          "contact": {
-            "postalAddresses": [
-              {
-                "address": "Av Naburo Ykesaki, 1270",
-                "additionalInfo": "Fundos",
-                "districtName": "Centro",
-                "townName": "Marília",
-                "countrySubDivision": "SP",
-                "postCode": "17500001",
-                "country": "BRA"
-              }
-            ],
-            "phones": [
-              {
-                "countryCallingCode": "55",
-                "areaCode": "19",
-                "number": "29875132",
-                "phoneExtension": "932"
-              }
-            ],
-            "emails": [
-              {
-                "email": "nome@br.net"
-              }
-            ]
-          },
-          "civilStatusCode": "SOLTEIRO",
-          "sex": "FEMININO",
-          "birthDate": "2021-05-21",
-          "filiation": {
-            "type": "MAE",
-            "civilName": "Marcelo Cláudio Fernandes"
-          },
-          "identificationDetails": {
-            "civilName": "Juan Kaique Cláudio Fernandes",
-            "cpfNumber": "string"
-          }
-        },
-        "qualificationData": {
-          "updateDateTime": "2021-05-21T08:30:00Z",
-          "pepIdentification": "NAO_EXPOSTO",
-          "occupation": [
-            {
-              "details": "string",
-              "occupationCode": "RECEITA_FEDERAL",
-              "occupationCodeType": "RFB"
-            }
-          ],
-          "lifePensionPlans": "SIM",
-          "informedRevenue": {
-            "incomeFrequency": "DIARIA",
-            "currency": "BRL",
-            "amount": "100000.04",
-            "date": "2012-05-21"
-          },
-          "informedPatrimony": {
-            "currency": "BRL",
-            "amount": "100000.04",
-            "year": "2010"
-          }
-        },
-        "complimentaryInformationData": {
-          "updateDateTime": "2021-05-21T08:30:00Z",
-          "startDate": "2014-05-21",
-          "relationshipBeginning": "2014-05-21",
-          "productsServices": [
-            {
-              "contract": "string",
-              "type": "MICROSSEGUROS",
-              "insuranceLineCode": "6272",
-              "procurators": [
-                {
-                  "nature": "PROCURADOR",
-                  "cpfNumber": "73677831148",
-                  "civilName": "Elza Milena Stefany Teixeira",
-                  "socialName": "string"
-                }
-              ]
-            }
-          ]
-        }
-      },
-      "policies": [
-        {
-          "policyInfo": {
-            "documentType": "APOLICE_INDIVIDUAL",
-            "policyId": "111111",
-            "susepProcessNumber": "string",
-            "groupCertificateId": "string",
-            "issuanceType": "EMISSAO_PROPRIA",
-            "issuanceDate": "2022-12-31",
-            "termStartDate": "2022-12-31",
-            "termEndDate": "2022-12-31",
-            "leadInsurerCode": "string",
-            "leadInsurerPolicyId": "string",
-            "maxLMG": {
-              "amount": "2000.00",
-              "unit": {
-                "code": "R$",
-                "description": "BRL"
-              }
-            },
-            "proposalId": "string",
-            "insureds": [
-              {
-                "identification": "12345678900",
-                "identificationType": "CPF",
-                "name": "Nome Sobrenome",
-                "postCode": "10000000",
-                "email": "string",
-                "city": "string",
-                "state": "string",
-                "country": "BRA",
-                "address": "string"
-              }
-            ],
-            "beneficiaries": [
-              {
-                "identification": "12345678900",
-                "identificationType": "CPF",
-                "name": "Nome Sobrenome"
-              }
-            ],
-            "principals": [
-              {
-                "identification": "12345678900",
-                "identificationType": "CPF",
-                "name": "Nome Sobrenome",
-                "postCode": "10000000",
-                "email": "string",
-                "city": "string",
-                "state": "string",
-                "country": "BRA",
-                "address": "string"
-              }
-            ],
-            "intermediaries": [
-              {
-                "type": "REPRESENTANTE",
-                "identification": "12345678900",
-                "brokerId": "string",
-                "identificationType": "CPF",
-                "name": "Nome Sobrenome",
-                "postCode": "10000000",
-                "city": "string",
-                "state": "string",
-                "country": "BRA",
-                "address": "string"
-              }
-            ],
-            "insuredObjects": [
-              {
-                "identification": "string",
-                "type": "CONTRATO",
-                "typeAdditionalInfo": "string",
-                "description": "string",
-                "amount": {
-                  "amount": "2000.00",
-                  "unit": {
-                    "code": "R$",
-                    "description": "BRL"
-                  }
-                },
-                "coverages": [
-                  {
-                    "branch": "0111",
-                    "code": "IMOVEL_BASICA",
-                    "description": "string",
-                    "internalCode": "string",
-                    "susepProcessNumber": "string",
-                    "LMI": {},
-                    "isLMISublimit": true,
-                    "termStartDate": "2022-12-31",
-                    "termEndDate": "2022-12-31",
-                    "isMainCoverage": true,
-                    "feature": "MASSIFICADOS",
-                    "type": "PARAMETRICO",
-                    "gracePeriod": 0,
-                    "gracePeriodicity": "DIA",
-                    "gracePeriodCountingMethod": "DIAS_UTEIS",
-                    "gracePeriodStartDate": "2022-12-31",
-                    "gracePeriodEndDate": "2022-12-31"
-                  }
-                ]
-              }
-            ],
-            "coverages": [
-              {
-                "branch": "0111",
-                "code": "IMOVEL_BASICA",
-                "description": "string",
-                "deductible": {
-                  "type": "DEDUTIVEL",
-                  "typeAdditionalInfo": "string",
-                  "amount": {
-                    "amount": "2000.00",
-                    "unit": {}
-                  },
-                  "period": 10,
-                  "periodicity": "DIA",
-                  "periodCountingMethod": "DIAS_UTEIS",
-                  "periodStartDate": "2022-05-16",
-                  "periodEndDate": "2022-05-17",
-                  "description": "Franquia de exemplo"
-                },
-                "POS": {
-                  "applicationType": "VALOR",
-                  "description": "Descrição de exemplo",
-                  "minValue": {
-                    "amount": "2000.00",
-                    "unit": {}
-                  },
-                  "maxValue": {
-                    "amount": "2000.00",
-                    "unit": {}
-                  },
-                  "percentage": "10.00"
-                }
-              }
-            ],
-            "coinsuranceRetainedPercentage": "10.00",
-            "coinsurers": [
-              {
-                "identification": "string",
-                "cededPercentage": "10.00"
-              }
-            ],
-            "branchInfo": {
-              "basicCoverageIndex": "SIMPLES",
-              "insuredObjects": [
-                {
-                  "identification": "string",
-                  "propertyType": "CASA",
-                  "structuringType": "CONDOMINIO_VERTICAL",
-                  "postCode": "10000000",
-                  "businessActivity": "1234567"
-                }
-              ]
-            }
-          },
-          "premium": {
-            "paymentsQuantity": 4,
-            "amount": {
-              "amount": "2000.00",
-              "unit": {
-                "code": "R$",
-                "description": "BRL"
-              }
-            },
-            "coverages": [
-              {
-                "branch": "0111",
-                "code": "IMOVEL_BASICA",
-                "description": "string",
-                "premiumAmount": {
-                  "amount": "2000.00",
-                  "unit": {
-                    "code": "R$",
-                    "description": "BRL"
-                  }
-                }
-              }
-            ],
-            "payments": [
-              {
-                "movementDate": "2022-12-31",
-                "movementType": "LIQUIDACAO_DE_PREMIO",
-                "movementOrigin": "EMISSAO_DIRETA",
-                "movementPaymentsNumber": 0,
-                "amount": {
-                  "amount": "2000.00",
-                  "unit": {
-                    "code": "R$",
-                    "description": "BRL"
-                  }
-                },
-                "maturityDate": "2022-12-31",
-                "tellerId": "string",
-                "tellerIdType": "CPF",
-                "tellerName": "string",
-                "financialInstitutionCode": "string",
-                "paymentType": "BOLETO"
-              }
-            ]
-          },
-          "claim": {
-            "identification": "string",
-            "documentationDeliveryDate": "2022-12-31",
-            "status": "ABERTO",
-            "statusAlterationDate": "2022-12-31",
-            "occurrenceDate": "2022-12-31",
-            "warningDate": "2022-12-31",
-            "thirdPartyClaimDate": "2022-12-31",
-            "amount": {
-              "amount": "2000.00",
-              "unit": {
-                "code": "R$",
-                "description": "BRL"
-              }
-            },
-            "denialJustification": "RISCO_EXCLUIDO",
-            "denialJustificationDescription": "string",
-            "coverages": [
-              {
-                "insuredObjectId": "string",
-                "branch": "0111",
-                "code": "IMOVEL_BASICA",
-                "description": "string",
-                "warningDate": "2022-12-31",
-                "thirdPartyClaimDate": "2022-12-31"
-              }
-            ]
-          }
-        }
-      ]
-    }
-  }
-}';
-const headers = {
-  'Content-Type':'application/json',
-  'Accept':'application/json',
-  'Authorization':'string',
-  'x-fapi-auth-date':'stringstringstringstringstrin',
-  'x-fapi-customer-ip-address':'string',
-  'x-fapi-interaction-id':'string',
-  'x-customer-user-agent':'string'
-};
-
-fetch('https://api.organizacao.com.br/open-insurance/quote-patrimonial/v1/condominium/request',
-{
-  method: 'POST',
-  body: inputBody,
-  headers: headers
-})
-.then(function(res) {
-    return res.json();
-}).then(function(body) {
-    console.log(body);
-});
-
-```
 
 ```python
 import requests
@@ -3892,7 +2145,7 @@ System.out.println(response.toString());
 
 `POST /condominium/request`
 
-Método para obter dados para cotação e contratação
+Método para criação de solicitação de cotação e contratação de PatrimonialCondominium
 
 > Body parameter
 
@@ -4459,7 +2712,7 @@ Método para obter dados para cotação e contratação
 }
 ```
 
-<h3 id="obtem-dados-de-cotação-e-contratação-de-seguro-de-cotação-patrimonial-parameters">Parameters</h3>
+<h3 id="envia-dados-de-cotação-e-contratação-de-patrimonialcondominium-parameters">Parameters</h3>
 
 |Name|In|Type|Required|Description|
 |---|---|---|---|---|
@@ -4496,21 +2749,21 @@ Método para obter dados para cotação e contratação
 }
 ```
 
-<h3 id="obtem-dados-de-cotação-e-contratação-de-seguro-de-cotação-patrimonial-responses">Responses</h3>
+<h3 id="envia-dados-de-cotação-e-contratação-de-patrimonialcondominium-responses">Responses</h3>
 
 |Status|Meaning|Description|Schema|
 |---|---|---|---|
-|201|[Created](https://tools.ietf.org/html/rfc7231#section-6.3.2)|Dados de ResponseQuotePatrimonial obtidos com sucesso|[ResponseQuotePatrimonialCondominium](#schemaresponsequotepatrimonialcondominium)|
-|400|[Bad Request](https://tools.ietf.org/html/rfc7231#section-6.5.1)|A requisição foi malformada, omitindo atributos obrigatórios, seja no payload ou através de atributos na URL|[ResponseError](#schemaresponseerror)|
-|401|[Unauthorized](https://tools.ietf.org/html/rfc7235#section-3.1)|Cabeçalho de autenticação ausente/inválido ou token inválido|[ResponseError](#schemaresponseerror)|
-|403|[Forbidden](https://tools.ietf.org/html/rfc7231#section-6.5.3)|O token tem escopo incorreto ou uma política de segurança foi violada|[ResponseError](#schemaresponseerror)|
-|404|[Not Found](https://tools.ietf.org/html/rfc7231#section-6.5.4)|O recurso solicitado não existe ou não foi implementado|[ResponseError](#schemaresponseerror)|
-|405|[Method Not Allowed](https://tools.ietf.org/html/rfc7231#section-6.5.5)|O consumidor tentou acessar o recurso com um método não suportado|[ResponseError](#schemaresponseerror)|
-|406|[Not Acceptable](https://tools.ietf.org/html/rfc7231#section-6.5.6)|A solicitação continha um cabeçalho Accept diferente dos tipos de mídia permitidos ou um conjunto de caracteres diferente de UTF-8|[ResponseError](#schemaresponseerror)|
-|422|[Unprocessable Entity](https://tools.ietf.org/html/rfc2518#section-10.3)|O servidor entende o tipo de conteúdo da entidade da requisição, e a sintaxe da requisição esta correta, mas não foi possível processar as instruções presentes|[ResponseError](#schemaresponseerror)|
-|429|[Too Many Requests](https://tools.ietf.org/html/rfc6585#section-4)|A operação foi recusada, pois muitas solicitações foram feitas dentro de um determinado período ou o limite global de requisições concorrentes foi atingido|[ResponseError](#schemaresponseerror)|
-|500|[Internal Server Error](https://tools.ietf.org/html/rfc7231#section-6.6.1)|Ocorreu um erro no gateway da API ou no microsserviço|[ResponseError](#schemaresponseerror)|
-|default|Default|Erro inesperado.|[ResponseError](#schemaresponseerror)|
+|201|[Created](https://tools.ietf.org/html/rfc7231#section-6.3.2)|Dados de PatrimonialCondominium criados com sucesso|[ResponseQuotePatrimonialCondominium](#schemaresponsequotepatrimonialcondominium)|
+|400|[Bad Request](https://tools.ietf.org/html/rfc7231#section-6.5.1)|A requisição foi malformada, omitindo atributos obrigatórios, seja no payload ou através de atributos na URL|[ResponseError](#schemaresponseerrorquotepatri)|
+|401|[Unauthorized](https://tools.ietf.org/html/rfc7235#section-3.1)|Cabeçalho de autenticação ausente/inválido ou token inválido|[ResponseError](#schemaresponseerrorquotepatri)|
+|403|[Forbidden](https://tools.ietf.org/html/rfc7231#section-6.5.3)|O token tem escopo incorreto ou uma política de segurança foi violada|[ResponseError](#schemaresponseerrorquotepatri)|
+|404|[Not Found](https://tools.ietf.org/html/rfc7231#section-6.5.4)|O recurso solicitado não existe ou não foi implementado|[ResponseError](#schemaresponseerrorquotepatri)|
+|405|[Method Not Allowed](https://tools.ietf.org/html/rfc7231#section-6.5.5)|O consumidor tentou acessar o recurso com um método não suportado|[ResponseError](#schemaresponseerrorquotepatri)|
+|406|[Not Acceptable](https://tools.ietf.org/html/rfc7231#section-6.5.6)|A solicitação continha um cabeçalho Accept diferente dos tipos de mídia permitidos ou um conjunto de caracteres diferente de UTF-8|[ResponseError](#schemaresponseerrorquotepatri)|
+|422|[Unprocessable Entity](https://tools.ietf.org/html/rfc2518#section-10.3)|O servidor entende o tipo de conteúdo da entidade da requisição, e a sintaxe da requisição esta correta, mas não foi possível processar as instruções presentes|[ResponseError](#schemaresponseerrorquotepatri)|
+|429|[Too Many Requests](https://tools.ietf.org/html/rfc6585#section-4)|A operação foi recusada, pois muitas solicitações foram feitas dentro de um determinado período ou o limite global de requisições concorrentes foi atingido|[ResponseError](#schemaresponseerrorquotepatri)|
+|500|[Internal Server Error](https://tools.ietf.org/html/rfc7231#section-6.6.1)|Ocorreu um erro no gateway da API ou no microsserviço|[ResponseError](#schemaresponseerrorquotepatri)|
+|default|Default|Erro inesperado.|[ResponseError](#schemaresponseerrorquotepatri)|
 
 ### Response Headers
 
@@ -4520,39 +2773,14 @@ Método para obter dados para cotação e contratação
 
 <aside class="warning">
 To perform this operation, you must be authenticated by means of one of the following methods:
-OpenId ( Scopes: openid ) & OAuth2Security ( Scopes: consent:consentId quote-patrimonial )
+OAuth2Security ( Scopes: consent:consentId quote-patrimonial-condominium )
 </aside>
 
-### Retorna os dados de cotação e contratação de Seguro de Cotação Patrimonial
+## Obtém os dados de cotação e contratação de PatrimonialCondominium identificado por consentId
 
 <a id="opIdgetQuotePatrimonialCondominium"></a>
 
 > Code samples
-
-```javascript
-
-const headers = {
-  'Accept':'application/json',
-  'Authorization':'string',
-  'x-fapi-auth-date':'stringstringstringstringstrin',
-  'x-fapi-customer-ip-address':'string',
-  'x-fapi-interaction-id':'string',
-  'x-customer-user-agent':'string'
-};
-
-fetch('https://api.organizacao.com.br/open-insurance/quote-patrimonial/v1/condominium/request/{consentId}/quote-status',
-{
-  method: 'GET',
-
-  headers: headers
-})
-.then(function(res) {
-    return res.json();
-}).then(function(body) {
-    console.log(body);
-});
-
-```
 
 ```python
 import requests
@@ -4590,9 +2818,9 @@ System.out.println(response.toString());
 
 `GET /condominium/request/{consentId}/quote-status`
 
-Método para retornar os dados para cotação e contratação
+Método para consulta dos dados de solicitação de cotação e contratação de PatrimonialCondominium
 
-<h3 id="retorna-os-dados-de-cotação-e-contratação-de-seguro-de-cotação-patrimonial-parameters">Parameters</h3>
+<h3 id="obtém-os-dados-de-cotação-e-contratação-de-patrimonialcondominium-identificado-por-consentid-parameters">Parameters</h3>
 
 |Name|In|Type|Required|Description|
 |---|---|---|---|---|
@@ -5000,21 +3228,21 @@ Método para retornar os dados para cotação e contratação
 }
 ```
 
-<h3 id="retorna-os-dados-de-cotação-e-contratação-de-seguro-de-cotação-patrimonial-responses">Responses</h3>
+<h3 id="obtém-os-dados-de-cotação-e-contratação-de-patrimonialcondominium-identificado-por-consentid-responses">Responses</h3>
 
 |Status|Meaning|Description|Schema|
 |---|---|---|---|
-|200|[OK](https://tools.ietf.org/html/rfc7231#section-6.3.1)|Cotação postado com sucesso.|[ResponseQuoteStatusPatrimonialCondominium](#schemaresponsequotestatuspatrimonialcondominium)|
-|400|[Bad Request](https://tools.ietf.org/html/rfc7231#section-6.5.1)|A requisição foi malformada, omitindo atributos obrigatórios, seja no payload ou através de atributos na URL|[ResponseError](#schemaresponseerror)|
-|401|[Unauthorized](https://tools.ietf.org/html/rfc7235#section-3.1)|Cabeçalho de autenticação ausente/inválido ou token inválido|[ResponseError](#schemaresponseerror)|
-|403|[Forbidden](https://tools.ietf.org/html/rfc7231#section-6.5.3)|O token tem escopo incorreto ou uma política de segurança foi violada|[ResponseError](#schemaresponseerror)|
-|404|[Not Found](https://tools.ietf.org/html/rfc7231#section-6.5.4)|O recurso solicitado não existe ou não foi implementado|[ResponseError](#schemaresponseerror)|
-|405|[Method Not Allowed](https://tools.ietf.org/html/rfc7231#section-6.5.5)|O consumidor tentou acessar o recurso com um método não suportado|[ResponseError](#schemaresponseerror)|
-|406|[Not Acceptable](https://tools.ietf.org/html/rfc7231#section-6.5.6)|A solicitação continha um cabeçalho Accept diferente dos tipos de mídia permitidos ou um conjunto de caracteres diferente de UTF-8|[ResponseError](#schemaresponseerror)|
-|422|[Unprocessable Entity](https://tools.ietf.org/html/rfc2518#section-10.3)|O servidor entende o tipo de conteúdo da entidade da requisição, e a sintaxe da requisição esta correta, mas não foi possível processar as instruções presentes|[ResponseError](#schemaresponseerror)|
-|429|[Too Many Requests](https://tools.ietf.org/html/rfc6585#section-4)|A operação foi recusada, pois muitas solicitações foram feitas dentro de um determinado período ou o limite global de requisições concorrentes foi atingido|[ResponseError](#schemaresponseerror)|
-|500|[Internal Server Error](https://tools.ietf.org/html/rfc7231#section-6.6.1)|Ocorreu um erro no gateway da API ou no microsserviço|[ResponseError](#schemaresponseerror)|
-|default|Default|Erro inesperado.|[ResponseError](#schemaresponseerror)|
+|200|[OK](https://tools.ietf.org/html/rfc7231#section-6.3.1)|Dados de PatrimonialCondominium obtidos com sucesso|[ResponseQuoteStatusPatrimonialCondominium](#schemaresponsequotestatuspatrimonialcondominium)|
+|400|[Bad Request](https://tools.ietf.org/html/rfc7231#section-6.5.1)|A requisição foi malformada, omitindo atributos obrigatórios, seja no payload ou através de atributos na URL|[ResponseError](#schemaresponseerrorquotepatri)|
+|401|[Unauthorized](https://tools.ietf.org/html/rfc7235#section-3.1)|Cabeçalho de autenticação ausente/inválido ou token inválido|[ResponseError](#schemaresponseerrorquotepatri)|
+|403|[Forbidden](https://tools.ietf.org/html/rfc7231#section-6.5.3)|O token tem escopo incorreto ou uma política de segurança foi violada|[ResponseError](#schemaresponseerrorquotepatri)|
+|404|[Not Found](https://tools.ietf.org/html/rfc7231#section-6.5.4)|O recurso solicitado não existe ou não foi implementado|[ResponseError](#schemaresponseerrorquotepatri)|
+|405|[Method Not Allowed](https://tools.ietf.org/html/rfc7231#section-6.5.5)|O consumidor tentou acessar o recurso com um método não suportado|[ResponseError](#schemaresponseerrorquotepatri)|
+|406|[Not Acceptable](https://tools.ietf.org/html/rfc7231#section-6.5.6)|A solicitação continha um cabeçalho Accept diferente dos tipos de mídia permitidos ou um conjunto de caracteres diferente de UTF-8|[ResponseError](#schemaresponseerrorquotepatri)|
+|422|[Unprocessable Entity](https://tools.ietf.org/html/rfc2518#section-10.3)|O servidor entende o tipo de conteúdo da entidade da requisição, e a sintaxe da requisição esta correta, mas não foi possível processar as instruções presentes|[ResponseError](#schemaresponseerrorquotepatri)|
+|429|[Too Many Requests](https://tools.ietf.org/html/rfc6585#section-4)|A operação foi recusada, pois muitas solicitações foram feitas dentro de um determinado período ou o limite global de requisições concorrentes foi atingido|[ResponseError](#schemaresponseerrorquotepatri)|
+|500|[Internal Server Error](https://tools.ietf.org/html/rfc7231#section-6.6.1)|Ocorreu um erro no gateway da API ou no microsserviço|[ResponseError](#schemaresponseerrorquotepatri)|
+|default|Default|Erro inesperado.|[ResponseError](#schemaresponseerrorquotepatri)|
 
 ### Response Headers
 
@@ -5026,49 +3254,14 @@ Se fornecido, o transmissor deve "reproduzir" esse valor no cabeçalho de respos
 
 <aside class="warning">
 To perform this operation, you must be authenticated by means of one of the following methods:
-OpenId ( Scopes: openid ) & OAuth2Security ( Scopes: consent:consentId quote-patrimonial )
+OAuth2Security ( Scopes: consent:consentId quote-patrimonial-condominium )
 </aside>
 
-### Envia justificativa para recusa de risco para cotação e contratação de Seguro de Cotação Patrimonial
+### Atualiza dados de cotação e contratação de PatrimonialCondominium identificado por consentId
 
 <a id="opIdpatchQuotePatrimonialCondominium"></a>
 
 > Code samples
-
-```javascript
-const inputBody = '{
-  "data": {
-    "status": "stri",
-    "quoteIdentification": "string",
-    "author": {
-      "identificationType": "CPF",
-      "identificationNumber": "73677831148"
-    }
-  }
-}';
-const headers = {
-  'Content-Type':'application/json',
-  'Accept':'application/json; charset=utf-8',
-  'Authorization':'string',
-  'x-fapi-auth-date':'stringstringstringstringstrin',
-  'x-fapi-customer-ip-address':'string',
-  'x-fapi-interaction-id':'string',
-  'x-customer-user-agent':'string'
-};
-
-fetch('https://api.organizacao.com.br/open-insurance/quote-patrimonial/v1/condominium/request/{consentId}',
-{
-  method: 'PATCH',
-  body: inputBody,
-  headers: headers
-})
-.then(function(res) {
-    return res.json();
-}).then(function(body) {
-    console.log(body);
-});
-
-```
 
 ```python
 import requests
@@ -5107,7 +3300,7 @@ System.out.println(response.toString());
 
 `PATCH /condominium/request/{consentId}`
 
-Método para retornar a recusa de proposta para cotação e contratação
+Método para atualização de solicitação de cotação e contratação de PatrimonialCondominium
 
 > Body parameter
 
@@ -5124,7 +3317,7 @@ Método para retornar a recusa de proposta para cotação e contratação
 }
 ```
 
-<h3 id="envia-justificativa-para-recusa-de-risco-para-cotação-e-contratação-de-seguro-de-cotação-patrimonial-parameters">Parameters</h3>
+<h3 id="atualiza-dados-de-cotação-e-contratação-de-patrimonialcondominium-identificado-por-consentid-parameters">Parameters</h3>
 
 |Name|In|Type|Required|Description|
 |---|---|---|---|---|
@@ -5159,21 +3352,21 @@ Método para retornar a recusa de proposta para cotação e contratação
 }
 ```
 
-<h3 id="envia-justificativa-para-recusa-de-risco-para-cotação-e-contratação-de-seguro-de-cotação-patrimonial-responses">Responses</h3>
+<h3 id="atualiza-dados-de-cotação-e-contratação-de-patrimonialcondominium-identificado-por-consentid-responses">Responses</h3>
 
 |Status|Meaning|Description|Schema|
 |---|---|---|---|
-|204|[No Content](https://tools.ietf.org/html/rfc7231#section-6.3.5)|Revogação de consentimento na seguradora.|None|
-|400|[Bad Request](https://tools.ietf.org/html/rfc7231#section-6.5.1)|A requisição foi malformada, omitindo atributos obrigatórios, seja no payload ou através de atributos na URL|[ResponseError](#schemaresponseerror)|
-|401|[Unauthorized](https://tools.ietf.org/html/rfc7235#section-3.1)|Cabeçalho de autenticação ausente/inválido ou token inválido|[ResponseError](#schemaresponseerror)|
-|403|[Forbidden](https://tools.ietf.org/html/rfc7231#section-6.5.3)|O token tem escopo incorreto ou uma política de segurança foi violada|[ResponseError](#schemaresponseerror)|
-|404|[Not Found](https://tools.ietf.org/html/rfc7231#section-6.5.4)|O recurso solicitado não existe ou não foi implementado|[ResponseError](#schemaresponseerror)|
-|405|[Method Not Allowed](https://tools.ietf.org/html/rfc7231#section-6.5.5)|O consumidor tentou acessar o recurso com um método não suportado|[ResponseError](#schemaresponseerror)|
-|406|[Not Acceptable](https://tools.ietf.org/html/rfc7231#section-6.5.6)|A solicitação continha um cabeçalho Accept diferente dos tipos de mídia permitidos ou um conjunto de caracteres diferente de UTF-8|[ResponseError](#schemaresponseerror)|
-|422|[Unprocessable Entity](https://tools.ietf.org/html/rfc2518#section-10.3)|O servidor entende o tipo de conteúdo da entidade da requisição, e a sintaxe da requisição esta correta, mas não foi possível processar as instruções presentes|[ResponseError](#schemaresponseerror)|
-|429|[Too Many Requests](https://tools.ietf.org/html/rfc6585#section-4)|A operação foi recusada, pois muitas solicitações foram feitas dentro de um determinado período ou o limite global de requisições concorrentes foi atingido|[ResponseError](#schemaresponseerror)|
-|500|[Internal Server Error](https://tools.ietf.org/html/rfc7231#section-6.6.1)|Ocorreu um erro no gateway da API ou no microsserviço|[ResponseError](#schemaresponseerror)|
-|default|Default|Erro inesperado.|[ResponseError](#schemaresponseerror)|
+|204|[No Content](https://tools.ietf.org/html/rfc7231#section-6.3.5)|Atualização de PatrimonialCondominium feita com sucesso|None|
+|400|[Bad Request](https://tools.ietf.org/html/rfc7231#section-6.5.1)|A requisição foi malformada, omitindo atributos obrigatórios, seja no payload ou através de atributos na URL|[ResponseError](#schemaresponseerrorquotepatri)|
+|401|[Unauthorized](https://tools.ietf.org/html/rfc7235#section-3.1)|Cabeçalho de autenticação ausente/inválido ou token inválido|[ResponseError](#schemaresponseerrorquotepatri)|
+|403|[Forbidden](https://tools.ietf.org/html/rfc7231#section-6.5.3)|O token tem escopo incorreto ou uma política de segurança foi violada|[ResponseError](#schemaresponseerrorquotepatri)|
+|404|[Not Found](https://tools.ietf.org/html/rfc7231#section-6.5.4)|O recurso solicitado não existe ou não foi implementado|[ResponseError](#schemaresponseerrorquotepatri)|
+|405|[Method Not Allowed](https://tools.ietf.org/html/rfc7231#section-6.5.5)|O consumidor tentou acessar o recurso com um método não suportado|[ResponseError](#schemaresponseerrorquotepatri)|
+|406|[Not Acceptable](https://tools.ietf.org/html/rfc7231#section-6.5.6)|A solicitação continha um cabeçalho Accept diferente dos tipos de mídia permitidos ou um conjunto de caracteres diferente de UTF-8|[ResponseError](#schemaresponseerrorquotepatri)|
+|422|[Unprocessable Entity](https://tools.ietf.org/html/rfc2518#section-10.3)|O servidor entende o tipo de conteúdo da entidade da requisição, e a sintaxe da requisição esta correta, mas não foi possível processar as instruções presentes|[ResponseError](#schemaresponseerrorquotepatri)|
+|429|[Too Many Requests](https://tools.ietf.org/html/rfc6585#section-4)|A operação foi recusada, pois muitas solicitações foram feitas dentro de um determinado período ou o limite global de requisições concorrentes foi atingido|[ResponseError](#schemaresponseerrorquotepatri)|
+|500|[Internal Server Error](https://tools.ietf.org/html/rfc7231#section-6.6.1)|Ocorreu um erro no gateway da API ou no microsserviço|[ResponseError](#schemaresponseerrorquotepatri)|
+|default|Default|Erro inesperado.|[ResponseError](#schemaresponseerrorquotepatri)|
 
 ### Response Headers
 
@@ -5185,636 +3378,18 @@ Se fornecido, o transmissor deve "reproduzir" esse valor no cabeçalho de respos
 
 <aside class="warning">
 To perform this operation, you must be authenticated by means of one of the following methods:
-OpenId ( Scopes: openid ) & OAuth2Security ( Scopes: consent:consentId quote-patrimonial )
+OAuth2Security ( Scopes: consent:consentId quote-patrimonial-condominium )
 </aside>
 
 <h2 id="api-patrimonial-open-insurance-brasil-patrimonialbusiness">PatrimonialBusiness</h2>
 
-Serviços de seguro PatrimonialBusiness
+Iniciação de serviços de seguro Cotação Patrimonial (PatrimonialBusiness)
 
-### Obtem dados de cotação e contratação de Seguro de Cotação Patrimonial
+### Envia dados de cotação e contratação de PatrimonialBusiness
 
 <a id="opIdpostQuotePatrimonialBusiness"></a>
 
 > Code samples
-
-```javascript
-const inputBody = '{
-  "data": {
-    "quoteCustomer": {
-      "identificationData": {
-        "updateDateTime": "2021-05-21T08:30:00Z",
-        "personalId": "578-psd-71md6971kjh-2d414",
-        "brandName": "Organização A",
-        "civilName": "Juan Kaique Cláudio Fernandes",
-        "socialName": "string",
-        "cpfNumber": "string",
-        "companyInfo": {
-          "cnpjNumber": "01773247000563",
-          "name": "Empresa da Organização A"
-        },
-        "documents": [
-          {
-            "type": "CNH",
-            "number": "15291908",
-            "expirationDate": "2023-05-21",
-            "issueLocation": "string"
-          }
-        ],
-        "hasBrazilianNationality": false,
-        "otherNationalitiesInfo": "CAN",
-        "otherDocuments": {
-          "type": "SOCIAL SEC",
-          "number": "15291908",
-          "country": "string",
-          "expirationDate": "2023-05-21"
-        },
-        "contact": {
-          "postalAddresses": [
-            {
-              "address": "Av Naburo Ykesaki, 1270",
-              "additionalInfo": "Fundos",
-              "districtName": "Centro",
-              "townName": "Marília",
-              "countrySubDivision": "SP",
-              "postCode": "17500001",
-              "country": "BRA"
-            }
-          ],
-          "phones": [
-            {
-              "countryCallingCode": "55",
-              "areaCode": "19",
-              "number": "29875132",
-              "phoneExtension": "932"
-            }
-          ],
-          "emails": [
-            {
-              "email": "nome@br.net"
-            }
-          ]
-        },
-        "civilStatusCode": "SOLTEIRO",
-        "sex": "FEMININO",
-        "birthDate": "2021-05-21",
-        "filiation": {
-          "type": "MAE",
-          "civilName": "Marcelo Cláudio Fernandes"
-        },
-        "identificationDetails": {
-          "civilName": "Juan Kaique Cláudio Fernandes",
-          "cpfNumber": "string"
-        }
-      },
-      "qualificationData": {
-        "updateDateTime": "2021-05-21T08:30:00Z",
-        "pepIdentification": "NAO_EXPOSTO",
-        "occupation": [
-          {
-            "details": "string",
-            "occupationCode": "RECEITA_FEDERAL",
-            "occupationCodeType": "RFB"
-          }
-        ],
-        "lifePensionPlans": "SIM",
-        "informedRevenue": {
-          "incomeFrequency": "DIARIA",
-          "currency": "BRL",
-          "amount": "100000.04",
-          "date": "2012-05-21"
-        },
-        "informedPatrimony": {
-          "currency": "BRL",
-          "amount": "100000.04",
-          "year": "2010"
-        }
-      },
-      "complimentaryInformationData": {
-        "updateDateTime": "2021-05-21T08:30:00Z",
-        "startDate": "2014-05-21",
-        "relationshipBeginning": "2014-05-21",
-        "productsServices": [
-          {
-            "contract": "string",
-            "type": "MICROSSEGUROS",
-            "insuranceLineCode": "6272",
-            "procurators": [
-              {
-                "nature": "PROCURADOR",
-                "cpfNumber": "73677831148",
-                "civilName": "Elza Milena Stefany Teixeira",
-                "socialName": "string"
-              }
-            ]
-          }
-        ]
-      },
-      "customData": [
-        {
-          "fieldCategory": "IDENTIFICATION",
-          "fields": [
-            {
-              "fieldId": "578-psd-71md6971kjh-2d414",
-              "value": null
-            }
-          ]
-        }
-      ]
-    },
-    "quoteData": {
-      "isCollectiveStipulated": true,
-      "hasOneRiskLocation": true,
-      "termStartDate": "2022-10-02",
-      "termEndDate": "2022-10-02",
-      "quoteId": "12345678",
-      "insuranceType": "NOVO",
-      "policyId": "111111",
-      "insurerId": "string",
-      "currency": "BRL",
-      "maxLMG": {
-        "amount": "2000.00",
-        "unit": {
-          "code": "R$",
-          "description": "BRL"
-        }
-      },
-      "includesAssistanceServices": true,
-      "claimAmount": {
-        "amount": "2000.00",
-        "unit": {
-          "code": "R$",
-          "description": "BRL"
-        }
-      },
-      "claimDescription": "string",
-      "insuredObjects": [
-        {
-          "identification": "string",
-          "riskAmount": {
-            "amount": "2000.00",
-            "unit": {
-              "code": "R$",
-              "description": "BRL"
-            }
-          },
-          "mainActivity": "COMERCIO",
-          "businessActivity": "string",
-          "businessActivityDescription": "string",
-          "professionalRegisterOrganization": "OAB-PR",
-          "professionalRegisterNumber": "OAB-PR",
-          "selfEmployeeJobTitle": "ADMINISTRADORES",
-          "propertiesForCoverage": "PREDIO_E_CONTEUDO",
-          "riskLocationInfo": {
-            "address": "Avenida Paulista, 2000",
-            "additionalInfo": "Apartamento 1304",
-            "districtName": "Cerqueira César",
-            "townName": "São Paulo",
-            "countrySubDivision": "AC",
-            "postCode": "1310200",
-            "billingAddress": "Avenida Paulista, 2000",
-            "billingAdditionalInfo": "Apartamento 1304",
-            "billingDistrictName": "Cerqueira César",
-            "billingTownName": "São Paulo",
-            "billingCountrySubDivision": "AC",
-            "billingPostCode": "1310200",
-            "propertyUsageType": "HABITUAL",
-            "propertyBuildType": "SUPERIOR",
-            "isListedDisappropriatedCondemned": true,
-            "isUnderConstructionRenovation": true,
-            "securityProtection": [
-              "CAMERA_CFTV"
-            ],
-            "fireProtection": [
-              "EXTINTOR"
-            ],
-            "propertyUseType": "PROPRIO",
-            "isMainlyOpen": true,
-            "hasInsulatingPanels": true,
-            "isInMall": true
-          },
-          "coverages": [
-            {
-              "branch": "0111",
-              "code": "RESIDENCIAL_IMOVEL_BASICA",
-              "description": "string",
-              "internalCode": "string",
-              "gracePeriod": 0,
-              "gracePeriodicity": "DIA",
-              "gracePeriodCountingMethod": "DIAS_UTEIS",
-              "gracePeriodStartDate": "2022-10-02",
-              "gracePeriodEndDate": "2022-10-02"
-            }
-          ],
-          "wasThereAClaim": true,
-          "claimNotifications": [
-            {
-              "claimAmount": {
-                "amount": "2000.00",
-                "unit": {
-                  "code": "R$",
-                  "description": "BRL"
-                }
-              },
-              "claimDescription": "string"
-            }
-          ]
-        }
-      ],
-      "beneficiaries": [
-        {
-          "identification": "12345678900",
-          "identificationType": "CPF",
-          "name": "Nome Sobrenome"
-        }
-      ],
-      "coverages": [
-        {
-          "branch": "0111",
-          "code": "RESIDENCIAL_IMOVEL_BASICA",
-          "description": "string",
-          "isSeparateContractingAllowed": true,
-          "maxLMI": {
-            "amount": "2000.00",
-            "unit": {
-              "code": "R$",
-              "description": "BRL"
-            }
-          },
-          "internalCode": "string"
-        }
-      ]
-    },
-    "historicalData": {
-      "customer": {
-        "identificationData": {
-          "updateDateTime": "2021-05-21T08:30:00Z",
-          "personalId": "578-psd-71md6971kjh-2d414",
-          "brandName": "Organização A",
-          "civilName": "Juan Kaique Cláudio Fernandes",
-          "socialName": "string",
-          "cpfNumber": "string",
-          "companyInfo": {
-            "cnpjNumber": "01773247000563",
-            "name": "Empresa da Organização A"
-          },
-          "documents": [
-            {
-              "type": "CNH",
-              "number": "15291908",
-              "expirationDate": "2023-05-21",
-              "issueLocation": "string"
-            }
-          ],
-          "hasBrazilianNationality": false,
-          "otherNationalitiesInfo": "CAN",
-          "otherDocuments": {
-            "type": "SOCIAL SEC",
-            "number": "15291908",
-            "country": "string",
-            "expirationDate": "2023-05-21"
-          },
-          "contact": {
-            "postalAddresses": [
-              {
-                "address": "Av Naburo Ykesaki, 1270",
-                "additionalInfo": "Fundos",
-                "districtName": "Centro",
-                "townName": "Marília",
-                "countrySubDivision": "SP",
-                "postCode": "17500001",
-                "country": "BRA"
-              }
-            ],
-            "phones": [
-              {
-                "countryCallingCode": "55",
-                "areaCode": "19",
-                "number": "29875132",
-                "phoneExtension": "932"
-              }
-            ],
-            "emails": [
-              {
-                "email": "nome@br.net"
-              }
-            ]
-          },
-          "civilStatusCode": "SOLTEIRO",
-          "sex": "FEMININO",
-          "birthDate": "2021-05-21",
-          "filiation": {
-            "type": "MAE",
-            "civilName": "Marcelo Cláudio Fernandes"
-          },
-          "identificationDetails": {
-            "civilName": "Juan Kaique Cláudio Fernandes",
-            "cpfNumber": "string"
-          }
-        },
-        "qualificationData": {
-          "updateDateTime": "2021-05-21T08:30:00Z",
-          "pepIdentification": "NAO_EXPOSTO",
-          "occupation": [
-            {
-              "details": "string",
-              "occupationCode": "RECEITA_FEDERAL",
-              "occupationCodeType": "RFB"
-            }
-          ],
-          "lifePensionPlans": "SIM",
-          "informedRevenue": {
-            "incomeFrequency": "DIARIA",
-            "currency": "BRL",
-            "amount": "100000.04",
-            "date": "2012-05-21"
-          },
-          "informedPatrimony": {
-            "currency": "BRL",
-            "amount": "100000.04",
-            "year": "2010"
-          }
-        },
-        "complimentaryInformationData": {
-          "updateDateTime": "2021-05-21T08:30:00Z",
-          "startDate": "2014-05-21",
-          "relationshipBeginning": "2014-05-21",
-          "productsServices": [
-            {
-              "contract": "string",
-              "type": "MICROSSEGUROS",
-              "insuranceLineCode": "6272",
-              "procurators": [
-                {
-                  "nature": "PROCURADOR",
-                  "cpfNumber": "73677831148",
-                  "civilName": "Elza Milena Stefany Teixeira",
-                  "socialName": "string"
-                }
-              ]
-            }
-          ]
-        }
-      },
-      "policies": [
-        {
-          "policyInfo": {
-            "documentType": "APOLICE_INDIVIDUAL",
-            "policyId": "111111",
-            "susepProcessNumber": "string",
-            "groupCertificateId": "string",
-            "issuanceType": "EMISSAO_PROPRIA",
-            "issuanceDate": "2022-12-31",
-            "termStartDate": "2022-12-31",
-            "termEndDate": "2022-12-31",
-            "leadInsurerCode": "string",
-            "leadInsurerPolicyId": "string",
-            "maxLMG": {
-              "amount": "2000.00",
-              "unit": {
-                "code": "R$",
-                "description": "BRL"
-              }
-            },
-            "proposalId": "string",
-            "insureds": [
-              {
-                "identification": "12345678900",
-                "identificationType": "CPF",
-                "name": "Nome Sobrenome",
-                "postCode": "10000000",
-                "email": "string",
-                "city": "string",
-                "state": "string",
-                "country": "BRA",
-                "address": "string"
-              }
-            ],
-            "beneficiaries": [
-              {
-                "identification": "12345678900",
-                "identificationType": "CPF",
-                "name": "Nome Sobrenome"
-              }
-            ],
-            "principals": [
-              {
-                "identification": "12345678900",
-                "identificationType": "CPF",
-                "name": "Nome Sobrenome",
-                "postCode": "10000000",
-                "email": "string",
-                "city": "string",
-                "state": "string",
-                "country": "BRA",
-                "address": "string"
-              }
-            ],
-            "intermediaries": [
-              {
-                "type": "REPRESENTANTE",
-                "identification": "12345678900",
-                "brokerId": "string",
-                "identificationType": "CPF",
-                "name": "Nome Sobrenome",
-                "postCode": "10000000",
-                "city": "string",
-                "state": "string",
-                "country": "BRA",
-                "address": "string"
-              }
-            ],
-            "insuredObjects": [
-              {
-                "identification": "string",
-                "type": "CONTRATO",
-                "typeAdditionalInfo": "string",
-                "description": "string",
-                "amount": {
-                  "amount": "2000.00",
-                  "unit": {
-                    "code": "R$",
-                    "description": "BRL"
-                  }
-                },
-                "coverages": [
-                  {
-                    "branch": "0111",
-                    "code": "IMOVEL_BASICA",
-                    "description": "string",
-                    "internalCode": "string",
-                    "susepProcessNumber": "string",
-                    "LMI": {},
-                    "isLMISublimit": true,
-                    "termStartDate": "2022-12-31",
-                    "termEndDate": "2022-12-31",
-                    "isMainCoverage": true,
-                    "feature": "MASSIFICADOS",
-                    "type": "PARAMETRICO",
-                    "gracePeriod": 0,
-                    "gracePeriodicity": "DIA",
-                    "gracePeriodCountingMethod": "DIAS_UTEIS",
-                    "gracePeriodStartDate": "2022-12-31",
-                    "gracePeriodEndDate": "2022-12-31"
-                  }
-                ]
-              }
-            ],
-            "coverages": [
-              {
-                "branch": "0111",
-                "code": "IMOVEL_BASICA",
-                "description": "string",
-                "deductible": {
-                  "type": "DEDUTIVEL",
-                  "typeAdditionalInfo": "string",
-                  "amount": {
-                    "amount": "2000.00",
-                    "unit": {}
-                  },
-                  "period": 10,
-                  "periodicity": "DIA",
-                  "periodCountingMethod": "DIAS_UTEIS",
-                  "periodStartDate": "2022-05-16",
-                  "periodEndDate": "2022-05-17",
-                  "description": "Franquia de exemplo"
-                },
-                "POS": {
-                  "applicationType": "VALOR",
-                  "description": "Descrição de exemplo",
-                  "minValue": {
-                    "amount": "2000.00",
-                    "unit": {}
-                  },
-                  "maxValue": {
-                    "amount": "2000.00",
-                    "unit": {}
-                  },
-                  "percentage": "10.00"
-                }
-              }
-            ],
-            "coinsuranceRetainedPercentage": "10.00",
-            "coinsurers": [
-              {
-                "identification": "string",
-                "cededPercentage": "10.00"
-              }
-            ],
-            "branchInfo": {
-              "basicCoverageIndex": "SIMPLES",
-              "insuredObjects": [
-                {
-                  "identification": "string",
-                  "propertyType": "CASA",
-                  "structuringType": "CONDOMINIO_VERTICAL",
-                  "postCode": "10000000",
-                  "businessActivity": "1234567"
-                }
-              ]
-            }
-          },
-          "premium": {
-            "paymentsQuantity": 4,
-            "amount": {
-              "amount": "2000.00",
-              "unit": {
-                "code": "R$",
-                "description": "BRL"
-              }
-            },
-            "coverages": [
-              {
-                "branch": "0111",
-                "code": "IMOVEL_BASICA",
-                "description": "string",
-                "premiumAmount": {
-                  "amount": "2000.00",
-                  "unit": {
-                    "code": "R$",
-                    "description": "BRL"
-                  }
-                }
-              }
-            ],
-            "payments": [
-              {
-                "movementDate": "2022-12-31",
-                "movementType": "LIQUIDACAO_DE_PREMIO",
-                "movementOrigin": "EMISSAO_DIRETA",
-                "movementPaymentsNumber": 0,
-                "amount": {
-                  "amount": "2000.00",
-                  "unit": {
-                    "code": "R$",
-                    "description": "BRL"
-                  }
-                },
-                "maturityDate": "2022-12-31",
-                "tellerId": "string",
-                "tellerIdType": "CPF",
-                "tellerName": "string",
-                "financialInstitutionCode": "string",
-                "paymentType": "BOLETO"
-              }
-            ]
-          },
-          "claim": {
-            "identification": "string",
-            "documentationDeliveryDate": "2022-12-31",
-            "status": "ABERTO",
-            "statusAlterationDate": "2022-12-31",
-            "occurrenceDate": "2022-12-31",
-            "warningDate": "2022-12-31",
-            "thirdPartyClaimDate": "2022-12-31",
-            "amount": {
-              "amount": "2000.00",
-              "unit": {
-                "code": "R$",
-                "description": "BRL"
-              }
-            },
-            "denialJustification": "RISCO_EXCLUIDO",
-            "denialJustificationDescription": "string",
-            "coverages": [
-              {
-                "insuredObjectId": "string",
-                "branch": "0111",
-                "code": "IMOVEL_BASICA",
-                "description": "string",
-                "warningDate": "2022-12-31",
-                "thirdPartyClaimDate": "2022-12-31"
-              }
-            ]
-          }
-        }
-      ]
-    }
-  }
-}';
-const headers = {
-  'Content-Type':'application/json',
-  'Accept':'application/json',
-  'Authorization':'string',
-  'x-fapi-auth-date':'stringstringstringstringstrin',
-  'x-fapi-customer-ip-address':'string',
-  'x-fapi-interaction-id':'string',
-  'x-customer-user-agent':'string'
-};
-
-fetch('https://api.organizacao.com.br/open-insurance/quote-patrimonial/v1/business/request',
-{
-  method: 'POST',
-  body: inputBody,
-  headers: headers
-})
-.then(function(res) {
-    return res.json();
-}).then(function(body) {
-    console.log(body);
-});
-
-```
 
 ```python
 import requests
@@ -5853,7 +3428,7 @@ System.out.println(response.toString());
 
 `POST /business/request`
 
-Método para obter dados para cotação e contratação
+Método para criação de solicitação de cotação e contratação de PatrimonialBusiness
 
 > Body parameter
 
@@ -6453,7 +4028,7 @@ Método para obter dados para cotação e contratação
 }
 ```
 
-<h3 id="obtem-dados-de-cotação-e-contratação-de-seguro-de-cotação-patrimonial-parameters">Parameters</h3>
+<h3 id="envia-dados-de-cotação-e-contratação-de-patrimonialbusiness-parameters">Parameters</h3>
 
 |Name|In|Type|Required|Description|
 |---|---|---|---|---|
@@ -6490,21 +4065,21 @@ Método para obter dados para cotação e contratação
 }
 ```
 
-<h3 id="obtem-dados-de-cotação-e-contratação-de-seguro-de-cotação-patrimonial-responses">Responses</h3>
+<h3 id="envia-dados-de-cotação-e-contratação-de-patrimonialbusiness-responses">Responses</h3>
 
 |Status|Meaning|Description|Schema|
 |---|---|---|---|
-|201|[Created](https://tools.ietf.org/html/rfc7231#section-6.3.2)|Dados de ResponseQuotePatrimonial obtidos com sucesso|[ResponseQuotePatrimonialBusiness](#schemaresponsequotepatrimonialbusiness)|
-|400|[Bad Request](https://tools.ietf.org/html/rfc7231#section-6.5.1)|A requisição foi malformada, omitindo atributos obrigatórios, seja no payload ou através de atributos na URL|[ResponseError](#schemaresponseerror)|
-|401|[Unauthorized](https://tools.ietf.org/html/rfc7235#section-3.1)|Cabeçalho de autenticação ausente/inválido ou token inválido|[ResponseError](#schemaresponseerror)|
-|403|[Forbidden](https://tools.ietf.org/html/rfc7231#section-6.5.3)|O token tem escopo incorreto ou uma política de segurança foi violada|[ResponseError](#schemaresponseerror)|
-|404|[Not Found](https://tools.ietf.org/html/rfc7231#section-6.5.4)|O recurso solicitado não existe ou não foi implementado|[ResponseError](#schemaresponseerror)|
-|405|[Method Not Allowed](https://tools.ietf.org/html/rfc7231#section-6.5.5)|O consumidor tentou acessar o recurso com um método não suportado|[ResponseError](#schemaresponseerror)|
-|406|[Not Acceptable](https://tools.ietf.org/html/rfc7231#section-6.5.6)|A solicitação continha um cabeçalho Accept diferente dos tipos de mídia permitidos ou um conjunto de caracteres diferente de UTF-8|[ResponseError](#schemaresponseerror)|
-|422|[Unprocessable Entity](https://tools.ietf.org/html/rfc2518#section-10.3)|O servidor entende o tipo de conteúdo da entidade da requisição, e a sintaxe da requisição esta correta, mas não foi possível processar as instruções presentes|[ResponseError](#schemaresponseerror)|
-|429|[Too Many Requests](https://tools.ietf.org/html/rfc6585#section-4)|A operação foi recusada, pois muitas solicitações foram feitas dentro de um determinado período ou o limite global de requisições concorrentes foi atingido|[ResponseError](#schemaresponseerror)|
-|500|[Internal Server Error](https://tools.ietf.org/html/rfc7231#section-6.6.1)|Ocorreu um erro no gateway da API ou no microsserviço|[ResponseError](#schemaresponseerror)|
-|default|Default|Erro inesperado.|[ResponseError](#schemaresponseerror)|
+|201|[Created](https://tools.ietf.org/html/rfc7231#section-6.3.2)|Dados de PatrimonialBusiness criados com sucesso|[ResponseQuotePatrimonialBusiness](#schemaresponsequotepatrimonialbusiness)|
+|400|[Bad Request](https://tools.ietf.org/html/rfc7231#section-6.5.1)|A requisição foi malformada, omitindo atributos obrigatórios, seja no payload ou através de atributos na URL|[ResponseError](#schemaresponseerrorquotepatri)|
+|401|[Unauthorized](https://tools.ietf.org/html/rfc7235#section-3.1)|Cabeçalho de autenticação ausente/inválido ou token inválido|[ResponseError](#schemaresponseerrorquotepatri)|
+|403|[Forbidden](https://tools.ietf.org/html/rfc7231#section-6.5.3)|O token tem escopo incorreto ou uma política de segurança foi violada|[ResponseError](#schemaresponseerrorquotepatri)|
+|404|[Not Found](https://tools.ietf.org/html/rfc7231#section-6.5.4)|O recurso solicitado não existe ou não foi implementado|[ResponseError](#schemaresponseerrorquotepatri)|
+|405|[Method Not Allowed](https://tools.ietf.org/html/rfc7231#section-6.5.5)|O consumidor tentou acessar o recurso com um método não suportado|[ResponseError](#schemaresponseerrorquotepatri)|
+|406|[Not Acceptable](https://tools.ietf.org/html/rfc7231#section-6.5.6)|A solicitação continha um cabeçalho Accept diferente dos tipos de mídia permitidos ou um conjunto de caracteres diferente de UTF-8|[ResponseError](#schemaresponseerrorquotepatri)|
+|422|[Unprocessable Entity](https://tools.ietf.org/html/rfc2518#section-10.3)|O servidor entende o tipo de conteúdo da entidade da requisição, e a sintaxe da requisição esta correta, mas não foi possível processar as instruções presentes|[ResponseError](#schemaresponseerrorquotepatri)|
+|429|[Too Many Requests](https://tools.ietf.org/html/rfc6585#section-4)|A operação foi recusada, pois muitas solicitações foram feitas dentro de um determinado período ou o limite global de requisições concorrentes foi atingido|[ResponseError](#schemaresponseerrorquotepatri)|
+|500|[Internal Server Error](https://tools.ietf.org/html/rfc7231#section-6.6.1)|Ocorreu um erro no gateway da API ou no microsserviço|[ResponseError](#schemaresponseerrorquotepatri)|
+|default|Default|Erro inesperado.|[ResponseError](#schemaresponseerrorquotepatri)|
 
 ### Response Headers
 
@@ -6514,39 +4089,14 @@ Método para obter dados para cotação e contratação
 
 <aside class="warning">
 To perform this operation, you must be authenticated by means of one of the following methods:
-OpenId ( Scopes: openid ) & OAuth2Security ( Scopes: consent:consentId quote-patrimonial )
+OAuth2Security ( Scopes: consent:consentId quote-patrimonial-business )
 </aside>
 
-### Retorna os dados de cotação e contratação de Seguro de Cotação Patrimonial
+## Obtém os dados de cotação e contratação de PatrimonialBusiness identificado por consentId
 
 <a id="opIdgetQuotePatrimonialBusiness"></a>
 
 > Code samples
-
-```javascript
-
-const headers = {
-  'Accept':'application/json',
-  'Authorization':'string',
-  'x-fapi-auth-date':'stringstringstringstringstrin',
-  'x-fapi-customer-ip-address':'string',
-  'x-fapi-interaction-id':'string',
-  'x-customer-user-agent':'string'
-};
-
-fetch('https://api.organizacao.com.br/open-insurance/quote-patrimonial/v1/business/request/{consentId}/quote-status',
-{
-  method: 'GET',
-
-  headers: headers
-})
-.then(function(res) {
-    return res.json();
-}).then(function(body) {
-    console.log(body);
-});
-
-```
 
 ```python
 import requests
@@ -6584,9 +4134,9 @@ System.out.println(response.toString());
 
 `GET /business/request/{consentId}/quote-status`
 
-Método para retornar os dados para cotação e contratação
+Método para consulta dos dados de solicitação de cotação e contratação de PatrimonialBusiness
 
-<h3 id="retorna-os-dados-de-cotação-e-contratação-de-seguro-de-cotação-patrimonial-parameters">Parameters</h3>
+<h3 id="obtém-os-dados-de-cotação-e-contratação-de-patrimonialbusiness-identificado-por-consentid-parameters">Parameters</h3>
 
 |Name|In|Type|Required|Description|
 |---|---|---|---|---|
@@ -7029,21 +4579,21 @@ Método para retornar os dados para cotação e contratação
 }
 ```
 
-<h3 id="retorna-os-dados-de-cotação-e-contratação-de-seguro-de-cotação-patrimonial-responses">Responses</h3>
+<h3 id="obtém-os-dados-de-cotação-e-contratação-de-patrimonialbusiness-identificado-por-consentid-responses">Responses</h3>
 
 |Status|Meaning|Description|Schema|
 |---|---|---|---|
-|200|[OK](https://tools.ietf.org/html/rfc7231#section-6.3.1)|Cotação postado com sucesso.|[ResponseQuoteStatusPatrimonialBusiness](#schemaresponsequotestatuspatrimonialbusiness)|
-|400|[Bad Request](https://tools.ietf.org/html/rfc7231#section-6.5.1)|A requisição foi malformada, omitindo atributos obrigatórios, seja no payload ou através de atributos na URL|[ResponseError](#schemaresponseerror)|
-|401|[Unauthorized](https://tools.ietf.org/html/rfc7235#section-3.1)|Cabeçalho de autenticação ausente/inválido ou token inválido|[ResponseError](#schemaresponseerror)|
-|403|[Forbidden](https://tools.ietf.org/html/rfc7231#section-6.5.3)|O token tem escopo incorreto ou uma política de segurança foi violada|[ResponseError](#schemaresponseerror)|
-|404|[Not Found](https://tools.ietf.org/html/rfc7231#section-6.5.4)|O recurso solicitado não existe ou não foi implementado|[ResponseError](#schemaresponseerror)|
-|405|[Method Not Allowed](https://tools.ietf.org/html/rfc7231#section-6.5.5)|O consumidor tentou acessar o recurso com um método não suportado|[ResponseError](#schemaresponseerror)|
-|406|[Not Acceptable](https://tools.ietf.org/html/rfc7231#section-6.5.6)|A solicitação continha um cabeçalho Accept diferente dos tipos de mídia permitidos ou um conjunto de caracteres diferente de UTF-8|[ResponseError](#schemaresponseerror)|
-|422|[Unprocessable Entity](https://tools.ietf.org/html/rfc2518#section-10.3)|O servidor entende o tipo de conteúdo da entidade da requisição, e a sintaxe da requisição esta correta, mas não foi possível processar as instruções presentes|[ResponseError](#schemaresponseerror)|
-|429|[Too Many Requests](https://tools.ietf.org/html/rfc6585#section-4)|A operação foi recusada, pois muitas solicitações foram feitas dentro de um determinado período ou o limite global de requisições concorrentes foi atingido|[ResponseError](#schemaresponseerror)|
-|500|[Internal Server Error](https://tools.ietf.org/html/rfc7231#section-6.6.1)|Ocorreu um erro no gateway da API ou no microsserviço|[ResponseError](#schemaresponseerror)|
-|default|Default|Erro inesperado.|[ResponseError](#schemaresponseerror)|
+|200|[OK](https://tools.ietf.org/html/rfc7231#section-6.3.1)|Dados de PatrimonialBusiness obtidos com sucesso|[ResponseQuoteStatusPatrimonialBusiness](#schemaresponsequotestatuspatrimonialbusiness)|
+|400|[Bad Request](https://tools.ietf.org/html/rfc7231#section-6.5.1)|A requisição foi malformada, omitindo atributos obrigatórios, seja no payload ou através de atributos na URL|[ResponseError](#schemaresponseerrorquotepatri)|
+|401|[Unauthorized](https://tools.ietf.org/html/rfc7235#section-3.1)|Cabeçalho de autenticação ausente/inválido ou token inválido|[ResponseError](#schemaresponseerrorquotepatri)|
+|403|[Forbidden](https://tools.ietf.org/html/rfc7231#section-6.5.3)|O token tem escopo incorreto ou uma política de segurança foi violada|[ResponseError](#schemaresponseerrorquotepatri)|
+|404|[Not Found](https://tools.ietf.org/html/rfc7231#section-6.5.4)|O recurso solicitado não existe ou não foi implementado|[ResponseError](#schemaresponseerrorquotepatri)|
+|405|[Method Not Allowed](https://tools.ietf.org/html/rfc7231#section-6.5.5)|O consumidor tentou acessar o recurso com um método não suportado|[ResponseError](#schemaresponseerrorquotepatri)|
+|406|[Not Acceptable](https://tools.ietf.org/html/rfc7231#section-6.5.6)|A solicitação continha um cabeçalho Accept diferente dos tipos de mídia permitidos ou um conjunto de caracteres diferente de UTF-8|[ResponseError](#schemaresponseerrorquotepatri)|
+|422|[Unprocessable Entity](https://tools.ietf.org/html/rfc2518#section-10.3)|O servidor entende o tipo de conteúdo da entidade da requisição, e a sintaxe da requisição esta correta, mas não foi possível processar as instruções presentes|[ResponseError](#schemaresponseerrorquotepatri)|
+|429|[Too Many Requests](https://tools.ietf.org/html/rfc6585#section-4)|A operação foi recusada, pois muitas solicitações foram feitas dentro de um determinado período ou o limite global de requisições concorrentes foi atingido|[ResponseError](#schemaresponseerrorquotepatri)|
+|500|[Internal Server Error](https://tools.ietf.org/html/rfc7231#section-6.6.1)|Ocorreu um erro no gateway da API ou no microsserviço|[ResponseError](#schemaresponseerrorquotepatri)|
+|default|Default|Erro inesperado.|[ResponseError](#schemaresponseerrorquotepatri)|
 
 ### Response Headers
 
@@ -7055,49 +4605,14 @@ Se fornecido, o transmissor deve "reproduzir" esse valor no cabeçalho de respos
 
 <aside class="warning">
 To perform this operation, you must be authenticated by means of one of the following methods:
-OpenId ( Scopes: openid ) & OAuth2Security ( Scopes: consent:consentId quote-patrimonial )
+OAuth2Security ( Scopes: consent:consentId quote-patrimonial-business )
 </aside>
 
-### Envia justificativa para recusa de risco para cotação e contratação de Seguro de Cotação Patrimonial
+## Atualiza dados de cotação e contratação de PatrimonialBusiness identificado por consentId
 
 <a id="opIdpatchQuotePatrimonialBusiness"></a>
 
 > Code samples
-
-```javascript
-const inputBody = '{
-  "data": {
-    "status": "stri",
-    "quoteIdentification": "string",
-    "author": {
-      "identificationType": "CPF",
-      "identificationNumber": "73677831148"
-    }
-  }
-}';
-const headers = {
-  'Content-Type':'application/json',
-  'Accept':'application/json; charset=utf-8',
-  'Authorization':'string',
-  'x-fapi-auth-date':'stringstringstringstringstrin',
-  'x-fapi-customer-ip-address':'string',
-  'x-fapi-interaction-id':'string',
-  'x-customer-user-agent':'string'
-};
-
-fetch('https://api.organizacao.com.br/open-insurance/quote-patrimonial/v1/business/request/{consentId}',
-{
-  method: 'PATCH',
-  body: inputBody,
-  headers: headers
-})
-.then(function(res) {
-    return res.json();
-}).then(function(body) {
-    console.log(body);
-});
-
-```
 
 ```python
 import requests
@@ -7136,7 +4651,7 @@ System.out.println(response.toString());
 
 `PATCH /business/request/{consentId}`
 
-Método para retornar a recusa de proposta para cotação e contratação
+Método para atualização de solicitação de cotação e contratação de PatrimonialBusiness
 
 > Body parameter
 
@@ -7153,7 +4668,7 @@ Método para retornar a recusa de proposta para cotação e contratação
 }
 ```
 
-<h3 id="envia-justificativa-para-recusa-de-risco-para-cotação-e-contratação-de-seguro-de-cotação-patrimonial-parameters">Parameters</h3>
+<h3 id="atualiza-dados-de-cotação-e-contratação-de-patrimonialbusiness-identificado-por-consentid-parameters">Parameters</h3>
 
 |Name|In|Type|Required|Description|
 |---|---|---|---|---|
@@ -7188,21 +4703,21 @@ Método para retornar a recusa de proposta para cotação e contratação
 }
 ```
 
-<h3 id="envia-justificativa-para-recusa-de-risco-para-cotação-e-contratação-de-seguro-de-cotação-patrimonial-responses">Responses</h3>
+<h3 id="atualiza-dados-de-cotação-e-contratação-de-patrimonialbusiness-identificado-por-consentid-responses">Responses</h3>
 
 |Status|Meaning|Description|Schema|
 |---|---|---|---|
-|204|[No Content](https://tools.ietf.org/html/rfc7231#section-6.3.5)|Revogação de consentimento na seguradora.|None|
-|400|[Bad Request](https://tools.ietf.org/html/rfc7231#section-6.5.1)|A requisição foi malformada, omitindo atributos obrigatórios, seja no payload ou através de atributos na URL|[ResponseError](#schemaresponseerror)|
-|401|[Unauthorized](https://tools.ietf.org/html/rfc7235#section-3.1)|Cabeçalho de autenticação ausente/inválido ou token inválido|[ResponseError](#schemaresponseerror)|
-|403|[Forbidden](https://tools.ietf.org/html/rfc7231#section-6.5.3)|O token tem escopo incorreto ou uma política de segurança foi violada|[ResponseError](#schemaresponseerror)|
-|404|[Not Found](https://tools.ietf.org/html/rfc7231#section-6.5.4)|O recurso solicitado não existe ou não foi implementado|[ResponseError](#schemaresponseerror)|
-|405|[Method Not Allowed](https://tools.ietf.org/html/rfc7231#section-6.5.5)|O consumidor tentou acessar o recurso com um método não suportado|[ResponseError](#schemaresponseerror)|
-|406|[Not Acceptable](https://tools.ietf.org/html/rfc7231#section-6.5.6)|A solicitação continha um cabeçalho Accept diferente dos tipos de mídia permitidos ou um conjunto de caracteres diferente de UTF-8|[ResponseError](#schemaresponseerror)|
-|422|[Unprocessable Entity](https://tools.ietf.org/html/rfc2518#section-10.3)|O servidor entende o tipo de conteúdo da entidade da requisição, e a sintaxe da requisição esta correta, mas não foi possível processar as instruções presentes|[ResponseError](#schemaresponseerror)|
-|429|[Too Many Requests](https://tools.ietf.org/html/rfc6585#section-4)|A operação foi recusada, pois muitas solicitações foram feitas dentro de um determinado período ou o limite global de requisições concorrentes foi atingido|[ResponseError](#schemaresponseerror)|
-|500|[Internal Server Error](https://tools.ietf.org/html/rfc7231#section-6.6.1)|Ocorreu um erro no gateway da API ou no microsserviço|[ResponseError](#schemaresponseerror)|
-|default|Default|Erro inesperado.|[ResponseError](#schemaresponseerror)|
+|204|[No Content](https://tools.ietf.org/html/rfc7231#section-6.3.5)|Atualização de PatrimonialBusiness feita com sucesso|None|
+|400|[Bad Request](https://tools.ietf.org/html/rfc7231#section-6.5.1)|A requisição foi malformada, omitindo atributos obrigatórios, seja no payload ou através de atributos na URL|[ResponseError](#schemaresponseerrorquotepatri)|
+|401|[Unauthorized](https://tools.ietf.org/html/rfc7235#section-3.1)|Cabeçalho de autenticação ausente/inválido ou token inválido|[ResponseError](#schemaresponseerrorquotepatri)|
+|403|[Forbidden](https://tools.ietf.org/html/rfc7231#section-6.5.3)|O token tem escopo incorreto ou uma política de segurança foi violada|[ResponseError](#schemaresponseerrorquotepatri)|
+|404|[Not Found](https://tools.ietf.org/html/rfc7231#section-6.5.4)|O recurso solicitado não existe ou não foi implementado|[ResponseError](#schemaresponseerrorquotepatri)|
+|405|[Method Not Allowed](https://tools.ietf.org/html/rfc7231#section-6.5.5)|O consumidor tentou acessar o recurso com um método não suportado|[ResponseError](#schemaresponseerrorquotepatri)|
+|406|[Not Acceptable](https://tools.ietf.org/html/rfc7231#section-6.5.6)|A solicitação continha um cabeçalho Accept diferente dos tipos de mídia permitidos ou um conjunto de caracteres diferente de UTF-8|[ResponseError](#schemaresponseerrorquotepatri)|
+|422|[Unprocessable Entity](https://tools.ietf.org/html/rfc2518#section-10.3)|O servidor entende o tipo de conteúdo da entidade da requisição, e a sintaxe da requisição esta correta, mas não foi possível processar as instruções presentes|[ResponseError](#schemaresponseerrorquotepatri)|
+|429|[Too Many Requests](https://tools.ietf.org/html/rfc6585#section-4)|A operação foi recusada, pois muitas solicitações foram feitas dentro de um determinado período ou o limite global de requisições concorrentes foi atingido|[ResponseError](#schemaresponseerrorquotepatri)|
+|500|[Internal Server Error](https://tools.ietf.org/html/rfc7231#section-6.6.1)|Ocorreu um erro no gateway da API ou no microsserviço|[ResponseError](#schemaresponseerrorquotepatri)|
+|default|Default|Erro inesperado.|[ResponseError](#schemaresponseerrorquotepatri)|
 
 ### Response Headers
 
@@ -7214,626 +4729,18 @@ Se fornecido, o transmissor deve "reproduzir" esse valor no cabeçalho de respos
 
 <aside class="warning">
 To perform this operation, you must be authenticated by means of one of the following methods:
-OpenId ( Scopes: openid ) & OAuth2Security ( Scopes: consent:consentId quote-patrimonial )
+OAuth2Security ( Scopes: consent:consentId quote-patrimonial-business )
 </aside>
 
 <h2 id="api-patrimonial-open-insurance-brasil-patrimonialdiverserisks">PatrimonialDiverseRisks</h2>
 
-Serviços de seguro PatrimonialDiverseRisks
+Iniciação de serviços de seguro Cotação Patrimonial (PatrimonialDiverseRisks)
 
-### Obtem dados de cotação e contratação de Seguro de Cotação Patrimonial
+### Envia dados de cotação e contratação de PatrimonialDiverseRisks
 
 <a id="opIdpostQuotePatrimonialDiverseRisks"></a>
 
 > Code samples
-
-```javascript
-const inputBody = '{
-  "data": {
-    "quoteCustomer": {
-      "identificationData": {
-        "updateDateTime": "2021-05-21T08:30:00Z",
-        "personalId": "578-psd-71md6971kjh-2d414",
-        "brandName": "Organização A",
-        "civilName": "Juan Kaique Cláudio Fernandes",
-        "socialName": "string",
-        "cpfNumber": "string",
-        "companyInfo": {
-          "cnpjNumber": "01773247000563",
-          "name": "Empresa da Organização A"
-        },
-        "documents": [
-          {
-            "type": "CNH",
-            "number": "15291908",
-            "expirationDate": "2023-05-21",
-            "issueLocation": "string"
-          }
-        ],
-        "hasBrazilianNationality": false,
-        "otherNationalitiesInfo": "CAN",
-        "otherDocuments": {
-          "type": "SOCIAL SEC",
-          "number": "15291908",
-          "country": "string",
-          "expirationDate": "2023-05-21"
-        },
-        "contact": {
-          "postalAddresses": [
-            {
-              "address": "Av Naburo Ykesaki, 1270",
-              "additionalInfo": "Fundos",
-              "districtName": "Centro",
-              "townName": "Marília",
-              "countrySubDivision": "SP",
-              "postCode": "17500001",
-              "country": "BRA"
-            }
-          ],
-          "phones": [
-            {
-              "countryCallingCode": "55",
-              "areaCode": "19",
-              "number": "29875132",
-              "phoneExtension": "932"
-            }
-          ],
-          "emails": [
-            {
-              "email": "nome@br.net"
-            }
-          ]
-        },
-        "civilStatusCode": "SOLTEIRO",
-        "sex": "FEMININO",
-        "birthDate": "2021-05-21",
-        "filiation": {
-          "type": "MAE",
-          "civilName": "Marcelo Cláudio Fernandes"
-        },
-        "identificationDetails": {
-          "civilName": "Juan Kaique Cláudio Fernandes",
-          "cpfNumber": "string"
-        }
-      },
-      "qualificationData": {
-        "updateDateTime": "2021-05-21T08:30:00Z",
-        "pepIdentification": "NAO_EXPOSTO",
-        "occupation": [
-          {
-            "details": "string",
-            "occupationCode": "RECEITA_FEDERAL",
-            "occupationCodeType": "RFB"
-          }
-        ],
-        "lifePensionPlans": "SIM",
-        "informedRevenue": {
-          "incomeFrequency": "DIARIA",
-          "currency": "BRL",
-          "amount": "100000.04",
-          "date": "2012-05-21"
-        },
-        "informedPatrimony": {
-          "currency": "BRL",
-          "amount": "100000.04",
-          "year": "2010"
-        }
-      },
-      "complimentaryInformationData": {
-        "updateDateTime": "2021-05-21T08:30:00Z",
-        "startDate": "2014-05-21",
-        "relationshipBeginning": "2014-05-21",
-        "productsServices": [
-          {
-            "contract": "string",
-            "type": "MICROSSEGUROS",
-            "insuranceLineCode": "6272",
-            "procurators": [
-              {
-                "nature": "PROCURADOR",
-                "cpfNumber": "73677831148",
-                "civilName": "Elza Milena Stefany Teixeira",
-                "socialName": "string"
-              }
-            ]
-          }
-        ]
-      },
-      "customData": [
-        {
-          "fieldCategory": "IDENTIFICATION",
-          "fields": [
-            {
-              "fieldId": "578-psd-71md6971kjh-2d414",
-              "value": null
-            }
-          ]
-        }
-      ]
-    },
-    "quoteData": {
-      "isCollectiveStipulated": true,
-      "includesAssistanceServices": true,
-      "termStartDate": "2022-10-02",
-      "termEndDate": "2022-10-02",
-      "insuranceTermStartDate": "2022-10-02",
-      "quoteId": "12345678",
-      "insuranceType": "NOVO",
-      "policyId": "111111",
-      "insurerId": "string",
-      "currency": "BRL",
-      "insuredObjectType": "EQUIPAMENTO_MOVEL",
-      "maxLMG": {
-        "amount": "2000.00",
-        "unit": {
-          "code": "R$",
-          "description": "BRL"
-        }
-      },
-      "insuredObjects": [
-        {
-          "identification": "string",
-          "equipmentType": "EQUIPAMENTO_DE_CONSTRUCAO_CIVIL",
-          "equipmentData": {
-            "fixedMachinery": true,
-            "mainBranch": "string",
-            "equipmentLocal": "SERVICOS",
-            "forAgriculturalOrMixedActivities": true,
-            "equipmentDescription": "string",
-            "brand": "string",
-            "manufacturingYear": 0,
-            "serialNumber": 0,
-            "brandNew": true,
-            "invoiceIssuedDate": "2022-10-02",
-            "invoiceNumber": 0,
-            "isRented": true,
-            "isBorrowed": true,
-            "isFinanced": true,
-            "ownOperation": true,
-            "operationLocation": "LOCAL_FECHADO",
-            "buildingSiteOperation": true
-          },
-          "geographicRegion": "ZONA_URBANA",
-          "propertiesForCoverage": "PREDIO_E_CONTEUDO",
-          "isNewValueContract": true,
-          "riskLocationInfo": {
-            "isSameAsTheProponent": true,
-            "address": "Avenida Paulista, 2000",
-            "additionalInfo": "Apartamento 1304",
-            "districtName": "Cerqueira César",
-            "townName": "São Paulo",
-            "countrySubDivision": "AC",
-            "postCode": "1310200",
-            "billingAddress": "Avenida Paulista, 2000",
-            "billingAdditionalInfo": "Apartamento 1304",
-            "billingDistrictName": "Cerqueira César",
-            "billingTownName": "São Paulo",
-            "billingCountrySubDivision": "AC",
-            "billingPostCode": "1310200",
-            "securityProtection": [
-              "CAMERA_CFTV"
-            ],
-            "fireProtection": [
-              "EXTINTOR"
-            ]
-          },
-          "coverages": [
-            {
-              "branch": "0111",
-              "code": "RESIDENCIAL_IMOVEL_BASICA",
-              "description": "string",
-              "internalCode": "string"
-            }
-          ],
-          "wasThereAClaim": true,
-          "claimNotifications": [
-            {
-              "claimAmount": {
-                "amount": "2000.00",
-                "unit": {
-                  "code": "R$",
-                  "description": "BRL"
-                }
-              },
-              "claimDescription": "string"
-            }
-          ]
-        }
-      ],
-      "beneficiaries": [
-        {
-          "identification": "12345678900",
-          "identificationType": "CPF",
-          "name": "Nome Sobrenome"
-        }
-      ],
-      "coverages": [
-        {
-          "branch": "0111",
-          "code": "RESIDENCIAL_IMOVEL_BASICA",
-          "description": "string",
-          "isSeparateContractingAllowed": true,
-          "maxLMI": {
-            "amount": "2000.00",
-            "unit": {
-              "code": "R$",
-              "description": "BRL"
-            }
-          },
-          "internalCode": "string"
-        }
-      ]
-    },
-    "historicalData": {
-      "customer": {
-        "identificationData": {
-          "updateDateTime": "2021-05-21T08:30:00Z",
-          "personalId": "578-psd-71md6971kjh-2d414",
-          "brandName": "Organização A",
-          "civilName": "Juan Kaique Cláudio Fernandes",
-          "socialName": "string",
-          "cpfNumber": "string",
-          "companyInfo": {
-            "cnpjNumber": "01773247000563",
-            "name": "Empresa da Organização A"
-          },
-          "documents": [
-            {
-              "type": "CNH",
-              "number": "15291908",
-              "expirationDate": "2023-05-21",
-              "issueLocation": "string"
-            }
-          ],
-          "hasBrazilianNationality": false,
-          "otherNationalitiesInfo": "CAN",
-          "otherDocuments": {
-            "type": "SOCIAL SEC",
-            "number": "15291908",
-            "country": "string",
-            "expirationDate": "2023-05-21"
-          },
-          "contact": {
-            "postalAddresses": [
-              {
-                "address": "Av Naburo Ykesaki, 1270",
-                "additionalInfo": "Fundos",
-                "districtName": "Centro",
-                "townName": "Marília",
-                "countrySubDivision": "SP",
-                "postCode": "17500001",
-                "country": "BRA"
-              }
-            ],
-            "phones": [
-              {
-                "countryCallingCode": "55",
-                "areaCode": "19",
-                "number": "29875132",
-                "phoneExtension": "932"
-              }
-            ],
-            "emails": [
-              {
-                "email": "nome@br.net"
-              }
-            ]
-          },
-          "civilStatusCode": "SOLTEIRO",
-          "sex": "FEMININO",
-          "birthDate": "2021-05-21",
-          "filiation": {
-            "type": "MAE",
-            "civilName": "Marcelo Cláudio Fernandes"
-          },
-          "identificationDetails": {
-            "civilName": "Juan Kaique Cláudio Fernandes",
-            "cpfNumber": "string"
-          }
-        },
-        "qualificationData": {
-          "updateDateTime": "2021-05-21T08:30:00Z",
-          "pepIdentification": "NAO_EXPOSTO",
-          "occupation": [
-            {
-              "details": "string",
-              "occupationCode": "RECEITA_FEDERAL",
-              "occupationCodeType": "RFB"
-            }
-          ],
-          "lifePensionPlans": "SIM",
-          "informedRevenue": {
-            "incomeFrequency": "DIARIA",
-            "currency": "BRL",
-            "amount": "100000.04",
-            "date": "2012-05-21"
-          },
-          "informedPatrimony": {
-            "currency": "BRL",
-            "amount": "100000.04",
-            "year": "2010"
-          }
-        },
-        "complimentaryInformationData": {
-          "updateDateTime": "2021-05-21T08:30:00Z",
-          "startDate": "2014-05-21",
-          "relationshipBeginning": "2014-05-21",
-          "productsServices": [
-            {
-              "contract": "string",
-              "type": "MICROSSEGUROS",
-              "insuranceLineCode": "6272",
-              "procurators": [
-                {
-                  "nature": "PROCURADOR",
-                  "cpfNumber": "73677831148",
-                  "civilName": "Elza Milena Stefany Teixeira",
-                  "socialName": "string"
-                }
-              ]
-            }
-          ]
-        }
-      },
-      "policies": [
-        {
-          "policyInfo": {
-            "documentType": "APOLICE_INDIVIDUAL",
-            "policyId": "111111",
-            "susepProcessNumber": "string",
-            "groupCertificateId": "string",
-            "issuanceType": "EMISSAO_PROPRIA",
-            "issuanceDate": "2022-12-31",
-            "termStartDate": "2022-12-31",
-            "termEndDate": "2022-12-31",
-            "leadInsurerCode": "string",
-            "leadInsurerPolicyId": "string",
-            "maxLMG": {
-              "amount": "2000.00",
-              "unit": {
-                "code": "R$",
-                "description": "BRL"
-              }
-            },
-            "proposalId": "string",
-            "insureds": [
-              {
-                "identification": "12345678900",
-                "identificationType": "CPF",
-                "name": "Nome Sobrenome",
-                "postCode": "10000000",
-                "email": "string",
-                "city": "string",
-                "state": "string",
-                "country": "BRA",
-                "address": "string"
-              }
-            ],
-            "beneficiaries": [
-              {
-                "identification": "12345678900",
-                "identificationType": "CPF",
-                "name": "Nome Sobrenome"
-              }
-            ],
-            "principals": [
-              {
-                "identification": "12345678900",
-                "identificationType": "CPF",
-                "name": "Nome Sobrenome",
-                "postCode": "10000000",
-                "email": "string",
-                "city": "string",
-                "state": "string",
-                "country": "BRA",
-                "address": "string"
-              }
-            ],
-            "intermediaries": [
-              {
-                "type": "REPRESENTANTE",
-                "identification": "12345678900",
-                "brokerId": "string",
-                "identificationType": "CPF",
-                "name": "Nome Sobrenome",
-                "postCode": "10000000",
-                "city": "string",
-                "state": "string",
-                "country": "BRA",
-                "address": "string"
-              }
-            ],
-            "insuredObjects": [
-              {
-                "identification": "string",
-                "type": "CONTRATO",
-                "typeAdditionalInfo": "string",
-                "description": "string",
-                "amount": {
-                  "amount": "2000.00",
-                  "unit": {
-                    "code": "R$",
-                    "description": "BRL"
-                  }
-                },
-                "coverages": [
-                  {
-                    "branch": "0111",
-                    "code": "IMOVEL_BASICA",
-                    "description": "string",
-                    "internalCode": "string",
-                    "susepProcessNumber": "string",
-                    "LMI": {},
-                    "isLMISublimit": true,
-                    "termStartDate": "2022-12-31",
-                    "termEndDate": "2022-12-31",
-                    "isMainCoverage": true,
-                    "feature": "MASSIFICADOS",
-                    "type": "PARAMETRICO",
-                    "gracePeriod": 0,
-                    "gracePeriodicity": "DIA",
-                    "gracePeriodCountingMethod": "DIAS_UTEIS",
-                    "gracePeriodStartDate": "2022-12-31",
-                    "gracePeriodEndDate": "2022-12-31"
-                  }
-                ]
-              }
-            ],
-            "coverages": [
-              {
-                "branch": "0111",
-                "code": "IMOVEL_BASICA",
-                "description": "string",
-                "deductible": {
-                  "type": "DEDUTIVEL",
-                  "typeAdditionalInfo": "string",
-                  "amount": {
-                    "amount": "2000.00",
-                    "unit": {}
-                  },
-                  "period": 10,
-                  "periodicity": "DIA",
-                  "periodCountingMethod": "DIAS_UTEIS",
-                  "periodStartDate": "2022-05-16",
-                  "periodEndDate": "2022-05-17",
-                  "description": "Franquia de exemplo"
-                },
-                "POS": {
-                  "applicationType": "VALOR",
-                  "description": "Descrição de exemplo",
-                  "minValue": {
-                    "amount": "2000.00",
-                    "unit": {}
-                  },
-                  "maxValue": {
-                    "amount": "2000.00",
-                    "unit": {}
-                  },
-                  "percentage": "10.00"
-                }
-              }
-            ],
-            "coinsuranceRetainedPercentage": "10.00",
-            "coinsurers": [
-              {
-                "identification": "string",
-                "cededPercentage": "10.00"
-              }
-            ],
-            "branchInfo": {
-              "basicCoverageIndex": "SIMPLES",
-              "insuredObjects": [
-                {
-                  "identification": "string",
-                  "propertyType": "CASA",
-                  "structuringType": "CONDOMINIO_VERTICAL",
-                  "postCode": "10000000",
-                  "businessActivity": "1234567"
-                }
-              ]
-            }
-          },
-          "premium": {
-            "paymentsQuantity": 4,
-            "amount": {
-              "amount": "2000.00",
-              "unit": {
-                "code": "R$",
-                "description": "BRL"
-              }
-            },
-            "coverages": [
-              {
-                "branch": "0111",
-                "code": "IMOVEL_BASICA",
-                "description": "string",
-                "premiumAmount": {
-                  "amount": "2000.00",
-                  "unit": {
-                    "code": "R$",
-                    "description": "BRL"
-                  }
-                }
-              }
-            ],
-            "payments": [
-              {
-                "movementDate": "2022-12-31",
-                "movementType": "LIQUIDACAO_DE_PREMIO",
-                "movementOrigin": "EMISSAO_DIRETA",
-                "movementPaymentsNumber": 0,
-                "amount": {
-                  "amount": "2000.00",
-                  "unit": {
-                    "code": "R$",
-                    "description": "BRL"
-                  }
-                },
-                "maturityDate": "2022-12-31",
-                "tellerId": "string",
-                "tellerIdType": "CPF",
-                "tellerName": "string",
-                "financialInstitutionCode": "string",
-                "paymentType": "BOLETO"
-              }
-            ]
-          },
-          "claim": {
-            "identification": "string",
-            "documentationDeliveryDate": "2022-12-31",
-            "status": "ABERTO",
-            "statusAlterationDate": "2022-12-31",
-            "occurrenceDate": "2022-12-31",
-            "warningDate": "2022-12-31",
-            "thirdPartyClaimDate": "2022-12-31",
-            "amount": {
-              "amount": "2000.00",
-              "unit": {
-                "code": "R$",
-                "description": "BRL"
-              }
-            },
-            "denialJustification": "RISCO_EXCLUIDO",
-            "denialJustificationDescription": "string",
-            "coverages": [
-              {
-                "insuredObjectId": "string",
-                "branch": "0111",
-                "code": "IMOVEL_BASICA",
-                "description": "string",
-                "warningDate": "2022-12-31",
-                "thirdPartyClaimDate": "2022-12-31"
-              }
-            ]
-          }
-        }
-      ]
-    }
-  }
-}';
-const headers = {
-  'Content-Type':'application/json',
-  'Accept':'application/json',
-  'Authorization':'string',
-  'x-fapi-auth-date':'stringstringstringstringstrin',
-  'x-fapi-customer-ip-address':'string',
-  'x-fapi-interaction-id':'string',
-  'x-customer-user-agent':'string'
-};
-
-fetch('https://api.organizacao.com.br/open-insurance/quote-patrimonial/v1/diverse-risks/request',
-{
-  method: 'POST',
-  body: inputBody,
-  headers: headers
-})
-.then(function(res) {
-    return res.json();
-}).then(function(body) {
-    console.log(body);
-});
-
-```
 
 ```python
 import requests
@@ -7872,7 +4779,7 @@ System.out.println(response.toString());
 
 `POST /diverse-risks/request`
 
-Método para obter dados para cotação e contratação
+Método para criação de solicitação de cotação e contratação de PatrimonialDiverseRisks
 
 > Body parameter
 
@@ -8462,7 +5369,7 @@ Método para obter dados para cotação e contratação
 }
 ```
 
-<h3 id="obtem-dados-de-cotação-e-contratação-de-seguro-de-cotação-patrimonial-parameters">Parameters</h3>
+<h3 id="envia-dados-de-cotação-e-contratação-de-patrimonialdiverserisks-parameters">Parameters</h3>
 
 |Name|In|Type|Required|Description|
 |---|---|---|---|---|
@@ -8499,21 +5406,21 @@ Método para obter dados para cotação e contratação
 }
 ```
 
-<h3 id="obtem-dados-de-cotação-e-contratação-de-seguro-de-cotação-patrimonial-responses">Responses</h3>
+<h3 id="envia-dados-de-cotação-e-contratação-de-patrimonialdiverserisks-responses">Responses</h3>
 
 |Status|Meaning|Description|Schema|
 |---|---|---|---|
-|201|[Created](https://tools.ietf.org/html/rfc7231#section-6.3.2)|Dados de ResponseQuotePatrimonial obtidos com sucesso|[ResponseQuotePatrimonialDiverseRisks](#schemaresponsequotepatrimonialdiverserisks)|
-|400|[Bad Request](https://tools.ietf.org/html/rfc7231#section-6.5.1)|A requisição foi malformada, omitindo atributos obrigatórios, seja no payload ou através de atributos na URL|[ResponseError](#schemaresponseerror)|
-|401|[Unauthorized](https://tools.ietf.org/html/rfc7235#section-3.1)|Cabeçalho de autenticação ausente/inválido ou token inválido|[ResponseError](#schemaresponseerror)|
-|403|[Forbidden](https://tools.ietf.org/html/rfc7231#section-6.5.3)|O token tem escopo incorreto ou uma política de segurança foi violada|[ResponseError](#schemaresponseerror)|
-|404|[Not Found](https://tools.ietf.org/html/rfc7231#section-6.5.4)|O recurso solicitado não existe ou não foi implementado|[ResponseError](#schemaresponseerror)|
-|405|[Method Not Allowed](https://tools.ietf.org/html/rfc7231#section-6.5.5)|O consumidor tentou acessar o recurso com um método não suportado|[ResponseError](#schemaresponseerror)|
-|406|[Not Acceptable](https://tools.ietf.org/html/rfc7231#section-6.5.6)|A solicitação continha um cabeçalho Accept diferente dos tipos de mídia permitidos ou um conjunto de caracteres diferente de UTF-8|[ResponseError](#schemaresponseerror)|
-|422|[Unprocessable Entity](https://tools.ietf.org/html/rfc2518#section-10.3)|O servidor entende o tipo de conteúdo da entidade da requisição, e a sintaxe da requisição esta correta, mas não foi possível processar as instruções presentes|[ResponseError](#schemaresponseerror)|
-|429|[Too Many Requests](https://tools.ietf.org/html/rfc6585#section-4)|A operação foi recusada, pois muitas solicitações foram feitas dentro de um determinado período ou o limite global de requisições concorrentes foi atingido|[ResponseError](#schemaresponseerror)|
-|500|[Internal Server Error](https://tools.ietf.org/html/rfc7231#section-6.6.1)|Ocorreu um erro no gateway da API ou no microsserviço|[ResponseError](#schemaresponseerror)|
-|default|Default|Erro inesperado.|[ResponseError](#schemaresponseerror)|
+|201|[Created](https://tools.ietf.org/html/rfc7231#section-6.3.2)|Dados de PatrimonialDiverseRisks criados com sucesso|[ResponseQuotePatrimonialDiverseRisks](#schemaresponsequotepatrimonialdiverserisks)|
+|400|[Bad Request](https://tools.ietf.org/html/rfc7231#section-6.5.1)|A requisição foi malformada, omitindo atributos obrigatórios, seja no payload ou através de atributos na URL|[ResponseError](#schemaresponseerrorquotepatri)|
+|401|[Unauthorized](https://tools.ietf.org/html/rfc7235#section-3.1)|Cabeçalho de autenticação ausente/inválido ou token inválido|[ResponseError](#schemaresponseerrorquotepatri)|
+|403|[Forbidden](https://tools.ietf.org/html/rfc7231#section-6.5.3)|O token tem escopo incorreto ou uma política de segurança foi violada|[ResponseError](#schemaresponseerrorquotepatri)|
+|404|[Not Found](https://tools.ietf.org/html/rfc7231#section-6.5.4)|O recurso solicitado não existe ou não foi implementado|[ResponseError](#schemaresponseerrorquotepatri)|
+|405|[Method Not Allowed](https://tools.ietf.org/html/rfc7231#section-6.5.5)|O consumidor tentou acessar o recurso com um método não suportado|[ResponseError](#schemaresponseerrorquotepatri)|
+|406|[Not Acceptable](https://tools.ietf.org/html/rfc7231#section-6.5.6)|A solicitação continha um cabeçalho Accept diferente dos tipos de mídia permitidos ou um conjunto de caracteres diferente de UTF-8|[ResponseError](#schemaresponseerrorquotepatri)|
+|422|[Unprocessable Entity](https://tools.ietf.org/html/rfc2518#section-10.3)|O servidor entende o tipo de conteúdo da entidade da requisição, e a sintaxe da requisição esta correta, mas não foi possível processar as instruções presentes|[ResponseError](#schemaresponseerrorquotepatri)|
+|429|[Too Many Requests](https://tools.ietf.org/html/rfc6585#section-4)|A operação foi recusada, pois muitas solicitações foram feitas dentro de um determinado período ou o limite global de requisições concorrentes foi atingido|[ResponseError](#schemaresponseerrorquotepatri)|
+|500|[Internal Server Error](https://tools.ietf.org/html/rfc7231#section-6.6.1)|Ocorreu um erro no gateway da API ou no microsserviço|[ResponseError](#schemaresponseerrorquotepatri)|
+|default|Default|Erro inesperado.|[ResponseError](#schemaresponseerrorquotepatri)|
 
 ### Response Headers
 
@@ -8523,39 +5430,14 @@ Método para obter dados para cotação e contratação
 
 <aside class="warning">
 To perform this operation, you must be authenticated by means of one of the following methods:
-OpenId ( Scopes: openid ) & OAuth2Security ( Scopes: consent:consentId quote-patrimonial )
+OAuth2Security ( Scopes: consent:consentId quote-patrimonial-diverse-risks )
 </aside>
 
-### Retorna os dados de cotação e contratação de Seguro de Cotação Patrimonial
+### Obtém os dados de cotação e contratação de PatrimonialDiverseRisks identificado por consentId
 
 <a id="opIdgetQuotePatrimonialDiverseRisks"></a>
 
 > Code samples
-
-```javascript
-
-const headers = {
-  'Accept':'application/json',
-  'Authorization':'string',
-  'x-fapi-auth-date':'stringstringstringstringstrin',
-  'x-fapi-customer-ip-address':'string',
-  'x-fapi-interaction-id':'string',
-  'x-customer-user-agent':'string'
-};
-
-fetch('https://api.organizacao.com.br/open-insurance/quote-patrimonial/v1/diverse-risks/request/{consentId}/quote-status',
-{
-  method: 'GET',
-
-  headers: headers
-})
-.then(function(res) {
-    return res.json();
-}).then(function(body) {
-    console.log(body);
-});
-
-```
 
 ```python
 import requests
@@ -8593,9 +5475,9 @@ System.out.println(response.toString());
 
 `GET /diverse-risks/request/{consentId}/quote-status`
 
-Método para retornar os dados para cotação e contratação
+Método para consulta dos dados de solicitação de cotação e contratação de PatrimonialDiverseRisks
 
-<h3 id="retorna-os-dados-de-cotação-e-contratação-de-seguro-de-cotação-patrimonial-parameters">Parameters</h3>
+<h3 id="obtém-os-dados-de-cotação-e-contratação-de-patrimonialdiverserisks-identificado-por-consentid-parameters">Parameters</h3>
 
 |Name|In|Type|Required|Description|
 |---|---|---|---|---|
@@ -9033,21 +5915,21 @@ Método para retornar os dados para cotação e contratação
 }
 ```
 
-<h3 id="retorna-os-dados-de-cotação-e-contratação-de-seguro-de-cotação-patrimonial-responses">Responses</h3>
+<h3 id="obtém-os-dados-de-cotação-e-contratação-de-patrimonialdiverserisks-identificado-por-consentid-responses">Responses</h3>
 
 |Status|Meaning|Description|Schema|
 |---|---|---|---|
-|200|[OK](https://tools.ietf.org/html/rfc7231#section-6.3.1)|Cotação postado com sucesso.|[ResponseQuoteStatusPatrimonialDiverseRisks](#schemaresponsequotestatuspatrimonialdiverserisks)|
-|400|[Bad Request](https://tools.ietf.org/html/rfc7231#section-6.5.1)|A requisição foi malformada, omitindo atributos obrigatórios, seja no payload ou através de atributos na URL|[ResponseError](#schemaresponseerror)|
-|401|[Unauthorized](https://tools.ietf.org/html/rfc7235#section-3.1)|Cabeçalho de autenticação ausente/inválido ou token inválido|[ResponseError](#schemaresponseerror)|
-|403|[Forbidden](https://tools.ietf.org/html/rfc7231#section-6.5.3)|O token tem escopo incorreto ou uma política de segurança foi violada|[ResponseError](#schemaresponseerror)|
-|404|[Not Found](https://tools.ietf.org/html/rfc7231#section-6.5.4)|O recurso solicitado não existe ou não foi implementado|[ResponseError](#schemaresponseerror)|
-|405|[Method Not Allowed](https://tools.ietf.org/html/rfc7231#section-6.5.5)|O consumidor tentou acessar o recurso com um método não suportado|[ResponseError](#schemaresponseerror)|
-|406|[Not Acceptable](https://tools.ietf.org/html/rfc7231#section-6.5.6)|A solicitação continha um cabeçalho Accept diferente dos tipos de mídia permitidos ou um conjunto de caracteres diferente de UTF-8|[ResponseError](#schemaresponseerror)|
-|422|[Unprocessable Entity](https://tools.ietf.org/html/rfc2518#section-10.3)|O servidor entende o tipo de conteúdo da entidade da requisição, e a sintaxe da requisição esta correta, mas não foi possível processar as instruções presentes|[ResponseError](#schemaresponseerror)|
-|429|[Too Many Requests](https://tools.ietf.org/html/rfc6585#section-4)|A operação foi recusada, pois muitas solicitações foram feitas dentro de um determinado período ou o limite global de requisições concorrentes foi atingido|[ResponseError](#schemaresponseerror)|
-|500|[Internal Server Error](https://tools.ietf.org/html/rfc7231#section-6.6.1)|Ocorreu um erro no gateway da API ou no microsserviço|[ResponseError](#schemaresponseerror)|
-|default|Default|Erro inesperado.|[ResponseError](#schemaresponseerror)|
+|200|[OK](https://tools.ietf.org/html/rfc7231#section-6.3.1)|Dados de PatrimonialDiverseRisks obtidos com sucesso|[ResponseQuoteStatusPatrimonialDiverseRisks](#schemaresponsequotestatuspatrimonialdiverserisks)|
+|400|[Bad Request](https://tools.ietf.org/html/rfc7231#section-6.5.1)|A requisição foi malformada, omitindo atributos obrigatórios, seja no payload ou através de atributos na URL|[ResponseError](#schemaresponseerrorquotepatri)|
+|401|[Unauthorized](https://tools.ietf.org/html/rfc7235#section-3.1)|Cabeçalho de autenticação ausente/inválido ou token inválido|[ResponseError](#schemaresponseerrorquotepatri)|
+|403|[Forbidden](https://tools.ietf.org/html/rfc7231#section-6.5.3)|O token tem escopo incorreto ou uma política de segurança foi violada|[ResponseError](#schemaresponseerrorquotepatri)|
+|404|[Not Found](https://tools.ietf.org/html/rfc7231#section-6.5.4)|O recurso solicitado não existe ou não foi implementado|[ResponseError](#schemaresponseerrorquotepatri)|
+|405|[Method Not Allowed](https://tools.ietf.org/html/rfc7231#section-6.5.5)|O consumidor tentou acessar o recurso com um método não suportado|[ResponseError](#schemaresponseerrorquotepatri)|
+|406|[Not Acceptable](https://tools.ietf.org/html/rfc7231#section-6.5.6)|A solicitação continha um cabeçalho Accept diferente dos tipos de mídia permitidos ou um conjunto de caracteres diferente de UTF-8|[ResponseError](#schemaresponseerrorquotepatri)|
+|422|[Unprocessable Entity](https://tools.ietf.org/html/rfc2518#section-10.3)|O servidor entende o tipo de conteúdo da entidade da requisição, e a sintaxe da requisição esta correta, mas não foi possível processar as instruções presentes|[ResponseError](#schemaresponseerrorquotepatri)|
+|429|[Too Many Requests](https://tools.ietf.org/html/rfc6585#section-4)|A operação foi recusada, pois muitas solicitações foram feitas dentro de um determinado período ou o limite global de requisições concorrentes foi atingido|[ResponseError](#schemaresponseerrorquotepatri)|
+|500|[Internal Server Error](https://tools.ietf.org/html/rfc7231#section-6.6.1)|Ocorreu um erro no gateway da API ou no microsserviço|[ResponseError](#schemaresponseerrorquotepatri)|
+|default|Default|Erro inesperado.|[ResponseError](#schemaresponseerrorquotepatri)|
 
 ### Response Headers
 
@@ -9059,49 +5941,14 @@ Se fornecido, o transmissor deve "reproduzir" esse valor no cabeçalho de respos
 
 <aside class="warning">
 To perform this operation, you must be authenticated by means of one of the following methods:
-OpenId ( Scopes: openid ) & OAuth2Security ( Scopes: consent:consentId quote-patrimonial )
+OAuth2Security ( Scopes: consent:consentId quote-patrimonial-diverse-risks )
 </aside>
 
-### Envia justificativa para recusa de risco para cotação e contratação de Seguro de Cotação Patrimonial
+### Atualiza dados de cotação e contratação de PatrimonialDiverseRisks identificado por consentId
 
 <a id="opIdpatchQuotePatrimonialDiverseRisks"></a>
 
 > Code samples
-
-```javascript
-const inputBody = '{
-  "data": {
-    "status": "stri",
-    "quoteIdentification": "string",
-    "author": {
-      "identificationType": "CPF",
-      "identificationNumber": "73677831148"
-    }
-  }
-}';
-const headers = {
-  'Content-Type':'application/json',
-  'Accept':'application/json; charset=utf-8',
-  'Authorization':'string',
-  'x-fapi-auth-date':'stringstringstringstringstrin',
-  'x-fapi-customer-ip-address':'string',
-  'x-fapi-interaction-id':'string',
-  'x-customer-user-agent':'string'
-};
-
-fetch('https://api.organizacao.com.br/open-insurance/quote-patrimonial/v1/diverse-risks/request/{consentId}',
-{
-  method: 'PATCH',
-  body: inputBody,
-  headers: headers
-})
-.then(function(res) {
-    return res.json();
-}).then(function(body) {
-    console.log(body);
-});
-
-```
 
 ```python
 import requests
@@ -9140,7 +5987,7 @@ System.out.println(response.toString());
 
 `PATCH /diverse-risks/request/{consentId}`
 
-Método para retornar a recusa de proposta para cotação e contratação
+Método para atualização de solicitação de cotação e contratação de PatrimonialDiverseRisks
 
 > Body parameter
 
@@ -9157,7 +6004,7 @@ Método para retornar a recusa de proposta para cotação e contratação
 }
 ```
 
-<h3 id="envia-justificativa-para-recusa-de-risco-para-cotação-e-contratação-de-seguro-de-cotação-patrimonial-parameters">Parameters</h3>
+<h3 id="atualiza-dados-de-cotação-e-contratação-de-patrimonialdiverserisks-identificado-por-consentid-parameters">Parameters</h3>
 
 |Name|In|Type|Required|Description|
 |---|---|---|---|---|
@@ -9192,21 +6039,21 @@ Método para retornar a recusa de proposta para cotação e contratação
 }
 ```
 
-<h3 id="envia-justificativa-para-recusa-de-risco-para-cotação-e-contratação-de-seguro-de-cotação-patrimonial-responses">Responses</h3>
+<h3 id="atualiza-dados-de-cotação-e-contratação-de-patrimonialdiverserisks-identificado-por-consentid-responses">Responses</h3>
 
 |Status|Meaning|Description|Schema|
 |---|---|---|---|
-|204|[No Content](https://tools.ietf.org/html/rfc7231#section-6.3.5)|Revogação de consentimento na seguradora.|None|
-|400|[Bad Request](https://tools.ietf.org/html/rfc7231#section-6.5.1)|A requisição foi malformada, omitindo atributos obrigatórios, seja no payload ou através de atributos na URL|[ResponseError](#schemaresponseerror)|
-|401|[Unauthorized](https://tools.ietf.org/html/rfc7235#section-3.1)|Cabeçalho de autenticação ausente/inválido ou token inválido|[ResponseError](#schemaresponseerror)|
-|403|[Forbidden](https://tools.ietf.org/html/rfc7231#section-6.5.3)|O token tem escopo incorreto ou uma política de segurança foi violada|[ResponseError](#schemaresponseerror)|
-|404|[Not Found](https://tools.ietf.org/html/rfc7231#section-6.5.4)|O recurso solicitado não existe ou não foi implementado|[ResponseError](#schemaresponseerror)|
-|405|[Method Not Allowed](https://tools.ietf.org/html/rfc7231#section-6.5.5)|O consumidor tentou acessar o recurso com um método não suportado|[ResponseError](#schemaresponseerror)|
-|406|[Not Acceptable](https://tools.ietf.org/html/rfc7231#section-6.5.6)|A solicitação continha um cabeçalho Accept diferente dos tipos de mídia permitidos ou um conjunto de caracteres diferente de UTF-8|[ResponseError](#schemaresponseerror)|
-|422|[Unprocessable Entity](https://tools.ietf.org/html/rfc2518#section-10.3)|O servidor entende o tipo de conteúdo da entidade da requisição, e a sintaxe da requisição esta correta, mas não foi possível processar as instruções presentes|[ResponseError](#schemaresponseerror)|
-|429|[Too Many Requests](https://tools.ietf.org/html/rfc6585#section-4)|A operação foi recusada, pois muitas solicitações foram feitas dentro de um determinado período ou o limite global de requisições concorrentes foi atingido|[ResponseError](#schemaresponseerror)|
-|500|[Internal Server Error](https://tools.ietf.org/html/rfc7231#section-6.6.1)|Ocorreu um erro no gateway da API ou no microsserviço|[ResponseError](#schemaresponseerror)|
-|default|Default|Erro inesperado.|[ResponseError](#schemaresponseerror)|
+|204|[No Content](https://tools.ietf.org/html/rfc7231#section-6.3.5)|Atualização de PatrimonialDiverseRisks feita com sucesso|None|
+|400|[Bad Request](https://tools.ietf.org/html/rfc7231#section-6.5.1)|A requisição foi malformada, omitindo atributos obrigatórios, seja no payload ou através de atributos na URL|[ResponseError](#schemaresponseerrorquotepatri)|
+|401|[Unauthorized](https://tools.ietf.org/html/rfc7235#section-3.1)|Cabeçalho de autenticação ausente/inválido ou token inválido|[ResponseError](#schemaresponseerrorquotepatri)|
+|403|[Forbidden](https://tools.ietf.org/html/rfc7231#section-6.5.3)|O token tem escopo incorreto ou uma política de segurança foi violada|[ResponseError](#schemaresponseerrorquotepatri)|
+|404|[Not Found](https://tools.ietf.org/html/rfc7231#section-6.5.4)|O recurso solicitado não existe ou não foi implementado|[ResponseError](#schemaresponseerrorquotepatri)|
+|405|[Method Not Allowed](https://tools.ietf.org/html/rfc7231#section-6.5.5)|O consumidor tentou acessar o recurso com um método não suportado|[ResponseError](#schemaresponseerrorquotepatri)|
+|406|[Not Acceptable](https://tools.ietf.org/html/rfc7231#section-6.5.6)|A solicitação continha um cabeçalho Accept diferente dos tipos de mídia permitidos ou um conjunto de caracteres diferente de UTF-8|[ResponseError](#schemaresponseerrorquotepatri)|
+|422|[Unprocessable Entity](https://tools.ietf.org/html/rfc2518#section-10.3)|O servidor entende o tipo de conteúdo da entidade da requisição, e a sintaxe da requisição esta correta, mas não foi possível processar as instruções presentes|[ResponseError](#schemaresponseerrorquotepatri)|
+|429|[Too Many Requests](https://tools.ietf.org/html/rfc6585#section-4)|A operação foi recusada, pois muitas solicitações foram feitas dentro de um determinado período ou o limite global de requisições concorrentes foi atingido|[ResponseError](#schemaresponseerrorquotepatri)|
+|500|[Internal Server Error](https://tools.ietf.org/html/rfc7231#section-6.6.1)|Ocorreu um erro no gateway da API ou no microsserviço|[ResponseError](#schemaresponseerrorquotepatri)|
+|default|Default|Erro inesperado.|[ResponseError](#schemaresponseerrorquotepatri)|
 
 ### Response Headers
 
@@ -9218,5 +6065,5 @@ Se fornecido, o transmissor deve "reproduzir" esse valor no cabeçalho de respos
 
 <aside class="warning">
 To perform this operation, you must be authenticated by means of one of the following methods:
-OpenId ( Scopes: openid ) & OAuth2Security ( Scopes: consent:consentId quote-patrimonial )
+OAuth2Security ( Scopes: consent:consentId quote-patrimonial-diverse-risks )
 </aside>
