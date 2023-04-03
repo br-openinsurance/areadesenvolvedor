@@ -1,4 +1,4 @@
-<h1 id="api-funil-consentimento">API - Funil de Consentimento v1.0.1 </h1>
+<h1 id="api-funil-consentimento">API - Funil de Consentimento v1.0.2 </h1>
 
 <aside class="alert">
 API em construção...
@@ -7,7 +7,7 @@ API em construção...
 > Scroll down for code samples, example requests and responses. Select a language for code samples from the tabs above or the mobile navigation menu.
 
 **Especificação em OAS** </br>
-<a href="files/swagger/consent-funnel-ingestion-v1.0.1.yaml" download="consent-funnel-ingestion-v1.0.1.yaml">Download da Especificação</a>
+<a href="files/swagger/consent-funnel-ingestion-v1.0.2.yaml" download="consent-funnel-ingestion-v1.0.2.yaml">Download da Especificação</a>
 
 API que recebe os eventos do funil de consentimentos.
 
@@ -51,12 +51,14 @@ Para assinar uma requisição a organização deverá:
       * **alg** - Algoritmo que será usado para assinar o JWS. Deve ser preenchido com o valor **"PS256"**.
 
       * **kid** - Valor do identificador da chave utilizado para a assinatura.
-
+      
       * **typ** - Tipo de conteúdo usado para trafegar mensagens na API. Deve ser preenchido com o valor **"JWT"**.
 
       E converter para Base64Url seguindo o padrão especificado na [RFC4648](https://datatracker.ietf.org/doc/html/rfc4648#section-5).
 
-  3) Montando o payload JWS Body da requisição no formato JSON convertido para Base64Url seguindo o padrão especificado na [RFC4648](https://datatracker.ietf.org/doc/html/rfc4648#section-5).
+  3) Montando o payload JWS
+
+      Body da requisição no formato JSON convertido para Base64Url seguindo o padrão especificado na [RFC4648](https://datatracker.ietf.org/doc/html/rfc4648#section-5).
 
   4) Gerar a assinatura digital conforme especificado na [RFC7515](https://datatracker.ietf.org/doc/html/rfc7515).
 
@@ -67,12 +69,51 @@ Para assinar uma requisição a organização deverá:
 A assinatura do body deve seguir o padrão JWS definido na [RFC7515](https://datatracker.ietf.org/doc/html/rfc7515).
 
 
-<h2 id="inclusao-unitaria-de-evento-pelo-servidor-funil-de-consentimento">Inclusão unitária de evento pelo servidor</h2>
 
+<h2 id="inclusao-unitaria-de-evento-pelo-servidor-funil-de-consentimento">Inclusão unitária de evento pelo servidor</h2>
 
 <a id="opIdeventServerEvent"></a>
 
 > Code samples
+
+```javascript
+const inputBody = '{
+  "consentId": "urn:bancoex:C1DD33123",
+  "step": "consent-created",
+  "correlationId": "577869e5-4c63-4b19-9235-a18d22c80986",
+  "additionalInfo": {
+    "consent-user": "invalid-credentials",
+    "authentication-failure-reason": "invalid-credentials",
+    "user-redirected-back-status": "success",
+    "token-kind": "consent-token",
+    "rejected-by": "user",
+    "revoked-by": "user",
+    "expired-by": "authorization-timeout"
+  },
+  "timestamp": "2022-11-07T17:26:32Z",
+  "clientOrgId": "1fb79963-4bff-4204-9370-93aceb8a2f0d",
+  "clientSSId": "2a59c2a3-529f-41c6-97e3-77395e9951ca",
+  "serverOrgId": "ff66b95a-d817-4fbe-949a-c5912e240189",
+  "serverASId": "f8cd7b48-197d-419b-8680-f42226111b6f"
+}';
+const headers = {
+  'Content-Type':'application/jwt',
+  'Accept':'application/json'
+};
+
+fetch('/event-api/v1/server-event',
+{
+  method: 'POST',
+  body: inputBody,
+  headers: headers
+})
+.then(function(res) {
+    return res.json();
+}).then(function(body) {
+    console.log(body);
+});
+
+```
 
 ```python
 import requests
@@ -146,10 +187,53 @@ This operation does not require authentication
 
 <h2 id="inclusao-em-massa-de-evento-pelo-transmisso-funil-de-consentimento">Inclusão em massa de evento pelo servidor</h2>
 
-
 <a id="opIdeventServerBatch"></a>
 
 > Code samples
+
+```javascript
+const inputBody = '{
+  "organisationId": "c1ddd896-1145-4177-9b58-8a6e310557e2",
+  "events": [
+    {
+      "consentId": "urn:bancoex:C1DD33123",
+      "step": "consent-created",
+      "correlationId": "577869e5-4c63-4b19-9235-a18d22c80986",
+      "additionalInfo": {
+        "consent-user": "invalid-credentials",
+        "authentication-failure-reason": "invalid-credentials",
+        "user-redirected-back-status": "success",
+        "token-kind": "consent-token",
+        "rejected-by": "user",
+        "revoked-by": "user",
+        "expired-by": "authorization-timeout"
+      },
+      "timestamp": "2022-11-07T17:26:32Z",
+      "clientOrgId": "1fb79963-4bff-4204-9370-93aceb8a2f0d",
+      "clientSSId": "2a59c2a3-529f-41c6-97e3-77395e9951ca",
+      "serverOrgId": "ff66b95a-d817-4fbe-949a-c5912e240189",
+      "serverASId": "f8cd7b48-197d-419b-8680-f42226111b6f"
+    }
+  ]
+}';
+const headers = {
+  'Content-Type':'application/jwt',
+  'Accept':'application/json'
+};
+
+fetch('/event-api/v1/server-batch',
+{
+  method: 'POST',
+  body: inputBody,
+  headers: headers
+})
+.then(function(res) {
+    return res.json();
+}).then(function(body) {
+    console.log(body);
+});
+
+```
 
 ```python
 import requests
@@ -217,7 +301,7 @@ O limite de registros de cada lote é 5.000 registros.
 
 |Status|Meaning|Description|Schema|
 |---|---|---|---|
-|200|[OK](https://tools.ietf.org/html/rfc7231#section-6.3.1)|O status 200 representa a situação onde todos os registros enviados no lote foram validados e serão direcionados para processamento.A operação vai devolver um array com todos os resultados, e garantir que ele esteja na mesma ordem do array de requisição.|Inline|
+|200|[OK](https://tools.ietf.org/html/rfc7231#section-6.3.1)|O status 200 representa a situação onde todos os registros enviados no lote foram validados e serão direcionados para processamento. A operação vai devolver um array com todos os resultados, e garantir que ele esteja na mesma ordem do array de requisição.|Inline|
 |207|[Multi-Status](https://tools.ietf.org/html/rfc2518#section-10.2)|O status 207 (Multi-Status) informa ao solicitante que o formato da solicitação está correto, mas que entradas do array da solicitação contém erro de validação, independente da quantidade. Ou seja, se todos os elementos do array informado estiverem com falha de validação, a operação vai devolver o status 207, e no corpo da resposta todos os elementos do array estarão com o status DISCARDED e com suas respectivas mensagens. A operação vai devolver um array com todos os resultados, e garantir que ele esteja na mesma ordem do array de requisição.|Inline|
 |400|[Bad Request](https://tools.ietf.org/html/rfc7231#section-6.5.1)|O formato do corpo da requisição não é um array.|Inline|
 |401|[Unauthorized](https://tools.ietf.org/html/rfc7235#section-3.1)|Ocorre quando uma requisição não é autorizada.|[response401](#schemaresponse401funildeconsentimento)|
@@ -256,12 +340,50 @@ Status Code **400**
 This operation does not require authentication
 </aside>
 
-
 <h2 id="inclusao-unitaria-de-evento-pelo-cliente-funil-de-consentimento">Inclusão unitária de evento pelo cliente</h2>
 
 <a id="opIdeventClientEvent"></a>
 
 > Code samples
+
+```javascript
+const inputBody = '{
+  "consentId": "urn:bancoex:C1DD33123",
+  "step": "consent-created",
+  "correlationId": "577869e5-4c63-4b19-9235-a18d22c80986",
+  "additionalInfo": {
+    "consent-user": "invalid-credentials",
+    "authentication-failure-reason": "invalid-credentials",
+    "user-redirected-back-status": "success",
+    "token-kind": "consent-token",
+    "rejected-by": "user",
+    "revoked-by": "user",
+    "expired-by": "authorization-timeout"
+  },
+  "timestamp": "2022-11-07T17:26:32Z",
+  "clientOrgId": "1fb79963-4bff-4204-9370-93aceb8a2f0d",
+  "clientSSId": "2a59c2a3-529f-41c6-97e3-77395e9951ca",
+  "serverOrgId": "ff66b95a-d817-4fbe-949a-c5912e240189",
+  "serverASId": "f8cd7b48-197d-419b-8680-f42226111b6f"
+}';
+const headers = {
+  'Content-Type':'application/jwt',
+  'Accept':'application/json'
+};
+
+fetch('/event-api/v1/client-event',
+{
+  method: 'POST',
+  body: inputBody,
+  headers: headers
+})
+.then(function(res) {
+    return res.json();
+}).then(function(body) {
+    console.log(body);
+});
+
+```
 
 ```python
 import requests
@@ -338,6 +460,50 @@ This operation does not require authentication
 
 > Code samples
 
+```javascript
+const inputBody = '{
+  "organisationId": "c1ddd896-1145-4177-9b58-8a6e310557e2",
+  "events": [
+    {
+      "consentId": "urn:bancoex:C1DD33123",
+      "step": "consent-created",
+      "correlationId": "577869e5-4c63-4b19-9235-a18d22c80986",
+      "additionalInfo": {
+        "consent-user": "invalid-credentials",
+        "authentication-failure-reason": "invalid-credentials",
+        "user-redirected-back-status": "success",
+        "token-kind": "consent-token",
+        "rejected-by": "user",
+        "revoked-by": "user",
+        "expired-by": "authorization-timeout"
+      },
+      "timestamp": "2022-11-07T17:26:32Z",
+      "clientOrgId": "1fb79963-4bff-4204-9370-93aceb8a2f0d",
+      "clientSSId": "2a59c2a3-529f-41c6-97e3-77395e9951ca",
+      "serverOrgId": "ff66b95a-d817-4fbe-949a-c5912e240189",
+      "serverASId": "f8cd7b48-197d-419b-8680-f42226111b6f"
+    }
+  ]
+}';
+const headers = {
+  'Content-Type':'application/jwt',
+  'Accept':'application/json'
+};
+
+fetch('/event-api/v1/client-batch',
+{
+  method: 'POST',
+  body: inputBody,
+  headers: headers
+})
+.then(function(res) {
+    return res.json();
+}).then(function(body) {
+    console.log(body);
+});
+
+```
+
 ```python
 import requests
 headers = {
@@ -404,7 +570,7 @@ O limite de registros de cada lote é de 5.000 registros.
 
 |Status|Meaning|Description|Schema|
 |---|---|---|---|
-|200|[OK](https://tools.ietf.org/html/rfc7231#section-6.3.1)|O status 200 representa a situação onde todos os registros enviados no lote foram validados e serão direcionados para processamento.A operação vai devolver um array com todos os resultados, e garantir que ele esteja na mesma ordem do array de requisição.|Inline|
+|200|[OK](https://tools.ietf.org/html/rfc7231#section-6.3.1)|O status 200 representa a situação onde todos os registros enviados no lote foram validados e serão direcionados para processamento. A operação vai devolver um array com todos os resultados, e garantir que ele esteja na mesma ordem do array de requisição.|Inline|
 |207|[Multi-Status](https://tools.ietf.org/html/rfc2518#section-10.2)|O status 207 (Multi-Status) informa ao solicitante que o formato da solicitação está correto, mas que entradas do array da solicitação contém erro de validação, independente da quantidade. Ou seja, se todos os elementos do array informado estiverem com falha de validação, a operação vai devolver o status 207, e no corpo da resposta todos os elementos do array estarão com o status DISCARDED e com suas respectivas mensagens. A operação vai devolver um array com todos os resultados, e garantir que ele esteja na mesma ordem do array de requisição.|Inline|
 |400|[Bad Request](https://tools.ietf.org/html/rfc7231#section-6.5.1)|O formato do corpo da requisição não é um array.|Inline|
 |401|[Unauthorized](https://tools.ietf.org/html/rfc7235#section-3.1)|Ocorre quando uma requisição não é autorizada.|[response401](#schemaresponse401funildeconsentimento)|
@@ -415,7 +581,7 @@ O limite de registros de cada lote é de 5.000 registros.
 
 <h3 id="inclusão-em-massa-de-eventos-pelo-lado-do-cliente.-responseschema">Response Schema</h3>
 
-Status Code **200**  
+Status Code **200**
 
 |Name|Type|Required|Restrictions|Description|
 |---|---|---|---|---|

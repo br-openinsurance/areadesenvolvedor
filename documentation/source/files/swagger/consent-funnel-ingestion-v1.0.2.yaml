@@ -1,0 +1,564 @@
+openapi: 3.0.0
+info:
+  version: 1.0.2
+  title: API de ingestão do funil de consentimentos
+  description: |
+    API que recebe os eventos do funil de consentimentos.
+
+    A API de eventos fornece operações que permitem a inclusão dos
+    eventos do funil de consentimento na plataforma de Coleta de Métricas.
+
+    A inclusão de eventos pode ser feita de maneira individual ou em
+    lote.
+
+    Os dados que são inseridos na API de eventos são sempre
+    processados de maneira assíncrona, e sua persistência se utiliza
+    de consistência posterior (eventual consistency), portanto, um
+    registro tem um tempo de processamento em que ele não estará
+    disponível para consulta até que ele seja persistido.
+
+    ## Segurança
+
+    A autenticação das requisições se dará com base na assinatura do body das requisições.
+
+    Requisitos:
+
+      * Organização devidamente registrada no diretório
+      * Certificado de assinatura devidamente cadastrado no diretório a nivel de organização
+
+    A validação da autenticidade será baseada no certificado de assinatura do body que
+    será validado no keystore do diretório.
+
+    Todas as requisições deveram ser enviadas com o Content-Type: application/jwt.<br />
+    Para assinar uma requisição a organização deverá:
+      1) Identifique a chave privada e o certificado de assinatura correspondente a serem usados para assinar o payload
+      2) Geração do JOSE Header
+
+          Montar um JSON com os campos obrigatórios:
+          * **alg** - Algoritmo que será usado para assinar o JWS. Deve ser preenchido com o valor **"PS256"**.
+          * **kid** - Valor do identificador da chave utilizado para a assinatura.
+          * **typ** - Tipo de conteúdo usado para trafegar mensagens na API. Deve ser preenchido com o valor **"JWT"**.
+
+          E converter para Base64Url seguindo o padrão especificado na [RFC4648](https://datatracker.ietf.org/doc/html/rfc4648#section-5).
+      3) Montando o payload JWS
+
+          Body da requisição no formato JSON convertido para Base64Url seguindo o padrão especificado na [RFC4648](https://datatracker.ietf.org/doc/html/rfc4648#section-5).
+
+      4) Gerar a assinatura digital conforme especificado na [RFC7515](https://datatracker.ietf.org/doc/html/rfc7515).
+      5) Juntar as partes concatenando com ponto (.) para formar o JWS
+
+          **JWS = Base64url(JOSEHeader) + "." + Base64url(payload JWT) + "." + Base64url(digital signature)**
+
+    A assinatura do body deve seguir o padrão JWS definido na [RFC7515](https://datatracker.ietf.org/doc/html/rfc7515).
+paths:
+  /event-api/v1/server-event:
+    post:
+      summary: Inclusão unitária de evento pelo servidor
+      description: Inclusão de evento individual na plataforma por um participante no papel de transmissor.
+      operationId: eventServerEvent
+      requestBody:
+        content:
+          application/jwt:
+            schema:
+              $ref: '#/components/schemas/eventBody'
+      responses:
+        '200':
+          $ref: '#/components/responses/eventEventResponse200'
+        '400':
+          $ref: '#/components/responses/eventEventResponse400'
+        '401':
+          $ref: '#/components/responses/eventEventResponse401'
+        '406':
+          $ref: '#/components/responses/eventEventResponse406'
+        '415':
+          $ref: '#/components/responses/eventEventResponse415'
+        '500':
+          $ref: '#/components/responses/eventEventResponse500'
+  /event-api/v1/server-batch:
+    post:
+      summary: Inclusão em massa de evento pelo transmissor
+      description: |
+        Inclusão de eventos em massa na plataforma. Ao enviar um lote de eventos,
+        a plataforma vai fazer o processo de validação de cada evento de maneira síncrona
+        e devolver o resultado dessa validação na resposta, sendo que o status HTTP de
+        retorno vai refletir esse resultado (vide documentação de cada status de retorno).
+        No entanto, o processamento de cada evento ocorrerá de maneira assíncrona.
+
+        O limite de registros de cada lote é 5.000 registros.
+      operationId: eventServerBatch
+      requestBody:
+        content:
+          application/jwt:
+            schema:
+              $ref: '#/components/schemas/batchBody'
+      responses:
+        '200':
+          $ref: '#/components/responses/eventBatchResponse200'
+        '207':
+          $ref: '#/components/responses/eventBatchResponse207'
+        '400':
+          $ref: '#/components/responses/eventBatchResponse400'
+        '401':
+          $ref: '#/components/responses/eventBatchResponse401'
+        '406':
+          $ref: '#/components/responses/eventBatchResponse406'
+        '413':
+          $ref: '#/components/responses/eventBatchResponse413'
+        '415':
+          $ref: '#/components/responses/eventBatchResponse415'
+        '500':
+          $ref: '#/components/responses/eventBatchResponse500'
+  /event-api/v1/client-event:
+    post:
+      summary: Inclusão unitária de evento pelo cliente
+      description: Inclusão de evento individual na plataforma por um participante no papel de receptor.
+      operationId: eventClientEvent
+      requestBody:
+        content:
+          application/jwt:
+            schema:
+              $ref: '#/components/schemas/eventBody'
+      responses:
+        '200':
+          $ref: '#/components/responses/eventEventResponse200'
+        '400':
+          $ref: '#/components/responses/eventEventResponse400'
+        '401':
+          $ref: '#/components/responses/eventEventResponse401'
+        '406':
+          $ref: '#/components/responses/eventEventResponse406'
+        '415':
+          $ref: '#/components/responses/eventEventResponse415'
+        '500':
+          $ref: '#/components/responses/eventEventResponse500'
+  /event-api/v1/client-batch:
+    post:
+      summary: Inclusão em massa de eventos pelo lado do cliente.
+      description: |
+        Inclusão de eventos em massa na plataforma. Ao enviar um lote de eventos, a plataforma
+        vai fazer o processo de validação de cada evento de maneira síncrona e devolver o resultado
+        dessa validação na resposta, sendo que o status HTTP de retorno vai refletir esse resultado
+        (vide documentação de cada status de retorno). No entanto, o processamento de cada evento
+        ocorrerá de maneira assíncrona.
+
+        O limite de registros de cada lote é de 5.000 registros.
+      operationId: eventClientBatch
+      requestBody:
+        content:
+          application/jwt:
+            schema:
+              $ref: '#/components/schemas/batchBody'
+      responses:
+        '200':
+          $ref: '#/components/responses/eventBatchResponse200'
+        '207':
+          $ref: '#/components/responses/eventBatchResponse207'
+        '400':
+          $ref: '#/components/responses/eventBatchResponse400'
+        '401':
+          $ref: '#/components/responses/eventBatchResponse401'
+        '406':
+          $ref: '#/components/responses/eventBatchResponse406'
+        '413':
+          $ref: '#/components/responses/eventBatchResponse413'
+        '415':
+          $ref: '#/components/responses/eventBatchResponse415'
+        '500':
+          $ref: '#/components/responses/eventBatchResponse500'
+components:
+  parameters:
+    authorizationParameter:
+      name: Authorization
+      in: header
+      description: Token de acesso
+      required: true
+      schema:
+        type: string
+      example: 'Bearer 9fu19ef0i12je0ifj12102ijf0i2je'
+  schemas:
+    success:
+      type: object
+      properties:
+        eventId:
+          type: string
+          example: '7eb81ba1-9011-4c58-9d5b-1098550d2fca'
+        correlationId:
+          type: string
+          example: FWUCp4yOA1b87LUJpgn1Mf52wi9KEF11
+        status:
+          type: string
+          example: ACCEPTED
+      required:
+        - eventId
+        - correlationId
+        - status
+      additionalProperties: false
+    response400:
+      type: object
+      properties:
+        correlationId:
+          type: string
+          example: FWUCp4yOA1b87LUJpgn1Mf52wi9KEF11
+        status:
+          type: string
+          example: DISCARDED
+        message:
+          type: string
+          example: 'Missing fields: fapiInteractionId, endpoint'
+      required:
+        - status
+        - message
+      additionalProperties: false
+    response401:
+      type: object
+      properties:
+        message:
+          type: string
+          example: 'Unauthorized'
+      required:
+        - message
+      additionalProperties: false
+    response404:
+      type: object
+      properties:
+        message:
+          type: string
+          example: 'Not Found'
+      required:
+        - message
+      additionalProperties: false
+    response406:
+      type: object
+      properties:
+        message:
+          type: string
+          example: 'Content-Type not accepted'
+      required:
+        - message
+      additionalProperties: false
+    response413:
+      type: object
+      properties:
+        message:
+          type: string
+          example: 'Record limit exceeded'
+      required:
+        - message
+      additionalProperties: false
+    response415:
+      type: object
+      properties:
+        message:
+          type: string
+          example: 'Unsupported media type'
+      required:
+        - message
+      additionalProperties: false
+    response500:
+      type: object
+      properties:
+        message:
+          type: string
+          example: 'Internal Server Error'
+      required:
+        - message
+      additionalProperties: false
+    batchBody:
+      type: object
+      properties:
+        organisationId:
+          type: string
+          example: 'c1ddd896-1145-4177-9b58-8a6e310557e2'
+        events:
+          type: array
+          items:
+            '$ref': '#/components/schemas/eventBody'
+      required:
+        - 'organisationId'
+        - 'events'
+    eventBody:
+      type: object
+      properties:
+        consentId:
+          type: string
+          pattern: '^urn:[a-zA-Z0-9][a-zA-Z0-9-]{0,31}:[a-zA-Z0-9()+,\-.:=@;$_!*''%\/?#]+$'
+          maxLength: 256
+          example: 'urn:bancoex:C1DD33123'
+          description: |-
+            O consentId é o identificador único do consentimento e deverá ser um URN - Uniform Resource Name.
+            Um URN, conforme definido na RFC8141 é um Uniform Resource Identifier - URI - que é atribuído sob o URI scheme "urn" e um namespace URN específico, com a intenção de que o URN seja um identificador de recurso persistente e independente da localização.
+            Considerando a string urn:bancoex:C1DD33123 como exemplo para consentId temos:
+
+            o namespace(urn)
+            o identificador associado ao namespace da instituição transnmissora (bancoex)
+            o identificador específico dentro do namespace (C1DD33123).
+            Informações mais detalhadas sobre a construção de namespaces devem ser consultadas na RFC8141.
+        step:
+          type: string
+          description: |
+            Etapa do funil de consentimento.
+
+            Etapas do Cliente:
+              * consent-created
+              * user-redirected
+              * user-redirected-back
+              * consent-token-received
+              * refresh-token-used
+              * resource-accessed
+              * consent-revoked
+
+            Etapas do Servidor:
+              * consent-created
+              * user-redirected
+              * user-authentication-failed
+              * user-authenticated
+              * consent-authorized
+              * consent-rejected
+              * authorization-code-created
+              * user-redirected-back
+              * consent-token-generated
+              * refresh-token-used
+              * resource-accessed
+              * consent-revoked
+              * consent-expired
+          example: 'consent-created'
+          enum:
+            - consent-created
+            - user-redirected
+            - user-authentication-failed
+            - user-authenticated
+            - consent-authorized
+            - consent-rejected
+            - authorization-code-created
+            - user-redirected-back
+            - consent-token-generated
+            - consent-token-received
+            - refresh-token-used
+            - resource-accessed
+            - consent-revoked
+            - consent-expired
+        correlationId:
+          type: string
+          example: '577869e5-4c63-4b19-9235-a18d22c80986'
+          minLength: 1
+        additionalInfo:
+          type: object
+          properties:
+            consent-user:
+              type: string
+              description: |
+                Informa se é cliente ou não do Receptor de dados.
+                <br />[Restrição] deve ser enviado quando o step for consent-created.
+              example: 'invalid-credentials'
+              enum:
+                - user
+                - non-user
+            authentication-failure-reason:
+              type: string
+              description: |
+                Informa razão da falha na autenticação.
+                <br />[Restrição] deve ser enviado quando o step for user-authentication-failed.
+              example: 'invalid-credentials'
+              enum:
+                - invalid-credentials
+                - invalid-mfa
+                - other
+            user-redirected-back-status:
+              type: string
+              description: |
+                Informa o status do redirect.
+                <br />[Restrição] deve ser enviado quando o step for user-redirected-back.
+              example: 'success'
+              enum:
+                - success
+                - failure
+            token-kind:
+              type: string
+              description: |
+                Informa o tipo do token utilizado na autorização do recurso.
+                <br />[Restrição] deve ser enviado quando o step for resource-accessed.
+              example: 'consent-token'
+              enum:
+                - consent-token
+                - client-credential
+            rejected-by:
+              type: string
+              description: |
+                Responsável pela rejeição. O usuário rejeitou ou o sistema devido a problemas
+                técnicos, políticas de segurança aplicada pela instituição transmissora, etc.
+                <br />[Restrição] deve ser enviado quando o step for consent-rejected.
+              enum:
+                - user
+                - system
+            revoked-by:
+              type: string
+              description: |
+                Responsável pela revogação. O usuário solicitou a revogação ou o sistema
+                revogou por questões de segurança
+                <br />[Restrição] deve ser enviado quando o step for consent-revoked.
+              enum:
+                - user
+                - system
+            expired-by:
+              type: string
+              description: |
+                Razão da expiração. Consentimento que ultrapassou o tempo limite para autorização
+                (authorization-timeout) ou consentimento que ultrapassou o tempo limite
+                de compartilhamento (max-date-reached).
+                <br />[Restrição] deve ser enviado quando o step for consent-expired.
+              enum:
+                - authorization-timeout
+                - max-date-reached
+        timestamp:
+          type: string
+          example: '2022-11-07T17:26:32Z'
+          description: 'Data e hora aproximada da ocorrência do evento. Uma string com data e hora conforme especificação RFC-3339, sempre com a utilização de timezone UTC(UTC time format).'
+          maxLength: 20
+          format: date-time
+          pattern: '^((?:(\d{4}-\d{2}-\d{2})T(\d{2}:\d{2}:\d{2}(?:\.\d+)?))(Z)?)$'
+        clientOrgId:
+          type: string
+          example: '1fb79963-4bff-4204-9370-93aceb8a2f0d'
+          description: Id da organização do cliente
+          pattern: '^\w{8}-\w{4}-\w{4}-\w{4}-\w{12}$'
+        clientSSId:
+          type: string
+          example: '2a59c2a3-529f-41c6-97e3-77395e9951ca'
+          description: Id do Software Statement do cliente
+          pattern: '^\w{8}-\w{4}-\w{4}-\w{4}-\w{12}$'
+        serverOrgId:
+          type: string
+          example: 'ff66b95a-d817-4fbe-949a-c5912e240189'
+          description: Id da organização do servidor
+          pattern: '^\w{8}-\w{4}-\w{4}-\w{4}-\w{12}$'
+        serverASId:
+          type: string
+          example: 'f8cd7b48-197d-419b-8680-f42226111b6f'
+          description: Id do Authorization Server do servidor
+          pattern: '^\w{8}-\w{4}-\w{4}-\w{4}-\w{12}$'
+      required:
+        - consentId
+        - step
+        - correlationId
+        - timestamp
+        - clientOrgId
+        - clientSSId
+        - serverOrgId
+        - serverASId
+  responses:
+    eventEventResponse200:
+      description: Registro recebido com sucesso.
+      content:
+        application/json:
+          schema:
+            '$ref': '#/components/schemas/success'
+    eventEventResponse400:
+      description: Ocorre quando uma requisição não envia os dados obrigatórios.
+      content:
+        application/json:
+          schema:
+            '$ref': '#/components/schemas/response400'
+    eventEventResponse401:
+      description: Ocorre quando uma requisição não é autorizada.
+      content:
+        application/json:
+          schema:
+            '$ref': '#/components/schemas/response401'
+    eventEventResponse404:
+      description: Ocorre quando o evento não é encontrado.
+      content:
+        application/json:
+          schema:
+            '$ref': '#/components/schemas/response404'
+    eventEventResponse406:
+      description: Ocorre quando um cliente espera uma resposta diferente de application/json usando o header Accept.
+      content:
+        application/json:
+          schema:
+            '$ref': '#/components/schemas/response406'
+    eventEventResponse415:
+      description: Ocorre quando uma requisição envia um Content-Type diferente de application/jwt.
+      content:
+        application/json:
+          schema:
+            '$ref': '#/components/schemas/response415'
+    eventEventResponse500:
+      description: É devolvido quando ocorre um erro não identificado no servidor.
+      content:
+        application/json:
+          schema:
+            '$ref': '#/components/schemas/response500'
+    eventBatchResponse200:
+      description: |
+        O status 200 representa a situação onde todos os registros enviados no lote foram validados
+        e serão direcionados para processamento.
+
+        A operação vai devolver um array com todos os resultados, e garantir que ele esteja na mesma
+        ordem do array de requisição.
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              '$ref': '#/components/schemas/success'
+    eventBatchResponse207:
+      description: |
+        O status 207 (Multi-Status) informa ao solicitante que o formato da solicitação está
+        correto, mas que entradas do array da solicitação contém erro de validação, independente
+        da quantidade. Ou seja, se todos os elementos do array informado estiverem com falha
+        de validação, a operação vai devolver o status 207, e no corpo da resposta todos os
+        elementos do array estarão com o status DISCARDED e com suas respectivas mensagens.
+
+        A operação vai devolver um array com todos os resultados, e garantir que ele esteja na mesma
+        ordem do array de requisição.
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              '$ref': '#/components/schemas/response400'
+    eventBatchResponse400:
+      description: O formato do corpo da requisição não é um array.
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: 'Invalid payload format: MUST be an array'
+            required:
+              - message
+            additionalProperties: false
+    eventBatchResponse401:
+      description: Ocorre quando uma requisição não é autorizada.
+      content:
+        application/json:
+          schema:
+            '$ref': '#/components/schemas/response401'
+    eventBatchResponse406:
+      description: Ocorre quando um cliente espera uma resposta diferente de application/json usando o header Accept.
+      content:
+        application/json:
+          schema:
+            '$ref': '#/components/schemas/response406'
+    eventBatchResponse413:
+      description: |
+        A quantidade de registros enviados excede o limite da operação, ou o tamanho do payload
+        excede o limite configurado no servidor http.
+      content:
+        application/json:
+          schema:
+            '$ref': '#/components/schemas/response413'
+    eventBatchResponse415:
+      description: Ocorre quando uma requisição envia um Content-Type diferente de application/jwt.
+      content:
+        application/json:
+          schema:
+            '$ref': '#/components/schemas/response415'
+    eventBatchResponse500:
+      description: É devolvido quando ocorre um erro não identificado no servidor.
+      content:
+        application/json:
+          schema:
+            '$ref': '#/components/schemas/response500'
