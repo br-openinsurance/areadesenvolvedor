@@ -1,0 +1,581 @@
+<h1 id="api-insurance-financial-assistance">API - Financial Assistance - v1.0.0</h1>
+
+> Scroll down for code samples, example requests and responses. Select a language for code samples from the tabs above or the mobile navigation menu.
+
+**Especificação em OAS 3.0** </br>
+<a href="files/swagger/insurance-financial-assistance.yaml" download="insurance-financial-assistance.yaml">Download da Especificação</a>
+
+API de Assistência Financeira do Open Insurance Brasil - Fase 2.
+
+Traz informações de contrato e movimentações financeiras mantidas nas instituições transmissoras por seus clientes.
+
+Não possui segregação entre pessoa natural e pessoa jurídica.
+
+Requer consentimento do cliente para todos os `endpoints`.
+
+Base URLs:
+
+**Servidor de Produção** </br>
+* <a href="https://api.organizacao.com.br/open-insurance/insurance-financial-assistance/v1">https://api.organizacao.com.br/open-insurance/insurance-financial-assistance/v1</a>
+
+**Servidor de Homologação** </br>
+* <a href="https://api.organizacao.com.br/open-insurance/insurance-financial-assistance/v1">https://api.organizacao.com.br/open-insurance/insurance-financial-assistance/v1</a>
+
+Web: <a href="https://www.gov.br/susep">Governança do Open Insurance Brasil</a> 
+
+<h2 id="api-insurance-financial-assistance-orientacoes">Orientações</h2>
+
+A `Role` do diretório de participantes relacionada à presente API é a `DADOS`.
+
+Para todos os `endpoints` desta API é previsto o envio de um `token` através do header `Authorization`.
+
+Este `token` deverá estar relacionado ao consentimento (identificado pelo `consentId`) mantido na instituição transmissora dos dados, o qual permitirá a pesquisa e retorno, na API em questão, dos 
+dados relacionados ao `consentId` específico.
+
+Os dados serão devolvidos na consulta desde que o `consentId` relacionado corresponda a um consentimento válido e com o status `AUTHORISED`.
+
+É também necessário que o recurso em questão (conta, contrato, etc.) esteja disponível na instituição transmissora (ou seja, sem boqueios de qualquer natureza e com todas as autorizações/consentimentos já autorizados).
+
+Além disso, as `permissions` necessárias deverão ter sido solicitadas quando da criação do consentimento relacionado.
+
+Relacionamos a seguir as `permissions` necessárias para a consulta de dados em cada `endpoint` da presente API.
+
+
+<h2 id="permissions-necessarias-para-a-api-insurancefinancialassistance">Permissions necessárias para a API InsuranceFinancialAssistance</h2>
+
+Para cada um dos `paths` desta API, além dos escopos (`scopes`) indicados existem `permissions` que deverão ser observadas:
+
+### `/contracts`
+  - permissions:
+    - GET: **FINANCIAL_ASSISTANCE_READ**
+
+### `/{contractId}/contract-info`
+  - permissions:
+    - GET: **FINANCIAL_ASSISTANCE_CONTRACTINFO_READ**
+
+### `/{contractId}/movements`
+  - permissions:
+    - GET: **FINANCIAL_ASSISTANCE_MOVEMENTS_READ**
+
+    ### Authentication
+
+- oAuth2 authentication. Fluxo OAuth necessário para que a receptora tenha acesso aos dados na instituição transmissora. Inclui o processo de redirecionamento e autenticação do usuário a que se referem os dados.
+
+    - Flow: authorizationCode
+    - Authorization URL = [https://authserver.example/authorization](https://authserver.example/authorization)
+    - Token URL = [https://authserver.example/token](https://authserver.example/token)
+
+|Scope|Scope Description|
+|---|---|
+|insurance-financial-assistance|Escopo necessário para acesso à API. O controle dos endpoints específicos é feito via permissions.|
+
+Dados transacionais de Assistência Financeira
+
+
+<h2 id="obtem-a-lista-de-identificacao-de-insurancefinancialassistance">Obtem a lista de identificação de InsuranceFinancialAssistance</h2>
+
+<a id="opIdgetInsuranceFinancialAssistance"></a>
+
+> Code samples
+
+```javascript
+const data = null;
+
+const xhr = new XMLHttpRequest();
+xhr.withCredentials = true;
+
+xhr.addEventListener("readystatechange", function () {
+  if (this.readyState === this.DONE) {
+    console.log(this.responseText);
+  }
+});
+
+xhr.open("GET", "https://api.organizacao.com.br/open-insurance/insurance-financial-assistance/v1/insurance-financial-assistance/contracts");
+xhr.setRequestHeader("Accept", "application/json");
+xhr.setRequestHeader("Authorization", "string");
+xhr.setRequestHeader("x-fapi-auth-date", "stringstringstringstringstrin");
+xhr.setRequestHeader("x-fapi-customer-ip-address", "string");
+xhr.setRequestHeader("x-fapi-interaction-id", "string");
+xhr.setRequestHeader("x-customer-user-agent", "string");
+
+xhr.send(data);
+```
+
+```python
+import http.client
+
+conn = http.client.HTTPSConnection("api.organizacao.com.br")
+
+headers = {
+    'Accept': "application/json",
+    'Authorization': "string",
+    'x-fapi-auth-date': "stringstringstringstringstrin",
+    'x-fapi-customer-ip-address': "string",
+    'x-fapi-interaction-id': "string",
+    'x-customer-user-agent': "string"
+    }
+
+conn.request("GET", "/open-insurance/insurance-financial-assistance/v1/insurance-financial-assistance/contracts", headers=headers)
+
+res = conn.getresponse()
+data = res.read()
+
+print(data.decode("utf-8"))
+```
+
+```java
+HttpResponse<String> response = Unirest.get("https://api.organizacao.com.br/open-insurance/insurance-financial-assistance/v1/insurance-financial-assistance/contracts")
+  .header("Accept", "application/json")
+  .header("Authorization", "string")
+  .header("x-fapi-auth-date", "stringstringstringstringstrin")
+  .header("x-fapi-customer-ip-address", "string")
+  .header("x-fapi-interaction-id", "string")
+  .header("x-customer-user-agent", "string")
+  .asString();
+```
+
+`GET /insurance-financial-assistance/contracts`
+
+Método para obter a lista de identificação de InsuranceFinancialAssistance
+
+<h3 id="obtem-a-lista-de-identificação-de-insurancefinancialassistance-parameters">Parameters</h3>
+
+|Name|In|Type|Required|Description|
+|---|---|---|---|---|
+|Authorization|header|string|true|Cabeçalho HTTP padrão. Permite que as credenciais sejam fornecidas dependendo do tipo de recurso solicitado.|
+|x-fapi-auth-date|header|string|false|Data em que o usuário logou pela última vez com o receptor. Representada de acordo com a [RFC7231](https://tools.ietf.org/html/rfc7231). Exemplo: Sun, 10 Sep 2017 19:43:31 UTC|
+|x-fapi-customer-ip-address|header|string|false|O endereço IP do usuário se estiver atualmente logado com o receptor.|
+|x-fapi-interaction-id|header|string|false|Um UID [RFC4122](https://tools.ietf.org/html/rfc4122) usado como um ID de correlação. Se fornecido, o transmissor deve "reproduzir" esse valor no cabeçalho de resposta.|
+|x-customer-user-agent|header|string|false|Indica o user-agent que o usuário utiliza.|
+|page|query|integer(int32)|false|Número da página que está sendo requisitada (o valor da primeira página é 1).|
+|page-size|query|integer(int32)|false|Quantidade total de registros por páginas.|
+
+> Example responses
+
+> 200 Response
+
+```json
+{
+  "data": {
+    "brand": {
+      "name": "EMPRESA A SEGUROS",
+      "companies": [
+        {
+          "companyName": "Empresa da Organização A",
+          "cnpjNumber": "12345678901234",
+          "contracts": [
+            {
+              "contractId": "42"
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "links": {
+    "self": "https://api.organizacao.com.br/open-insurance/insurance-financial-assistance/v1/insurance-financial-assistance",
+    "first": "https://api.organizacao.com.br/open-insurance/insurance-financial-assistance/v1/insurance-financial-assistance",
+    "prev": "https://api.organizacao.com.br/open-insurance/insurance-financial-assistance/v1/insurance-financial-assistance",
+    "next": "https://api.organizacao.com.br/open-insurance/insurance-financial-assistance/v1/insurance-financial-assistance",
+    "last": "https://api.organizacao.com.br/open-insurance/insurance-financial-assistance/v1/insurance-financial-assistance"
+  },
+  "meta": {
+    "totalRecords": 10,
+    "totalPages": 1
+  }
+}
+```
+
+<h3 id="obtem-a-lista-de-identificação-de-insurancefinancialassistance-responses">Responses</h3>
+
+|Status|Meaning|Description|Schema|
+|---|---|---|---|
+|200|[OK](https://tools.ietf.org/html/rfc7231#section-6.3.1)|Dados de ResponseInsuranceFinancialAssistance obtidos com sucesso|[ResponseInsuranceFinancialAssistance](#schemaresponseinsurancefinancialassistance)|
+|400|[Bad Request](https://tools.ietf.org/html/rfc7231#section-6.5.1)|A requisição foi malformada, omitindo atributos obrigatórios, seja no payload ou através de atributos na URL|[ResponseError](#schemaresponseerrorfinancialassistance)|
+|401|[Unauthorized](https://tools.ietf.org/html/rfc7235#section-3.1)|Cabeçalho de autenticação ausente/inválido ou token inválido|[ResponseError](#schemaresponseerrorfinancialassistance)|
+|403|[Forbidden](https://tools.ietf.org/html/rfc7231#section-6.5.3)|O token tem escopo incorreto ou uma política de segurança foi violada|[ResponseError](#schemaresponseerrorfinancialassistance)|
+|404|[Not Found](https://tools.ietf.org/html/rfc7231#section-6.5.4)|O recurso solicitado não existe ou não foi implementado|[ResponseError](#schemaresponseerrorfinancialassistance)|
+|405|[Method Not Allowed](https://tools.ietf.org/html/rfc7231#section-6.5.5)|O consumidor tentou acessar o recurso com um método não suportado|[ResponseError](#schemaresponseerrorfinancialassistance)|
+|406|[Not Acceptable](https://tools.ietf.org/html/rfc7231#section-6.5.6)|A solicitação continha um cabeçalho Accept diferente dos tipos de mídia permitidos ou um conjunto de caracteres diferente de UTF-8|[ResponseError](#schemaresponseerrorfinancialassistance)|
+|422|[Unprocessable Entity](https://tools.ietf.org/html/rfc2518#section-10.3)|O servidor entende o tipo de conteúdo da entidade da requisição, e a sintaxe da requisição esta correta, mas não foi possível processar as instruções presentes|[ResponseError](#schemaresponseerrorfinancialassistance)|
+|429|[Too Many Requests](https://tools.ietf.org/html/rfc6585#section-4)|A operação foi recusada, pois muitas solicitações foram feitas dentro de um determinado período ou o limite global de requisições concorrentes foi atingido|[ResponseError](#schemaresponseerrorfinancialassistance)|
+|500|[Internal Server Error](https://tools.ietf.org/html/rfc7231#section-6.6.1)|Ocorreu um erro no gateway da API ou no microsserviço|[ResponseError](#schemaresponseerrorfinancialassistance)|
+
+### Response Headers
+
+|Status|Header|Type|Format|Description|
+|---|---|---|---|---|
+|200|x-fapi-interaction-id|string||none|
+
+<aside class="warning">
+To perform this operation, you must be authenticated by means of one of the following methods:
+OpenId ( Scopes: openid ) & OAuth2Security ( Scopes: consent:consentId insurance-financial-assistance )
+</aside>
+
+## Obtém as informações gerais do contrato identificado por {contractId}
+
+<h2 id="obtem-as-informacaes-gerais-do-contrato-identificado por-insurancefinancialassistance">Obtém as informações gerais do contrato identificado por</h2>
+
+<a id="opIdgetInsuranceFinancialAssistanceContractInfo"></a>
+
+> Code samples
+
+```javascript
+const data = null;
+
+const xhr = new XMLHttpRequest();
+xhr.withCredentials = true;
+
+xhr.addEventListener("readystatechange", function () {
+  if (this.readyState === this.DONE) {
+    console.log(this.responseText);
+  }
+});
+
+xhr.open("GET", "https://api.organizacao.com.br/open-insurance/insurance-financial-assistance/v1/insurance-financial-assistance/string/contract-info");
+xhr.setRequestHeader("Accept", "application/json");
+xhr.setRequestHeader("Authorization", "string");
+xhr.setRequestHeader("x-fapi-auth-date", "stringstringstringstringstrin");
+xhr.setRequestHeader("x-fapi-customer-ip-address", "string");
+xhr.setRequestHeader("x-fapi-interaction-id", "string");
+xhr.setRequestHeader("x-customer-user-agent", "string");
+
+xhr.send(data);
+```
+
+```python
+import http.client
+
+conn = http.client.HTTPSConnection("api.organizacao.com.br")
+
+headers = {
+    'Accept': "application/json",
+    'Authorization': "string",
+    'x-fapi-auth-date': "stringstringstringstringstrin",
+    'x-fapi-customer-ip-address': "string",
+    'x-fapi-interaction-id': "string",
+    'x-customer-user-agent': "string"
+    }
+
+conn.request("GET", "/open-insurance/insurance-financial-assistance/v1/insurance-financial-assistance/string/contract-info", headers=headers)
+
+res = conn.getresponse()
+data = res.read()
+
+print(data.decode("utf-8"))
+```
+
+```java
+HttpResponse<String> response = Unirest.get("https://api.organizacao.com.br/open-insurance/insurance-financial-assistance/v1/insurance-financial-assistance/string/contract-info")
+  .header("Accept", "application/json")
+  .header("Authorization", "string")
+  .header("x-fapi-auth-date", "stringstringstringstringstrin")
+  .header("x-fapi-customer-ip-address", "string")
+  .header("x-fapi-interaction-id", "string")
+  .header("x-customer-user-agent", "string")
+  .asString();
+```
+
+`GET /insurance-financial-assistance/{contractId}/contract-info`
+
+Método para obter as informações gerais do contrato
+
+<h3 id="obtém-as-informações-gerais-do-contrato-identificado-por-{contractid}-parameters">Parameters</h3>
+
+|Name|In|Type|Required|Description|
+|---|---|---|---|---|
+|Authorization|header|string|true|Cabeçalho HTTP padrão. Permite que as credenciais sejam fornecidas dependendo do tipo de recurso solicitado.|
+|x-fapi-auth-date|header|string|false|Data em que o usuário logou pela última vez com o receptor. Representada de acordo com a [RFC7231](https://tools.ietf.org/html/rfc7231). Exemplo: Sun, 10 Sep 2017 19:43:31 UTC|
+|x-fapi-customer-ip-address|header|string|false|O endereço IP do usuário se estiver atualmente logado com o receptor.|
+|x-fapi-interaction-id|header|string|false|Um UID [RFC4122](https://tools.ietf.org/html/rfc4122) usado como um ID de correlação. Se fornecido, o transmissor deve "reproduzir" esse valor no cabeçalho de resposta.|
+|x-customer-user-agent|header|string|false|Indica o user-agent que o usuário utiliza.|
+|contractId|path|string|true|Identificador do contrato de assistência financeira|
+
+> Example responses
+
+> 200 Response
+
+```json
+{
+  "data": {
+    "contractId": "42",
+    "certificateId": "42",
+    "groupContractId": "42",
+    "susepProcessNumber": "12345",
+    "insureds": [
+      {
+        "documentType": "CPF",
+        "documentNumber": "12345678910",
+        "name": "Juan Kaique Cláudio Fernandes"
+      }
+    ],
+    "conceivedCreditValue": {
+      "amount": "2000.00",
+      "unit": {
+        "code": "R$",
+        "description": "BRL"
+      }
+    },
+    "creditedLiquidValue": {
+      "amount": "2000.00",
+      "unit": {
+        "code": "R$",
+        "description": "BRL"
+      }
+    },
+    "counterInstallments": {
+      "value": {
+        "amount": "2000.00",
+        "unit": {
+          "code": "R$",
+          "description": "BRL"
+        }
+      },
+      "periodicity": "MENSAL",
+      "quantity": 4,
+      "firstDate": "2021-05-21",
+      "lastDate": "2021-09-21"
+    },
+    "interestRate": 10,
+    "effectiveCostRate": 10,
+    "amortizationPeriod": 4,
+    "acquittanceValue": {
+      "amount": "2000.00",
+      "unit": {
+        "code": "R$",
+        "description": "BRL"
+      }
+    },
+    "acquittanceDate": "2021-09-21",
+    "taxesValue": {
+      "amount": "2000.00",
+      "unit": {
+        "code": "R$",
+        "description": "BRL"
+      }
+    },
+    "expensesValue": {
+      "amount": "2000.00",
+      "unit": {
+        "code": "R$",
+        "description": "BRL"
+      }
+    },
+    "finesValue": {
+      "amount": "2000.00",
+      "unit": {
+        "code": "R$",
+        "description": "BRL"
+      }
+    },
+    "monetaryUpdatesValue": {
+      "amount": "2000.00",
+      "unit": {
+        "code": "R$",
+        "description": "BRL"
+      }
+    },
+    "administrativeFeesValue": {
+      "amount": "2000.00",
+      "unit": {
+        "code": "R$",
+        "description": "BRL"
+      }
+    },
+    "interestValue": {
+      "amount": "2000.00",
+      "unit": {
+        "code": "R$",
+        "description": "BRL"
+      }
+    }
+  },
+  "links": {
+    "self": "https://api.organizacao.com.br/open-insurance/insurance-financial-assistance/v1/insurance-financial-assistance",
+    "first": "https://api.organizacao.com.br/open-insurance/insurance-financial-assistance/v1/insurance-financial-assistance",
+    "prev": "https://api.organizacao.com.br/open-insurance/insurance-financial-assistance/v1/insurance-financial-assistance",
+    "next": "https://api.organizacao.com.br/open-insurance/insurance-financial-assistance/v1/insurance-financial-assistance",
+    "last": "https://api.organizacao.com.br/open-insurance/insurance-financial-assistance/v1/insurance-financial-assistance"
+  },
+  "meta": {
+    "totalRecords": 10,
+    "totalPages": 1
+  }
+}
+```
+
+<h3 id="obtém-as-informações-gerais-do-contrato-identificado-por-{contractid}-responses">Responses</h3>
+
+|Status|Meaning|Description|Schema|
+|---|---|---|---|
+|200|[OK](https://tools.ietf.org/html/rfc7231#section-6.3.1)|Dados de ResponseInsuranceFinancialAssistanceContractInfo obtidos com sucesso|[ResponseInsuranceFinancialAssistanceContractInfo](#schemaresponseinsurancefinancialassistancecontractinfo)|
+|400|[Bad Request](https://tools.ietf.org/html/rfc7231#section-6.5.1)|A requisição foi malformada, omitindo atributos obrigatórios, seja no payload ou através de atributos na URL|[ResponseError](#schemaresponseerrorfinancialassistance)|
+|401|[Unauthorized](https://tools.ietf.org/html/rfc7235#section-3.1)|Cabeçalho de autenticação ausente/inválido ou token inválido|[ResponseError](#schemaresponseerrorfinancialassistance)|
+|403|[Forbidden](https://tools.ietf.org/html/rfc7231#section-6.5.3)|O token tem escopo incorreto ou uma política de segurança foi violada|[ResponseError](#schemaresponseerrorfinancialassistance)|
+|404|[Not Found](https://tools.ietf.org/html/rfc7231#section-6.5.4)|O recurso solicitado não existe ou não foi implementado|[ResponseError](#schemaresponseerrorfinancialassistance)|
+|405|[Method Not Allowed](https://tools.ietf.org/html/rfc7231#section-6.5.5)|O consumidor tentou acessar o recurso com um método não suportado|[ResponseError](#schemaresponseerrorfinancialassistance)|
+|406|[Not Acceptable](https://tools.ietf.org/html/rfc7231#section-6.5.6)|A solicitação continha um cabeçalho Accept diferente dos tipos de mídia permitidos ou um conjunto de caracteres diferente de UTF-8|[ResponseError](#schemaresponseerrorfinancialassistance)|
+|422|[Unprocessable Entity](https://tools.ietf.org/html/rfc2518#section-10.3)|O servidor entende o tipo de conteúdo da entidade da requisição, e a sintaxe da requisição esta correta, mas não foi possível processar as instruções presentes|[ResponseError](#schemaresponseerrorfinancialassistance)|
+|429|[Too Many Requests](https://tools.ietf.org/html/rfc6585#section-4)|A operação foi recusada, pois muitas solicitações foram feitas dentro de um determinado período ou o limite global de requisições concorrentes foi atingido|[ResponseError](#schemaresponseerrorfinancialassistance)|
+|500|[Internal Server Error](https://tools.ietf.org/html/rfc7231#section-6.6.1)|Ocorreu um erro no gateway da API ou no microsserviço|[ResponseError](#schemaresponseerrorfinancialassistance)|
+
+### Response Headers
+
+|Status|Header|Type|Format|Description|
+|---|---|---|---|---|
+|200|x-fapi-interaction-id|string||none|
+
+<aside class="warning">
+To perform this operation, you must be authenticated by means of one of the following methods:
+OpenId ( Scopes: openid ) & OAuth2Security ( Scopes: consent:consentId insurance-financial-assistance )
+</aside>
+
+<h2 id="obtem-os-dados-de-movimentacao-do-contrato-identificado-por-insurancefinancialassistance">Obtém os dados de movimentação do contrato identificado por {contractId}</h2>
+
+<a id="opIdgetInsuranceFinancialAssistanceMovements"></a>
+
+> Code samples
+
+```javascript
+const data = null;
+
+const xhr = new XMLHttpRequest();
+xhr.withCredentials = true;
+
+xhr.addEventListener("readystatechange", function () {
+  if (this.readyState === this.DONE) {
+    console.log(this.responseText);
+  }
+});
+
+xhr.open("GET", "https://api.organizacao.com.br/open-insurance/insurance-financial-assistance/v1/insurance-financial-assistance/string/movements");
+xhr.setRequestHeader("Accept", "application/json");
+xhr.setRequestHeader("Authorization", "string");
+xhr.setRequestHeader("x-fapi-auth-date", "stringstringstringstringstrin");
+xhr.setRequestHeader("x-fapi-customer-ip-address", "string");
+xhr.setRequestHeader("x-fapi-interaction-id", "string");
+xhr.setRequestHeader("x-customer-user-agent", "string");
+
+xhr.send(data);
+```
+
+```python
+import http.client
+
+conn = http.client.HTTPSConnection("api.organizacao.com.br")
+
+headers = {
+    'Accept': "application/json",
+    'Authorization': "string",
+    'x-fapi-auth-date': "stringstringstringstringstrin",
+    'x-fapi-customer-ip-address': "string",
+    'x-fapi-interaction-id': "string",
+    'x-customer-user-agent': "string"
+    }
+
+conn.request("GET", "/open-insurance/insurance-financial-assistance/v1/insurance-financial-assistance/string/movements", headers=headers)
+
+res = conn.getresponse()
+data = res.read()
+
+print(data.decode("utf-8"))
+```
+
+```java
+HttpResponse<String> response = Unirest.get("https://api.organizacao.com.br/open-insurance/insurance-financial-assistance/v1/insurance-financial-assistance/string/movements")
+  .header("Accept", "application/json")
+  .header("Authorization", "string")
+  .header("x-fapi-auth-date", "stringstringstringstringstrin")
+  .header("x-fapi-customer-ip-address", "string")
+  .header("x-fapi-interaction-id", "string")
+  .header("x-customer-user-agent", "string")
+  .asString();
+```
+
+`GET /insurance-financial-assistance/{contractId}/movements`
+
+Método para obter os dados de movimentação do contrato.
+
+<h3 id="obtém-os-dados-de-movimentação-do-contrato-identificado-por-{contractid}-parameters">Parameters</h3>
+
+|Name|In|Type|Required|Description|
+|---|---|---|---|---|
+|Authorization|header|string|true|Cabeçalho HTTP padrão. Permite que as credenciais sejam fornecidas dependendo do tipo de recurso solicitado.|
+|x-fapi-auth-date|header|string|false|Data em que o usuário logou pela última vez com o receptor. Representada de acordo com a [RFC7231](https://tools.ietf.org/html/rfc7231). Exemplo: Sun, 10 Sep 2017 19:43:31 UTC|
+|x-fapi-customer-ip-address|header|string|false|O endereço IP do usuário se estiver atualmente logado com o receptor.|
+|x-fapi-interaction-id|header|string|false|Um UID [RFC4122](https://tools.ietf.org/html/rfc4122) usado como um ID de correlação. Se fornecido, o transmissor deve "reproduzir" esse valor no cabeçalho de resposta.|
+|x-customer-user-agent|header|string|false|Indica o user-agent que o usuário utiliza.|
+|contractId|path|string|true|Identificador do contrato de assistência financeira|
+
+> Example responses
+
+> 200 Response
+
+```json
+{
+  "data": [
+    {
+      "updatedDebitAmount": {
+        "amount": "2000.00",
+        "unit": {
+          "code": "R$",
+          "description": "BRL"
+        }
+      },
+      "remainingCounterInstallmentsQuantity": 4,
+      "remainingUnpaidCounterInstallmentsQuantity": 4,
+      "lifePensionPmBacAmount": {
+        "amount": "2000.00",
+        "unit": {
+          "code": "R$",
+          "description": "BRL"
+        }
+      },
+      "pensionPlanPmBacAmount": {
+        "amount": "2000.00",
+        "unit": {
+          "code": "R$",
+          "description": "BRL"
+        }
+      }
+    }
+  ],
+  "links": {
+    "self": "https://api.organizacao.com.br/open-insurance/insurance-financial-assistance/v1/insurance-financial-assistance",
+    "first": "https://api.organizacao.com.br/open-insurance/insurance-financial-assistance/v1/insurance-financial-assistance",
+    "prev": "https://api.organizacao.com.br/open-insurance/insurance-financial-assistance/v1/insurance-financial-assistance",
+    "next": "https://api.organizacao.com.br/open-insurance/insurance-financial-assistance/v1/insurance-financial-assistance",
+    "last": "https://api.organizacao.com.br/open-insurance/insurance-financial-assistance/v1/insurance-financial-assistance"
+  },
+  "meta": {
+    "totalRecords": 10,
+    "totalPages": 1
+  }
+}
+```
+
+<h3 id="obtém-os-dados-de-movimentação-do-contrato-identificado-por-{contractid}-responses">Responses</h3>
+
+|Status|Meaning|Description|Schema|
+|---|---|---|---|
+|200|[OK](https://tools.ietf.org/html/rfc7231#section-6.3.1)|Dados de ResponseInsuranceFinancialAssistanceMovements obtidos com sucesso|[ResponseInsuranceFinancialAssistanceMovements](#schemaresponseinsurancefinancialassistancemovements)|
+|400|[Bad Request](https://tools.ietf.org/html/rfc7231#section-6.5.1)|A requisição foi malformada, omitindo atributos obrigatórios, seja no payload ou através de atributos na URL|[ResponseError](#schemaresponseerrorfinancialassistance)|
+|401|[Unauthorized](https://tools.ietf.org/html/rfc7235#section-3.1)|Cabeçalho de autenticação ausente/inválido ou token inválido|[ResponseError](#schemaresponseerrorfinancialassistance)|
+|403|[Forbidden](https://tools.ietf.org/html/rfc7231#section-6.5.3)|O token tem escopo incorreto ou uma política de segurança foi violada|[ResponseError](#schemaresponseerrorfinancialassistance)|
+|404|[Not Found](https://tools.ietf.org/html/rfc7231#section-6.5.4)|O recurso solicitado não existe ou não foi implementado|[ResponseError](#schemaresponseerrorfinancialassistance)|
+|405|[Method Not Allowed](https://tools.ietf.org/html/rfc7231#section-6.5.5)|O consumidor tentou acessar o recurso com um método não suportado|[ResponseError](#schemaresponseerrorfinancialassistance)|
+|406|[Not Acceptable](https://tools.ietf.org/html/rfc7231#section-6.5.6)|A solicitação continha um cabeçalho Accept diferente dos tipos de mídia permitidos ou um conjunto de caracteres diferente de UTF-8|[ResponseError](#schemaresponseerrorfinancialassistance)|
+|422|[Unprocessable Entity](https://tools.ietf.org/html/rfc2518#section-10.3)|O servidor entende o tipo de conteúdo da entidade da requisição, e a sintaxe da requisição esta correta, mas não foi possível processar as instruções presentes|[ResponseError](#schemaresponseerrorfinancialassistance)|
+|429|[Too Many Requests](https://tools.ietf.org/html/rfc6585#section-4)|A operação foi recusada, pois muitas solicitações foram feitas dentro de um determinado período ou o limite global de requisições concorrentes foi atingido|[ResponseError](#schemaresponseerrorfinancialassistance)|
+|500|[Internal Server Error](https://tools.ietf.org/html/rfc7231#section-6.6.1)|Ocorreu um erro no gateway da API ou no microsserviço|[ResponseError](#schemaresponseerrorfinancialassistance)|
+
+### Response Headers
+
+|Status|Header|Type|Format|Description|
+|---|---|---|---|---|
+|200|x-fapi-interaction-id|string||none|
+
+<aside class="warning">
+To perform this operation, you must be authenticated by means of one of the following methods:
+OpenId ( Scopes: openid ) & OAuth2Security ( Scopes: consent:consentId insurance-financial-assistance )
+</aside>
