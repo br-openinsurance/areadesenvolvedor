@@ -1,0 +1,1108 @@
+<h1 id="api-insurance-life-pension">API - Life Pension - v1.1.0</h1>
+
+> Scroll down for code samples, example requests and responses. Select a language for code samples from the tabs above or the mobile navigation menu.
+
+**Especificação em OAS 3.0** </br>
+<a href="files/swagger/insurance-life-pension.yaml" download="insurance-life-pension.yaml">Download da Especificação</a>
+
+**Detalhamento Técnico** </br>
+<a href="files/docs/insurance-life-pension.docx" download="insurance-life-pension.docx">Download do Detalhamento Técnico</a>
+
+API de Previdência Sobrevivência do Open Insurance Brasil - Fase 2.
+
+Traz informações de contrato, contribuições e benefício, portabilidade, resgate e sinistro mantidas nas instituições transmissoras por seus clientes.
+
+Não possui segregação entre pessoa natural e pessoa jurídica.
+
+Requer consentimento do cliente para todos os `endpoints`.
+
+Base URLs:
+
+**Servidor de Produção** </br>
+* <a href="https://api.organizacao.com.br/open-insurance/insurance-life-pension/v1">https://api.organizacao.com.br/open-insurance/insurance-life-pension/v1</a>
+
+**Servidor de Homologação** </br>
+* <a href="https://api.organizacao.com.br/open-insurance/insurance-life-pension/v1">https://api.organizacao.com.br/open-insurance/insurance-life-pension/v1</a>
+
+Web: <a href="https://www.gov.br/susep">Governança do Open Insurance Brasil</a> 
+
+<h2 id="api-insurance-life-pension-orientacoes">Orientações</h2>
+
+A `Role`  do diretório de participantes relacionada à presente API é a `DADOS`.
+
+Para todos os `endpoints` desta API é previsto o envio de um `token` através do header `Authorization`.
+
+Este `token` deverá estar relacionado ao consentimento (identificado pelo `consentId`) mantido na instituição transmissora dos dados, o qual permitirá a pesquisa e retorno, na API em questão, dos 
+dados relacionados ao `consentId` específico.
+
+Os dados serão devolvidos na consulta desde que o `consentId` relacionado corresponda a um consentimento válido e com o status `AUTHORISED`.
+
+É também necessário que o recurso em questão (conta, contrato, etc.) esteja disponível na instituição transmissora (ou seja, sem boqueios de qualquer natureza e com todas as autorizações/consentimentos já autorizados).
+
+Além disso, as `permissions` necessárias deverão ter sido solicitadas quando da criação do consentimento relacionado.
+
+Relacionamos a seguir as `permissions` necessárias para a consulta de dados em cada `endpoint` da presente API.
+
+<h2 id="permissions-necessarias-para-a-api-insurancelifepension">Permissions necessárias para a API InsuranceLifePension</h2>
+
+Para cada um dos `paths` desta API, além dos escopos (`scopes`) indicados existem `permissions` que deverão ser observadas:
+
+### `/contracts`
+  - permissions:
+    - GET: **LIFE_PENSION_READ**
+
+### `/{pensionIdentification}/contract-info`
+  - permissions:
+    - GET: **LIFE_PENSION_CONTRACTINFO_READ**
+
+### `/{pensionIdentification}/movements`
+  - permissions:
+    - GET: **LIFE_PENSION_MOVEMENTS_READ**
+
+### `/{pensionIdentification}/portabilites`
+  - permissions:
+    - GET: **LIFE_PENSION_PORTABILITIES_READ**
+
+### `/{pensionIdentification}/withdrawals`
+  - permissions:
+    - GET: **LIFE_PENSION_WITHDRAWALS_READ**
+
+### `/{pensionIdentification}/claim`
+  - permissions:
+    - GET: **LIFE_PENSION_CLAIM**
+
+
+### Authentication
+
+- oAuth2 authentication. Fluxo OAuth necessário para que a receptora tenha acesso aos dados na instituição transmissora. Inclui o processo de redirecionamento e autenticação do usuário a que se referem os dados.
+
+    - Flow: authorizationCode
+    - Authorization URL = [https://authserver.example/authorization](https://authserver.example/authorization)
+    - Token URL = [https://authserver.example/token](https://authserver.example/token)
+
+|Scope|Scope Description|
+|---|---|
+|insurance-life-pension|Escopo necessário para acesso à API. O controle dos endpoints específicos é feito via permissions.|
+
+Dados transacionais de Previdência Sobrevivência
+
+<h2 id="obtem-a-lista-de-identificacao-de-insurancelifepension">Obtem a lista de identificação de InsuranceLifePension</h2>
+
+<a id="opIdgetInsuranceLifePension"></a>
+
+> Code samples
+
+```javascript
+const data = null;
+
+const xhr = new XMLHttpRequest();
+xhr.withCredentials = true;
+
+xhr.addEventListener("readystatechange", function () {
+  if (this.readyState === this.DONE) {
+    console.log(this.responseText);
+  }
+});
+
+xhr.open("GET", "https://api.organizacao.com.br/open-insurance/insurance-life-pension/v1/insurance-life-pension/contracts");
+xhr.setRequestHeader("Accept", "application/json");
+xhr.setRequestHeader("Authorization", "string");
+xhr.setRequestHeader("x-fapi-auth-date", "stringstringstringstringstrin");
+xhr.setRequestHeader("x-fapi-customer-ip-address", "string");
+xhr.setRequestHeader("x-fapi-interaction-id", "string");
+xhr.setRequestHeader("x-customer-user-agent", "string");
+
+xhr.send(data);
+```
+
+```python
+import http.client
+
+conn = http.client.HTTPSConnection("api.organizacao.com.br")
+
+headers = {
+    'Accept': "application/json",
+    'Authorization': "string",
+    'x-fapi-auth-date': "stringstringstringstringstrin",
+    'x-fapi-customer-ip-address': "string",
+    'x-fapi-interaction-id': "string",
+    'x-customer-user-agent': "string"
+    }
+
+conn.request("GET", "/open-insurance/insurance-life-pension/v1/insurance-life-pension/contracts", headers=headers)
+
+res = conn.getresponse()
+data = res.read()
+
+print(data.decode("utf-8"))
+```
+
+```java
+HttpResponse<String> response = Unirest.get("https://api.organizacao.com.br/open-insurance/insurance-life-pension/v1/insurance-life-pension/contracts")
+  .header("Accept", "application/json")
+  .header("Authorization", "string")
+  .header("x-fapi-auth-date", "stringstringstringstringstrin")
+  .header("x-fapi-customer-ip-address", "string")
+  .header("x-fapi-interaction-id", "string")
+  .header("x-customer-user-agent", "string")
+  .asString();
+```
+
+`GET /insurance-life-pension/contracts`
+
+Método para obter a lista de identificação de InsuranceLifePension
+
+<h3 id="obtem-a-lista-de-identificação-de-insurancelifepension-parameters">Parameters</h3>
+
+|Name|In|Type|Required|Description|
+|---|---|---|---|---|
+|Authorization|header|string|true|Cabeçalho HTTP padrão. Permite que as credenciais sejam fornecidas dependendo do tipo de recurso solicitado.|
+|x-fapi-auth-date|header|string|false|Data em que o usuário logou pela última vez com o receptor. Representada de acordo com a [RFC7231](https://tools.ietf.org/html/rfc7231). Exemplo: Sun, 10 Sep 2017 19:43:31 UTC|
+|x-fapi-customer-ip-address|header|string|false|O endereço IP do usuário se estiver atualmente logado com o receptor.|
+|x-fapi-interaction-id|header|string|false|Um UID [RFC4122](https://tools.ietf.org/html/rfc4122) usado como um ID de correlação. Se fornecido, o transmissor deve "reproduzir" esse valor no cabeçalho de resposta.|
+|x-customer-user-agent|header|string|false|Indica o user-agent que o usuário utiliza.|
+|page|query|integer(int32)|false|Número da página que está sendo requisitada (o valor da primeira página é 1).|
+|page-size|query|integer(int32)|false|Quantidade total de registros por páginas.|
+
+> Example responses
+
+> 200 Response
+
+```json
+{
+  "data": {
+    "brand": {
+      "name": "EMPRESA A SEGUROS",
+      "companies": [
+        {
+          "companyName": "Empresa da Organização A",
+          "cnpjNumber": "12345678901234",
+          "contracts": [
+            {
+              "productName": "Produto A Previdência",
+              "pensionIdentification": "42"
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "links": {
+    "self": "https://api.organizacao.com.br/open-insurance/insurance-life-pension/v1/insurance-life-pension",
+    "first": "https://api.organizacao.com.br/open-insurance/insurance-life-pension/v1/insurance-life-pension",
+    "prev": "https://api.organizacao.com.br/open-insurance/insurance-life-pension/v1/insurance-life-pension",
+    "next": "https://api.organizacao.com.br/open-insurance/insurance-life-pension/v1/insurance-life-pension",
+    "last": "https://api.organizacao.com.br/open-insurance/insurance-life-pension/v1/insurance-life-pension"
+  },
+  "meta": {
+    "totalRecords": 10,
+    "totalPages": 1
+  }
+}
+```
+
+<h3 id="obtem-a-lista-de-identificação-de-insurancelifepension-responses">Responses</h3>
+
+|Status|Meaning|Description|Schema|
+|---|---|---|---|
+|200|[OK](https://tools.ietf.org/html/rfc7231#section-6.3.1)|Dados de ResponseInsuranceLifePension obtidos com sucesso|[ResponseInsuranceLifePension](#schemaresponseinsurancelifepension)|
+|204|[No Content](https://tools.ietf.org/html/rfc7231#section-6.3.5)|O recurso solicitado não existe ou não foi localizado.|[ResponseError](#schemaresponseerrorinsurancelifepension)|
+|400|[Bad Request](https://tools.ietf.org/html/rfc7231#section-6.5.1)|A requisição foi malformada, omitindo atributos obrigatórios, seja no payload ou através de atributos na URL|[ResponseError](#schemaresponseerrorinsurancelifepension)|
+|401|[Unauthorized](https://tools.ietf.org/html/rfc7235#section-3.1)|Cabeçalho de autenticação ausente/inválido ou token inválido|[ResponseError](#schemaresponseerrorinsurancelifepension)|
+|403|[Forbidden](https://tools.ietf.org/html/rfc7231#section-6.5.3)|O token tem escopo incorreto ou uma política de segurança foi violada|[ResponseError](#schemaresponseerrorinsurancelifepension)|
+|404|[Not Found](https://tools.ietf.org/html/rfc7231#section-6.5.4)|O recurso solicitado não existe ou não foi implementado|[ResponseError](#schemaresponseerrorinsurancelifepension)|
+|405|[Method Not Allowed](https://tools.ietf.org/html/rfc7231#section-6.5.5)|O consumidor tentou acessar o recurso com um método não suportado|[ResponseError](#schemaresponseerrorinsurancelifepension)|
+|406|[Not Acceptable](https://tools.ietf.org/html/rfc7231#section-6.5.6)|A solicitação continha um cabeçalho Accept diferente dos tipos de mídia permitidos ou um conjunto de caracteres diferente de UTF-8|[ResponseError](#schemaresponseerrorinsurancelifepension)|
+|422|[Unprocessable Entity](https://tools.ietf.org/html/rfc2518#section-10.3)|O servidor entende o tipo de conteúdo da entidade da requisição, e a sintaxe da requisição esta correta, mas não foi possível processar as instruções presentes|[ResponseError](#schemaresponseerrorinsurancelifepension)|
+|429|[Too Many Requests](https://tools.ietf.org/html/rfc6585#section-4)|A operação foi recusada, pois muitas solicitações foram feitas dentro de um determinado período ou o limite global de requisições concorrentes foi atingido|[ResponseError](#schemaresponseerrorinsurancelifepension)|
+|500|[Internal Server Error](https://tools.ietf.org/html/rfc7231#section-6.6.1)|Ocorreu um erro no gateway da API ou no microsserviço|[ResponseError](#schemaresponseerrorinsurancelifepension)|
+
+### Response Headers
+
+|Status|Header|Type|Format|Description|
+|---|---|---|---|---|
+|200|x-fapi-interaction-id|string||none|
+
+<aside class="warning">
+To perform this operation, you must be authenticated by means of one of the following methods:
+OpenId ( Scopes: openid ) & OAuth2Security ( Scopes: consent:consentId insurance-life-pension )
+</aside>
+
+<h2 id="obtem-as-informacoes-gerais-do-contrato-identificado-por-insurancelifepension">Obtém as informações gerais do contrato identificado por {pensionIdentification}</h2>
+
+<a id="opIdgetInsuranceLifePensionpensionIdentificationContractInfo"></a>
+
+> Code samples
+
+```javascript
+const data = null;
+
+const xhr = new XMLHttpRequest();
+xhr.withCredentials = true;
+
+xhr.addEventListener("readystatechange", function () {
+  if (this.readyState === this.DONE) {
+    console.log(this.responseText);
+  }
+});
+
+xhr.open("GET", "https://api.organizacao.com.br/open-insurance/insurance-life-pension/v1/insurance-life-pension/string/contract-info");
+xhr.setRequestHeader("Accept", "application/json");
+xhr.setRequestHeader("Authorization", "string");
+xhr.setRequestHeader("x-fapi-auth-date", "stringstringstringstringstrin");
+xhr.setRequestHeader("x-fapi-customer-ip-address", "string");
+xhr.setRequestHeader("x-fapi-interaction-id", "string");
+xhr.setRequestHeader("x-customer-user-agent", "string");
+
+xhr.send(data);
+```
+
+```python
+import http.client
+
+conn = http.client.HTTPSConnection("api.organizacao.com.br")
+
+headers = {
+    'Accept': "application/json",
+    'Authorization': "string",
+    'x-fapi-auth-date': "stringstringstringstringstrin",
+    'x-fapi-customer-ip-address': "string",
+    'x-fapi-interaction-id': "string",
+    'x-customer-user-agent': "string"
+    }
+
+conn.request("GET", "/open-insurance/insurance-life-pension/v1/insurance-life-pension/string/contract-info", headers=headers)
+
+res = conn.getresponse()
+data = res.read()
+
+print(data.decode("utf-8"))
+```
+
+```java
+HttpResponse<String> response = Unirest.get("https://api.organizacao.com.br/open-insurance/insurance-life-pension/v1/insurance-life-pension/string/contract-info")
+  .header("Accept", "application/json")
+  .header("Authorization", "string")
+  .header("x-fapi-auth-date", "stringstringstringstringstrin")
+  .header("x-fapi-customer-ip-address", "string")
+  .header("x-fapi-interaction-id", "string")
+  .header("x-customer-user-agent", "string")
+  .asString();
+```
+
+`GET /insurance-life-pension/{pensionIdentification}/contract-info`
+
+Método para obter as informações gerais do contrato
+
+<h3 id="obtém-as-informações-gerais-do-contrato-identificado-por-{pensionidentification}-parameters">Parameters</h3>
+
+|Name|In|Type|Required|Description|
+|---|---|---|---|---|
+|Authorization|header|string|true|Cabeçalho HTTP padrão. Permite que as credenciais sejam fornecidas dependendo do tipo de recurso solicitado.|
+|x-fapi-auth-date|header|string|false|Data em que o usuário logou pela última vez com o receptor. Representada de acordo com a [RFC7231](https://tools.ietf.org/html/rfc7231). Exemplo: Sun, 10 Sep 2017 19:43:31 UTC|
+|x-fapi-customer-ip-address|header|string|false|O endereço IP do usuário se estiver atualmente logado com o receptor.|
+|x-fapi-interaction-id|header|string|false|Um UID [RFC4122](https://tools.ietf.org/html/rfc4122) usado como um ID de correlação. Se fornecido, o transmissor deve "reproduzir" esse valor no cabeçalho de resposta.|
+|x-customer-user-agent|header|string|false|Indica o user-agent que o usuário utiliza.|
+|pensionIdentification|path|string|true|Código único a ser definido pela sociedade|
+
+> Example responses
+
+> 200 Response
+
+```json
+{
+  "data": {
+    "pensionIdentification": "42",
+    "documents": [
+      {
+        "contractingType": "INDIVIDUAL",
+        "certificateId": "67",
+        "contractId": "681",
+        "effectiveDateStart": "2021-05-21",
+        "effectiveDateEnd": "2021-05-21"
+      }
+    ],
+    "proposalId": "987",
+    "insureds": [
+      {
+        "documentType": "CPF",
+        "documentTypeOthers": "OUTROS",
+        "documentNumber": "12345678910",
+        "name": "Juan Kaique Cláudio Fernandes",
+        "birthDate": "2021-05-21",
+        "gender": "MASCULINO",
+        "postCode": "17500001",
+        "email": "nome@br.net",
+        "townName": "Rio de Janeiro",
+        "countrySubDivision": "RJ",
+        "countryCode": "BRA",
+        "address": "Av Naburo Ykesaki, 1270",
+        "addressAdditionalInfo": "Fundos"
+      }
+    ],
+    "beneficiary": [
+      {
+        "documentNumber": "12345678910",
+        "documentType": "CPF",
+        "documentTypeOthers": "OUTROS",
+        "name": "Juan Kaique Cláudio Fernandes",
+        "participationPercentage": "10.00"
+      }
+    ],
+    "intermediary": [
+      {
+        "type": "CORRETOR",
+        "documentNumber": "12345678910",
+        "intermediaryId": "12097",
+        "documentType": "CPF",
+        "documentTypeOthers": "OUTROS",
+        "name": "Empresa A",
+        "postCode": "17500001",
+        "townName": "Rio de Janeiro",
+        "countrySubDivision": "RJ",
+        "countryCode": "BRA",
+        "address": "Av Naburo Ykesaki, 1270",
+        "additionalInfo": "Fundos"
+      }
+    ],
+    "planType": "AVERBADO",
+    "plans": [
+      {
+        "coverageCode": "1999",
+        "susepProcessNumber": "12345",
+        "structureModality": "BENEFICIO_DEFINIDO",
+        "benefitAmount": {
+          "amount": "2000.00",
+          "unit": {
+            "code": "R$",
+            "description": "BRL"
+          }
+        },
+        "rentsInterestRate": "10.00",
+        "periodicity": "MENSAL",
+        "grace": [
+          {
+            "graceType": "RESGATE",
+            "gracePeriod": 4,
+            "gracePeriodicity": "ANO",
+            "dayIndicator": "UTEIS",
+            "gracePeriodStart": "2021-05-21",
+            "gracePeriodEnd": "2021-05-21",
+            "gracePeriodBetween": 6,
+            "gracePeriodBetweenType": "DIA"
+          }
+        ],
+        "type": "PGBL",
+        "typeDetails": "Descrição do Tipo de Plano",
+        "lockedPlan": false,
+        "qualifiedProposer": "SIM",
+        "biometricTable": "1  - Mortalidade Geral / Beneficiário - AT49 M",
+        "benefitPaymentMethod": "RENDA",
+        "pmbacInterestRate": "10.00",
+        "pmbacGuaranteePriceIndex": "IPC-FGV",
+        "pmbacIndexLagging": 1,
+        "financialResultReversal": false,
+        "financialResultReversalPercentage": "10.00",
+        "pdrOrVdrminimalGuaranteeIndex": "IPC-FGV",
+        "pdrOrVdrminimalGuaranteePercentage": "10.00",
+        "taxRegime": "PROGRESSIVO",
+        "calculationBasis": "MENSAL"
+      }
+    ],
+    "conjugatedPlan": true,
+    "PMBaC": {
+      "pmbacAmount": {
+        "amount": "2000.00",
+        "unit": {
+          "code": "R$",
+          "description": "BRL"
+        }
+      },
+      "provisionSurplusAmount": {
+        "amount": "2000.00",
+        "unit": {
+          "code": "R$",
+          "description": "BRL"
+        }
+      },
+      "FIE": [
+        {
+          "FIECNPJ": "12345678901234",
+          "FIEName": "RAZÃO SOCIAL",
+          "FIETradeName": "NOME FANTASIA"
+        }
+      ]
+    }
+  },
+  "links": {
+    "self": "https://api.organizacao.com.br/open-insurance/insurance-life-pension/v1/insurance-life-pension",
+    "first": "https://api.organizacao.com.br/open-insurance/insurance-life-pension/v1/insurance-life-pension",
+    "prev": "https://api.organizacao.com.br/open-insurance/insurance-life-pension/v1/insurance-life-pension",
+    "next": "https://api.organizacao.com.br/open-insurance/insurance-life-pension/v1/insurance-life-pension",
+    "last": "https://api.organizacao.com.br/open-insurance/insurance-life-pension/v1/insurance-life-pension"
+  },
+  "meta": {
+    "totalRecords": 10,
+    "totalPages": 1
+  }
+}
+```
+
+<h3 id="obtém-as-informações-gerais-do-contrato-identificado-por-{pensionidentification}-responses">Responses</h3>
+
+|Status|Meaning|Description|Schema|
+|---|---|---|---|
+|200|[OK](https://tools.ietf.org/html/rfc7231#section-6.3.1)|Dados de ResponseInsuranceLifePensionContractInfo obtidos com sucesso|[ResponseInsuranceLifePensionContractInfo](#schemaresponseinsurancelifepensioncontractinfo)|
+|204|[No Content](https://tools.ietf.org/html/rfc7231#section-6.3.5)|O recurso solicitado não existe ou não foi localizado.|[ResponseError](#schemaresponseerrorinsurancelifepension)|
+|400|[Bad Request](https://tools.ietf.org/html/rfc7231#section-6.5.1)|A requisição foi malformada, omitindo atributos obrigatórios, seja no payload ou através de atributos na URL|[ResponseError](#schemaresponseerrorinsurancelifepension)|
+|401|[Unauthorized](https://tools.ietf.org/html/rfc7235#section-3.1)|Cabeçalho de autenticação ausente/inválido ou token inválido|[ResponseError](#schemaresponseerrorinsurancelifepension)|
+|403|[Forbidden](https://tools.ietf.org/html/rfc7231#section-6.5.3)|O token tem escopo incorreto ou uma política de segurança foi violada|[ResponseError](#schemaresponseerrorinsurancelifepension)|
+|404|[Not Found](https://tools.ietf.org/html/rfc7231#section-6.5.4)|O recurso solicitado não existe ou não foi implementado|[ResponseError](#schemaresponseerrorinsurancelifepension)|
+|405|[Method Not Allowed](https://tools.ietf.org/html/rfc7231#section-6.5.5)|O consumidor tentou acessar o recurso com um método não suportado|[ResponseError](#schemaresponseerrorinsurancelifepension)|
+|406|[Not Acceptable](https://tools.ietf.org/html/rfc7231#section-6.5.6)|A solicitação continha um cabeçalho Accept diferente dos tipos de mídia permitidos ou um conjunto de caracteres diferente de UTF-8|[ResponseError](#schemaresponseerrorinsurancelifepension)|
+|422|[Unprocessable Entity](https://tools.ietf.org/html/rfc2518#section-10.3)|O servidor entende o tipo de conteúdo da entidade da requisição, e a sintaxe da requisição esta correta, mas não foi possível processar as instruções presentes|[ResponseError](#schemaresponseerrorinsurancelifepension)|
+|429|[Too Many Requests](https://tools.ietf.org/html/rfc6585#section-4)|A operação foi recusada, pois muitas solicitações foram feitas dentro de um determinado período ou o limite global de requisições concorrentes foi atingido|[ResponseError](#schemaresponseerrorinsurancelifepension)|
+|500|[Internal Server Error](https://tools.ietf.org/html/rfc7231#section-6.6.1)|Ocorreu um erro no gateway da API ou no microsserviço|[ResponseError](#schemaresponseerrorinsurancelifepension)|
+
+### Response Headers
+
+|Status|Header|Type|Format|Description|
+|---|---|---|---|---|
+|200|x-fapi-interaction-id|string||none|
+
+<aside class="warning">
+To perform this operation, you must be authenticated by means of one of the following methods:
+OpenId ( Scopes: openid ) & OAuth2Security ( Scopes: consent:consentId insurance-life-pension )
+</aside>
+
+<h2 id="obtem-os-dados-de-movimentacao-do-contrato-identificado-por-insurancelifepension">Obtém os dados de movimentação do contrato identificado por {pensionIdentification}</h2>
+
+<a id="opIdgetInsuranceLifePensionpensionIdentificationMovements"></a>
+
+> Code samples
+
+```javascript
+const data = null;
+
+const xhr = new XMLHttpRequest();
+xhr.withCredentials = true;
+
+xhr.addEventListener("readystatechange", function () {
+  if (this.readyState === this.DONE) {
+    console.log(this.responseText);
+  }
+});
+
+xhr.open("GET", "https://api.organizacao.com.br/open-insurance/insurance-life-pension/v1/insurance-life-pension/string/movements");
+xhr.setRequestHeader("Accept", "application/json");
+xhr.setRequestHeader("Authorization", "string");
+xhr.setRequestHeader("x-fapi-auth-date", "stringstringstringstringstrin");
+xhr.setRequestHeader("x-fapi-customer-ip-address", "string");
+xhr.setRequestHeader("x-fapi-interaction-id", "string");
+xhr.setRequestHeader("x-customer-user-agent", "string");
+
+xhr.send(data);
+```
+
+```python
+import http.client
+
+conn = http.client.HTTPSConnection("api.organizacao.com.br")
+
+headers = {
+    'Accept': "application/json",
+    'Authorization': "string",
+    'x-fapi-auth-date': "stringstringstringstringstrin",
+    'x-fapi-customer-ip-address': "string",
+    'x-fapi-interaction-id': "string",
+    'x-customer-user-agent': "string"
+    }
+
+conn.request("GET", "/open-insurance/insurance-life-pension/v1/insurance-life-pension/string/movements", headers=headers)
+
+res = conn.getresponse()
+data = res.read()
+
+print(data.decode("utf-8"))
+```
+
+```java
+HttpResponse<String> response = Unirest.get("https://api.organizacao.com.br/open-insurance/insurance-life-pension/v1/insurance-life-pension/string/movements")
+  .header("Accept", "application/json")
+  .header("Authorization", "string")
+  .header("x-fapi-auth-date", "stringstringstringstringstrin")
+  .header("x-fapi-customer-ip-address", "string")
+  .header("x-fapi-interaction-id", "string")
+  .header("x-customer-user-agent", "string")
+  .asString();
+```
+
+`GET /insurance-life-pension/{pensionIdentification}/movements`
+
+Método para obter os dados de movimentação do contrato.
+
+<h3 id="obtém-os-dados-de-movimentação-do-contrato-identificado-por-{pensionidentification}-parameters">Parameters</h3>
+
+|Name|In|Type|Required|Description|
+|---|---|---|---|---|
+|Authorization|header|string|true|Cabeçalho HTTP padrão. Permite que as credenciais sejam fornecidas dependendo do tipo de recurso solicitado.|
+|x-fapi-auth-date|header|string|false|Data em que o usuário logou pela última vez com o receptor. Representada de acordo com a [RFC7231](https://tools.ietf.org/html/rfc7231). Exemplo: Sun, 10 Sep 2017 19:43:31 UTC|
+|x-fapi-customer-ip-address|header|string|false|O endereço IP do usuário se estiver atualmente logado com o receptor.|
+|x-fapi-interaction-id|header|string|false|Um UID [RFC4122](https://tools.ietf.org/html/rfc4122) usado como um ID de correlação. Se fornecido, o transmissor deve "reproduzir" esse valor no cabeçalho de resposta.|
+|x-customer-user-agent|header|string|false|Indica o user-agent que o usuário utiliza.|
+|pensionIdentification|path|string|true|Código único a ser definido pela sociedade|
+
+> Example responses
+
+> 200 Response
+
+```json
+{
+  "data": {
+    "movementContributions": [
+      {
+        "contributionAmount": {
+          "amount": "2000.00",
+          "unit": {
+            "code": "R$",
+            "description": "BRL"
+          }
+        },
+        "contributionPaymentDate": "2021-05-21",
+        "contributionExpirationDate": "2021-05-21",
+        "chargedInAdvanceAmount": {
+          "amount": "2000.00",
+          "unit": {
+            "code": "R$",
+            "description": "BRL"
+          }
+        },
+        "periodicity": "MENSAL"
+      }
+    ],
+    "movementBenefits": [
+      {
+        "benefitAmount": {
+          "amount": "2000.00",
+          "unit": {
+            "code": "R$",
+            "description": "BRL"
+          }
+        },
+        "benefitPaymentDate": "2021-05-21"
+      }
+    ]
+  },
+  "links": {
+    "self": "https://api.organizacao.com.br/open-insurance/insurance-life-pension/v1/insurance-life-pension",
+    "first": "https://api.organizacao.com.br/open-insurance/insurance-life-pension/v1/insurance-life-pension",
+    "prev": "https://api.organizacao.com.br/open-insurance/insurance-life-pension/v1/insurance-life-pension",
+    "next": "https://api.organizacao.com.br/open-insurance/insurance-life-pension/v1/insurance-life-pension",
+    "last": "https://api.organizacao.com.br/open-insurance/insurance-life-pension/v1/insurance-life-pension"
+  },
+  "meta": {
+    "totalRecords": 10,
+    "totalPages": 1
+  }
+}
+```
+
+<h3 id="obtém-os-dados-de-movimentação-do-contrato-identificado-por-{pensionidentification}-responses">Responses</h3>
+
+|Status|Meaning|Description|Schema|
+|---|---|---|---|
+|200|[OK](https://tools.ietf.org/html/rfc7231#section-6.3.1)|Dados de ResponseInsuranceLifePensionMovements obtidos com sucesso|[ResponseInsuranceLifePensionMovements](#schemaresponseinsurancelifepensionmovements)|
+|204|[No Content](https://tools.ietf.org/html/rfc7231#section-6.3.5)|O recurso solicitado não existe ou não foi localizado.|[ResponseError](#schemaresponseerrorinsurancelifepension)|
+|400|[Bad Request](https://tools.ietf.org/html/rfc7231#section-6.5.1)|A requisição foi malformada, omitindo atributos obrigatórios, seja no payload ou através de atributos na URL|[ResponseError](#schemaresponseerrorinsurancelifepension)|
+|401|[Unauthorized](https://tools.ietf.org/html/rfc7235#section-3.1)|Cabeçalho de autenticação ausente/inválido ou token inválido|[ResponseError](#schemaresponseerrorinsurancelifepension)|
+|403|[Forbidden](https://tools.ietf.org/html/rfc7231#section-6.5.3)|O token tem escopo incorreto ou uma política de segurança foi violada|[ResponseError](#schemaresponseerrorinsurancelifepension)|
+|404|[Not Found](https://tools.ietf.org/html/rfc7231#section-6.5.4)|O recurso solicitado não existe ou não foi implementado|[ResponseError](#schemaresponseerrorinsurancelifepension)|
+|405|[Method Not Allowed](https://tools.ietf.org/html/rfc7231#section-6.5.5)|O consumidor tentou acessar o recurso com um método não suportado|[ResponseError](#schemaresponseerrorinsurancelifepension)|
+|406|[Not Acceptable](https://tools.ietf.org/html/rfc7231#section-6.5.6)|A solicitação continha um cabeçalho Accept diferente dos tipos de mídia permitidos ou um conjunto de caracteres diferente de UTF-8|[ResponseError](#schemaresponseerrorinsurancelifepension)|
+|422|[Unprocessable Entity](https://tools.ietf.org/html/rfc2518#section-10.3)|O servidor entende o tipo de conteúdo da entidade da requisição, e a sintaxe da requisição esta correta, mas não foi possível processar as instruções presentes|[ResponseError](#schemaresponseerrorinsurancelifepension)|
+|429|[Too Many Requests](https://tools.ietf.org/html/rfc6585#section-4)|A operação foi recusada, pois muitas solicitações foram feitas dentro de um determinado período ou o limite global de requisições concorrentes foi atingido|[ResponseError](#schemaresponseerrorinsurancelifepension)|
+|500|[Internal Server Error](https://tools.ietf.org/html/rfc7231#section-6.6.1)|Ocorreu um erro no gateway da API ou no microsserviço|[ResponseError](#schemaresponseerrorinsurancelifepension)|
+
+### Response Headers
+
+|Status|Header|Type|Format|Description|
+|---|---|---|---|---|
+|200|x-fapi-interaction-id|string||none|
+
+<aside class="warning">
+To perform this operation, you must be authenticated by means of one of the following methods:
+OpenId ( Scopes: openid ) & OAuth2Security ( Scopes: consent:consentId insurance-life-pension )
+</aside>
+
+<h2 id="obtem-os-dados-de-portabilidades-do-contrato-identificada-por-insurancelifepension">Obtém os dados de portabilidades do contrato identificada por {pensionIdentification}</h2>
+
+<a id="opIdgetInsuranceLifePensionpensionIdentificationPortabilities"></a>
+
+> Code samples
+
+```javascript
+const data = null;
+
+const xhr = new XMLHttpRequest();
+xhr.withCredentials = true;
+
+xhr.addEventListener("readystatechange", function () {
+  if (this.readyState === this.DONE) {
+    console.log(this.responseText);
+  }
+});
+
+xhr.open("GET", "https://api.organizacao.com.br/open-insurance/insurance-life-pension/v1/insurance-life-pension/string/portabilities");
+xhr.setRequestHeader("Accept", "application/json");
+xhr.setRequestHeader("Authorization", "string");
+xhr.setRequestHeader("x-fapi-auth-date", "stringstringstringstringstrin");
+xhr.setRequestHeader("x-fapi-customer-ip-address", "string");
+xhr.setRequestHeader("x-fapi-interaction-id", "string");
+xhr.setRequestHeader("x-customer-user-agent", "string");
+
+xhr.send(data);
+```
+
+```python
+import http.client
+
+conn = http.client.HTTPSConnection("api.organizacao.com.br")
+
+headers = {
+    'Accept': "application/json",
+    'Authorization': "string",
+    'x-fapi-auth-date': "stringstringstringstringstrin",
+    'x-fapi-customer-ip-address': "string",
+    'x-fapi-interaction-id': "string",
+    'x-customer-user-agent': "string"
+    }
+
+conn.request("GET", "/open-insurance/insurance-life-pension/v1/insurance-life-pension/string/portabilities", headers=headers)
+
+res = conn.getresponse()
+data = res.read()
+
+print(data.decode("utf-8"))
+```
+
+```java
+HttpResponse<String> response = Unirest.get("https://api.organizacao.com.br/open-insurance/insurance-life-pension/v1/insurance-life-pension/string/portabilities")
+  .header("Accept", "application/json")
+  .header("Authorization", "string")
+  .header("x-fapi-auth-date", "stringstringstringstringstrin")
+  .header("x-fapi-customer-ip-address", "string")
+  .header("x-fapi-interaction-id", "string")
+  .header("x-customer-user-agent", "string")
+  .asString();
+```
+
+`GET /insurance-life-pension/{pensionIdentification}/portabilities`
+
+Método para obter os dados de portabilidades associadas ao contrato
+
+<h3 id="obtém-os-dados-de-portabilidades-do-contrato-identificada-por-{pensionidentification}-parameters">Parameters</h3>
+
+|Name|In|Type|Required|Description|
+|---|---|---|---|---|
+|Authorization|header|string|true|Cabeçalho HTTP padrão. Permite que as credenciais sejam fornecidas dependendo do tipo de recurso solicitado.|
+|x-fapi-auth-date|header|string|false|Data em que o usuário logou pela última vez com o receptor. Representada de acordo com a [RFC7231](https://tools.ietf.org/html/rfc7231). Exemplo: Sun, 10 Sep 2017 19:43:31 UTC|
+|x-fapi-customer-ip-address|header|string|false|O endereço IP do usuário se estiver atualmente logado com o receptor.|
+|x-fapi-interaction-id|header|string|false|Um UID [RFC4122](https://tools.ietf.org/html/rfc4122) usado como um ID de correlação. Se fornecido, o transmissor deve "reproduzir" esse valor no cabeçalho de resposta.|
+|x-customer-user-agent|header|string|false|Indica o user-agent que o usuário utiliza.|
+|pensionIdentification|path|string|true|Código único a ser definido pela sociedade|
+|page|query|integer(int32)|false|Número da página que está sendo requisitada (o valor da primeira página é 1).|
+|page-size|query|integer(int32)|false|Quantidade total de registros por páginas.|
+
+> Example responses
+
+> 200 Response
+
+```json
+{
+  "data": {
+    "hasOccurredPortability": true,
+    "portabilityInfo": [
+      {
+        "direction": "ENTRADA",
+        "type": "PARCIAL",
+        "amount": {
+          "amount": "2000.00",
+          "unit": {
+            "code": "R$",
+            "description": "BRL"
+          }
+        },
+        "requestDate": "2022-05-16T00:00:00.000Z",
+        "liquidationDate": "2022-05-16T00:00:00.000Z",
+        "postedChargedAmount": {
+          "amount": "2000.00",
+          "unit": {
+            "code": "R$",
+            "description": "BRL"
+          }
+        },
+        "sourceEntity": "string",
+        "targetEntity": "string",
+        "susepProcess": "12345",
+        "taxRegime": "PROGRESSIVO",
+        "FIE": [
+          {
+            "FIECNPJ": "12345678901234",
+            "FIEName": "RAZÃO SOCIAL",
+            "FIETradeName": "NOME FANTASIA",
+            "portedType": "ORIGEM"
+          }
+        ]
+      }
+    ]
+  },
+  "links": {
+    "self": "https://api.organizacao.com.br/open-insurance/insurance-life-pension/v1/insurance-life-pension",
+    "first": "https://api.organizacao.com.br/open-insurance/insurance-life-pension/v1/insurance-life-pension",
+    "prev": "https://api.organizacao.com.br/open-insurance/insurance-life-pension/v1/insurance-life-pension",
+    "next": "https://api.organizacao.com.br/open-insurance/insurance-life-pension/v1/insurance-life-pension",
+    "last": "https://api.organizacao.com.br/open-insurance/insurance-life-pension/v1/insurance-life-pension"
+  },
+  "meta": {
+    "totalRecords": 10,
+    "totalPages": 1
+  }
+}
+```
+
+<h3 id="obtém-os-dados-de-portabilidades-do-contrato-identificada-por-{pensionidentification}-responses">Responses</h3>
+
+|Status|Meaning|Description|Schema|
+|---|---|---|---|
+|200|[OK](https://tools.ietf.org/html/rfc7231#section-6.3.1)|Dados de ResponseInsuranceLifePensionPortabilities obtidos com sucesso|[ResponseInsuranceLifePensionPortabilities](#schemaresponseinsurancelifepensionportabilities)|
+|204|[No Content](https://tools.ietf.org/html/rfc7231#section-6.3.5)|O recurso solicitado não existe ou não foi localizado.|[ResponseError](#schemaresponseerrorinsurancelifepension)|
+|400|[Bad Request](https://tools.ietf.org/html/rfc7231#section-6.5.1)|A requisição foi malformada, omitindo atributos obrigatórios, seja no payload ou através de atributos na URL|[ResponseError](#schemaresponseerrorinsurancelifepension)|
+|401|[Unauthorized](https://tools.ietf.org/html/rfc7235#section-3.1)|Cabeçalho de autenticação ausente/inválido ou token inválido|[ResponseError](#schemaresponseerrorinsurancelifepension)|
+|403|[Forbidden](https://tools.ietf.org/html/rfc7231#section-6.5.3)|O token tem escopo incorreto ou uma política de segurança foi violada|[ResponseError](#schemaresponseerrorinsurancelifepension)|
+|404|[Not Found](https://tools.ietf.org/html/rfc7231#section-6.5.4)|O recurso solicitado não existe ou não foi implementado|[ResponseError](#schemaresponseerrorinsurancelifepension)|
+|405|[Method Not Allowed](https://tools.ietf.org/html/rfc7231#section-6.5.5)|O consumidor tentou acessar o recurso com um método não suportado|[ResponseError](#schemaresponseerrorinsurancelifepension)|
+|406|[Not Acceptable](https://tools.ietf.org/html/rfc7231#section-6.5.6)|A solicitação continha um cabeçalho Accept diferente dos tipos de mídia permitidos ou um conjunto de caracteres diferente de UTF-8|[ResponseError](#schemaresponseerrorinsurancelifepension)|
+|422|[Unprocessable Entity](https://tools.ietf.org/html/rfc2518#section-10.3)|O servidor entende o tipo de conteúdo da entidade da requisição, e a sintaxe da requisição esta correta, mas não foi possível processar as instruções presentes|[ResponseError](#schemaresponseerrorinsurancelifepension)|
+|429|[Too Many Requests](https://tools.ietf.org/html/rfc6585#section-4)|A operação foi recusada, pois muitas solicitações foram feitas dentro de um determinado período ou o limite global de requisições concorrentes foi atingido|[ResponseError](#schemaresponseerrorinsurancelifepension)|
+|500|[Internal Server Error](https://tools.ietf.org/html/rfc7231#section-6.6.1)|Ocorreu um erro no gateway da API ou no microsserviço|[ResponseError](#schemaresponseerrorinsurancelifepension)|
+
+### Response Headers
+
+|Status|Header|Type|Format|Description|
+|---|---|---|---|---|
+|200|x-fapi-interaction-id|string||none|
+
+<aside class="warning">
+To perform this operation, you must be authenticated by means of one of the following methods:
+OpenId ( Scopes: openid ) & OAuth2Security ( Scopes: consent:consentId insurance-life-pension )
+</aside>
+
+<h2 id="obtem-os-dados-de-resgates-do-contrato-identificado-por-insurancelifepension">Obtém os dados de resgates do contrato identificado por {pensionIdentification}</h2>
+
+<a id="opIdgetInsuranceLifePensionpensionIdentificationWithdrawals"></a>
+
+> Code samples
+
+```javascript
+const data = null;
+
+const xhr = new XMLHttpRequest();
+xhr.withCredentials = true;
+
+xhr.addEventListener("readystatechange", function () {
+  if (this.readyState === this.DONE) {
+    console.log(this.responseText);
+  }
+});
+
+xhr.open("GET", "https://api.organizacao.com.br/open-insurance/insurance-life-pension/v1/insurance-life-pension/string/withdrawals");
+xhr.setRequestHeader("Accept", "application/json");
+xhr.setRequestHeader("Authorization", "string");
+xhr.setRequestHeader("x-fapi-auth-date", "stringstringstringstringstrin");
+xhr.setRequestHeader("x-fapi-customer-ip-address", "string");
+xhr.setRequestHeader("x-fapi-interaction-id", "string");
+xhr.setRequestHeader("x-customer-user-agent", "string");
+
+xhr.send(data);
+```
+
+```python
+import http.client
+
+conn = http.client.HTTPSConnection("api.organizacao.com.br")
+
+headers = {
+    'Accept': "application/json",
+    'Authorization': "string",
+    'x-fapi-auth-date': "stringstringstringstringstrin",
+    'x-fapi-customer-ip-address': "string",
+    'x-fapi-interaction-id': "string",
+    'x-customer-user-agent': "string"
+    }
+
+conn.request("GET", "/open-insurance/insurance-life-pension/v1/insurance-life-pension/string/withdrawals", headers=headers)
+
+res = conn.getresponse()
+data = res.read()
+
+print(data.decode("utf-8"))
+```
+
+```java
+HttpResponse<String> response = Unirest.get("https://api.organizacao.com.br/open-insurance/insurance-life-pension/v1/insurance-life-pension/string/withdrawals")
+  .header("Accept", "application/json")
+  .header("Authorization", "string")
+  .header("x-fapi-auth-date", "stringstringstringstringstrin")
+  .header("x-fapi-customer-ip-address", "string")
+  .header("x-fapi-interaction-id", "string")
+  .header("x-customer-user-agent", "string")
+  .asString();
+```
+
+`GET /insurance-life-pension/{pensionIdentification}/withdrawals`
+
+Método para obter os dados de resgates associados ao contrato
+
+<h3 id="obtém-os-dados-de-resgates-do-contrato-identificado-por-{pensionidentification}-parameters">Parameters</h3>
+
+|Name|In|Type|Required|Description|
+|---|---|---|---|---|
+|Authorization|header|string|true|Cabeçalho HTTP padrão. Permite que as credenciais sejam fornecidas dependendo do tipo de recurso solicitado.|
+|x-fapi-auth-date|header|string|false|Data em que o usuário logou pela última vez com o receptor. Representada de acordo com a [RFC7231](https://tools.ietf.org/html/rfc7231). Exemplo: Sun, 10 Sep 2017 19:43:31 UTC|
+|x-fapi-customer-ip-address|header|string|false|O endereço IP do usuário se estiver atualmente logado com o receptor.|
+|x-fapi-interaction-id|header|string|false|Um UID [RFC4122](https://tools.ietf.org/html/rfc4122) usado como um ID de correlação. Se fornecido, o transmissor deve "reproduzir" esse valor no cabeçalho de resposta.|
+|x-customer-user-agent|header|string|false|Indica o user-agent que o usuário utiliza.|
+|pensionIdentification|path|string|true|Código único a ser definido pela sociedade|
+|page|query|integer(int32)|false|Número da página que está sendo requisitada (o valor da primeira página é 1).|
+|page-size|query|integer(int32)|false|Quantidade total de registros por páginas.|
+
+> Example responses
+
+> 200 Response
+
+```json
+{
+  "data": [
+    {
+      "withdrawalOccurence": true,
+      "type": "PARCIAL",
+      "requestDate": "2022-05-16T00:00:00.000Z",
+      "amount": {
+        "amount": "2000.00",
+        "unit": {
+          "code": "R$",
+          "description": "BRL"
+        }
+      },
+      "liquidationDate": "2022-05-16T00:00:00.000Z",
+      "postedChargedAmount": {
+        "amount": "2000.00",
+        "unit": {
+          "code": "R$",
+          "description": "BRL"
+        }
+      },
+      "nature": "RESGATE_REGULAR",
+      "FIE": [
+        {
+          "FIECNPJ": "12345678901234",
+          "FIEName": "RAZÃO SOCIAL",
+          "FIETradeName": "NOME FANTASIA"
+        }
+      ]
+    }
+  ],
+  "links": {
+    "self": "https://api.organizacao.com.br/open-insurance/insurance-life-pension/v1/insurance-life-pension",
+    "first": "https://api.organizacao.com.br/open-insurance/insurance-life-pension/v1/insurance-life-pension",
+    "prev": "https://api.organizacao.com.br/open-insurance/insurance-life-pension/v1/insurance-life-pension",
+    "next": "https://api.organizacao.com.br/open-insurance/insurance-life-pension/v1/insurance-life-pension",
+    "last": "https://api.organizacao.com.br/open-insurance/insurance-life-pension/v1/insurance-life-pension"
+  },
+  "meta": {
+    "totalRecords": 10,
+    "totalPages": 1
+  }
+}
+```
+
+<h3 id="obtém-os-dados-de-resgates-do-contrato-identificado-por-{pensionidentification}-responses">Responses</h3>
+
+|Status|Meaning|Description|Schema|
+|---|---|---|---|
+|200|[OK](https://tools.ietf.org/html/rfc7231#section-6.3.1)|Dados de ResponseInsuranceLifePensionWithdrawal obtidos com sucesso|[ResponseInsuranceLifePensionWithdrawal](#schemaresponseinsurancelifepensionwithdrawal)|
+|204|[No Content](https://tools.ietf.org/html/rfc7231#section-6.3.5)|O recurso solicitado não existe ou não foi localizado.|[ResponseError](#schemaresponseerrorinsurancelifepension)|
+|400|[Bad Request](https://tools.ietf.org/html/rfc7231#section-6.5.1)|A requisição foi malformada, omitindo atributos obrigatórios, seja no payload ou através de atributos na URL|[ResponseError](#schemaresponseerrorinsurancelifepension)|
+|401|[Unauthorized](https://tools.ietf.org/html/rfc7235#section-3.1)|Cabeçalho de autenticação ausente/inválido ou token inválido|[ResponseError](#schemaresponseerrorinsurancelifepension)|
+|403|[Forbidden](https://tools.ietf.org/html/rfc7231#section-6.5.3)|O token tem escopo incorreto ou uma política de segurança foi violada|[ResponseError](#schemaresponseerrorinsurancelifepension)|
+|404|[Not Found](https://tools.ietf.org/html/rfc7231#section-6.5.4)|O recurso solicitado não existe ou não foi implementado|[ResponseError](#schemaresponseerrorinsurancelifepension)|
+|405|[Method Not Allowed](https://tools.ietf.org/html/rfc7231#section-6.5.5)|O consumidor tentou acessar o recurso com um método não suportado|[ResponseError](#schemaresponseerrorinsurancelifepension)|
+|406|[Not Acceptable](https://tools.ietf.org/html/rfc7231#section-6.5.6)|A solicitação continha um cabeçalho Accept diferente dos tipos de mídia permitidos ou um conjunto de caracteres diferente de UTF-8|[ResponseError](#schemaresponseerrorinsurancelifepension)|
+|422|[Unprocessable Entity](https://tools.ietf.org/html/rfc2518#section-10.3)|O servidor entende o tipo de conteúdo da entidade da requisição, e a sintaxe da requisição esta correta, mas não foi possível processar as instruções presentes|[ResponseError](#schemaresponseerrorinsurancelifepension)|
+|429|[Too Many Requests](https://tools.ietf.org/html/rfc6585#section-4)|A operação foi recusada, pois muitas solicitações foram feitas dentro de um determinado período ou o limite global de requisições concorrentes foi atingido|[ResponseError](#schemaresponseerrorinsurancelifepension)|
+|500|[Internal Server Error](https://tools.ietf.org/html/rfc7231#section-6.6.1)|Ocorreu um erro no gateway da API ou no microsserviço|[ResponseError](#schemaresponseerrorinsurancelifepension)|
+
+### Response Headers
+
+|Status|Header|Type|Format|Description|
+|---|---|---|---|---|
+|200|x-fapi-interaction-id|string||none|
+
+<aside class="warning">
+To perform this operation, you must be authenticated by means of one of the following methods:
+OpenId ( Scopes: openid ) & OAuth2Security ( Scopes: consent:consentId insurance-life-pension )
+</aside>
+
+<h2 id="obtem-os-dados-de-sinistro-do-contrato-identificado-por-insurancelifepension">Obtém os dados de sinistro do contrato identificado por {pensionIdentification}</h2>
+
+<a id="opIdgetInsuranceLifePensionpensionIdentificationPeople"></a>
+
+> Code samples
+
+```javascript
+const data = null;
+
+const xhr = new XMLHttpRequest();
+xhr.withCredentials = true;
+
+xhr.addEventListener("readystatechange", function () {
+  if (this.readyState === this.DONE) {
+    console.log(this.responseText);
+  }
+});
+
+xhr.open("GET", "https://api.organizacao.com.br/open-insurance/insurance-life-pension/v1/insurance-life-pension/string/claim");
+xhr.setRequestHeader("Accept", "application/json");
+xhr.setRequestHeader("Authorization", "string");
+xhr.setRequestHeader("x-fapi-auth-date", "stringstringstringstringstrin");
+xhr.setRequestHeader("x-fapi-customer-ip-address", "string");
+xhr.setRequestHeader("x-fapi-interaction-id", "string");
+xhr.setRequestHeader("x-customer-user-agent", "string");
+
+xhr.send(data);
+```
+
+```python
+import http.client
+
+conn = http.client.HTTPSConnection("api.organizacao.com.br")
+
+headers = {
+    'Accept': "application/json",
+    'Authorization': "string",
+    'x-fapi-auth-date': "stringstringstringstringstrin",
+    'x-fapi-customer-ip-address': "string",
+    'x-fapi-interaction-id': "string",
+    'x-customer-user-agent': "string"
+    }
+
+conn.request("GET", "/open-insurance/insurance-life-pension/v1/insurance-life-pension/string/claim", headers=headers)
+
+res = conn.getresponse()
+data = res.read()
+
+print(data.decode("utf-8"))
+```
+
+```java
+HttpResponse<String> response = Unirest.get("https://api.organizacao.com.br/open-insurance/insurance-life-pension/v1/insurance-life-pension/string/claim")
+  .header("Accept", "application/json")
+  .header("Authorization", "string")
+  .header("x-fapi-auth-date", "stringstringstringstringstrin")
+  .header("x-fapi-customer-ip-address", "string")
+  .header("x-fapi-interaction-id", "string")
+  .header("x-customer-user-agent", "string")
+  .asString();
+```
+
+`GET /insurance-life-pension/{pensionIdentification}/claim`
+
+Método para obter os dados de sinistro associados ao contrato
+
+<h3 id="obtém-os-dados-de-sinistro-do-contrato-identificado-por-{pensionidentification}-parameters">Parameters</h3>
+
+|Name|In|Type|Required|Description|
+|---|---|---|---|---|
+|Authorization|header|string|true|Cabeçalho HTTP padrão. Permite que as credenciais sejam fornecidas dependendo do tipo de recurso solicitado.|
+|x-fapi-auth-date|header|string|false|Data em que o usuário logou pela última vez com o receptor. Representada de acordo com a [RFC7231](https://tools.ietf.org/html/rfc7231). Exemplo: Sun, 10 Sep 2017 19:43:31 UTC|
+|x-fapi-customer-ip-address|header|string|false|O endereço IP do usuário se estiver atualmente logado com o receptor.|
+|x-fapi-interaction-id|header|string|false|Um UID [RFC4122](https://tools.ietf.org/html/rfc4122) usado como um ID de correlação. Se fornecido, o transmissor deve "reproduzir" esse valor no cabeçalho de resposta.|
+|x-customer-user-agent|header|string|false|Indica o user-agent que o usuário utiliza.|
+|pensionIdentification|path|string|true|Código único a ser definido pela sociedade|
+|page|query|integer(int32)|false|Número da página que está sendo requisitada (o valor da primeira página é 1).|
+|page-size|query|integer(int32)|false|Quantidade total de registros por páginas.|
+
+> Example responses
+
+> 200 Response
+
+```json
+{
+  "data": [
+    {
+      "eventStatus": "ABERTO",
+      "eventAlertDate": "2021-05-21",
+      "eventRegisterDate": "2021-05-21",
+      "beneficiaryDocument": "12345678910",
+      "beneficiaryDocumentType": "CPF",
+      "beneficiaryName": "NOME BENEFICIARIO",
+      "beneficiaryCategory": "SEGURADO",
+      "beneficiaryBirthDate": "2021-05-21",
+      "incomeType": "PAGAMENTO_UNICO",
+      "incomeTypeDetails": "Descrição do Tipo de Renda",
+      "reversedIncome": false,
+      "incomeAmount": {
+        "amount": "2000.00",
+        "unit": {
+          "code": "R$",
+          "description": "BRL"
+        }
+      },
+      "paymentTerms": "PRAZO",
+      "benefitAmount": 2,
+      "grantedDate": "2021-05-21",
+      "monetaryUpdateIndex": "IPC-FGV",
+      "lastUpdateDate": "2021-05-21",
+      "defermentDueDate": "2025-12-31"
+    }
+  ],
+  "links": {
+    "self": "https://api.organizacao.com.br/open-insurance/insurance-life-pension/v1/insurance-life-pension",
+    "first": "https://api.organizacao.com.br/open-insurance/insurance-life-pension/v1/insurance-life-pension",
+    "prev": "https://api.organizacao.com.br/open-insurance/insurance-life-pension/v1/insurance-life-pension",
+    "next": "https://api.organizacao.com.br/open-insurance/insurance-life-pension/v1/insurance-life-pension",
+    "last": "https://api.organizacao.com.br/open-insurance/insurance-life-pension/v1/insurance-life-pension"
+  },
+  "meta": {
+    "totalRecords": 10,
+    "totalPages": 1
+  }
+}
+```
+
+<h3 id="obtém-os-dados-de-sinistro-do-contrato-identificado-por-{pensionidentification}-responses">Responses</h3>
+
+|Status|Meaning|Description|Schema|
+|---|---|---|---|
+|200|[OK](https://tools.ietf.org/html/rfc7231#section-6.3.1)|Dados de ResponseInsuranceLifePensionClaim obtidos com sucesso|[ResponseInsuranceLifePensionClaim](#schemaresponseinsurancelifepensionclaim)|
+|204|[No Content](https://tools.ietf.org/html/rfc7231#section-6.3.5)|O recurso solicitado não existe ou não foi localizado.|[ResponseError](#schemaresponseerrorinsurancelifepension)|
+|400|[Bad Request](https://tools.ietf.org/html/rfc7231#section-6.5.1)|A requisição foi malformada, omitindo atributos obrigatórios, seja no payload ou através de atributos na URL|[ResponseError](#schemaresponseerrorinsurancelifepension)|
+|401|[Unauthorized](https://tools.ietf.org/html/rfc7235#section-3.1)|Cabeçalho de autenticação ausente/inválido ou token inválido|[ResponseError](#schemaresponseerrorinsurancelifepension)|
+|403|[Forbidden](https://tools.ietf.org/html/rfc7231#section-6.5.3)|O token tem escopo incorreto ou uma política de segurança foi violada|[ResponseError](#schemaresponseerrorinsurancelifepension)|
+|404|[Not Found](https://tools.ietf.org/html/rfc7231#section-6.5.4)|O recurso solicitado não existe ou não foi implementado|[ResponseError](#schemaresponseerrorinsurancelifepension)|
+|405|[Method Not Allowed](https://tools.ietf.org/html/rfc7231#section-6.5.5)|O consumidor tentou acessar o recurso com um método não suportado|[ResponseError](#schemaresponseerrorinsurancelifepension)|
+|406|[Not Acceptable](https://tools.ietf.org/html/rfc7231#section-6.5.6)|A solicitação continha um cabeçalho Accept diferente dos tipos de mídia permitidos ou um conjunto de caracteres diferente de UTF-8|[ResponseError](#schemaresponseerrorinsurancelifepension)|
+|422|[Unprocessable Entity](https://tools.ietf.org/html/rfc2518#section-10.3)|O servidor entende o tipo de conteúdo da entidade da requisição, e a sintaxe da requisição esta correta, mas não foi possível processar as instruções presentes|[ResponseError](#schemaresponseerrorinsurancelifepension)|
+|429|[Too Many Requests](https://tools.ietf.org/html/rfc6585#section-4)|A operação foi recusada, pois muitas solicitações foram feitas dentro de um determinado período ou o limite global de requisições concorrentes foi atingido|[ResponseError](#schemaresponseerrorinsurancelifepension)|
+|500|[Internal Server Error](https://tools.ietf.org/html/rfc7231#section-6.6.1)|Ocorreu um erro no gateway da API ou no microsserviço|[ResponseError](#schemaresponseerrorinsurancelifepension)|
+
+### Response Headers
+
+|Status|Header|Type|Format|Description|
+|---|---|---|---|---|
+|200|x-fapi-interaction-id|string||none|
+
+<aside class="warning">
+To perform this operation, you must be authenticated by means of one of the following methods:
+OpenId ( Scopes: openid ) & OAuth2Security ( Scopes: consent:consentId insurance-life-pension )
+</aside>

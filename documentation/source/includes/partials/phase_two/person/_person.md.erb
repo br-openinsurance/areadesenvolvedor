@@ -1,0 +1,892 @@
+<h1 id="api-insurance-person">API - Person v1.2.0</h1>
+
+> Scroll down for code samples, example requests and responses. Select a language for code samples from the tabs above or the mobile navigation menu.
+
+**Especificação em OAS 3.0** </br>
+<a href="files/swagger/insurance-person.yaml" download="insurance-person.yaml">Download da Especificação</a>
+
+**Detalhamento Técnico** </br>
+<a href="files/docs/insurance-person.docx" download="insurance-person.docx">Download do Detalhamento Técnico</a>
+
+API de Pessoas do Open Insurance Brasil - Fase 2.
+
+Traz informações de apólice, prêmio e sinistro mantidas nas instituições transmissoras por seus clientes.
+
+Não possui segregação entre pessoa natural e pessoa jurídica.
+
+Requer consentimento do cliente para todos os 'endpoints'.
+
+Base URLs:
+
+**Servidor de Produção** </br>
+* <a href="https://api.organizacao.com.br/open-insurance/insurance-person/v1">https://api.organizacao.com.br/open-insurance/insurance-person/v1</a>
+
+**Servidor de Homologação** </br>
+* <a href="https://api.organizacao.com.br/open-insurance/insurance-person/v1">https://api.organizacao.com.br/open-insurance/insurance-person/v1</a>
+
+Web: <a href="https://www.gov.br/susep/">Governança do Open Insurance Brasil</a> 
+
+<h2 id="orientacoes-insurance-pension-plan">Orientações</h2>
+
+A `Role`  do diretório de participantes relacionada à presente API é a `DADOS`.
+
+Para todos os `endpoints` desta API é previsto o envio de um `token` através do header `Authorization`.
+
+Este `token` deverá estar relacionado ao consentimento (identificado pelo `consentId`) mantido na instituição transmissora dos dados, o qual permitirá a pesquisa e retorno, na API em questão, dos 
+dados relacionados ao `consentId` específico.\
+
+Os dados serão devolvidos na consulta desde que o `consentId` relacionado corresponda a um consentimento válido e com o status `AUTHORISED`.
+É também necessário que o recurso em questão (conta, contrato, etc.) esteja disponível na instituição transmissora (ou seja, sem boqueios de qualquer natureza e com todas as autorizações/consentimentos já autorizados).
+
+Além disso, as `permissions` necessárias deverão ter sido solicitadas quando da criação do consentimento relacionado.
+
+Relacionamos a seguir as `permissions` necessárias para a consulta de dados em cada `endpoint` da presente API.
+
+<h2 id="permissions-necessarias-para-a-api-insurance-person">Permissions necessárias para a API InsurancePerson</h2>
+
+Para cada um dos `paths` desta API, além dos escopos (`scopes`) indicados existem `permissions` que deverão ser observadas:
+
+### `/`
+  - permissions:
+    - GET: **DAMAGES_AND_PEOPLE_PERSON_READ**
+
+### `/{policyId}/policy-info`
+  - permissions:
+    - GET: **DAMAGES_AND_PEOPLE_PERSON_POLICYINFO_READ**
+
+### `/{policyId}/claim`
+  - permissions:
+    - GET: **DAMAGES_AND_PEOPLE_PERSON_CLAIM_READ**
+
+### `/{policyId}/movements`
+  - permissions:
+    - GET: **DAMAGES_AND_PEOPLE_PERSON_MOVEMENTS_READ**
+
+
+### Authentication
+
+- oAuth2 authentication. Fluxo OAuth necessário para que a receptora tenha acesso aos dados na instituição transmissora. Inclui o processo de redirecionamento e autenticação do usuário a que se referem os dados.
+
+    - Flow: authorizationCode
+    - Authorization URL = [https://authserver.example/authorization](https://authserver.example/authorization)
+    - Token URL = [https://authserver.example/token](https://authserver.example/token)
+
+|Scope|Scope Description|
+|---|---|
+|insurance-person|Escopo necessário para acesso à API. O controle dos endpoints específicos é feito via permissions.|
+
+<h2 id="obtem-a-lista-de-identificacao-de-insurance-person">Obtém a lista de identificação de InsurancePerson</h2>
+
+<a id="opIdgetInsurancePerson"></a>
+
+> Code samples
+
+```javascript
+const data = null;
+
+const xhr = new XMLHttpRequest();
+xhr.withCredentials = true;
+
+xhr.addEventListener("readystatechange", function () {
+  if (this.readyState === this.DONE) {
+    console.log(this.responseText);
+  }
+});
+
+xhr.open("GET", "https://api.organizacao.com.br/open-insurance/insurance-person/v1/insurance-person");
+xhr.setRequestHeader("Accept", "application/json");
+xhr.setRequestHeader("Authorization", "string");
+xhr.setRequestHeader("x-fapi-auth-date", "stringstringstringstringstrin");
+xhr.setRequestHeader("x-fapi-customer-ip-address", "string");
+xhr.setRequestHeader("x-fapi-interaction-id", "string");
+xhr.setRequestHeader("x-customer-user-agent", "string");
+
+xhr.send(data);
+```
+
+```python
+import http.client
+
+conn = http.client.HTTPSConnection("api.organizacao.com.br")
+
+headers = {
+    'Accept': "application/json",
+    'Authorization': "string",
+    'x-fapi-auth-date': "stringstringstringstringstrin",
+    'x-fapi-customer-ip-address': "string",
+    'x-fapi-interaction-id': "string",
+    'x-customer-user-agent': "string"
+    }
+
+conn.request("GET", "/open-insurance/insurance-person/v1/insurance-person", headers=headers)
+
+res = conn.getresponse()
+data = res.read()
+
+print(data.decode("utf-8"))
+```
+
+```java
+HttpResponse<String> response = Unirest.get("https://api.organizacao.com.br/open-insurance/insurance-person/v1/insurance-person")
+  .header("Accept", "application/json")
+  .header("Authorization", "string")
+  .header("x-fapi-auth-date", "stringstringstringstringstrin")
+  .header("x-fapi-customer-ip-address", "string")
+  .header("x-fapi-interaction-id", "string")
+  .header("x-customer-user-agent", "string")
+  .asString();
+```
+
+`GET /insurance-person`
+
+Método para obter a lista de identificação de InsurancePerson
+
+<h3 id="obtem-a-lista-de-identificação-de-insuranceperson-parameters">Parameters</h3>
+
+|Name|In|Type|Required|Description|
+|---|---|---|---|---|
+|Authorization|header|string|true|Cabeçalho HTTP padrão. Permite que as credenciais sejam fornecidas dependendo do tipo de recurso solicitado.|
+|x-fapi-auth-date|header|string|false|Data em que o usuário logou pela última vez com o receptor. Representada de acordo com a [RFC7231](https://tools.ietf.org/html/rfc7231). Exemplo: Sun, 10 Sep 2017 19:43:31 UTC|
+|x-fapi-customer-ip-address|header|string|false|O endereço IP do usuário se estiver atualmente logado com o receptor.|
+|x-fapi-interaction-id|header|string|false|Um UID [RFC4122](https://tools.ietf.org/html/rfc4122) usado como um ID de correlação. Se fornecido, o transmissor deve "reproduzir" esse valor no cabeçalho de resposta.|
+|x-customer-user-agent|header|string|false|Indica o user-agent que o usuário utiliza.|
+|page|query|integer(int32)|false|Número da página que está sendo requisitada (o valor da primeira página é 1).|
+|page-size|query|integer(int32)|false|Quantidade total de registros por páginas.|
+
+> Example responses
+
+> 200 Response
+
+```json
+{
+  "data": {
+    "brand": {
+      "name": "EMPRESA A SEGUROS",
+      "companies": [
+        {
+          "companyName": "string",
+          "cnpjNumber": "12345678901234",
+          "policies": [
+            {
+              "productName": "Produto A Pessoas",
+              "policyId": "111111"
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "links": {
+    "self": "https://api.organizacao.com.br/open-insurance/insurance-person/v1/insurance-person",
+    "first": "https://api.organizacao.com.br/open-insurance/insurance-person/v1/insurance-person",
+    "prev": "https://api.organizacao.com.br/open-insurance/insurance-person/v1/insurance-person",
+    "next": "https://api.organizacao.com.br/open-insurance/insurance-person/v1/insurance-person",
+    "last": "https://api.organizacao.com.br/open-insurance/insurance-person/v1/insurance-person"
+  },
+  "meta": {
+    "totalRecords": 10,
+    "totalPages": 1
+  }
+}
+```
+
+<h3 id="obtem-a-lista-de-identificação-de-insuranceperson-responses">Responses</h3>
+
+|Status|Meaning|Description|Schema|
+|---|---|---|---|
+|200|[OK](https://tools.ietf.org/html/rfc7231#section-6.3.1)|Dados de ResponseInsurancePerson obtidos com sucesso|[ResponseInsurancePerson](#schemaresponseinsuranceperson)|
+|204|[No Content](https://tools.ietf.org/html/rfc7231#section-6.3.5)|O recurso solicitado não existe ou não foi localizado.|[ResponseError](#schemaresponseerrorinsuranceperson)|
+|400|[Bad Request](https://tools.ietf.org/html/rfc7231#section-6.5.1)|A requisição foi malformada, omitindo atributos obrigatórios, seja no payload ou através de atributos na URL.|[ResponseError](#schemaresponseerrorinsuranceperson)|
+|401|[Unauthorized](https://tools.ietf.org/html/rfc7235#section-3.1)|Cabeçalho de autenticação ausente/inválido ou token inválido|[ResponseError](#schemaresponseerrorinsuranceperson)|
+|403|[Forbidden](https://tools.ietf.org/html/rfc7231#section-6.5.3)|O token tem escopo incorreto ou uma política de segurança foi violada|[ResponseError](#schemaresponseerrorinsuranceperson)|
+|404|[Not Found](https://tools.ietf.org/html/rfc7231#section-6.5.4)|O recurso solicitado não existe ou não foi implementado|[ResponseError](#schemaresponseerrorinsuranceperson)|
+|405|[Method Not Allowed](https://tools.ietf.org/html/rfc7231#section-6.5.5)|O consumidor tentou acessar o recurso com um método não suportado|[ResponseError](#schemaresponseerrorinsuranceperson)|
+|406|[Not Acceptable](https://tools.ietf.org/html/rfc7231#section-6.5.6)|A solicitação continha um cabeçalho Accept diferente dos tipos de mídia permitidos ou um conjunto de caracteres diferente de UTF-8|[ResponseError](#schemaresponseerrorinsuranceperson)|
+|422|[Unprocessable Entity](https://tools.ietf.org/html/rfc2518#section-10.3)|O servidor entende o tipo de conteúdo da entidade da requisição, e a sintaxe da requisição esta correta, mas não foi possível processar as instruções presente.|[ResponseError](#schemaresponseerrorinsuranceperson)|
+|429|[Too Many Requests](https://tools.ietf.org/html/rfc6585#section-4)|A operação foi recusada, pois muitas solicitações foram feitas dentro de um determinado período ou o limite global de requisições concorrentes foi atingido|[ResponseError](#schemaresponseerrorinsuranceperson)|
+|500|[Internal Server Error](https://tools.ietf.org/html/rfc7231#section-6.6.1)|Ocorreu um erro no gateway da API ou no microsserviço|[ResponseError](#schemaresponseerrorinsuranceperson)|
+
+### Response Headers
+
+|Status|Header|Type|Format|Description|
+|---|---|---|---|---|
+|200|x-fapi-interaction-id|string||none|
+
+<aside class="warning">
+To perform this operation, you must be authenticated by means of one of the following methods:
+OpenId ( Scopes: openid ) & OAuth2Security ( Scopes: consent:consentId insurance-person )
+</aside>
+
+<h2 id="obtem-as-informações-gerais-da-apolice-identificada-por-policy-id-insurance-person">Obtém as informações gerais da apólice identificada por {policyId}</h2>
+
+<a id="opIdgetInsurancePersonpolicyIdPolicyInfo"></a>
+
+> Code samples
+
+```javascript
+const data = null;
+
+const xhr = new XMLHttpRequest();
+xhr.withCredentials = true;
+
+xhr.addEventListener("readystatechange", function () {
+  if (this.readyState === this.DONE) {
+    console.log(this.responseText);
+  }
+});
+
+xhr.open("GET", "https://api.organizacao.com.br/open-insurance/insurance-person/v1/insurance-person/string/policy-info");
+xhr.setRequestHeader("Accept", "application/json");
+xhr.setRequestHeader("Authorization", "string");
+xhr.setRequestHeader("x-fapi-auth-date", "stringstringstringstringstrin");
+xhr.setRequestHeader("x-fapi-customer-ip-address", "string");
+xhr.setRequestHeader("x-fapi-interaction-id", "string");
+xhr.setRequestHeader("x-customer-user-agent", "string");
+
+xhr.send(data);
+```
+
+```python
+import http.client
+
+conn = http.client.HTTPSConnection("api.organizacao.com.br")
+
+headers = {
+    'Accept': "application/json",
+    'Authorization': "string",
+    'x-fapi-auth-date': "stringstringstringstringstrin",
+    'x-fapi-customer-ip-address': "string",
+    'x-fapi-interaction-id': "string",
+    'x-customer-user-agent': "string"
+    }
+
+conn.request("GET", "/open-insurance/insurance-person/v1/insurance-person/string/policy-info", headers=headers)
+
+res = conn.getresponse()
+data = res.read()
+
+print(data.decode("utf-8"))
+```
+
+```java
+HttpResponse<String> response = Unirest.get("https://api.organizacao.com.br/open-insurance/insurance-person/v1/insurance-person/string/policy-info")
+  .header("Accept", "application/json")
+  .header("Authorization", "string")
+  .header("x-fapi-auth-date", "stringstringstringstringstrin")
+  .header("x-fapi-customer-ip-address", "string")
+  .header("x-fapi-interaction-id", "string")
+  .header("x-customer-user-agent", "string")
+  .asString();
+```
+
+`GET /insurance-person/{policyId}/policy-info`
+
+Método para obter as informações gerais da apólice
+
+<h3 id="obtém-as-informações-gerais-da-apólice-identificada-por-{policyid}-parameters">Parameters</h3>
+
+|Name|In|Type|Required|Description|
+|---|---|---|---|---|
+|Authorization|header|string|true|Cabeçalho HTTP padrão. Permite que as credenciais sejam fornecidas dependendo do tipo de recurso solicitado.|
+|x-fapi-auth-date|header|string|false|Data em que o usuário logou pela última vez com o receptor. Representada de acordo com a [RFC7231](https://tools.ietf.org/html/rfc7231). Exemplo: Sun, 10 Sep 2017 19:43:31 UTC|
+|x-fapi-customer-ip-address|header|string|false|O endereço IP do usuário se estiver atualmente logado com o receptor.|
+|x-fapi-interaction-id|header|string|false|Um UID [RFC4122](https://tools.ietf.org/html/rfc4122) usado como um ID de correlação. Se fornecido, o transmissor deve "reproduzir" esse valor no cabeçalho de resposta.|
+|x-customer-user-agent|header|string|false|Indica o user-agent que o usuário utiliza.|
+|policyId|path|string|true|none|
+
+> Example responses
+
+> 200 Response
+
+```json
+{
+  "data": {
+    "contractingType": "COLETIVO",
+    "policyId": "111111",
+    "certificateId": "67",
+    "termStartDate": "2022-12-31",
+    "termEndDate": "2022-12-31",
+    "withdrawals": [
+      {
+        "occurrenceWithdrawal": true,
+        "type": "PARCIAL",
+        "requestDate": "2020-12-31",
+        "amount": {
+          "amount": "2000.00",
+          "unit": {
+            "code": "R$",
+            "description": "BRL"
+          }
+        },
+        "movementDate": "2020-12-31",
+        "chargingValue": {
+          "amount": "2000.00",
+          "unit": {
+            "code": "R$",
+            "description": "BRL"
+          }
+        },
+        "withdrawalCause": "RESGATE_REGULAR",
+        "FIE": [
+          {
+            "FIECNPJ": "12345678901234",
+            "FIEName": "RAZÃO SOCIAL",
+            "FIETradeName": "NOME FANTASIA"
+          }
+        ]
+      }
+    ],
+    "portabilities": [
+      {
+        "occurrencePortability": true,
+        "direction": "ENTRADA",
+        "type": "PARCIAL",
+        "amount": {
+          "amount": "2000.00",
+          "unit": {
+            "code": "R$",
+            "description": "BRL"
+          }
+        },
+        "requestDate": "2020-12-31",
+        "movementDate": "2020-12-31",
+        "chargingValue": {
+          "amount": "2000.00",
+          "unit": {
+            "code": "R$",
+            "description": "BRL"
+          }
+        },
+        "sourceEntityCode": "ABC123",
+        "targetEntityCode": "ABC123",
+        "sourceEntitySusepProcessNumber": "ABC123",
+        "taxRegime": "PROGRESSIVO",
+        "FIE": [
+          {
+            "FIECNPJ": "12345678901234",
+            "FIEName": "RAZÃO SOCIAL",
+            "FIETradeName": "NOME FANTASIA",
+            "portedType": "ORIGEM"
+          }
+        ]
+      }
+    ],
+    "proposalId": "ABC123",
+    "insureds": [
+      {
+        "identificationType": "CPF",
+        "identificationTypeOthers": "OUTROS",
+        "identification": "12345678900",
+        "name": "Nome Sobrenome",
+        "birthDate": "2022-12-31",
+        "gender": "MASCULINO",
+        "postCode": "10000000",
+        "email": "string",
+        "city": "string",
+        "state": "string",
+        "country": "BRA",
+        "address": "string",
+        "addressAdditionalInfo": "Fundos"
+      }
+    ],
+    "beneficiaries": [
+      {
+        "identification": "12345678900",
+        "identificationType": "CPF",
+        "identificationTypeOthers": "OUTROS",
+        "name": "Nome Sobrenome",
+        "participationPercentage": "10.00"
+      }
+    ],
+    "intermediaries": [
+      {
+        "type": "REPRESENTANTE",
+        "typeOthers": "OUTROS",
+        "identification": "12345678900",
+        "brokerId": "string",
+        "identificationType": "CPF",
+        "identificationTypeOthers": "OUTROS",
+        "name": "Nome Sobrenome",
+        "postCode": "10000000",
+        "city": "string",
+        "state": "string",
+        "country": "BRA",
+        "address": "string"
+      }
+    ],
+    "coverages": [
+      {
+        "branch": "0111",
+        "planType": "AVERBADO",
+        "coverageCode": "1999",
+        "internalCode": "string",
+        "susepProcessNumber": "string",
+        "feesTax": "FORMATO NÃO DEFINIDO",
+        "paymentPeriod": "MENSAL",
+        "grace": [
+          {
+            "type": "RESGATE",
+            "gracePeriod": 0,
+            "gracePeriodicity": "DIA",
+            "gracePeriodCountingMethod": "DIAS_UTEIS",
+            "gracePeriodStartDate": "2022-12-31",
+            "gracePeriodEndDate": "2022-12-31",
+            "period": 0,
+            "periodType": "DIA"
+          }
+        ],
+        "pmbacInterestRate": "10.00",
+        "pmbacMonetaryUpdateIndex": "IGPM-FGV",
+        "pmbacMonetaryUpdateIndexOthers": "OUTROS",
+        "pmbacIndexLag": 5,
+        "incomeInterestRate": "10.00",
+        "pricingForm": "POR_IDADE",
+        "pricingFormOthers": "OUTROS",
+        "triggerEvent": "INVALIDEZ",
+        "triggerEventOthers": "OUTROS",
+        "financialtype": "REPARTICAO_SIMPLES",
+        "coverageUpdateIndex": "IGPM-FGV",
+        "coverageUpdateIndexOthers": "OUTROS",
+        "periodicityValue": 5,
+        "periodicity": "DIA",
+        "IndexLag": 5,
+        "chargedAmount": {
+          "amount": "2000.00",
+          "unit": {
+            "code": "R$",
+            "description": "BRL"
+          }
+        },
+        "insuredDependentsInclusionClause": "NAO_HA",
+        "tripScope": "NACIONAL",
+        "insuredCapitalType": "FIXO",
+        "moneylenderType": "BASICO",
+        "creditor": {
+          "identification": "12345678901",
+          "identificationType": "CPF",
+          "name": "string"
+        },
+        "obligations": [
+          {
+            "type": "EMPRESTIMO",
+            "typeOthers": "string"
+          }
+        ],
+        "personIdentification": {
+          "identification": "12345678900",
+          "identificationType": "CPF",
+          "name": "Nome Sobrenome"
+        },
+        "insuredCapitalPercentage": "20.00",
+        "dependents": [
+          {
+            "identification": "12345678901234",
+            "identificationType": "CPF",
+            "name": "Nome Sobrenome",
+            "kinshipDegree": "CONJUGE"
+          }
+        ],
+        "educationalInstitution": {
+          "identification": "12345678901",
+          "identificationType": "CPF",
+          "name": "Nome Sobrenome"
+        },
+        "benefitAmount": {
+          "amount": "2000.00",
+          "unit": {
+            "code": "R$",
+            "description": "BRL"
+          }
+        },
+        "plan": "PGBL",
+        "planOthers": "OUTROS",
+        "planBlock": false,
+        "structureModality": "BENEFICIO_DEFINIDO",
+        "qualifiedProposer": "SIM",
+        "biometricTable": "1  - Mortalidade Geral / Beneficiário - AT49 M",
+        "benefitPaymentModality": "RENDA",
+        "financialResultReversal": "SIM",
+        "financialResultReversalPercentage": "10.00",
+        "minimumWarrantyIndex": "IGP-DI-FGV",
+        "minimumWarrantyPercentage": "10.00",
+        "taxRegime": "PROGRESSIVO",
+        "calculationBasis": "MENSAL"
+      }
+    ],
+    "conjugatedPlan": true,
+    "PMBaC": {
+      "pmbacAmount": {
+        "amount": "2000.00",
+        "unit": {
+          "code": "R$",
+          "description": "BRL"
+        }
+      },
+      "provisionSurplusAmount": {
+        "amount": "2000.00",
+        "unit": {
+          "code": "R$",
+          "description": "BRL"
+        }
+      },
+      "FIE": [
+        {
+          "FIECNPJ": "12345678901234",
+          "FIEName": "RAZÃO SOCIAL",
+          "FIETradeName": "NOME FANTASIA"
+        }
+      ]
+    }
+  },
+  "links": {
+    "self": "https://api.organizacao.com.br/open-insurance/insurance-person/v1/insurance-person",
+    "first": "https://api.organizacao.com.br/open-insurance/insurance-person/v1/insurance-person",
+    "prev": "https://api.organizacao.com.br/open-insurance/insurance-person/v1/insurance-person",
+    "next": "https://api.organizacao.com.br/open-insurance/insurance-person/v1/insurance-person",
+    "last": "https://api.organizacao.com.br/open-insurance/insurance-person/v1/insurance-person"
+  },
+  "meta": {
+    "totalRecords": 10,
+    "totalPages": 1
+  }
+}
+```
+
+<h3 id="obtém-as-informações-gerais-da-apólice-identificada-por-{policyid}-responses">Responses</h3>
+
+|Status|Meaning|Description|Schema|
+|---|---|---|---|
+|200|[OK](https://tools.ietf.org/html/rfc7231#section-6.3.1)|Dados de ResponseInsurancePersonPolicyInfo obtidos com sucesso|[ResponseInsurancePersonPolicyInfo](#schemaresponseinsurancepersonpolicyinfo)|
+|204|[No Content](https://tools.ietf.org/html/rfc7231#section-6.3.5)|O recurso solicitado não existe ou não foi localizado.|[ResponseError](#schemaresponseerrorinsuranceperson)|
+|400|[Bad Request](https://tools.ietf.org/html/rfc7231#section-6.5.1)|A requisição foi malformada, omitindo atributos obrigatórios, seja no payload ou através de atributos na URL.|[ResponseError](#schemaresponseerrorinsuranceperson)|
+|401|[Unauthorized](https://tools.ietf.org/html/rfc7235#section-3.1)|Cabeçalho de autenticação ausente/inválido ou token inválido|[ResponseError](#schemaresponseerrorinsuranceperson)|
+|403|[Forbidden](https://tools.ietf.org/html/rfc7231#section-6.5.3)|O token tem escopo incorreto ou uma política de segurança foi violada|[ResponseError](#schemaresponseerrorinsuranceperson)|
+|404|[Not Found](https://tools.ietf.org/html/rfc7231#section-6.5.4)|O recurso solicitado não existe ou não foi implementado|[ResponseError](#schemaresponseerrorinsuranceperson)|
+|405|[Method Not Allowed](https://tools.ietf.org/html/rfc7231#section-6.5.5)|O consumidor tentou acessar o recurso com um método não suportado|[ResponseError](#schemaresponseerrorinsuranceperson)|
+|406|[Not Acceptable](https://tools.ietf.org/html/rfc7231#section-6.5.6)|A solicitação continha um cabeçalho Accept diferente dos tipos de mídia permitidos ou um conjunto de caracteres diferente de UTF-8|[ResponseError](#schemaresponseerrorinsuranceperson)|
+|422|[Unprocessable Entity](https://tools.ietf.org/html/rfc2518#section-10.3)|O servidor entende o tipo de conteúdo da entidade da requisição, e a sintaxe da requisição esta correta, mas não foi possível processar as instruções presente.|[ResponseError](#schemaresponseerrorinsuranceperson)|
+|429|[Too Many Requests](https://tools.ietf.org/html/rfc6585#section-4)|A operação foi recusada, pois muitas solicitações foram feitas dentro de um determinado período ou o limite global de requisições concorrentes foi atingido|[ResponseError](#schemaresponseerrorinsuranceperson)|
+|500|[Internal Server Error](https://tools.ietf.org/html/rfc7231#section-6.6.1)|Ocorreu um erro no gateway da API ou no microsserviço|[ResponseError](#schemaresponseerrorinsuranceperson)|
+
+### Response Headers
+
+|Status|Header|Type|Format|Description|
+|---|---|---|---|---|
+|200|x-fapi-interaction-id|string||none|
+
+<aside class="warning">
+To perform this operation, you must be authenticated by means of one of the following methods:
+OpenId ( Scopes: openid ) & OAuth2Security ( Scopes: consent:consentId insurance-person )
+</aside>
+
+<h2 id="obtem-os-dados-de-sinistro-da-apolice-identificada-por-policy-id-insurance-person">Obtém os dados de sinistro da apólice identificada por {policyId}</h2>
+
+<a id="opIdgetInsurancePersonpolicyIdClaims"></a>
+
+> Code samples
+
+```javascript
+const data = null;
+
+const xhr = new XMLHttpRequest();
+xhr.withCredentials = true;
+
+xhr.addEventListener("readystatechange", function () {
+  if (this.readyState === this.DONE) {
+    console.log(this.responseText);
+  }
+});
+
+xhr.open("GET", "https://api.organizacao.com.br/open-insurance/insurance-person/v1/insurance-person/string/claim");
+xhr.setRequestHeader("Accept", "application/json");
+xhr.setRequestHeader("Authorization", "string");
+xhr.setRequestHeader("x-fapi-auth-date", "stringstringstringstringstrin");
+xhr.setRequestHeader("x-fapi-customer-ip-address", "string");
+xhr.setRequestHeader("x-fapi-interaction-id", "string");
+xhr.setRequestHeader("x-customer-user-agent", "string");
+
+xhr.send(data);
+```
+
+```python
+import http.client
+
+conn = http.client.HTTPSConnection("api.organizacao.com.br")
+
+headers = {
+    'Accept': "application/json",
+    'Authorization': "string",
+    'x-fapi-auth-date': "stringstringstringstringstrin",
+    'x-fapi-customer-ip-address': "string",
+    'x-fapi-interaction-id': "string",
+    'x-customer-user-agent': "string"
+    }
+
+conn.request("GET", "/open-insurance/insurance-person/v1/insurance-person/string/claim", headers=headers)
+
+res = conn.getresponse()
+data = res.read()
+
+print(data.decode("utf-8"))
+```
+
+```java
+HttpResponse<String> response = Unirest.get("https://api.organizacao.com.br/open-insurance/insurance-person/v1/insurance-person/string/claim")
+  .header("Accept", "application/json")
+  .header("Authorization", "string")
+  .header("x-fapi-auth-date", "stringstringstringstringstrin")
+  .header("x-fapi-customer-ip-address", "string")
+  .header("x-fapi-interaction-id", "string")
+  .header("x-customer-user-agent", "string")
+  .asString();
+```
+
+`GET /insurance-person/{policyId}/claim`
+
+Método para obter os dados de sinistro associados à apólice
+
+<h3 id="obtém-os-dados-de-sinistro-da-apólice-identificada-por-{policyid}-parameters">Parameters</h3>
+
+|Name|In|Type|Required|Description|
+|---|---|---|---|---|
+|Authorization|header|string|true|Cabeçalho HTTP padrão. Permite que as credenciais sejam fornecidas dependendo do tipo de recurso solicitado.|
+|x-fapi-auth-date|header|string|false|Data em que o usuário logou pela última vez com o receptor. Representada de acordo com a [RFC7231](https://tools.ietf.org/html/rfc7231). Exemplo: Sun, 10 Sep 2017 19:43:31 UTC|
+|x-fapi-customer-ip-address|header|string|false|O endereço IP do usuário se estiver atualmente logado com o receptor.|
+|x-fapi-interaction-id|header|string|false|Um UID [RFC4122](https://tools.ietf.org/html/rfc4122) usado como um ID de correlação. Se fornecido, o transmissor deve "reproduzir" esse valor no cabeçalho de resposta.|
+|x-customer-user-agent|header|string|false|Indica o user-agent que o usuário utiliza.|
+|policyId|path|string|true|none|
+
+> Example responses
+
+> 200 Response
+
+```json
+{
+  "data": [
+    {
+      "status": "ABERTO",
+      "warningDate": "2022-12-31",
+      "warningRegisterDate": "2022-12-31",
+      "recipientIdentification": "12345678901",
+      "recipientIdentificationType": "CPF",
+      "recipientName": "Nome Sobrenome",
+      "recipientClassification": "SEGURADO",
+      "recipientBirthDate": "1990-12-31",
+      "incomeModality": "RENDA_VITALICIA",
+      "incomeModalityOthers": "Outros",
+      "incomeReversed": true,
+      "incomeValueUniquePayment": {
+        "amount": "2000.00",
+        "unit": {
+          "code": "R$",
+          "description": "BRL"
+        }
+      },
+      "incomeTerm": "string",
+      "recipientNumber": 3,
+      "concessionStartDate": "2020-12-31",
+      "monetaryUpdateIndex": "IGPM-FGV",
+      "monetaryUpdateIndexOthers": "OUTROS",
+      "lastUpdateDate": "2020-12-31",
+      "defermentDueDate": "2025-12-31"
+    }
+  ],
+  "links": {
+    "self": "https://api.organizacao.com.br/open-insurance/insurance-person/v1/insurance-person",
+    "first": "https://api.organizacao.com.br/open-insurance/insurance-person/v1/insurance-person",
+    "prev": "https://api.organizacao.com.br/open-insurance/insurance-person/v1/insurance-person",
+    "next": "https://api.organizacao.com.br/open-insurance/insurance-person/v1/insurance-person",
+    "last": "https://api.organizacao.com.br/open-insurance/insurance-person/v1/insurance-person"
+  },
+  "meta": {
+    "totalRecords": 10,
+    "totalPages": 1
+  }
+}
+```
+
+<h3 id="obtém-os-dados-de-sinistro-da-apólice-identificada-por-{policyid}-responses">Responses</h3>
+
+|Status|Meaning|Description|Schema|
+|---|---|---|---|
+|200|[OK](https://tools.ietf.org/html/rfc7231#section-6.3.1)|Dados de ResponseInsurancePersonClaims obtidos com sucesso|[ResponseInsurancePersonClaims](#schemaresponseinsurancepersonclaims)|
+|204|[No Content](https://tools.ietf.org/html/rfc7231#section-6.3.5)|O recurso solicitado não existe ou não foi localizado.|[ResponseError](#schemaresponseerrorinsuranceperson)|
+|400|[Bad Request](https://tools.ietf.org/html/rfc7231#section-6.5.1)|A requisição foi malformada, omitindo atributos obrigatórios, seja no payload ou através de atributos na URL.|[ResponseError](#schemaresponseerrorinsuranceperson)|
+|401|[Unauthorized](https://tools.ietf.org/html/rfc7235#section-3.1)|Cabeçalho de autenticação ausente/inválido ou token inválido|[ResponseError](#schemaresponseerrorinsuranceperson)|
+|403|[Forbidden](https://tools.ietf.org/html/rfc7231#section-6.5.3)|O token tem escopo incorreto ou uma política de segurança foi violada|[ResponseError](#schemaresponseerrorinsuranceperson)|
+|404|[Not Found](https://tools.ietf.org/html/rfc7231#section-6.5.4)|O recurso solicitado não existe ou não foi implementado|[ResponseError](#schemaresponseerrorinsuranceperson)|
+|405|[Method Not Allowed](https://tools.ietf.org/html/rfc7231#section-6.5.5)|O consumidor tentou acessar o recurso com um método não suportado|[ResponseError](#schemaresponseerrorinsuranceperson)|
+|406|[Not Acceptable](https://tools.ietf.org/html/rfc7231#section-6.5.6)|A solicitação continha um cabeçalho Accept diferente dos tipos de mídia permitidos ou um conjunto de caracteres diferente de UTF-8|[ResponseError](#schemaresponseerrorinsuranceperson)|
+|422|[Unprocessable Entity](https://tools.ietf.org/html/rfc2518#section-10.3)|O servidor entende o tipo de conteúdo da entidade da requisição, e a sintaxe da requisição esta correta, mas não foi possível processar as instruções presente.|[ResponseError](#schemaresponseerrorinsuranceperson)|
+|429|[Too Many Requests](https://tools.ietf.org/html/rfc6585#section-4)|A operação foi recusada, pois muitas solicitações foram feitas dentro de um determinado período ou o limite global de requisições concorrentes foi atingido|[ResponseError](#schemaresponseerrorinsuranceperson)|
+|500|[Internal Server Error](https://tools.ietf.org/html/rfc7231#section-6.6.1)|Ocorreu um erro no gateway da API ou no microsserviço|[ResponseError](#schemaresponseerrorinsuranceperson)|
+
+### Response Headers
+
+|Status|Header|Type|Format|Description|
+|---|---|---|---|---|
+|200|x-fapi-interaction-id|string||none|
+
+<aside class="warning">
+To perform this operation, you must be authenticated by means of one of the following methods:
+OpenId ( Scopes: openid ) & OAuth2Security ( Scopes: consent:consentId insurance-person )
+</aside>
+
+<h2 id="obtem-os-dados-de-contribuições-identificado-por-policy-id-insurance-person">Obtém os dados de contribuições identificado por {policyId}</h2>
+
+<a id="opIdgetInsurancePersonpolicyIdMovements"></a>
+
+> Code samples
+
+```javascript
+const data = null;
+
+const xhr = new XMLHttpRequest();
+xhr.withCredentials = true;
+
+xhr.addEventListener("readystatechange", function () {
+  if (this.readyState === this.DONE) {
+    console.log(this.responseText);
+  }
+});
+
+xhr.open("GET", "https://api.organizacao.com.br/open-insurance/insurance-person/v1/insurance-person/string/movements");
+xhr.setRequestHeader("Accept", "application/json");
+xhr.setRequestHeader("Authorization", "string");
+xhr.setRequestHeader("x-fapi-auth-date", "stringstringstringstringstrin");
+xhr.setRequestHeader("x-fapi-customer-ip-address", "string");
+xhr.setRequestHeader("x-fapi-interaction-id", "string");
+xhr.setRequestHeader("x-customer-user-agent", "string");
+
+xhr.send(data);
+```
+
+```python
+import http.client
+
+conn = http.client.HTTPSConnection("api.organizacao.com.br")
+
+headers = {
+    'Accept': "application/json",
+    'Authorization': "string",
+    'x-fapi-auth-date': "stringstringstringstringstrin",
+    'x-fapi-customer-ip-address': "string",
+    'x-fapi-interaction-id': "string",
+    'x-customer-user-agent': "string"
+    }
+
+conn.request("GET", "/open-insurance/insurance-person/v1/insurance-person/string/movements", headers=headers)
+
+res = conn.getresponse()
+data = res.read()
+
+print(data.decode("utf-8"))
+```
+
+```java
+HttpResponse<String> response = Unirest.get("https://api.organizacao.com.br/open-insurance/insurance-person/v1/insurance-person/string/movements")
+  .header("Accept", "application/json")
+  .header("Authorization", "string")
+  .header("x-fapi-auth-date", "stringstringstringstringstrin")
+  .header("x-fapi-customer-ip-address", "string")
+  .header("x-fapi-interaction-id", "string")
+  .header("x-customer-user-agent", "string")
+  .asString();
+```
+
+`GET /insurance-person/{policyId}/movements`
+
+Método para obter os dados de contribuições associados à apólice
+
+<h3 id="obtém-os-dados-de-contribuições-identificado-por-{policyid}-parameters">Parameters</h3>
+
+|Name|In|Type|Required|Description|
+|---|---|---|---|---|
+|Authorization|header|string|true|Cabeçalho HTTP padrão. Permite que as credenciais sejam fornecidas dependendo do tipo de recurso solicitado.|
+|x-fapi-auth-date|header|string|false|Data em que o usuário logou pela última vez com o receptor. Representada de acordo com a [RFC7231](https://tools.ietf.org/html/rfc7231). Exemplo: Sun, 10 Sep 2017 19:43:31 UTC|
+|x-fapi-customer-ip-address|header|string|false|O endereço IP do usuário se estiver atualmente logado com o receptor.|
+|x-fapi-interaction-id|header|string|false|Um UID [RFC4122](https://tools.ietf.org/html/rfc4122) usado como um ID de correlação. Se fornecido, o transmissor deve "reproduzir" esse valor no cabeçalho de resposta.|
+|x-customer-user-agent|header|string|false|Indica o user-agent que o usuário utiliza.|
+|policyId|path|string|true|none|
+
+> Example responses
+
+> 200 Response
+
+```json
+{
+  "data": {
+    "movementContributions": [
+      {
+        "contributionAmount": {
+          "amount": "2000.00",
+          "unit": {
+            "code": "R$",
+            "description": "BRL"
+          }
+        },
+        "contributionPaymentDate": "2021-05-21",
+        "contributionExpirationDate": "2021-05-21",
+        "chargedInAdvanceAmount": {
+          "amount": "2000.00",
+          "unit": {
+            "code": "R$",
+            "description": "BRL"
+          }
+        },
+        "periodicity": "MENSAL"
+      }
+    ],
+    "movementBenefits": [
+      {
+        "benefitAmount": {
+          "amount": "2000.00",
+          "unit": {
+            "code": "R$",
+            "description": "BRL"
+          }
+        },
+        "benefitPaymentDate": "2021-05-21"
+      }
+    ]
+  },
+  "links": {
+    "self": "https://api.organizacao.com.br/open-insurance/insurance-person/v1/insurance-person",
+    "first": "https://api.organizacao.com.br/open-insurance/insurance-person/v1/insurance-person",
+    "prev": "https://api.organizacao.com.br/open-insurance/insurance-person/v1/insurance-person",
+    "next": "https://api.organizacao.com.br/open-insurance/insurance-person/v1/insurance-person",
+    "last": "https://api.organizacao.com.br/open-insurance/insurance-person/v1/insurance-person"
+  },
+  "meta": {
+    "totalRecords": 10,
+    "totalPages": 1
+  }
+}
+```
+
+<h3 id="obtém-os-dados-de-contribuições-identificado-por-{policyid}-responses">Responses</h3>
+
+|Status|Meaning|Description|Schema|
+|---|---|---|---|
+|200|[OK](https://tools.ietf.org/html/rfc7231#section-6.3.1)|Dados de ResponseInsurancePersonMovements obtidos com sucesso|[ResponseInsurancePersonMovements](#schemaresponseinsurancepersonmovements)|
+|204|[No Content](https://tools.ietf.org/html/rfc7231#section-6.3.5)|O recurso solicitado não existe ou não foi localizado.|[ResponseError](#schemaresponseerrorinsuranceperson)|
+|400|[Bad Request](https://tools.ietf.org/html/rfc7231#section-6.5.1)|A requisição foi malformada, omitindo atributos obrigatórios, seja no payload ou através de atributos na URL.|[ResponseError](#schemaresponseerrorinsuranceperson)|
+|401|[Unauthorized](https://tools.ietf.org/html/rfc7235#section-3.1)|Cabeçalho de autenticação ausente/inválido ou token inválido|[ResponseError](#schemaresponseerrorinsuranceperson)|
+|403|[Forbidden](https://tools.ietf.org/html/rfc7231#section-6.5.3)|O token tem escopo incorreto ou uma política de segurança foi violada|[ResponseError](#schemaresponseerrorinsuranceperson)|
+|404|[Not Found](https://tools.ietf.org/html/rfc7231#section-6.5.4)|O recurso solicitado não existe ou não foi implementado|[ResponseError](#schemaresponseerrorinsuranceperson)|
+|405|[Method Not Allowed](https://tools.ietf.org/html/rfc7231#section-6.5.5)|O consumidor tentou acessar o recurso com um método não suportado|[ResponseError](#schemaresponseerrorinsuranceperson)|
+|406|[Not Acceptable](https://tools.ietf.org/html/rfc7231#section-6.5.6)|A solicitação continha um cabeçalho Accept diferente dos tipos de mídia permitidos ou um conjunto de caracteres diferente de UTF-8|[ResponseError](#schemaresponseerrorinsuranceperson)|
+|422|[Unprocessable Entity](https://tools.ietf.org/html/rfc2518#section-10.3)|O servidor entende o tipo de conteúdo da entidade da requisição, e a sintaxe da requisição esta correta, mas não foi possível processar as instruções presente.|[ResponseError](#schemaresponseerrorinsuranceperson)|
+|429|[Too Many Requests](https://tools.ietf.org/html/rfc6585#section-4)|A operação foi recusada, pois muitas solicitações foram feitas dentro de um determinado período ou o limite global de requisições concorrentes foi atingido|[ResponseError](#schemaresponseerrorinsuranceperson)|
+|500|[Internal Server Error](https://tools.ietf.org/html/rfc7231#section-6.6.1)|Ocorreu um erro no gateway da API ou no microsserviço|[ResponseError](#schemaresponseerrorinsuranceperson)|
+
+### Response Headers
+
+|Status|Header|Type|Format|Description|
+|---|---|---|---|---|
+|200|x-fapi-interaction-id|string||none|
+
+<aside class="warning">
+To perform this operation, you must be authenticated by means of one of the following methods:
+OpenId ( Scopes: openid ) & OAuth2Security ( Scopes: consent:consentId insurance-person )
+</aside>

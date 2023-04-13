@@ -6,7 +6,7 @@ info:
     Traz informações de apólice, prêmio e sinistro mantidas nas instituições transmissoras por seus clientes.\
     Não possui segregação entre pessoa natural e pessoa jurídica.\
     Requer consentimento do cliente para todos os 'endpoints'.
-    
+
     # Orientações
     A `Role`  do diretório de participantes relacionada à presente API é a `DADOS`.\
     Para todos os `endpoints` desta API é previsto o envio de um `token` através do header `Authorization`.\
@@ -27,23 +27,23 @@ info:
     ### `/{policyId}/policy-info`
       - permissions:
         - GET: **DAMAGES_AND_PEOPLE_PERSON_POLICYINFO_READ**
-    ### `/{policyId}/premium`
-      - permissions:
-        - GET: **DAMAGES_AND_PEOPLE_PERSON_PREMIUM_READ**
     ### `/{policyId}/claim`
       - permissions:
         - GET: **DAMAGES_AND_PEOPLE_PERSON_CLAIM_READ**
-  version: 1.1.0
+    ### `/{policyId}/movements`
+      - permissions:
+        - GET: **DAMAGES_AND_PEOPLE_PERSON_MOVEMENTS_READ**
+  version: 1.2.0
   contact:
     name: Governança do Open Insurance Brasil
-    url: 'https://www.gov.br/susep/'
+    url: "https://www.gov.br/susep/"
 servers:
-  - url: 'https://api.organizacao.com.br/open-insurance/insurance-person/v1'
+  - url: "https://api.organizacao.com.br/open-insurance/insurance-person/v1"
     description: Servidor de Produção
-  - url: 'https://api.organizacao.com.br/open-insurance/insurance-person/v1'
+  - url: "https://api.organizacao.com.br/open-insurance/insurance-person/v1"
     description: Servidor de Homologação
 tags:
-  - name: 'InsurancePerson'
+  - name: "InsurancePerson"
 paths:
   /insurance-person:
     get:
@@ -53,47 +53,41 @@ paths:
       description: "Método para obter a lista de identificação de InsurancePerson"
       operationId: "getInsurancePerson"
       parameters:
-        - $ref: '#/components/parameters/Authorization'
-        - $ref: '#/components/parameters/xFapiAuthDate'
-        - $ref: '#/components/parameters/xFapiCustomerIpAddress'
-        - $ref: '#/components/parameters/xFapiInteractionId'
-        - $ref: '#/components/parameters/xCustomerUserAgent'
+        - $ref: "#/components/parameters/Authorization"
+        - $ref: "#/components/parameters/xFapiAuthDate"
+        - $ref: "#/components/parameters/xFapiCustomerIpAddress"
+        - $ref: "#/components/parameters/xFapiInteractionId"
+        - $ref: "#/components/parameters/xCustomerUserAgent"
         - $ref: "#/components/parameters/page"
         - $ref: "#/components/parameters/pageSize"
       responses:
-        '200':
-          $ref: '#/components/responses/OKResponseInsurancePerson'
-        '204':
-          $ref: '#/components/responses/NoContent'
-        '400':
-          $ref: '#/components/responses/BadRequest'
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-        '403':
-          $ref: '#/components/responses/Forbidden'
-        '404':
-          $ref: '#/components/responses/NotFound'
-        '405':
-          $ref: '#/components/responses/MethodNotAllowed'
-        '406':
-          $ref: '#/components/responses/NotAcceptable'
-        '422':
-          $ref: '#/components/responses/UnprocessableEntity'
-        '429':
-          $ref: '#/components/responses/TooManyRequests'
-        '500':
-          $ref: '#/components/responses/InternalServerError'
-        default:
-          description: Erro inesperado.
-          content:
-            application/json; charset=utf-8:
-              schema:
-                $ref: '#/components/schemas/ResponseError'
+        "200":
+          $ref: "#/components/responses/OKResponseInsurancePerson"
+        "204":
+          $ref: "#/components/responses/NoContent"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "405":
+          $ref: "#/components/responses/MethodNotAllowed"
+        "406":
+          $ref: "#/components/responses/NotAcceptable"
+        "422":
+          $ref: "#/components/responses/UnprocessableEntity"
+        "429":
+          $ref: "#/components/responses/TooManyRequests"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
       security:
         - OpenId:
             - openid
           OAuth2Security:
-            - 'consent:consentId'
+            - "consent:consentId"
             - insurance-person
   /insurance-person/{policyId}/policy-info:
     get:
@@ -103,95 +97,40 @@ paths:
       description: "Método para obter as informações gerais da apólice"
       operationId: "getInsurancePersonpolicyIdPolicyInfo"
       parameters:
-        - $ref: '#/components/parameters/Authorization'
-        - $ref: '#/components/parameters/xFapiAuthDate'
-        - $ref: '#/components/parameters/xFapiCustomerIpAddress'
-        - $ref: '#/components/parameters/xFapiInteractionId'
-        - $ref: '#/components/parameters/xCustomerUserAgent'
+        - $ref: "#/components/parameters/Authorization"
+        - $ref: "#/components/parameters/xFapiAuthDate"
+        - $ref: "#/components/parameters/xFapiCustomerIpAddress"
+        - $ref: "#/components/parameters/xFapiInteractionId"
+        - $ref: "#/components/parameters/xCustomerUserAgent"
         - $ref: "#/components/parameters/policyId"
       responses:
-        '200':
-          $ref: '#/components/responses/OKResponseInsurancePersonPolicyInfo'
-        '204':
-          $ref: '#/components/responses/NoContent'
-        '400':
-          $ref: '#/components/responses/BadRequest'
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-        '403':
-          $ref: '#/components/responses/Forbidden'
-        '404':
-          $ref: '#/components/responses/NotFound'
-        '405':
-          $ref: '#/components/responses/MethodNotAllowed'
-        '406':
-          $ref: '#/components/responses/NotAcceptable'
-        '422':
-          $ref: '#/components/responses/UnprocessableEntity'
-        '429':
-          $ref: '#/components/responses/TooManyRequests'
-        '500':
-          $ref: '#/components/responses/InternalServerError'
-        default:
-          description: Erro inesperado.
-          content:
-            application/json; charset=utf-8:
-              schema:
-                $ref: '#/components/schemas/ResponseError'
+        "200":
+          $ref: "#/components/responses/OKResponseInsurancePersonPolicyInfo"
+        "204":
+          $ref: "#/components/responses/NoContent"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "405":
+          $ref: "#/components/responses/MethodNotAllowed"
+        "406":
+          $ref: "#/components/responses/NotAcceptable"
+        "422":
+          $ref: "#/components/responses/UnprocessableEntity"
+        "429":
+          $ref: "#/components/responses/TooManyRequests"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
       security:
         - OpenId:
             - openid
           OAuth2Security:
-            - 'consent:consentId'
-            - insurance-person
-  /insurance-person/{policyId}/premium:
-    get:
-      tags:
-        - InsurancePerson
-      summary: Obtém os dados de prêmio da apólice identificada por {policyId}
-      description: "Método para obter os dados de prêmio da apólice."
-      operationId: "getInsurancePersonpolicyIdPremium"
-      parameters:
-        - $ref: '#/components/parameters/Authorization'
-        - $ref: '#/components/parameters/xFapiAuthDate'
-        - $ref: '#/components/parameters/xFapiCustomerIpAddress'
-        - $ref: '#/components/parameters/xFapiInteractionId'
-        - $ref: '#/components/parameters/xCustomerUserAgent'
-        - $ref: "#/components/parameters/policyId"
-      responses:
-        '200':
-          $ref: '#/components/responses/OKResponseInsurancePersonPremium'
-        '204':
-          $ref: '#/components/responses/NoContent'
-        '400':
-          $ref: '#/components/responses/BadRequest'
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-        '403':
-          $ref: '#/components/responses/Forbidden'
-        '404':
-          $ref: '#/components/responses/NotFound'
-        '405':
-          $ref: '#/components/responses/MethodNotAllowed'
-        '406':
-          $ref: '#/components/responses/NotAcceptable'
-        '422':
-          $ref: '#/components/responses/UnprocessableEntity'
-        '429':
-          $ref: '#/components/responses/TooManyRequests'
-        '500':
-          $ref: '#/components/responses/InternalServerError'
-        default:
-          description: Erro inesperado.
-          content:
-            application/json; charset=utf-8:
-              schema:
-                $ref: '#/components/schemas/ResponseError'
-      security:
-        - OpenId:
-            - openid
-          OAuth2Security:
-            - 'consent:consentId'
+            - "consent:consentId"
             - insurance-person
   /insurance-person/{policyId}/claim:
     get:
@@ -201,46 +140,83 @@ paths:
       description: "Método para obter os dados de sinistro associados à apólice"
       operationId: "getInsurancePersonpolicyIdClaims"
       parameters:
-        - $ref: '#/components/parameters/Authorization'
-        - $ref: '#/components/parameters/xFapiAuthDate'
-        - $ref: '#/components/parameters/xFapiCustomerIpAddress'
-        - $ref: '#/components/parameters/xFapiInteractionId'
-        - $ref: '#/components/parameters/xCustomerUserAgent'
+        - $ref: "#/components/parameters/Authorization"
+        - $ref: "#/components/parameters/xFapiAuthDate"
+        - $ref: "#/components/parameters/xFapiCustomerIpAddress"
+        - $ref: "#/components/parameters/xFapiInteractionId"
+        - $ref: "#/components/parameters/xCustomerUserAgent"
         - $ref: "#/components/parameters/policyId"
       responses:
-        '200':
-          $ref: '#/components/responses/OKResponseInsurancePersonClaims'
-        '204':
-          $ref: '#/components/responses/NoContent'
-        '400':
-          $ref: '#/components/responses/BadRequest'
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-        '403':
-          $ref: '#/components/responses/Forbidden'
-        '404':
-          $ref: '#/components/responses/NotFound'
-        '405':
-          $ref: '#/components/responses/MethodNotAllowed'
-        '406':
-          $ref: '#/components/responses/NotAcceptable'
-        '422':
-          $ref: '#/components/responses/UnprocessableEntity'
-        '429':
-          $ref: '#/components/responses/TooManyRequests'
-        '500':
-          $ref: '#/components/responses/InternalServerError'
-        default:
-          description: Erro inesperado.
-          content:
-            application/json; charset=utf-8:
-              schema:
-                $ref: '#/components/schemas/ResponseError'
+        "200":
+          $ref: "#/components/responses/OKResponseInsurancePersonClaims"
+        "204":
+          $ref: "#/components/responses/NoContent"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "405":
+          $ref: "#/components/responses/MethodNotAllowed"
+        "406":
+          $ref: "#/components/responses/NotAcceptable"
+        "422":
+          $ref: "#/components/responses/UnprocessableEntity"
+        "429":
+          $ref: "#/components/responses/TooManyRequests"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
       security:
         - OpenId:
             - openid
           OAuth2Security:
-            - 'consent:consentId'
+            - "consent:consentId"
+            - insurance-person
+  /insurance-person/{policyId}/movements:
+    get:
+      tags:
+        - InsurancePerson
+      summary: Obtém os dados de contribuições identificado por {policyId}
+      description: "Método para obter os dados de contribuições associados à apólice"
+      operationId: "getInsurancePersonpolicyIdMovements"
+      parameters:
+        - $ref: "#/components/parameters/Authorization"
+        - $ref: "#/components/parameters/xFapiAuthDate"
+        - $ref: "#/components/parameters/xFapiCustomerIpAddress"
+        - $ref: "#/components/parameters/xFapiInteractionId"
+        - $ref: "#/components/parameters/xCustomerUserAgent"
+        - $ref: "#/components/parameters/policyId"
+      responses:
+        "200":
+          $ref: "#/components/responses/OKResponseInsurancePersonMovements"
+        "204":
+          $ref: "#/components/responses/NoContent"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "405":
+          $ref: "#/components/responses/MethodNotAllowed"
+        "406":
+          $ref: "#/components/responses/NotAcceptable"
+        "422":
+          $ref: "#/components/responses/UnprocessableEntity"
+        "429":
+          $ref: "#/components/responses/TooManyRequests"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+      security:
+        - OpenId:
+            - openid
+          OAuth2Security:
+            - "consent:consentId"
             - insurance-person
 components:
   schemas:
@@ -252,47 +228,63 @@ components:
         - meta
       properties:
         data:
-          type: array
-          items:
-            type: object
-            required:
-              - brand
-              - companies
-            properties:
-              brand:
-                description: Nome da marca reportada pelo participante do Open Insurance
-                type: string
-                maxLength: 80 
-              companies:
-                type: array
-                items:
-                  type: object
-                  required:
-                    - companyName
-                    - cnpjNumber
-                    - policies
-                  properties:
-                    companyName:
-                      description: Nome da sociedade pertencente à marca
-                      type: string
-                      maxLength: 200
-                    cnpjNumber:
-                      description: CNPJ da sociedade pertencente à marca
-                      type: string
-                      maxLength: 14
-                      pattern: '^\d{14}$'
-                      example: "12345678901234"
-                    policies:
-                      type: array
-                      items:
-                        description: policyId - Identificador da apólice
+          type: object
+          required:
+            - brand
+          properties:
+            brand:
+              type: object
+              description: Marca reportada pelo participante do Open Insurance. O conceito a que se refere a marca é em essência uma promessa das sociedades sob ela em fornecer uma série específica de atributos, benefícios e serviços uniformes aos clientes.
+              required:
+                - name
+                - companies
+              properties:
+                name:
+                  type: string
+                  description: Nome da Marca
+                  maxLength: 500
+                  example: EMPRESA A SEGUROS
+                companies:
+                  type: array
+                  items:
+                    type: object
+                    required:
+                      - companyName
+                      - cnpjNumber
+                      - policies
+                    properties:
+                      companyName:
+                        description: Nome da sociedade pertencente à marca
                         type: string
-                        maxLength: 60
-                        example: "42"
+                        maxLength: 200
+                      cnpjNumber:
+                        description: CNPJ da sociedade pertencente à marca
+                        type: string
+                        maxLength: 14
+                        pattern: '^\d{14}$'
+                        example: "12345678901234"
+                      policies:
+                        type: array
+                        items:
+                          type: object
+                          required:
+                            - productName
+                            - policyId
+                          properties:
+                            productName:
+                              description: Nome comercial do produto, pelo qual é identificado nos canais de distribuição e atendimento da sociedade
+                              type: string
+                              maxLength: 100
+                              example: Produto A Pessoas
+                            policyId:
+                              description: Identificador da apólice ou bilhete
+                              type: string
+                              maxLength: 60
+                              example: "111111"
         links:
-            $ref: '#/components/schemas/Links'
+          $ref: "#/components/schemas/Links"
         meta:
-            $ref: '#/components/schemas/Meta'
+          $ref: "#/components/schemas/Meta"
     ResponseInsurancePersonPolicyInfo:
       type: object
       required:
@@ -301,121 +293,304 @@ components:
         - meta
       properties:
         data:
-          $ref: '#/components/schemas/InsurancePersonPolicyInfo'
+          $ref: "#/components/schemas/InsurancePersonPolicyInfo"
         links:
-          $ref: '#/components/schemas/Links'
+          $ref: "#/components/schemas/Links"
         meta:
-          $ref: '#/components/schemas/Meta'
-    InsurancePersonPolicyInfo:    
+          $ref: "#/components/schemas/Meta"
+    InsurancePersonPolicyInfo:
       type: object
       required:
-        - documentType 
+        - contractingType
         - policyId
-        - issuanceType
-        - issuanceDate
         - termStartDate
         - termEndDate
-        - maxLMG
         - proposalId
+        - conjugatedPlan
         - insureds
-        - insuredObjects
-        
+        - PMBaC
       properties:
-        documentType:
-          description: Tipo de Documento Emitido
+        contractingType:
+          description: Tipo de contratação
           type: string
-          enum: [APOLICE_INDIVIDUAL,
-                BILHETE,
-                CERTIFICADO,
-                APOLICE_INDIVIDUAL_AUTOMOVEL,
-                APOLICE_FROTA_AUTOMOVEL]
-          example: APOLICE_INDIVIDUAL
+          enum: [COLETIVO, INDIVIDUAL]
+          example: COLETIVO
         policyId:
-          description: Identificador da apólice ou bilhete
+          description: identificação do contrato/apólice, em caso de contratação coletiva, obrigatório caso Tipo de contratação seja COLETIVO
           type: string
           maxLength: 60
           example: "111111"
-        susepProcessNumber: 
-          description: Número SUSEP da apólice, conforme regulamentação vigente (Obrigatório caso apólice com coberturas do ramo Garantia)
+        certificateId:
+          description: Identificador utilizado para as "entidades de 1º nível", a saber, apólices individuais , bilhetes ei certificados de participante individual de previdência; por sua vez, nas operações coletivas equivale às apólices coletivas e aos contratos coletivos de previdência
           type: string
           maxLength: 60
-        groupCertificateId: 
-          description: "Identificador do Certificado(Caso Tipo de Documento Emitido for certificado)"
-          type: string
-          maxLength: 60
-        issuanceType: 
-          description: "Tipo de Emissão"
-          type: string
-          enum: [EMISSAO_PROPRIA,
-                COSSEGURO_ACEITO]
-          example: EMISSAO_PROPRIA
-        issuanceDate:
-          description: Data de emissão do documento
-          type: string
-          format: date
-          maxLength: 10
-          example: '2022-12-31'
-        termStartDate: 
+          example: "67"
+        termStartDate:
           description: Data de início de vigência do documento
           type: string
           format: date
           maxLength: 10
-          example: '2022-12-31'
+          example: "2022-12-31"
         termEndDate:
           description: Data de fim de vigência do documento
           type: string
           format: date
           maxLength: 10
-          example: '2022-12-31'
-        leadInsurerCode:
-          description: "Código da seguradora líder para contratos com arranjo de cosseguro"
-          type: string
-          maxLength: 1024
-        leadInsurerPolicyId:
-          description: "Identificador da apólice seguradora líder para apólice de cosseguro aceito"
-          type: string
-          maxLength: 1024
-        maxLMG:
-          $ref: '#/components/schemas/AmountDetails'
+          example: "2022-12-31"
+        withdrawals:
+          $ref: "#/components/schemas/WithdrawalInfo"
+        portabilities:
+          $ref: "#/components/schemas/PortabilityInfo"
         proposalId:
           description: Identificador da Proposta
           type: string
           maxLength: 60
+          example: "ABC123"
         insureds:
           type: array
           items:
-            $ref: '#/components/schemas/PersonalInfo'  
-        beneficiaries: 
+            $ref: "#/components/schemas/PersonalInfo"
+        beneficiaries:
           type: array
           items:
-            $ref: '#/components/schemas/PersonalInfo'
-        principals:
-          type: array
-          items:
-            $ref: '#/components/schemas/PersonalInfo'
+            $ref: "#/components/schemas/BeneficiaryInfo"
         intermediaries:
           type: array
           items:
-            $ref: '#/components/schemas/Intermediary'
-        insuredObjects:
+            $ref: "#/components/schemas/Intermediary"
+        coverages:
           type: array
           items:
-            $ref: '#/components/schemas/InsurancePersonInsuredObject'
-        coverages:    
-          type: array
-          items:
-            $ref: '#/components/schemas/InsurancePersonCoverage'
-        coinsuranceRetainedPercentage:
-          description: "Percentual Retido em Cosseguro (Quando há cosseguro)"
-          type: string
-          pattern: '^\d{1,3}\.\d{1,9}$' 
-          example: '10.00'
-        coinsurers:
-          type: array
-          items:
-            $ref: '#/components/schemas/Coinsurer'
-        branchInfo:
-          $ref: '#/components/schemas/InsurancePersonSpecificPolicyInfo'
+            $ref: "#/components/schemas/InsurancePersonCoverage"
+        conjugatedPlan:
+          description: O plano é conjugado?
+          type: boolean
+          example: true
+        PMBaC:
+          type: object
+          description: PMBaC
+          required:
+            - pmbacAmount
+            - provisionSurplusAmount
+            - FIE
+          properties:
+            pmbacAmount:
+              description: |
+                Valor PMBaC (fim do mês) 
+                Valor da Provisão Matemática de Benefícios a Conceder (PMBaC), no fim de cada mês. Caso não haja saldo informar nulo
+              allOf:
+                - $ref: "#/components/schemas/AmountDetails"
+            provisionSurplusAmount:
+              description: |
+                Valor da provisão de excedentes financeiros (PEF) (valor ao final do mês) Caso não haja saldo informar nulo
+              allOf:
+                - $ref: "#/components/schemas/AmountDetails"
+            FIE:
+              type: array
+              items:
+                type: object
+                properties:
+                  FIECNPJ:
+                    description: CNPJ do FIE
+                    type: string
+                    maxLength: 14
+                    pattern: '^\d{14}$'
+                    example: "12345678901234"
+                  FIEName:
+                    description: Razão social do FIE
+                    type: string
+                    example: RAZÃO SOCIAL
+                  FIETradeName:
+                    description: Nome fantasia do FIE
+                    type: string
+                    example: NOME FANTASIA
+
+    GraceInfo:
+      type: array
+      description: Informações de Carência em caso de regime financeiro de Repartição de Capitais de Cobertura e de Capitalização (Caso seguro individual)
+      items:
+        type: object
+        properties:
+          type:
+            description: Tipo de Carência (Quando houver)
+            type: string
+            enum: [PORTABILIDADE, RESGATE]
+            example: RESGATE
+          gracePeriod:
+            type: integer
+            maxLength: 5
+            description: "Período de carência. OBS: Obrigatório, se houver"
+          gracePeriodicity:
+            type: string
+            description: "Periodicidade da carência. OBS: Obrigatório, se houver"
+            enum: [DIA, MES, ANO]
+          gracePeriodCountingMethod:
+            type: string
+            description: "Indicador de dias úteis ou corridos da carência. OBS: Obrigatório, se houver"
+            enum: [DIAS_UTEIS, DIAS_CORRIDOS]
+          gracePeriodStartDate:
+            type: string
+            format: date
+            maxLength: 10
+            example: "2022-12-31"
+            description: "Data de início da carência. OBS: Obrigatório, se houver"
+          gracePeriodEndDate:
+            type: string
+            format: date
+            maxLength: 10
+            example: "2022-12-31"
+            description: "Data de fim da carência. OBS: Obrigatório, se houver"
+          period:
+            type: integer
+            maxLength: 5
+            description: Prazo de Carência entre Resgates, Condicional a seleção da opção de RESGATE no campo Tipo de Carência
+          periodType:
+            type: string
+            description: Tipo de Prazo de Carência entre Resgates, Condicional a seleção da opção de RESGATE no campo Tipo de Carência 
+            enum: [DIA, MES, ANO]
+    WithdrawalInfo:
+      type: array
+      description: Informações de resgate, Obrigatório se houver em caso de regime financeiro de Capitalização
+      items:
+        type: object
+        properties:
+          occurrenceWithdrawal:
+            type: boolean
+            description: Indica se houve resgate
+            example: true
+          type:
+            description: Tipo de resgate
+            type: string
+            enum: [TOTAL, PARCIAL]
+            example: PARCIAL
+          requestDate:
+            description: Data solicitação
+            type: string
+            format: date
+            example: "2020-12-31"
+          amount:
+            allOf:
+              - $ref: "#/components/schemas/AmountDetails"
+          movementDate:
+            description: Data Movimentação (liquidação)
+            type: string
+            format: date
+            example: "2020-12-31"
+          chargingValue:
+            $ref: "#/components/schemas/AmountDetails"
+          withdrawalCause:
+            description: Natureza do Resgate (Caso Ocorrência do resgate for Sim)
+            type: string
+            enum: [
+              RESGATE_REGULAR,
+              MORTE,
+              INVALIDEZ,
+              PAGAMENTO_FINANCEIRO_PROGRAMADO,
+              CUSTEIO_DE_COBERTURA_DE_RISCOS_EM_PLANOS_CONJUGADOS,
+              ASSISTENCIA_FINANCEIRA
+              ]
+          FIE:
+            type: array
+            description: Informações do FIE do Valor Resgatado (Caso Ocorrência do resgate for Sim)
+            items:
+              type: object
+              properties:
+                FIECNPJ:
+                  description: CNPJ do FIE
+                  type: string
+                  maxLength: 14
+                  pattern: '^\d{14}$'
+                  example: "12345678901234"
+                FIEName:
+                  description: Razão social do FIE
+                  type: string
+                  example: RAZÃO SOCIAL
+                FIETradeName:
+                  description: Nome fantasia do FIE
+                  type: string
+                  example: NOME FANTASIA
+
+    PortabilityInfo:
+      type: array
+      description: Informações de portabilidade, Obrigatório se houver em caso de regime financeiro de Capitalização
+      items:
+        type: object
+        required:
+          - occurrencePortability
+          - chargingValue
+        properties:
+          occurrencePortability:
+            type: boolean
+            description: Indica se houve portabilidade
+            example: true
+          direction:
+            description: Direção do fluxo de portabilidade
+            type: string
+            enum: [ENTRADA, SAIDA]
+            example: ENTRADA
+          type:
+            type: string
+            description: Tipo de portabilidade
+            enum: [TOTAL, PARCIAL]
+            example: PARCIAL
+          amount:
+            $ref: "#/components/schemas/AmountDetails"
+          requestDate:
+            description: Data solicitação
+            type: string
+            format: date
+            example: "2020-12-31"
+          movementDate:
+            description: Data Movimentação (liquidação)
+            type: string
+            format: date
+            example: "2020-12-31"
+          chargingValue:
+            $ref: "#/components/schemas/AmountDetails"
+          sourceEntityCode:
+            description: Código FIP da entidade de origem (cedente) da portabilidade
+            type: string
+            example: "ABC123"
+          targetEntityCode:
+            description: Código FIP da entidade de origem destino (cessionária) da portabilidade
+            type: string
+            example: "ABC123"
+          sourceEntitySusepProcessNumber:
+            description: Processo Susep do Plano Origem
+            type: string
+            maxLength: 60
+            example: "ABC123"
+          taxRegime:
+            description: Regime de Tributação (Caso fluxo de portabilidade for de entrada e Ocorrência da portabilidade for Sim)
+            type: string
+            enum: [PROGRESSIVO, REGRESSIVO]
+            example: PROGRESSIVO
+          FIE:
+            type: array
+            description: Informações do FIE do Valor Portado (Caso Ocorrência da portabilidade for Sim)
+            items:
+              type: object
+              properties:
+                FIECNPJ:
+                  description: CNPJ do FIE
+                  type: string
+                  maxLength: 14
+                  pattern: '^\d{14}$'
+                  example: "12345678901234"
+                FIEName:
+                  description: Razão social do FIE
+                  type: string
+                  example: RAZÃO SOCIAL
+                FIETradeName:
+                  description: Nome fantasia do FIE
+                  type: string
+                  example: NOME FANTASIA
+                portedType:
+                  description: Tipo portado
+                  type: string
+                  enum: [ORIGEM, DESTINO]
+                  example: ORIGEM
+  
     PersonalInfo:
       type: object
       required:
@@ -428,97 +603,146 @@ components:
         - country
         - address
       properties:
+        identificationType:
+          description: Tipo de Documento do Segurado/Participante
+          type: string
+          enum: [CPF, CNPJ, OUTROS]
+          example: CPF
+        identificationTypeOthers:
+          description: Descrição do Tipo de Documento quando for informada a opção OUTROS
+          type: string
+          example: OUTROS
         identification:
-          description: Documento de Identificação da Pessoa
+          description: Documento de Identificação do Segurado/Participante
           type: string
           maxLength: 60
           example: "12345678900"
-        identificationType:
-          description: Tipo de Documento da Pessoa
-          type: string
-          enum: [
-            CPF,
-            CNPJ,
-            OUTROS
-          ]
-          example: CPF
         name:
-          description: Nome ou Razão Social da Pessoa
+          description: Nome ou Razão Social do Segurado/Participante
           type: string
           maxLength: 60
           example: Nome Sobrenome
+        birthDate:
+          description: Data de nascimento do Segurado/Participante
+          type: string
+          format: date
+          example: "2022-12-31"
+        gender:
+          description: Sexo do Segurado/Participante
+          type: string
+          enum: [MASCULINO, FEMININO, NAO_INFORMADO]
         postCode:
-          description: Código Postal da Pessoa
+          description: Código Postal do Segurado/Participante
           type: string
           maxLength: 60
           example: "10000000"
         email:
-          description: E-mail da Pessoa (caso possua)
+          description: E-mail do Segurado/Participante (caso possua)
           type: string
           maxLength: 256
         city:
-          description: Cidade da Pessoa (por extenso)
+          description: Cidade do Segurado/Participante (por extenso)
           type: string
           maxLength: 60
         state:
-          description: Estado da Pessoa (por extenso)
+          description: Estado do Segurado/Participante (por extenso)
           type: string
           maxLength: 60
         country:
-          description: País da Pessoa (de acordo com o código "alpha3" do ISO-3166)
+          description: País do Segurado/Participante (de acordo com o código "alpha3" do ISO-3166)
           type: string
           maxLength: 3
           pattern: '^(\w{3}){1}$'
-          example: BRA 
+          example: BRA
         address:
-          description: Endereço da Pessoa (restante do endereço, excluindo cidade, estado e país)
+          description: Endereço do Segurado/Participante (restante do endereço, excluindo cidade, estado e país)
           type: string
           maxLength: 60
+        addressAdditionalInfo:
+          type: string
+          maxLength: 30
+          pattern: '[\w\W\s]*'
+          example: Fundos
+          description: Alguns logradouros ainda necessitam ser especificados por meio de complemento.
+    BeneficiaryInfo:
+      type: object
+      required:
+        - identification
+        - identificationType
+        - name
+      properties:
+        identification:
+          description: Documento de Identificação do beneficiário.
+          type: string
+          maxLength: 60
+          example: "12345678900"
+        identificationType:
+          description: Tipo de Documento do beneficiário.
+          type: string
+          enum: [CPF, CNPJ, OUTROS]
+          example: CPF
+        identificationTypeOthers:
+          description: Descrição do Tipo de Documento quando for informada a opção OUTROS
+          type: string
+          example: OUTROS
+        name:
+          description: Nome ou Razão Social do beneficiário.
+          type: string
+          maxLength: 60
+          example: Nome Sobrenome
+        participationPercentage:
+          description: Percentual de particiapação do beneficiário.
+          type: string
+          pattern: '^\d{1,3}\.\d{1,9}$'
+          example: "10.00"
     Intermediary:
       type: object
       required:
-        - identification 
-        - identificationType
-        - name
+        - type
       properties:
         type:
           description: Tipo do Intermediador
           type: string
-          enum: [ 
-            CORRETOR,
-            REPRESENTANTE,
-            ESTIPULANTE_AVERBADOR_INSTITUIDOR,
-            CORRESPONDENTE,
-            AGENTE_DE_MICROSSEGUROS,
-            OUTROS
-          ]
+          enum:
+            [
+              CORRETOR,
+              REPRESENTANTE,
+              ESTIPULANTE_AVERBADOR_INSTITUIDOR,
+              CORRESPONDENTE,
+              AGENTE_DE_MICROSSEGUROS,
+              OUTROS
+            ]
           example: REPRESENTANTE
+        typeOthers:
+          description: Descrição do Tipo do Intermediador quando for informada a opção OUTROS
+          type: string
+          example: OUTROS
         identification:
-          description: Documento de Identificação da Intermediador
+          description: Documento de Identificação da Intermediador (Caso Tipo de Intermediador não seja Corretor ou quando for Corretor, porém o identificador do intermediador não seja informado)
           type: string
           maxLength: 60
           pattern: '^\d{1,60}$'
           example: "12345678900"
         brokerId:
-          description: Identificador do Intermediador (Caso Tipo de Intermediador for CORRETOR)
+          description: Identificador do Intermediador (Caso Tipo de Intermediador for CORRETOR) código SUSEP do corretor(a)
           type: string
           maxLength: 100
         identificationType:
           description: Tipo de Documento da Intermediador
           type: string
-          enum: [
-            CPF,
-            CNPJ,
-            OUTROS
-          ]
+          enum: [CPF, CNPJ, OUTROS]
           example: CPF
+        identificationTypeOthers:
+          description: Descrição do Tipo de Documento quando for informada a opção OUTROS
+          type: string
+          example: OUTROS
         name:
           description: Nome ou Razão Social da Intermediador
           type: string
           maxLength: 60
           example: Nome Sobrenome
         postCode:
-          description: Código Postal da Intermediador (Caso Tipo de Intermediador for ESTIPULANTE) 
+          description: Código Postal da Intermediador (Caso Tipo de Intermediador for ESTIPULANTE)
           type: string
           maxLength: 60
           example: "10000000"
@@ -535,711 +759,166 @@ components:
           type: string
           maxLength: 3
           pattern: '^(\w{3}){1}$'
-          example: BRA 
+          example: BRA
         address:
           description: Endereço da Intermediador (restante do do endereço, excluindo cidade, estado e país; Caso Tipo de Intermediador for ESTIPULANTE)
           type: string
           maxLength: 60
-    InsurancePersonInsuredObject:
-      type: object
-      required:
-        - identification
-        - type
-        - description
-        - amount
-        - coverages
-      properties:
-        identification:
-          type: string
-          maxLength: 100
-          description: "Identificador do objeto segurado. Obs.: Para Fiança Locatícia, é a identificação do Contrato de Locação."
-        type:
-          type: string
-          description: Tipo do objeto segurado
-          enum: [CONTRATO,
-                PROCESSO_ADMINISTRATIVO,
-                PROCESSO_JUDICIAL,
-                AUTOMOVEL,
-                CONDUTOR,
-                FROTA,
-                PESSOA,
-                OUTROS]
-        typeAdditionalInfo:
-          type: string
-          maxLength: 100
-          description: "Descrição do tipo do objeto segurado(caso tipo de objeto segurado for outros)."
-        description: 
-          type: string
-          maxLength: 1024
-          description: Descrição do objeto segurado 
-        amount:
-          $ref: '#/components/schemas/AmountDetails'
-        coverages:
-          type: array
-          items:
-            $ref: '#/components/schemas/InsurancePersonInsuredObjectCoverage'
-    InsurancePersonInsuredObjectCoverage:
+    InsurancePersonCoverage:
       type: object
       required:
         - branch
-        - code
+        - coverageCode
         - susepProcessNumber
-        - LMI
-        - termStartDate
-        - termEndDate
-        - feature
-        - type
+        - paymentPeriod
+        - plan
+        - planBlock
+        - qualifiedProposer
+        - structureModality
+        - chargedAmount
+        - triggerEvent
+        - financialtype
+        - benefitPaymentModality
+        - financialResultReversal
+        - taxRegime
+        - calculationBasis
+      minProperties: 2
       properties:
         branch:
           type: string
           maxLength: 4
-          example: '0111'
+          example: "0111"
           description: Grupo e Ramo da Cobertura (Conforme regulamentação Susep vigente)
-        code:
-            type: string
-            description: Código da cobertura, conforme Anexo II do Manuel de Escopo de Dados
-            enum: [
-              MORTE,
-              MORTE_ACIDENTAL,
-              INVALIDEZ_TOTAL_POR_ACIDENTE,
-              INVALIDEZ_PARCIAL_POR_ACIDENTE,
-              INVALIDEZ_TOTAL_E_PARCIAL_POR_ACIDENTE,
-              INVALIDEZ_FUNCIONAL_PERMANENTE_TOTAL_POR_DOENCA,
-              INVALIDEZ_LABORATIVA_PERMANENTE_TOTAL_POR_DOENCA,
-              DESEMPREGO_PERDA_DE_RENDA,
-              INCAPACIDADE_TEMPORARIA,
-              DOENCA_GRAVE,
-              INTERNACAO_HOSPITALAR,
-              DESPESAS_MEDICAS_HOSPITALARES_E_ODONTOLOGICAS_BRASIL,
-              DESPESAS_MEDICAS_HOSPITALARES_E_ODONTOLOGICAS_EXTERIOR,
-              TRANSPLANTE_DE_ORGAOS,
-              CIRURGIA,
-              TRASLADO_DE_CORPO,
-              REGRESSO_SANITARIO,
-              TRASLADO_MEDICO,
-              CANCELAMENTO_DE_VIAGEM,
-              REGRESSO_ANTECIPADO,
-              SOBREVIVENCIA,
-              OUTRAS
-            ]
-        description:
+        planType:
+          description: Tipo do Plano (Quando Contrato Coletivo)
           type: string
-          maxLength: 500
-          description: "Descrição / Nome da Cobertura (Obrigatório quando o campo 'Codigo' for preenchido com 'Outras')"
+          enum: [AVERBADO, INSTITUIDO_CONTRIBUTARIO, INSTITUIDO_NAO_CONTRIBUTARIO]
+          example: AVERBADO
+        coverageCode:
+         type: string
+         description: Código da Cobertura - De acordo com a Tabela 63 do Anexo I do Manual de Escopo de Dados
+         maxLength: 5
+         example: "1999"
         internalCode:
           type: string
           maxLength: 500
           description: "Código interno da cobertura da seguradora(obrigatório se houver)"
         susepProcessNumber:
-            type: string
-            maxLength: 50
-        LMI:          
-          $ref: '#/components/schemas/AmountDetails'
-        isLMISublimit:
-          type: boolean
-          description: Limite máximo de indenização (LMI) é sublimite (Caso aplicável)
-        termStartDate: 
           type: string
-          format: date
-          maxLength: 10
-          example: '2022-12-31'
-          description: "Data de início de vigência da cobertura"
-        termEndDate:  
+          description: Número do processo administrativo da Susep relacionado à cobertura contratada
+        feesTax:
           type: string
-          format: date
-          maxLength: 10
-          example: '2022-12-31'
-          description: "Data de fim de vigência da cobertura"
-        isMainCoverage:
-          type: boolean
-          description: "Cobertura Principal"
-        feature:
+          description: Taxa de juros prevista para cálculo das rendas
+          example: FORMATO NÃO DEFINIDO
+        paymentPeriod:
+          description: Periodicidade de pagamento da Contribuição/Prêmio
           type: string
-          description: "Característica da cobertura"
-          enum: [MASSIFICADOS,
-                MASSIFICADOS_MICROSEGUROS,
-                GRANDES_RISCOS]
-        type:    
+          enum: [MENSAL, BIMESTRAL, TRIMESTRAL, QUADRIMESTRAL, SEMESTRAL, ANUAL, ESPORÁDICA]
+          example: MENSAL
+        grace:
+          $ref: "#/components/schemas/GraceInfo"
+        pmbacInterestRate:
+          description: |
+            Taxa de Juros PMBaC
+            Obrigatório em caso de regime financeiro de Capitalização
           type: string
-          description: "Tipo de cobertura"
-          enum: [PARAMETRICO,
-                INTERMITENTE,
-                REGULAR_COMUM,
-                CAPITAL_GLOBAL,
-                PARAMETRICO_E_INTERMITENTE]    
-        gracePeriod:
+          pattern: '^\d{1,3}\.\d{1,9}$'
+          example: "10.00"
+        pmbacMonetaryUpdateIndex:
+          type: string
+          description: |
+            Índice de Preços Garantido PMBaC
+            Obrigatório em caso de regime financeiro de Capitalização
+          enum: [IPC-FGV, IGP-DI-FGV, IPCA-IBGE, IGPM-FGV, INPC-IBGE, TR, OUTROS]
+          example: IGPM-FGV
+        pmbacMonetaryUpdateIndexOthers:
+          description: Descrição do Índice de Preços Garantido PMBaC quando for informada a opção OUTROS
+          type: string
+          example: OUTROS
+        pmbacIndexLag:
           type: integer
-          maxLength: 5
-          description: "Período de carência. OBS: Obrigatório, se houver"       
-        gracePeriodicity:
+          description: |
+            Defasagem do Índice PMBaC (em meses)
+            Obrigatório em caso de regime financeiro de Capitalização
+          example: 5
+        incomeInterestRate:
+          description: Taxa de Juros Rendas (quando houver)
           type: string
-          description: "Periodicidade da carência. OBS: Obrigatório, se houver"
-          enum: [DIA,
-                MES,
-                ANO]     
-        gracePeriodCountingMethod:   
+          pattern: '^\d{1,3}\.\d{1,9}$'
+          example: "10.00"
+        pricingForm:
           type: string
-          description: "Indicador de dias úteis ou corridos da carência. OBS: Obrigatório, se houver"
-          enum: [DIAS_UTEIS,
-                DIAS_CORRIDOS] 
-        gracePeriodStartDate:            
+          description: Forma de tarifação (quando houver)
+          enum:
+            [POR_IDADE, TAXA_MEDIA, FAIXA_ETARIA, OUTROS]
+          example: POR_IDADE
+        pricingFormOthers:
+          description: Descrição da Forma de tarifação quando for informada a opção OUTROS
           type: string
-          format: date
-          maxLength: 10
-          example: '2022-12-31'
-          description: "Data de início da carência. OBS: Obrigatório, se houver"
-        gracePeriodEndDate:            
+          example: OUTROS
+        triggerEvent:
           type: string
-          format: date
-          maxLength: 10
-          example: '2022-12-31'
-          description: "Data de fim da carência. OBS: Obrigatório, se houver"
-    InsurancePersonCoverage:
-      type: object
-      required:
-        - branch
-        - code
-      minProperties: 3
-      properties:
-        branch:
-          description: Grupo e ramo da cobertura
+          description: Indica o tipo de evento gerador aplicavel a cobertura
+          enum:
+            [INVALIDEZ, MORTE, OUTROS]
+          example: INVALIDEZ
+        triggerEventOthers:
+          description: Descrição do evento gerador quando for informada a opção OUTROS
           type: string
-          maxLength: 4
-          example: '0111'
-        code:
-            type: string
-            description: Código da cobertura, conforme Anexo II do Manuel de Escopo de Dados
-            enum: [
-              MORTE,
-              MORTE_ACIDENTAL,
-              INVALIDEZ_TOTAL_POR_ACIDENTE,
-              INVALIDEZ_PARCIAL_POR_ACIDENTE,
-              INVALIDEZ_TOTAL_E_PARCIAL_POR_ACIDENTE,
-              INVALIDEZ_FUNCIONAL_PERMANENTE_TOTAL_POR_DOENCA,
-              INVALIDEZ_LABORATIVA_PERMANENTE_TOTAL_POR_DOENCA,
-              DESEMPREGO_PERDA_DE_RENDA,
-              INCAPACIDADE_TEMPORARIA,
-              DOENCA_GRAVE,
-              INTERNACAO_HOSPITALAR,
-              DESPESAS_MEDICAS_HOSPITALARES_E_ODONTOLOGICAS_BRASIL,
-              DESPESAS_MEDICAS_HOSPITALARES_E_ODONTOLOGICAS_EXTERIOR,
-              TRANSPLANTE_DE_ORGAOS,
-              CIRURGIA,
-              TRASLADO_DE_CORPO,
-              REGRESSO_SANITARIO,
-              TRASLADO_MEDICO,
-              CANCELAMENTO_DE_VIAGEM,
-              REGRESSO_ANTECIPADO,
-              SOBREVIVENCIA,
-              OUTRAS
+          example: OUTROS
+        financialtype:
+          type: string
+          description: Regime financeiro
+          enum:
+            [
+              REPARTICAO_SIMPLES,
+              REPARTICAO_POR_CAPITAIS_DE_COBERTURA,
+              CAPITALIZACAO
             ]
-        description:
-          description: Descrição / Nome da Cobertura (Caso Código da Cobertura for "OUTRAS")
+          example: REPARTICAO_SIMPLES
+        coverageUpdateIndex:
           type: string
-          maxLength: 500
-        deductible:
-          $ref: '#/components/schemas/Deductible'
-        POS:
-          $ref: '#/components/schemas/POS'
-    Deductible:
-      type: object
-      description: Informações de franquia
-      required:
-        - type
-        - amount
-        - period
-        - periodicity
-        - periodStartDate
-        - periodEndDate
-        - description
-      properties:
-        type:
-          description: Tipo de Franquia
+          description: Índice de preços referente à atualização monetária anual do valor da cobertura
+          enum:
+            [IPC-FGV, IGP-DI-FGV, IPCA-IBGE, IGPM-FGV, INPC-IBGE, TR, OUTROS]
+          example: IGPM-FGV
+        coverageUpdateIndexOthers:
+          description: Descrição do Índice de preços referente à atualização monetária anual do valor da cobertura quando for informada a opção OUTROS
           type: string
-          enum: [
-            REDUZIDA,
-            NORMAL,
-            MAJORADA,
-            DEDUTIVEL,
-            OUTROS
-          ]
-          example: DEDUTIVEL
-        typeAdditionalInfo:
-          description: Descriçao do Tipo de Franquia (Caso Tipo de Franquia for "OUTROS")
-          type: string
-          maxLength: 500
-        amount:
-          $ref: '#/components/schemas/AmountDetails'
-        period:
-          description: Prazo da Franquia
+          example: OUTROS
+        periodicityValue:
           type: integer
-          maxLength: 5
-          example: 10
+          description: Periodicidade de Atualizacao da cobertura (quando houver)
+          example: 5
         periodicity:
-          description: Periodicidade da Franquia
+          description: Unidade da Periodicidade de Atualização da Cobertura
           type: string
-          enum: [
-            DIA,
-            MES,
-            ANO
-          ]
+          enum: [DIA, MES, ANO]
           example: DIA
-        periodCountingMethod:
-          description: Indicador de Dias Úteis ou Corridos (Caso aplicável)
-          type: string
-          enum: [
-            DIAS_UTEIS,
-            DIAS_CORRIDOS
-          ]
-          example: DIAS_UTEIS
-        periodStartDate:
-          description: Data de Início da Franquia
-          type: string
-          format: date
-          example: "2022-05-16"
-        periodEndDate:
-          description: Data de Fim da Franquia
-          type: string
-          format: date
-          example: "2022-05-17"
-        description:
-          description: Descrição da Franquia
-          type: string
-          maxLength: 60
-          example: Franquia de exemplo
-    POS:
-      type: object
-      description: Informações de franquia
-      required:
-        - applicationType
-        - description
-      properties:
-        applicationType:
-          description: Forma de Aplicação do POS
-          type: string
-          enum: [
-            VALOR,
-            PERCENTUAL,
-            OUTROS
-          ]
-          example: VALOR
-        description:
-          description: Descrição do POS
-          type: string
-          maxLength: 60
-          example: "Descrição de exemplo"
-        minValue:
-          $ref: '#/components/schemas/AmountDetails'
-        maxValue:
-          $ref: '#/components/schemas/AmountDetails'
-        percentage:
-          description: Percentual do POS
-          type: string
-          pattern: '^\d{1,3}\.\d{1,9}$'
-          example: '10.00'
-    Coinsurer:
-      type: object
-      required:
-        - identification
-        - cededPercentage
-      properties:
-        identification:
-          description: "Identificação da congênere, cessionário do cosseguro. Obs: Obrigatório quando há cosseguro"
-          type: string
-          maxLength: 60
-        cededPercentage:
-          description: "Percentual cedido para a congênere para contratos de cosseguro cedido. Obs: Obrigatório quando há cosseguro"
-          type: string
-          pattern: '^\d{1,3}\.\d{1,9}$'
-          example: '10.00'
-    ResponseInsurancePersonPremium:
-      type: object
-      required:
-        - data
-        - links
-        - meta
-      properties:
-        data:
-          $ref: '#/components/schemas/InsurancePersonPremium'
-        links:
-          $ref: '#/components/schemas/Links'
-        meta:
-          $ref: '#/components/schemas/Meta'
-    InsurancePersonPremium:
-      type: object
-      required:
-        - amount
-        - paymentsQuantity
-        - coverages
-        - payments
-      properties:
-        paymentsQuantity:
-          description: Quantidade de parcelas do prêmio do contrato
-          type: number
-          maxLength: 3
-          example: 4
-        amount:
-          $ref: '#/components/schemas/AmountDetails'
-        coverages:
-          type: array
-          items:
-            $ref: '#/components/schemas/InsurancePersonPremiumCoverage'
-        payments:
-          type: array
-          items:
-            $ref: '#/components/schemas/Payment'
-    InsurancePersonPremiumCoverage:
-      type: object
-      required:
-        - branch
-        - code
-        - premiumAmount
-      properties:
-        branch:
-          description: Grupo e ramo da cobertura
-          type: string
-          maxLength: 4
-          example: '0111'
-        code:
-            type: string
-            description: Código da cobertura, conforme Anexo II do Manuel de Escopo de Dados
-            enum: [
-              MORTE,
-              MORTE_ACIDENTAL,
-              INVALIDEZ_TOTAL_POR_ACIDENTE,
-              INVALIDEZ_PARCIAL_POR_ACIDENTE,
-              INVALIDEZ_TOTAL_E_PARCIAL_POR_ACIDENTE,
-              INVALIDEZ_FUNCIONAL_PERMANENTE_TOTAL_POR_DOENCA,
-              INVALIDEZ_LABORATIVA_PERMANENTE_TOTAL_POR_DOENCA,
-              DESEMPREGO_PERDA_DE_RENDA,
-              INCAPACIDADE_TEMPORARIA,
-              DOENCA_GRAVE,
-              INTERNACAO_HOSPITALAR,
-              DESPESAS_MEDICAS_HOSPITALARES_E_ODONTOLOGICAS_BRASIL,
-              DESPESAS_MEDICAS_HOSPITALARES_E_ODONTOLOGICAS_EXTERIOR,
-              TRANSPLANTE_DE_ORGAOS,
-              CIRURGIA,
-              TRASLADO_DE_CORPO,
-              REGRESSO_SANITARIO,
-              TRASLADO_MEDICO,
-              CANCELAMENTO_DE_VIAGEM,
-              REGRESSO_ANTECIPADO,
-              SOBREVIVENCIA,
-              OUTRAS
-            ]
-        description:
-          description: Descrição / Nome da Cobertura (Caso Código da Cobertura for "OUTRAS")
-          type: string
-          maxLength: 500
-        premiumAmount:
-          $ref: '#/components/schemas/AmountDetails'
-    Payment:
-      type: object
-      required:
-        - movementDate
-        - movementType
-        - movementPaymentsNumber
-        - amount
-        - maturityDate
-      properties:
-        movementDate:
-          description: Data do movimento de prêmio
-          type: string
-          format: date
-          example: '2022-12-31'
-        movementType:
-          description: Tipo do Movimento
-          type: string
-          enum: [LIQUIDACAO_DE_PREMIO,
-                LIQUIDACAO_DE_RESTITUICAO_DE_PREMIO,
-                LIQUIDACAO_DE_CUSTO_DE_AQUISICAO,
-                LIQUIDACAO_DE_RESTITUICAO_DE_CUSTO_DE_AQUISICAO,
-                ESTORNO_DE_PREMIO,
-                ESTORNO_DE_RESTITUICAO_DE_PREMIO,
-                ESTORNO_DE_CUSTO_DE_AQUISICAO,
-                EMISSAO_DE_PREMIO,
-                CANCELAMENTO_DE_PARCELA,
-                EMISSAO_DE_RESTITUICAO_DE_PREMIO,
-                REABERTURA_DE_PARCELA,
-                BAIXA_POR_PERDA]
-          example: LIQUIDACAO_DE_PREMIO
-        movementOrigin:
-          description: "Origem do Movimento. Obs: Obrigatório caso Tipo de Movimento for LIQUIDACAO_DE_PREMIO e ESTORNO_DE_PREMIO"
-          type: string
-          enum: [EMISSAO_DIRETA,
-            EMISSAO_ACEITA_DE_COSSEGURO,
-            EMISSAO_CEDIDA_DE_COSSEGURO]
-          example: EMISSAO_DIRETA
-        movementPaymentsNumber:
-          description: Identificador da parcela do movimento
-          type: number
-          maxLength: 3
-        amount:
-          $ref: '#/components/schemas/AmountDetails'
-        maturityDate:
-          description: Data de Vencimento da Parcela
-          type: string
-          format: date
-          example: '2022-12-31'
-        tellerId:
-          description: "Documento do Pagador/Recebedor Obs: Obrigatório caso Tipo de Movimento for  LIQUIDACAO_DE_PREMIO e LIQUIDACAO_DE_CUSTO_DE_AQUISICAO"
-          type: string
-          maxLength: 1024
-        tellerIdType:
-          description: "Tipo do Documento do Pagador/Recebedor Obs: Obrigatório caso Tipo de Movimento for  LIQUIDACAO_DE_PREMIO e LIQUIDACAO_DE_CUSTO_DE_AQUISICAO"
-          type: string
-          enum: [CPF,
-            CNPJ,
-            OUTROS]
-          example: CPF
-        tellerName:
-          description: "Nome ou Razão Social do Pagador/Recebedor Obs: Obrigatório caso Tipo de Movimento for  LIQUIDACAO_DE_PREMIO e LIQUIDACAO_DE_CUSTO_DE_AQUISICAO"
-          type: string
-          maxLength: 100
-        financialInstitutionCode:
-          description: "Código da Instituição Financeiro do Pagamento Obs: Obrigatório caso Tipo de Movimento for  LIQUIDACAO_DE_PREMIO e LIQUIDACAO_DE_CUSTO_DE_AQUISICAO"
-          type: string
-          maxLength: 100
-        paymentType:
-          description: "Meio de Pagamento Obs: Obrigatório caso Tipo de Movimento for  LIQUIDACAO_DE_PREMIO e LIQUIDACAO_DE_CUSTO_DE_AQUISICAO"
-          type: string
-          enum: [BOLETO,
-                TED,
-                TEF,
-                CARTAO,
-                DOC,
-                CHEQUE,
-                DESCONTO_EM_FOLHA,  
-                PIX,
-                DINHEIRO_EM_ESPECIE,
-                OUTROS]
-          example: BOLETO
-    ResponseInsurancePersonClaims:
-      type: object
-      required:
-        - data
-        - links
-        - meta
-      properties:
-        data:
-          type: array
-          items:
-            $ref: '#/components/schemas/InsurancePersonClaim'
-          minItems: 0
-        links:
-            $ref: '#/components/schemas/Links'
-        meta:
-            $ref: '#/components/schemas/Meta'
-    InsurancePersonClaim:
-      type: object
-      required:
-        - identification
-        - documentationDeliveryDate
-        - status
-        - statusAlterationDate
-        - occurrenceDate
-        - warningDate
-        - amount
-      properties:
-        identification:
-          description: Identificador do processo de sinistro
-          type: string
-          maxLength: 50
-        documentationDeliveryDate:
-          description: Data de entrega da documentação completa
-          type: string
-          format: date
-          maxLength: 10
-          example: '2022-12-31'
-        status:
-          description: Status do sinistro     
-          type: string
-          enum: [ABERTO,
-                ENCERRADO_COM_INDENIZACAO,
-                ENCERRADO_SEM_INDENIZACAO,
-                REABERTO,
-                CANCELADO_POR_ERRO_OPERACIONAL,
-                AVALIACAO_INICIAL]
-        statusAlterationDate:
-          description: Data de alteração do status do sinistro
-          type: string
-          format: date
-          maxLength: 10
-          example: '2022-12-31'
-        occurrenceDate:
-          description: Data de ocorrência do sinistro
-          type: string
-          format: date
-          maxLength: 10
-          example: '2022-12-31'
-        warningDate:
-          description: Data de aviso do sinistro
-          type: string
-          format: date
-          maxLength: 10
-          example: '2022-12-31'
-        thirdPartyClaimDate:
-          description: Data de reclamação do terceiro
-          type: string
-          format: date
-          maxLength: 10
-          example: '2022-12-31'
-        amount:
-          $ref: '#/components/schemas/AmountDetails'
-        denialJustification:
-          description: "Justificativa da Negativa(Caso Status do Sinistro for 'ENCERRADO_SEM_INDENIZACAO')"
-          type: string
-          enum: [RISCO_EXCLUIDO,
-            RISCO_AGRAVADO,
-            SEM_DOCUMENTACAO,
-            DOCUMENTACAO_INCOMPLETA,
-            PRESCRICAO,
-            FORA_COBERTURA,
-            OUTROS]
-        denialJustificationDescription:
-          description: "Descrição da Justificativa da Negativa(Caso Justificativa da Negativa for 'OUTROS')"
-          type: string
-          maxLength: 100  
-        coverages:
-          type: array
-          items:
-            $ref: '#/components/schemas/InsurancePersonClaimCoverage'   
-    InsurancePersonClaimCoverage:
-      type: object
-      required:
-        - branch
-        - code
-      properties:
-        insuredObjectId:
-          description: Identificador do Objeto Segurado (Caso aplicável)
-          type: string
-          maxLength: 100
-        branch:
-          description: Grupo e ramo da cobertura
-          type: string
-          maxLength: 4
-          example: '0111'
-        code:
-            type: string
-            description: Código da cobertura, conforme Anexo II do Manuel de Escopo de Dados
-            enum: [
-              MORTE,
-              MORTE_ACIDENTAL,
-              INVALIDEZ_TOTAL_POR_ACIDENTE,
-              INVALIDEZ_PARCIAL_POR_ACIDENTE,
-              INVALIDEZ_TOTAL_E_PARCIAL_POR_ACIDENTE,
-              INVALIDEZ_FUNCIONAL_PERMANENTE_TOTAL_POR_DOENCA,
-              INVALIDEZ_LABORATIVA_PERMANENTE_TOTAL_POR_DOENCA,
-              DESEMPREGO_PERDA_DE_RENDA,
-              INCAPACIDADE_TEMPORARIA,
-              DOENCA_GRAVE,
-              INTERNACAO_HOSPITALAR,
-              DESPESAS_MEDICAS_HOSPITALARES_E_ODONTOLOGICAS_BRASIL,
-              DESPESAS_MEDICAS_HOSPITALARES_E_ODONTOLOGICAS_EXTERIOR,
-              TRANSPLANTE_DE_ORGAOS,
-              CIRURGIA,
-              TRASLADO_DE_CORPO,
-              REGRESSO_SANITARIO,
-              TRASLADO_MEDICO,
-              CANCELAMENTO_DE_VIAGEM,
-              REGRESSO_ANTECIPADO,
-              SOBREVIVENCIA,
-              OUTRAS
-            ]
-        description:
-          description: Descrição / Nome da Cobertura (Caso Código da Cobertura for "OUTRAS")
-          type: string
-          maxLength: 500
-        warningDate:
-          description: Data de Aviso do Sinistro por Cobertura (Caso aplicável)
-          type: string
-          format: date
-          example: '2022-12-31'
-        thirdPartyClaimDate:
-          description: Data de Reclamação do Terceiro por Cobertura (Caso aplicável)
-          type: string
-          format: date
-          example: '2022-12-31'
-    AmountDetails:
-        type: object
-        description: Detalhes de valores/limites
-        required:
-          - amount
-          - unit
-        properties:
-          amount:
-            type: string
-            pattern: '^\d{1,16}\.\d{2}$'
-            example: '2000.00'
-          unit:
-            type: object
-            required:
-              - code
-              - description
-            properties:
-              code:
-                type: string
-                maxLength: 2
-                example: R$
-              description:
-                type: string
-                description: Moeda da Parcela, de acordo com ISO-4217.
-                pattern: ^(\w{3})$
-                example: BRL
-    InsurancePersonSpecificPolicyInfo:    
-      type: object
-      description: Informações do Anexo Específico
-      required:
-        - insuredDependentsInclusionClause
-      properties:
+        IndexLag:
+          type: integer
+          description: Defasagem do índice de preços aplicado na atualização da renda (em meses)
+          example: 5
+        chargedAmount:
+          description: Valor do carregamento
+          allOf:
+            - $ref: "#/components/schemas/AmountDetails"
         insuredDependentsInclusionClause:
           description: Cláusula de Inclusão de Dependentes Segurados. (Caso contrato de Funeral, Acidentes Pessoais, Doenças Graves ou Doença Terminal, Eventos Aleatórios, Vida,  Desemprego/Perda de Renda e Viagem)
           type: string
-          enum: [NAO_HA,
-                  FACULTATIVA,
-                  AUTOMATICA]  
-        dependents:
-          description: Segurados dependentes
-          type: array
-          items:
-            type: object
-            properties:
-              identification:
-                description: Documento de Identificação da Pessoa Associada. (Caso haja em Cláusula de Inclusão de Dependentes Segurados e caso contrato de Funeral, Acidentes Pessoais, Doenças Graves ou Doença Terminal, Eventos Aleatórios, Vida,  Desemprego/Perda de Renda e Viagem)
-                type: string
-                maxLength: 60
-                example: 99.999.999/9999-99
-              kinshipDegree:
-                description: Grau de Parentesco. (Caso haja em Cláusula de Inclusão de Dependentes Segurados e caso contrato de Funeral, Acidentes Pessoais, Doenças Graves ou Doença Terminal, Eventos Aleatórios, Vida,  Desemprego/Perda de Renda e Viagem)
-                type: string
-                enum: [PAI_E_OU_MAE,
-                        AVO_E_OU_AVO, 
-                        BISAVO_E_OU_BISAVO,
-                        FILHO_E_OU_FILHA,
-                        NETO_E_OU_NETA,
-                        BISNETO_E_OU_BISNETA,
-                        IRMAO_E_OU_IRMA,
-                        TIO_E_OU_TIA,
-                        SOBRINHO_E_OU_SOBRINHA,
-                        CONJUGE]
-        tripScope: 
+          enum: [NAO_HA, FACULTATIVA, AUTOMATICA]
+        tripScope:
           description: Abrangência da viagem. (Caso contrato Viagem)
           type: string
-          enum: [NACIONAL,
-                INTERNACIONAL,
-                NACIONAL_E_INTERNACIONAL]
+          enum: [NACIONAL, INTERNACIONAL, NACIONAL_E_INTERNACIONAL]
         insuredCapitalType:
           description: Modalidade de capital segurado. (Caso contrato Prestamista - exceto Habitacional e Rural)
           type: string
-          enum: [FIXO,
-                VINCULADO,
-                VARIAVEL]
+          enum: [FIXO, VINCULADO, VARIAVEL]
         moneylenderType:
           description: Tipo de prestamista. (Caso contrato Prestamista - exceto Habitacional e Rural)
           type: string
-          enum: [BASICO,
-                EMPRESARIAL,
-                EMPRESARIAL_INTEGRAL]
+          enum: [BASICO, EMPRESARIAL, EMPRESARIAL_INTEGRAL]
         creditor:
           type: object
           properties:
@@ -1247,13 +926,12 @@ components:
               description: Identificação do credor. (Caso contrato Prestamista - exceto Habitacional e Rural)
               type: string
               maxLength: 60
-              example: 99.999.999/9999-99
+              pattern: '^\d{1,60}$'
+              example: "12345678901"
             identificationType:
               description: Tipo de documento do credor. (Caso contrato Prestamista - exceto Habitacional e Rural)
               type: string
-              enum: [CPF, 
-                    CNPJ,
-                    Outros]
+              enum: [CPF, CNPJ, OUTROS]
             name:
               description: Nome ou razão social do credor. (Caso contrato Prestamista - exceto Habitacional e Rural)
               type: string
@@ -1266,19 +944,506 @@ components:
               type:
                 description: Tipo de obrigação. (Caso contrato Prestamista - exceto Habitacional e Rural)
                 type: string
-                enum: [EMPRESTIMO,
-                        CONSORCIO,
-                        CONDOMINIO,
-                        OUTROS]
+                enum: [EMPRESTIMO, CONSORCIO, CONDOMINIO, OUTROS]
               typeOthers:
                 description: Descrição Tipo da Obrigação. (Caso tipo de obrigação OUTROS e caso contrato Prestamista - exceto Habitacional e Rural)
                 type: string
                 maxLength: 500
-              insuredCapitalPercentage:
-                description: Percentual do Capital Segurado. (Caso contrato Prestamista - exceto Habitacional e Rural)
+        personIdentification:
+          description: (Caso contrato Prestamista)
+          type: object
+          properties:
+            identification:
+              description: Documento de Identificação da Pessoa
+              type: string
+              maxLength: 60
+              example: "12345678900"
+            identificationType:
+              description: Tipo de Documento da Pessoa
+              type: string
+              enum: [CPF, CNPJ, OUTROS]
+              example: CPF
+            name:
+              description: Nome ou Razão Social da Pessoa
+              type: string
+              maxLength: 60
+              example: Nome Sobrenome
+        insuredCapitalPercentage:
+          description: Percentual do Capital Segurado. (Caso contrato Prestamista - exceto Habitacional e Rural)
+          type: string
+          pattern: '^\d{1,3}\.\d{1,9}$'
+          example: "20.00"
+        dependents:
+          description: Segurados dependentes
+          type: array
+          items:
+            type: object
+            properties:
+              identification:
+                description: Documento de Identificação da Pessoa Associada. (Caso haja em Cláusula de Inclusão de Dependentes Segurados e caso contrato de Funeral, Acidentes Pessoais, Doenças Graves ou Doença Terminal, Eventos Aleatórios, Vida,  Desemprego/Perda de Renda e Viagem)
                 type: string
-                pattern: '^\d{1,3}\.\d{1,9}$'
-                example: '20.00'
+                maxLength: 60
+                pattern: '^\d{1,60}$'
+                example: "12345678901234"
+              identificationType:
+                description: Tipo de Documento da Pessoa
+                type: string
+                enum: [CPF, CNPJ, OUTROS]
+                example: CPF
+              name:
+                description: Nome ou Razão Social da Pessoa
+                type: string
+                maxLength: 60
+                example: Nome Sobrenome
+              kinshipDegree:
+                description: Grau de Parentesco. (Caso haja em Cláusula de Inclusão de Dependentes Segurados e caso contrato de Funeral, Acidentes Pessoais, Doenças Graves ou Doença Terminal, Eventos Aleatórios, Vida,  Desemprego/Perda de Renda e Viagem)
+                type: string
+                enum:
+                  [
+                    CONJUGE,
+                    PAIS,
+                    SOGROS,
+                    AVOS,
+                    BISAVOS,
+                    FILHOS,
+                    NETOS,
+                    BISNETOS,
+                    IRMAOS,
+                    TIOS,
+                    SOBRINHOS
+                  ]
+        educationalInstitution:
+          description: Referente a seguro educacional
+          type: object
+          properties:
+            identification:
+              description: Documento de Identificação da Pessoa
+              type: string
+              maxLength: 60
+              example: "12345678901"
+            identificationType:
+              description: Tipo de Documento da Pessoa
+              type: string
+              enum: [CPF, CNPJ, OUTROS]
+              example: CPF
+            name:
+              description: Nome ou Razão Social da Pessoa
+              type: string
+              maxLength: 60
+              example: Nome Sobrenome
+        benefitAmount:
+          description: Valor do beneficio em reais da cobertura contratada (caso campo modalidade de estruturacao for beneficio definido)
+          allOf:
+            - $ref: "#/components/schemas/AmountDetails"
+        plan:
+          description: Tipo de plano
+          type: string
+          enum: [PGBL, PRGP, PAGP, PRSA, PRI, PDR, VGBL, VRGP, VAGP, VRSA, VRI, VDR, TRADICIONAL, OUTROS]
+          example: PGBL
+        planOthers:
+          description: Descrição do tipo de plano contratado quando for informada a opção OUTROS
+          type: string
+          example: OUTROS
+        planBlock:
+          description: Plano é bloqueado
+          type: boolean
+          example: false
+        structureModality:
+          description: Modalidade de estruturação
+          type: string
+          enum: [BENEFICIO_DEFINIDO, CONTRIBUICAO_VARIAVEL]
+          example: BENEFICIO_DEFINIDO
+        qualifiedProposer:
+          description: Proponente Qualificado
+          type: string
+          enum: [SIM, NAO]
+          example: SIM
+        biometricTable:
+          type: string
+          description: Tábua biométrica, se houver
+          example: 1  - Mortalidade Geral / Beneficiário - AT49 M
+          enum:
+            [
+              1  - Mortalidade Geral / Beneficiário - AT49 M,
+              2  - Mortalidade Geral / Beneficiário - AT49 F,
+              3  - Mortalidade Geral / Beneficiário - AT50 M,
+              4  - Mortalidade Geral / Beneficiário - AT50 F,
+              5  - Mortalidade Geral / Beneficiário - AT55 M,
+              6  - Mortalidade Geral / Beneficiário - AT55 F,
+              7  - Mortalidade Geral / Beneficiário - AT71 M,
+              8  - Mortalidade Geral / Beneficiário - AT71 F,
+              9  - Mortalidade Geral / Beneficiário - AT83 M,
+              10  - Mortalidade Geral / Beneficiário - AT83 F,
+              11  - Mortalidade Geral / Beneficiário - AT2000 M,
+              12  - Mortalidade Geral / Beneficiário - AT2000 F,
+              13  - Mortalidade Geral / Beneficiário - CS041,
+              14  - Mortalidade Geral / Beneficiário - CSO58,
+              15  - Mortalidade Geral / Beneficiário - CSO80 M,
+              16  - Mortalidade Geral / Beneficiário - CSO80 F,
+              17  - Mortalidade Geral / Beneficiário - CSG 60,
+              18  - Mortalidade Geral / Beneficiário - GAM71 M,
+              19  - Mortalidade Geral / Beneficiário - GAM71 F,
+              20  - Mortalidade Geral / Beneficiário - SGB51,
+              21  - Mortalidade Geral / Beneficiário - SGB55,
+              22  - Mortalidade Geral / Beneficiário - SGB71,
+              23  - Mortalidade Geral / Beneficiário - SGB75,
+              24  - Mortalidade Geral / Beneficiário - GKF70,
+              25  - Mortalidade Geral / Beneficiário - GKF80,
+              26  - Mortalidade Geral / Beneficiário - GKF95,
+              27  - Mortalidade Geral / Beneficiário - GKM70,
+              28  - Mortalidade Geral / Beneficiário - GKM80,
+              29  - Mortalidade Geral / Beneficiário - GKM95,
+              30  - Mortalidade Geral / Beneficiário - UP 84,
+              31  - Mortalidade de Inválidos - IAPB 57,
+              32  - Mortalidade de Inválidos - IAPB57 - Nivelada,
+              33  - Mortalidade de Inválidos - ZIMMERMANN,
+              34  - Mortalidade de Inválidos - WINKLEVOSS,
+              35  - Mortalidade de Inválidos - BENTZIEN,
+              36  - Mortalidade de Inválidos - EXP. IAPC,
+              37  - Mortalidade de Inválidos - TASA27,
+              38  - Mortalidade de Inválidos - MULLER,
+              39  - Entrada em Invalidez - IAPB 57 FRACA,
+              40  - Entrada em Invalidez - IAPB 57 FORTE,
+              41  - Entrada em Invalidez - ZIMMERMANN,
+              42  - Entrada em Invalidez - ÁLVARO VINDAS,
+              43  - Entrada em Invalidez - TASA 27,
+              44  - Entrada em Invalidez - MULLER,
+              45  - Entrada em Invalidez - HUNTER,
+              46  - Mortalidade Geral / Beneficiário - EB7,
+              47  - Mortalidade Geral / Beneficiário - UP94 M,
+              48  - Mortalidade Geral / Beneficiário - AT49,
+              49  - Mortalidade Geral / Beneficiário - AT2000 female suavizada 10%,
+              49  - Entrada em Invalidez - AT2000 female suavizada 10%,
+              50  - Mortalidade Geral / Beneficiário - TGA,
+              50  - Entrada em Invalidez - TGA,
+              51  - Mortalidade Geral / Beneficiário - AT2000 male suavizada 10%,
+              52  - Mortalidade Geral / Beneficiário - BR-EMSsb-V.2010-m,
+              53  - Mortalidade Geral / Beneficiário - BR-EMSsb-V.2010-f,
+              54  - Entrada em Invalidez - SUSEP_IBGE,
+              55  - Mortalidade Geral / Beneficiário - Percentual Fixo,
+              55  - Mortalidade de Inválidos - Percentual Fixo,
+              55  - Entrada em Invalidez - Percentual Fixo,
+              56  - Mortalidade Geral / Beneficiário - Perpétua,
+              56  - Mortalidade de Inválidos - Perpétua,
+              56  - Entrada em Invalidez - Perpétua,
+              57  - Mortalidade Geral / Beneficiário - BR-EMSmt-V.2010-m,
+              57  - Mortalidade de Inválidos - BR-EMSmt-V.2010-m,
+              57  - Entrada em Invalidez - BR-EMSmt-V.2010-m,
+              58  - Mortalidade Geral / Beneficiário - BR-EMSmt-V.2010-f,
+              58  - Mortalidade de Inválidos - BR-EMSmt-V.2010-f,
+              58  - Entrada em Invalidez - BR-EMSmt-V.2010-f,
+              59  - Mortalidade Geral / Beneficiário - BR-EMSsb-V.2015-m,
+              59  - Mortalidade de Inválidos - BR-EMSsb-V.2015-m,
+              59  - Entrada em Invalidez - BR-EMSsb-V.2015-m,
+              60  - Mortalidade Geral / Beneficiário - BR-EMSsb-V.2015-f,
+              60  - Mortalidade de Inválidos - BR-EMSsb-V.2015-f,
+              60  - Entrada em Invalidez - BR-EMSsb-V.2015-f,
+              61  - Mortalidade Geral / Beneficiário - BR-EMSmt-V.2015-m,
+              61  - Mortalidade de Inválidos - BR-EMSmt-V.2015-m,
+              61  - Entrada em Invalidez - BR-EMSmt-V.2015-m,
+              62  - Mortalidade Geral / Beneficiário - BR-EMSmt-V.2015-f,
+              62  - Mortalidade de Inválidos - BR-EMSmt-V.2015-f,
+              62  - Entrada em Invalidez - BR-EMSmt-V.2015-f,
+              63  - Mortalidade Geral / Beneficiário - BR-EMSsb-m,
+              63  - Mortalidade de Inválidos - BR-EMSsb-m,
+              63  - Entrada em Invalidez - BR-EMSsb-m,
+              64  - Mortalidade Geral / Beneficiário - BR-EMSsb-f,
+              64  - Mortalidade de Inválidos - BR-EMSsb-f,
+              64  - Entrada em Invalidez - BR-EMSsb-f,
+              65  - Mortalidade Geral / Beneficiário - BR-EMSmt-m,
+              65  - Mortalidade de Inválidos - BR-EMSmt-m,
+              65  - Entrada em Invalidez - BR-EMSmt-m,
+              66  - Mortalidade Geral / Beneficiário - BR-EMSmt-f,
+              66  - Mortalidade de Inválidos - BR-EMSmt-f,
+              66  - Entrada em Invalidez - BR-EMSmt-f,
+              67  - Mortalidade Geral / Beneficiário - BR-EMSsb-V.2021-m,
+              67  - Mortalidade de Inválidos - BR-EMSsb-V.2021-m,
+              67  - Entrada em Invalidez - BR-EMSsb-V.2021-m,
+              68  - Mortalidade Geral / Beneficiário - BR-EMSsb-V.2021-f,
+              68  - Mortalidade de Inválidos - BR-EMSsb-V.2021-f,
+              68  - Entrada em Invalidez - BR-EMSsb-V.2021-f,
+              69  - Mortalidade Geral / Beneficiário - BR-EMSmt-V.2021-m,
+              69  - Mortalidade de Inválidos - BR-EMSmt-V.2021-m,
+              69  - Entrada em Invalidez - BR-EMSmt-V.2021-m,
+              70  - Mortalidade Geral / Beneficiário - BR-EMSmt-V.2021-f,
+              70  - Mortalidade de Inválidos - BR-EMSmt-V.2021-f,
+              70  - Entrada em Invalidez - BR-EMSmt-V.2021-f,
+              99  - Mortalidade Geral / Beneficiário - OUTRAS,
+              99  - Mortalidade de Inválidos - OUTRAS,
+              99  - Entrada em Invalidez - OUTRAS]
+        benefitPaymentModality:
+          description: Forma de Pagamento do Benefício
+          type: string
+          enum: [RENDA, UNICO]
+          example: RENDA
+        financialResultReversal:
+          type: string
+          description: Reversão de resultado financeiro na fase de concessão
+          enum: [SIM, NAO]
+          example: SIM
+        financialResultReversalPercentage:
+          description: Percentual de reversão de resultado financeiro na fase de concessão (Quando “Reversão de resultado financeiro na fase de concessão” for Sim)
+          type: string
+          pattern: '^\d{1,3}\.\d{1,9}$'
+          example: "10.00"
+        minimumWarrantyIndex:
+          type: string
+          description: Índice utilizado como garantia mínima de desempenho para produtos do tipo Plano de Desempenho Referenciado (PDR) e Vida com Desempenho Referenciado (VDR)
+          enum:
+            [IPC-FGV, IGP-DI-FGV, IPCA-IBGE, IGPM-FGV, INPC-IBGE, TR, OUTROS]
+          example: IGP-DI-FGV
+        minimumWarrantyPercentage:
+          description: Percentual utilizado como garantia mínima de desempenho para produtos do tipo Plano de Desempenho Referenciado (PDR) e Vida com Desempenho Referenciado (VDR).
+          type: string
+          pattern: '^\d{1,3}\.\d{1,9}$'
+          example: "10.00"
+        taxRegime:
+          description: Regime tributário do plano contratado
+          type: string
+          enum: [PROGRESSIVO, REGRESSIVO]
+          example: PROGRESSIVO
+        calculationBasis:
+          type: string
+          description: Base de cálculo das anuidades do benefício concedido
+          enum: [MENSAL, ANUAL]
+          example: MENSAL
+
+    ResponseInsurancePersonClaims:
+      type: object
+      required:
+        - data
+        - links
+        - meta
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/InsurancePersonClaim"
+          minItems: 0
+        links:
+          $ref: "#/components/schemas/Links"
+        meta:
+          $ref: "#/components/schemas/Meta"
+    InsurancePersonClaim:
+      type: object
+      required:
+        - status
+        - warningDate
+        - warningRegisterDate
+      properties:
+        status:
+          description: Status do sinistro / evento gerador
+          type: string
+          enum:
+            [
+              ABERTO,
+              ENCERRADO_COM_INDENIZACAO,
+              ENCERRADO_SEM_INDENIZACAO,
+              REABERTO,
+              CANCELADO_POR_ERRO_OPERACIONAL,
+              AVALIACAO_INICIAL,
+              ENCERRADO_COM_PAGAMENTO_UNICO_BENEFICIO,
+              ENCERRADO_COM_CONCESSAO_DE_RENDA_BENEFICIO,
+              ENCERRADO_INDEFERIDO_BENEFICIO
+            ]
+        warningDate:
+          description: Data de aviso do sinistro
+          type: string
+          format: date
+          maxLength: 10
+          example: "2022-12-31"
+        warningRegisterDate:
+          description: |
+            Data do Registro de Aviso à Seguradora
+            Em caso de regime financeiro de Repartição de Capitais de Cobertura e de Capitalização
+          type: string
+          format: date
+          maxLength: 10
+          example: "2022-12-31"
+        recipientIdentification:
+          description: Documento de identificação do beneficiário da renda concedida
+          type: string
+          maxLength: 60
+          example: "12345678901"
+        recipientIdentificationType:
+          description: Tipo de Documento da Pessoa
+          type: string
+          enum: [CPF, RG, PASSAPORTE, OUTROS]
+          example: CPF
+        recipientName:
+          description: Nome do beneficiário da renda concedida
+          type: string
+          maxLength: 60
+          example: Nome Sobrenome
+        recipientClassification:
+          description: Tipo de Documento da Pessoa
+          type: string
+          enum: [SEGURADO, CONJUGE, FILHO_MENOR_DE_IDADE, BENEFICIARIO_INDICADO]
+          example: SEGURADO
+        recipientBirthDate:
+          description: Data de nascimento do beneficiário da renda concedida
+          type: string
+          format: date
+          example: "1990-12-31"
+        incomeModality:
+          type: string
+          description: Tipo de renda concedida
+          example: RENDA_VITALICIA
+          enum:
+            [
+              PAGAMENTO_UNICO,
+              RENDA_PRAZO_CERTO,
+              RENDA_TEMPORARIA,
+              RENDA_TEMPORARIA_REVERSIVEL,
+              RENDA_TEMPORARIA_PRAZO_MINIMO_GARANTIDO,
+              RENDA_TEMPORARIA_REVERSIVEL_PRAZO_MINIMO_GARANTIDO,
+              RENDA_VITALICIA,
+              RENDA_VITALICIA_REVERSIVEL_BENEFICIARIO_INDICADO,
+              RENDA_VITALICIA_REVERSIVEL_CONJUGE_CONTINUIDADE_MENORES,
+              RENDA_VITALICIA_PRAZO_MINIMO_GARANTIDO,
+              RENDA_VITALICIA_REVERSIVEL_PRAZO_MINIMO_GARANTIDO,
+              RENDA_VITALICIA_REVERSIVEL_CONJUGE,
+              OUTROS
+            ]
+        incomeModalityOthers:
+          type: string
+          description: Descrição do tipo de renda quando outros
+          example: "Outros"
+        incomeReversed:
+          type: boolean
+          description: Declara se já houve a reversão da renda do benefício concedido do segurado para o cônjuge, beneficiário indicado ou filho menor
+          example: true
+        incomeValueUniquePayment:
+          $ref: "#/components/schemas/AmountDetails"
+        incomeTerm:
+          type: string
+          description: Prazo pagamento da parcela ou da renda atuarial ou financeira do benefício concedido
+        recipientNumber:
+          type: integer
+          description: Número de benefícios a serem recebidos por ano
+          example: 3
+        concessionStartDate:
+          description: Data de início de concessão do benefício
+          type: string
+          format: date
+          example: "2020-12-31"
+        monetaryUpdateIndex:
+          type: string
+          description: Índice de preços referente à atualização monetária anual do valor da renda
+          enum:
+            [IPC-FGV, IGP-DI-FGV, IPCA-IBGE, IGPM-FGV, INPC-IBGE, TR, OUTROS]
+          example: IGPM-FGV
+        monetaryUpdateIndexOthers:
+          description: Descrição do Índice de preços referente à atualização monetária anual do valor da renda quando for informada a opção OUTROS
+          type: string
+          example: OUTROS
+        lastUpdateDate:
+          description: Data da última atualização do benefício
+          type: string
+          format: date
+          example: "2020-12-31"
+        defermentDueDate:
+          description: Data do fim do período de diferimento do benefício concedido/a conceder
+          type: string
+          format: date
+          example: "2025-12-31"
+
+    AmountDetails:
+      type: object
+      description: Detalhes de valores/limites
+      required:
+        - amount
+        - unit
+      properties:
+        amount:
+          type: string
+          pattern: '^\d{1,16}\.\d{2}$'
+          example: "2000.00"
+        unit:
+          type: object
+          required:
+            - code
+            - description
+          properties:
+            code:
+              type: string
+              maxLength: 2
+              example: R$
+            description:
+              type: string
+              description: Moeda da Parcela, de acordo com ISO-4217.
+              pattern: ^(\w{3})$
+              example: BRL
+
+    ResponseInsurancePersonMovements:
+      type: object
+      required:
+        - data
+        - links
+        - meta
+      properties:
+        data:
+          $ref: "#/components/schemas/InsurancePersonMovements"
+        links:
+          $ref: "#/components/schemas/Links"
+        meta:
+          $ref: "#/components/schemas/Meta"
+
+    InsurancePersonMovements:
+      type: object
+      properties:
+        movementContributions:
+          type: array
+          items:
+            type: object
+            properties:
+              contributionAmount:
+                description: Valores de contribuições/prêmios comerciais pagos pelo segurado participante (em relação aos últimos 12 meses), Obrigatório se houver
+                allOf:
+                  - $ref: "#/components/schemas/AmountDetails"
+              contributionPaymentDate:
+                description: Datas de Pagamentos das contribuições/prêmios comerciais (em relação aos últimos 12 meses), Obrigatório, se houver
+                type: string
+                format: date
+                example: "2021-05-21"
+              contributionExpirationDate:
+                description: Datas de Vencimentos das contribuições/prêmios comerciais (em relação aos últimos 12 meses)
+                type: string
+                format: date
+                example: "2021-05-21"
+              chargedInAdvanceAmount:
+                description: Valor do carregamento cobrado de forma antecipada, Obrigatório se houver
+                allOf:
+                  - $ref: "#/components/schemas/AmountDetails"
+              periodicity:
+                type: string
+                description: Periodicidade da contribuições
+                enum:
+                  [
+                    MENSAL,
+                    BIMESTRAL,
+                    TRIMESTRAL,
+                    QUADRIMESTRAL,
+                    SEMESTRAL,
+                    ANUAL,
+                    ESPORADICA
+                  ]
+                example: MENSAL
+        movementBenefits:
+          type: array
+          items:
+            type: object
+            properties:
+              benefitAmount:
+                description: Valores de benefícios recebidos (em relação aos últimos 12 meses), Obrigatório, se houver
+                allOf:
+                  - $ref: "#/components/schemas/AmountDetails"
+              benefitPaymentDate:
+                description: Datas de Pagamentos de benefícios recebidos (em relação aos últimos 12 meses), Obrigatório, se houver
+                type: string
+                format: date
+                example: "2021-05-21"
+         
     Links:
       type: object
       properties:
@@ -1286,27 +1451,27 @@ components:
           type: string
           description: URL da página atualmente requisitada
           pattern: ^(https:\/\/)(.*?)(\/open-insurance\/insurance-person\/v\d+)(\/insurance-person.*)?$
-          example: 'https://api.organizacao.com.br/open-insurance/insurance-person/v1/insurance-person'
+          example: "https://api.organizacao.com.br/open-insurance/insurance-person/v1/insurance-person"
         first:
           type: string
           description: URL da primeira página de registros
           pattern: ^(https:\/\/)(.*?)(\/open-insurance\/insurance-person\/v\d+)(\/insurance-person.*)?$
-          example: 'https://api.organizacao.com.br/open-insurance/insurance-person/v1/insurance-person'
+          example: "https://api.organizacao.com.br/open-insurance/insurance-person/v1/insurance-person"
         prev:
           type: string
           description: URL da página anterior de registros
           pattern: ^(https:\/\/)(.*?)(\/open-insurance\/insurance-person\/v\d+)(\/insurance-person.*)?$
-          example: 'https://api.organizacao.com.br/open-insurance/insurance-person/v1/insurance-person'
+          example: "https://api.organizacao.com.br/open-insurance/insurance-person/v1/insurance-person"
         next:
           type: string
           description: URL da próxima página de registros
           pattern: ^(https:\/\/)(.*?)(\/open-insurance\/insurance-person\/v\d+)(\/insurance-person.*)?$
-          example: 'https://api.organizacao.com.br/open-insurance/insurance-person/v1/insurance-person'
+          example: "https://api.organizacao.com.br/open-insurance/insurance-person/v1/insurance-person"
         last:
           type: string
           description: URL da última página de registros
           pattern: ^(https:\/\/)(.*?)(\/open-insurance\/insurance-person\/v\d+)(\/insurance-person.*)?$
-          example: 'https://api.organizacao.com.br/open-insurance/insurance-person/v1/insurance-person'
+          example: "https://api.organizacao.com.br/open-insurance/insurance-person/v1/insurance-person"
     Meta:
       type: object
       properties:
@@ -1352,14 +1517,14 @@ components:
                 type: string
                 maxLength: 2048
               requestDateTime:
-                description: 'Data e hora da consulta, conforme especificação RFC-3339, formato UTC.'
+                description: "Data e hora da consulta, conforme especificação RFC-3339, formato UTC."
                 type: string
                 maxLength: 2048
                 format: date-time
-                example: '2021-08-20T08:30:00Z'
+                example: "2021-08-20T08:30:00Z"
             additionalProperties: false
         meta:
-          $ref: '#/components/schemas/Meta'
+          $ref: "#/components/schemas/Meta"
       additionalProperties: false
     XFapiInteractionId:
       type: string
@@ -1368,12 +1533,12 @@ components:
       description: 'Um UID [RFC4122](https://tools.ietf.org/html/rfc4122) usado como um ID de correlação. Se fornecido, o transmissor deve "reproduzir" esse valor no cabeçalho de resposta.'
   parameters:
     policyId:
-        name: policyId
-        in: path
-        required: true
-        schema:
-          type: string
-          maxLength: 60
+      name: policyId
+      in: path
+      required: true
+      schema:
+        type: string
+        maxLength: 60
     Authorization:
       name: Authorization
       in: header
@@ -1415,7 +1580,7 @@ components:
     xFapiAuthDate:
       name: x-fapi-auth-date
       in: header
-      description: 'Data em que o usuário logou pela última vez com o receptor. Representada de acordo com a [RFC7231](https://tools.ietf.org/html/rfc7231). Exemplo: Sun, 10 Sep 2017 19:43:31 UTC'
+      description: "Data em que o usuário logou pela última vez com o receptor. Representada de acordo com a [RFC7231](https://tools.ietf.org/html/rfc7231). Exemplo: Sun, 10 Sep 2017 19:43:31 UTC"
       required: false
       schema:
         type: string
@@ -1445,14 +1610,14 @@ components:
   securitySchemes:
     OpenId:
       type: openIdConnect
-      openIdConnectUrl: 'https://auth.mockbank.poc.raidiam.io/.well-known/openid-configuration'
+      openIdConnectUrl: "https://auth.mockbank.poc.raidiam.io/.well-known/openid-configuration"
     OAuth2Security:
       type: oauth2
       description: Fluxo OAuth necessário para que a receptora tenha acesso aos dados na instituição transmissora. Inclui o processo de redirecionamento e autenticação do usuário a que se referem os dados.
       flows:
         authorizationCode:
-          authorizationUrl: 'https://authserver.example/authorization'
-          tokenUrl: 'https://authserver.example/token'
+          authorizationUrl: "https://authserver.example/authorization"
+          tokenUrl: "https://authserver.example/token"
           scopes:
             insurance-person: Escopo necessário para acesso à API. O controle dos endpoints específicos é feito via permissions.
   responses:
@@ -1461,98 +1626,98 @@ components:
       headers:
         x-fapi-interaction-id:
           schema:
-            $ref: '#/components/schemas/XFapiInteractionId'
+            $ref: "#/components/schemas/XFapiInteractionId"
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/ResponseInsurancePerson'
+            $ref: "#/components/schemas/ResponseInsurancePerson"
     OKResponseInsurancePersonPolicyInfo:
       description: Dados de ResponseInsurancePersonPolicyInfo obtidos com sucesso
       headers:
         x-fapi-interaction-id:
           schema:
-            $ref: '#/components/schemas/XFapiInteractionId'
+            $ref: "#/components/schemas/XFapiInteractionId"
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/ResponseInsurancePersonPolicyInfo'
+            $ref: "#/components/schemas/ResponseInsurancePersonPolicyInfo"
     OKResponseInsurancePersonClaims:
       description: Dados de ResponseInsurancePersonClaims obtidos com sucesso
       headers:
         x-fapi-interaction-id:
           schema:
-            $ref: '#/components/schemas/XFapiInteractionId'
+            $ref: "#/components/schemas/XFapiInteractionId"
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/ResponseInsurancePersonClaims'
-    OKResponseInsurancePersonPremium:
-      description: Dados de ResponseInsurancePersonPremium obtidos com sucesso
+            $ref: "#/components/schemas/ResponseInsurancePersonClaims"
+    OKResponseInsurancePersonMovements:
+      description: Dados de ResponseInsurancePersonMovements obtidos com sucesso
       headers:
         x-fapi-interaction-id:
           schema:
-            $ref: '#/components/schemas/XFapiInteractionId'
+            $ref: "#/components/schemas/XFapiInteractionId"
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/ResponseInsurancePersonPremium'
+            $ref: "#/components/schemas/ResponseInsurancePersonMovements"
     UnprocessableEntity:
-      description: 'O servidor entende o tipo de conteúdo da entidade da requisição, e a sintaxe da requisição esta correta, mas não foi possível processar as instruções presente.'
+      description: "O servidor entende o tipo de conteúdo da entidade da requisição, e a sintaxe da requisição esta correta, mas não foi possível processar as instruções presente."
       content:
         application/json; charset=utf-8:
           schema:
-            $ref: '#/components/schemas/ResponseError'
+            $ref: "#/components/schemas/ResponseError"
     NoContent:
-      description: 'O recurso solicitado não existe ou não foi localizado.'
+      description: "O recurso solicitado não existe ou não foi localizado."
       content:
         application/json; charset=utf-8:
           schema:
-            $ref: '#/components/schemas/ResponseError'
+            $ref: "#/components/schemas/ResponseError"
     BadRequest:
-      description: 'A requisição foi malformada, omitindo atributos obrigatórios, seja no payload ou através de atributos na URL.'
+      description: "A requisição foi malformada, omitindo atributos obrigatórios, seja no payload ou através de atributos na URL."
       content:
         application/json; charset=utf-8:
           schema:
-            $ref: '#/components/schemas/ResponseError'
+            $ref: "#/components/schemas/ResponseError"
     Forbidden:
       description: O token tem escopo incorreto ou uma política de segurança foi violada
       content:
         application/json; charset=utf-8:
           schema:
-            $ref: '#/components/schemas/ResponseError'
+            $ref: "#/components/schemas/ResponseError"
     InternalServerError:
       description: Ocorreu um erro no gateway da API ou no microsserviço
       content:
         application/json; charset=utf-8:
           schema:
-            $ref: '#/components/schemas/ResponseError'
+            $ref: "#/components/schemas/ResponseError"
     MethodNotAllowed:
       description: O consumidor tentou acessar o recurso com um método não suportado
       content:
         application/json; charset=utf-8:
           schema:
-            $ref: '#/components/schemas/ResponseError'
+            $ref: "#/components/schemas/ResponseError"
     NotAcceptable:
       description: A solicitação continha um cabeçalho Accept diferente dos tipos de mídia permitidos ou um conjunto de caracteres diferente de UTF-8
       content:
         application/json; charset=utf-8:
           schema:
-            $ref: '#/components/schemas/ResponseError'
+            $ref: "#/components/schemas/ResponseError"
     NotFound:
       description: O recurso solicitado não existe ou não foi implementado
       content:
         application/json; charset=utf-8:
           schema:
-            $ref: '#/components/schemas/ResponseError'
+            $ref: "#/components/schemas/ResponseError"
     TooManyRequests:
-      description: 'A operação foi recusada, pois muitas solicitações foram feitas dentro de um determinado período ou o limite global de requisições concorrentes foi atingido'
+      description: "A operação foi recusada, pois muitas solicitações foram feitas dentro de um determinado período ou o limite global de requisições concorrentes foi atingido"
       content:
         application/json; charset=utf-8:
           schema:
-            $ref: '#/components/schemas/ResponseError'
+            $ref: "#/components/schemas/ResponseError"
     Unauthorized:
       description: Cabeçalho de autenticação ausente/inválido ou token inválido
       content:
         application/json; charset=utf-8:
           schema:
-            $ref: '#/components/schemas/ResponseError'
+            $ref: "#/components/schemas/ResponseError"
