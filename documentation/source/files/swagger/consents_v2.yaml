@@ -15,177 +15,230 @@ info:
     - Todas as datas trafegadas nesta API seguem o padrão da [RFC3339](https://tools.ietf.org/html/rfc3339) e formato "zulu".
     - A descrição do fluxo de consentimento encontra-se disponível no [Portal do desenvolvedor](https://br-openinsurance.github.io/areadesenvolvedor/).
     - O arquivo com o mapeamento completo entre `Roles`, `scopes` e `permissions` está disponibilizado no Portal do desenvolvedor, no mesmo item acima - descrição do fluxo de consentimento.
-    - A receptora deve enviar obrigatoriamente, no pedido de criação de consentimento, todas as permissions dos agrupamentos de dados as quais ela deseja consentimento, conforme tabela abaixo:
-      
+    - A receptora deve enviar, no pedido de criação de consentimento, todas as permissions dos agrupamentos obrigatórios das 
+      categorias de dados as quais ela deseja consentimento, conforme tabela abaixo:
+      (Para a fase 2, RESOURCES_READ é a única permissão obrigatória. Para a fase 3, todas as permissões de uma categoria de dados são obrigatórias)
       ```
+      |-----------------------------------------------------------------------------------------------------------------------------|
+      | Fase 2:                                                                                                                     |
       |----------------------|----------------------------------|-------------------------------------------------------------------|
       | CATEGORIA DE DADOS   | AGRUPAMENTO                      | PERMISSIONS                                                       |
       |----------------------|----------------------------------|-------------------------------------------------------------------|
-      | Cadastro             | Dados Cadastrais PF              | CUSTOMERS_PERSONAL_IDENTIFICATIONS_READ                           |
-      |                      |                                  | RESOURCES_READ                                                    |
+      | Cadastro             | Pessoa Física                    | RESOURCES_READ                                                    |
+      | Pessoa Física        | (Obrigatório)                    |                                                                   |
+      |                      |----------------------------------|-------------------------------------------------------------------|
+      |                      | Pessoa Física                    | CUSTOMERS_PERSONAL_IDENTIFICATIONS_READ                           |
+      |                      | (Opcional)                       | CUSTOMERS_PERSONAL_QUALIFICATION_READ                             |
+      |                      |                                  | CUSTOMERS_PERSONAL_ADDITIONALINFO_READ                            |
       |----------------------|----------------------------------|-------------------------------------------------------------------|
-      | Cadastro             | Qualificação PF                  | CUSTOMERS_PERSONAL_QUALIFICATION_READ                             |
-      |                      |                                  | RESOURCES_READ                                                    |
+      | Cadastro             | Pessoa Jurídica                  | RESOURCES_READ                                                    |
+      | Pessoa Jurídica      | (Obrigatório)                    |                                                                   |
+      |                      |----------------------------------|-------------------------------------------------------------------|
+      |                      | Pessoa Jurídica                  | CUSTOMERS_BUSINESS_IDENTIFICATIONS_READ                           |
+      |                      | (Opcional)                       | CUSTOMERS_BUSINESS_QUALIFICATION_READ                             |
+      |                      |                                  | CUSTOMERS_BUSINESS_ADDITIONALINFO_READ                            |   
       |----------------------|----------------------------------|-------------------------------------------------------------------|
-      | Cadastro             | Informações complementares PF    | CUSTOMERS_PERSONAL_ADITTIONALINFO_READ                            |
-      |                      |                                  | RESOURCES_READ                                                    |
+      | Títulos de Cap.      | Produtos de Títulos de Cap.      | RESOURCES_READ                                                    |
+      |                      | (Obrigatório)                    |                                                                   |
+      |                      |----------------------------------|-------------------------------------------------------------------|
+      |                      | Produtos de Títulos de Cap.      | CAPITALIZATION_TITLE_READ                                         |
+      |                      | (Opcional)                       | CAPITALIZATION_TITLE_PLANINFO_READ                                |      
+      |                      |                                  | CAPITALIZATION_TITLE_EVENTS_READ                                  |
+      |                      |                                  | CAPITALIZATION_TITLE_SETTLEMENTS_READ                             |
       |----------------------|----------------------------------|-------------------------------------------------------------------|
-      | Cadastro             | Dados Cadastrais PJ              | CUSTOMERS_BUSINESS_IDENTIFICATIONS_READ                           |
-      |                      |                                  | RESOURCES_READ                                                    |
-      |----------------------|----------------------------------|-------------------------------------------------------------------|
-      | Cadastro             | Qualificação PJ                  | CUSTOMERS_BUSINESS_QUALIFICATION_READ                             |
-      |                      |                                  | RESOURCES_READ                                                    |
-      |----------------------|----------------------------------|-------------------------------------------------------------------|
-      | Cadastro             | Informações complementares PJ    | CUSTOMERS_BUSINESS_ADITTIONALINFO_READ                            |
-      |                      |                                  | RESOURCES_READ                                                    |
-      |----------------------|----------------------------------|-------------------------------------------------------------------|
-      | Títulos de Cap.      | Produtos de Títulos de Cap.      | CAPITALIZATION_TITLES_READ                                        |
-      |                      |                                  | CAPITALIZATION_TITLES_POLICYINFO_READ                             |
-      |                      |                                  | CAPITALIZATION_TITLES_PREMIUM_READ                                |      
-      |                      |                                  | CAPITALIZATION_TITLES_CLAIM_READ                                  |
-      |                      |                                  | RESOURCES_READ                                                    |
-      |----------------------|----------------------------------|--------------------- ---------------------------------------------|
-      | Previdência          | Produtos de Previdência Risco    | PENSION_PLAN_READ                                                 |
-      |                      |                                  | PENSION_PLAN_CONTRACTINFO_READ                                    |
+      | Previdência          | Produtos de Previdência Risco    | RESOURCES_READ                                                    |
+      | Risco                | (Obrigatório)                    |                                                                   |
+      |                      |----------------------------------|-------------------------------------------------------------------|
+      |                      | Produtos de Previdência Risco    | PENSION_PLAN_READ                                                 |
+      |                      | (Opcional)                       | PENSION_PLAN_CONTRACTINFO_READ                                    |
       |                      |                                  | PENSION_PLAN_MOVEMENTS_READ                                       |
       |                      |                                  | PENSION_PLAN_PORTABILITIES_READ                                   |
       |                      |                                  | PENSION_PLAN_WITHDRAWALS_READ                                     |
       |                      |                                  | PENSION_PLAN_CLAIM                                                |
-      |                      |                                  | RESOURCES_READ                                                    |
-      |----------------------|----------------------------------|--------------------- ---------------------------------------------|
-      | Previdência          | Produtos de Previdência          | LIFE_PENSION_READ                                                 |
-      |                      | Sobrevivência                    | LIFE_PENSION_CONTRACTINFO_READ                                    |
+      |----------------------|----------------------------------|-------------------------------------------------------------------|
+      | Previdência          | Produtos de Previdência          | RESOURCES_READ                                                    |
+      | Sobrevivência        | Sobrevivência (Obrigatório)      |                                                                   |
+      |                      |----------------------------------|-------------------------------------------------------------------|
+      |                      | Produtos de Previdência          | LIFE_PENSION_READ                                                 |
+      |                      | Sobrevivência (Opcional)         | LIFE_PENSION_CONTRACTINFO_READ                                    |
       |                      |                                  | LIFE_PENSION_MOVEMENTS_READ                                       |
       |                      |                                  | LIFE_PENSION_PORTABILITIES_READ                                   |
       |                      |                                  | LIFE_PENSION_WITHDRAWALS_READ                                     |
       |                      |                                  | LIFE_PENSION_CLAIM                                                |
-      |                      |                                  | RESOURCES_READ                                                    |
       |----------------------|----------------------------------|-------------------------------------------------------------------|
-      | Danos e Pessoas      | Patrimonial                      | DAMAGES_AND_PEOPLE_PATRIMONIAL_READ                               |
+      | Assistência          | Assist. Financeira (Obrigatório) | RESOURCES_READ                                                    |
+      | Financeira           |----------------------------------|-------------------------------------------------------------------|
+      |                      | Assist. Financeira (Opcional)    | FINANCIAL_ASSISTANCE_READ                                         |
+      |                      |                                  | FINANCIAL_ASSISTANCE_CONTRACTINFO_READ                            |
+      |                      |                                  | FINANCIAL_ASSISTANCE_MOVEMENTS_READ                               |
+      |----------------------|----------------------------------|-------------------------------------------------------------------|
+      | Danos e Pessoas      | Patrimonial (Obrigatório)        | RESOURCES_READ                                                    |
+      | Patrimonial          |----------------------------------|-------------------------------------------------------------------|
+      |                      | Patrimonial (Opcional)           | DAMAGES_AND_PEOPLE_PATRIMONIAL_READ                               |
       |                      |                                  | DAMAGES_AND_PEOPLE_PATRIMONIAL_POLICYINFO_READ                    |
       |                      |                                  | DAMAGES_AND_PEOPLE_PATRIMONIAL_PREMIUM_READ                       |
-      |                      |                                  | DAMAGES_AND_PEOPLE_PATRIMONIAL_CLAIM_READ                         |
-      |                      |                                  | RESOURCES_READ                                                    | 
+      |                      |                                  | DAMAGES_AND_PEOPLE_PATRIMONIAL_CLAIM_READ                         | 
       |----------------------|----------------------------------|-------------------------------------------------------------------|
-      | Danos e Pessoas      | Responsabilidade                 | DAMAGES_AND_PEOPLE_RESPONSIBILITY_READ                            |
+      | Danos e Pessoas      | Responsabilidade (Obrigatório)   | RESOURCES_READ                                                    |
+      | Responsabilidade     |----------------------------------|-------------------------------------------------------------------|
+      |                      | Responsabilidade (Opcional)      | DAMAGES_AND_PEOPLE_RESPONSIBILITY_READ                            |
       |                      |                                  | DAMAGES_AND_PEOPLE_RESPONSIBILITY_POLICYINFO_READ                 |
       |                      |                                  | DAMAGES_AND_PEOPLE_RESPONSIBILITY_PREMIUM_READ                    |
       |                      |                                  | DAMAGES_AND_PEOPLE_RESPONSIBILITY_CLAIM_READ                      |
-      |                      |                                  | RESOURCES_READ                                                    | 
       |----------------------|----------------------------------|-------------------------------------------------------------------|
-      | Danos e Pessoas      | Transportes                      | DAMAGES_AND_PEOPLE_TRANSPORT_READ                                 |
+      | Danos e Pessoas      | Transportes (Obrigatório)        | RESOURCES_READ                                                    |
+      | Transportes          |----------------------------------|-------------------------------------------------------------------|
+      |                      | Transportes (Opcional)           | DAMAGES_AND_PEOPLE_TRANSPORT_READ                                 |
       |                      |                                  | DAMAGES_AND_PEOPLE_TRANSPORT_POLICYINFO_READ                      |
       |                      |                                  | DAMAGES_AND_PEOPLE_TRANSPORT_PREMIUM_READ                         |
       |                      |                                  | DAMAGES_AND_PEOPLE_TRANSPORT_CLAIM_READ                           |
-      |                      |                                  | RESOURCES_READ                                                    | 
       |----------------------|----------------------------------|-------------------------------------------------------------------|
-      | Danos e Pessoas      | Riscos Financeiros               | DAMAGES_AND_PEOPLE_FINANCIAL_RISKS_READ                           |
+      | Danos e Pessoas      | Riscos Financeiros (Obrigatório) | RESOURCES_READ                                                    |
+      | Riscos Financeiros   |----------------------------------|-------------------------------------------------------------------|
+      |                      | Riscos Financeiros (Opcional)    | DAMAGES_AND_PEOPLE_FINANCIAL_RISKS_READ                           |
       |                      |                                  | DAMAGES_AND_PEOPLE_FINANCIAL_RISKS_POLICYINFO_READ                |
       |                      |                                  | DAMAGES_AND_PEOPLE_FINANCIAL_RISKS_PREMIUM_READ                   |
-      |                      |                                  | DAMAGES_AND_PEOPLE_FINANCIAL_RISKS_CLAIM_READ                     |
-      |                      |                                  | RESOURCES_READ                                                    | 
+      |                      |                                  | DAMAGES_AND_PEOPLE_FINANCIAL_RISKS_CLAIM_READ                     | 
       |----------------------|----------------------------------|-------------------------------------------------------------------|
-      | Danos e Pessoas      | Rural                            | DAMAGES_AND_PEOPLE_RURAL_READ                                     |
+      | Danos e Pessoas      | Rural (Obrigatório)              | RESOURCES_READ                                                    |
+      | Rural                |----------------------------------|-------------------------------------------------------------------|
+      |                      | Rural (Opcional)                 | DAMAGES_AND_PEOPLE_RURAL_READ                                     |
       |                      |                                  | DAMAGES_AND_PEOPLE_RURAL_POLICYINFO_READ                          |
       |                      |                                  | DAMAGES_AND_PEOPLE_RURAL_PREMIUM_READ                             |
       |                      |                                  | DAMAGES_AND_PEOPLE_RURAL_CLAIM_READ                               |
-      |                      |                                  | RESOURCES_READ                                                    | 
       |----------------------|----------------------------------|-------------------------------------------------------------------|
-      | Danos e Pessoas      | Automóveis                       | DAMAGES_AND_PEOPLE_AUTO_READ                                      |
+      | Danos e Pessoas      | Automóveis (Obrigatório)         | RESOURCES_READ                                                    |
+      | Automóveis           |----------------------------------|-------------------------------------------------------------------|
+      |                      | Automóveis (Opcional)            | DAMAGES_AND_PEOPLE_AUTO_READ                                      |
       |                      |                                  | DAMAGES_AND_PEOPLE_AUTO_POLICYINFO_READ                           |
       |                      |                                  | DAMAGES_AND_PEOPLE_AUTO_PREMIUM_READ                              |
       |                      |                                  | DAMAGES_AND_PEOPLE_AUTO_CLAIM_READ                                |
-      |                      |                                  | RESOURCES_READ                                                    |
       |----------------------|----------------------------------|-------------------------------------------------------------------|
-      | Danos e Pessoas      | Habitacional                     | DAMAGES_AND_PEOPLE_HOUSING_READ                                   |
+      | Danos e Pessoas      | Habitacional (Obrigatório)       | RESOURCES_READ                                                    |
+      | Habitacional         |----------------------------------|-------------------------------------------------------------------|
+      |                      | Habitacional (Opcional)          | DAMAGES_AND_PEOPLE_HOUSING_READ                                   |
       |                      |                                  | DAMAGES_AND_PEOPLE_HOUSING_POLICYINFO_READ                        |
       |                      |                                  | DAMAGES_AND_PEOPLE_HOUSING_PREMIUM_READ                           |
       |                      |                                  | DAMAGES_AND_PEOPLE_HOUSING_CLAIM_READ                             |
-      |                      |                                  | RESOURCES_READ                                                    |
       |----------------------|----------------------------------|-------------------------------------------------------------------|
-      | Danos e Pessoas      | Aceitação e Sucursal no exterior | DAMAGES_AND_PEOPLE_ACCEPTANCE_AND_BRANCHES_ABROAD_READ            |
-      |                      |                                  | DAMAGES_AND_PEOPLE_ACCEPTANCE_AND_BRANCHES_ABROAD_POLICYINFO_READ |
+      | Danos e Pessoas      | Aceitação e Sucursal no exterior | RESOURCES_READ                                                    |
+      | Aceitação e Sucursal | (Obrigatório)                    |                                                                   |
+      | no exterior          |----------------------------------|-------------------------------------------------------------------|
+      |                      | Aceitação e Sucursal no exterior | DAMAGES_AND_PEOPLE_ACCEPTANCE_AND_BRANCHES_ABROAD_READ            |
+      |                      | (Opcional)                       | DAMAGES_AND_PEOPLE_ACCEPTANCE_AND_BRANCHES_ABROAD_POLICYINFO_READ |
       |                      |                                  | DAMAGES_AND_PEOPLE_ACCEPTANCE_AND_BRANCHES_ABROAD_PREMIUM_READ    |
       |                      |                                  | DAMAGES_AND_PEOPLE_ACCEPTANCE_AND_BRANCHES_ABROAD_CLAIM_READ      |
-      |                      |                                  | RESOURCES_READ                                                    |
       |----------------------|----------------------------------|-------------------------------------------------------------------|
-      | Danos e Pessoas      | Pessoas                          | DAMAGES_AND_PEOPLE_PERSON_READ                                    |
+      | Danos e Pessoas      | Pessoas (Obrigatório)            | RESOURCES_READ                                                    |
+      | Pessoas              |----------------------------------|-------------------------------------------------------------------|
+      |                      | Pessoas (Opcional)               | DAMAGES_AND_PEOPLE_PERSON_READ                                    |
       |                      |                                  | DAMAGES_AND_PEOPLE_PERSON_POLICYINFO_READ                         |
-      |                      |                                  | DAMAGES_AND_PEOPLE_PERSON_PREMIUM_READ                            |
       |                      |                                  | DAMAGES_AND_PEOPLE_PERSON_CLAIM_READ                              |
-      |                      |                                  | RESOURCES_READ                                                    | 
+      |                      |                                  | DAMAGES_AND_PEOPLE_PERSON_MOVEMENTS_READ                          |
       |----------------------|----------------------------------|-------------------------------------------------------------------|
-      | Aviso de Sinistro    |                                  | CLAIM_NOTIFICATION_REQUEST_DAMAGE_CREATE                          |
-      |                      |                                  | CLAIM_NOTIFICATION_REQUEST_PERSON_CREATE                          |
+
+      |-----------------------------------------------------------------------------------------------------------------------------|
+      | Fase 3:                                                                                                                     |
       |----------------------|----------------------------------|-------------------------------------------------------------------|
-      | Endosso              |                                  | ENDORSEMENT_REQUEST_CREATE                                        |
+      | CATEGORIA DE DADOS   | AGRUPAMENTO                      | PERMISSIONS                                                       |
       |----------------------|----------------------------------|-------------------------------------------------------------------|
-      | Cotação              | Patrimonial                      | QUOTE_PATRIMONIAL_LEAD_CREATE                                     |
-      |                      |                                  | QUOTE_PATRIMONIAL_LEAD_UPDATE                                     |
-      |                      |                                  | QUOTE_PATRIMONIAL_HOME_READ                                       |
-      |                      |                                  | QUOTE_PATRIMONIAL_HOME_CREATE                                     |
+      | Aviso de Sinistro    | Danos (Obrigatório)              | CLAIM_NOTIFICATION_REQUEST_DAMAGE_CREATE                          |
+      | Danos                |                                  |                                                                   |
+      |----------------------|----------------------------------|-------------------------------------------------------------------|
+      | Aviso de Sinistro    | Pessoas (Obrigatório)            | CLAIM_NOTIFICATION_REQUEST_PERSON_CREATE                          |
+      | Pessoas              |                                  |                                                                   |
+      |----------------------|----------------------------------|-------------------------------------------------------------------|
+      | Endosso              | Endosso (Obrigatório)            | ENDORSEMENT_REQUEST_CREATE                                        |
+      |----------------------|----------------------------------|-------------------------------------------------------------------|
+      | Cotação Patrimonial  | Patrimonial Lead                 | QUOTE_PATRIMONIAL_LEAD_CREATE                                     |
+      | Lead                 | (Obrigatório)                    | QUOTE_PATRIMONIAL_LEAD_UPDATE                                     |
+      |----------------------|----------------------------------|-------------------------------------------------------------------|
+      | Cotação Patrimonial  | Patrimonial Home                 | QUOTE_PATRIMONIAL_HOME_READ                                       |
+      | Home                 | (Obrigatório)                    | QUOTE_PATRIMONIAL_HOME_CREATE                                     |
       |                      |                                  | QUOTE_PATRIMONIAL_HOME_UPDATE                                     |
-      |                      |                                  | QUOTE_PATRIMONIAL_CONDOMINIUM_READ                                |
-      |                      |                                  | QUOTE_PATRIMONIAL_CONDOMINIUM_CREATE                              |
-      |                      |                                  | QUOTE_PATRIMONIAL_CONDOMINIUM_UPDATE                              | 
-      |                      |                                  | QUOTE_PATRIMONIAL_BUSINESS_READ                                   | 
-      |                      |                                  | QUOTE_PATRIMONIAL_BUSINESS_CREATE                                 |
+      |----------------------|----------------------------------|-------------------------------------------------------------------|
+      | Cotação Patrimonial  | Patrimonial Condominium          | QUOTE_PATRIMONIAL_CONDOMINIUM_READ                                |
+      | Condominium          | (Obrigatório)                    | QUOTE_PATRIMONIAL_CONDOMINIUM_CREATE                              |
+      |                      |                                  | QUOTE_PATRIMONIAL_CONDOMINIUM_UPDATE                              |
+      |----------------------|----------------------------------|-------------------------------------------------------------------| 
+      | Cotação Patrimonial  | Patrimonial Business             | QUOTE_PATRIMONIAL_BUSINESS_READ                                   | 
+      |                      | (Obrigatório)                    | QUOTE_PATRIMONIAL_BUSINESS_CREATE                                 |
       |                      |                                  | QUOTE_PATRIMONIAL_BUSINESS_UPDATE                                 |
-      |                      |                                  | QUOTE_PATRIMONIAL_DIVERSE_RISKS_READ                              |
-      |                      |                                  | QUOTE_PATRIMONIAL_DIVERSE_RISKS_CREATE                            |
+      |----------------------|----------------------------------|-------------------------------------------------------------------|
+      | Cotação Patrimonial  | Patrimonial Diverse Risks        | QUOTE_PATRIMONIAL_DIVERSE_RISKS_READ                              |
+      | Diverse Risks        | (Obrigatório)                    | QUOTE_PATRIMONIAL_DIVERSE_RISKS_CREATE                            |
       |                      |                                  | QUOTE_PATRIMONIAL_DIVERSE_RISKS_UPDATE                            |
       |----------------------|----------------------------------|-------------------------------------------------------------------|
-      | Cotação              | Aceitação e Sucursal no exterior | QUOTE_ACCEPTANCE_AND_BRANCHES_ABROAD_LEAD_CREATE                  |
-      |                      |                                  | QUOTE_ACCEPTANCE_AND_BRANCHES_ABROAD_LEAD_UPDATE                  |
+      | Cotação Aceitação e  | Aceitação e Sucursal no exterior | QUOTE_ACCEPTANCE_AND_BRANCHES_ABROAD_LEAD_CREATE                  |
+      | Sucursal no exterior | (Obrigatório)                    | QUOTE_ACCEPTANCE_AND_BRANCHES_ABROAD_LEAD_UPDATE                  |
       |----------------------|----------------------------------|-------------------------------------------------------------------|
-      | Cotação              | Auto                             | QUOTE_AUTO_LEAD_CREATE                                            |
+      | Cotação Auto Lead    | Auto Lead (Obrigatório)          | QUOTE_AUTO_LEAD_CREATE                                            |
       |                      |                                  | QUOTE_AUTO_LEAD_UPDATE                                            |
-      |                      |                                  | QUOTE_AUTO_READ                                                   |
+      |----------------------|----------------------------------|-------------------------------------------------------------------|
+      | Cotação Auto         | Auto (Obrigatório)               | QUOTE_AUTO_READ                                                   |
       |                      |                                  | QUOTE_AUTO_CREATE                                                 |
       |                      |                                  | QUOTE_AUTO_UPDATE                                                 |
       |----------------------|----------------------------------|-------------------------------------------------------------------|
-      | Cotação              | Riscos Financeiros               | QUOTE_FINANCIAL_RISK_LEAD_CREATE                                  |
-      |                      |                                  | QUOTE_FINANCIAL_RISK_LEAD_UPDATE                                  |
+      | Cotação              | Riscos Financeiros Lead          | QUOTE_FINANCIAL_RISK_LEAD_CREATE                                  |
+      | Riscos Financeiros   | (Obrigatório)                    | QUOTE_FINANCIAL_RISK_LEAD_UPDATE                                  |
       |----------------------|----------------------------------|-------------------------------------------------------------------|
-      | Cotação              | Habitacional                     | QUOTE_HOUSING_LEAD_CREATE                                         |
-      |                      |                                  | QUOTE_HOUSING_LEAD_UPDATE                                         |
+      | Cotação              | Habitacional Lead                | QUOTE_HOUSING_LEAD_CREATE                                         |
+      | Habitacional         | (Obrigatório)                    | QUOTE_HOUSING_LEAD_UPDATE                                         |
       |----------------------|----------------------------------|-------------------------------------------------------------------|
-      | Cotação              | Responsabilidade                 | QUOTE_RESPONSIBILITY_LEAD_CREATE                                  |
-      |                      |                                  | QUOTE_RESPONSIBILITY_LEAD_UPDATE                                  |
+      | Cotação              | Responsabilidade Lead            | QUOTE_RESPONSIBILITY_LEAD_CREATE                                  |
+      | Responsabilidade     | (Obrigatório)                    | QUOTE_RESPONSIBILITY_LEAD_UPDATE                                  |
       |----------------------|----------------------------------|-------------------------------------------------------------------|
-      | Cotação              | Rural                            | QUOTE_RURAL_LEAD_CREATE                                           |
-      |                      |                                  | QUOTE_RURAL_LEAD_UPDATE                                           |
+      | Cotação              | Rural Lead (Obrigatório)         | QUOTE_RURAL_LEAD_CREATE                                           |
+      | Rural                |                                  | QUOTE_RURAL_LEAD_UPDATE                                           |
       |----------------------|----------------------------------|-------------------------------------------------------------------|
-      | Cotação              | Transportes                      | QUOTE_TRANSPORT_LEAD_CREATE                                       |
-      |                      |                                  | QUOTE_TRANSPORT_LEAD_UPDATE                                       |
+      | Cotação              | Transportes Lead (Obrigatório)   | QUOTE_TRANSPORT_LEAD_CREATE                                       |
+      | Transportes          |                                  | QUOTE_TRANSPORT_LEAD_UPDATE                                       |
       |----------------------|----------------------------------|-------------------------------------------------------------------|
-      | Cotação              | Pessoas                          | QUOTE_PERSON_LEAD_CREATE                                          |
-      |                      |                                  | QUOTE_PERSON_LEAD_UPDATE                                          |
-      |                      |                                  | QUOTE_PERSON_LIFE_READ                                            |
-      |                      |                                  | QUOTE_PERSON_LIFE_CREATE                                          |
+      | Cotação Pessoas      | Pessoas Lead (Obrigatório)       | QUOTE_PERSON_LEAD_CREATE                                          |
+      | Lead                 |                                  | QUOTE_PERSON_LEAD_UPDATE                                          |
+      |----------------------|----------------------------------|-------------------------------------------------------------------|
+      | Cotação Pessoas      | Pessoas Life (Obrigatório)       | QUOTE_PERSON_LIFE_READ                                            |
+      | Life                 |                                  | QUOTE_PERSON_LIFE_CREATE                                          |
       |                      |                                  | QUOTE_PERSON_LIFE_UPDATE                                          |
-      |                      |                                  | QUOTE_PERSON_TRAVEL_READ                                          |
-      |                      |                                  | QUOTE_PERSON_TRAVEL_CREATE                                        |
+      |----------------------|----------------------------------|-------------------------------------------------------------------|
+      | Cotação Pessoas      | Pessoas Travel (Obrigatório)     | QUOTE_PERSON_TRAVEL_READ                                          |
+      | Travel               |                                  | QUOTE_PERSON_TRAVEL_CREATE                                        |
       |                      |                                  | QUOTE_PERSON_TRAVEL_UPDATE                                        |
       |----------------------|----------------------------------|-------------------------------------------------------------------|
-      | Contratação e        | Previdência Risco                | CONTRACT_PENSION_PLAN_LEAD_CREATE                                 |
-      | portabilidade        |                                  | CONTRACT_PENSION_PLAN_LEAD_UPDATE                                 |
-      |                      |                                  | CONTRACT_PENSION_PLAN_LEAD_PORTABILITY_CREATE                     |
-      |                      |                                  | CONTRACT_PENSION_PLAN_LEAD_PORTABILITY_UPDATE                     |
+      | Cotação Títulos de   | Títulos de Capitalização         | QUOTE_CAPITALIZATION_TITLE_LEAD_CREATE                            |
+      | Capitalização Lead   | Lead (Obrigatório)               | QUOTE_CAPITALIZATION_TITLE_LEAD_UPDATE                            |
       |----------------------|----------------------------------|-------------------------------------------------------------------|
-      | Contratação e        | Previdência Sobrevivência        | CONTRACT_LIFE_PENSION_LEAD_CREATE                                 |
-      | portabilidade        |                                  | CONTRACT_LIFE_PENSION_LEAD_UPDATE                                 |
-      |                      |                                  | CONTRACT_LIFE_PENSION_LEAD_PORTABILITY_CREATE                     |
-      |                      |                                  | CONTRACT_LIFE_PENSION_LEAD_PORTABILITY_UPDATE                     |
+      | Cotação Títulos de   | Títulos de Capitalização         | QUOTE_CAPITALIZATION_TITLE_READ                                   |
+      | Capitalização        | (Obrigatório)                    | QUOTE_CAPITALIZATION_TITLE_CREATE                                 |
+      |                      |                                  | QUOTE_CAPITALIZATION_TITLE_UPDATE                                 |
       |----------------------|----------------------------------|-------------------------------------------------------------------|
-      | Resgate              | Previdência                      | PENSION_WITHDRAWAL_CREATE                                         |
+      | Sorteio Títulos de   | Títulos de Capitalização         | QUOTE_CAPITALIZATION_TITLE_RAFFLE_CREATE                          |
+      | Capitalização        | Sorteio (Obrigatório)            |                                                                   |
+      |----------------------|----------------------------------|-------------------------------------------------------------------|
+      | Contratação          | Previdência Risco Lead           | CONTRACT_PENSION_PLAN_LEAD_CREATE                                 |
+      | Previdência Risco    | (Obrigatório)                    | CONTRACT_PENSION_PLAN_LEAD_UPDATE                                 |
+      |----------------------|----------------------------------|-------------------------------------------------------------------|
+      | Portabilidade        | Previdência Risco Portabilidade  | CONTRACT_PENSION_PLAN_LEAD_PORTABILITY_CREATE                     |
+      | Previdência Risco    | (Obrigatório)                    | CONTRACT_PENSION_PLAN_LEAD_PORTABILITY_UPDATE                     |
+      |----------------------|----------------------------------|-------------------------------------------------------------------|
+      | Contratação          | Previdência Sobrevivência Lead   | CONTRACT_LIFE_PENSION_LEAD_CREATE                                 |
+      | Previ. Sobrevivência | (Obrigatório)                    | CONTRACT_LIFE_PENSION_LEAD_UPDATE                                 |
+      |----------------------|----------------------------------|-------------------------------------------------------------------|
+      | Portabilidade        | Previdência Sobrevivência Porta. | CONTRACT_LIFE_PENSION_LEAD_PORTABILITY_CREATE                     |
+      | Previ. Sobrevivência | (Obrigatório)                    | CONTRACT_LIFE_PENSION_LEAD_PORTABILITY_UPDATE                     |
+      |----------------------|----------------------------------|-------------------------------------------------------------------|
+      | Resgate Previdência  | Previdência (Obrigatório)        | PENSION_WITHDRAWAL_CREATE                                         |
+      |----------------------|----------------------------------|-------------------------------------------------------------------|
+      | Resgate Cap.         | Capitalização (Obrigatório)      | CAPITALIZATION_TITLE_WITHDRAWAL_CREATE                            |
       |----------------------|----------------------------------|-------------------------------------------------------------------|
       ```
-    - A instituição transmissora deve validar o preenchimento correto desses agrupamentos no momento da geração do consentimento.
-    - Caso a instiuição receptora envie permissões divergentes ao agrupamento especificado na tabela, a transmissora deve rejeitar o pedido da receptora dando retorno HTTP Status Code 400.
-    - Caso a instiuição receptora envie permissões de fase 2 (compartilhamento de dados) e 3 (iniciação de serviços) em uma única solicitação, a transmissora deve rejeitar o pedido da receptora dando retorno HTTP Status Code 422.
+    - A instituição transmissora deve validar o preenchimento correto dos agrupamentos submetidos pela receptora no momento da geração do consentimento.
+    - Caso a instituição receptora envie permissões sem o acompanhamento de todas as permissões obrigatórias de uma categoria, a transmissora deve rejeitar o pedido da receptora 
+      dando retorno HTTP Status Code 400. Exemplos: "DAMAGES_AND_PEOPLE_TRANSPORT_PREMIUM_READ" sem a permissão "RESOURCES_READ". "QUOTE_AUTO_LEAD_UPDATE" sem a permissão "QUOTE_AUTO_LEAD_CREATE".
+    - Caso a instituição receptora envie somente a permissão "RESOURCES_READ" sem nenhuma outra permissão de fase 2, a transmissora deve rejeitar o pedido da receptora dando retorno HTTP Status Code 400.
+    - Caso a instituição receptora envie permissões de fase 2 (compartilhamento de dados) e 3 (iniciação de serviços) em uma única solicitação, a transmissora deve rejeitar o pedido da receptora dando retorno HTTP Status Code 422.
     - A transmissora deve retornar, da lista de permissions requisitadas, apenas o subconjunto de permissions por ela suportada, removendo da lista as permissions de produtos não suportados e retornando HTTP Status Code 201. Caso não restem permissões funcionais, a instituição transmissora deve retornar o erro HTTP Code "422 Unprocessable Entity".
-  version: 2.2.0
+  version: 2.3.0
   license:
     name: Apache 2.0
     url: 'http://www.apache.org/licenses/LICENSE-2.0'
@@ -224,8 +277,6 @@ paths:
       responses:
         '201':
           $ref: '#/components/responses/201ConsentsCreated'
-        '204':
-          $ref: '#/components/responses/NoContent'
         '400':
           $ref: '#/components/responses/BadRequest'
         '401':
@@ -266,8 +317,6 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/200ConsentsConsentIdRead'
-        '204':
-          $ref: '#/components/responses/NoContent'
         '400':
           $ref: '#/components/responses/BadRequest'
         '401':
@@ -306,7 +355,7 @@ paths:
         - $ref: '#/components/parameters/xCustomerUserAgent'
       responses:
         '204':
-          $ref: '#/components/responses/NoContent'
+          $ref: '#/components/responses/204ConsentsConsentIdDeleted'
         '400':
           $ref: '#/components/responses/BadRequest'
         '401':
@@ -420,15 +469,15 @@ components:
                 type: string
                 enum:
                     - CUSTOMERS_PERSONAL_IDENTIFICATIONS_READ         
-                    - CUSTOMERS_PERSONAL_ADITTIONALINFO_READ         
+                    - CUSTOMERS_PERSONAL_ADDITIONALINFO_READ         
                     - CUSTOMERS_PERSONAL_QUALIFICATION_READ         
                     - CUSTOMERS_BUSINESS_IDENTIFICATIONS_READ         
                     - CUSTOMERS_BUSINESS_QUALIFICATION_READ         
-                    - CUSTOMERS_BUSINESS_ADITTIONALINFO_READ         
-                    - CAPITALIZATION_TITLES_READ                                        
-                    - CAPITALIZATION_TITLES_POLICYINFO_READ                             
-                    - CAPITALIZATION_TITLES_PREMIUM_READ                                      
-                    - CAPITALIZATION_TITLES_CLAIM_READ          
+                    - CUSTOMERS_BUSINESS_ADDITIONALINFO_READ         
+                    - CAPITALIZATION_TITLE_READ
+                    - CAPITALIZATION_TITLE_PLANINFO_READ
+                    - CAPITALIZATION_TITLE_EVENTS_READ
+                    - CAPITALIZATION_TITLE_SETTLEMENTS_READ
                     - PENSION_PLAN_READ                                                      
                     - PENSION_PLAN_CONTRACTINFO_READ                                           
                     - PENSION_PLAN_MOVEMENTS_READ
@@ -440,7 +489,10 @@ components:
                     - LIFE_PENSION_MOVEMENTS_READ
                     - LIFE_PENSION_PORTABILITIES_READ
                     - LIFE_PENSION_WITHDRAWALS_READ
-                    - LIFE_PENSION_CLAIM                                             
+                    - LIFE_PENSION_CLAIM
+                    - FINANCIAL_ASSISTANCE_READ
+                    - FINANCIAL_ASSISTANCE_CONTRACTINFO_READ
+                    - FINANCIAL_ASSISTANCE_MOVEMENTS_READ
                     - DAMAGES_AND_PEOPLE_PATRIMONIAL_READ                                          
                     - DAMAGES_AND_PEOPLE_PATRIMONIAL_POLICYINFO_READ                    
                     - DAMAGES_AND_PEOPLE_PATRIMONIAL_PREMIUM_READ                       
@@ -475,8 +527,8 @@ components:
                     - DAMAGES_AND_PEOPLE_ACCEPTANCE_AND_BRANCHES_ABROAD_CLAIM_READ            
                     - DAMAGES_AND_PEOPLE_PERSON_READ                                                                                                                                                                                                                                                   
                     - DAMAGES_AND_PEOPLE_PERSON_POLICYINFO_READ                        
-                    - DAMAGES_AND_PEOPLE_PERSON_PREMIUM_READ                           
-                    - DAMAGES_AND_PEOPLE_PERSON_CLAIM_READ
+                    - DAMAGES_AND_PEOPLE_PERSON_CLAIM_READ                           
+                    - DAMAGES_AND_PEOPLE_PERSON_MOVEMENTS_READ
                     - ENDORSEMENT_REQUEST_CREATE
                     - CLAIM_NOTIFICATION_REQUEST_DAMAGE_CREATE
                     - CLAIM_NOTIFICATION_REQUEST_PERSON_CREATE      
@@ -519,6 +571,12 @@ components:
                     - QUOTE_PERSON_TRAVEL_READ
                     - QUOTE_PERSON_TRAVEL_CREATE
                     - QUOTE_PERSON_TRAVEL_UPDATE
+                    - QUOTE_CAPITALIZATION_TITLE_LEAD_CREATE
+                    - QUOTE_CAPITALIZATION_TITLE_LEAD_UPDATE
+                    - QUOTE_CAPITALIZATION_TITLE_READ
+                    - QUOTE_CAPITALIZATION_TITLE_CREATE
+                    - QUOTE_CAPITALIZATION_TITLE_UPDATE
+                    - QUOTE_CAPITALIZATION_TITLE_RAFFLE_CREATE
                     - CONTRACT_LIFE_PENSION_LEAD_CREATE
                     - CONTRACT_LIFE_PENSION_LEAD_UPDATE
                     - CONTRACT_LIFE_PENSION_LEAD_PORTABILITY_CREATE
@@ -528,10 +586,11 @@ components:
                     - CONTRACT_PENSION_PLAN_LEAD_PORTABILITY_CREATE
                     - CONTRACT_PENSION_PLAN_LEAD_PORTABILITY_UPDATE
                     - PENSION_WITHDRAWAL_CREATE
+                    - CAPITALIZATION_TITLE_WITHDRAWAL_CREATE
                     - RESOURCES_READ         
               minItems: 1
               example:     
-                - CAPITALIZATION_TITLES_READ         
+                - CAPITALIZATION_TITLE_READ         
                 - RESOURCES_READ         
             expirationDateTime:
               description: 'Data e hora de expiração da permissão. De preenchimento obrigatório, reflete a data limite de validade do consentimento. Uma string com data e hora conforme especificação RFC-3339, sempre com a utilização de timezone UTC(UTC time format).'
@@ -617,15 +676,15 @@ components:
                 type: string
                 enum:
                     - CUSTOMERS_PERSONAL_IDENTIFICATIONS_READ         
-                    - CUSTOMERS_PERSONAL_ADITTIONALINFO_READ         
+                    - CUSTOMERS_PERSONAL_ADDITIONALINFO_READ         
                     - CUSTOMERS_PERSONAL_QUALIFICATION_READ         
                     - CUSTOMERS_BUSINESS_IDENTIFICATIONS_READ         
                     - CUSTOMERS_BUSINESS_QUALIFICATION_READ         
-                    - CUSTOMERS_BUSINESS_ADITTIONALINFO_READ         
-                    - CAPITALIZATION_TITLES_READ                                        
-                    - CAPITALIZATION_TITLES_POLICYINFO_READ                             
-                    - CAPITALIZATION_TITLES_PREMIUM_READ                                      
-                    - CAPITALIZATION_TITLES_CLAIM_READ          
+                    - CUSTOMERS_BUSINESS_ADDITIONALINFO_READ         
+                    - CAPITALIZATION_TITLE_READ                                        
+                    - CAPITALIZATION_TITLE_PLANINFO_READ                             
+                    - CAPITALIZATION_TITLE_EVENTS_READ                                      
+                    - CAPITALIZATION_TITLE_SETTLEMENTS_READ          
                     - PENSION_PLAN_READ                                                      
                     - PENSION_PLAN_CONTRACTINFO_READ                                           
                     - PENSION_PLAN_MOVEMENTS_READ
@@ -637,7 +696,10 @@ components:
                     - LIFE_PENSION_MOVEMENTS_READ
                     - LIFE_PENSION_PORTABILITIES_READ
                     - LIFE_PENSION_WITHDRAWALS_READ
-                    - LIFE_PENSION_CLAIM                                                
+                    - LIFE_PENSION_CLAIM
+                    - FINANCIAL_ASSISTANCE_READ
+                    - FINANCIAL_ASSISTANCE_CONTRACTINFO_READ
+                    - FINANCIAL_ASSISTANCE_MOVEMENTS_READ
                     - DAMAGES_AND_PEOPLE_PATRIMONIAL_READ                                          
                     - DAMAGES_AND_PEOPLE_PATRIMONIAL_POLICYINFO_READ                    
                     - DAMAGES_AND_PEOPLE_PATRIMONIAL_PREMIUM_READ                       
@@ -672,8 +734,8 @@ components:
                     - DAMAGES_AND_PEOPLE_ACCEPTANCE_AND_BRANCHES_ABROAD_CLAIM_READ            
                     - DAMAGES_AND_PEOPLE_PERSON_READ                                                                                                                                                                                                                                                   
                     - DAMAGES_AND_PEOPLE_PERSON_POLICYINFO_READ                        
-                    - DAMAGES_AND_PEOPLE_PERSON_PREMIUM_READ                           
-                    - DAMAGES_AND_PEOPLE_PERSON_CLAIM_READ  
+                    - DAMAGES_AND_PEOPLE_PERSON_CLAIM_READ                           
+                    - DAMAGES_AND_PEOPLE_PERSON_MOVEMENTS_READ  
                     - ENDORSEMENT_REQUEST_CREATE
                     - CLAIM_NOTIFICATION_REQUEST_DAMAGE_CREATE
                     - CLAIM_NOTIFICATION_REQUEST_PERSON_CREATE      
@@ -716,6 +778,12 @@ components:
                     - QUOTE_PERSON_TRAVEL_READ
                     - QUOTE_PERSON_TRAVEL_CREATE
                     - QUOTE_PERSON_TRAVEL_UPDATE
+                    - QUOTE_CAPITALIZATION_TITLE_LEAD_CREATE
+                    - QUOTE_CAPITALIZATION_TITLE_LEAD_UPDATE
+                    - QUOTE_CAPITALIZATION_TITLE_READ
+                    - QUOTE_CAPITALIZATION_TITLE_CREATE
+                    - QUOTE_CAPITALIZATION_TITLE_UPDATE
+                    - QUOTE_CAPITALIZATION_TITLE_RAFFLE_CREATE
                     - CONTRACT_LIFE_PENSION_LEAD_CREATE
                     - CONTRACT_LIFE_PENSION_LEAD_UPDATE
                     - CONTRACT_LIFE_PENSION_LEAD_PORTABILITY_CREATE
@@ -725,9 +793,10 @@ components:
                     - CONTRACT_PENSION_PLAN_LEAD_PORTABILITY_CREATE
                     - CONTRACT_PENSION_PLAN_LEAD_PORTABILITY_UPDATE
                     - PENSION_WITHDRAWAL_CREATE
+                    - CAPITALIZATION_TITLE_WITHDRAWAL_CREATE
                     - RESOURCES_READ      
               example:    
-                - CAPITALIZATION_TITLES_READ         
+                - CAPITALIZATION_TITLE_READ         
                 - RESOURCES_READ         
             expirationDateTime:
               description: 'Data e hora de expiração da permissão. De preenchimento obrigatório, reflete a data limite de validade do consentimento. Uma string com data e hora conforme especificação RFC-3339, sempre com a utilização de timezone UTC(UTC time format).'
@@ -747,12 +816,67 @@ components:
               format: date-time
               example: '2021-02-01T23:59:59Z'
               maxLength: 20
+            rejection:
+              type: object
+              description: Objeto a ser retornado caso o consentimento seja rejeitado.
+              required:
+                - rejectedBy
+                - reason
+              properties:
+                rejectedBy:
+                  $ref: '#/components/schemas/EnumRejectedBy'
+                reason:
+                  $ref: '#/components/schemas/RejectedReason'
           additionalProperties: false
         links:
           $ref: '#/components/schemas/Links'
         meta:
           $ref: '#/components/schemas/Meta'
       additionalProperties: false
+    EnumRejectedBy:
+      type: string
+      description: |
+        Informar usuário responsável pela rejeição.   
+        1. USER usuário   
+        2. ASPSP instituição transmissora   
+        3. TPP instituição receptora   
+      enum:
+        - USER
+        - ASPSP
+        - TPP
+      example: USER
+    EnumReasonCode:
+      type: string
+      description: |
+        Define o código da razão pela qual o consentimento foi rejeitado.
+        - CONSENT_EXPIRED – consentimento que ultrapassou o tempo limite para autorização.   
+        - CUSTOMER_MANUALLY_REJECTED – cliente efetuou a rejeição do consentimento manualmente através de interação nas instituições participantes.   
+        - CUSTOMER_MANUALLY_REVOKED – cliente efetuou a revogação após a autorização do consentimento.   
+        - CONSENT_MAX_DATE_REACHED – consentimento que ultrapassou o tempo limite de compartilhamento.   
+        - CONSENT_TECHNICAL_ISSUE – consentimento que foi rejeitado devido a um problema técnico que impossibilita seu uso pela instituição receptora, por exemplo: falha associada a troca do AuthCode pelo AccessToken, durante o processo de Hybid Flow.   
+        - INTERNAL_SECURITY_REASON – consentimento que foi rejeitado devido as políticas de segurança aplicada pela instituição transmissora.
+      enum:
+        - CONSENT_EXPIRED
+        - CUSTOMER_MANUALLY_REJECTED
+        - CUSTOMER_MANUALLY_REVOKED
+        - CONSENT_MAX_DATE_REACHED
+        - CONSENT_TECHNICAL_ISSUE
+        - INTERNAL_SECURITY_REASON
+      example: CONSENT_EXPIRED
+    RejectedReason:
+      type: object
+      description: Define a razão pela qual o consentimento foi rejeitado.
+      required:
+        - code
+      properties:
+        code:
+          $ref: '#/components/schemas/EnumReasonCode'
+        additionalInformation:
+          type: string
+          description: Contém informações adicionais a critério da transmissora.
+          maxLength: 140
+          pattern: '[\w\W\s]*'
+          example: Tempo de confirmação da múltipla alçada excedido.
     ResponseError:
       type: object
       required:
@@ -918,12 +1042,6 @@ components:
   responses:
     UnprocessableEntity:
       description: 'O servidor entende o tipo de conteúdo da entidade da requisição, e a sintaxe da requisição esta correta, mas não foi possível processar as instruções presente.'
-      content:
-        application/json; charset=utf-8:
-          schema:
-            $ref: '#/components/schemas/ResponseError'
-    NoContent:
-      description: 'O recurso solicitado não existe ou não foi localizado.'
       content:
         application/json; charset=utf-8:
           schema:
