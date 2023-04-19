@@ -677,7 +677,7 @@
     </span><span class="p">},</span><span class="w">
     </span><span class="nl">"documentId"</span><span class="p">:</span><span class="w"> </span><span class="s2">"111111"</span><span class="p">,</span><span class="w">
     </span><span class="nl">"permissions"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
-      </span><span class="s2">"CAPITALIZATION_TITLES_READ"</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"CAPITALIZATION_TITLE_READ"</span><span class="p">,</span><span class="w">
       </span><span class="s2">"RESOURCES_READ"</span><span class="w">
     </span><span class="p">],</span><span class="w">
     </span><span class="nl">"expirationDateTime"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2021-05-21T08:30:00Z"</span><span class="p">,</span><span class="w">
@@ -770,12 +770,19 @@
     </span><span class="nl">"documentId"</span><span class="p">:</span><span class="w"> </span><span class="s2">"111111"</span><span class="p">,</span><span class="w">
     </span><span class="nl">"statusUpdateDateTime"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2021-05-21T08:30:00Z"</span><span class="p">,</span><span class="w">
     </span><span class="nl">"permissions"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
-      </span><span class="s2">"CAPITALIZATION_TITLES_READ"</span><span class="p">,</span><span class="w">
+      </span><span class="s2">"CAPITALIZATION_TITLE_READ"</span><span class="p">,</span><span class="w">
       </span><span class="s2">"RESOURCES_READ"</span><span class="w">
     </span><span class="p">],</span><span class="w">
     </span><span class="nl">"expirationDateTime"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2021-05-21T08:30:00Z"</span><span class="p">,</span><span class="w">
     </span><span class="nl">"transactionFromDateTime"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2021-01-01T00:00:00Z"</span><span class="p">,</span><span class="w">
-    </span><span class="nl">"transactionToDateTime"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2021-02-01T23:59:59Z"</span><span class="w">
+    </span><span class="nl">"transactionToDateTime"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2021-02-01T23:59:59Z"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"rejection"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+      </span><span class="nl">"rejectedBy"</span><span class="p">:</span><span class="w"> </span><span class="s2">"USER"</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"reason"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+        </span><span class="nl">"code"</span><span class="p">:</span><span class="w"> </span><span class="s2">"CONSENT_EXPIRED"</span><span class="p">,</span><span class="w">
+        </span><span class="nl">"additionalInformation"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Tempo de confirmação da múltipla alçada excedido."</span><span class="w">
+      </span><span class="p">}</span><span class="w">
+    </span><span class="p">}</span><span class="w">
   </span><span class="p">},</span><span class="w">
   </span><span class="nl">"links"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
     </span><span class="nl">"self"</span><span class="p">:</span><span class="w"> </span><span class="s2">"https://api.organizacao.com.br/open-insurance/consents/v2/consents"</span><span class="p">,</span><span class="w">
@@ -871,6 +878,27 @@
 <td>Data e hora final da transação. Se não for preenchido, a transação terá a data aberta e a data será retornada com a ultima transação disponível. Uma string com data e hora conforme especificação <a href="https://www.rfc-editor.org/rfc/rfc3339">RFC-3339</a>, sempre com a utilização de timezone UTC(UTC time format).</td>
 </tr>
 <tr>
+<td>» rejection</td>
+<td>object</td>
+<td>false</td>
+<td>none</td>
+<td>Objeto a ser retornado caso o consentimento seja rejeitado.</td>
+</tr>
+<tr>
+<td>»» rejectedBy</td>
+<td><a href="#schemaenumrejectedby">EnumRejectedBy</a></td>
+<td>true</td>
+<td>none</td>
+<td>Informar usuário responsável pela rejeição.   <br>1. USER usuário   <br>2. ASPSP instituição transmissora   <br>3. TPP instituição receptora</td>
+</tr>
+<tr>
+<td>»» reason</td>
+<td><a href="#schemarejectedreason">RejectedReason</a></td>
+<td>true</td>
+<td>none</td>
+<td>Define a razão pela qual o consentimento foi rejeitado.</td>
+</tr>
+<tr>
 <td>links</td>
 <td><a href="#schemalinksconsentsv2">Links</a></td>
 <td>false</td>
@@ -910,6 +938,185 @@
 </tr>
 </tbody></table>
 
+<h2 id="tocS_EnumRejectedBy">EnumRejectedBy</h2>
+
+<!-- backwards compatibility -->
+
+<p><a id="schemaenumrejectedby"></a>
+<a id="schema_EnumRejectedBy"></a>
+<a id="tocSenumrejectedby"></a>
+<a id="tocsenumrejectedby"></a></p>
+<div class="highlight"><pre class="highlight json tab-json"><code><span class="s2">"USER"</span><span class="w">
+
+</span></code></pre></div>
+
+<p>Informar usuário responsável pela rejeição.<br>
+1. USER usuário<br>
+2. ASPSP instituição transmissora<br>
+3. TPP instituição receptora</p>
+
+<h3 id='properties-5'>Properties</h3>
+
+<table><thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Required</th>
+<th>Restrictions</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td><em>anonymous</em></td>
+<td>string</td>
+<td>false</td>
+<td>none</td>
+<td>Informar usuário responsável pela rejeição.   <br>1. USER usuário   <br>2. ASPSP instituição transmissora   <br>3. TPP instituição receptora</td>
+</tr>
+</tbody></table>
+
+<h4 id='enumerated-values-2'>Enumerated Values</h4>
+
+<table><thead>
+<tr>
+<th>Property</th>
+<th>Value</th>
+</tr>
+</thead><tbody>
+<tr>
+<td><em>anonymous</em></td>
+<td>USER</td>
+</tr>
+<tr>
+<td><em>anonymous</em></td>
+<td>ASPSP</td>
+</tr>
+<tr>
+<td><em>anonymous</em></td>
+<td>TPP</td>
+</tr>
+</tbody></table>
+
+<h2 id="tocS_EnumReasonCode">EnumReasonCode</h2>
+
+<!-- backwards compatibility -->
+
+<p><a id="schemaenumreasoncode"></a>
+<a id="schema_EnumReasonCode"></a>
+<a id="tocSenumreasoncode"></a>
+<a id="tocsenumreasoncode"></a></p>
+
+<div class="highlight"><pre class="highlight json tab-json"><code><span class="s2">"CONSENT_EXPIRED"</span><span class="w">
+
+</span></code></pre></div>
+
+<p>Define o código da razão pela qual o consentimento foi rejeitado.
+- CONSENT_EXPIRED – consentimento que ultrapassou o tempo limite para autorização.<br>
+- CUSTOMER_MANUALLY_REJECTED – cliente efetuou a rejeição do consentimento manualmente através de interação nas instituições participantes.<br>
+- CUSTOMER_MANUALLY_REVOKED – cliente efetuou a revogação após a autorização do consentimento.<br>
+- CONSENT_MAX_DATE_REACHED – consentimento que ultrapassou o tempo limite de compartilhamento.<br>
+- CONSENT_TECHNICAL_ISSUE – consentimento que foi rejeitado devido a um problema técnico que impossibilita seu uso pela instituição receptora, por exemplo: falha associada a troca do AuthCode pelo AccessToken, durante o processo de Hybid Flow.<br>
+- INTERNAL_SECURITY_REASON – consentimento que foi rejeitado devido as políticas de segurança aplicada pela instituição transmissora.</p>
+
+<h3 id='properties-6'>Properties</h3>
+
+<table><thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Required</th>
+<th>Restrictions</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td><em>anonymous</em></td>
+<td>string</td>
+<td>false</td>
+<td>none</td>
+<td>Define o código da razão pela qual o consentimento foi rejeitado.<br>- CONSENT_EXPIRED – consentimento que ultrapassou o tempo limite para autorização.   <br>- CUSTOMER_MANUALLY_REJECTED – cliente efetuou a rejeição do consentimento manualmente através de interação nas instituições participantes.   <br>- CUSTOMER_MANUALLY_REVOKED – cliente efetuou a revogação após a autorização do consentimento.   <br>- CONSENT_MAX_DATE_REACHED – consentimento que ultrapassou o tempo limite de compartilhamento.   <br>- CONSENT_TECHNICAL_ISSUE – consentimento que foi rejeitado devido a um problema técnico que impossibilita seu uso pela instituição receptora, por exemplo: falha associada a troca do AuthCode pelo AccessToken, durante o processo de Hybid Flow.   <br>- INTERNAL_SECURITY_REASON – consentimento que foi rejeitado devido as políticas de segurança aplicada pela instituição transmissora.</td>
+</tr>
+</tbody></table>
+
+<h4 id='enumerated-values-3'>Enumerated Values</h4>
+
+<table><thead>
+<tr>
+<th>Property</th>
+<th>Value</th>
+</tr>
+</thead><tbody>
+<tr>
+<td><em>anonymous</em></td>
+<td>CONSENT_EXPIRED</td>
+</tr>
+<tr>
+<td><em>anonymous</em></td>
+<td>CUSTOMER_MANUALLY_REJECTED</td>
+</tr>
+<tr>
+<td><em>anonymous</em></td>
+<td>CUSTOMER_MANUALLY_REVOKED</td>
+</tr>
+<tr>
+<td><em>anonymous</em></td>
+<td>CONSENT_MAX_DATE_REACHED</td>
+</tr>
+<tr>
+<td><em>anonymous</em></td>
+<td>CONSENT_TECHNICAL_ISSUE</td>
+</tr>
+<tr>
+<td><em>anonymous</em></td>
+<td>INTERNAL_SECURITY_REASON</td>
+</tr>
+</tbody></table>
+
+<h2 id="tocS_RejectedReason">RejectedReason</h2>
+
+<!-- backwards compatibility -->
+
+<p><a id="schemarejectedreason"></a>
+<a id="schema_RejectedReason"></a>
+<a id="tocSrejectedreason"></a>
+<a id="tocsrejectedreason"></a></p>
+
+<div class="highlight"><pre class="highlight json tab-json"><code><span class="p">{</span><span class="w">
+  </span><span class="nl">"code"</span><span class="p">:</span><span class="w"> </span><span class="s2">"CONSENT_EXPIRED"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"additionalInformation"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Tempo de confirmação da múltipla alçada excedido."</span><span class="w">
+</span><span class="p">}</span><span class="w">
+
+</span></code></pre></div>
+
+<p>Define a razão pela qual o consentimento foi rejeitado.</p>
+
+<h3 id='properties-7'>Properties</h3>
+
+<table><thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Required</th>
+<th>Restrictions</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>code</td>
+<td><a href="#schemaenumreasoncode">EnumReasonCode</a></td>
+<td>true</td>
+<td>none</td>
+<td>Define o código da razão pela qual o consentimento foi rejeitado.<br>- CONSENT_EXPIRED – consentimento que ultrapassou o tempo limite para autorização.   <br>- CUSTOMER_MANUALLY_REJECTED – cliente efetuou a rejeição do consentimento manualmente através de interação nas instituições participantes.   <br>- CUSTOMER_MANUALLY_REVOKED – cliente efetuou a revogação após a autorização do consentimento.   <br>- CONSENT_MAX_DATE_REACHED – consentimento que ultrapassou o tempo limite de compartilhamento.   <br>- CONSENT_TECHNICAL_ISSUE – consentimento que foi rejeitado devido a um problema técnico que impossibilita seu uso pela instituição receptora, por exemplo: falha associada a troca do AuthCode pelo AccessToken, durante o processo de Hybid Flow.   <br>- INTERNAL_SECURITY_REASON – consentimento que foi rejeitado devido as políticas de segurança aplicada pela instituição transmissora.</td>
+</tr>
+<tr>
+<td>additionalInformation</td>
+<td>string</td>
+<td>false</td>
+<td>none</td>
+<td>Contém informações adicionais a critério da transmissora.</td>
+</tr>
+</tbody></table>
+
 <h2 id="tocS_ResponseErrorconsentsv2">ResponseError</h2>
 
 <!-- backwards compatibility -->
@@ -918,6 +1125,7 @@
 <a id="schema_ResponseError"></a>
 <a id="tocSresponseerror"></a>
 <a id="tocsresponseerror"></a></p>
+
 <div class="highlight"><pre class="highlight json tab-json"><code><span class="p">{</span><span class="w">
   </span><span class="nl">"errors"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
     </span><span class="p">{</span><span class="w">
@@ -933,7 +1141,7 @@
   </span><span class="p">}</span><span class="w">
 </span><span class="p">}</span><span class="w">
 
-</span></code></pre></div><h3 id='properties-5'>Properties</h3>
+</span></code></pre></div><h3 id='properties-8'>Properties</h3>
 <table><thead>
 <tr>
 <th>Name</th>
@@ -1006,7 +1214,7 @@
 
 <p>Usuário (pessoa natural) que encontra-se logado na instituição receptora e que iniciará o processo de consentimento para compartilhamento de dados.</p>
 
-<h3 id='properties-6'>Properties</h3>
+<h3 id='properties-9'>Properties</h3>
 
 <table><thead>
 <tr>
@@ -1060,7 +1268,7 @@
 
 <p>Titular, pessoa jurídica a quem se referem os dados que são objeto de compartilhamento.</p>
 
-<h3 id='properties-7'>Properties</h3>
+<h3 id='properties-10'>Properties</h3>
 
 <table><thead>
 <tr>
@@ -1554,7 +1762,7 @@
 <td>string</td>
 <td>true</td>
 <td>none</td>
-<td>Tipo de recurso (vide Enum):<br>- CUSTOMERS_PERSONAL_IDENTIFICATIONS: Informações de identificação PF<br>- CUSTOMERS_PERSONAL_QUALIFICATION: Informações de qualificação PF                    <br>- CUSTOMERS_PERSONAL_ADITTIONALINFO: Informações complementares PF<br>- CUSTOMERS_BUSINESS_IDENTIFICATIONS: Informações de identificação PJ<br>- CUSTOMERS_BUSINESS_QUALIFICATION: Informações de qualificação PJ<br>- CUSTOMERS_BUSINESS_ADITTIONALINFO: Informações complementares PJ<br>- CAPITALIZATION_TITLES: Produtos de Titulos de Capitalização<br>- PENSION_PLAN: Produtos de Previdência Risco<br>- LIFE_PENSION: Produtos de Previdência Sobrevivência                    <br>- DAMAGES_AND_PEOPLE_PATRIMONIAL: Produtos de Patrimonial<br>- DAMAGES_AND_PEOPLE_RESPONSIBILITY: Produtos de Responsabilidade<br>- DAMAGES_AND_PEOPLE_TRANSPORT: Produtos de Transportes<br>- DAMAGES_AND_PEOPLE_FINANCIAL_RISKS: Produtos de Riscos Financeiros<br>- DAMAGES_AND_PEOPLE_RURAL: Produtos de Rural<br>- DAMAGES_AND_PEOPLE_AUTO: Produtos de Automóveis<br>- DAMAGES_AND_PEOPLE_HOUSING: Produtos de Habitacional<br>- DAMAGES_AND_PEOPLE_PERSON: Produtos de Pessoas (Repartição simples)<br>- DAMAGES_AND_PEOPLE_ACCEPTANCE_AND_BRANCHES_ABROAD: Aceitação e Sucursal no exterior<br>- CLAIM_NOTIFICATION: Solicitação de Aviso de Sinistro<br>- ENDORSEMENT: Solicitação de Endosso<br>- QUOTE_PATRIMONIAL: Cotação do Seguro Patrimonial<br>- QUOTE_ACCEPTANCE_AND_BRANCHES_ABROAD: Cotação do Seguro Aceitação e Sucursal no exterior<br>- QUOTE_AUTO: Cotação do Seguro Automóvel<br>- QUOTE_FINANCIAL_RISK: Cotação do Seguro Riscos Financeiros<br>- QUOTE_HOUSING: Cotação do Seguro Habitacional<br>- QUOTE_RESPONSIBILITY: Cotação do Seguro Responsabilidade<br>- QUOTE_RURAL: Cotação do Seguro Rural<br>- QUOTE_TRANSPORT: Cotação do Seguro Transportes<br>- QUOTE_PERSON: Cotação do Seguro Pessoas<br>- CONTRACT_LIFE_PENSION: Contratação/Portabilidade de Previdência Sobrevivência<br>- CONTRACT_PENSION_PLAN: Contratação/Portabilidade de Previdência Risco<br>- PENSION_WITHDRAWAL: Resgate de Previdência</td>
+<td>Tipo de recurso (vide Enum):<br>- CUSTOMERS_PERSONAL_IDENTIFICATIONS: Informações de identificação PF<br>- CUSTOMERS_PERSONAL_QUALIFICATION: Informações de qualificação PF<br>- CUSTOMERS_PERSONAL_ADDITIONALINFO: Informações complementares PF<br>- CUSTOMERS_BUSINESS_IDENTIFICATIONS: Informações de identificação PJ<br>- CUSTOMERS_BUSINESS_QUALIFICATION: Informações de qualificação PJ<br>- CUSTOMERS_BUSINESS_ADDITIONALINFO: Informações complementares PJ<br>- CAPITALIZATION_TITLES: Produtos de Titulos de Capitalização<br>- PENSION_PLAN: Produtos de Previdência Risco<br>- LIFE_PENSION: Produtos de Previdência Sobrevivência<br>- FINANCIAL_ASSISTANCE: Produtos de Assistência Financeira<br>- DAMAGES_AND_PEOPLE_PATRIMONIAL: Produtos de Patrimonial<br>- DAMAGES_AND_PEOPLE_RESPONSIBILITY: Produtos de Responsabilidade<br>- DAMAGES_AND_PEOPLE_TRANSPORT: Produtos de Transportes<br>- DAMAGES_AND_PEOPLE_FINANCIAL_RISKS: Produtos de Riscos Financeiros<br>- DAMAGES_AND_PEOPLE_RURAL: Produtos de Rural<br>- DAMAGES_AND_PEOPLE_AUTO: Produtos de Automóveis<br>- DAMAGES_AND_PEOPLE_HOUSING: Produtos de Habitacional<br>- DAMAGES_AND_PEOPLE_PERSON: Produtos de Pessoas (Repartição simples)<br>- DAMAGES_AND_PEOPLE_ACCEPTANCE_AND_BRANCHES_ABROAD: Aceitação e Sucursal no exterior<br>- CLAIM_NOTIFICATION: Solicitação de Aviso de Sinistro<br>- ENDORSEMENT: Solicitação de Endosso<br>- QUOTE_PATRIMONIAL: Cotação do Seguro Patrimonial<br>- QUOTE_ACCEPTANCE_AND_BRANCHES_ABROAD: Cotação do Seguro Aceitação e Sucursal no exterior<br>- QUOTE_AUTO: Cotação do Seguro Automóvel<br>- QUOTE_FINANCIAL_RISK: Cotação do Seguro Riscos Financeiros<br>- QUOTE_HOUSING: Cotação do Seguro Habitacional<br>- QUOTE_RESPONSIBILITY: Cotação do Seguro Responsabilidade<br>- QUOTE_RURAL: Cotação do Seguro Rural<br>- QUOTE_TRANSPORT: Cotação do Seguro Transportes<br>- QUOTE_PERSON: Cotação do Seguro Pessoas<br>- QUOTE_CAPITALIZATION_TITLE: Cotação de Títulos de Capitalização<br>- CONTRACT_LIFE_PENSION: Contratação/Portabilidade de Previdência Sobrevivência<br>- CONTRACT_PENSION_PLAN: Contratação/Portabilidade de Previdência Risco<br>- PENSION_WITHDRAWAL: Resgate de Previdência<br>- CAPITALIZATION_TITLE_WITHDRAWAL: Resgate de Títulos de Capitalização</td>
 </tr>
 <tr>
 <td>» status</td>
@@ -1595,7 +1803,7 @@
 </tr>
 <tr>
 <td>type</td>
-<td>CUSTOMERS_PERSONAL_ADITTIONALINFO</td>
+<td>CUSTOMERS_PERSONAL_ADDITIONALINFO</td>
 </tr>
 <tr>
 <td>type</td>
@@ -1607,7 +1815,7 @@
 </tr>
 <tr>
 <td>type</td>
-<td>CUSTOMERS_BUSINESS_ADITTIONALINFO</td>
+<td>CUSTOMERS_BUSINESS_ADDITIONALINFO</td>
 </tr>
 <tr>
 <td>type</td>
@@ -1620,6 +1828,10 @@
 <tr>
 <td>type</td>
 <td>LIFE_PENSION</td>
+</tr>
+<tr>
+<td>type</td>
+<td>FINANCIAL_ASSISTANCE</td>
 </tr>
 <tr>
 <td>type</td>
@@ -1703,6 +1915,10 @@
 </tr>
 <tr>
 <td>type</td>
+<td>QUOTE_CAPITALIZATION_TITLE</td>
+</tr>
+<tr>
+<td>type</td>
 <td>CONTRACT_LIFE_PENSION</td>
 </tr>
 <tr>
@@ -1712,6 +1928,10 @@
 <tr>
 <td>type</td>
 <td>PENSION_WITHDRAWAL</td>
+</tr>
+<tr>
+<td>type</td>
+<td>CAPITALIZATION_TITLE_WITHDRAWAL</td>
 </tr>
 <tr>
 <td>status</td>
