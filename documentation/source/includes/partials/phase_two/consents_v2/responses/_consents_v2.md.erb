@@ -1,3 +1,4 @@
+
 <h2 id="tocS_Linksconsentsv2">Links</h2>
 <!-- backwards compatibility -->
 <a id="schemalinksconsentsv2"></a>
@@ -76,7 +77,7 @@ Meta informações referente à API requisitada.
     },
     "documentId": "111111",
     "permissions": [
-      "CAPITALIZATION_TITLES_READ",
+      "CAPITALIZATION_TITLE_READ",
       "RESOURCES_READ"
     ],
     "expirationDateTime": "2021-05-21T08:30:00Z",
@@ -116,12 +117,19 @@ Meta informações referente à API requisitada.
     "documentId": "111111",
     "statusUpdateDateTime": "2021-05-21T08:30:00Z",
     "permissions": [
-      "CAPITALIZATION_TITLES_READ",
+      "CAPITALIZATION_TITLE_READ",
       "RESOURCES_READ"
     ],
     "expirationDateTime": "2021-05-21T08:30:00Z",
     "transactionFromDateTime": "2021-01-01T00:00:00Z",
-    "transactionToDateTime": "2021-02-01T23:59:59Z"
+    "transactionToDateTime": "2021-02-01T23:59:59Z",
+    "rejection": {
+      "rejectedBy": "USER",
+      "reason": {
+        "code": "CONSENT_EXPIRED",
+        "additionalInformation": "Tempo de confirmação da múltipla alçada excedido."
+      }
+    }
   },
   "links": {
     "self": "https://api.organizacao.com.br/open-insurance/consents/v2/consents",
@@ -152,6 +160,9 @@ Meta informações referente à API requisitada.
 |» expirationDateTime|string(date-time)|true|none|Data e hora de expiração da permissão. De preenchimento obrigatório, reflete a data limite de validade do consentimento. Uma string com data e hora conforme especificação [RFC-3339](https://www.rfc-editor.org/rfc/rfc3339), sempre com a utilização de timezone UTC(UTC time format).|
 |» transactionFromDateTime|string(date-time)|false|none|Data e hora da transação inicial. Se não for preenchido, a transação terá a data aberta e a data será retornada com a primeira transação disponível. Uma string com data e hora conforme especificação [RFC-3339](https://www.rfc-editor.org/rfc/rfc3339), sempre com a utilização de timezone UTC(UTC time format).|
 |» transactionToDateTime|string(date-time)|false|none|Data e hora final da transação. Se não for preenchido, a transação terá a data aberta e a data será retornada com a ultima transação disponível. Uma string com data e hora conforme especificação [RFC-3339](https://www.rfc-editor.org/rfc/rfc3339), sempre com a utilização de timezone UTC(UTC time format).|
+|» rejection|object|false|none|Objeto a ser retornado caso o consentimento seja rejeitado.|
+|»» rejectedBy|[EnumRejectedBy](#schemaenumrejectedby)|true|none|Informar usuário responsável pela rejeição.   <br>1. USER usuário   <br>2. ASPSP instituição transmissora   <br>3. TPP instituição receptora|
+|»» reason|[RejectedReason](#schemarejectedreason)|true|none|Define a razão pela qual o consentimento foi rejeitado.|
 |links|[Links](#schemalinksconsentsv2)|false|none|Referências para outros recusos da API requisitada.|
 |meta|[Meta](#schemametaconsentsv2)|false|none|Meta informações referente à API requisitada.|
 
@@ -163,6 +174,98 @@ Meta informações referente à API requisitada.
 |status|AWAITING_AUTHORISATION|
 |status|REJECTED|
 |status|CONSUMED|
+
+<h2 id="tocS_EnumRejectedBy">EnumRejectedBy</h2>
+<!-- backwards compatibility -->
+<a id="schemaenumrejectedby"></a>
+<a id="schema_EnumRejectedBy"></a>
+<a id="tocSenumrejectedby"></a>
+<a id="tocsenumrejectedby"></a>
+
+```json
+"USER"
+
+```
+
+Informar usuário responsável pela rejeição.   
+1. USER usuário   
+2. ASPSP instituição transmissora   
+3. TPP instituição receptora
+
+### Properties
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|*anonymous*|string|false|none|Informar usuário responsável pela rejeição.   <br>1. USER usuário   <br>2. ASPSP instituição transmissora   <br>3. TPP instituição receptora|
+
+#### Enumerated Values
+
+|Property|Value|
+|---|---|
+|*anonymous*|USER|
+|*anonymous*|ASPSP|
+|*anonymous*|TPP|
+
+<h2 id="tocS_EnumReasonCode">EnumReasonCode</h2>
+<!-- backwards compatibility -->
+<a id="schemaenumreasoncode"></a>
+<a id="schema_EnumReasonCode"></a>
+<a id="tocSenumreasoncode"></a>
+<a id="tocsenumreasoncode"></a>
+
+```json
+"CONSENT_EXPIRED"
+
+```
+
+Define o código da razão pela qual o consentimento foi rejeitado.
+- CONSENT_EXPIRED – consentimento que ultrapassou o tempo limite para autorização.   
+- CUSTOMER_MANUALLY_REJECTED – cliente efetuou a rejeição do consentimento manualmente através de interação nas instituições participantes.   
+- CUSTOMER_MANUALLY_REVOKED – cliente efetuou a revogação após a autorização do consentimento.   
+- CONSENT_MAX_DATE_REACHED – consentimento que ultrapassou o tempo limite de compartilhamento.   
+- CONSENT_TECHNICAL_ISSUE – consentimento que foi rejeitado devido a um problema técnico que impossibilita seu uso pela instituição receptora, por exemplo: falha associada a troca do AuthCode pelo AccessToken, durante o processo de Hybid Flow.   
+- INTERNAL_SECURITY_REASON – consentimento que foi rejeitado devido as políticas de segurança aplicada pela instituição transmissora.
+
+### Properties
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|*anonymous*|string|false|none|Define o código da razão pela qual o consentimento foi rejeitado.<br>- CONSENT_EXPIRED – consentimento que ultrapassou o tempo limite para autorização.   <br>- CUSTOMER_MANUALLY_REJECTED – cliente efetuou a rejeição do consentimento manualmente através de interação nas instituições participantes.   <br>- CUSTOMER_MANUALLY_REVOKED – cliente efetuou a revogação após a autorização do consentimento.   <br>- CONSENT_MAX_DATE_REACHED – consentimento que ultrapassou o tempo limite de compartilhamento.   <br>- CONSENT_TECHNICAL_ISSUE – consentimento que foi rejeitado devido a um problema técnico que impossibilita seu uso pela instituição receptora, por exemplo: falha associada a troca do AuthCode pelo AccessToken, durante o processo de Hybid Flow.   <br>- INTERNAL_SECURITY_REASON – consentimento que foi rejeitado devido as políticas de segurança aplicada pela instituição transmissora.|
+
+#### Enumerated Values
+
+|Property|Value|
+|---|---|
+|*anonymous*|CONSENT_EXPIRED|
+|*anonymous*|CUSTOMER_MANUALLY_REJECTED|
+|*anonymous*|CUSTOMER_MANUALLY_REVOKED|
+|*anonymous*|CONSENT_MAX_DATE_REACHED|
+|*anonymous*|CONSENT_TECHNICAL_ISSUE|
+|*anonymous*|INTERNAL_SECURITY_REASON|
+
+<h2 id="tocS_RejectedReason">RejectedReason</h2>
+<!-- backwards compatibility -->
+<a id="schemarejectedreason"></a>
+<a id="schema_RejectedReason"></a>
+<a id="tocSrejectedreason"></a>
+<a id="tocsrejectedreason"></a>
+
+```json
+{
+  "code": "CONSENT_EXPIRED",
+  "additionalInformation": "Tempo de confirmação da múltipla alçada excedido."
+}
+
+```
+
+Define a razão pela qual o consentimento foi rejeitado.
+
+### Properties
+
+|Name|Type|Required|Restrictions|Description|
+|---|---|---|---|---|
+|code|[EnumReasonCode](#schemaenumreasoncode)|true|none|Define o código da razão pela qual o consentimento foi rejeitado.<br>- CONSENT_EXPIRED – consentimento que ultrapassou o tempo limite para autorização.   <br>- CUSTOMER_MANUALLY_REJECTED – cliente efetuou a rejeição do consentimento manualmente através de interação nas instituições participantes.   <br>- CUSTOMER_MANUALLY_REVOKED – cliente efetuou a revogação após a autorização do consentimento.   <br>- CONSENT_MAX_DATE_REACHED – consentimento que ultrapassou o tempo limite de compartilhamento.   <br>- CONSENT_TECHNICAL_ISSUE – consentimento que foi rejeitado devido a um problema técnico que impossibilita seu uso pela instituição receptora, por exemplo: falha associada a troca do AuthCode pelo AccessToken, durante o processo de Hybid Flow.   <br>- INTERNAL_SECURITY_REASON – consentimento que foi rejeitado devido as políticas de segurança aplicada pela instituição transmissora.|
+|additionalInformation|string|false|none|Contém informações adicionais a critério da transmissora.|
 
 <h2 id="tocS_ResponseErrorconsentsv2">ResponseError</h2>
 <!-- backwards compatibility -->
