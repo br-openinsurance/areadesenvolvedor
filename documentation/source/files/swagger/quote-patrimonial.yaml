@@ -65,14 +65,14 @@ info:
      
 
 
-  version: 1.4.1
+  version: 1.5.3
   contact:
     name: Governança do Open Insurance Brasil
     url: 'https://www.gov.br/susep'
 servers:
   - url: 'https://api.organizacao.com.br/open-insurance/quote-patrimonial/v1'
     description: Servidor de Produção
-  - url: 'https://api.organizacao.com.br/open-insurance/quote-patrimonial/v1'
+  - url: 'https://apih.organizacao.com.br/open-insurance/quote-patrimonial/v1'
     description: Servidor de Homologação
 tags:
   - name: PatrimonialLead
@@ -135,7 +135,6 @@ paths:
                 $ref: '#/components/schemas/ResponseError'
       security:
         - OAuth2Security:
-          - 'consent:consentId'
           - quote-patrimonial-lead
   /lead/request/{consentId}:
     patch:
@@ -157,12 +156,12 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/revocationPayload'
-        description: Payload para postagem da justificativa de recusa de proposta de cotação.
+              $ref: '#/components/schemas/RevokePatchPayload'
+        description: Payload para postagem da atualização de proposta de cotação.
         required: true
       responses:
-        '204':
-          $ref: '#/components/responses/204RevokedQuotePatrimonialLead'
+        '200':
+          $ref: '#/components/responses/200UpdatedQuotePatrimonialLead'
         '400':
           $ref: '#/components/responses/BadRequest'
         '401':
@@ -189,7 +188,6 @@ paths:
                 $ref: '#/components/schemas/ResponseError'
       security:
         - OAuth2Security:
-          - 'consent:consentId'
           - quote-patrimonial-lead
 
   /home/request:
@@ -241,7 +239,6 @@ paths:
                 $ref: '#/components/schemas/ResponseError'
       security:
         - OAuth2Security:
-          - 'consent:consentId'
           - quote-patrimonial-home
   /home/request/{consentId}/quote-status:
     get:
@@ -288,7 +285,6 @@ paths:
                 $ref: '#/components/schemas/ResponseError'
       security:
         - OAuth2Security:
-          - 'consent:consentId'
           - quote-patrimonial-home
   /home/request/{consentId}:
     patch:
@@ -310,12 +306,12 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/revocationPayload'
-        description: Payload para postagem da justificativa de recusa de proposta de cotação.
+              $ref: '#/components/schemas/PatchPayload'
+        description: Payload para postagem da atualização de proposta de cotação.
         required: true
       responses:
-        '204':
-          $ref: '#/components/responses/204RevokedQuotePatrimonialHome'
+        '200':
+          $ref: '#/components/responses/200UpdatedQuotePatrimonialHome'
         '400':
           $ref: '#/components/responses/BadRequest'
         '401':
@@ -342,7 +338,6 @@ paths:
                 $ref: '#/components/schemas/ResponseError'
       security:
         - OAuth2Security:
-          - 'consent:consentId'
           - quote-patrimonial-home
 
   /condominium/request:
@@ -394,7 +389,6 @@ paths:
                 $ref: '#/components/schemas/ResponseError'
       security:
         - OAuth2Security:
-          - 'consent:consentId'
           - quote-patrimonial-condominium
   /condominium/request/{consentId}/quote-status:
     get:
@@ -441,7 +435,6 @@ paths:
                 $ref: '#/components/schemas/ResponseError'
       security:
         - OAuth2Security:
-          - 'consent:consentId'
           - quote-patrimonial-condominium
   /condominium/request/{consentId}:
     patch:
@@ -463,12 +456,12 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/revocationPayload'
-        description: Payload para postagem da justificativa de recusa de proposta de cotação.
+              $ref: '#/components/schemas/PatchPayload'
+        description: Payload para postagem da atualização de proposta de cotação.
         required: true
       responses:
-        '204':
-          $ref: '#/components/responses/204RevokedQuotePatrimonialCondominium'
+        '200':
+          $ref: '#/components/responses/200UpdatedQuotePatrimonialCondominium'
         '400':
           $ref: '#/components/responses/BadRequest'
         '401':
@@ -495,7 +488,6 @@ paths:
                 $ref: '#/components/schemas/ResponseError'
       security:
         - OAuth2Security:
-          - 'consent:consentId'
           - quote-patrimonial-condominium
 
   /business/request:
@@ -547,7 +539,6 @@ paths:
                 $ref: '#/components/schemas/ResponseError'
       security:
         - OAuth2Security:
-          - 'consent:consentId'
           - quote-patrimonial-business
   /business/request/{consentId}/quote-status:
     get:
@@ -594,7 +585,6 @@ paths:
                 $ref: '#/components/schemas/ResponseError'
       security:
         - OAuth2Security:
-          - 'consent:consentId'
           - quote-patrimonial-business
   /business/request/{consentId}:
     patch:
@@ -616,12 +606,12 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/revocationPayload'
-        description: Payload para postagem da justificativa de recusa de proposta de cotação.
+              $ref: '#/components/schemas/PatchPayload'
+        description: Payload para postagem da atualização de proposta de cotação.
         required: true
       responses:
-        '204':
-          $ref: '#/components/responses/204RevokedQuotePatrimonialBusiness'
+        '200':
+          $ref: '#/components/responses/200UpdatedQuotePatrimonialBusiness'
         '400':
           $ref: '#/components/responses/BadRequest'
         '401':
@@ -648,7 +638,6 @@ paths:
                 $ref: '#/components/schemas/ResponseError'
       security:
         - OAuth2Security:
-          - 'consent:consentId'
           - quote-patrimonial-business
 
   /diverse-risks/request:
@@ -700,7 +689,6 @@ paths:
                 $ref: '#/components/schemas/ResponseError'
       security:
         - OAuth2Security:
-          - 'consent:consentId'
           - quote-patrimonial-diverse-risks
   /diverse-risks/request/{consentId}/quote-status:
     get:
@@ -747,7 +735,6 @@ paths:
                 $ref: '#/components/schemas/ResponseError'
       security:
         - OAuth2Security:
-          - 'consent:consentId'
           - quote-patrimonial-diverse-risks
   /diverse-risks/request/{consentId}:
     patch:
@@ -769,12 +756,12 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/revocationPayload'
-        description: Payload para postagem da justificativa de recusa de proposta de cotação.
+              $ref: '#/components/schemas/PatchPayload'
+        description: Payload para postagem da atualização de proposta de cotação.
         required: true
       responses:
-        '204':
-          $ref: '#/components/responses/204RevokedQuotePatrimonialDiverseRisks'
+        '200':
+          $ref: '#/components/responses/200UpdatedQuotePatrimonialDiverseRisks'
         '400':
           $ref: '#/components/responses/BadRequest'
         '401':
@@ -801,7 +788,6 @@ paths:
                 $ref: '#/components/schemas/ResponseError'
       security:
         - OAuth2Security:
-          - 'consent:consentId'
           - quote-patrimonial-diverse-risks
 
 components:
@@ -2042,11 +2028,6 @@ components:
           maxLength: 10
           example: 2022-10-02
           description: "Data de fim de vigência até as 24 horas"
-        quoteId:
-          type: string
-          maxLength: 100
-          example: "12345678"  
-          description: Número para identificar o orçamento
         insuranceTermStartDate:  
           type: string
           format: date
@@ -2623,10 +2604,14 @@ components:
               - premiumInfo
               - coverages
               - quoteDateTime
-              - links
+              - insurerQuoteId
             type: object
             description: Informações da cotação enviada pela seguradora
             properties:
+              insurerQuoteId:
+                type: string
+                description: |
+                  Id da proposta da segurada
               quoteDateTime:
                 type: string
                 format: date-time
@@ -2665,15 +2650,6 @@ components:
                   $ref: '#/components/schemas/QuoteResultAssistance'    
               premiumInfo:
                 $ref: '#/components/schemas/QuoteResultPremium'
-              links:
-                type: object
-                required:
-                  - redirect
-                properties:
-                  redirect: 
-                    type: string
-                    example: http://www.abcseguros.com/propostas_cotacao?propID=003
-                    description: Link interno da seguradora, onde o cliente é redirecionado para conclusão da contratação  
         customData:
           type: object
           properties:
@@ -2969,11 +2945,6 @@ components:
           maxLength: 10
           example: 2022-10-02
           description: "Data de fim de vigência até as 24 horas"
-        quoteId:
-          type: string
-          maxLength: 100
-          example: "12345678"  
-          description: Número para identificar o orçamento
         insuranceTermStartDate:  
           type: string
           format: date
@@ -3520,11 +3491,6 @@ components:
           maxLength: 10
           example: 2022-10-02
           description: "Data de fim de vigência até as 24 horas"
-        quoteId:
-          type: string
-          maxLength: 100
-          example: "12345678" 
-          description: Número para identificar o orçamento
         insuranceType: 
           type: string
           description: Tipo de Seguro
@@ -4131,10 +4097,14 @@ components:
               - premiumInfo
               - coverages
               - quoteDateTime
-              - links
+              - insurerQuoteId
             type: object
             description: Informações da cotação enviada pela seguradora
             properties:
+              insurerQuoteId:
+                type: string
+                description: |
+                  Id da proposta da segurada            
               quoteDateTime:
                 type: string
                 format: date-time
@@ -4173,15 +4143,6 @@ components:
                   $ref: '#/components/schemas/QuoteResultAssistance'    
               premiumInfo:
                 $ref: '#/components/schemas/QuoteResultPremium'
-              links:
-                type: object
-                required:
-                  - redirect
-                properties:
-                  redirect: 
-                    type: string
-                    example: http://www.abcseguros.com/propostas_cotacao?propID=003
-                    description: Link interno da seguradora, onde o cliente é redirecionado para conclusão da contratação
         customData:
           type: object
           properties:
@@ -4246,11 +4207,6 @@ components:
           maxLength: 10
           example: 2022-10-02
           description: "Data de fim de vigência até as 24 horas"
-        quoteId:
-          type: string
-          maxLength: 100
-          example: "12345678" 
-          description: Número para identificar o orçamento
         insuranceType: 
           type: string
           description: Tipo de Seguro
@@ -4778,12 +4734,7 @@ components:
           format: date
           maxLength: 10
           example: 2022-10-02
-          description: "Data de fim de vigência até as 24 horas"
-        quoteId:
-          description: Número para identificar o orçamento
-          type: string
-          maxLength: 100
-          example: "12345678"  
+          description: "Data de fim de vigência até as 24 horas" 
         insuranceType: 
           type: string
           description: Tipo de Seguro
@@ -5615,10 +5566,14 @@ components:
               - premiumInfo
               - coverages
               - quoteDateTime
-              - links
+              - insurerQuoteId
             type: object
             description: Informações da cotação enviada pela seguradora
             properties:
+              insurerQuoteId:
+                type: string
+                description: |
+                  Id da proposta da segurada
               quoteDateTime:
                 type: string
                 format: date-time
@@ -5657,15 +5612,6 @@ components:
                   $ref: '#/components/schemas/QuoteResultAssistance'
               premiumInfo:
                 $ref: '#/components/schemas/QuoteResultPremium'
-              links:
-                type: object
-                required:
-                  - redirect
-                properties:
-                  redirect: 
-                    type: string
-                    example: http://www.abcseguros.com/propostas_cotacao?propID=003
-                    description: Link interno da seguradora, onde o cliente é redirecionado para conclusão da contratação
         customData:
           type: object
           properties:
@@ -5949,11 +5895,6 @@ components:
           maxLength: 10
           example: 2022-10-02
           description: "Data de fim de vigência até as 24 horas"
-        quoteId:
-          description: Número para identificar o orçamento
-          type: string
-          maxLength: 100
-          example: "12345678"  
         insuranceType: 
           type: string
           description: Tipo de Seguro
@@ -6371,11 +6312,6 @@ components:
           maxLength: 10
           example: 2022-10-02
           description: "Data de fim de vigência até as 24 horas"
-        quoteId:
-          type: string
-          maxLength: 100
-          example: "12345678"  
-          description: Número para identificar o orçamento
         insuranceType: 
           type: string
           description: Tipo de Seguro
@@ -7025,10 +6961,14 @@ components:
               - premiumInfo
               - coverages
               - quoteDateTime
-              - links
+              - insurerQuoteId
             type: object
             description: Informações da cotação enviada pela seguradora
             properties:
+              insurerQuoteId:
+                type: string
+                description: |
+                  Id da proposta da segurada            
               quoteDateTime:
                 type: string
                 format: date-time
@@ -7067,16 +7007,7 @@ components:
                 items:
                   $ref: '#/components/schemas/QuoteResultAssistance'    
               premiumInfo:
-                $ref: '#/components/schemas/QuoteResultPremium'
-              links:
-                type: object
-                required:
-                  - redirect
-                properties:
-                  redirect: 
-                    type: string
-                    example: http://www.abcseguros.com/propostas_cotacao?propID=003
-                    description: Link interno da seguradora, onde o cliente é redirecionado para conclusão da contratação  
+                $ref: '#/components/schemas/QuoteResultPremium'  
         customData:
           type: object
           properties:
@@ -7365,11 +7296,6 @@ components:
           maxLength: 10
           example: 2022-10-02
           description: "Data de fim de vigência até as 24 horas"
-        quoteId:
-          type: string
-          maxLength: 100
-          example: "12345678"  
-          description: Número para identificar o orçamento
         insuranceType: 
           type: string
           description: Tipo de Seguro
@@ -7844,16 +7770,15 @@ components:
           description: Modalides de Equipamentos Portáteis
           type: string
           enum: [
-            'Smartphone',
-            'Notebook',
-            'Tablet',
-            'Smartwatch',
-            'Câmeras, Filmadoras e Equipamentos Audiovisuais',
-            'Bike',
-            'Patinete ou scooter elétrico (com dispensa de CNH e Registro DETRAN)',
-            'Médicos, Cirúrgicos, Odontológicos ou Estéticos',
-            'Instrumentos Musicais']
-
+            'SMARTPHONE',
+            'NOTEBOOK',
+            'TABLET',
+            'SMARTWATCH',
+            'CAMERAS_FILMADORAS_EQUIPAMENTOS_AUDIOVISUAIS',
+            'BICICLETA',
+            'PATINETE_OU_SCOOTER_ELETRICO_COM_DISPENSA_DE_CNH_E_REGISTRO_DETRAN',
+            'MEDICOS_CIRURGICOS_ODONTOLOGICOS_OU_ESTETICOS',
+            'INSTRUMENTOS_MUSICAIS']
         brand:
           description: Fabricante ou Marca do Equipamento Portátil
           type: string
@@ -8486,47 +8411,23 @@ components:
     
     QuoteStatus:
       type: object
+      required:
+        - status
+        - statusUpdateDateTime
       properties:
         status:
+          description: Status da cotação.
           type: string
-          maxLength: 4
+          enum: [RCVD,
+                EVAL,
+                ACPT,
+                RJCT,
+                ACKN,
+                CANC]
         statusUpdateDateTime:
           type: string
           format: date-time
-
-
-    revocationPayload:
-      type: object
-      required:
-        - data
-      properties:
-        data:
-          type: object
-          required:
-            - status
-          properties:
-            status:
-              type: string
-              maxLength: 4
-            quoteIdentification:
-              type: string
-              description: |
-                Id da proposta da segurada 
-                Esse ID é utilizado em jornadas de cotação completa/firme e leva o número identificador da proposta aceita (ACKN) pelo cliente.
-            author:
-              type: object
-              properties:
-                identificationType:
-                  type: string
-                  maxLength: 15
-                  example: CPF
-                  description: Tipo identificação (documento, etc.) do solicitante do cancelamento/revogação.
-                identificationNumber:
-                  type: string
-                  maxLength: 20
-                  pattern: '[\w\W\s]*'
-                  example: '73677831148'
-                  description: Número de identificação (documento, etc.) do solicitante do cancelamento/revogação.
+                  
     PersonalDocuments:
       type: array
       description: Objeto agrupador de informações relativas a Documentos da pessoa natural
@@ -8933,7 +8834,6 @@ components:
         properties:
           type: 
             type: string
-            maxLength: 13
             example: SOCIO
             description: Tipo de vínculo com a pessoa jurídica
             enum:
@@ -9102,29 +9002,158 @@ components:
           example: '-46.6361100'
       additionalProperties: false      
     
+    RevokePatchPayload:
+      type: object
+      required:
+        - data
+      properties:
+        data:
+          type: object
+          description: Revogação de LEAD.
+          required:
+            - author
+          properties:
+            author:
+              type: object
+              required:
+                - identificationType
+                - identificationNumber
+              properties:
+                identificationType:
+                  type: string
+                  description: Tipo identificação (CPF ou CNPJ) do solicitante do cancelamento/revogação.
+                  enum: [CPF,CNPJ]
+                  example: CPF
+                identificationNumber:
+                  type: string
+                  description: Número de identificação (CPF ou CNPJ) do solicitante do cancelamento/revogação.
+                  maxLength: 20
+                  pattern: '[\w\W\s]*'
+                  example: '73677831148'
+    
+    ResponseRevokePatch:
+      type: object
+      required:
+        - data
+      properties:
+        data:
+          type: object
+          description: Objeto contendo informações da atualização.
+          required:
+            - status
+          properties:
+            status:
+              description: Status da cotação.
+              type: string
+              enum: [CANC]
+    PatchPayload:
+      type: object
+      required:
+        - data
+      properties:
+        data:
+          type: object
+          required:
+            - status
+            - author
+          properties:
+            status:
+              description: Status da cotação.
+              type: string
+              enum: [ACKN,CANC]
+            insurerQuoteId:
+              type: string
+              description: |
+                Id da proposta da segurada 
+                Esse ID é utilizado em jornadas de cotação completa/firme e leva o número identificador da proposta aceita (ACKN) pelo cliente.
+                Condicional ao status de ACKN.
+            author:
+              type: object
+              required:
+                - identificationType
+                - identificationNumber
+              properties:
+                identificationType:
+                  type: string
+                  description: Tipo identificação (CPF ou CNPJ) do solicitante do cancelamento/revogação.
+                  enum: [CPF,CNPJ]
+                  example: CPF
+                identificationNumber:
+                  type: string
+                  description: Número de identificação (CPF ou CNPJ) do solicitante do cancelamento/revogação.
+                  maxLength: 20
+                  pattern: '[\w\W\s]*'
+                  example: '73677831148'
+
+    ResponsePatch:
+      type: object
+      required:
+        - data
+      properties:
+        data:
+          type: object
+          description: Objeto contendo informações da atualização.
+          required:
+            - status
+          properties:
+            status:
+              description: Status da cotação.
+              type: string
+              enum: [ACKN,CANC]
+            insurerQuoteId:
+              type: string
+              description: |
+                Id da proposta da segurada 
+                Esse ID é utilizado em jornadas de cotação completa/firme e leva o número identificador da proposta aceita (ACKN) pelo cliente.
+                Condicional ao status de ACKN.
+            protocolNumber:
+              description: Protocolo referente a cotação aceita. Condicional ao status de ACKN.
+              type: string
+              maxLength: 60
+            protocolDateTime:
+              description: Data e hora do protocolamento da cotação, conforme especificação RFC-3339, formato UTC. Condicional ao status de ACKN.
+              type: string
+              maxLength: 2048
+              format: date-time
+              example: '2021-08-20T08:30:00Z'
+            links:
+              description: Condicional ao status de ACKN.
+              type: object
+              required:
+                - redirect
+              properties:
+                redirect: 
+                  type: string
+                  example: http://www.abcseguros.com/propostas_cotacao?propID=003
+                  description: Link interno da seguradora, onde o cliente é redirecionado para conclusão da contratação
     Links:
       type: object
       properties:
         self:
           type: string
           description: URL da página atualmente requisitada
-          example: 'https://api.organizacao.com.br/open-insurance/quote-patrimonial/v1'
+          pattern: ^(https:\/\/)(.*?)(\/open-insurance\/quote-patrimonial\/v\d+)(\/(lead|home|condominium|business|diverse-risks)\/.*)(\/request\d+)?$
+          example: "https://api.organizacao.com.br/open-insurance/quote-patrimonial/v1/lead/request"
         first:
           type: string
           description: URL da primeira página de registros
-          example: 'https://api.organizacao.com.br/open-insurance/quote-patrimonial/v1'
+          pattern: ^(https:\/\/)(.*?)(\/open-insurance\/quote-patrimonial\/v\d+)(\/(lead|home|condominium|business|diverse-risks)\/.*)(\/request\d+)?$
+          example: "https://api.organizacao.com.br/open-insurance/quote-patrimonial/v1/lead/request"
         prev:
           type: string
           description: URL da página anterior de registros
-          example: 'https://api.organizacao.com.br/open-insurance/quote-patrimonial/v1'
+          pattern: ^(https:\/\/)(.*?)(\/open-insurance\/quote-patrimonial\/v\d+)(\/(lead|home|condominium|business|diverse-risks)\/.*)(\/request\d+)?$
+          example: "https://api.organizacao.com.br/open-insurance/quote-patrimonial/v1/lead/request"
         next:
           type: string
           description: URL da próxima página de registros
-          example: 'https://api.organizacao.com.br/open-insurance/quote-patrimonial/v1'
+          pattern: ^(https:\/\/)(.*?)(\/open-insurance\/quote-patrimonial\/v\d+)(\/(lead|home|condominium|business|diverse-risks)\/.*)(\/request\d+)?$
+          example: "https://api.organizacao.com.br/open-insurance/quote-patrimonial/v1/lead/request"
         last:
           type: string
           description: URL da última página de registros
-          example: 'https://api.organizacao.com.br/open-insurance/quote-patrimonial/v1'
+          pattern: ^(https:\/\/)(.*?)(\/open-insurance\/quote-patrimonial\/v\d+)(\/(lead|home|condominium|business|diverse-risks)\/.*)(\/request\d+)?$
+          example: "https://api.organizacao.com.br/open-insurance/quote-patrimonial/v1/lead/request"
     Meta:
       type: object
       properties:
@@ -9191,8 +9220,24 @@ components:
         data:
           type: object
           required:
+            - consentId
             - quoteCustomer
           properties:
+            consentId:
+              description: |
+                O consentId é o identificador único do consentimento e deverá ser um URN - Uniform Resource Name.  
+                Um URN, conforme definido na [RFC8141](https://tools.ietf.org/html/rfc8141) é um Uniform Resource 
+                Identifier - URI - que é atribuído sob o URI scheme "urn" e um namespace URN específico, com a intenção de que o URN 
+                seja um identificador de recurso persistente e independente da localização.  
+                Considerando a string urn:initiator:C1DD93123 como exemplo para consentId temos:
+                - o namespace(urn)
+                - o identificador associado ao namespace da instituição transnmissora (initiator) 
+                - o identificador específico dentro do namespace (C1DD93123).  
+                Informações mais detalhadas sobre a construção de namespaces devem ser consultadas na [RFC8141](https://tools.ietf.org/html/rfc8141).
+              type: string
+              pattern: '^urn:[a-zA-Z0-9][a-zA-Z0-9-]{0,31}:[a-zA-Z0-9()+,\-.:=@;$_!*''%\/?#]+$'
+              maxLength: 256
+              example: 'urn:initiator:C1DD93123'
             quoteCustomer:
               type: object
               properties:
@@ -9260,6 +9305,7 @@ components:
           $ref: '#/components/schemas/Links'
         meta:
           $ref: '#/components/schemas/Meta'
+          
     QuoteRequestPatrimonialHome:
       type: object
       required:
@@ -9268,9 +9314,25 @@ components:
         data:
           type: object
           required:
+            - consentId
             - quoteData
             - quoteCustomer
           properties:
+            consentId:
+              description: |
+                O consentId é o identificador único do consentimento e deverá ser um URN - Uniform Resource Name.  
+                Um URN, conforme definido na [RFC8141](https://tools.ietf.org/html/rfc8141) é um Uniform Resource 
+                Identifier - URI - que é atribuído sob o URI scheme "urn" e um namespace URN específico, com a intenção de que o URN 
+                seja um identificador de recurso persistente e independente da localização.  
+                Considerando a string urn:initiator:C1DD93123 como exemplo para consentId temos:
+                - o namespace(urn)
+                - o identificador associado ao namespace da instituição transnmissora (initiator) 
+                - o identificador específico dentro do namespace (C1DD93123).  
+                Informações mais detalhadas sobre a construção de namespaces devem ser consultadas na [RFC8141](https://tools.ietf.org/html/rfc8141).
+              type: string
+              pattern: '^urn:[a-zA-Z0-9][a-zA-Z0-9-]{0,31}:[a-zA-Z0-9()+,\-.:=@;$_!*''%\/?#]+$'
+              maxLength: 256
+              example: 'urn:initiator:C1DD93123'
             quoteCustomer:
               type: object
               properties:
@@ -9336,15 +9398,26 @@ components:
       properties:
         data:
           type: object
+          required:
+            - status
+            - statusUpdateDateTime
           properties:
             status:
+              description: Status da cotação.
               type: string
-              maxLength: 4
+              enum: [RCVD,
+                    EVAL,
+                    ACPT,
+                    RJCT,
+                    ACKN,
+                    CANC]
             statusUpdateDateTime:
               type: string
               format: date-time
             quoteData:
-              $ref: '#/components/schemas/QuoteStatusPatrimonialHome'
+              description: Condicional ao Status ser ACPT
+              allOf:
+                - $ref: '#/components/schemas/QuoteStatusPatrimonialHome'
         links:
           $ref: '#/components/schemas/Links'
         meta:
@@ -9363,6 +9436,8 @@ components:
           $ref: '#/components/schemas/Links'
         meta:
           $ref: '#/components/schemas/Meta'
+
+
     QuoteRequestPatrimonialCondominium:
       type: object
       required:
@@ -9371,9 +9446,25 @@ components:
         data:
           type: object
           required:
+            - consentId
             - quoteData
             - quoteCustomer
           properties:
+            consentId:
+              description: |
+                O consentId é o identificador único do consentimento e deverá ser um URN - Uniform Resource Name.  
+                Um URN, conforme definido na [RFC8141](https://tools.ietf.org/html/rfc8141) é um Uniform Resource 
+                Identifier - URI - que é atribuído sob o URI scheme "urn" e um namespace URN específico, com a intenção de que o URN 
+                seja um identificador de recurso persistente e independente da localização.  
+                Considerando a string urn:initiator:C1DD93123 como exemplo para consentId temos:
+                - o namespace(urn)
+                - o identificador associado ao namespace da instituição transnmissora (initiator) 
+                - o identificador específico dentro do namespace (C1DD93123).  
+                Informações mais detalhadas sobre a construção de namespaces devem ser consultadas na [RFC8141](https://tools.ietf.org/html/rfc8141).
+              type: string
+              pattern: '^urn:[a-zA-Z0-9][a-zA-Z0-9-]{0,31}:[a-zA-Z0-9()+,\-.:=@;$_!*''%\/?#]+$'
+              maxLength: 256
+              example: 'urn:initiator:C1DD93123'
             quoteCustomer:
               type: object
               properties:
@@ -9439,15 +9530,26 @@ components:
       properties:
         data:
           type: object
+          required:
+            - status
+            - statusUpdateDateTime
           properties:
             status:
+              description: Status da cotação.
               type: string
-              maxLength: 4
+              enum: [RCVD,
+                    EVAL,
+                    ACPT,
+                    RJCT,
+                    ACKN,
+                    CANC]
             statusUpdateDateTime:
               type: string
               format: date-time
             quoteData:
-              $ref: '#/components/schemas/QuoteStatusPatrimonialCondominium'
+              description: Condicional ao Status ser ACPT
+              allOf:
+                - $ref: '#/components/schemas/QuoteStatusPatrimonialCondominium'
         links:
           $ref: '#/components/schemas/Links'
         meta:
@@ -9466,6 +9568,8 @@ components:
           $ref: '#/components/schemas/Links'
         meta:
           $ref: '#/components/schemas/Meta'
+
+
     QuoteRequestPatrimonialBusiness:
       type: object
       required:
@@ -9474,9 +9578,25 @@ components:
         data:
           type: object
           required:
+            - consentId
             - quoteData
             - quoteCustomer
           properties:
+            consentId:
+              description: |
+                O consentId é o identificador único do consentimento e deverá ser um URN - Uniform Resource Name.  
+                Um URN, conforme definido na [RFC8141](https://tools.ietf.org/html/rfc8141) é um Uniform Resource 
+                Identifier - URI - que é atribuído sob o URI scheme "urn" e um namespace URN específico, com a intenção de que o URN 
+                seja um identificador de recurso persistente e independente da localização.  
+                Considerando a string urn:initiator:C1DD93123 como exemplo para consentId temos:
+                - o namespace(urn)
+                - o identificador associado ao namespace da instituição transnmissora (initiator) 
+                - o identificador específico dentro do namespace (C1DD93123).  
+                Informações mais detalhadas sobre a construção de namespaces devem ser consultadas na [RFC8141](https://tools.ietf.org/html/rfc8141).
+              type: string
+              pattern: '^urn:[a-zA-Z0-9][a-zA-Z0-9-]{0,31}:[a-zA-Z0-9()+,\-.:=@;$_!*''%\/?#]+$'
+              maxLength: 256
+              example: 'urn:initiator:C1DD93123'
             quoteCustomer:
               type: object
               properties:
@@ -9542,15 +9662,26 @@ components:
       properties:
         data:
           type: object
+          required:
+            - status
+            - statusUpdateDateTime
           properties:
             status:
+              description: Status da cotação.
               type: string
-              maxLength: 4
+              enum: [RCVD,
+                    EVAL,
+                    ACPT,
+                    RJCT,
+                    ACKN,
+                    CANC]
             statusUpdateDateTime:
               type: string
               format: date-time
             quoteData:
-              $ref: '#/components/schemas/QuoteStatusPatrimonialBusiness'
+              description: Condicional ao Status ser ACPT
+              allOf:
+                - $ref: '#/components/schemas/QuoteStatusPatrimonialBusiness'
         links:
           $ref: '#/components/schemas/Links'
         meta:
@@ -9569,6 +9700,8 @@ components:
           $ref: '#/components/schemas/Links'
         meta:
           $ref: '#/components/schemas/Meta'
+
+
     QuoteRequestPatrimonialDiverseRisks:
       type: object
       required:
@@ -9577,9 +9710,25 @@ components:
         data:
           type: object
           required:
+            - consentId
             - quoteData
             - quoteCustomer
           properties:
+            consentId:
+              description: |
+                O consentId é o identificador único do consentimento e deverá ser um URN - Uniform Resource Name.  
+                Um URN, conforme definido na [RFC8141](https://tools.ietf.org/html/rfc8141) é um Uniform Resource 
+                Identifier - URI - que é atribuído sob o URI scheme "urn" e um namespace URN específico, com a intenção de que o URN 
+                seja um identificador de recurso persistente e independente da localização.  
+                Considerando a string urn:initiator:C1DD93123 como exemplo para consentId temos:
+                - o namespace(urn)
+                - o identificador associado ao namespace da instituição transnmissora (initiator) 
+                - o identificador específico dentro do namespace (C1DD93123).  
+                Informações mais detalhadas sobre a construção de namespaces devem ser consultadas na [RFC8141](https://tools.ietf.org/html/rfc8141).
+              type: string
+              pattern: '^urn:[a-zA-Z0-9][a-zA-Z0-9-]{0,31}:[a-zA-Z0-9()+,\-.:=@;$_!*''%\/?#]+$'
+              maxLength: 256
+              example: 'urn:initiator:C1DD93123'
             quoteCustomer:
               type: object
               properties:
@@ -9645,15 +9794,26 @@ components:
       properties:
         data:
           type: object
+          required:
+            - status
+            - statusUpdateDateTime
           properties:
             status:
+              description: Status da cotação.
               type: string
-              maxLength: 4
+              enum: [RCVD,
+                    EVAL,
+                    ACPT,
+                    RJCT,
+                    ACKN,
+                    CANC]
             statusUpdateDateTime:
               type: string
               format: date-time
             quoteData:
-              $ref: '#/components/schemas/QuoteStatusPatrimonialDiverseRisks'
+              description: Condicional ao Status ser ACPT
+              allOf:
+                - $ref: '#/components/schemas/QuoteStatusPatrimonialDiverseRisks'
         links:
           $ref: '#/components/schemas/Links'
         meta:
@@ -9672,6 +9832,8 @@ components:
           $ref: '#/components/schemas/Links'
         meta:
           $ref: '#/components/schemas/Meta'
+
+
   parameters:
     consentId:
         name: consentId
@@ -9829,7 +9991,7 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/ResponseQuotePatrimonialLead'       
-    204RevokedQuotePatrimonialLead:
+    200UpdatedQuotePatrimonialLead:
       description: "Atualização de PatrimonialLead feita com sucesso"
       headers:
         x-fapi-interaction-id:
@@ -9842,6 +10004,10 @@ components:
             minLength: 1
             maxLength: 100
             example: 73cac523-d3ae-2289-b106-330a6218710d
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ResponseRevokePatch'
     OKResponseQuoteRequestPatrimonialHome:
       description: Dados de PatrimonialHome criados com sucesso
       headers:
@@ -9869,7 +10035,7 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/ResponseQuoteStatusPatrimonialHome'
-    204RevokedQuotePatrimonialHome:
+    200UpdatedQuotePatrimonialHome:
       description: "Atualização de PatrimonialHome feita com sucesso"
       headers:
         x-fapi-interaction-id:
@@ -9882,6 +10048,10 @@ components:
             minLength: 1
             maxLength: 100
             example: 73cac523-d3ae-2289-b106-330a6218710d
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ResponsePatch'    
     OKResponseQuoteRequestPatrimonialCondominium:
       description: Dados de PatrimonialCondominium criados com sucesso
       headers:
@@ -9909,7 +10079,7 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/ResponseQuoteStatusPatrimonialCondominium'
-    204RevokedQuotePatrimonialCondominium:
+    200UpdatedQuotePatrimonialCondominium:
       description: "Atualização de PatrimonialCondominium feita com sucesso"
       headers:
         x-fapi-interaction-id:
@@ -9922,6 +10092,10 @@ components:
             minLength: 1
             maxLength: 100
             example: 73cac523-d3ae-2289-b106-330a6218710d
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ResponsePatch'    
     OKResponseQuoteRequestPatrimonialBusiness:
       description: Dados de PatrimonialBusiness criados com sucesso
       headers:
@@ -9949,7 +10123,7 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/ResponseQuoteStatusPatrimonialBusiness'
-    204RevokedQuotePatrimonialBusiness:
+    200UpdatedQuotePatrimonialBusiness:
       description: "Atualização de PatrimonialBusiness feita com sucesso"
       headers:
         x-fapi-interaction-id:
@@ -9962,6 +10136,10 @@ components:
             minLength: 1
             maxLength: 100
             example: 73cac523-d3ae-2289-b106-330a6218710d
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ResponsePatch'    
     OKResponseQuoteRequestPatrimonialDiverseRisks:
       description: Dados de PatrimonialDiverseRisks criados com sucesso
       headers:
@@ -9989,7 +10167,7 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/ResponseQuoteStatusPatrimonialDiverseRisks'
-    204RevokedQuotePatrimonialDiverseRisks:
+    200UpdatedQuotePatrimonialDiverseRisks:
       description: "Atualização de PatrimonialDiverseRisks feita com sucesso"
       headers:
         x-fapi-interaction-id:
@@ -10002,3 +10180,7 @@ components:
             minLength: 1
             maxLength: 100
             example: 73cac523-d3ae-2289-b106-330a6218710d
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ResponsePatch'
