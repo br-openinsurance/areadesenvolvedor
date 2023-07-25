@@ -3,7 +3,7 @@ info:
   title: APIs Open Data do Open Insurance Brasil
   description: 
     API de informações de Seguro Residencial. Os recursos que podem ser consumidos pelos participantes conforme a regra 3.2.2 do manual de escopo de dados.
-  version: 1.2.0
+  version: 1.3.0
   contact:
     url: 'https://www.gov.br/susep/'
 servers:
@@ -84,6 +84,7 @@ components:
           $ref: '#/components/schemas/Links'
         meta:
           $ref: '#/components/schemas/Meta'
+
     HomeInsuranceBrand:
       type: object
       required:
@@ -97,6 +98,7 @@ components:
           example: EMPRESA A seguros
         companies:
           $ref: '#/components/schemas/HomeInsuranceCompany'  
+
     HomeInsuranceCompany:
       type: array
       items:
@@ -113,10 +115,11 @@ components:
           cnpjNumber:
             type: string
             description: CNPJ da sociedade pertencente à marca.
-            maxLength: 14
+            pattern: ^\d{14}$
             example: '12345678901234'
           products:
             $ref: '#/components/schemas/HomeInsuranceProduct'
+
     HomeInsuranceProduct:
       type: array
       description: Produtos de Seguro Residencial.
@@ -194,7 +197,7 @@ components:
             type: array 
             description: Distribuição de frequência relativa aos valores referentes às taxas cobradas.
             items:
-                type: string            
+              type: string    
           premiumPayments:
             $ref: '#/components/schemas/HomeInsurancePremiumPayment'                 
           minimumRequirements:
@@ -207,7 +210,8 @@ components:
               type: string
               description: Público a quem se destina o produto
               example: PESSOA_NATURAL
-              enum: [PESSOA_NATURAL , PESSOA_JURIDICA, AMBAS]             
+              enum: [PESSOA_NATURAL , PESSOA_JURIDICA, AMBAS]
+
     HomeInsuranceMinimumRequirements:
       type: object
       description: Produtos de Seguro Residencial.
@@ -223,7 +227,8 @@ components:
           type: string
           description: Campo aberto contendo todos os requisitos mínimos para contratação (possibilidade de incluir URL).              
           maxLength: 1024
-          example: https://openinsurance.com.br/aaa
+          example: https://www.seguradora.com.br/produto/requisitos.pdf
+
     HomeInsuranceCoverageAttributes:     
       type: object
       description: Informações de cobertura do Seguro Residencial.
@@ -243,7 +248,7 @@ components:
           type: number
           description: Listagem percentual de franquia e/ou percentual de participação obrigatória do segurado estabelecida pela sociedade para cada tipo de cobertura de produto.
           maxLength: 9
-
+        
     HomeInsuranceLimit:
       type: object
       description: Lista com valor de LMI aceito pela sociedade para cada cobertura.
@@ -275,6 +280,7 @@ components:
         description: 
           type: string
           example: REAL
+
     HomeInsuranceCoverageAttributesDetails:
         type: object
         description: Valor
@@ -286,6 +292,7 @@ components:
             type: number
           unit:
             $ref: '#/components/schemas/HomeInsuranceCoverageAttributesDetailsUnit'  
+
     HomeInsuranceTermsAndConditions:
       type: array
       description: Informações dos termos e condições conforme número do processo SUSEP.
@@ -304,7 +311,8 @@ components:
             type: string
             description: Campo aberto (possibilidade de incluir uma url).
             maxLength: 1024
-            example: https://openinsurance.com.br/aaa
+            example: https://www.seguradora.com.br/produto/termos.pdf
+
     HomeInsuranceValidity:
         type: array
         description: Vigência
@@ -322,6 +330,7 @@ components:
                 type: string
                 description: Campo livre para descrição por cada participante ao selecionar o domínio “Outros” no campo Prazo (acima).
                 maxLength: 100
+
     HomeInsurancePremiumPayment:
         type: array 
         description: Informações de pagamento de prêmio.
@@ -341,10 +350,13 @@ components:
               description: Campo aberto para detalhamento do campo ‘Outros’ por cada participante.
               maxLength: 100
             paymentType:
-              type: string
+              type: array
               description: Forma de pagamento
-              example: PAGAMENTO_UNICO
-              enum: [PAGAMENTO_UNICO , PARCELADO, AMBOS]
+              items:
+                type: string
+                example: A_VISTA
+                enum: [A_VISTA, PARCELADO]
+
     HomeInsuranceAssistanceServices:    
       type: array
       description: Agrupamento dos serviços de assistências disponíveis vinculado ao produto.
@@ -364,12 +376,13 @@ components:
             type: string
             description: Campo livre para descrição dos serviços ofertados por cada sociedade participante.
             maxLength: 1000
-            example: reboque pane seca
+            example: Encanador
           chargeTypeSignaling:
             type: string
             description: Sinalização em campo exclusivo se o pacote de Assistência é gratuita ou contratada/paga.
             example: GRATUITA
             enum: [GRATUITA, PAGO]
+
     HomeInsuranceCoverages:
       type: array
       description: Listagem de coberturas incluídas no produto.
@@ -397,6 +410,7 @@ components:
             example: false
           coverageAttributes:
             $ref: '#/components/schemas/HomeInsuranceCoverageAttributes'
+
     HomeInsurancePropertyCharacteristics:
         type: array 
         description: Caracteristicas do imóvel.
@@ -428,6 +442,7 @@ components:
               description: Destinação da Importância Segurada.
               example: PREDIO
               enum: [PREDIO, CONTEUDO, AMBOS]   
+
     Links:
       type: object
       properties:
@@ -456,6 +471,7 @@ components:
           description: URL da última página de registros
           pattern: ^(https:\/\/)(.*?)(\/open-insurance\/products-services\/v\d+)(\/home-insurance.*)?$
           example: 'https://api.organizacao.com.br/open-insurance/products-services/v1/home-insurance/commercializationArea'
+
     Meta:
       type: object
       properties:
@@ -470,6 +486,7 @@ components:
       required:
         - totalRecords
         - totalPages
+
     ResponseError:
       type: object
       required:
@@ -513,6 +530,7 @@ components:
         meta:
           $ref: '#/components/schemas/Meta'
       additionalProperties: false    
+
   parameters:
     page:
       name: page

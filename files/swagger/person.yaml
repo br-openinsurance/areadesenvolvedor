@@ -3,7 +3,7 @@ info:
   title: APIs Open Data do Open Insurance Brasil
   description: 
     Obtém a lista dos produtos Seguros de Pessoas – Coberturas de Risco (excluindo VGBL).
-  version: 1.3.0
+  version: 1.4.0
   contact:
     url: 'https://www.gov.br/susep/'
 servers:
@@ -30,6 +30,8 @@ paths:
         - $ref: "#/components/parameters/x-Frame-Options"
         - $ref: "#/components/parameters/page"
         - $ref: "#/components/parameters/pageSize"
+        - $ref: "#/components/parameters/x-v"
+        - $ref: "#/components/parameters/x-min-v"
       responses:
         '200':
           description: Dados dos Plano de Seguro de Pessoas
@@ -83,6 +85,7 @@ components:
          $ref: '#/components/schemas/Links'
        meta:
          $ref: '#/components/schemas/Meta'
+
     PersonBrand:
       type: object
       description: Organização controladora do grupo.
@@ -96,6 +99,7 @@ components:
           example: Marca
         companies:
             $ref: '#/components/schemas/PersonCompany'  
+
     PersonCompany:
       type: array
       items:
@@ -112,9 +116,11 @@ components:
           cnpjNumber:
             type: string
             description: CNPJ da sociedade pertencente à marca.
-            example: '45086338000178'
+            pattern: ^\d{14}$
+            example: '12345678901234'
           products:          
             $ref: '#/components/schemas/PersonProducts'
+
     PersonProducts:
       type: array
       description: Lista de Dependências de uma Instituição.
@@ -126,15 +132,17 @@ components:
           - category
           - insuranceModality 
           - coverages
+          - assistanceType
           - additional
           - termsAndConditions
           - globalCapital
           - validity
-          - contractType
+          - benefitRecalculation
           - otherGuaranteedValues
           - allowPortability
           - portabilityGraceTime
-          - indemnityPaymentMethod
+          - premiumPayment
+          - minimumRequirements
           - targetAudience
         properties:
           name:
@@ -148,7 +156,7 @@ components:
           category:
             type: string
             description: Indica a categoria do Produto
-            enum: [TRADICIONAL, MICROSEGURO]
+            enum: [TRADICIONAL, MICROSSEGURO]
           insuranceModality:
             type: string
             example: FUNERAL
@@ -157,6 +165,10 @@ components:
             type: array
             items:
               type: object
+              required:
+                - coverage
+                - coverageAttributes
+                - contractType
               properties:
                 coverage:
                   type: string
@@ -209,13 +221,17 @@ components:
                         TRANSLADO_MEDICO,
                         TRANSLADO_CORPO,
                         VERBA_RESCISORIA,
-                        OUTRAS]                
+                        OUTRAS]
                 coverageOthers:
                   type: array
                   items:
                     type: string
                 coverageAttributes:
                   $ref: '#/components/schemas/PersonCoverageAttributes'
+                contractType:
+                  type: string
+                  description: Regime Financeiro  
+                  enum: [REPARTICAO_SIMPLES, REPARTICAO_CAPITAIS, CAPITALIZACAO ] 
           assistanceType:        
             type: array
             description: Listagem dos serviços de assistências complementares disponíveis vinculados ao produto. Deve ser padronizada na proposta técnica submetida pela Estrutura Inicial de  Governança para observância comum por todas as sociedades participantes 
@@ -277,16 +293,20 @@ components:
                 VIAGEM,
                 VITIMA,
                 OUTROS]  
-          additional:         
-            type: array
-            items:
-              type: string
-              enum: [SORTEIO , SERVICOS_ASSISTENCIAS_COMPLEMENTARES_PAGO , SERVICOS_ASSISTENCIA_COMPLEMENTARES_GRATUITO, OUTROS, NAO_HA] 
           assistanceTypeOthers:
             type: array
             items:
               type: string
               description: Campo a ser preenchido pelas participantes quando houver ‘Outros’ no campo ‘Tipo de Assistência’   
+          additional:
+            type: array
+            items:
+              type: string
+              enum: [SORTEIO, SERVICOS_ASSISTENCIAS_COMPLEMENTARES_PAGO, SERVICOS_ASSISTENCIA_COMPLEMENTARES_GRATUITO, OUTROS, NAO_HA] 
+          additionalOthers:
+            description: Descrição adicional quando for informada a opção OUTROS.
+            type: string
+            example: OUTROS
           termsAndConditions:
             type: array
             items:
@@ -303,12 +323,6 @@ components:
             $ref: '#/components/schemas/PersonPmbacRemuneration'
           benefitRecalculation:
             $ref: '#/components/schemas/PersonBenefitRecalculation'
-          ageAdjustment:
-            $ref: '#/components/schemas/PersonAgeAdjustment'
-          contractType:
-            type: string
-            description: Regime Financeiro  
-            enum: [REPARTICAO_SIMPLES, REPARTICAO_CAPITAIS, CAPITALIZACAO ] 
           reclaim:
             $ref: '#/components/schemas/PersonReclaim'
           otherGuaranteedValues:
@@ -318,36 +332,15 @@ components:
             type: boolean
             description: Permite Portabilidade
           portabilityGraceTime:
-            type: integer
-            description: Prazo de carência em dias para Portabilidade
-          indemnityPaymentMethod:
-            type: array
-            items:  
-              type: string
-              description: Modalidade de pagamento da indenização
-              enum: [UNICO, SOB_FORMA_DE_RENDA]  
-          indemnityPaymentIncome:
-            type: array
-            description: Tipo de Renda (caso modalidade de pagamento de indenização seja sob a forma de renda)
-            items:
-              type: string
-              enum: [CERTA,
-                TEMPORARIA,
-                TEMPORARIA_REVERSIVEL,
-                TEMPORARIO_MINIMO_GARANTIDO,
-                TEMPORARIA_REVERSIVEL_MINIMO_GARANTIDO,
-                VITALICIA,
-                VITALICIA_REVERSIVEL,
-                VITALICIA_MINIMO_GARANTIDO,
-                VITALICIA_REVERSIVEL_MINIMO_GARANTIDO
-                ]
+            $ref: '#/components/schemas/PersonGracePeriodPortabilityUnit'
           premiumPayment:
             $ref: '#/components/schemas/PersonPremiumPayment'
-          minimunRequirements:
+          minimumRequirements:
             $ref: '#/components/schemas/PersonMinimumRequirements'
           targetAudience:
             type: string
             enum: [PESSOA_NATURAL, PESSOA_JURIDICA]
+
     PersonTermsAndCondition:     
       type: object
       required:
@@ -360,6 +353,7 @@ components:
         definition:
           type: string
           description: Campo aberto (possibilidade de incluir URL).
+
     PersonCoverageAttributesDetailsUnit:
       type: object
       required:
@@ -374,6 +368,7 @@ components:
           type: string
           description: Descrição da unidade de medida
           example: description
+
     PersonCoverageAttributesDetails:
         type: object
         required:
@@ -386,9 +381,13 @@ components:
             example: 60
           unit:
             $ref: '#/components/schemas/PersonCoverageAttributesDetailsUnit'
+
     PersonGracePeriodUnit:
         type: object
         description: Período de carência
+        required:
+          - amount
+          - unit
         properties:
           details:
             type: string
@@ -403,6 +402,24 @@ components:
             description: Unidade do prazo (dias ou meses).
             example: DIAS
             enum: [DIAS, MESES, NAO_SE_APLICA]
+
+    PersonGracePeriodPortabilityUnit:
+        type: object
+        description: Período de carência
+        required:
+          - amount
+          - unit
+        properties:
+          amount:
+            type: number
+            description: Prazo de carência. Prazo (de acordo com o dado “Portabilidade – Critério de prazo de carência”)
+            example: 60
+          unit:
+            type: string
+            description: Critério de Prazo de Carência. Informar a unidade de medida de tempo para fixação do prazo de carência
+            example: DIAS
+            enum: [DIAS, MESES]
+
     PersonCoverageAttributes:
       type: object
       required:
@@ -410,14 +427,16 @@ components:
         - indemnityPaymentFrequency
         - minValue
         - maxValue
-        - indemnifiablePeriod
         - maximumQtyIndemnifiableInstallments
         - currency
         - gracePeriod  
         - deductibleDays 
         - deductibleBRL    
         - excludedRisks
+        - excludedRisksURL
         - allowApartPurchase
+        - indemnityPaymentMode
+        - ageAdjustment
       properties:
         indemnityPaymentMethod:
            type: array
@@ -445,10 +464,11 @@ components:
            $ref: '#/components/schemas/PersonCoverageAttributesDetails'
         indemnifiablePeriod:
           type: array
-          description: Listagem de período indenizável para cada combinação de modalidade/cobertura do produto 
+          description: Listagem de período indenizável para cada combinação de modalidade/cobertura do produto. Deve ser preenchido somente se a frequência do pagamento de indenização for igual a DIARIA_OU_PARCELA
           items:
            type: string
            example: ATE_FIM_CICLO_DETERMINADO
+           enum: [QUANTIDADE_DETERMINADA_DE_PARCELAS, ATE_FIM_CICLO_DETERMINADO]
         maximumQtyIndemnifiableInstallments:
           type: integer
           description: Caso o período indenizável seja relacionado a parcelas, listagem de número máximo de  parcelas indenizáveis para cada combinação de modalidade/ cobertura do produto
@@ -463,6 +483,7 @@ components:
             $ref: '#/components/schemas/PersonGracePeriodUnit'
         differentiatedGracePeriod:
           type: string
+          description: Descricao do periodo de carencia de cobertura para cada combinacao modalidade/cobertura do produto caso haja alguma especificidade (de acordo com o dado "criterio de prazo de carencia diferenciada")
           maxLength: 500
         deductibleDays:
           type: integer
@@ -488,9 +509,36 @@ components:
         allowApartPurchase:
           type: boolean
           description: Indicar se a cobertura pode ser contratada isoladamente ou não.
-          example: true      
+          example: true
+        indemnityPaymentMode:
+          type: array
+          items:  
+            type: string
+            description: Modalidade de pagamento da indenização
+            enum: [UNICO, SOB_FORMA_DE_RENDA]  
+        indemnityPaymentIncome:
+          type: array
+          description: Tipo de Renda (caso modalidade de pagamento de indenização seja sob a forma de renda)
+          items:
+            type: string
+            enum: [CERTA,
+              TEMPORARIA,
+              TEMPORARIA_REVERSIVEL,
+              TEMPORARIO_MINIMO_GARANTIDO,
+              TEMPORARIA_REVERSIVEL_MINIMO_GARANTIDO,
+              VITALICIA,
+              VITALICIA_REVERSIVEL,
+              VITALICIA_MINIMO_GARANTIDO,
+              VITALICIA_REVERSIVEL_MINIMO_GARANTIDO
+              ]
+        ageAdjustment:
+          $ref: '#/components/schemas/PersonAgeAdjustment'
+  
     PersonPmbacRemuneration:
       type: object
+      required:
+        - interestRate
+        - pmbacUpdateIndex
       properties:
         interestRate:
           type: number
@@ -498,8 +546,13 @@ components:
         pmbacUpdateIndex:
           type: string
           description: Índice utilizado na atualização da PMBaC.
-          example: IPCA
-          enum: [IPCA, IGP-M,INPC]          
+          example: IPC-FGV
+          enum: [IPC-FGV, IGP-DI-FGV, IPCA-IBGE, IGPM-FGV, INPC-IBGE, TR, OUTROS]
+        pmbacIndexOthers:
+          type: string
+          description: Campo de livre preenchimento para quando a opção escolhida para o índice utilizado na atualização da PMBaC (campo anterior) for OUTROS.
+          maxLength: 100          
+
     PersonBenefitRecalculation:
       type: object
       required:
@@ -512,12 +565,17 @@ components:
         benefitUpdateIndex:
           type: string
           description: Índice utilizado na atualização do prêmio/contribuição e do capital segurado/ benefício,  caso critério de atualização por meio de índice  
-          enum: [IPCA, IGP-M ,INPC]
+          example: IPC-FGV
+          enum: [IPC-FGV, IGP-DI-FGV, IPCA-IBGE, IGPM-FGV, INPC-IBGE, TR, OUTROS]
+        benefitIndexOthers:
+          type: string
+          description: Campo de livre preenchimento para quando a opção escolhida para o índice utilizado na atualização do prêmio/contribuição e do capital segurado/benefício (campo anterior) for OUTROS.
+          maxLength: 100
+
     PersonAgeAdjustment:
       type: object
       required:
         - criterion
-        - frequency
       properties:
         criterion:
           type: string
@@ -527,6 +585,7 @@ components:
         frequency:
           type: integer
           description: Período em anos, caso critério de reenquadramento após ou a cada período em anos.
+
     personReclaimTable:
       type: object
       required:
@@ -546,9 +605,11 @@ components:
         percentage:
           type: number
           description: Percentual da faixa de resgate
+
     PersonReclaim:
       type: object
       required:
+        - reclaimTable
         - gracePeriod
       properties:
         reclaimTable:
@@ -561,6 +622,7 @@ components:
           description: Campo aberto (possibilidade de incluir URL).
         gracePeriod:
           $ref: '#/components/schemas/PersonGracePeriodUnit'
+
     PersonPremiumPayment:
       type: object
       required:
@@ -573,7 +635,12 @@ components:
             type: string
             description: Meio(s) de pagamento do Prêmio disponíveis 
             example: CARTAO_CREDITO
-            enum: [CARTAO_CREDITO , DEBITO_CONTA, DEBITO_CONTA_POUPANCA, BOLETO_BANCARIO, PIX, CARTAO_DEBITO, REGRA_PARCEIRO, CONSIGNACAO_FOLHA_PAGAMENTO, PONTOS_PROGRAMAS_BENEFICIO]
+            enum: [CARTAO_CREDITO, DEBITO_CONTA, DEBITO_CONTA_POUPANCA, BOLETO_BANCARIO, PIX, CARTAO_DEBITO, REGRA_PARCEIRO, CONSIGNACAO_FOLHA_PAGAMENTO, PONTOS_PROGRAMAS_BENEFICIO, TED_DOC, OUTROS]
+        paymentDetail:
+          description: Descrição de Meio(s) de pagamento do Prêmio disponíveis quando for informada a opção OUTROS.
+          type: string
+          maxLength: 100
+          example: OUTROS
         frequency:
           type: array
           items:
@@ -584,6 +651,7 @@ components:
         premiumTax:
           type: string
           description: Distribuição de frequência relativa aos valores referentes às taxas cobradas.
+          
     PersonMinimumRequirements:
         type: object
         required:
@@ -595,6 +663,8 @@ components:
              enum: [COLETIVO, INDIVIDUAL]
           contractingMinRequirement:
             type: string
+            description: Requisitos mínimos para contratação
+
     Links: 
       type: object
       properties:
@@ -623,6 +693,7 @@ components:
           description: URL da última página de registros
           pattern: ^(https:\/\/)(.*?)(\/open-insurance\/products-services\/v\d+)(\/person.*)?$
           example: 'https://api.organizacao.com.br/open-insurance/products-services/v1/person'
+
     Meta:
       type: object
       properties:
@@ -637,6 +708,7 @@ components:
       required:
         - totalRecords
         - totalPages
+
     ResponseError:
       type: object
       required:
@@ -680,6 +752,7 @@ components:
         meta:
           $ref: '#/components/schemas/Meta'
       additionalProperties: false    
+
   parameters:
     page:
       name: page
@@ -696,7 +769,7 @@ components:
       schema:
         type: integer
         default: 10
-        minimum: 1  
+        minimum: 1
     cnpjNumber:
       name: cnpjNumber
       in: path
@@ -746,7 +819,32 @@ components:
       description: Campo indica se o navegador deve ou não renderizar um frame.
       schema:
         type: string
-        pattern: '[\w\W\s]*' 
+        pattern: '[\w\W\s]*'
+    x-v:
+      name: x-v
+      in: header
+      description: |
+        Versão do endpoint da API requisitado pelo cliente. O titular dos dados deve 
+        responder com a versão mais alta suportada entre x-min-v e x-v. Se o valor de 
+        x-min-v for igual ou maior que o valor de x-v, o cabeçalho x-min-v deve ser 
+        tratado como ausente. Se todas as versões solicitadas não forem suportadas, 
+        o titular dos dados deve responder com o código de status 406 Not Acceptable.
+      required: false
+      schema:
+        type: string
+      example: '2.1.3'
+    x-min-v:
+      name: x-min-v
+      in: header
+      description: |
+        Versão mínima do endpoint da API requisitado pelo cliente. O detentor dos dados 
+        deve responder com a versão mais alta suportada entre x-min-v e x-v. Se todas as 
+        versões solicitadas não forem suportadas, o titular dos dados deve responder com 
+        um código de status 406 Not Acceptable.
+      required: false
+      schema:
+        type: string
+      example: '2.0.0'
   
   responses:
     UnprocessableEntity:

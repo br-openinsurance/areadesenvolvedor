@@ -1,10 +1,9 @@
-
 openapi: 3.0.0
 info:
   title: APIs Open Data do Open Insurance Brasil
   description:
     API de informações de dados do produto Credito Interno. Os recursos que podem ser consumidos pelos participantes conforme a regra 3.1.2 do manual de escopo de dados..
-  version: 1.1.0
+  version: 1.2.0
   contact:
     url: 'https://www.gov.br/susep/'
 servers:
@@ -87,6 +86,7 @@ components:
             $ref: '#/components/schemas/Links'
         meta:
             $ref: '#/components/schemas/Meta'
+
     DomesticCreditBrand:
       type: object
       description: Organizacao controladora do grupo.
@@ -101,6 +101,7 @@ components:
           example: ACME Group Seguros
         companies:
           $ref: '#/components/schemas/DomesticCreditCompany'
+
     DomesticCreditCompany:
       type: array
       items:
@@ -118,23 +119,23 @@ components:
             cnpjNumber:
                 type: string
                 description: CNPJ da sociedade pertencente à marca.
-                maxLength: 14
-                example: "12345678901234"
+                pattern: ^\d{14}$
+                example: '12345678901234'
             products:
                 $ref: '#/components/schemas/DomesticCreditProduct'
+
     DomesticCreditProduct:
       type: array
       description: Lista de produtos de uma empresa.
       items:
         type: object
         required:
-          - name
           - code
           - coverages
           - traits
           - validity
           - termsAndConditions
-          - minimumRequirements
+          - targetAudiences
         properties:
           name:
             type: string
@@ -153,12 +154,12 @@ components:
               required:
                 - coverage
                 - coverageDescription
+                - coverageAttributes
                 - allowApartPurchase
               properties:
                 coverage:
-                  description: Listagem de coberturas incluídas no produto que deve observar a relação discriminada de coberturas, conforme Tabela II.12 do Anexo II
+                  description: Listagem de coberturas incluídas no produto que deve observar a relação discriminada de coberturas.
                   type: string
-                  maxLength: 49
                   example: NAO_PAGAMENTO_DA_CARTEIRA_DE_CLIENTES_DO_SEGURADO
                   enum: [
                     NAO_PAGAMENTO_DA_CARTEIRA_DE_CLIENTES_DO_SEGURADO,
@@ -186,8 +187,13 @@ components:
               maxLength: 1024
           termsAndConditions:
             $ref: '#/components/schemas/DomesticCreditTerms'
-          minimumRequirements:
-            $ref: '#/components/schemas/DomesticCreditMinimumRequirements'
+          targetAudiences:
+            description: Público Alvo
+            type: array
+            items:
+              type: string
+              example: PESSOA_NATURAL
+              enum: [PESSOA_NATURAL, PESSOA_JURIDICA]
     
     DomesticCreditValidity:
       type: array
@@ -200,7 +206,6 @@ components:
             type: array
             items:
               type: string
-              maxLength: 23
               description: Prazo
               example: ANUAL
               enum: [ANUAL , ANUAL_INTERMITENTE , PLURIANUAL , PLURIANUAL_INTERMITENTE , MENSAL, MENSAL_INTERMITENTE , DIARIO , DIARIO_INTERMITENTE, OUTROS]
@@ -226,22 +231,6 @@ components:
           maxLength: 1024
           example: https://www.seguradora.com.br/produto/tradicional/pdf/condicoes_gerais.pdf
 
-    
-    DomesticCreditMinimumRequirements:
-      type: object
-      description: Requisitos mínimos.
-      required:
-        - targetAudiences
-      properties:
-        targetAudiences:
-          description: Público Alvo
-          type: array
-          items:
-            type: string
-            maxLength: 15
-            example: PESSOA_NATURAL
-            enum: [PESSOA_NATURAL, PESSOA_JURIDICA]
-    
     DomesticCreditCoverageAttributes:
       type: object
       description: Informações de cobertura do Seguro.
@@ -250,6 +239,7 @@ components:
       properties:
         maxLMI:
           $ref: '#/components/schemas/DomesticCreditLimit'
+        
 
     DomesticCreditLimit:
       type: object
