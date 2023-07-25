@@ -3,7 +3,7 @@ info:
   title: APIs Open Data do Open Insurance Brasil
   description:
     API de informações de Planos de Previdência e Seguros de Pessoas ambos com cobertura por sobrevivência (excluindo seguros Dotais). Os recursos que podem ser consumidos pelos participantes conforme a regra 3.1.1 do manual de escopo de dados.
-  version: 1.3.0
+  version: 1.4.0
   contact:
     url: 'https://www.gov.br/susep/'
 servers:
@@ -90,6 +90,7 @@ components:
           $ref: '#/components/schemas/Links'
         meta:
           $ref: '#/components/schemas/Meta'
+
     LifePensionBrand:
       type: object
       description: Organização controladora do grupo.
@@ -103,6 +104,7 @@ components:
           example: EMPRESA
         companies:
           $ref: '#/components/schemas/LifePensionCompany'  
+
     LifePensionCompany:
       type: array
       items:
@@ -119,9 +121,11 @@ components:
           cnpjNumber:
             type: string
             description: CNPJ da sociedade pertencente à marca.
-            example: '45086338000178'
+            pattern: ^\d{14}$
+            example: '12345678901234'
           products:          
             $ref: '#/components/schemas/LifePensionProduct'
+
     LifePensionProduct:
         type: array
         items:
@@ -130,7 +134,9 @@ components:
             - name
             - code
             - segment
+            - type
             - modality
+            - productDetails
             - minimumRequirements
             - targetAudience
           properties:
@@ -161,7 +167,7 @@ components:
               enum: [CONTRIBUICAO_VARIAVEL , BENEFICIO_DEFINIDO]
             optionalCoverage:
               type: string
-              description: Campo aberto (possibilidade de incluir URL).
+              description: Campo aberto (possibilidade de incluir URL) para a descricao das coberturas de risco (previdencia) comercializadas facultativamente a cobertura de sobrevivencia
               maxLength: 1024
             productDetails:
               $ref: '#/components/schemas/LifePensionProductDetails'
@@ -172,6 +178,7 @@ components:
               description: Público-alvo.
               example: PESSOA_NATURAL
               enum: [PESSOA_NATURAL, PESSOA_JURIDICA]
+
     LifePensionProductDetails:
       type: array
       items:
@@ -191,7 +198,7 @@ components:
             contractTermsConditions:
               type: string
               description: Campo aberto (possibilidade de incluir URL).
-              example: https://example.com/mobilebanking
+              example: https://www.seguradora.com.br/produto/pdf/condicoes_gerais.pdf
               maxLength: 1024
             defferalPeriod:
               $ref: '#/components/schemas/LifePensionDefferalPeriod'
@@ -199,14 +206,16 @@ components:
               $ref: '#/components/schemas/LifePensionPeriodGrantBenefit'
             costs:
               $ref: '#/components/schemas/LifePensionCosts'
+
     LifePensionDefferalPeriod:
       type: object
       required:
         - interestRate
         - updateIndex
-        - otherMinimumPerformanceGarantees
         - reversalFinancialResults
         - minimumPremiumAmount
+        - premiumPaymentMethod
+        - permissionExtraordinaryContributions
         - permissonScheduledFinancialPayments
         - gracePeriodRedemption
         - gracePeriodBetweenRedemptionRequests
@@ -214,6 +223,7 @@ components:
         - gracePeriodPortability
         - gracePeriodBetweenPortabilityRequests
         - portabilityPaymentTerm
+        - investmentFunds
       properties:
         interestRate:
           type: number
@@ -226,11 +236,20 @@ components:
           description: Indice garantido que remunera o plano durante a fase de diferimento/ acumulação.
           example: IPCA
           enum: [IPCA,IGP-M,INPC, NAO_SE_APLICA]
-        otherMinimumPerformanceGarantees:
+        otherMinGuaranteesIndex:
           type: string
-          description: Para produtos do tipo PDR e VDR, indicação do percentual e do índice de ampla divulgação utilizados como garantia mínima de desempenho. Em %.
+          description: |
+            Para produtos do tipo PDR e VDR, indicação do índice de ampla divulgação
+            utilizados como garantia mínima de desempenho.
           example: SELIC
-          maxLength: 12
+          maxLength: 15
+        otherMinGuaranteesPercentage:
+          type: string
+          description: |
+            Para produtos do tipo PDR e VDR, indicação do percentual do índice de ampla
+            divulgação utilizados como garantia mínima de desempenho. Exemplo 1.000000 igual a 100 por cento
+          pattern: ^\d{1}\.\d{6}$
+          example: '1.000000'
         reversalFinancialResults:
           type: number
           description: Percentual de reversão de excedente financeiro no período de diferimento.
@@ -241,11 +260,9 @@ components:
           items:
             type: object
             description: Valor mínimo em R$ de prêmio/ contribuição aceita pela sociedade ao plano (identificar valor mensal e/ou aporte único).
-            example: {
-              minimumPremiumAmountValue: 250,
-              minimumPremiumAmountDescription: ''
-            }
-            maxLength: 100
+            required:
+              - minimumPremiumAmountValue
+              - minimumPremiumAmountDescription
             properties:
               minimumPremiumAmountValue:
                 type: number
@@ -264,6 +281,11 @@ components:
             description: Meio de pagamento escolhido pelo segurado.
             example: CARTAO_CREDITO
             enum: [CARTAO_CREDITO, DEBITO_CONTA, DEBITO_CONTA_POUPANCA, BOLETO_BANCARIO, PIX, CARTAO_DEBITO, REGRA_PARCEIRO, CONSIGNACAO_FOLHA_PAGAMENTO, PONTOS_PROGRAMA_BENEFICIO, TED_DOC, OUTROS]
+        paymentDetail:
+          description: Descrição de Meio(s) de pagamento do Prêmio disponíveis quando for informada a opção OUTROS.
+          type: string
+          maxLength: 100
+          example: OUTROS
         permissionExtraordinaryContributions:
           type: boolean
           description: Se ficam permitidos aportes extraordinários.
@@ -304,9 +326,10 @@ components:
           example: 20
         investmentFunds:
           $ref: '#/components/schemas/LifePensionInvestmentFunds'
+
     LifePensionInvestmentFunds:
         type: array
-        description: Lista com as informações do(s) Fundo(s) de Investimento(s) disponíveis para o período de diferimento/acumulação.
+        description: Lista com as informações do(s) Fundo(s) de Investimento(s) disponíveis para o período de diferimento/acumulação ou de concessão.
         items:
             type: object
             required:
@@ -314,12 +337,13 @@ components:
               - companyName
               - maximumAdministrationFee
               - typePerformanceFee
+              - eligibilityRule
             properties:
                 cnpjNumber:
                   type: string
                   description: Número de CNPJ.
-                  example: '13.456.789/0001-12'
-                  maxLength: 18
+                  pattern: ^\d{14}$
+                  example: '12345678901234'
                 companyName:
                   type: string
                   description: Nome Fantasia.
@@ -361,6 +385,7 @@ components:
                   description: Valor Mínimo Provisão Matemática. Caso a Regra de Elegibilidade SIM.
                   maxLength: 5
                   example: 1000
+
     LifePensionPeriodGrantBenefit:
       type: object
       required:
@@ -400,6 +425,7 @@ components:
           maxLength: 8
         investmentFunds:
           $ref: '#/components/schemas/LifePensionInvestmentFunds'
+
     LifePensionCosts:
       type: object
       required:
@@ -407,9 +433,14 @@ components:
         - loadingLate
       properties:
         loadingAntecipated:
-          $ref: '#/components/schemas/LifePensionLoading'
+          description: Percentual de carregamento cobrado quando do pagamento do premio/contribuicao. Para coletivos Valor maximo
+          allOf:
+            - $ref: '#/components/schemas/LifePensionLoading'
         loadingLate:
-          $ref: '#/components/schemas/LifePensionLoading'
+          description: Percentual de taxa de carregamento cobrado quando da efetivacao de resgate ou portabilidade. Para coletivos Valor maximo
+          allOf:
+            - $ref: '#/components/schemas/LifePensionLoading'
+
     LifePensionLoading:
       type: object
       required:
@@ -426,6 +457,7 @@ components:
           description: alor máximo em %.
           example: 10
           maxLength: 8
+
     LifePensionMinimumRequirements:
       type: object
       required:
@@ -446,8 +478,9 @@ components:
         minRequirementsContract:
           type: string
           description: Campo aberto contendo todos os requisitos mínimos para contratação (possibilidade de incluir URL).
-          example: https://example.com/mobile-banking
+          example: https://www.seguradora.com.br/produto/pdf/min_contrato.pdf
           maxLength: 1024
+
     Links:
       type: object
       properties:
@@ -476,6 +509,7 @@ components:
           description: URL da última página de registros
           pattern: ^(https:\/\/)(.*?)(\/open-insurance\/products-services\/v\d+)(\/life-pension.*)?$
           example: 'https://api.organizacao.com.br/open-insurance/products-services/v1/life-pension'
+
     Meta:
       type: object
       properties:
@@ -490,6 +524,7 @@ components:
       required:
         - totalRecords
         - totalPages
+
     ResponseError:
       type: object
       required:
@@ -533,6 +568,7 @@ components:
         meta:
           $ref: '#/components/schemas/Meta'
       additionalProperties: false
+
   parameters:
     page:
       name: page
