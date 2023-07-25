@@ -1,10 +1,9 @@
-
 openapi: 3.0.0
 info:
   title: APIs Open Data do Open Insurance Brasil
   description:
     API de informações de dados do produto Risco Financeiro. Os recursos que podem ser consumidos pelos participantes conforme a regra 3.1.2 do manual de escopo de dados..
-  version: 1.1.0
+  version: 1.2.0
   contact:
     url: 'https://www.gov.br/susep/'
 servers:
@@ -87,6 +86,7 @@ components:
             $ref: '#/components/schemas/Links'
         meta:
             $ref: '#/components/schemas/Meta'
+
     FinancialRiskBrand:
       type: object
       description: Organizacao controladora do grupo.
@@ -101,6 +101,7 @@ components:
           example: ACME Group Seguros
         companies:
           $ref: '#/components/schemas/FinancialRiskCompany'
+
     FinancialRiskCompany:
       type: array
       items:
@@ -118,10 +119,11 @@ components:
             cnpjNumber:
                 type: string
                 description: CNPJ da sociedade pertencente à marca.
-                maxLength: 14
-                example: "12345678901234"
+                pattern: ^\d{14}$
+                example: '12345678901234'
             products:
                 $ref: '#/components/schemas/FinancialRiskProduct'
+
     FinancialRiskProduct:
       type: array
       description: Lista de produtos de uma empresa.
@@ -133,7 +135,7 @@ components:
           - traits
           - validity
           - termsAndConditions
-          - minimumRequirements
+          - targetAudiences
         properties:
           name:
             type: string
@@ -157,8 +159,7 @@ components:
               properties:
                 coverage:
                   type: string
-                  maxLength: 24
-                  description: Listagem de coberturas incluídas no produto que deve observar a relação discriminada de coberturas, conforme Tabela II.12 do Anexo II
+                  description: Listagem de coberturas incluídas no produto que deve observar a relação discriminada de coberturas
                   enum: [PROTECAO_DE_BENS,
                       PROTECAO_DE_DADOS_ONLINE,
                       SAQUE_COMPRA_SOB_COACAO,
@@ -185,12 +186,17 @@ components:
             type: array
             description: Distribuição de frequência relativa aos valores referentes às taxas cobradas
             items:
-                type: string
-                maxLength: 1024
+              type: string
+              maxLength: 1024
           termsAndConditions:
             $ref: '#/components/schemas/FinancialRiskTerms'
-          minimumRequirements:
-            $ref: '#/components/schemas/FinancialRiskMinimumRequirements'
+          targetAudiences:
+            description: Público Alvo
+            type: array
+            items:
+              type: string
+              example: PESSOA_NATURAL
+              enum: [PESSOA_NATURAL, PESSOA_JURIDICA]
     
     FinancialRiskValidity:
       type: array
@@ -203,7 +209,6 @@ components:
             type: array
             items:
               type: string
-              maxLength: 23
               description: Prazo
               example: ANUAL
               enum: [ANUAL , ANUAL_INTERMITENTE , PLURIANUAL , PLURIANUAL_INTERMITENTE , MENSAL, MENSAL_INTERMITENTE , DIARIO , DIARIO_INTERMITENTE, OUTROS]
@@ -228,22 +233,6 @@ components:
           description: Campo aberto (possibilidade de incluir uma url).
           maxLength: 1024
           example: https://www.seguradora.com.br/produto/tradicional/pdf/condicoes_gerais.pdf
-
-    
-    FinancialRiskMinimumRequirements:
-      type: object
-      description: Requisitos mínimos.
-      required:
-        - targetAudiences
-      properties:
-        targetAudiences:
-          description: Público Alvo
-          type: array
-          items:
-            type: string
-            maxLength: 15
-            example: PESSOA_NATURAL
-            enum: [PESSOA_NATURAL, PESSOA_JURIDICA]
     
     FinancialRiskCoverageAttributes:
       type: object
@@ -253,7 +242,7 @@ components:
       properties:
         maxLMI:
           $ref: '#/components/schemas/FinancialRiskLimit'
-
+      
     FinancialRiskLimit:
       type: object
       description: Lista com valor de LMI aceito pela sociedade para cada cobertura.

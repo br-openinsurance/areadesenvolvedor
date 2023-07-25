@@ -1,10 +1,9 @@
- 
 openapi: 3.0.0
 info:
   title: APIs Open Data do Open Insurance Brasil
   description:
     API de informações de dados do produto Garantia Estendida. Os recursos que podem ser consumidos pelos participantes conforme a regra 3.1.2 do manual de escopo de dados..
-  version: 1.1.0
+  version: 1.2.0
   contact:
     url: 'https://www.gov.br/susep/'
 servers:
@@ -87,6 +86,7 @@ components:
             $ref: '#/components/schemas/Links'
         meta:
             $ref: '#/components/schemas/Meta'
+
     ExtendedWarrantyBrand:
       type: object
       description: Organizacao controladora do grupo.
@@ -101,6 +101,7 @@ components:
           example: ACME Group Seguros
         companies:
           $ref: '#/components/schemas/ExtendedWarrantyCompany'
+
     ExtendedWarrantyCompany:
       type: array
       items:
@@ -118,10 +119,11 @@ components:
             cnpjNumber:
                 type: string
                 description: CNPJ da sociedade pertencente à marca.
-                maxLength: 14
+                pattern: ^\d{14}$
                 example: '12345678901234'
             products:
                 $ref: '#/components/schemas/ExtendedWarrantyProduct'
+
     ExtendedWarrantyProduct:
       type: array
       description: Lista de produtos de uma empresa.
@@ -140,6 +142,7 @@ components:
           - premiumPayment
           - termsAndConditions
           - minimumRequirements
+          - targetAudiences
         properties:
           name:
             type: string
@@ -158,6 +161,7 @@ components:
               required:
                 - coverage
                 - coverageDescription
+                - coverageAttributes
                 - allowApartPurchase
               properties:
                 coverage:
@@ -172,7 +176,7 @@ components:
                 coverageDescription:
                   type: string
                   maxLength: 3000
-                  description: Campo aberto para detalhamento de cada uma das coberturas possíveis dos produtosss
+                  description: Campo aberto para detalhamento de cada uma das coberturas possíveis dos produtos
                 coverageAttributes:
                    $ref: '#/components/schemas/ExtendedWarrantyCoverageAttributes'
                 allowApartPurchase:
@@ -222,14 +226,19 @@ components:
             $ref: '#/components/schemas/ExtendedWarrantyTerms'
           minimumRequirements:
             $ref: '#/components/schemas/ExtendedWarrantyMinimumRequirements'
+          targetAudiences:
+            description: Público Alvo
+            type: array
+            items:
+              type: string
+              description: Público-alvo
+              example: PESSOA_NATURAL
+              enum: [PESSOA_NATURAL, PESSOA_JURIDICA]
     
     ExtendedWarrantyAssistanceServices:
       type: object
       required:
         - assistanceServices
-        - assistanceServicesPackage
-        - complementaryAssistanceServicesDetail
-        - chargeTypeSignaling
       properties: 
         assistanceServices:
           type: boolean
@@ -243,8 +252,7 @@ components:
             enum: [ATE_10_SERVICOS,
               ATE_20_SERVICOS,
               ACIMA_DE_20_SERVICOS,
-              CUSTOMIZAVEL
-            ]
+              CUSTOMIZAVEL]
         complementaryAssistanceServicesDetail:
           type: string
           maxLength: 1000
@@ -255,7 +263,6 @@ components:
           example: GRATUITO
           enum: [GRATUITO, PAGO]
 
-    
     ExtendedWarrantyValidity:
       type: array
       items:
@@ -308,9 +315,9 @@ components:
               example: A_VISTA
               enum: [A_VISTA, PARCELADO]
           premiumRates:
-              description: Distribuição de frequência relativa aos valores referentes às taxas cobradas.
-              type: string
-              maxLength: 1024
+            description: Distribuição de frequência relativa aos valores referentes às taxas cobradas.
+            type: string
+            maxLength: 1024
         
     ExtendedWarrantyTerms:
       type: object
@@ -329,14 +336,12 @@ components:
           maxLength: 1024
           example: https://www.seguradora.com.br/produto/tradicional/pdf/condicoes_gerais.pdf   
 
-    
     ExtendedWarrantyMinimumRequirements:
       type: object
       description: Requisitos mínimos.
       required:
         - contractType
         - minimumRequirementDetails
-        - targetAudiences
       properties:
         contractType:
           type: array
@@ -349,16 +354,7 @@ components:
           type: string
           description: Campo aberto contendo todos os requisitos mínimos para contratação (possibilidade de incluir URL).
           maxLength: 1024
-          example: https://openinsurance.com.br/aaa
-        targetAudiences:
-          description: Público Alvo
-          type: array
-          items:
-            type: string
-            description: Público-alvo
-            example: PESSOA_NATURAL
-            enum: [PESSOA_NATURAL, PESSOA_JURIDICA]
-    
+          example: https://www.seguradora.com.br/produto/requisitos.pdf  
     ExtendedWarrantyCoverageAttributes:
       type: object
       description: Informações de cobertura do Seguro.
@@ -379,6 +375,7 @@ components:
           type: string
           maxLength: 1024
           description: Lista com descrição referente ao campo “Participação do Segurado” para cada cobertura.
+       
 
     ExtendedWarrantyLimit:
       type: object

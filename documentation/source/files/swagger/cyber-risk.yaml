@@ -3,7 +3,7 @@ info:
   title: APIs Open Data do Open Insurance Brasil
   description:
     API de informações de dados do produto Risco Cibernético. Os recursos que podem ser consumidos pelos participantes conforme a regra 3.1.2 do manual de escopo de dados..
-  version: 1.1.0
+  version: 1.2.0
   contact:
     url: 'https://www.gov.br/susep/'
 servers:
@@ -86,6 +86,7 @@ components:
             $ref: '#/components/schemas/Links'
         meta:
             $ref: '#/components/schemas/Meta'
+
     CyberRiskBrand:
       type: object
       description: Organizacao controladora do grupo.
@@ -100,6 +101,7 @@ components:
           example: ACME Group Seguros
         companies:
           $ref: '#/components/schemas/CyberRiskCompany'
+
     CyberRiskCompany:
       type: array
       items:
@@ -117,10 +119,11 @@ components:
             cnpjNumber:
                 type: string
                 description: CNPJ da sociedade pertencente à marca.
-                maxLength: 14
-                example: "12345678901234"
+                pattern: ^\d{14}$
+                example: '12345678901234'
             products:
                 $ref: '#/components/schemas/CyberRiskProduct'
+
     CyberRiskProduct:
       type: array
       description: Lista de produtos de uma empresa.
@@ -135,8 +138,10 @@ components:
           - maxLMG 
           - traits
           - validity
+          - premiumPayment
           - termsAndConditions
           - minimumRequirements
+          - targetAudiences
         properties:
           name:
             type: string
@@ -160,7 +165,7 @@ components:
               properties:
                 coverage:
                   type: string
-                  description: Listagem de coberturas incluídas no produto que deve observar a relação discriminada de coberturas, conforme Tabela II.9 do Anexo II.
+                  description: Listagem de coberturas incluídas no produto que deve observar a relação discriminada de coberturas.
                   enum: [ RESPONSABILIDADE_CIVIL_PERANTE_TERCEIROS,
                     PERDAS_DIRETAS_AO_SEGURADO,
                     GERENCIAMENTO_DE_CRISE,
@@ -202,7 +207,14 @@ components:
             $ref: '#/components/schemas/CyberRiskTerms'
           minimumRequirements:
             $ref: '#/components/schemas/CyberRiskMinimumRequirements'
-    
+          targetAudiences:
+            description: Público Alvo
+            type: array
+            items:
+              type: string
+              example: PESSOA_NATURAL
+              enum: [PESSOA_NATURAL, PESSOA_JURIDICA]
+
     CyberRiskValidity:
       type: array
       items:
@@ -277,7 +289,7 @@ components:
             description: Distribuição de frequência relativa aos valores referentes às taxas cobradas, nos termos do Anexo III.
             type: string
             maxLength: 1024
-    
+
     CyberRiskTerms:
       type: object
       description: Informações dos termos e condições conforme número do processo SUSEP.
@@ -295,14 +307,12 @@ components:
           maxLength: 1024
           example: https://www.seguradora.com.br/produto/tradicional/pdf/condicoes_gerais.pdf
 
-    
     CyberRiskMinimumRequirements:
       type: object
       description: Requisitos mínimos.
       required:
         - contractType
         - minimumRequirementDetails
-        - targetAudiences
       properties:
         contractType:
           type: array
@@ -313,13 +323,6 @@ components:
           type: string
           maxLength: 1024
           description: Campo aberto contendo todos os requisitos mínimos para contratação (possibilidade de incluir URL).       
-        targetAudiences:
-          description: Público Alvo
-          type: array
-          items:
-            type: string
-            example: PESSOA_NATURAL
-            enum: [PESSOA_NATURAL, PESSOA_JURIDICA]
     
     CyberRiskCoverageAttributes:
       type: object
@@ -354,7 +357,7 @@ components:
           type: string
           maxLength: 100
           description: Campo livre para descrição, caso o valor do campo '"Base de indenização' seja 3. Outros
-            
+        
     CyberRiskLimit:
       type: object
       description: Lista com valor máximo/mínimo de LMI/LA aceito pela sociedade para cada cobertura.

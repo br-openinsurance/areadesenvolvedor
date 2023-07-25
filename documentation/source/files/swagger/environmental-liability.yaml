@@ -1,10 +1,9 @@
-
 openapi: 3.0.0
 info:
   title: APIs Open Data do Open Insurance Brasil
   description:
     API de informações de dados do produto Responsabilidade Ambiental. Os recursos que podem ser consumidos pelos participantes conforme a regra 3.1.2 do manual de escopo de dados..
-  version: 1.1.0
+  version: 1.2.0
   contact:
     url: 'https://www.gov.br/susep/'
 servers:
@@ -87,6 +86,7 @@ components:
             $ref: '#/components/schemas/Links'
         meta:
             $ref: '#/components/schemas/Meta'
+
     EnvironmentalLiabilityBrand:
       type: object
       description: Organizacao controladora do grupo.
@@ -101,6 +101,7 @@ components:
           example: ACME Group Seguros
         companies:
           $ref: '#/components/schemas/EnvironmentalLiabilityCompany'
+
     EnvironmentalLiabilityCompany:
       type: array
       items:
@@ -118,10 +119,11 @@ components:
             cnpjNumber:
                 type: string
                 description: CNPJ da sociedade pertencente à marca.
-                maxLength: 14
-                example: "12345678901234"
+                pattern: ^\d{14}$
+                example: '12345678901234'
             products:
                 $ref: '#/components/schemas/EnvironmentalLiabilityProduct'
+
     EnvironmentalLiabilityProduct:
       type: array
       description: Lista de produtos de uma empresa.
@@ -134,8 +136,12 @@ components:
           - traits
           - maxLMG
           - maxLMGDescription
+          - assistanceServices
           - validity
           - premiumPayment
+          - termsAndConditions
+          - minimumRequirements
+          - targetAudiences
         properties:
           name:
             type: string
@@ -147,7 +153,6 @@ components:
             description: Código único a ser definido pela sociedade.
             maxLength: 100
             example: "01234589-0"
-          
           coverages:
             type: array
             items:
@@ -155,6 +160,7 @@ components:
               required:
                 - coverage
                 - coverageDescription
+                - coverageAttributes
                 - allowApartPurchase
               properties:
                 coverage:
@@ -200,6 +206,12 @@ components:
             $ref: '#/components/schemas/EnvironmentalLiabilityTerms'
           minimumRequirements:
             $ref: '#/components/schemas/EnvironmentalLiabilityMinimumRequirements'
+          targetAudiences:
+            type: array
+            items:
+              type: string
+              example: PESSOA_NATURAL
+              enum: [PESSOA_NATURAL, PESSOA_JURIDICA]
     
     EnvironmentalLiabilityAssistanceServices:
       type: array
@@ -259,7 +271,7 @@ components:
             description: Distribuição de frequência relativa aos valores referentes às taxas cobradas, nos termos do Anexo III.
             type: string
             maxLength: 1024
-    
+            
     EnvironmentalLiabilityValidity:
       type: array
       items:
@@ -295,14 +307,12 @@ components:
           maxLength: 1024
           example: https://www.seguradora.com.br/produto/tradicional/pdf/condicoes_gerais.pdf
 
-    
     EnvironmentalLiabilityMinimumRequirements:
       type: object
       description: Requisitos mínimos.
       required:
         - contractType
         - minimumRequirementDetails
-        - targetAudiences
       properties:
         contractType:
           type: array
@@ -313,24 +323,21 @@ components:
           type: string
           description: Campo aberto contendo todos os requisitos mínimos para contratação (possibilidade de incluir URL).
           maxLength: 1024
-          example: https://openinsurance.com.br/aaa
-        targetAudiences:
-          type: array
-          items:
-            type: string
-            example: PESSOA_NATURAL
-            enum: [PESSOA_NATURAL, PESSOA_JURIDICA]
+          example: https://www.seguradora.com.br/produto/requisitos.pdf
     
     EnvironmentalLiabilityCoverageAttributes:
       type: object
       description: Informações de cobertura do Seguro Residencial.
       required:
-       - maxLMI
-       - insuredParticipation
-       - idenizationBasis
+        - maxLMI
+        - maxLA
+        - insuredParticipation
+        - idenizationBasis
       properties:
         maxLMI:
           $ref: '#/components/schemas/EnvironmentalLiabilityLimit'
+        maxLA:
+          $ref: '#/components/schemas/EnvironmentalLiabilityCoverageAttributesDetails'   
         insuredParticipation:
           type: array
           description: Lista com indicativo do tipo de participação do segurado para cada cobertura.
@@ -351,7 +358,7 @@ components:
           type: string
           description: Campo livre para descrição, caso o valor do campo "Base de indenização" seja 3. Outros
           maxLength: 3000
-
+        
     EnvironmentalLiabilityLimit:
       type: object
       description: Lista com valor de LMI aceito pela sociedade para cada cobertura.

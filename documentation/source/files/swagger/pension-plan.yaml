@@ -3,7 +3,7 @@ info:
   title: APIs Open Data do Open Insurance Brasil
   description: 
     API de informações de Plano de Previdência com cobertura de risco. Os recursos que podem ser consumidos pelos participantes conforme a regra 3.1.2 do manual de escopo de dados.
-  version: 1.1.0
+  version: 1.2.0
   contact:
     url: 'https://www.gov.br/susep/'
 servers:
@@ -30,6 +30,8 @@ paths:
         - $ref: "#/components/parameters/x-Frame-Options"
         - $ref: "#/components/parameters/page"
         - $ref: "#/components/parameters/pageSize"
+        - $ref: "#/components/parameters/x-v"
+        - $ref: "#/components/parameters/x-min-v"
       responses:
         '200':
           description: Dados dos Plano de Previdência com cobertura de risco
@@ -96,6 +98,7 @@ components:
           $ref: '#/components/schemas/Links'
         meta:
           $ref: '#/components/schemas/Meta'
+
     PensionPlanBrand:
       type: object
       description: Organização controladora do grupo.
@@ -109,6 +112,7 @@ components:
           example: EMPRESA
         companies:
           $ref: '#/components/schemas/PensionPlanCompany'  
+
     PensionPlanCompany:
       type: array
       items:
@@ -125,9 +129,11 @@ components:
           cnpjNumber:
             type: string
             description: CNPJ da sociedade pertencente à marca.
-            example: '45086338000178'
+            pattern: ^\d{14}$
+            example: '12345678901234'
           products:          
             $ref: '#/components/schemas/PensionPlanProduct'
+
     PensionPlanProduct:
       type: array
       description: Produtos de Seguro de Automóveis.
@@ -139,8 +145,8 @@ components:
           - coverages
           - termsAndConditions
           - premiumUpdateIndex
-          - financialRegimeContractType
-          - otherGuarateedValues
+          - ageReframing
+          - otherGuaranteedValues
           - contributionPayment
           - minimumRequirements
           - targetAudience
@@ -158,20 +164,11 @@ components:
             items:
               type: object
               required:
-                - modality
+                - coverage
+                - coveragesAttributes
+                - coveragePeriod
+                - financialRegimeContractType
               properties:
-                modality:
-                  type: string
-                  description: Modalidade da cobertura.
-                  example: RENDA
-                  enum: [PECULIO,
-                        RENDA,
-                        PENSAO_PRAZO_CERTO,
-                        PENSAO_MENORES_21,
-                        PENSAO_MENORES_24,
-                        PENSAO_CONJUGE_VITALICIA,
-                        PENSAO_CONJUGE_TEMPORARIA
-                        ]
                 coverage:        
                   type: string
                   description: Formas de coberturas.
@@ -186,7 +183,12 @@ components:
                     type: string
                     example: VITALICIA
                     enum: [VITALICIA, TEMPORARIA]
-          additional:         
+                financialRegimeContractType:
+                  type: string
+                  description: Listagem de regime financeiro para cada combinação de modalidade/cobertura do produto
+                  example: REPARTICAO_SIMPLES
+                  enum: [REPARTICAO_SIMPLES, REPARTICAO_CAPITAIS_COBERTURA, CAPITALIZACAO]
+          additional:
             type: string
             description: Adicional ao plano.
             enum: [SORTEIO, OUTROS]
@@ -268,14 +270,9 @@ components:
             enum: [IPCA, IGPM, INPC]
           ageReframing:
             $ref: '#/components/schemas/PensionPlanAgeReframing'
-          financialRegimeContractType:
-            type: string
-            description: Tipo de contratação de regime financeiro.
-            example: REPARTICAO_SIMPLES
-            enum: [REPARTICAO_SIMPLES, REPARTICAO_CAPITAIS_COBERTURA, CAPITALIZACAO]
           reclaim:
             $ref: '#/components/schemas/PensionPlanReclaim'
-          otherGuarateedValues:
+          otherGuaranteedValues:
             type: string
             description: Outros valores garantidos.
             example: SALDAMENTO
@@ -291,6 +288,7 @@ components:
             type: string
             example: PESSOA_NATURAL
             enum: [PESSOA_NATURAL, PESSOA_JURIDICA]           
+
     PensionPlanTerms:
       type: object
       description: Informações dos termos e condições conforme número do processo SUSEP.
@@ -305,7 +303,8 @@ components:
         definition:
           type: string
           description: Campo aberto (possibilidade de incluir uma url).
-          example: wwww.seguradora.com.br/termos
+          example: https://www.seguradora.com.br/produto/tradicional/pdf/condicoes_gerais.pdf
+
     PensionPlanCoverageAttributesDetailsUnit:
       type: object
       required:
@@ -318,6 +317,7 @@ components:
         description:
           type: string
           description: Descrição da unidade de medida
+
     PensionPlanCoverageAttributesDetails:
         type: object
         description: Valor mínimo/máximo de cobertura diária ou parcelada. Em reais.
@@ -330,25 +330,38 @@ components:
             example: 14
           unit:
             $ref: '#/components/schemas/PensionPlanCoverageAttributesDetailsUnit'
+
     PensionPlanCoverageAttributes:
       type: object
       description: Atributos da cobertura.
       required:
+       - modality
        - indenizationPaymentMethod
        - minValue
        - maxValue
-       - indemnifiableDeadline
        - currency
        - gracePeriod
        - excludedRisk
-       - excludedRiskURL
-       - profitModality
       properties:
-        indenizationPaymentMethod:
+        modality:
           type: string
+          description: Modalidade da cobertura.
+          example: RENDA
+          enum: [PECULIO,
+                RENDA,
+                PENSAO_PRAZO_CERTO,
+                PENSAO_MENORES_21,
+                PENSAO_MENORES_24,
+                PENSAO_CONJUGE_VITALICIA,
+                PENSAO_CONJUGE_TEMPORARIA
+                ]
+        indenizationPaymentMethod:
+          type: array
           description: Forma de pagamento da indenização.
-          example: PAGAMENTO_UNICO
-          enum: [PAGAMENTO_UNICO, FORMA_RENDA]
+          items:
+            type: string
+            example: PAGAMENTO_UNICO
+            enum: [PAGAMENTO_UNICO, FORMA_RENDA]
         minValue:
           $ref: '#/components/schemas/PensionPlanCoverageAttributesDetails'
         maxValue:
@@ -374,35 +387,35 @@ components:
           description: Riscos excluídos.
           items:
             type: string
-            enum: [ATO_RECONHECIMENTO_PERIGOSO, ATO_ILICITO_DOLOSO_PRATICADO_SEGURADO, OPERACOES_DE_GUERRA, FURACOES_CICLONES_TERREMOTOS, MATERIAL_NUCLEAR, DOENCAS_LESOES_PREEXISTENTES, EPIDEMIAS_PANDEMIAS, SUICIDIO, ATO_ILICITO_DOLOSO_PRATICADO_CONTROLADOR, OUTROS]
+            enum: [ATO_RECONHECIMENTO_PERIGOSO, ATO_ILICITO_DOLOSO_PRATICADO_SEGURADO, OPERACOES_DE_GUERRA, FURACOES_CICLONES_TERREMOTOS, MATERIAL_NUCLEAR, DOENCAS_LESOES_PREEXISTENTES, EPIDEMIAS_PANDEMIAS, SUICIDIO, ATO_ILICITO_DOLOSO_PRATICADO_CONTROLADOR, OUTROS, NAO_SE_APLICA]
         excludedRiskURL:
           type: string
           description: Campo aberto (possibilidade de incluir URL)
-        profitModality:
-          type: string
-          description: Modalidade de pagamento da indenização.
-          enum: [PAGAMENTO_UNICO, FORMA_RENDA]
-    PensionPlanUpdatePMBaC:     
+       
+       
+
+    PensionPlanUpdatePMBaC:
       type: object
       description: Atualização/ Remuneração da PMaC.
       required:
         - interestRate
+        - updateIndex
       properties:
         interestRate:
           type: number
-          description: Taxa de juros para capitalização da PMBaC PMBC.
+          description: Taxa de juros para capitalização da PMBaC.
           example: 14
         updateIndex:
           type: string
           description: Índice utilizado na atualização da PMBaC.
           example: IPCA
           enum: [IPCA, IGPM, INPC]
+
     PensionPlanAgeReframing:     
       type: object
       description: Reenquadramento etário.
       required:
         - reframingCriterion
-        - reframingPeriodicity
       properties:
         reframingCriterion:
           type: string
@@ -413,6 +426,7 @@ components:
           type: integer
           description: Período em anos para reenquadramento etário.
           example: 10
+
     PensionPlanReclaim:     
       type: object
       description: Resgate.
@@ -424,13 +438,9 @@ components:
           description: Percentual de resgate para PMBaC para cada conjunto aplicável.
           items:
             $ref: '#/components/schemas/PensionPlanReclaimTable'
-        differentiatedPercentage: 
-          type: string
-          description: Campo aberto (possibilidade de incluir URL)
         gracePeriod:
-          type: string
-          description: Prazo de carência em dias para resgate.
-          example: 20/Não se aplica
+          $ref: '#/components/schemas/PensionPlanGracePeriod'
+
     PensionPlanReclaimTable: 
       type: object
       required: 
@@ -446,7 +456,11 @@ components:
           description: Mês final do range
         percentage:
           type: string
-          description: Percentual da faixa de resgate
+          description: Percentual da faixa de resgate da PMBaC para cada conjunto de prazo aplicável.
+        differentiatedPercentage:
+          type: string
+          description: Campo aberto (possibilidade de incluir URL), caso o percentual de resgate não siga o padrão apenas no que se refere ao critério temporal padronizado no campo “Resgate-Percentual”
+
     PensionPlanContributionPayment:     
       type: object
       description: Pagamento da contribuição.
@@ -460,7 +474,12 @@ components:
           items:
             type: string
             example: CARTAO_CREDITO
-            enum: [CARTAO_CREDITO, DEBITO_CONTA, DEBITO_CONTA_POUPANCA, BOLETO_BANCARIO, PIX, TED_DOC, CONSIGNACAO_FOLHA_PAGAMENTO, PONTOS_PROGRAMA_BENEFICIO, OUTROS]      
+            enum: [CARTAO_CREDITO, DEBITO_CONTA, DEBITO_CONTA_POUPANCA, BOLETO_BANCARIO, PIX, CARTAO_DEBITO, TED_DOC, CONSIGNACAO_FOLHA_PAGAMENTO, PONTOS_PROGRAMA_BENEFICIO, OUTROS]
+        contributionPaymentDetail:
+          description: Descrição da Forma de pagamento da contribuição quando for informada a opção OUTROS.
+          type: string
+          maxLength: 100
+          example: OUTROS
         contributionPeriodicity:
           type: array
           description: Periodicidade de pagamento da contribuição.
@@ -468,6 +487,12 @@ components:
             type: string
             example: MENSAL
             enum: [MENSAL, UNICA, ANUAL, TRIMESTRAL, SEMESTRAL, BIMESTRAL, OUTRAS]
+        contributionDetail:
+          description: Descrição da Periodicidade de pagamento da contribuição quando for informada a opção OUTRAS.
+          type: string
+          maxLength: 100
+          example: OUTRAS
+
     PensionPlanMinimumRequirements:
       type: object
       description: Requisitos mínimos.
@@ -484,8 +509,12 @@ components:
           type: string
           description: Campo aberto contendo todos os requisitos mínimos para contratação.
           example: wwww.seguradora.com.br/termos
+
     PensionPlanGracePeriod:
       type: object
+      required: 
+        - amount
+        - unit
       description: Período de carência.
       properties: 
         amount:
@@ -495,6 +524,7 @@ components:
           type: string
           description: Unidade do prazo (dias ou meses)
           enum: [DIAS, MESES, NAO_SE_APLICA]
+
     Links:
       type: object
       required: 
@@ -525,6 +555,7 @@ components:
           description: URI da última página dessa lista de resultados. Restrição - Obrigatório quando não for a última página da resposta
           pattern: ^(https:\/\/)(.*?)(\/open-insurance\/products-services\/v\d+)(\/pension-plan.*)?$
           example: 'https://api.organizacao.com.br/open-insurance/products-services/v1/pension-plan'
+
     Meta:
       type: object
       required:
@@ -539,6 +570,7 @@ components:
           type: integer
           description: Total de páginas para os registros encontrados
           example: 1
+
     ResponseError:
       type: object
       required:
@@ -582,6 +614,7 @@ components:
         meta:
           $ref: '#/components/schemas/Meta'
       additionalProperties: false    
+
   parameters:
     page:
       name: page
@@ -598,7 +631,7 @@ components:
       schema:
         type: integer
         default: 10
-        minimum: 1  
+        minimum: 1
     cnpjNumber:
       name: cnpjNumber
       in: path
@@ -649,6 +682,31 @@ components:
       schema:
         type: string
         pattern: '[\w\W\s]*'
+    x-v:
+      name: x-v
+      in: header
+      description: |
+        Versão do endpoint da API requisitado pelo cliente. O titular dos dados deve 
+        responder com a versão mais alta suportada entre x-min-v e x-v. Se o valor de 
+        x-min-v for igual ou maior que o valor de x-v, o cabeçalho x-min-v deve ser 
+        tratado como ausente. Se todas as versões solicitadas não forem suportadas, 
+        o titular dos dados deve responder com o código de status 406 Not Acceptable.
+      required: false
+      schema:
+        type: string
+      example: '2.1.3'
+    x-min-v:
+      name: x-min-v
+      in: header
+      description: |
+        Versão mínima do endpoint da API requisitado pelo cliente. O detentor dos dados 
+        deve responder com a versão mais alta suportada entre x-min-v e x-v. Se todas as 
+        versões solicitadas não forem suportadas, o titular dos dados deve responder com 
+        um código de status 406 Not Acceptable.
+      required: false
+      schema:
+        type: string
+      example: '2.0.0'
      
   responses:
     UnprocessableEntity:
