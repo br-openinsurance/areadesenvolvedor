@@ -1,10 +1,9 @@
-
 openapi: 3.0.0
 info:
   title: APIs Open Data do Open Insurance Brasil
   description:
     API de informações de dados do produto Transportes. Os recursos que podem ser consumidos pelos participantes conforme a regra 3.1.2 do manual de escopo de dados..
-  version: 1.1.0
+  version: 1.2.0
   contact:
     url: 'https://www.gov.br/susep/'
 servers:
@@ -87,6 +86,7 @@ components:
             $ref: '#/components/schemas/Links'
         meta:
             $ref: '#/components/schemas/Meta'
+
     TransportBrand:
       type: object
       description: Organizacao controladora do grupo.
@@ -101,6 +101,7 @@ components:
           example: EMPRESA A seguros
         companies:
           $ref: '#/components/schemas/TransportCompany'
+
     TransportCompany:
       type: array
       items:
@@ -118,10 +119,11 @@ components:
             cnpjNumber:
                 type: string
                 description: CNPJ da sociedade pertencente à marca.
-                maxLength: 14
-                example: "12345678901234"
+                pattern: ^\d{14}$
+                example: '12345678901234'
             products:
                 $ref: '#/components/schemas/TransportProduct'
+
     TransportProduct:
       type: array
       description: Lista de produtos de uma empresa.
@@ -137,6 +139,7 @@ components:
           - policyType
           - termsAndConditions
           - minimumRequirements
+          - targetAudiences
         properties:
           name:
             type: string
@@ -159,7 +162,7 @@ components:
                 - coverageAttributes
               properties:
                 coverage:
-                  description: Listagem de coberturas incluídas no produto que deve observar a relação discriminada de coberturas, conforme Tabela II.15 do Anexo II.
+                  description: Listagem de coberturas incluídas no produto que deve observar a relação discriminada de coberturas.
                   type: string
                   example: ACIDENTES_PESSOAIS_COM_PASSAGEIROS
                   enum: [ACIDENTES_PESSOAIS_COM_PASSAGEIROS,
@@ -233,6 +236,13 @@ components:
             $ref: '#/components/schemas/TransportTerms'
           minimumRequirements:
             $ref: '#/components/schemas/TransportMinimumRequirements'
+          targetAudiences:
+            description: Público Alvo
+            type: array
+            items:
+              type: string
+              example: PESSOA_FISICA
+              enum: [PESSOA_FISICA, PESSOA_JURIDICA]
     
     TransportCoverageAttributesDetailsUnit:
       type: object
@@ -339,6 +349,8 @@ components:
     TransportTerms:
       type: object
       description: Informações dos termos e condições conforme número do processo SUSEP.
+      required:
+        - definition
       properties:
         susepProcessNumber:
           type: string
@@ -351,7 +363,6 @@ components:
           maxLength: 1024
           example: https://www.seguradora.com.br/produto/tradicional/pdf/condicoes_gerais.pdf
 
-    
     TransportCoverageAttributes:
       type: object
       description: Informações de cobertura do Seguro.
@@ -370,25 +381,16 @@ components:
           type: string
           maxLength: 1024
         
-    
     TransportMinimumRequirements:
       type: object
       description: Requisitos mínimos.
       required:
         - minimumRequirementDetails
-        - targetAudiences
       properties:
         minimumRequirementDetails:
           type: string
           maxLength: 1024
           description: Campo aberto contendo todos os requisitos mínimos para contratação (possibilidade de incluir URL).
-        targetAudiences:
-          description: Público Alvo
-          type: array
-          items:
-            type: string
-            example: PESSOA_FISICA
-            enum: [PESSOA_FISICA, PESSOA_JURIDICA]
     
     Links:
       type: object

@@ -3,7 +3,7 @@ info:
   title: APIs Open Data do Open Insurance Brasil
   description: 
     API de informações de Seguro de Automóveis. Os recursos que podem ser consumidos pelos participantes conforme a regra 3.2.2 do manual de escopo de dados.
-  version: 1.3.0
+  version: 1.4.0
   contact:
     url: 'https://www.gov.br/susep/'
 servers:
@@ -86,6 +86,7 @@ components:
           $ref: '#/components/schemas/Links'
         meta:
           $ref: '#/components/schemas/Meta'
+
     AutoInsuranceBrand:
       type: object
       required:
@@ -97,6 +98,7 @@ components:
           description: Nome da marca reportada pelo participante do Open Insurance. O conceito a que se refere a marca é em essência uma promessa das sociedades sob ela em fornecer uma série específica de atributos, benefícios e serviços uniformes aos clientes.
         companies:
           $ref: '#/components/schemas/AutoInsuranceCompany'  
+
     AutoInsuranceCompany:
       type: array
       items:
@@ -112,8 +114,11 @@ components:
           cnpjNumber:
             type: string
             description: CNPJ da sociedade pertencente à marca.
+            pattern: ^\d{14}$
+            example: '12345678901234'
           products:
             $ref: '#/components/schemas/AutoInsuranceProduct'
+
     AutoInsuranceProduct:
       type: array
       description: Produtos de Seguro de Automóveis.
@@ -149,7 +154,7 @@ components:
             $ref: '#/components/schemas/AutoInsuranceCarModel'
           vehicleOvernightZipCode:
             type: string
-            description: Área de comercialização do seguro do automóvel.
+            description: CEP do pernoite do veiculo
             maxLength: 8
             example: '01311000'
           additional:
@@ -174,7 +179,12 @@ components:
             items:
                 type: string
                 example: ANUAL
-                enum: [ANUAL , ANUAL_INTERMITENTE , PLURIANUAL, PLURIANUAL_INTERMITENTE, SEMESTRAL, SEMESTRAL_INTERMITENTE, MENSAL, MENSAL_INTERMITENTE, DIARIO, DIARIO_INTERMITENTE, OUTROS]
+                enum: [ANUAL, ANUAL_INTERMITENTE, PLURIANUAL, PLURIANUAL_INTERMITENTE, SEMESTRAL, SEMESTRAL_INTERMITENTE, MENSAL, MENSAL_INTERMITENTE, DIARIO, DIARIO_INTERMITENTE, OUTROS]
+          termsOthers:
+            description: Descrição do Prazo quando for informada a opção OUTROS.
+            type: string
+            example: OUTROS
+            maxLength: 100
           customerServices:
             type: array 
             description: Rede de atendimento do seguro contratado.
@@ -191,12 +201,12 @@ components:
             description: Público-alvo.
             items:
               type: string         
-              maxLength: 30
               example: PESSOA_NATURAL
               enum: [PESSOA_NATURAL, PESSOA_JURIDICA, AMBAS] 
-    AutoInsuranceCoverage:     
+
+    AutoInsuranceCoverage:
       type: array
-      description: Listagem de coberturas incluídas no produto que deve observar a relação discriminada de coberturas, conforme Tabela II.5 do Anexo II
+      description: Listagem de coberturas incluídas no produto que deve observar a relação discriminada de coberturas.
       items:
         type: object
         required:
@@ -242,6 +252,7 @@ components:
               example: true
             coverageAttributes:
               $ref: '#/components/schemas/AutoInsuranceCoverageAttributes'         
+
     AutoInsuranceLimit:
       type: object
       description: Lista com valor de LMI aceito pela sociedade para cada cobertura.
@@ -260,6 +271,7 @@ components:
           enum: [LMG, FINANCEIRO_COBERTURA, OUTRO]
         maxIndexAmount:
           $ref: '#/components/schemas/AutoInsuranceCoverageAttributesDetails'
+
     AutoInsuranceCoverageAttributesDetailsUnit:
       type: object
       required:
@@ -270,6 +282,7 @@ components:
           type: string
         description: 
           type: string
+
     AutoInsuranceCoverageAttributesDetails:
         type: object
         description: Listagem percentual de franquia e/ou percentual de participação obrigatória do segurado estabelecida pela sociedade para cada tipo de cobertura de produto.
@@ -281,6 +294,7 @@ components:
             type: number
           unit:
             $ref: '#/components/schemas/AutoInsuranceCoverageAttributesDetailsUnit'
+
     AutoInsuranceContractBase:
       type: array
       description: Base de contratação.
@@ -291,13 +305,21 @@ components:
         properties:
           contractBaseType:
             type: string
-            description: Incidência ao capital segurado da cobertura de casco.
+            description: |
+              Incidência ao capital segurado da cobertura de casco.
+              No caso de valor de mercado, as tabelas de referência devem ser padronizadas
+              na proposta técnica submetida pela Estrutura Inicial de Governança para observância
+              comum por todas as sociedades participantes.
+              Quando a base de contratação for “valor determinado” deve ser informado o valor mínimo e máximo comercializado.
+              Quando a base de contratação for “valor de mercado” deve ser informado o percentual mínimo e máximo
+              da referência da tabela comercializada.
             example: VALOR_DETERMINADO
-            enum: [VALOR_DETERMINADO, VALOR_MERCADO, AMBOS]
+            enum: [VALOR_DETERMINADO, VALOR_MERCADO]
           contractBaseMinValue:
             $ref: '#/components/schemas/AutoInsuranceCoverageAttributesDetails'
           contractBaseMaxValue:
             $ref: '#/components/schemas/AutoInsuranceCoverageAttributesDetails'
+
     AutoInsuranceCoverageAttributes:
       type: object
       description: Atributos da cobertura.
@@ -306,11 +328,11 @@ components:
        - maxLMI
        - contractBase
        - newCarMaximumCalculatingPeriod
+       - newCarContractBase
        - fullIndemnityPercentage
        - deductibleType
        - fullIndemnityDeductible
        - deductiblePaymentByCoverage
-       - deductiblePercentage
        - mandatoryParticipation
        - geographicScopeCoverage
       properties:
@@ -342,14 +364,14 @@ components:
           example: true
         deductiblePaymentByCoverage:
           type: boolean
-          description: Sinalização para cada cobertura se a seguradora exige pagamento de franquia.
+          description: Sinalizacao para cada cobertura se a seguradora exige pagamento de franquia. (Indicacao de existencia de franquia para cada cobertura).
         deductiblePercentage:
           $ref: '#/components/schemas/AutoInsuranceCoverageAttributesDetails'
         mandatoryParticipation:
           type: string
-          description: Participação Obrigatória do Segurado.
+          description: Participação Obrigatória do Segurado (em valor)
           maxLength: 300
-          example: Casco - RCF-V Danos 
+          example: '80.00'
         geographicScopeCoverage:
           type: array
           description: Listagem de abrangência geográfica do produto para fins de cada cobertura.
@@ -359,7 +381,8 @@ components:
             enum: [NACIONAL, REGIONAL, INTERNACIONAL, OUTROS_PAISES]
         geographicScopeCoverageOthers:
           type: string
-          description: Âmbito geográficoda cobertura - Outros
+          description: Âmbito geográfico da cobertura - Outros
+
     AutoInsuranceMinimumRequirements:
       type: object
       description: Produtos de Seguro de Automóvel.
@@ -378,7 +401,8 @@ components:
           type: string
           description: Campo aberto contendo todos os requisitos mínimos para contratação (possibilidade de incluir URL).
           maxLength: 1024
-          example: https://example.com/mobile-banking
+          example: https://www.seguradora.com.br/produto/pdf/min_contrato.pdf
+
     AutoInsuranceTermsAndConditions:
       type: array
       items:
@@ -398,6 +422,7 @@ components:
             description: Campo aberto (possibilidade de incluir uma url).
             maxLength: 1024
             example: https://ey.exemplo/capitalizacao/tradicional/pdf/condicoes_gerais.pdf
+
     AutoInsurancePremiumPayment:
       type: object 
       description: Informações de pagamento de prêmio.
@@ -422,12 +447,14 @@ components:
         paymentDetail:
           type: string
           description: Campo aberto para detalhamento do campo ‘Outros’ por cada participante.
-    AutoInsuranceAssistanceServices:    
+
+    AutoInsuranceAssistanceServices:
       type: object
       description: Serviços de Assistência.
       required:
         - assistanceServicesPackage
         - assistanceServicesDetail
+        - chargeTypeSignaling
       properties:
         assistanceServicesPackage:
             type: array
@@ -446,7 +473,8 @@ components:
             description: Sinalização em campo exclusivo se o pacote de Assistência é gratuita ou contratada/paga.
             example: GRATUITA
             enum: [GRATUITA, PAGA]
-    AutoInsuranceCarPart:    
+
+    AutoInsuranceCarPart:
       type: array
       description: Tipo de peça utilizada para reparação.
       items:
@@ -464,7 +492,8 @@ components:
                 description: Originais e não originais
                 example: ORIGINAIS
                 enum: [ORIGINAIS, COMPATIVEIS, AMBAS]
-    AutoInsuranceCarModel:    
+
+    AutoInsuranceCarModel:
       type: array
       description: Listagem de modelos / ano de veículos. Deve ser padronizada na proposta técnica submetida pela Estrutura Inicial de Governança para observância comum por todas as sociedades participantes.
       items:
@@ -494,6 +523,7 @@ components:
             fipeCode:
               type: string
               description: Código FIPE do veículo.
+
     Links:
       type: object
       properties:
@@ -522,6 +552,7 @@ components:
           description: URL da última página de registros
           pattern: ^(https:\/\/)(.*?)(\/open-insurance\/products-services\/v\d+)(\/auto-insurance.*)?$
           example: 'https://api.organizacao.com.br/open-insurance/products-services/v1/auto-insurance'
+
     Meta:
       type: object
       properties:
@@ -536,6 +567,7 @@ components:
       required:
         - totalRecords
         - totalPages
+
     ResponseError:
       type: object
       required:
@@ -579,6 +611,7 @@ components:
         meta:
           $ref: '#/components/schemas/Meta'
       additionalProperties: false    
+
   parameters:
     page:
       name: page

@@ -1,10 +1,9 @@
-
 openapi: 3.0.0
 info:
   title: APIs Open Data do Open Insurance Brasil
   description:
     API de informações de dados do produto Rural. Os recursos que podem ser consumidos pelos participantes conforme a regra 3.1.2 do manual de escopo de dados..
-  version: 1.1.0
+  version: 1.2.0
   contact:
     url: 'https://www.gov.br/susep/'
 servers:
@@ -86,6 +85,7 @@ components:
             $ref: '#/components/schemas/Links'
         meta:
             $ref: '#/components/schemas/Meta'
+
     RuralBrand:
       type: object
       description: Organizacao controladora do grupo.
@@ -100,6 +100,7 @@ components:
           example: EMPRESA A seguros
         companies:
           $ref: '#/components/schemas/RuralCompany'
+
     RuralCompany:
       type: array
       items:
@@ -117,10 +118,11 @@ components:
             cnpjNumber:
                 type: string
                 description: CNPJ da sociedade pertencente à marca.
-                maxLength: 14
-                example: "12345678901234"
+                pattern: ^\d{14}$
+                example: '12345678901234'
             products:
                 $ref: '#/components/schemas/RuralProduct'
+
     RuralProduct:
       type: array
       description: Lista de produtos de uma empresa.
@@ -137,6 +139,7 @@ components:
           - premiumPayment
           - termsAndConditions
           - minimumRequirements
+          - targetAudiences
         properties:
           name:
             type: string
@@ -171,7 +174,7 @@ components:
                 - coverageAttributes
               properties:
                 coverage:
-                  description: Listagem de coberturas incluídas no produto que deve observar a relação discriminada de coberturas, conforme Tabela II.17 do Anexo II.
+                  description: Listagem de coberturas incluídas no produto que deve observar a relação discriminada de coberturas.
                   type: string
                   example: GRANIZO
                   enum: [GRANIZO,
@@ -315,6 +318,12 @@ components:
             $ref: '#/components/schemas/RuralPremiumPayment'    
           minimumRequirements:
             $ref: '#/components/schemas/RuralMinimumRequirements'
+          targetAudiences:
+            type: array
+            items:
+              type: string
+              example: PESSOA_FISICA
+              enum: [PESSOA_FISICA, PESSOA_JURIDICA]
 
     RuralCoverageLimitGuarantee:
       type: object
@@ -414,15 +423,16 @@ components:
             description: Distribuição de frequência relativa aos valores referentes às taxas cobradas, nos termos do Anexo III.
             type: string
             maxLength: 1024
-    
+            
     RuralTerms:
       type: object
       description: Informações dos termos e condições conforme número do processo SUSEP.
+      required:
+        - definition
       properties:
         susepProcessNumber:
           type: string
-          description: "Número do processo Susep.
-            OBS: Condicional a seleção de 2. Não no campo acima."
+          description: "Número do processo Susep. Caso não seja um produto para Grandes Riscos"
           maxLength: 20
           example: 15414.622222/2222-22
         definition:
@@ -430,7 +440,6 @@ components:
           description: Campo aberto (possibilidade de incluir uma url).
           maxLength: 1024
           example: https://www.seguradora.com.br/produto/tradicional/pdf/condicoes_gerais.pdf
-
     
     RuralMinimumRequirements:
       type: object
@@ -438,7 +447,6 @@ components:
       required:
         - contractType
         - minimumRequirementDetails
-        - targetAudiences
       properties:
         contractType:
           type: array
@@ -449,13 +457,7 @@ components:
           type: string
           maxLength: 1024
           description: Campo aberto contendo todos os requisitos mínimos para contratação (possibilidade de incluir URL).
-          example: https://openinsurance.com.br/aaa
-        targetAudiences:
-          type: array
-          items:
-            type: string
-            example: PESSOA_FISICA
-            enum: [PESSOA_FISICA, PESSOA_JURIDICA]
+          example: https://www.seguradora.com.br/produto/requisitos.pdf
     
     RuralCoverageAttributes:
       type: object

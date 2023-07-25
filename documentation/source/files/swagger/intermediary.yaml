@@ -1,10 +1,9 @@
-
 openapi: 3.0.0
 info:
   title: APIs Open Data do Open Insurance Brasil
   description:
     API de informações de dados do produto Intermediarios. Os recursos que podem ser consumidos pelos participantes conforme a regra 3.1.2 do manual de escopo de dados..
-  version: 1.2.0
+  version: 1.3.0
   contact:
     url: 'https://www.gov.br/susep/'    
 servers:
@@ -89,6 +88,7 @@ components:
             $ref: '#/components/schemas/Links'
         meta:
             $ref: '#/components/schemas/Meta'
+
     IntermediaryBrand:
       type: object
       description: Organizacao controladora do grupo.
@@ -103,6 +103,7 @@ components:
           example: ACME Group Seguros
         companies:
           $ref: '#/components/schemas/IntermediaryCompany'
+
     IntermediaryCompany:
       type: array
       items:
@@ -120,10 +121,11 @@ components:
             cnpjNumber:
                 type: string
                 description: CNPJ da sociedade supervisionada participante
-                maxLength: 14
-                example: "12345678901234"
+                pattern: ^\d{14}$
+                example: '12345678901234'
             identification:
                 $ref: '#/components/schemas/IntermediaryIdentification'
+
     IntermediaryIdentification:
       type: array
       items:
@@ -518,6 +520,7 @@ components:
           description: Informação da Longitude referente a geolocalização informada. Formato numérico 3 casas antes da vírgula, 11 posições. Entre -180 e 180.'
           example: '-179.836519'
           pattern: ^-?\d{1,3}\.\d{1,10}$
+
     IntermediaryAccess:
       type: object
       description: Forma de acesso.
@@ -528,15 +531,16 @@ components:
           description: Endereço de e-mail
           type: string
           maxLength: 50
-          example: Joao.silva@seguradoraa.com.br
+          example: Joao.silva@seguradora.com.br
         site:
           type: string
           description: "Campo aberto
             As URLs são limitadas a 2048 caracteres, mas, para o contexto do Open Insurance, foi adotado a metade deste tamanho (1024)."
           maxLength: 1024
-          example: "https://openinsurance.com.br/aaa"
+          example: https://www.seguradora.com.br/
         phones:
           $ref: '#/components/schemas/IntermediaryPhones'
+
     IntermediaryStandards:
       type: array
       items:
@@ -564,6 +568,7 @@ components:
                   SEXTA_FEIRA,
                   SABADO]
             example: DOMINGO
+
     IntermediaryPhones:
       type: array
       description: Telefone do intermediário
@@ -590,6 +595,7 @@ components:
             type: string
             maxLength: 11
             example: '30041000'
+
     IntermediaryServices:
       type: array
       items:

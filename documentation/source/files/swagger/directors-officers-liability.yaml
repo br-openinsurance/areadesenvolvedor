@@ -1,10 +1,9 @@
-
 openapi: 3.0.0
 info:
   title: APIs Open Data do Open Insurance Brasil
   description:
     API de informações de dados do produto RD D&O.
-  version: 1.1.0
+  version: 1.2.0
   contact:
     url: 'https://www.gov.br/susep/'
 servers:
@@ -87,6 +86,7 @@ components:
             $ref: '#/components/schemas/Links'
         meta:
             $ref: '#/components/schemas/Meta'
+
     DirectorsOfficersLiabilityBrand:
       type: object
       description: Organizacao controladora do grupo.
@@ -101,6 +101,7 @@ components:
           example: ACME Group Seguros
         companies:
           $ref: '#/components/schemas/DirectorsOfficersLiabilityCompany'
+
     DirectorsOfficersLiabilityCompany:
       type: array
       items:
@@ -118,10 +119,11 @@ components:
             cnpjNumber:
                 type: string
                 description: CNPJ da sociedade pertencente à marca.
-                maxLength: 14
+                pattern: ^\d{14}$
                 example: '12345678901234'
             products:
                 $ref: '#/components/schemas/DirectorsOfficersLiabilityProduct'
+
     DirectorsOfficersLiabilityProduct:
       type: array
       description: Lista de produtos de uma empresa.
@@ -139,6 +141,7 @@ components:
           - validity
           - termsAndConditions
           - minimumRequirements
+          - targetAudiences
         properties:
           name:
             type: string
@@ -150,7 +153,6 @@ components:
             description: Código único a ser definido pela sociedade.
             maxLength: 100
             example: '01234589-0'
-          
           coverages:
             type: array
             items:
@@ -158,6 +160,7 @@ components:
               required:
                 - coverage
                 - coverageDescription
+                - coverageAttributes
                 - allowApartPurchase
               properties:
                 coverage:
@@ -174,7 +177,6 @@ components:
                 allowApartPurchase:
                   type: boolean
                   description: Indicação se a cobertura permite contratação separada   
-
           maxLMGDescription:
             type: string
             maxLength: 1024
@@ -201,7 +203,14 @@ components:
             $ref: '#/components/schemas/DirectorsOfficersLiabilityTerms'
           minimumRequirements:
             $ref: '#/components/schemas/DirectorsOfficersLiabilityMinimumRequirements'
-    
+          targetAudiences:
+            description: Público Alvo
+            type: array
+            items:
+              type: string
+              example: PESSOA_NATURAL
+              enum: [PESSOA_NATURAL, PESSOA_JURIDICA]
+
     DirectorsOfficersLiabilityAssistanceServices:
       type: array
       description: Agrupamento dos serviços de assistências disponíveis vinculado ao produto.
@@ -265,7 +274,7 @@ components:
             description: Distribuição de frequência relativa aos valores referentes às taxas cobradas.
             type: string
             maxLength: 1024
-    
+            
     DirectorsOfficersLiabilityValidity:
       type: array
       items:
@@ -309,7 +318,6 @@ components:
       required:
         - contractType
         - minimumRequirementDetails
-        - targetAudiences
       properties:
         contractType:
           type: array
@@ -320,25 +328,21 @@ components:
           type: string
           description: Campo aberto contendo todos os requisitos mínimos para contratação (possibilidade de incluir URL).
           maxLength: 1024
-          example: https://openinsurance.com.br/aaa
-        targetAudiences:
-          description: Público Alvo
-          type: array
-          items:
-            type: string
-            example: PESSOA_NATURAL
-            enum: [PESSOA_NATURAL, PESSOA_JURIDICA]
+          example: https://www.seguradora.com.br/produto/requisitos.pdf
     
     DirectorsOfficersLiabilityCoverageAttributes:
       type: object
       description: Informações de cobertura do Seguro Residencial.
       required:
        - maxLMI
+       - maxLA
        - insuredParticipation 
        - idenizationBasis
       properties:
         maxLMI:
           $ref: '#/components/schemas/DirectorsOfficersLiabilityLimit'          
+        maxLA:
+          $ref: '#/components/schemas/DirectorsOfficersLiabilityCoverageAttributesDetails'   
         insuredParticipation:
           type: array
           description: Lista com indicativo do tipo de participação do segurado para cada cobertura
@@ -359,6 +363,7 @@ components:
           type: string
           description: Campo livre para descrição, caso o valor do campo "Base de indenização" seja 3. Outros
           maxLength: 3000
+        
 
     DirectorsOfficersLiabilityLimit:
       type: object

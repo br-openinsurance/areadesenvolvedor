@@ -1,10 +1,9 @@
- 
 openapi: 3.0.0
 info:
   title: APIs Open Data do Open Insurance Brasil
   description:
     API de informações de dados do produto Empresarial. Os recursos que podem ser consumidos pelos participantes conforme a regra 3.1.2 do manual de escopo de dados..
-  version: 1.1.0
+  version: 1.2.0
   contact:
     url: 'https://www.gov.br/susep/'
 servers:
@@ -87,6 +86,7 @@ components:
             $ref: '#/components/schemas/Links'
         meta:
             $ref: '#/components/schemas/Meta'
+
     BusinessBrand:
       type: object
       description: Organizacao controladora do grupo.
@@ -101,6 +101,7 @@ components:
           example: ACME Group Seguros
         companies:
           $ref: '#/components/schemas/BusinessCompany'
+
     BusinessCompany:
       type: array
       items:
@@ -118,10 +119,11 @@ components:
             cnpjNumber:
                 type: string
                 description: CNPJ da sociedade pertencente à marca.
-                maxLength: 14
-                example: "12345678901234"
+                pattern: ^\d{14}$
+                example: '12345678901234'
             products:
                 $ref: '#/components/schemas/BusinessProduct'
+
     BusinessProduct:
       type: array
       description: Lista de produtos de uma empresa.
@@ -138,6 +140,7 @@ components:
           - premiumPayment
           - minimumRequirements
           - termsAndConditions
+          - targetAudiences
         properties:
           name:
             type: string
@@ -149,7 +152,6 @@ components:
             description: Código único a ser definido pela sociedade.
             maxLength: 100
             example: "01234589-0"
-          
           coverages:
             type: array
             items:
@@ -162,7 +164,7 @@ components:
               properties:
                 coverage:
                   type: string
-                  description: Listagem de coberturas incluídas no produto que deve observar a relação discriminada de coberturas, conforme Tabela II.7 do Anexo II."
+                  description: Listagem de coberturas incluídas no produto que deve observar a relação discriminada de coberturas
                   example: INCENDIO_QUEDA_DE_RAIO_E_EXPLOSAO
                   enum: [
                         INCENDIO_QUEDA_DE_RAIO_E_EXPLOSAO,
@@ -199,7 +201,6 @@ components:
                   type: boolean
                   description: Indicação se a cobertura permite contratação separada (por cobertura selecionada).
                   example: true
-
           assistanceServices:
             $ref: '#/components/schemas/BusinessAssistanceServices'
           microInsurance:
@@ -218,6 +219,13 @@ components:
             $ref: '#/components/schemas/BusinessTerms'
           minimumRequirements:
             $ref: '#/components/schemas/BusinessMinimumRequirements'
+          targetAudiences:
+            description: Público Alvo
+            type: array
+            items:
+              type: string
+              example: PESSOA_NATURAL
+              enum: [PESSOA_NATURAL, PESSOA_JURIDICA]
     
     BusinessAssistanceServices:
       type: array
@@ -242,7 +250,7 @@ components:
             type: string
             description: Campo livre para descrição dos serviços ofertados por cada sociedade participante, contendo minimamente cada um dos serviços assistenciais complementares oferecidos e se o pacote se trata de uma cobertura de assistência securitária ou se serviços de assistência
             maxLength: 1000
-            example: reboque pane seca
+            example: Eletricista
           chargeTypeSignaling:
             type: string
             description: Indicação se o pacote de Assistência é gratuita ou contratada/paga.
@@ -284,40 +292,42 @@ components:
             maxLength: 100
             description: Campo livre para descrição por cada participante ao selecionar o domínio “Outros” no campo Meio de pagamento (acima) 
           paymentType:
-            type: string
-            description: tipo de pagamento
-            example: A_VISTA
-            enum: [A_VISTA, PARCELADO]
-          premiumRates:
-              description: Distribuição de frequência relativa aos valores referentes às taxas cobradas, nos termos do Anexo III"
+            type: array
+            description: Forma de pagamento
+            items:
               type: string
-              maxLength: 1024
+              example: A_VISTA
+              enum: [A_VISTA, PARCELADO]
+          premiumRates:
+            description: Distribuição de frequência relativa aos valores referentes às taxas cobradas, nos termos do Anexo III"
+            type: string
+            maxLength: 1024
         
     BusinessTerms:
-      type: object
-      description: Informações dos termos e condições conforme número do processo SUSEP.
-      required:
-        - definition
-      properties:
-        susepProcessNumber:
-          type: string
-          description: Número do processo SUSEP.
-          maxLength: 20
-          example: 15414.622222/2222-22
-        definition:
-          type: string
-          description: Campo aberto (possibilidade de incluir uma url).
-          maxLength: 1024
-          example: https://www.seguradora.com.br/produto/tradicional/pdf/condicoes_gerais.pdf
+      type: array
+      items:
+        type: object
+        description: Informações dos termos e condições conforme número do processo SUSEP.
+        required:
+          - definition
+        properties:
+          susepProcessNumber:
+            type: string
+            description: Número do processo SUSEP (Caso não seja um produto para Grandes Riscos).
+            maxLength: 20
+            example: 15414.622222/2222-22
+          definition:
+            type: string
+            description: Campo aberto (possibilidade de incluir uma url).
+            maxLength: 1024
+            example: https://www.seguradora.com.br/produto/tradicional/pdf/condicoes_gerais.pdf
 
-    
     BusinessMinimumRequirements:
       type: object
       description: Requisitos mínimos.
       required:
         - contractType
         - minimumRequirementDetails
-        - targetAudiences
       properties:
         contractType:
           type: array
@@ -329,13 +339,6 @@ components:
           type: string
           maxLength: 1024
           description: Campo aberto contendo todos os requisitos mínimos para contratação (possibilidade de incluir URL).        
-        targetAudiences:
-          description: Público Alvo
-          type: array
-          items:
-            type: string
-            example: PESSOA_NATURAL
-            enum: [PESSOA_NATURAL, PESSOA_JURIDICA]
     
     BusinessCoverageAttributes:
       type: object
@@ -357,7 +360,7 @@ components:
           type: string
           maxLength: 1024
           description: Lista com descrição referente ao campo “Participação do Segurado” para cada cobertura.      
-
+       
     BusinessLimit:
       type: object
       description: Lista com valor de LMI aceito pela sociedade para cada cobertura.

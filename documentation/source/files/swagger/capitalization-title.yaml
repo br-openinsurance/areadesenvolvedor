@@ -3,7 +3,7 @@ info:
   title: APIs Open Data do Open Insurance Brasil
   description:
     API de informações de Título de Capitaliazação.
-  version: 1.1.0
+  version: 1.2.0
   contact:
     url: 'https://www.gov.br/susep/'
 servers:
@@ -30,6 +30,8 @@ paths:
         - $ref: "#/components/parameters/x-Frame-Options"
         - $ref: "#/components/parameters/page"
         - $ref: "#/components/parameters/pageSize"
+        - $ref: "#/components/parameters/x-v"
+        - $ref: "#/components/parameters/x-min-v"
       responses:
         '200':
           description: Dados dos produtos de Título de Capitalização
@@ -90,6 +92,7 @@ components:
           $ref: '#/components/schemas/Links'
         meta:
           $ref: '#/components/schemas/Meta'
+
     CapitalizationTitleBrand:
       type: object
       description: Organização controladora do grupo.
@@ -104,6 +107,7 @@ components:
           example: ACME seguros
         companies:
           $ref: '#/components/schemas/CapitalizationTitleCompany'
+
     CapitalizationTitleCompany:
       type: array
       items:
@@ -121,10 +125,11 @@ components:
           cnpjNumber:
             type: string
             description: CNPJ da sociedade pertencente à marca.
-            maxLength: 14
-            example: "12345678901234"
+            pattern: ^\d{14}$
+            example: '12345678901234'
           products:
             $ref: '#/components/schemas/CapitalizationTitleProduct'
+
     CapitalizationTitleProduct:
       type: array
       description: Lista de produtos de uma empresa.
@@ -135,8 +140,17 @@ components:
           - code
           - modality
           - quotas
+          - validity
+          - capitalizationPeriod
           - costType
           - termsAndConditions
+          - latePayment
+          - contributionPayment
+          - redemption
+          - raffle
+          - additionalDetails
+          - minimumRequirements
+          - targetAudiences
         properties:
           name:
             type: string
@@ -149,17 +163,15 @@ components:
             maxLength: 100
             example: 01234589_cap
           modality:
-            type: array
+            type: string
             description: Modalidade.
-            items:
-                type: string
-                enum: [TRADICIONAL, INSTRUMENTO_GARANTIA, COMPRA_PROGRAMADA, POPULAR, INCENTIVO, FILANTROPIA_PREMIAVEL]
+            enum: [TRADICIONAL, INSTRUMENTO_GARANTIA, COMPRA_PROGRAMADA, POPULAR, INCENTIVO, FILANTROPIA_PREMIAVEL]
+            example: TRADICIONAL
           costType:
-            type: array
+            type: string
             description: Forma de custeio
-            items:
-                type: string
-                enum: [PAGAMENTO_UNICO, PAGAMENTO_MENSAL, PAGAMENTO_PERIODICO]
+            enum: [PAGAMENTO_UNICO, PAGAMENTO_MENSAL, PAGAMENTO_PERIODICO]
+            example: PAGAMENTO_UNICO
           termsAndConditions:
             $ref: '#/components/schemas/CapitalizationTitleTerms'
           quotas:
@@ -177,13 +189,21 @@ components:
           contributionPayment:
             $ref: '#/components/schemas/CapitalizationTitleContributionPayment'
           redemption:
-            $ref: '#/components/schemas/CapitalizationTitleredemption'
+            $ref: '#/components/schemas/CapitalizationTitleRedemption'
           raffle:
             $ref: '#/components/schemas/CapitalizationTitleRaffle'
           additionalDetails:
             $ref: '#/components/schemas/CapitalizationTitleAdditionals'
           minimumRequirements:
             $ref: '#/components/schemas/CapitalizationTitleMinimumRequirements'
+          targetAudiences:
+            description: Público Alvo
+            type: array
+            items:
+              type: string
+              example: PESSOA_NATURAL
+              enum: [PESSOA_NATURAL, PESSOA_JURIDICA]
+
     CapitalizationTitleTerms:
       type: object
       description: Informações dos termos e condições conforme número do processo SUSEP.
@@ -200,7 +220,8 @@ components:
           type: string
           description: Campo aberto (possibilidade de incluir uma url).
           maxLength: 1024
-          example: https://ey.exemplo/capitalizacao/tradicional/pdf/condicoes_gerais.pdf
+          example: https://seguradora.exemplo.com.br/capitalizacao/pdf/condicoes_gerais.pdf
+
     CapitalizationTitleQuotas:
         type: object
         description: Quotas
@@ -215,36 +236,33 @@ components:
               description: Número da parcela.
               example: 10
             capitalizationQuota:
-              type: array
+              type: string
               description: Percentual da contribuição destinado à constituição de capital referente ao direito de resgate.
-              items:
-                type: number
-                maxLength: 9
-                example: 10.000000
+              pattern: ^[0-1]\.\d{6}$
+              example: '0.000002'
             raffleQuota:
-              type: array
+              type: string
               description: Percentual da contribuição designado a custear os sorteios, se previstos no plano
-              items:
-                type: number
-                maxLength: 9
-                example: 10.000000
+              pattern: ^[0-1]\.\d{6}$
+              example: '0.000002'
             chargingQuota:
-              type: array
+              type: string
               description: Percentual da contribuição destinado aos custos de despesas com corretagem, colocação e administração do título de capitalização, emissão, divulgação, lucro da sociedade de capitalização e eventuais despesas relavas ao custeio da contemplação obrigatória e da distribuição de bônus.
-              items:
-                type: number
-                maxLength: 9
-                example: 10.000000
+              pattern: ^[0-1]\.\d{6}$
+              example: '0.000002'
+
     CapitalizationTitleValidity:
         type: integer
         description: Prazo de vigência do título de capitalização em meses.
         maxLength: 3
         example: 48
+
     CapitalizationTitleSerieSize:
         type: integer
         description: Os títulos de capitalização que prevejam sorteio devem ser estruturados em series, ou seja, em sequencias ou em grupos de títulos submetidos às mesmas condições e características, à exceção do valor do pagamento.
         maxLength: 10
         example: 5000000
+
     CapitalizationTitlePeriod:
         description: Período de Capitalização
         type: object
@@ -257,10 +275,14 @@ components:
           - gracePeriodRedemption
         properties:
           interestRate:
-            description: Taxa que remunera a parte da mensalidade destinada a formar o Capital, ou seja, a Provisão Matemática de Resgate, também chamada de saldo de capitalização. Em porcentagem ao mês (% a.m)
-            type: number
-            maxLength: 7
-            example: 0.25123
+            description: |
+              Taxa de juros que remunera a provisão matemática para capitalização.
+              (Taxa que remunera a parte da mensalidade destinada a formar o Capital,
+              ou seja, a Provisão Matemática de Resgate, também chamada de saldo de capitalização.
+              Em porcentagem ao mês (% a.m)). Exemplo 1.000000 igual a 100 por cento
+            type: string
+            pattern: ^[0-1]\.\d{6}$
+            example: '0.000002'
           updateIndex:
             type: string
             description: Índice utilizado na correção que remunera a provisão matemática para capitalização
@@ -276,27 +298,28 @@ components:
             description: Possibilidade de o titular efetuar o resgate do capital constituído antes do fim do prazo de vigência do título, podendo ocorrer por solicitação expressa do titular ou por contemplação em sorteio com liquidação antecipada
             type: array
             items:
-                type: object
-                required:
-                  - quota
-                  - percentage
-                properties:
-                  quota:
-                    type: integer
-                    description: Número de parcela.
-                  percentage:
-                    type: number
-                    description: Percentual da quota
+              type: object
+              required:
+                - quota
+                - percentage
+              properties:
+                quota:
+                  type: integer
+                  description: Número de parcela.
+                percentage:
+                  type: number
+                  description: Percentual da quota
           redemptionPercentageEndTerm:
-            description: Percentual mínimo da soma das contribuições efetuadas que poderá ser resgatado ao final da vigência,  tendo como condição os pagamentos das parcelas nos respectivos vencimentos.
-            type: number
-            maxLength: 7
-            example: 100.002
+            description: Percentual mínimo da soma das contribuições efetuadas que poderá ser resgatado ao final da vigência, tendo como condição os pagamentos das parcelas nos respectivos vencimentos.
+            type: string
+            pattern: ^\d{1}\.\d{6}$
+            example: '0.000002'
           gracePeriodRedemption:
             description: Intervalo de tempo mínimo entre contratação e resgate do direito, em meses.
             type: integer
             maxLength: 3
             example: 48
+
     CapitalizationTitleContributionAmount:
       type: object
       properties:
@@ -316,6 +339,7 @@ components:
         value:
           type: number
           description: valor
+
     CapitalizationTitleLatePayment:
         type: object
         description: Atraso de Pagamento
@@ -332,6 +356,7 @@ components:
             description: Alteração do prazo de vigência original, pela suspensão.
             type: boolean
             example: true
+
     CapitalizationTitleContributionPayment:
       type: object
       description: Pagamento da contribuição
@@ -340,12 +365,17 @@ components:
         - updateIndex
       properties:
         paymentMethod:
-          description:  Meio de Pagamento utilizados para pagamento da contribuição.
+          description: Meio de Pagamento utilizados para pagamento da contribuição.
           type: array
           items:
             type: string
             example: CARTAO_CREDITO
             enum: [CARTAO_CREDITO, CARTAO_DEBITO, DEBITO_CONTA_CORRENTE, DEBITO_CONTA_POUPANCA, BOLETO_BANCARIO, PIX, CONSIGNACAO_FOLHA_PAGAMENTO, PAGAMENTO_COM_PONTOS, OUTROS]
+        paymentDetail:
+          description: Descrição do Meio de Pagamento utilizados para pagamento da contribuição quando for informada a opção OUTROS
+          type: string
+          maxLength: 100
+          example: OUTROS
         updateIndex:
           description: Índice utilizado na atualização dos pagamentos mensais (para títulos com mais de 12 meses de vigência)
           type: array
@@ -359,16 +389,18 @@ components:
             items:
                 type: string
                 example: Índice de atualização
-    CapitalizationTitleredemption:
+
+    CapitalizationTitleRedemption:
         type: object
         required:
         - redemption
         properties:
-            redemption:
-                description: Valor percentual (%) de resgate final permitido.
-                type: number
-                maxLength: 6
-                example: 151.23
+          redemption:
+            description: Valor percentual (%) de resgate final permitido. Exemplo 1.000000 igual a 100 por cento
+            type: string
+            pattern: ^\d{1}\.\d{6}$
+            example: '0.000002'
+
     CapitalizationTitleRaffle:
       description: Sorteios
       type: array
@@ -395,6 +427,11 @@ components:
               type: string
               example: QUINZENAL
               enum: [UNICO, DIARIO, SEMANAL, QUINZENAL, MENSAL, BIMESTRAL, TRIMESTRAL, QUADRIMESTRAL, SEMESTRAL, ANUAL, OUTROS]
+          timeIntervalOthers:
+            description: Descrição do Intervalo de tempo regular previsto entre os sorteios quando for informada a opção OUTROS.
+            type: string
+            maxLength: 100
+            example: OUTROS
           raffleValue:
             type: number
             description: Valor dos sorteios representado por múltiplo do valor de contribuição.
@@ -413,9 +450,11 @@ components:
             maxLength: 200
             example: Sorteio às quartas-feiras
           minimumContemplationProbability:
-            type: number
-            description: Número representativo da probabilidade mínima de contemplação nos sorteios, em porcentagem (%).
-            example: 0.000001
+            type: string
+            description: Número representativo da probabilidade mínima de contemplação nos sorteios, em porcentagem (%). Exemplo 1.000000 igual a 100 por cento
+            pattern: ^\d{1}\.\d{6}$
+            example: '0.000002'
+
     CapitalizationTitleAdditionals:
       type: object
       required:
@@ -426,25 +465,19 @@ components:
           description: Campo aberto (possibilidade de incluir URL).
           maxLength: 1024
           example: https://example.com/openinsurance
+
     CapitalizationTitleMinimumRequirements:
       type: object
       description: Requisitos mínimos.
       required:
         - minimumRequirementDetails
-        - targetAudiences
       properties:
         minimumRequirementDetails:
           type: string
           description: Detalhamento do requisito mínimo para contratação - Campo aberto (possibilidade de incluir URL).
           maxLength: 1024
-          example: https://ey.exemplo/capitalizacao/tradicional/PU/requisitos_min
-        targetAudiences:
-          description: Público Alvo
-          type: array
-          items:
-            type: string
-            example: PESSOA_NATURAL
-            enum: [PESSOA_NATURAL, PESSOA_JURIDICA]
+          example: https://seguradora.exemplo.com.br/capitalizacao/requisitos_min.pdf
+
     Links:
       type: object
       properties:
@@ -473,6 +506,7 @@ components:
           description: URL da última página de registros
           pattern: ^(https:\/\/)(.*?)(\/open-insurance\/products-services\/v\d+)(\/capitalization-title.*)?$
           example: 'https://api.organizacao.com.br/open-insurance/products-services/v1/capitalization-title'
+
     Meta:
       type: object
       properties:
@@ -487,6 +521,7 @@ components:
       required:
         - totalRecords
         - totalPages
+
     ResponseError:
       type: object
       required:
@@ -530,6 +565,7 @@ components:
         meta:
           $ref: '#/components/schemas/Meta'
       additionalProperties: false
+
   parameters:
     page:
       name: page
@@ -597,6 +633,31 @@ components:
       schema:
         type: string
         pattern: '[\w\W\s]*'
+    x-v:
+      name: x-v
+      in: header
+      description: |
+        Versão do endpoint da API requisitado pelo cliente. O titular dos dados deve 
+        responder com a versão mais alta suportada entre x-min-v e x-v. Se o valor de 
+        x-min-v for igual ou maior que o valor de x-v, o cabeçalho x-min-v deve ser 
+        tratado como ausente. Se todas as versões solicitadas não forem suportadas, 
+        o titular dos dados deve responder com o código de status 406 Not Acceptable.
+      required: false
+      schema:
+        type: string
+      example: '2.1.3'
+    x-min-v:
+      name: x-min-v
+      in: header
+      description: |
+        Versão mínima do endpoint da API requisitado pelo cliente. O detentor dos dados 
+        deve responder com a versão mais alta suportada entre x-min-v e x-v. Se todas as 
+        versões solicitadas não forem suportadas, o titular dos dados deve responder com 
+        um código de status 406 Not Acceptable.
+      required: false
+      schema:
+        type: string
+      example: '2.0.0'
 
   responses:
     UnprocessableEntity:

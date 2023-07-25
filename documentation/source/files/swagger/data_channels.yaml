@@ -2,7 +2,7 @@ openapi: 3.0.0
 info:
   title: APIs Open Data do Open Insurance Brasil
   description: As APIs descritas neste documento são referentes as APIs da fase Open Data do Open Insurance Brasil.
-  version: 1.3.0
+  version: 1.4.0
   contact:
     url: 'https://www.gov.br/susep/'
 tags:
@@ -160,6 +160,7 @@ components:
           $ref: '#/components/schemas/Links'
         meta:
           $ref: '#/components/schemas/Meta'
+
     BranchesBrand:
       type: object
       required:
@@ -178,11 +179,13 @@ components:
             $ref: '#/components/schemas/BranchesCompany'
           minItems: 1
           description: Companies traz uma lista de todas as instuituições da Marca.
+
     BranchesCompany:
       type: object
       required:
         - name
         - cnpjNumber
+        - branches
       properties:
         name:
           type: string
@@ -191,13 +194,11 @@ components:
           example: Empresa A1
         cnpjNumber:
           type: string
-          minLength: 14
-          maxLength: 14
-          pattern: '^(\d{14})$|^NA$'
           description: |
             Número completo do CNPJ da instituição responsável pela dependência - o CNPJ corresponde ao número de inscrição no Cadastro de Pessoa Jurídica.
             Deve-se ter apenas os números do CNPJ, sem máscara
-          example: '45086338000178'
+          pattern: ^\d{14}$
+          example: '12345678901234'
         branches:
           type: array
           items:
@@ -230,25 +231,33 @@ components:
             name: 'Organização A'
             companies:
               - name: 'Empresa A1'
-                cnpjNumber: '45086338000178'
+                cnpjNumber: '12345678901234'
                 urlComplementaryList: 'https://empresaa1.com/branches-insurance'
                 electronicChannels:
                   - identification:
                       type: 'INTERNET'
+                      accessType: 'INTERNET'
                       urls:
                         - 'https://empresa1.com/insurance'
                     services:
                       - name: 'ALTERACOES_FORMA_PAGAMENTO'
                         code: '01'
+                    availability:
+                      standards:
+                      - weekday: DOMINGO
+                        openingTime: 10:00:57Z
+                        closingTime: 16:00:57Z               
+                  
         links:
           self: 'https://api.organizacao.com.br/open-insurance/channels/v1/electronic-channels'
           first: 'https://api.organizacao.com.br/open-insurance/channels/v1/electronic-channels'
-          prev: "https://api.organizacao.com.br/open-insurance/channels/v1/electronic-channels"
-          next: "https://api.organizacao.com.br/open-insurance/channels/v1/electronic-channels"
+          prev: 'https://api.organizacao.com.br/open-insurance/channels/v1/electronic-channels'
+          next: 'https://api.organizacao.com.br/open-insurance/channels/v1/electronic-channels'
           last: 'https://api.organizacao.com.br/open-insurance/channels/v1/electronic-channels'
         meta:
           totalRecords: 1
           totalPages: 1
+
     ElectronicChannelsBrand:
       type: object
       required:
@@ -267,6 +276,7 @@ components:
             $ref: '#/components/schemas/ElectronicChannelsCompanies'
           minItems: 1
           description: Lista de instituições pertencentes à marca
+
     ElectronicChannelsCompanies:
       type: object
       required:
@@ -282,8 +292,9 @@ components:
           pattern: \w*\W*
         cnpjNumber:
           type: string
-          maxLength: 14
           description: CNPJ da sociedade responsável pelo canal de atendimento - o CNPJ corresponde ao número de inscrição no Cadastro de Pessoa Jurídica.
+          pattern: ^\d{14}$
+          example: '12345678901234'
         electronicChannels:
           type: array
           items:
@@ -291,10 +302,12 @@ components:
           minItems: 1
           maxItems: 99
           description: Lista  de canais de atendimento eltrônico
+
     Branch:
       type: object
       description: Dependência destinada à prática das atividades para as quais a instituição esteja regularmente habilitada.
       required:
+        - identification
         - postalAddress
         - availability
         - services
@@ -318,6 +331,7 @@ components:
             $ref: '#/components/schemas/BranchService'
           minItems: 1
           maxItems: 20
+
     BranchPostalAddress:
       type: object
       required:
@@ -375,6 +389,7 @@ components:
           example: BRA
         geographicCoordinates:
           $ref: '#/components/schemas/BranchesGeographicCoordinates'       
+
     BranchIdentification:
       type: object
       properties:
@@ -401,6 +416,7 @@ components:
           pattern: \w*\W*
           description: Nome da dependência
           example: Marília      
+
     BranchAvailability:
       type: object
       properties:
@@ -445,6 +461,7 @@ components:
           example: true
       required:
         - standards
+
     EletronicChannelsAvailability:
       type: object
       properties:
@@ -485,6 +502,7 @@ components:
           maxItems: 7
       required:
         - standards
+
     PhoneChannelsAvailability:
       type: object
       properties:
@@ -525,6 +543,7 @@ components:
           maxItems: 7
       required:
         - standards
+
     BranchService:
       type: object
       properties:
@@ -579,11 +598,13 @@ components:
       required:
       - code
       - name
+
     ElectronicChannels:
       type: object
       required:
         - identification
         - services
+        - availability
       properties:
         identification:
           $ref: '#/components/schemas/ElectronicChannelsIdentification'
@@ -596,10 +617,12 @@ components:
           description: "Traz a relação de serviços disponbilizados pelo Canal de Atendimento"
         availability:
           $ref: '#/components/schemas/EletronicChannelsAvailability'
+
     ElectronicChannelsIdentification:
       type: object
       required:
         - type
+        - accessType
         - urls
       properties:
         type:
@@ -623,10 +646,12 @@ components:
             $ref: '#/components/schemas/ElectronicChannelsUrl'
           minItems: 1
           description: Lista das URLs que atendem um tipo de canal eletrônico selecionado
+
     ElectronicChannelsUrl:
       type: string
       pattern: \w*\W*
       maxLength: 1024
+
     ElectronicChannelsServices:
       type: object
       required:
@@ -710,6 +735,7 @@ components:
           pattern: '^([0-9]{8,11})$'
           example: "35721199"
           description: "Número de telefone da dependência - se houver"
+
     ####################
     ## Phone ElectronicChannels ##
     ####################
@@ -739,7 +765,7 @@ components:
             name: 'Organização A'
             companies:
               - name: 'Empresa A1'
-                cnpjNumber: '45086338000178'
+                cnpjNumber: '12345678901234'
                 urlComplementaryList: 'https://empresaa1.com/branches-insurance'
                 phoneChannels:
                   - identification:
@@ -758,6 +784,11 @@ components:
                         code: '02'
                       - name: 'ENDOSSO'
                         code: '05'
+                    availability:
+                      standards:
+                      - weekday: DOMINGO
+                        openingTime: 10:00:57Z
+                        closingTime: 16:00:57Z 
                   - identification:
                       type: 'SAC'
                       phones:
@@ -777,6 +808,11 @@ components:
                         code: '15'
                       - name: 'ENDOSSO'
                         code: '05'
+                    availability:
+                      standards:
+                      - weekday: DOMINGO
+                        openingTime: 10:00:57Z
+                        closingTime: 16:00:57Z 
                   - identification:
                       type: 'OUVIDORIA'
                       phones:
@@ -794,15 +830,21 @@ components:
                         code: '16'
                       - name: 'PORTABILIDADE'
                         code: '15'
+                    availability:
+                      standards:
+                      - weekday: DOMINGO
+                        openingTime: 10:00:57Z
+                        closingTime: 16:00:57Z 
         links:
-          self: "https://api.organizacao.com.br/open-insurance/channels/v1/phone-channels"
+          self: 'https://api.organizacao.com.br/open-insurance/channels/v1/phone-channels'
           first: 'https://api.organizacao.com.br/open-insurance/channels/v1/phone-channels'
-          prev: "https://api.organizacao.com.br/open-insurance/channels/v1/phone-channels"
-          next: "https://api.organizacao.com.br/open-insurance/channels/v1/phone-channels"
+          prev: 'https://api.organizacao.com.br/open-insurance/channels/v1/phone-channels'
+          next: 'https://api.organizacao.com.br/open-insurance/channels/v1/phone-channels'
           last: 'https://api.organizacao.com.br/open-insurance/channels/v1/phone-channels'
         meta:
           totalRecords: 1
           totalPages: 1
+
     #### PhoneChannelsBrand ####
     PhoneChannelsBrand:
       type: object
@@ -822,6 +864,7 @@ components:
             $ref: '#/components/schemas/PhoneChannelsCompanies'
           minItems: 1
           description: Lista de instituições pertencentes à marca
+
     #### PhoneChannelsCompanies ####
     PhoneChannelsCompanies:
       type: object
@@ -838,22 +881,25 @@ components:
           example: "Empresa da Marca A"
         cnpjNumber:
           type: string
-          minLength: 14
-          maxLength: 14
-          pattern: '^(\d{14})$|^NA$'
           description: |
             Número completo do CNPJ da instituição responsável pela dependência - o CNPJ corresponde ao número de inscrição no Cadastro de Pessoa Jurídica.
             Deve-se ter apenas os números do CNPJ, sem máscara
-          example: '45086338000178'
+          pattern: ^\d{14}$
+          example: '12345678901234'
         phoneChannels:
           type: array
           items:
             $ref: '#/components/schemas/PhoneChannels'
           minItems: 1
           description: Lista  de canais de atendimento telefônico
+
     #### PhoneChannels ####
     PhoneChannels:
       type: object
+      required:
+        - identification
+        - services
+        - availability
       properties:
         identification:
           $ref: '#/components/schemas/PhoneChannelsIdentification'
@@ -866,14 +912,13 @@ components:
           description: Traz a relação de serviços disponbilizados pelo Canal de Atendimento
         availability:
           $ref: '#/components/schemas/PhoneChannelsAvailability'
-      required:
-        - identification
-        - services
+
     #### PhoneChannelsIdentification ####
     PhoneChannelsIdentification:
       type: object
       required:
         - type
+        - phones
       properties:
         type:
           type: string
@@ -893,6 +938,7 @@ components:
             $ref: '#/components/schemas/PhoneChannelsPhones'
           minItems: 1
           description: "Lista de telefones do Canal de Atendimento"
+
     #### PhoneChannelPhones ####
     PhoneChannelsPhones:
       type: object
@@ -919,6 +965,7 @@ components:
           pattern: ^([0-9]{8,11})$|^NA$
           example: "08007787788"
           description: "Número de telefone de acesso ao canal."      
+
     #### PhoneChannelsServices ####
     PhoneChannelsServices:
       type: object
@@ -973,6 +1020,7 @@ components:
             - "18"
             - "19"
           description: "Código dos Serviços efetivamente prestados pelo Canal de Atendimento"    
+
     BranchesGeographicCoordinates:
       type: object
       description: Informação referente a geolocalização informada.
@@ -987,6 +1035,7 @@ components:
           type: string
           pattern: ^-?\d{1,3}\.\d{1,10}$
           example: '-175.836519'
+
     Links:
       type: object
       properties:
@@ -1015,6 +1064,7 @@ components:
           description: URL da última página de registros
           pattern: ^(https:\/\/)(.*?)(\/open-insurance\/channels\/v\d+)(\/(branches|electronic-channels|phone-channels).*)?$
           example: 'https://api.organizacao.com.br/open-insurance/channels/v1/branches'
+
     Meta:
       type: object
       properties:
@@ -1029,6 +1079,7 @@ components:
       required:
         - totalRecords
         - totalPages
+
     ResponseError:
       type: object
       required:
@@ -1072,6 +1123,7 @@ components:
         meta:
           $ref: '#/components/schemas/Meta'
       additionalProperties: false   
+
   parameters:
     page:
       name: page
