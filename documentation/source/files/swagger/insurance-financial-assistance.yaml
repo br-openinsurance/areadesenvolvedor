@@ -31,7 +31,7 @@ info:
       - permissions:
         - GET: **FINANCIAL_ASSISTANCE_MOVEMENTS_READ**
 
-  version: 1.0.0
+  version: 1.1.0
   contact:
     name: Governança do Open Insurance Brasil
     url: "https://www.gov.br/susep"
@@ -141,6 +141,8 @@ paths:
         - $ref: "#/components/parameters/xFapiInteractionId"
         - $ref: "#/components/parameters/xCustomerUserAgent"
         - $ref: "#/components/parameters/contractId"
+        - $ref: "#/components/parameters/page"
+        - $ref: "#/components/parameters/pageSize"
       responses:
         "200":
           $ref: "#/components/responses/OKResponseInsuranceFinancialAssistanceMovements"
@@ -178,53 +180,54 @@ components:
         - meta
       properties:
         data:
-          type: object
-          required:
-            - brand
-          properties:
-            brand:
-              type: object
-              description: Marca reportada pelo participante do Open Insurance. O conceito a que se refere a marca é em essência uma promessa das sociedades sob ela em fornecer uma série específica de atributos, benefícios e serviços uniformes aos clientes.
-              required:
-                - name
-                - companies
-              properties:
-                name:
-                  type: string
-                  description: Nome da Marca
-                  maxLength: 500
-                  example: EMPRESA A SEGUROS
-                companies:
-                  type: array
-                  items:
-                    type: object
-                    required:
-                      - companyName
-                      - cnpjNumber
-                    properties:
-                      companyName:
-                        description: Nome da sociedade pertencente à marca
-                        type: string
-                        maxLength: 80
-                        example: Empresa da Organização A
-                      cnpjNumber:
-                        description: CNPJ da sociedade pertencente à marca
-                        type: string
-                        maxLength: 14
-                        pattern: '^\d{14}$'
-                        example: "12345678901234"
-                      contracts:
-                        type: array
-                        items:
-                          type: object
-                          required:
-                            - contractId
-                          properties:
-                            contractId:
-                              description: Identificador do contrato de assistência financeira
-                              type: string
-                              maxLength: 60
-                              example: "42"
+          type: array
+          items:
+            type: object
+            required:
+              - brand
+            properties:
+              brand:
+                type: object
+                description: Marca reportada pelo participante do Open Insurance. O conceito a que se refere a marca é em essência uma promessa das sociedades sob ela em fornecer uma série específica de atributos, benefícios e serviços uniformes aos clientes.
+                required:
+                  - name
+                  - companies
+                properties:
+                  name:
+                    type: string
+                    description: Nome da Marca
+                    maxLength: 500
+                    example: EMPRESA A SEGUROS
+                  companies:
+                    type: array
+                    items:
+                      type: object
+                      required:
+                        - companyName
+                        - cnpjNumber
+                      properties:
+                        companyName:
+                          description: Nome da sociedade pertencente à marca
+                          type: string
+                          maxLength: 80
+                          example: Empresa da Organização A
+                        cnpjNumber:
+                          description: CNPJ da sociedade pertencente à marca
+                          type: string
+                          pattern: '^\d{14}$'
+                          example: "12345678901234"
+                        contracts:
+                          type: array
+                          items:
+                            type: object
+                            required:
+                              - contractId
+                            properties:
+                              contractId:
+                                description: Identificador do contrato de assistência financeira
+                                type: string
+                                maxLength: 60
+                                example: "42"
         links:
           $ref: "#/components/schemas/Links"
         meta:
