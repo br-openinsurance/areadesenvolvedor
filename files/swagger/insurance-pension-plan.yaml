@@ -39,7 +39,7 @@ info:
     ### `/{pensionIdentification}/claim`
       - permissions:
         - GET: **PENSION_PLAN_CLAIM**
-  version: 1.1.0
+  version: 1.2.0
   contact:
     name: Governança do Open Insurance Brasil
     url: "https://www.gov.br/susep"
@@ -327,58 +327,60 @@ components:
         - meta
       properties:
         data:
-          type: object
-          required:
-            - brand
-          properties:
-            brand:
-              type: object
-              description: Marca reportada pelo participante do Open Insurance. O conceito a que se refere a marca é em essência uma promessa das sociedades sob ela em fornecer uma série específica de atributos, benefícios e serviços uniformes aos clientes.
-              required:
-                - name
-                - companies
-              properties:
-                name:
-                  type: string
-                  description: Nome da Marca
-                  maxLength: 500
-                  example: EMPRESA A SEGUROS
-                companies:
-                  type: array
-                  items:
-                    type: object
-                    required:
-                      - companyName
-                      - cnpjNumber
-                    properties:
-                      companyName:
-                        description: Nome da sociedade pertencente à marca
-                        type: string
-                        maxLength: 80
-                        example: Empresa da Organização A
-                      cnpjNumber:
-                        description: CNPJ da sociedade pertencente à marca
-                        type: string
-                        maxLength: 14
-                        pattern: '^\d{14}$'
-                        example: "12345678901234"
-                      contracts:
-                        type: array
-                        items:
-                          type: object
-                          required:
-                            - pensionIdentification
-                            - productName
-                          properties:
-                            productName:
-                              type: string
-                              description: Nome comercial do produto, pelo qual é identificado nos canais de distribuição e atendimento da sociedade
-                              maxLength: 100
-                            pensionIdentification:
-                              description: Código único a ser definido pela sociedade
-                              type: string
-                              maxLength: 60
-                              example: "42"
+          type: array
+          items:
+            type: object
+            required:
+              - brand
+            properties:
+              brand:
+                type: object
+                description: Marca reportada pelo participante do Open Insurance. O conceito a que se refere a marca é em essência uma promessa das sociedades sob ela em fornecer uma série específica de atributos, benefícios e serviços uniformes aos clientes.
+                required:
+                  - name
+                  - companies
+                properties:
+                  name:
+                    type: string
+                    description: Nome da Marca
+                    maxLength: 500
+                    example: EMPRESA A SEGUROS
+                  companies:
+                    type: array
+                    items:
+                      type: object
+                      required:
+                        - companyName
+                        - cnpjNumber
+                        - contracts
+                      properties:
+                        companyName:
+                          description: Nome da sociedade pertencente à marca
+                          type: string
+                          maxLength: 80
+                          example: Empresa da Organização A
+                        cnpjNumber:
+                          description: CNPJ da sociedade pertencente à marca
+                          type: string
+                          pattern: '^\d{14}$'
+                          example: "12345678901234"
+                        contracts:
+                          type: array
+                          items:
+                            type: object
+                            required:
+                              - pensionIdentification
+                              - productName
+                            properties:
+                              productName:
+                                type: string
+                                description: Nome comercial do produto, pelo qual é identificado nos canais de distribuição e atendimento da sociedade
+                                maxLength: 100
+                              pensionIdentification:
+                                description: Código único a ser definido pela sociedade
+                                type: string
+                                maxLength: 60
+                                example: "42"
         links:
           $ref: "#/components/schemas/Links"
         meta:
@@ -617,8 +619,12 @@ components:
               OUTROS
             ]
           example: CORRETOR
+        typeOthers:
+          description: Descricao do campo de Tipo do Intermediador quando a opcao escolhida for OUTROS
+          type: string
+          maxLength: 100
         documentNumber:
-          description: Documento do Intermediador, Campo obrigatório quando o campo “Tipo” for preenchido com “1 - Corretor”.
+          description: Documento do Intermediador (Caso Tipo de Intermediador nao seja Corretor, ou quando for Corretor, porem o identificador do intermediador nao seja informado)
           type: string
           maxLength: 60
           example: "12345678910"
@@ -718,7 +724,7 @@ components:
       properties:
         coverageCode:
           type: string
-          description: Código da Cobertura - De acordo com a Tabela 63 do Anexo I do Manual de Escopo de Dados
+          description: Codigo da cobertura
           maxLength: 5
           example: "1999"
         susepProcessNumber:
@@ -751,9 +757,15 @@ components:
               QUADRIMESTRAL,
               SEMESTRAL,
               ANUAL,
-              ESPORADICA
+              ESPORADICA,
+              PAGAMENTO_UNICO,
+              OUTROS
             ]
           example: MENSAL
+        periodicityOthers:
+          description: Descricao do campo de Periodicidade de pagamento da Contribuicao/Premio quando a opcao escolhida for OUTROS
+          type: string
+          maxLength: 100
         coverageName:
           type: string
           maxLength: 500
@@ -998,7 +1010,6 @@ components:
       description: Eventos Geradores
       required:
         - eventType
-        - eventInfo
       properties:
         eventType:
           description: Indica o tipo de evento gerador aplicável à cobertura
@@ -1008,38 +1019,6 @@ components:
           description: Descrição do tipo de evento gerador quando for informada a opção OUTROS
           type: string
           example: OUTROS
-        eventInfo:
-          type: object
-          description: Dados Gerais do Evento Gerador
-          required:
-            - eventStatus
-            - eventAlertDate
-            - eventRegisterDate
-          properties:
-            eventStatus:
-              description: Status do Evento Gerador
-              type: string
-              enum: [
-                  ABERTO,
-                  ENCERRADO_COM_INDENIZACAO,
-                  ENCERRADO_SEM_INDENIZACAO,
-                  REABERTO,
-                  CANCELADO_POR_ERRO_OPERACIONAL,
-                  AVALIACAO_INICIAL,
-                  ENCERRADO_COM_PAGAMENTO_UNICO_BENEFICIO,
-                  ENCERRADO_COM_CONCESSAO_DE_RENDA_BENEFICIO,
-                  ENCERRADO_INDEFERIDO_BENEFICIO
-                ]
-            eventAlertDate:
-              description: Data de Aviso do Evento Gerador
-              type: string
-              format: date
-              example: "2021-05-21"
-            eventRegisterDate:
-              description: Data do Registro de Aviso à Seguradora
-              type: string
-              format: date
-              example: "2021-05-21"
 
     ResponseInsurancePensionPlanMovements:
       type: object
@@ -1061,6 +1040,12 @@ components:
           type: array
           items:
             type: object
+            required:
+              - contributionAmount
+              - contributionPaymentDate
+              - contributionExpirationDate
+              - chargedInAdvanceAmount
+              - periodicity
             properties:
               contributionAmount:
                 description: Valores de contribuições/prêmios comerciais pagos pelo segurado participante (em relação aos últimos 12 meses), Obrigatório se houver
@@ -1091,9 +1076,15 @@ components:
                     QUADRIMESTRAL,
                     SEMESTRAL,
                     ANUAL,
-                    ESPORADICA
+                    ESPORADICA,
+                    PAGAMENTO_UNICO,
+                    OUTROS
                   ]
                 example: MENSAL
+              periodicityOthers:
+                description: Descricao do campo de Periodicidade da contribuicoes quando a opcao escolhida for OUTROS
+                type: string
+                maxLength: 100
         movementBenefits:
           type: array
           items:
@@ -1262,103 +1253,149 @@ components:
     InsurancePensionPlanClaim:
       type: object
       required:
-        - beneficiaryDocument
-        - beneficiaryDocumentType
-        - beneficiaryName
-        - beneficiaryCategory
-        - beneficiaryBirthDate
-        - incomeType
-        - reversedIncome
-        - incomeAmount
-        - benefitAmount
-        - grantedDate
-        - monetaryUpdateIndex
-        - lastUpdateDate
+        - eventInfo
       properties:
-        beneficiaryDocument:
-          description: Documento de identificação do beneficiário da renda concedida
-          type: string
-          example: "12345678910"
-        beneficiaryDocumentType:
-          description: Tipo de Documento do Beneficiário
-          type: string
-          enum: [CPF, RG, PASSAPORTE, OUTROS]
-          example: "CPF"
-        beneficiaryName:
-          description: Nome do beneficiário da renda concedida
-          type: string
-          example: "NOME BENEFICIARIO"
-        beneficiaryCategory:
-          description: Classificação do Beneficiário
-          type: string
-          enum: [SEGURADO, CONJUGE, FILHO_MENOR_DE_IDADE, BENEFICIARIO_INDICADO]
-          example: "SEGURADO"
-        beneficiaryBirthDate:
-          description: Data de nascimento do beneficiário da renda concedida
-          type: string
-          format: date
-          example: "2021-05-21"
-        incomeType:
-          description: Tipo de Renda
-          type: string
-          enum:
-            - PAGAMENTO_UNICO
-            - RENDA_POR_PRAZO_CERTO
-            - RENDA_TEMPORARIA
-            - RENDA_TEMPORARIA_REVERSIVEL
-            - RENDA_TEMPORARIA_COM_PRAZO_MINIMO_GARANTIDO
-            - RENDA_TEMPORARIA_REVERSIVEL_COM_PRAZO_MINIMO_GARANTIDO
-            - RENDA_VITALICIA
-            - RENDA_VITALICIA_REVERSIVEL_AO_BENEFICIARIO_INDICADO
-            - RENDA_VITALICIA_REVERSIVEL_AO_CONJUGE_COM_CONTINUIDADE_AOS_MENORES
-            - RENDA_VITALICIA_COM_PRAZO_MINIMO_GARANTIDO
-            - RENDA_VITALICIA_REVERSIVEL_COM_PRAZO_MINIMO_GARANTIDO
-            - RENDA_VITALICIA_REVERSIVEL_AO_CONJUGE
-            - OUTROS
-          example: PAGAMENTO_UNICO
-        incomeTypeDetails:
-          description: Descrição do Tipo de Renda, obrigatório se campo Tipo de Renda for OUTROS.
-          type: string
-          maxLength: 100
-          example: Descrição do Tipo de Renda
-        reversedIncome:
-          description: Renda Revertida, obrigatório se campo Tipo de Renda for 4, 6, 8, 9 e 11.
-          type: boolean
-          example: false
-        incomeAmount:
-          description: Valor do benefício concedido em forma de renda ou do pagamento único
-          allOf:
-            - $ref: "#/components/schemas/AmountDetails"
-        paymentTerms:
-          description: Prazo pagamento da parcela ou da renda atuarial ou financeira do benefício concedido (quando Tipo de renda for igual a 2, 3, 4, 5 e 6)
-          type: string
-          example: "PRAZO"
-        benefitAmount:
-          description: Número de benefícios a serem recebidos por ano
-          type: integer
-          example: 2
-        grantedDate:
-          description: Data de Concessão
-          type: string
-          format: date
-          example: "2021-05-21"
-        monetaryUpdateIndex:
-          description: Índice de Atualização Monetária
-          type: string
-          enum:
-            - IPC-FGV
-            - IGP-DI-FGV
-            - IPCA-IBGE
-            - IGPM-FGV
-            - INPC-IBGE
-            - TR
-            - OUTROS
-          example: IPC-FGV
-        lastUpdateDate:
-          description: Data da última atualização do benefício
-          type: string
-          format: date
-          example: "2021-05-21"
+        eventInfo:
+          type: object
+          description: Dados Gerais do Evento Gerador
+          required:
+            - eventStatus
+            - eventAlertDate
+            - eventRegisterDate
+          properties:
+            eventStatus:
+              description: Status do Evento Gerador
+              type: string
+              enum: [
+                  ABERTO,
+                  ENCERRADO_COM_INDENIZACAO,
+                  ENCERRADO_SEM_INDENIZACAO,
+                  REABERTO,
+                  CANCELADO_POR_ERRO_OPERACIONAL,
+                  AVALIACAO_INICIAL,
+                  ENCERRADO_COM_PAGAMENTO_UNICO_BENEFICIO,
+                  ENCERRADO_COM_CONCESSAO_DE_RENDA_BENEFICIO,
+                  ENCERRADO_INDEFERIDO_BENEFICIO
+                ]
+            eventAlertDate:
+              description: Data de Aviso do Evento Gerador
+              type: string
+              format: date
+              example: "2021-05-21"
+            eventRegisterDate:
+              description: Data do Registro de Aviso à Seguradora
+              type: string
+              format: date
+              example: "2021-05-21"
+
+        incomeInfo:
+          type: object
+          description: Informacoes de Renda Concedida (caso renda tenha sido concedida)
+          required:
+            - beneficiaryDocument
+            - beneficiaryDocumentType
+            - beneficiaryName
+            - beneficiaryCategory
+            - beneficiaryBirthDate
+            - incomeType
+            - incomeAmount
+            - benefitAmount
+            - grantedDate
+            - monetaryUpdateIndex
+            - lastUpdateDate
+          properties:
+            beneficiaryDocument:
+              description: Documento de identificação do beneficiário da renda concedida
+              type: string
+              example: "12345678910"
+            beneficiaryDocumentType:
+              description: Tipo de Documento do Beneficiário
+              type: string
+              enum: [CPF, RG, PASSAPORTE, OUTROS]
+              example: "CPF"
+            beneficiaryDocTypeOthers:
+              description: Descricao do campo de Tipo de Documento do Beneficiario quando a opcao escolhida for OUTROS
+              type: string
+              maxLength: 100
+            beneficiaryName:
+              description: Nome do beneficiário da renda concedida
+              type: string
+              example: "NOME BENEFICIARIO"
+            beneficiaryCategory:
+              description: Classificação do Beneficiário
+              type: string
+              enum: [SEGURADO, CONJUGE, FILHO_MENOR_DE_IDADE, BENEFICIARIO_INDICADO]
+              example: "SEGURADO"
+            beneficiaryBirthDate:
+              description: Data de nascimento do beneficiário da renda concedida
+              type: string
+              format: date
+              example: "2021-05-21"
+            incomeType:
+              description: Tipo de Renda
+              type: string
+              enum:
+                - PAGAMENTO_UNICO
+                - RENDA_POR_PRAZO_CERTO
+                - RENDA_TEMPORARIA
+                - RENDA_TEMPORARIA_REVERSIVEL
+                - RENDA_TEMPORARIA_COM_PRAZO_MINIMO_GARANTIDO
+                - RENDA_TEMPORARIA_REVERSIVEL_COM_PRAZO_MINIMO_GARANTIDO
+                - RENDA_VITALICIA
+                - RENDA_VITALICIA_REVERSIVEL_AO_BENEFICIARIO_INDICADO
+                - RENDA_VITALICIA_REVERSIVEL_AO_CONJUGE_COM_CONTINUIDADE_AOS_MENORES
+                - RENDA_VITALICIA_COM_PRAZO_MINIMO_GARANTIDO
+                - RENDA_VITALICIA_REVERSIVEL_COM_PRAZO_MINIMO_GARANTIDO
+                - RENDA_VITALICIA_REVERSIVEL_AO_CONJUGE
+                - OUTROS
+              example: PAGAMENTO_UNICO
+            incomeTypeDetails:
+              description: Descrição do Tipo de Renda, obrigatório se campo Tipo de Renda for OUTROS.
+              type: string
+              maxLength: 100
+              example: Descrição do Tipo de Renda
+            reversedIncome:
+              description: Renda Revertida, obrigatorio se campo Tipo de Renda for 4, 6, 8, 9, 11 e 12.
+              type: boolean
+              example: false
+            incomeAmount:
+              description: Valor do benefício concedido em forma de renda ou do pagamento único
+              allOf:
+                - $ref: "#/components/schemas/AmountDetails"
+            paymentTerms:
+              description: Prazo pagamento da parcela ou da renda atuarial ou financeira do benefício concedido (quando Tipo de renda for igual a 2, 3, 4, 5 e 6)
+              type: string
+              example: "PRAZO"
+            benefitAmount:
+              description: Número de benefícios a serem recebidos por ano
+              type: integer
+              example: 2
+            grantedDate:
+              description: Data de Concessão
+              type: string
+              format: date
+              example: "2021-05-21"
+            monetaryUpdateIndex:
+              description: Índice de Atualização Monetária
+              type: string
+              enum:
+                - IPC-FGV
+                - IGP-DI-FGV
+                - IPCA-IBGE
+                - IGPM-FGV
+                - INPC-IBGE
+                - TR
+                - OUTROS
+              example: IPC-FGV
+            monetaryUpdIndexOthers:
+              description: Descricao do campo de Indice de Atualizacao Monetaria quando a opcao escolhida for OUTROS
+              type: string
+              maxLength: 100
+            lastUpdateDate:
+              description: Data da última atualização do benefício
+              type: string
+              format: date
+              example: "2021-05-21"
 
     AmountDetails:
       type: object
