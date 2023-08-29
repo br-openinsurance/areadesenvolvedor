@@ -33,7 +33,7 @@ info:
     ### `/{policyId}/claim`
       - permissions:
         - GET: **DAMAGES_AND_PEOPLE_HOUSING_CLAIM_READ**
-  version: 1.2.1
+  version: 1.3.0
   contact:
     name: Governança do Open Insurance Brasil
     url: 'https://www.gov.br/susep/'
@@ -207,6 +207,8 @@ paths:
         - $ref: '#/components/parameters/xFapiInteractionId'
         - $ref: '#/components/parameters/xCustomerUserAgent'
         - $ref: "#/components/parameters/policyId"
+        - $ref: "#/components/parameters/page"
+        - $ref: "#/components/parameters/pageSize"
       responses:
         '200':
           $ref: '#/components/responses/OKResponseInsuranceHousingClaims'
@@ -279,7 +281,6 @@ components:
                     cnpjNumber:
                       description: CNPJ da sociedade pertencente à marca
                       type: string
-                      maxLength: 14
                       pattern: '^\d{14}$'
                       example: "12345678901234"
                     policies:
@@ -443,6 +444,11 @@ components:
             OUTROS
           ]
           example: CPF
+        identificationTypeOthers:
+          description: Campo de detalhamento para quando a opcao do tipo de documento do intermediador(a) for OUTROS
+          type: string
+          maxLength: 100
+          example: RNE
         name:
           description: Nome ou Razão Social da Pessoa
           type: string
@@ -496,6 +502,11 @@ components:
             OUTROS
           ]
           example: CPF
+        identificationTypeOthers:
+          description: Campo de detalhamento para quando a opcao do tipo de documento do intermediador(a) for OUTROS
+          type: string
+          maxLength: 100
+          example: RNE
         name:
           description: Nome ou Razão Social da Pessoa
           type: string
@@ -504,6 +515,7 @@ components:
     Intermediary:
       type: object
       required:
+        - type
         - name
       properties:
         type:
@@ -518,8 +530,12 @@ components:
             OUTROS
           ]
           example: REPRESENTANTE
+        typeOthers:
+          description: Descricao do Tipo do Intermediador quando for informada a opcao OUTROS
+          type: string
+          maxLength: 100
         identification:
-          description: Documento de Identificação da Intermediador
+          description: Documento de Identificacao do Intermediador(a) (Caso Tipo de Intermediador nao seja CORRETOR ou quando for CORRETOR, porem o identificador do intermediador nao seja informado)
           type: string
           maxLength: 60
           pattern: '^\d{1,60}$'
@@ -537,6 +553,11 @@ components:
             OUTROS
           ]
           example: CPF
+        identificationTypeOthers:
+          description: Campo de detalhamento para quando a opcao do tipo de documento do intermediador(a) for OUTROS
+          type: string
+          maxLength: 100
+          example: RNE
         name:
           description: Nome ou Razão Social da Intermediador
           type: string
@@ -568,16 +589,14 @@ components:
     InsuranceHousingInsuredObject:
       type: object
       required:
-        - identification
         - type
         - description
-        - amount
         - coverages
       properties:
         identification:
           type: string
           maxLength: 100
-          description: "Identificador do objeto segurado. Obs.: Para Fiança Locatícia, é a identificação do Contrato de Locação."
+          description: Identificador do objeto segurado (Quando o Tipo de Objeto Segurado for diferente de PESSOA). Para Fianca Locaticia, colocar a identificacao do Contrato de Locacao
         type:
           type: string
           description: Tipo do objeto segurado
@@ -614,6 +633,7 @@ components:
         - termEndDate
         - feature
         - type
+        - premiumPeriodicity
       properties:
         branch:
           type: string
@@ -622,7 +642,7 @@ components:
           description: Grupo e Ramo da Cobertura (Conforme regulamentação Susep vigente)
         code:
             type: string
-            description: Código da cobertura, conforme Anexo II do Manuel de Escopo de Dados
+            description: Codigo da cobertura
             enum: [
               DANOS_ELETRICOS,
               DANOS_FISICOS_AO_CONTEUDO,
@@ -705,6 +725,22 @@ components:
           maxLength: 10
           example: '2022-12-31'
           description: "Data de fim da carência. OBS: Obrigatório, se houver"
+        premiumPeriodicity:
+          description: Periodicidade de pagamento do premio
+          type: string
+          enum: [MENSAL,
+                BIMESTRAL,
+                TRIMESTRAL,
+                QUADRIMESTRAL,
+                SEMESTRAL,
+                ANUAL,
+                ESPORADICA,
+                PAGAMENTO_UNICO,
+                OUTROS]
+        premiumPeriodicityOthers:
+          description: Descricao da Periodicidade de pagamento do premio quando for informada a opcao OUTROS
+          type: string
+          maxLength: 100
     InsuranceHousingCoverage:
       type: object
       required:
@@ -719,7 +755,7 @@ components:
           example: '0111'
         code:
             type: string
-            description: Código da cobertura, conforme Anexo II do Manuel de Escopo de Dados
+            description: Codigo da cobertura
             enum: [
               DANOS_ELETRICOS,
               DANOS_FISICOS_AO_CONTEUDO,
@@ -809,7 +845,6 @@ components:
       description: Informações de franquia
       required:
         - applicationType
-        - description
       properties:
         applicationType:
           description: Forma de Aplicação do POS
@@ -821,7 +856,7 @@ components:
           ]
           example: VALOR
         description:
-          description: Descrição do POS
+          description: Descricao do POS caso forma de aplicacao do POS for OUTROS
           type: string
           maxLength: 60
           example: "Descrição de exemplo"
@@ -876,7 +911,9 @@ components:
           maxLength: 3
           example: 4
         amount:
-          $ref: '#/components/schemas/AmountDetails'
+          description: Valor total do premio do contrato
+          allOf:
+            - $ref: '#/components/schemas/AmountDetails'
         coverages:
           type: array
           items:
@@ -899,7 +936,7 @@ components:
           example: '0111'
         code:
             type: string
-            description: Código da cobertura, conforme Anexo II do Manual de Escopo de Dados
+            description: Codigo da cobertura
             enum: [
               DANOS_ELETRICOS,
               DANOS_FISICOS_AO_CONTEUDO,
@@ -915,7 +952,9 @@ components:
           type: string
           maxLength: 500
         premiumAmount:
-          $ref: '#/components/schemas/AmountDetails'
+          description: Valor de premio da cobertura
+          allOf:
+            - $ref: '#/components/schemas/AmountDetails'
     Payment:
       type: object
       required:
@@ -935,17 +974,21 @@ components:
           type: string
           enum: [LIQUIDACAO_DE_PREMIO,
                 LIQUIDACAO_DE_RESTITUICAO_DE_PREMIO,
+                LIQUIDACAO_DE_CUSTO_DE_AQUISICAO,
+                LIQUIDACAO_DE_RESTITUICAO_DE_CUSTO_DE_AQUISICAO,
                 ESTORNO_DE_PREMIO,
                 ESTORNO_DE_RESTITUICAO_DE_PREMIO,
-                EMISSAO_DE_PREMIO,
+                ESTORNO_DE_CUSTO_DE_AQUISICAO,
+                EMISSAO_DE_PREMIO_SEM_ENDOSSO,
                 CANCELAMENTO_DE_PARCELA,
-                EMISSAO_DE_RESTITUICAO_DE_PREMIO,
+                EMISSAO_DE_RESTITUICAO_DE_PREMIO_SEM_ENDOSSO,
                 REABERTURA_DE_PARCELA,
                 BAIXA_POR_PERDA,
-                CANCELAMENTO_DE_PREMIO_E_PARCELA]
+                CANCELAMENTO_DE_PREMIO_E_PARCELA_SEM_ENDOSSO,
+                COMPENSACAO_FINANCEIRA]
           example: LIQUIDACAO_DE_PREMIO
         movementOrigin:
-          description: "Origem do Movimento. Obs: Obrigatório caso Tipo de Movimento for LIQUIDACAO_DE_PREMIO e ESTORNO_DE_PREMIO"
+          description: Origem do Movimento. Obrigatorio caso Tipo de Movimento for LIQUIDACAO_DE_PREMIO ou ESTORNO_DE_PREMIO
           type: string
           enum: [EMISSAO_DIRETA,
             EMISSAO_ACEITA_DE_COSSEGURO,
@@ -963,26 +1006,31 @@ components:
           format: date
           example: '2022-12-31'
         tellerId:
-          description: "Documento do Pagador/Recebedor Obs: Obrigatório caso Tipo de Movimento for  LIQUIDACAO_DE_PREMIO e LIQUIDACAO_DE_CUSTO_DE_AQUISICAO"
+          description: Documento do Pagador/Recebedor. Obrigatorio caso Tipo de Movimento for LIQUIDACAO_DE_PREMIO ou LIQUIDACAO_DE_CUSTO_DE_AQUISICAO
           type: string
           maxLength: 1024
         tellerIdType:
-          description: "Tipo do Documento do Pagador/Recebedor Obs: Obrigatório caso Tipo de Movimento for  LIQUIDACAO_DE_PREMIO e LIQUIDACAO_DE_CUSTO_DE_AQUISICAO"
+          description: Tipo do Documento do Pagador/Recebedor. Obrigatorio caso Tipo de Movimento for LIQUIDACAO_DE_PREMIO ou LIQUIDACAO_DE_CUSTO_DE_AQUISICAO
           type: string
           enum: [CPF,
             CNPJ,
             OUTROS]
           example: CPF
+        tellerIdOthers:
+          description: Descricao do campo de tipo do documento do pagador/recebedor quando a opcao escolhida for OUTROS
+          type: string
+          maxLength: 100
+          example: RNE
         tellerName:
-          description: "Nome ou Razão Social do Pagador/Recebedor Obs: Obrigatório caso Tipo de Movimento for  LIQUIDACAO_DE_PREMIO e LIQUIDACAO_DE_CUSTO_DE_AQUISICAO"
+          description: Nome ou Razao Social do Pagador/Recebedor. Obrigatorio caso Tipo de Movimento for LIQUIDACAO_DE_PREMIO ou LIQUIDACAO_DE_CUSTO_DE_AQUISICAO
           type: string
           maxLength: 100
         financialInstitutionCode:
-          description: "Código da Instituição Financeiro do Pagamento Obs: Obrigatório caso Tipo de Movimento for  LIQUIDACAO_DE_PREMIO e LIQUIDACAO_DE_CUSTO_DE_AQUISICAO"
+          description: Codigo da Instituicao Financeiro do Pagamento. Obrigatorio caso Tipo de Movimento for LIQUIDACAO_DE_PREMIO ou LIQUIDACAO_DE_CUSTO_DE_AQUISICAO
           type: string
           maxLength: 100
         paymentType:
-          description: "Meio de Pagamento Obs: Obrigatório caso Tipo de Movimento for  LIQUIDACAO_DE_PREMIO e LIQUIDACAO_DE_CUSTO_DE_AQUISICAO"
+          description: Meio de Pagamento. Obrigatorio caso Tipo de Movimento for LIQUIDACAO_DE_PREMIO ou LIQUIDACAO_DE_CUSTO_DE_AQUISICAO
           type: string
           enum: [BOLETO,
                 TED,
@@ -995,6 +1043,10 @@ components:
                 DINHEIRO_EM_ESPECIE,
                 OUTROS]
           example: BOLETO
+        paymentTypeOthers:
+          description: Campo de detalhamento para quando a opcao do meio de pagamento for OUTROS
+          type: string
+          maxLength: 100
     ResponseInsuranceHousingClaims:
       type: object
       required:
@@ -1020,6 +1072,7 @@ components:
         - occurrenceDate
         - warningDate
         - amount
+        - coverages
       properties:
         identification:
           description: Identificador do processo de sinistro
@@ -1101,7 +1154,7 @@ components:
           example: '0111'
         code:
             type: string
-            description: Código da cobertura, conforme Anexo II do Manuel de Escopo de Dados
+            description: Codigo da cobertura
             enum: [
               DANOS_ELETRICOS,
               DANOS_FISICOS_AO_CONTEUDO,
@@ -1146,6 +1199,7 @@ components:
       type: object
       required:
         - insuredObjects
+        - insureds
       properties:
         insuredObjects:
           type: array
@@ -1225,7 +1279,6 @@ components:
               cnpjNumber:
                 description: CNPJ do financiador
                 type: string
-                maxLength: 14
                 pattern: '^\d{14}$'
                 example: "12345678901234"
     InsuranceHousingSpecificInsured:
@@ -1248,6 +1301,11 @@ components:
             OUTROS
           ]
           example: CPF
+        identificationTypeOthers:
+          description: Campo de detalhamento para quando a opcao do tipo de documento do intermediador(a) for OUTROS
+          type: string
+          maxLength: 100
+          example: RNE
         birthDate:
           description: Data de nascimento do segurado (caso cobertura do ramo habitacional e Pessoa Física com "Tipo documento CPF ou Outros")
           type: string

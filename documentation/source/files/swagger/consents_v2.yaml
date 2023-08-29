@@ -56,10 +56,10 @@ info:
       |                      |                                  | PENSION_PLAN_WITHDRAWALS_READ                                     |
       |                      |                                  | PENSION_PLAN_CLAIM                                                |
       |----------------------|----------------------------------|-------------------------------------------------------------------|
-      | Previdência          | Produtos de Previdência          | RESOURCES_READ                                                    |
-      | Sobrevivência        | Sobrevivência (Obrigatório)      |                                                                   |
-      |                      |----------------------------------|-------------------------------------------------------------------|
-      |                      | Produtos de Previdência          | LIFE_PENSION_READ                                                 |
+      | Previdência e        | Produtos de Previdência e Pessoas| RESOURCES_READ                                                    |
+      | Pessoas              | Sobrevivência (Obrigatório)      |                                                                   |
+      | Sobrevivência        |----------------------------------|-------------------------------------------------------------------|
+      |                      | Produtos de Previdência e Pessoas| LIFE_PENSION_READ                                                 |
       |                      | Sobrevivência (Opcional)         | LIFE_PENSION_CONTRACTINFO_READ                                    |
       |                      |                                  | LIFE_PENSION_MOVEMENTS_READ                                       |
       |                      |                                  | LIFE_PENSION_PORTABILITIES_READ                                   |
@@ -133,8 +133,8 @@ info:
       | Pessoas              |----------------------------------|-------------------------------------------------------------------|
       |                      | Pessoas (Opcional)               | DAMAGES_AND_PEOPLE_PERSON_READ                                    |
       |                      |                                  | DAMAGES_AND_PEOPLE_PERSON_POLICYINFO_READ                         |
+      |                      |                                  | DAMAGES_AND_PEOPLE_PERSON_PREMIUM_READ                            |
       |                      |                                  | DAMAGES_AND_PEOPLE_PERSON_CLAIM_READ                              |
-      |                      |                                  | DAMAGES_AND_PEOPLE_PERSON_MOVEMENTS_READ                          |
       |----------------------|----------------------------------|-------------------------------------------------------------------|
 
       |-----------------------------------------------------------------------------------------------------------------------------|
@@ -238,7 +238,7 @@ info:
     - Caso a instituição receptora envie somente a permissão "RESOURCES_READ" sem nenhuma outra permissão de fase 2, a transmissora deve rejeitar o pedido da receptora dando retorno HTTP Status Code 400.
     - Caso a instituição receptora envie permissões de fase 2 (compartilhamento de dados) e 3 (iniciação de serviços) em uma única solicitação, a transmissora deve rejeitar o pedido da receptora dando retorno HTTP Status Code 422.
     - A transmissora deve retornar, da lista de permissions requisitadas, apenas o subconjunto de permissions por ela suportada, removendo da lista as permissions de produtos não suportados e retornando HTTP Status Code 201. Caso não restem permissões funcionais, a instituição transmissora deve retornar o erro HTTP Code "422 Unprocessable Entity".
-  version: 2.3.0
+  version: 2.4.0
   license:
     name: Apache 2.0
     url: 'http://www.apache.org/licenses/LICENSE-2.0'
@@ -527,8 +527,8 @@ components:
                     - DAMAGES_AND_PEOPLE_ACCEPTANCE_AND_BRANCHES_ABROAD_CLAIM_READ            
                     - DAMAGES_AND_PEOPLE_PERSON_READ                                                                                                                                                                                                                                                   
                     - DAMAGES_AND_PEOPLE_PERSON_POLICYINFO_READ                        
+                    - DAMAGES_AND_PEOPLE_PERSON_PREMIUM_READ
                     - DAMAGES_AND_PEOPLE_PERSON_CLAIM_READ                           
-                    - DAMAGES_AND_PEOPLE_PERSON_MOVEMENTS_READ
                     - ENDORSEMENT_REQUEST_CREATE
                     - CLAIM_NOTIFICATION_REQUEST_DAMAGE_CREATE
                     - CLAIM_NOTIFICATION_REQUEST_PERSON_CREATE      
@@ -734,8 +734,8 @@ components:
                     - DAMAGES_AND_PEOPLE_ACCEPTANCE_AND_BRANCHES_ABROAD_CLAIM_READ            
                     - DAMAGES_AND_PEOPLE_PERSON_READ                                                                                                                                                                                                                                                   
                     - DAMAGES_AND_PEOPLE_PERSON_POLICYINFO_READ                        
+                    - DAMAGES_AND_PEOPLE_PERSON_PREMIUM_READ
                     - DAMAGES_AND_PEOPLE_PERSON_CLAIM_READ                           
-                    - DAMAGES_AND_PEOPLE_PERSON_MOVEMENTS_READ  
                     - ENDORSEMENT_REQUEST_CREATE
                     - CLAIM_NOTIFICATION_REQUEST_DAMAGE_CREATE
                     - CLAIM_NOTIFICATION_REQUEST_PERSON_CREATE      
