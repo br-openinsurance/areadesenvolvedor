@@ -1,6 +1,6 @@
 openapi: 3.0.0
 info:
-  version: 1.0.2
+  version: 1.0.3
   title: API de ingestão do funil de consentimentos
   description: |
     API que recebe os eventos do funil de consentimentos.
@@ -50,6 +50,11 @@ info:
           **JWS = Base64url(JOSEHeader) + "." + Base64url(payload JWT) + "." + Base64url(digital signature)**
 
     A assinatura do body deve seguir o padrão JWS definido na [RFC7515](https://datatracker.ietf.org/doc/html/rfc7515).
+servers:
+  - url: 'https://ingestion-api.opinbrasil.com.br'
+    description: Servidor de Producao
+  - url: 'https://ingestion-api-sandbox.opinbrasil.com.br'
+    description: Servidor de Homologacao 
 paths:
   /event-api/v1/server-event:
     post:
@@ -179,7 +184,7 @@ components:
     success:
       type: object
       properties:
-        eventId:
+        reportId:
           type: string
           example: '7eb81ba1-9011-4c58-9d5b-1098550d2fca'
         correlationId:
@@ -189,7 +194,7 @@ components:
           type: string
           example: ACCEPTED
       required:
-        - eventId
+        - reportId
         - correlationId
         - status
       additionalProperties: false
@@ -204,7 +209,7 @@ components:
           example: DISCARDED
         message:
           type: string
-          example: 'Missing fields: fapiInteractionId, endpoint'
+          example: 'Missing fields: correlationId, timestamp.'
       required:
         - status
         - message
