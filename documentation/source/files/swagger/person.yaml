@@ -3,7 +3,7 @@ info:
   title: APIs Open Data do Open Insurance Brasil
   description: 
     Obtém a lista dos produtos Seguros de Pessoas – Coberturas de Risco (excluindo VGBL).
-  version: 1.5.0
+  version: 1.5.1
   contact:
     url: 'https://www.gov.br/susep/'
 servers:
@@ -158,9 +158,6 @@ components:
           - globalCapital
           - validity
           - benefitRecalculation
-          - otherGuaranteedValues
-          - allowPortability
-          - portabilityGraceTime
           - premiumPayment
           - minimumRequirements
           - targetAudience
@@ -347,10 +344,11 @@ components:
             $ref: '#/components/schemas/PersonReclaim'
           otherGuaranteedValues:
             type: string
+            description: Outros valores garantidos (Somente informado se Regime Financeiro for igual a Capitalizacao)
             enum: [SALDAMENTO, BENEFICIO_PROLONGADO, NAO_SE_APLICA]
           allowPortability:
             type: boolean
-            description: Permite Portabilidade
+            description: Permite Portabilidade (Somente informado se Regime Financeiro for igual a Capitalizacao)
           portabilityGraceTime:
             $ref: '#/components/schemas/PersonGracePeriodPortabilityUnit'
           premiumPayment:
@@ -425,7 +423,7 @@ components:
 
     PersonGracePeriodPortabilityUnit:
         type: object
-        description: Período de carência
+        description: Periodo de carencia (Somente informado se Regime Financeiro for igual a Capitalizacao)
         required:
           - amount
           - unit
@@ -447,7 +445,6 @@ components:
         - indemnityPaymentFrequency
         - minValue
         - maxValue
-        - maximumQtyIndemnifiableInstallments
         - currency
         - gracePeriod  
         - deductibleDays 
@@ -556,6 +553,7 @@ components:
   
     PersonPmbacRemuneration:
       type: object
+      description: Somente informado se Regime Financeiro for igual a Capitalizacao
       required:
         - interestRate
         - pmbacUpdateIndex
@@ -628,6 +626,7 @@ components:
 
     PersonReclaim:
       type: object
+      description: Somente informado se Regime Financeiro for igual a Capitalizacao
       required:
         - reclaimTable
         - gracePeriod
