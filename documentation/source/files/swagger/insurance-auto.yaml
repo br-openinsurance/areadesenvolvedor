@@ -33,7 +33,7 @@ info:
     ### `/{policyId}/claim`
       - permissions:
         - GET: **DAMAGES_AND_PEOPLE_AUTO_CLAIM_READ**
-  version: 1.2.0
+  version: 1.3.0
   contact:
     name: Governança do Open Insurance Brasil
     url: 'https://www.gov.br/susep/'
@@ -207,6 +207,8 @@ paths:
         - $ref: '#/components/parameters/xFapiInteractionId'
         - $ref: '#/components/parameters/xCustomerUserAgent'
         - $ref: "#/components/parameters/policyId"
+        - $ref: "#/components/parameters/page"
+        - $ref: "#/components/parameters/pageSize"
       responses:
         '200':
           $ref: '#/components/responses/OKResponseInsuranceAutoClaims'
@@ -279,7 +281,6 @@ components:
                     cnpjNumber:
                       description: CNPJ da sociedade pertencente à marca
                       type: string
-                      maxLength: 14
                       pattern: '^\d{14}$'
                       example: "12345678901234"
                     policies:
@@ -429,6 +430,10 @@ components:
             OUTROS
           ]
           example: REDE_REFERENCIADA
+        repairNetworkOthers:
+          description: Campo de detalhamento para quando a opcao de rede de reparacao dos veiculos for OUTROS
+          type: string
+          maxLength: 100
         repairedPartsUsageType:
           description: Tipos de peças passíveis de uso em reparos (Casco)
           type: string
@@ -473,6 +478,10 @@ components:
             OUTROS
           ]
           example: SEMESTRAL_INTERMITENTE
+        validityTypeOthers:
+          description: Campo de detalhamento para quando a opcao do tipo de vigencia for OUTROS
+          type: string
+          maxLength: 100
         otherCompensations:
           description: Outras formas de recompensa (Caso aplicável)
           type: string
@@ -492,12 +501,12 @@ components:
           description: Pacotes de Assistência (Caso aplicável)
           type: string
           enum: [
-            ATE_DEZ_SERVICOS,
-            ATE_VINTE_SERVICOS,
-            ACIMA_DE_VINTE_SERVICOS,
+            ATE_10_SERVICOS,
+            ATE_20_SERVICOS,
+            ACIMA_DE_20_SERVICOS,
             CUSTOMIZAVEL
           ]
-          example: ATE_DEZ_SERVICOS
+          example: ATE_10_SERVICOS
         isExpiredRiskPolicy:
           description: Apólice de Risco Decorrido (Caso aplicável)
           type: boolean
@@ -539,6 +548,11 @@ components:
             OUTROS
           ]
           example: CPF
+        identificationTypeOthers:
+          description: Campo de detalhamento para quando a opcao do tipo de documento da pessoa for OUTROS
+          type: string
+          maxLength: 100
+          example: RNE
         name:
           description: Nome ou Razão Social da Pessoa
           type: string
@@ -592,6 +606,11 @@ components:
             OUTROS
           ]
           example: CPF
+        identificationTypeOthers:
+          description: Campo de detalhamento para quando a opcao do tipo de documento da pessoa for OUTROS
+          type: string
+          maxLength: 100
+          example: RNE
         name:
           description: Nome ou Razão Social da Pessoa
           type: string
@@ -600,6 +619,7 @@ components:
     Intermediary:
       type: object
       required:
+        - type
         - name
       properties:
         type:
@@ -614,6 +634,10 @@ components:
             OUTROS
           ]
           example: REPRESENTANTE
+        typeOthers:
+          description: Descricao do Tipo do Intermediador quando for informada a opcao OUTROS
+          type: string
+          maxLength: 100
         identification:
           description: Documento de Identificação do Intermediador(a) (Caso Tipo de Intermediador não seja CORRETOR ou quando for CORRETOR, porém o identificador do intermediador não seja informado)
           type: string
@@ -633,6 +657,11 @@ components:
             OUTROS
           ]
           example: CPF
+        identificationTypeOthers:
+          description: Campo de detalhamento para quando a opcao do tipo de documento do intermediador(a) for OUTROS
+          type: string
+          maxLength: 100
+          example: RNE
         name:
           description: Nome ou Razão Social da Intermediador
           type: string
@@ -678,7 +707,8 @@ components:
           description: Tipo do objeto segurado
           enum: [AUTOMOVEL,
                 CONDUTOR,
-                FROTA]
+                FROTA,
+                OUTROS]
         typeAdditionalInfo:
           type: string
           maxLength: 100
@@ -699,6 +729,10 @@ components:
             CRITERIO_DIVERSO,
             OUTROS
           ]
+        modalityOthers:
+          description: Campo de detalhamento para quando a opcao da Modalidade de cobertura for OUTROS
+          type: string
+          maxLength: 100
         amountReferenceTable:
           description: Tabela de referência adotada no plano (Casco, RCF-A, APP, Assistência e Outras Coberturas)
           type: string
@@ -709,6 +743,10 @@ components:
             VD,
             OUTRAS
           ]
+        amountReferenceTableOthers:
+          description: Campo de detalhamento para quando a opcao da Tabela de referencia adotada no plano for OUTRAS
+          type: string
+          maxLength: 100
         model:
           description: Código do modelo (caso aplicável)
           type: string
@@ -719,7 +757,7 @@ components:
           maxLength: 4
           pattern: '^\d{4}$' 
         fareCategory:
-          description: Categoria tarifária (Casco, RCF-A, APP, Assistência e Outras Coberturas; caso aplicável) - Conforme definido na tabela 9.9 do Manual de  Orientação para Envio de Dados, Circular Susep nº 522
+          description: Categoria tarifaria (Casco, RCF-A, APP, Assistencia e Outras Coberturas - caso aplicavel) - conforme definicao do campo no manual de escopo de dados
           type: string
           enum:
             - "10"
@@ -790,6 +828,10 @@ components:
             EXERCICIO_DO_TRABALHO,
             OUTROS
           ]
+        vehicleUsageOthers:
+          description: Campo de detalhamento para quando a opcao do Codigo de utilizacao do veiculo for OUTROS
+          type: string
+          maxLength: 100
         frequentDestinationPostCode:
           description: CEP da localidade de destino frequente do veículo (caso aplicável)
           type: string
@@ -813,9 +855,11 @@ components:
         - LMI
         - termStartDate
         - termEndDate
+        - isMainCoverage
         - feature
         - type
         - premiumAmount
+        - premiumPeriodicity
       properties:
         branch:
           type: string
@@ -824,7 +868,7 @@ components:
           description: Grupo e Ramo da Cobertura (Conforme regulamentação Susep vigente)
         code:
             type: string
-            description: Código da cobertura, conforme Anexo II do Manuel de Escopo de Dados
+            description: Codigo da cobertura
             enum: [
               CASCO_COMPREENSIVA,
               CASCO_INCENDIO_ROUBO_E_FURTO,
@@ -922,6 +966,22 @@ components:
           example: '10.00'
         premiumAmount:
           $ref: '#/components/schemas/AmountDetails'
+        premiumPeriodicity:
+          description: Periodicidade de pagamento do premio
+          type: string
+          enum: [MENSAL,
+                BIMESTRAL,
+                TRIMESTRAL,
+                QUADRIMESTRAL,
+                SEMESTRAL,
+                ANUAL,
+                ESPORADICA,
+                PAGAMENTO_UNICO,
+                OUTROS]
+        premiumPeriodicityOthers:
+          description: Descricao da Periodicidade de pagamento do premio quando for informada a opcao OUTROS
+          type: string
+          maxLength: 100
         compensationType:
           description: Tipo de indenização por cobertura contratada (caso aplicável)
           type: string
@@ -931,6 +991,10 @@ components:
             OUTROS
           ]
           example: PARCIAL
+        compensationTypeOthers:
+          description: Campo de detalhamento para quando a opcao do tipo de indenizacao por cobertura contratada for OUTROS
+          type: string
+          maxLength: 100
         partialCompensationPercentage:
           description: Percentual por indenização parcial (caso aplicável)
           type: string
@@ -954,6 +1018,10 @@ components:
             OUTROS
           ]
           example: VEICULO
+        boundCoverageOthers:
+          description: Campo de detalhamento para quando a opcao da Cobertura vinculada for OUTROS
+          type: string
+          maxLength: 100
     InsuranceAutoCoverage:
       type: object
       required:
@@ -968,7 +1036,7 @@ components:
           example: '0111'
         code:
             type: string
-            description: Código da cobertura, conforme Anexo II do Manuel de Escopo de Dados
+            description: Codigo da cobertura
             enum: [
               CASCO_COMPREENSIVA,
               CASCO_INCENDIO_ROUBO_E_FURTO,
@@ -1011,10 +1079,11 @@ components:
             REDUZIDA,
             NORMAL,
             MAJORADA,
-            DEDUTIVEL,
+            ISENTA,
+            FLEXIVEL,
             OUTROS
           ]
-          example: DEDUTIVEL
+          example: REDUZIDA
         typeAdditionalInfo:
           description: Descriçao do Tipo de Franquia (Caso Tipo de Franquia for "OUTROS")
           type: string
@@ -1080,7 +1149,6 @@ components:
           description: Descrição do POS (caso Forma de aplicação do POS for Outros)
           type: string
           maxLength: 60
-          example: "Descrição de exemplo"
         minValue:
           $ref: '#/components/schemas/AmountDetails'
         maxValue:
@@ -1132,7 +1200,9 @@ components:
           maxLength: 3
           example: 4
         amount:
-          $ref: '#/components/schemas/AmountDetails'
+          description: Valor total do premio do contrato
+          allOf:
+            - $ref: '#/components/schemas/AmountDetails'
         coverages:
           type: array
           items:
@@ -1155,7 +1225,7 @@ components:
           example: '0111'
         code:
             type: string
-            description: Código da cobertura, conforme Anexo II do Manuel de Escopo de Dados
+            description: Codigo da cobertura
             enum: [
               CASCO_COMPREENSIVA,
               CASCO_INCENDIO_ROUBO_E_FURTO,
@@ -1182,7 +1252,9 @@ components:
           type: string
           maxLength: 500
         premiumAmount:
-          $ref: '#/components/schemas/AmountDetails'
+          description: Valor de premio da cobertura
+          allOf:
+            - $ref: '#/components/schemas/AmountDetails'
     Payment:
       type: object
       required:
@@ -1202,17 +1274,21 @@ components:
           type: string
           enum: [LIQUIDACAO_DE_PREMIO,
                 LIQUIDACAO_DE_RESTITUICAO_DE_PREMIO,
+                LIQUIDACAO_DE_CUSTO_DE_AQUISICAO,
+                LIQUIDACAO_DE_RESTITUICAO_DE_CUSTO_DE_AQUISICAO,
                 ESTORNO_DE_PREMIO,
                 ESTORNO_DE_RESTITUICAO_DE_PREMIO,
-                EMISSAO_DE_PREMIO,
+                ESTORNO_DE_CUSTO_DE_AQUISICAO,
+                EMISSAO_DE_PREMIO_SEM_ENDOSSO,
                 CANCELAMENTO_DE_PARCELA,
-                EMISSAO_DE_RESTITUICAO_DE_PREMIO,
+                EMISSAO_DE_RESTITUICAO_DE_PREMIO_SEM_ENDOSSO,
                 REABERTURA_DE_PARCELA,
                 BAIXA_POR_PERDA,
-                CANCELAMENTO_DE_PREMIO_E_PARCELA]
+                CANCELAMENTO_DE_PREMIO_E_PARCELA_SEM_ENDOSSO,
+                COMPENSACAO_FINANCEIRA]
           example: LIQUIDACAO_DE_PREMIO
         movementOrigin:
-          description: "Origem do Movimento. Obs: Obrigatório caso Tipo de Movimento for LIQUIDACAO_DE_PREMIO e ESTORNO_DE_PREMIO"
+          description: Origem do Movimento. Obrigatorio caso Tipo de Movimento for LIQUIDACAO_DE_PREMIO ou ESTORNO_DE_PREMIO
           type: string
           enum: [EMISSAO_DIRETA,
             EMISSAO_ACEITA_DE_COSSEGURO,
@@ -1230,26 +1306,31 @@ components:
           format: date
           example: '2022-12-31'
         tellerId:
-          description: "Documento do Pagador/Recebedor Obs: Obrigatório caso Tipo de Movimento for  LIQUIDACAO_DE_PREMIO e LIQUIDACAO_DE_CUSTO_DE_AQUISICAO"
+          description: Documento do Pagador/Recebedor. Obrigatorio caso Tipo de Movimento for LIQUIDACAO_DE_PREMIO ou LIQUIDACAO_DE_CUSTO_DE_AQUISICAO
           type: string
           maxLength: 1024
         tellerIdType:
-          description: "Tipo do Documento do Pagador/Recebedor Obs: Obrigatório caso Tipo de Movimento for  LIQUIDACAO_DE_PREMIO e LIQUIDACAO_DE_CUSTO_DE_AQUISICAO"
+          description: Tipo do Documento do Pagador/Recebedor. Obrigatorio caso Tipo de Movimento for LIQUIDACAO_DE_PREMIO ou LIQUIDACAO_DE_CUSTO_DE_AQUISICAO
           type: string
           enum: [CPF,
             CNPJ,
             OUTROS]
           example: CPF
+        tellerIdOthers:
+          description: Descricao do campo de tipo do documento do pagador/recebedor quando a opcao escolhida for OUTROS
+          type: string
+          maxLength: 100
+          example: RNE
         tellerName:
-          description: "Nome ou Razão Social do Pagador/Recebedor Obs: Obrigatório caso Tipo de Movimento for  LIQUIDACAO_DE_PREMIO e LIQUIDACAO_DE_CUSTO_DE_AQUISICAO"
+          description: Nome ou Razao Social do Pagador/Recebedor. Obrigatorio caso Tipo de Movimento for LIQUIDACAO_DE_PREMIO ou LIQUIDACAO_DE_CUSTO_DE_AQUISICAO
           type: string
           maxLength: 100
         financialInstitutionCode:
-          description: "Código da Instituição Financeiro do Pagamento Obs: Obrigatório caso Tipo de Movimento for  LIQUIDACAO_DE_PREMIO e LIQUIDACAO_DE_CUSTO_DE_AQUISICAO"
+          description: Codigo da Instituicao Financeiro do Pagamento. Obrigatorio caso Tipo de Movimento for LIQUIDACAO_DE_PREMIO ou LIQUIDACAO_DE_CUSTO_DE_AQUISICAO
           type: string
           maxLength: 100
         paymentType:
-          description: "Meio de Pagamento Obs: Obrigatório caso Tipo de Movimento for  LIQUIDACAO_DE_PREMIO e LIQUIDACAO_DE_CUSTO_DE_AQUISICAO"
+          description: Meio de Pagamento. Obrigatorio caso Tipo de Movimento for LIQUIDACAO_DE_PREMIO ou LIQUIDACAO_DE_CUSTO_DE_AQUISICAO
           type: string
           enum: [BOLETO,
                 TED,
@@ -1262,6 +1343,10 @@ components:
                 DINHEIRO_EM_ESPECIE,
                 OUTROS]
           example: BOLETO
+        paymentTypeOthers:
+          description: Campo de detalhamento para quando a opcao do meio de pagamento for OUTROS
+          type: string
+          maxLength: 100
     ResponseInsuranceAutoClaims:
       type: object
       required:
@@ -1282,19 +1367,19 @@ components:
       type: object
       required:
         - identification
-        - documentationDeliveryDate
         - status
         - statusAlterationDate
         - occurrenceDate
         - warningDate
         - amount
+        - coverages
       properties:
         identification:
           description: Identificador do processo de sinistro
           type: string
           maxLength: 50
         documentationDeliveryDate:
-          description: Data de entrega da documentação completa
+          description: Data de entrega da documentação completa (Caso tenha ocorrido toda a entrega)
           type: string
           format: date
           maxLength: 10
@@ -1371,7 +1456,7 @@ components:
           example: '0111'
         code:
             type: string
-            description: Código da cobertura, conforme Anexo II do Manuel de Escopo de Dados
+            description: Codigo da cobertura
             enum: [
               CASCO_COMPREENSIVA,
               CASCO_INCENDIO_ROUBO_E_FURTO,
@@ -1454,6 +1539,10 @@ components:
             ASSISTENCIA_HORAS,
             OUTROS
           ]
+        occurrenceCauseOthers:
+          description: Campo de detalhamento para quando a opcao da causa do sinistro for OUTROS
+          type: string
+          maxLength: 100
         driverAtOccurrenceSex:
           description: Sexo do condutor do veículo no momento do sinistro (Caso aplicável)
           type: string
@@ -1463,6 +1552,10 @@ components:
             NAO_DECLARADO,
             OUTROS
           ]
+        driverAtOccurrenceSexOthers:
+          description: Campo de detalhamento para quando a opcao do sexo do condutor for OUTROS
+          type: string
+          maxLength: 100
         driverAtOccurrenceBirthDate:
           description: Data de nascimento do condutor do veículo no momento do sinistro (Caso aplicável)
           type: string
@@ -1481,8 +1574,7 @@ components:
           example: "10000000"
     Driver:
       type: object
-      required:
-        - identification
+      description: Condutores (Caso tipo de objeto for AUTOMOVEL ou CONDUTOR)
       properties:
         identification:
           description: Documento de Identificação do Condutor
@@ -1498,13 +1590,17 @@ components:
             NAO_DECLARADO,
             OUTROS
           ]
+        sexOthers:
+          description: Campo de detalhamento para quando a opcao do sexo do condutor for OUTROS
+          type: string
+          maxLength: 100
         birthDate:
           description: Data de nascimento do condutor (caso aplicável)
           type: string
           format: date
           example: '2022-12-31'
         licensedExperience:
-          description: Tempo de habilitação do condutor utilizado para taxação (caso aplicável)
+          description: Tempo de habilitacao do condutor utilizado para taxacao (caso aplicavel), em anos
           type: integer
           maxLength: 3
           example: 4

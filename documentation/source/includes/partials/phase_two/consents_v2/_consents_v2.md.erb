@@ -1,8 +1,4 @@
-<h1 id="api-consents-v2">API - Consents v2.2.0 </h1>
-
-<aside class="info">
-A API – Consents/Resources v2 estará vigente no motor de conformidade a partir de 07/04 e deverá ser homologada (testes estruturais e funcionais) até 30/05
-</aside>
+<h1 id="api-consents-v2">API - Consents v2.3.0 </h1>
 
 > Scroll down for code samples, example requests and responses. Select a language for code samples from the tabs above or the mobile navigation menu.
 
@@ -31,12 +27,14 @@ Web: <a href="https://www.gov.br/susep/">Governança do Open Insurance Brasil - 
   Release Notes:
 
   - <a href="./1.3.1.html#consents-consents-v2-2-0">27/03/2023 </a>
+  - <a href="./1.3.4.html#consents-v2-consents-v2-3-0">18/04/2023 </a>
+
 
 <h2 id="orientacoes-importantes-consents-v2">Orientações importantes</h2>
 
 A API Consents trata dos consentimentos para a fase 2 e 3 do Open Insurance Brasil.
 
-- As informações da instituição receptora não trafegam na API Consents – a autenticação da receptora se dá através do [DCR](https://br-openinsurance.github.io/areadesenvolvedor/#dynamic-client-registration-dcr).
+- As informações da instituição receptora não trafegam na API Consents – a autenticação da receptora se dá através do [DCR](https://br-openinsurance.github.io/areadesenvolvedor/#dynamic-client-registration-dcr).   
 
 - Na chamada para a criação do consentimento deve-se utilizar um token gerado via `client_credentials`.
 
@@ -48,154 +46,205 @@ A API Consents trata dos consentimentos para a fase 2 e 3 do Open Insurance Bras
 
 - Todas as datas trafegadas nesta API seguem o padrão da [RFC3339](https://tools.ietf.org/html/rfc3339) e formato "zulu".
 
-- A descrição do fluxo de consentimento encontra-se disponível no [Portal do desenvolvedor](https://br-openinsurance.github.io/areadesenvolvedor/#criar-novo-pedido-de-consentimento-consentsv2).
+- A descrição do fluxo de consentimento encontra-se disponível no [Portal do desenvolvedor](https://br-openinsurance.github.io/areadesenvolvedor/).
 
 - O arquivo com o mapeamento completo entre `Roles`, `scopes` e `permissions` está disponibilizado no Portal do desenvolvedor, no mesmo item acima - descrição do fluxo de consentimento.
 
-- A receptora deve enviar obrigatoriamente, no pedido de criação de consentimento, todas as permissions dos agrupamentos de dados as quais ela deseja consentimento, conforme tabela abaixo:
-  
- 
+- A receptora deve enviar, no pedido de criação de consentimento, todas as permissions dos agrupamentos obrigatórios das 
+
+  categorias de dados as quais ela deseja consentimento, conforme tabela abaixo:
+
+  (Para a fase 2, RESOURCES_READ é a única permissão obrigatória. Para a fase 3, todas as permissões de uma categoria de dados são obrigatórias)
+
+ Fase 2:
 
 | CATEGORIA DE DADOS   | AGRUPAMENTO                      | PERMISSIONS                                                       |
 |----------------------|----------------------------------|-------------------------------------------------------------------|
-| Cadastro             | Dados Cadastrais PF              | CUSTOMERS_PERSONAL_IDENTIFICATIONS_READ                           |
-|                      |                                  | RESOURCES_READ                                                    |
-| Cadastro             | Qualificação PF                  | CUSTOMERS_PERSONAL_QUALIFICATION_READ                             |
-|                      |                                  | RESOURCES_READ                                                    |
-| Cadastro             | Informações complementares PF    | CUSTOMERS_PERSONAL_ADITTIONALINFO_READ                            |
-|                      |                                  | RESOURCES_READ                                                    |
-| Cadastro             | Dados Cadastrais PJ              | CUSTOMERS_BUSINESS_IDENTIFICATIONS_READ                           |
-|                      |                                  | RESOURCES_READ                                                    |
-| Cadastro             | Qualificação PJ                  | CUSTOMERS_BUSINESS_QUALIFICATION_READ                             |
-|                      |                                  | RESOURCES_READ                                                    |
-| Cadastro             | Informações complementares PJ    | CUSTOMERS_BUSINESS_ADITTIONALINFO_READ                            |
-|                      |                                  | RESOURCES_READ                                                    |
-| Títulos de Cap.      | Produtos de Títulos de Cap.      | CAPITALIZATION_TITLES_READ                                        |
-|                      |                                  | CAPITALIZATION_TITLES_POLICYINFO_READ                             |
-|                      |                                  | CAPITALIZATION_TITLES_PREMIUM_READ                                |
-|                      |                                  | CAPITALIZATION_TITLES_CLAIM_READ                                  |
-|                      |                                  | RESOURCES_READ                                                    |
-| Previdência          | Produtos de Previdência Risco    | PENSION_PLAN_READ                                                 |
-|                      |                                  | PENSION_PLAN_CONTRACTINFO_READ                                    |
+| Cadastro             | Pessoa Física                    | RESOURCES_READ                                                    |
+| Pessoa Física        | (Obrigatório)                    |                                                                   |
+|                      |                                  |                                                                   |
+|                      | Pessoa Física                    | CUSTOMERS_PERSONAL_IDENTIFICATIONS_READ                           |
+|                      | (Opcional)                       | CUSTOMERS_PERSONAL_QUALIFICATION_READ                             |
+|                      |                                  | CUSTOMERS_PERSONAL_ADDITIONALINFO_READ                            |
+| Cadastro             | Pessoa Jurídica                  | RESOURCES_READ                                                    |
+| Pessoa Jurídica      | (Obrigatório)                    |                                                                   |
+|                      |                                  |                                                                   |
+|                      | Pessoa Jurídica                  | CUSTOMERS_BUSINESS_IDENTIFICATIONS_READ                           |
+|                      | (Opcional)                       | CUSTOMERS_BUSINESS_QUALIFICATION_READ                             |
+|                      |                                  | CUSTOMERS_BUSINESS_ADDITIONALINFO_READ                            |
+| Títulos de Cap.      | Produtos de Títulos de Cap.      | RESOURCES_READ                                                    |
+|                      | (Obrigatório)                    |                                                                   |
+|                      |                                  |                                                                   |
+|                      | Produtos de Títulos de Cap.      | CAPITALIZATION_TITLE_READ                                         |
+|                      | (Opcional)                       | CAPITALIZATION_TITLE_PLANINFO_READ                                |
+|                      |                                  | CAPITALIZATION_TITLE_EVENTS_READ                                  |
+|                      |                                  | CAPITALIZATION_TITLE_SETTLEMENTS_READ                             |
+| Previdência          | Produtos de Previdência Risco    | RESOURCES_READ                                                    |
+| Risco                | (Obrigatório)                    |                                                                   |
+|                      |                                  |                                                                   |
+|                      | Produtos de Previdência Risco    | PENSION_PLAN_READ                                                 |
+|                      | (Opcional)                       | PENSION_PLAN_CONTRACTINFO_READ                                    |
 |                      |                                  | PENSION_PLAN_MOVEMENTS_READ                                       |
 |                      |                                  | PENSION_PLAN_PORTABILITIES_READ                                   |
 |                      |                                  | PENSION_PLAN_WITHDRAWALS_READ                                     |
 |                      |                                  | PENSION_PLAN_CLAIM                                                |
-|                      |                                  | RESOURCES_READ                                                    |
-| Previdência          | Produtos de Previdência          | LIFE_PENSION_READ                                                 |
-|                      | Sobrevivência                    | LIFE_PENSION_CONTRACTINFO_READ                                    |
+| Previdência          | Produtos de Previdência          | RESOURCES_READ                                                    |
+| Sobrevivência        | Sobrevivência (Obrigatório)      |                                                                   |
+|                      |                                  |                                                                   |
+|                      | Produtos de Previdência          | LIFE_PENSION_READ                                                 |
+|                      | Sobrevivência (Opcional)         | LIFE_PENSION_CONTRACTINFO_READ                                    |
 |                      |                                  | LIFE_PENSION_MOVEMENTS_READ                                       |
 |                      |                                  | LIFE_PENSION_PORTABILITIES_READ                                   |
 |                      |                                  | LIFE_PENSION_WITHDRAWALS_READ                                     |
 |                      |                                  | LIFE_PENSION_CLAIM                                                |
-|                      |                                  | RESOURCES_READ                                                    |
-| Danos e Pessoas      | Patrimonial                      | DAMAGES_AND_PEOPLE_PATRIMONIAL_READ                               |
+| Assistência          | Assist. Financeira (Obrigatório) | RESOURCES_READ                                                    |
+| Financeira           |                                  |                                                                   |
+|                      | Assist. Financeira (Opcional)    | FINANCIAL_ASSISTANCE_READ                                         |
+|                      |                                  | FINANCIAL_ASSISTANCE_CONTRACTINFO_READ                            |
+|                      |                                  | FINANCIAL_ASSISTANCE_MOVEMENTS_READ                               |
+| Danos e Pessoas      | Patrimonial (Obrigatório)        | RESOURCES_READ                                                    |
+| Patrimonial          |                                  |                                                                   |
+|                      | Patrimonial (Opcional)           | DAMAGES_AND_PEOPLE_PATRIMONIAL_READ                               |
 |                      |                                  | DAMAGES_AND_PEOPLE_PATRIMONIAL_POLICYINFO_READ                    |
 |                      |                                  | DAMAGES_AND_PEOPLE_PATRIMONIAL_PREMIUM_READ                       |
 |                      |                                  | DAMAGES_AND_PEOPLE_PATRIMONIAL_CLAIM_READ                         |
-|                      |                                  | RESOURCES_READ                                                    |
-| Danos e Pessoas      | Responsabilidade                 | DAMAGES_AND_PEOPLE_RESPONSIBILITY_READ                            |
+| Danos e Pessoas      | Responsabilidade (Obrigatório)   | RESOURCES_READ                                                    |
+| Responsabilidade     |                                  |                                                                   |
+|                      | Responsabilidade (Opcional)      | DAMAGES_AND_PEOPLE_RESPONSIBILITY_READ                            |
 |                      |                                  | DAMAGES_AND_PEOPLE_RESPONSIBILITY_POLICYINFO_READ                 |
 |                      |                                  | DAMAGES_AND_PEOPLE_RESPONSIBILITY_PREMIUM_READ                    |
 |                      |                                  | DAMAGES_AND_PEOPLE_RESPONSIBILITY_CLAIM_READ                      |
-|                      |                                  | RESOURCES_READ                                                    |
-| Danos e Pessoas      | Transportes                      | DAMAGES_AND_PEOPLE_TRANSPORT_READ                                 |
+| Danos e Pessoas      | Transportes (Obrigatório)        | RESOURCES_READ                                                    |
+| Transportes          |                                  |                                                                   |
+|                      | Transportes (Opcional)           | DAMAGES_AND_PEOPLE_TRANSPORT_READ                                 |
 |                      |                                  | DAMAGES_AND_PEOPLE_TRANSPORT_POLICYINFO_READ                      |
 |                      |                                  | DAMAGES_AND_PEOPLE_TRANSPORT_PREMIUM_READ                         |
 |                      |                                  | DAMAGES_AND_PEOPLE_TRANSPORT_CLAIM_READ                           |
-|                      |                                  | RESOURCES_READ                                                    |
-| Danos e Pessoas      | Riscos Financeiros               | DAMAGES_AND_PEOPLE_FINANCIAL_RISKS_READ                           |
+| Danos e Pessoas      | Riscos Financeiros (Obrigatório) | RESOURCES_READ                                                    |
+| Riscos Financeiros   |                                  |                                                                   |
+|                      | Riscos Financeiros (Opcional)    | DAMAGES_AND_PEOPLE_FINANCIAL_RISKS_READ                           |
 |                      |                                  | DAMAGES_AND_PEOPLE_FINANCIAL_RISKS_POLICYINFO_READ                |
 |                      |                                  | DAMAGES_AND_PEOPLE_FINANCIAL_RISKS_PREMIUM_READ                   |
 |                      |                                  | DAMAGES_AND_PEOPLE_FINANCIAL_RISKS_CLAIM_READ                     |
-|                      |                                  | RESOURCES_READ                                                    |
-| Danos e Pessoas      | Rural                            | DAMAGES_AND_PEOPLE_RURAL_READ                                     |
+| Danos e Pessoas      | Rural (Obrigatório)              | RESOURCES_READ                                                    |
+| Rural                |                                  |                                                                   |
+|                      | Rural (Opcional)                 | DAMAGES_AND_PEOPLE_RURAL_READ                                     |
 |                      |                                  | DAMAGES_AND_PEOPLE_RURAL_POLICYINFO_READ                          |
 |                      |                                  | DAMAGES_AND_PEOPLE_RURAL_PREMIUM_READ                             |
 |                      |                                  | DAMAGES_AND_PEOPLE_RURAL_CLAIM_READ                               |
-|                      |                                  | RESOURCES_READ                                                    |
-| Danos e Pessoas      | Automóveis                       | DAMAGES_AND_PEOPLE_AUTO_READ                                      |
+| Danos e Pessoas      | Automóveis (Obrigatório)         | RESOURCES_READ                                                    |
+| Automóveis           |                                  |                                                                   |
+|                      | Automóveis (Opcional)            | DAMAGES_AND_PEOPLE_AUTO_READ                                      |
 |                      |                                  | DAMAGES_AND_PEOPLE_AUTO_POLICYINFO_READ                           |
 |                      |                                  | DAMAGES_AND_PEOPLE_AUTO_PREMIUM_READ                              |
 |                      |                                  | DAMAGES_AND_PEOPLE_AUTO_CLAIM_READ                                |
-|                      |                                  | RESOURCES_READ                                                    |
-| Danos e Pessoas      | Habitacional                     | DAMAGES_AND_PEOPLE_HOUSING_READ                                   |
+| Danos e Pessoas      | Habitacional (Obrigatório)       | RESOURCES_READ                                                    |
+| Habitacional         |                                  |                                                                   |
+|                      | Habitacional (Opcional)          | DAMAGES_AND_PEOPLE_HOUSING_READ                                   |
 |                      |                                  | DAMAGES_AND_PEOPLE_HOUSING_POLICYINFO_READ                        |
 |                      |                                  | DAMAGES_AND_PEOPLE_HOUSING_PREMIUM_READ                           |
 |                      |                                  | DAMAGES_AND_PEOPLE_HOUSING_CLAIM_READ                             |
-|                      |                                  | RESOURCES_READ                                                    |
-| Danos e Pessoas      | Aceitação e Sucursal no exterior | DAMAGES_AND_PEOPLE_ACCEPTANCE_AND_BRANCHES_ABROAD_READ            |
-|                      |                                  | DAMAGES_AND_PEOPLE_ACCEPTANCE_AND_BRANCHES_ABROAD_POLICYINFO_READ |
+| Danos e Pessoas      | Aceitação e Sucursal no exterior | RESOURCES_READ                                                    |
+| Aceitação e Sucursal | (Obrigatório)                    |                                                                   |
+| no exterior          |                                  |                                                                   |
+|                      | Aceitação e Sucursal no exterior | DAMAGES_AND_PEOPLE_ACCEPTANCE_AND_BRANCHES_ABROAD_READ            |
+|                      | (Opcional)                       | DAMAGES_AND_PEOPLE_ACCEPTANCE_AND_BRANCHES_ABROAD_POLICYINFO_READ |
 |                      |                                  | DAMAGES_AND_PEOPLE_ACCEPTANCE_AND_BRANCHES_ABROAD_PREMIUM_READ    |
 |                      |                                  | DAMAGES_AND_PEOPLE_ACCEPTANCE_AND_BRANCHES_ABROAD_CLAIM_READ      |
-|                      |                                  | RESOURCES_READ                                                    |
-| Danos e Pessoas      | Pessoas                          | DAMAGES_AND_PEOPLE_PERSON_READ                                    |
+| Danos e Pessoas      | Pessoas (Obrigatório)            | RESOURCES_READ                                                    |
+| Pessoas              |                                  |                                                                   |
+|                      | Pessoas (Opcional)               | DAMAGES_AND_PEOPLE_PERSON_READ                                    |
 |                      |                                  | DAMAGES_AND_PEOPLE_PERSON_POLICYINFO_READ                         |
-|                      |                                  | DAMAGES_AND_PEOPLE_PERSON_PREMIUM_READ                            |
 |                      |                                  | DAMAGES_AND_PEOPLE_PERSON_CLAIM_READ                              |
-|                      |                                  | RESOURCES_READ                                                    |
-| Aviso de Sinistro    |                                  | CLAIM_NOTIFICATION_REQUEST_DAMAGE_CREATE                          |
-|                      |                                  | CLAIM_NOTIFICATION_REQUEST_PERSON_CREATE                          |
-| Endosso              |                                  | ENDORSEMENT_REQUEST_CREATE                                        |
-| Cotação              | Patrimonial                      | QUOTE_PATRIMONIAL_LEAD_CREATE                                     |
-|                      |                                  | QUOTE_PATRIMONIAL_LEAD_UPDATE                                     |
-|                      |                                  | QUOTE_PATRIMONIAL_HOME_READ                                       |
-|                      |                                  | QUOTE_PATRIMONIAL_HOME_CREATE                                     |
+|                      |                                  | DAMAGES_AND_PEOPLE_PERSON_MOVEMENTS_READ                          |
+
+
+Fase 3:
+
+| CATEGORIA DE DADOS   | AGRUPAMENTO                      | PERMISSIONS                                                       |
+|----------------------|----------------------------------|-------------------------------------------------------------------|
+| Aviso de Sinistro    | Danos (Obrigatório)              | CLAIM_NOTIFICATION_REQUEST_DAMAGE_CREATE                          |
+| Danos                |                                  |                                                                   |
+| Aviso de Sinistro    | Pessoas (Obrigatório)            | CLAIM_NOTIFICATION_REQUEST_PERSON_CREATE                          |
+| Pessoas              |                                  |                                                                   |
+| Endosso              | Endosso (Obrigatório)            | ENDORSEMENT_REQUEST_CREATE                                        |
+| Cotação Patrimonial  | Patrimonial Lead                 | QUOTE_PATRIMONIAL_LEAD_CREATE                                     |
+| Lead                 | (Obrigatório)                    | QUOTE_PATRIMONIAL_LEAD_UPDATE                                     |
+| Cotação Patrimonial  | Patrimonial Home                 | QUOTE_PATRIMONIAL_HOME_READ                                       |
+| Home                 | (Obrigatório)                    | QUOTE_PATRIMONIAL_HOME_CREATE                                     |
 |                      |                                  | QUOTE_PATRIMONIAL_HOME_UPDATE                                     |
-|                      |                                  | QUOTE_PATRIMONIAL_CONDOMINIUM_READ                                |
-|                      |                                  | QUOTE_PATRIMONIAL_CONDOMINIUM_CREATE                              |
+| Cotação Patrimonial  | Patrimonial Condominium          | QUOTE_PATRIMONIAL_CONDOMINIUM_READ                                |
+| Condominium          | (Obrigatório)                    | QUOTE_PATRIMONIAL_CONDOMINIUM_CREATE                              |
 |                      |                                  | QUOTE_PATRIMONIAL_CONDOMINIUM_UPDATE                              |
-|                      |                                  | QUOTE_PATRIMONIAL_BUSINESS_READ                                   |
-|                      |                                  | QUOTE_PATRIMONIAL_BUSINESS_CREATE                                 |
+| Cotação Patrimonial  | Patrimonial Business             | QUOTE_PATRIMONIAL_BUSINESS_READ                                   |
+|                      | (Obrigatório)                    | QUOTE_PATRIMONIAL_BUSINESS_CREATE                                 |
 |                      |                                  | QUOTE_PATRIMONIAL_BUSINESS_UPDATE                                 |
-|                      |                                  | QUOTE_PATRIMONIAL_DIVERSE_RISKS_READ                              |
-|                      |                                  | QUOTE_PATRIMONIAL_DIVERSE_RISKS_CREATE                            |
+| Cotação Patrimonial  | Patrimonial Diverse Risks        | QUOTE_PATRIMONIAL_DIVERSE_RISKS_READ                              |
+| Diverse Risks        | (Obrigatório)                    | QUOTE_PATRIMONIAL_DIVERSE_RISKS_CREATE                            |
 |                      |                                  | QUOTE_PATRIMONIAL_DIVERSE_RISKS_UPDATE                            |
-| Cotação              | Aceitação e Sucursal no exterior | QUOTE_ACCEPTANCE_AND_BRANCHES_ABROAD_LEAD_CREATE                  |
-|                      |                                  | QUOTE_ACCEPTANCE_AND_BRANCHES_ABROAD_LEAD_UPDATE                  |
-| Cotação              | Auto                             | QUOTE_AUTO_LEAD_CREATE                                            |
+| Cotação Aceitação e  | Aceitação e Sucursal no exterior | QUOTE_ACCEPTANCE_AND_BRANCHES_ABROAD_LEAD_CREATE                  |
+| Sucursal no exterior | (Obrigatório)                    | QUOTE_ACCEPTANCE_AND_BRANCHES_ABROAD_LEAD_UPDATE                  |
+| Cotação Auto Lead    | Auto Lead (Obrigatório)          | QUOTE_AUTO_LEAD_CREATE                                            |
 |                      |                                  | QUOTE_AUTO_LEAD_UPDATE                                            |
-|                      |                                  | QUOTE_AUTO_READ                                                   |
+| Cotação Auto         | Auto (Obrigatório)               | QUOTE_AUTO_READ                                                   |
 |                      |                                  | QUOTE_AUTO_CREATE                                                 |
 |                      |                                  | QUOTE_AUTO_UPDATE                                                 |
-| Cotação              | Riscos Financeiros               | QUOTE_FINANCIAL_RISK_LEAD_CREATE                                  |
-|                      |                                  | QUOTE_FINANCIAL_RISK_LEAD_UPDATE                                  |
-| Cotação              | Habitacional                     | QUOTE_HOUSING_LEAD_CREATE                                         |
-|                      |                                  | QUOTE_HOUSING_LEAD_UPDATE                                         |
-| Cotação              | Responsabilidade                 | QUOTE_RESPONSIBILITY_LEAD_CREATE                                  |
-|                      |                                  | QUOTE_RESPONSIBILITY_LEAD_UPDATE                                  |
-| Cotação              | Rural                            | QUOTE_RURAL_LEAD_CREATE                                           |
-|                      |                                  | QUOTE_RURAL_LEAD_UPDATE                                           |
-| Cotação              | Transportes                      | QUOTE_TRANSPORT_LEAD_CREATE                                       |
-|                      |                                  | QUOTE_TRANSPORT_LEAD_UPDATE                                       |
-| Cotação              | Pessoas                          | QUOTE_PERSON_LEAD_CREATE                                          |
-|                      |                                  | QUOTE_PERSON_LEAD_UPDATE                                          |
-|                      |                                  | QUOTE_PERSON_LIFE_READ                                            |
-|                      |                                  | QUOTE_PERSON_LIFE_CREATE                                          |
+| Cotação              | Riscos Financeiros Lead          | QUOTE_FINANCIAL_RISK_LEAD_CREATE                                  |
+| Riscos Financeiros   | (Obrigatório)                    | QUOTE_FINANCIAL_RISK_LEAD_UPDATE                                  |
+| Cotação              | Habitacional Lead                | QUOTE_HOUSING_LEAD_CREATE                                         |
+| Habitacional         | (Obrigatório)                    | QUOTE_HOUSING_LEAD_UPDATE                                         |
+| Cotação              | Responsabilidade Lead            | QUOTE_RESPONSIBILITY_LEAD_CREATE                                  |
+| Responsabilidade     | (Obrigatório)                    | QUOTE_RESPONSIBILITY_LEAD_UPDATE                                  |
+| Cotação              | Rural Lead (Obrigatório)         | QUOTE_RURAL_LEAD_CREATE                                           |
+| Rural                |                                  | QUOTE_RURAL_LEAD_UPDATE                                           |
+| Cotação              | Transportes Lead (Obrigatório)   | QUOTE_TRANSPORT_LEAD_CREATE                                       |
+| Transportes          |                                  | QUOTE_TRANSPORT_LEAD_UPDATE                                       |
+| Cotação Pessoas      | Pessoas Lead (Obrigatório)       | QUOTE_PERSON_LEAD_CREATE                                          |
+| Lead                 |                                  | QUOTE_PERSON_LEAD_UPDATE                                          |
+| Cotação Pessoas      | Pessoas Life (Obrigatório)       | QUOTE_PERSON_LIFE_READ                                            |
+| Life                 |                                  | QUOTE_PERSON_LIFE_CREATE                                          |
 |                      |                                  | QUOTE_PERSON_LIFE_UPDATE                                          |
-|                      |                                  | QUOTE_PERSON_TRAVEL_READ                                          |
-|                      |                                  | QUOTE_PERSON_TRAVEL_CREATE                                        |
+| Cotação Pessoas      | Pessoas Travel (Obrigatório)     | QUOTE_PERSON_TRAVEL_READ                                          |
+| Travel               |                                  | QUOTE_PERSON_TRAVEL_CREATE                                        |
 |                      |                                  | QUOTE_PERSON_TRAVEL_UPDATE                                        |
-| Contratação e        | Previdência Risco                | CONTRACT_PENSION_PLAN_LEAD_CREATE                                 |
-| portabilidade        |                                  | CONTRACT_PENSION_PLAN_LEAD_UPDATE                                 |
-|                      |                                  | CONTRACT_PENSION_PLAN_LEAD_PORTABILITY_CREATE                     |
-|                      |                                  | CONTRACT_PENSION_PLAN_LEAD_PORTABILITY_UPDATE                     |
-| Contratação e        | Previdência Sobrevivência        | CONTRACT_LIFE_PENSION_LEAD_CREATE                                 |
-| portabilidade        |                                  | CONTRACT_LIFE_PENSION_LEAD_UPDATE                                 |
-|                      |                                  | CONTRACT_LIFE_PENSION_LEAD_PORTABILITY_CREATE                     |
-|                      |                                  | CONTRACT_LIFE_PENSION_LEAD_PORTABILITY_UPDATE                     |
-| Resgate              | Previdência                      | PENSION_WITHDRAWAL_CREATE                                         |
+| Cotação Títulos de   | Títulos de Capitalização         | QUOTE_CAPITALIZATION_TITLE_LEAD_CREATE                            |
+| Capitalização Lead   | Lead (Obrigatório)               | QUOTE_CAPITALIZATION_TITLE_LEAD_UPDATE                            |
+| Cotação Títulos de   | Títulos de Capitalização         | QUOTE_CAPITALIZATION_TITLE_READ                                   |
+| Capitalização        | (Obrigatório)                    | QUOTE_CAPITALIZATION_TITLE_CREATE                                 |
+|                      |                                  | QUOTE_CAPITALIZATION_TITLE_UPDATE                                 |
+| Sorteio Títulos de   | Títulos de Capitalização         | QUOTE_CAPITALIZATION_TITLE_RAFFLE_CREATE                          |
+| Capitalização        | Sorteio (Obrigatório)            |                                                                   |
+| Contratação          | Previdência Risco Lead           | CONTRACT_PENSION_PLAN_LEAD_CREATE                                 |
+| Previdência Risco    | (Obrigatório)                    | CONTRACT_PENSION_PLAN_LEAD_UPDATE                                 |
+| Portabilidade        | Previdência Risco Portabilidade  | CONTRACT_PENSION_PLAN_LEAD_PORTABILITY_CREATE                     |
+| Previdência Risco    | (Obrigatório)                    | CONTRACT_PENSION_PLAN_LEAD_PORTABILITY_UPDATE                     |
+| Contratação          | Previdência Sobrevivência Lead   | CONTRACT_LIFE_PENSION_LEAD_CREATE                                 |
+| Previ. Sobrevivência | (Obrigatório)                    | CONTRACT_LIFE_PENSION_LEAD_UPDATE                                 |
+| Portabilidade        | Previdência Sobrevivência Porta. | CONTRACT_LIFE_PENSION_LEAD_PORTABILITY_CREATE                     |
+| Previ. Sobrevivência | (Obrigatório)                    | CONTRACT_LIFE_PENSION_LEAD_PORTABILITY_UPDATE                     |
+| Resgate Previdência  | Previdência (Obrigatório)        | PENSION_WITHDRAWAL_CREATE                                         |
+| Resgate Cap.         | Capitalização (Obrigatório)      | CAPITALIZATION_TITLE_WITHDRAWAL_CREATE                            |
+  
+- A instituição transmissora deve validar o preenchimento correto dos agrupamentos submetidos pela receptora no momento da geração do consentimento.
 
+- Caso a instituição receptora envie permissões sem o acompanhamento de todas as permissões obrigatórias de uma categoria, a transmissora deve rejeitar o pedido da receptora 
 
-- A instituição transmissora deve validar o preenchimento correto desses agrupamentos no momento da geração do consentimento.
+  dando retorno HTTP Status Code 400. Exemplos: "DAMAGES_AND_PEOPLE_TRANSPORT_PREMIUM_READ" sem a permissão "RESOURCES_READ". "QUOTE_AUTO_LEAD_UPDATE" sem a permissão "QUOTE_AUTO_LEAD_CREATE".
 
-- Caso a instiuição receptora envie permissões divergentes ao agrupamento especificado na tabela, a transmissora deve rejeitar o pedido da receptora dando retorno HTTP Status Code 400.
+- Caso a instituição receptora envie somente a permissão "RESOURCES_READ" sem nenhuma outra permissão de fase 2, a transmissora deve rejeitar o pedido da receptora dando retorno HTTP Status Code 400.
 
-- Caso a instiuição receptora envie permissões de fase 2 (compartilhamento de dados) e 3 (iniciação de serviços) em uma única solicitação, a transmissora deve rejeitar o pedido da receptora dando retorno HTTP Status Code 422.
+- Caso a instituição receptora envie permissões de fase 2 (compartilhamento de dados) e 3 (iniciação de serviços) em uma única solicitação, a transmissora deve rejeitar o pedido da receptora dando retorno HTTP Status Code 422.
 
 - A transmissora deve retornar, da lista de permissions requisitadas, apenas o subconjunto de permissions por ela suportada, removendo da lista as permissions de produtos não suportados e retornando HTTP Status Code 201. Caso não restem permissões funcionais, a instituição transmissora deve retornar o erro HTTP Code "422 Unprocessable Entity".
 
+Base URLs:
 
+* <a href="https://api.seguro.com.br/open-insurance/consents/v2">https://api.seguro.com.br/open-insurance/consents/v2</a>
+
+* <a href="https://apih.seguro.com.br/open-insurance/consents/v2">https://apih.seguro.com.br/open-insurance/consents/v2</a>
+
+Web: <a href="https://www.gov.br/susep/">Governança do Open Insurance Brasil - Especificações</a> 
+License: <a href="http://www.apache.org/licenses/LICENSE-2.0">Apache 2.0</a>
 
 ### Authentication
 
@@ -211,44 +260,95 @@ A API Consents trata dos consentimentos para a fase 2 e 3 do Open Insurance Bras
 
 Operações para criação, consulta e revogação do consentimento dado pelo cliente.
 
-
 <h2 id="criar-novo-pedido-de-consentimento-consentsv2">Criar novo pedido de consentimento.</h2>
+
+<a id="opIdconsentsPostConsents"></a>
 
 > Code samples
 
+```javascript
+const data = JSON.stringify({
+  "data": {
+    "loggedUser": {
+      "document": {
+        "identification": "11111111111",
+        "rel": "CPF"
+      }
+    },
+    "businessEntity": {
+      "document": {
+        "identification": "11111111111111",
+        "rel": "CNPJ"
+      }
+    },
+    "documentId": "111111",
+    "permissions": [
+      "CAPITALIZATION_TITLE_READ",
+      "RESOURCES_READ"
+    ],
+    "expirationDateTime": "2021-05-21T08:30:00Z",
+    "transactionFromDateTime": "2021-01-01T00:00:00Z",
+    "transactionToDateTime": "2021-02-01T23:59:59Z"
+  }
+});
+
+const xhr = new XMLHttpRequest();
+xhr.withCredentials = true;
+
+xhr.addEventListener("readystatechange", function () {
+  if (this.readyState === this.DONE) {
+    console.log(this.responseText);
+  }
+});
+
+xhr.open("POST", "https://api.seguro.com.br/open-insurance/consents/v2/consents");
+xhr.setRequestHeader("Content-Type", "application/json");
+xhr.setRequestHeader("Accept", "application/json");
+xhr.setRequestHeader("Authorization", "string");
+xhr.setRequestHeader("x-fapi-auth-date", "stringstringstringstringstrin");
+xhr.setRequestHeader("x-fapi-customer-ip-address", "string");
+xhr.setRequestHeader("x-fapi-interaction-id", "string");
+xhr.setRequestHeader("x-customer-user-agent", "string");
+
+xhr.send(data);
+```
+
 ```python
-import requests
+import http.client
+
+conn = http.client.HTTPSConnection("api.seguro.com.br")
+
+payload = "{\"data\":{\"loggedUser\":{\"document\":{\"identification\":\"11111111111\",\"rel\":\"CPF\"}},\"businessEntity\":{\"document\":{\"identification\":\"11111111111111\",\"rel\":\"CNPJ\"}},\"documentId\":\"111111\",\"permissions\":[\"CAPITALIZATION_TITLE_READ\",\"RESOURCES_READ\"],\"expirationDateTime\":\"2021-05-21T08:30:00Z\",\"transactionFromDateTime\":\"2021-01-01T00:00:00Z\",\"transactionToDateTime\":\"2021-02-01T23:59:59Z\"}}"
+
 headers = {
-  'Content-Type': 'application/json',
-  'Accept': 'application/json',
-  'Authorization': 'string',
-  'x-fapi-auth-date': 'stringstringstringstringstrin',
-  'x-fapi-customer-ip-address': 'string',
-  'x-fapi-interaction-id': 'string',
-  'x-customer-user-agent': 'string'
-}
+    'Content-Type': "application/json",
+    'Accept': "application/json",
+    'Authorization': "string",
+    'x-fapi-auth-date': "stringstringstringstringstrin",
+    'x-fapi-customer-ip-address': "string",
+    'x-fapi-interaction-id': "string",
+    'x-customer-user-agent': "string"
+    }
 
-r = requests.post('https://api.seguro.com.br/open-insurance/consents/v2/consents', headers = headers)
+conn.request("POST", "/open-insurance/consents/v2/consents", payload, headers)
 
-print(r.json())
+res = conn.getresponse()
+data = res.read()
 
+print(data.decode("utf-8"))
 ```
 
 ```java
-URL obj = new URL("https://api.seguro.com.br/open-insurance/consents/v2/consents");
-HttpURLConnection con = (HttpURLConnection) obj.openConnection();
-con.setRequestMethod("POST");
-int responseCode = con.getResponseCode();
-BufferedReader in = new BufferedReader(
-    new InputStreamReader(con.getInputStream()));
-String inputLine;
-StringBuffer response = new StringBuffer();
-while ((inputLine = in.readLine()) != null) {
-    response.append(inputLine);
-}
-in.close();
-System.out.println(response.toString());
-
+HttpResponse<String> response = Unirest.post("https://api.seguro.com.br/open-insurance/consents/v2/consents")
+  .header("Content-Type", "application/json")
+  .header("Accept", "application/json")
+  .header("Authorization", "string")
+  .header("x-fapi-auth-date", "stringstringstringstringstrin")
+  .header("x-fapi-customer-ip-address", "string")
+  .header("x-fapi-interaction-id", "string")
+  .header("x-customer-user-agent", "string")
+  .body("{\"data\":{\"loggedUser\":{\"document\":{\"identification\":\"11111111111\",\"rel\":\"CPF\"}},\"businessEntity\":{\"document\":{\"identification\":\"11111111111111\",\"rel\":\"CNPJ\"}},\"documentId\":\"111111\",\"permissions\":[\"CAPITALIZATION_TITLE_READ\",\"RESOURCES_READ\"],\"expirationDateTime\":\"2021-05-21T08:30:00Z\",\"transactionFromDateTime\":\"2021-01-01T00:00:00Z\",\"transactionToDateTime\":\"2021-02-01T23:59:59Z\"}}")
+  .asString();
 ```
 
 `POST /consents`
@@ -274,7 +374,7 @@ Método para a criação de um novo consentimento.
     },
     "documentId": "111111",
     "permissions": [
-      "CAPITALIZATION_TITLES_READ",
+      "CAPITALIZATION_TITLE_READ",
       "RESOURCES_READ"
     ],
     "expirationDateTime": "2021-05-21T08:30:00Z",
@@ -308,12 +408,19 @@ Método para a criação de um novo consentimento.
     "documentId": "111111",
     "statusUpdateDateTime": "2021-05-21T08:30:00Z",
     "permissions": [
-      "CAPITALIZATION_TITLES_READ",
+      "CAPITALIZATION_TITLE_READ",
       "RESOURCES_READ"
     ],
     "expirationDateTime": "2021-05-21T08:30:00Z",
     "transactionFromDateTime": "2021-01-01T00:00:00Z",
-    "transactionToDateTime": "2021-02-01T23:59:59Z"
+    "transactionToDateTime": "2021-02-01T23:59:59Z",
+    "rejection": {
+      "rejectedBy": "USER",
+      "reason": {
+        "code": "CONSENT_EXPIRED",
+        "additionalInformation": "Tempo de confirmação da múltipla alçada excedido."
+      }
+    }
   },
   "links": {
     "self": "https://api.organizacao.com.br/open-insurance/consents/v2/consents",
@@ -334,7 +441,6 @@ Método para a criação de um novo consentimento.
 |Status|Meaning|Description|Schema|
 |---|---|---|---|
 |201|[Created](https://tools.ietf.org/html/rfc7231#section-6.3.2)|Consentimento criado com sucesso.|[ResponseConsent](#schemaresponseconsent)|
-|204|[No Content](https://tools.ietf.org/html/rfc7231#section-6.3.5)|O recurso solicitado não existe ou não foi localizado.|[ResponseError](#schemaresponseerrorconsentsv2)|
 |400|[Bad Request](https://tools.ietf.org/html/rfc7231#section-6.5.1)|A requisição foi malformada, omitindo atributos obrigatórios, seja no payload ou através de atributos na URL.|[ResponseError](#schemaresponseerrorconsentsv2)|
 |401|[Unauthorized](https://tools.ietf.org/html/rfc7235#section-3.1)|Cabeçalho de autenticação ausente/inválido ou token inválido|[ResponseError](#schemaresponseerrorconsentsv2)|
 |403|[Forbidden](https://tools.ietf.org/html/rfc7231#section-6.5.3)|O token tem escopo incorreto ou uma política de segurança foi violada|[ResponseError](#schemaresponseerrorconsentsv2)|
@@ -362,43 +468,66 @@ To perform this operation, you must be authenticated by means of one of the foll
 OAuth2Security ( Scopes: consents )
 </aside>
 
-
 <h2 id="obter-detalhes-do-consentimento-identificado-por-consentIdconsentidv2">Obter detalhes do consentimento identificado por consentId.</h2>
+
+<a id="opIdconsentsGetConsentsConsentId"></a>
 
 > Code samples
 
+```javascript
+const data = null;
+
+const xhr = new XMLHttpRequest();
+xhr.withCredentials = true;
+
+xhr.addEventListener("readystatechange", function () {
+  if (this.readyState === this.DONE) {
+    console.log(this.responseText);
+  }
+});
+
+xhr.open("GET", "https://api.seguro.com.br/open-insurance/consents/v2/consents/string");
+xhr.setRequestHeader("Accept", "application/json");
+xhr.setRequestHeader("Authorization", "string");
+xhr.setRequestHeader("x-fapi-auth-date", "stringstringstringstringstrin");
+xhr.setRequestHeader("x-fapi-customer-ip-address", "string");
+xhr.setRequestHeader("x-fapi-interaction-id", "string");
+xhr.setRequestHeader("x-customer-user-agent", "string");
+
+xhr.send(data);
+```
+
 ```python
-import requests
+import http.client
+
+conn = http.client.HTTPSConnection("api.seguro.com.br")
+
 headers = {
-  'Accept': 'application/json',
-  'Authorization': 'string',
-  'x-fapi-auth-date': 'stringstringstringstringstrin',
-  'x-fapi-customer-ip-address': 'string',
-  'x-fapi-interaction-id': 'string',
-  'x-customer-user-agent': 'string'
-}
+    'Accept': "application/json",
+    'Authorization': "string",
+    'x-fapi-auth-date': "stringstringstringstringstrin",
+    'x-fapi-customer-ip-address': "string",
+    'x-fapi-interaction-id': "string",
+    'x-customer-user-agent': "string"
+    }
 
-r = requests.get('https://api.seguro.com.br/open-insurance/consents/v2/consents/{consentId}', headers = headers)
+conn.request("GET", "/open-insurance/consents/v2/consents/string", headers=headers)
 
-print(r.json())
+res = conn.getresponse()
+data = res.read()
 
+print(data.decode("utf-8"))
 ```
 
 ```java
-URL obj = new URL("https://api.seguro.com.br/open-insurance/consents/v2/consents/{consentId}");
-HttpURLConnection con = (HttpURLConnection) obj.openConnection();
-con.setRequestMethod("GET");
-int responseCode = con.getResponseCode();
-BufferedReader in = new BufferedReader(
-    new InputStreamReader(con.getInputStream()));
-String inputLine;
-StringBuffer response = new StringBuffer();
-while ((inputLine = in.readLine()) != null) {
-    response.append(inputLine);
-}
-in.close();
-System.out.println(response.toString());
-
+HttpResponse<String> response = Unirest.get("https://api.seguro.com.br/open-insurance/consents/v2/consents/string")
+  .header("Accept", "application/json")
+  .header("Authorization", "string")
+  .header("x-fapi-auth-date", "stringstringstringstringstrin")
+  .header("x-fapi-customer-ip-address", "string")
+  .header("x-fapi-interaction-id", "string")
+  .header("x-customer-user-agent", "string")
+  .asString();
 ```
 
 `GET /consents/{consentId}`
@@ -433,12 +562,19 @@ Método para obter detalhes do consentimento identificado por consentId.
     "documentId": "111111",
     "statusUpdateDateTime": "2021-05-21T08:30:00Z",
     "permissions": [
-      "CAPITALIZATION_TITLES_READ",
+      "CAPITALIZATION_TITLE_READ",
       "RESOURCES_READ"
     ],
     "expirationDateTime": "2021-05-21T08:30:00Z",
     "transactionFromDateTime": "2021-01-01T00:00:00Z",
-    "transactionToDateTime": "2021-02-01T23:59:59Z"
+    "transactionToDateTime": "2021-02-01T23:59:59Z",
+    "rejection": {
+      "rejectedBy": "USER",
+      "reason": {
+        "code": "CONSENT_EXPIRED",
+        "additionalInformation": "Tempo de confirmação da múltipla alçada excedido."
+      }
+    }
   },
   "links": {
     "self": "https://api.organizacao.com.br/open-insurance/consents/v2/consents",
@@ -459,7 +595,6 @@ Método para obter detalhes do consentimento identificado por consentId.
 |Status|Meaning|Description|Schema|
 |---|---|---|---|
 |200|[OK](https://tools.ietf.org/html/rfc7231#section-6.3.1)|Consentimento consultado com sucesso.|[ResponseConsent](#schemaresponseconsent)|
-|204|[No Content](https://tools.ietf.org/html/rfc7231#section-6.3.5)|O recurso solicitado não existe ou não foi localizado.|[ResponseError](#schemaresponseerrorconsentsv2)|
 |400|[Bad Request](https://tools.ietf.org/html/rfc7231#section-6.5.1)|A requisição foi malformada, omitindo atributos obrigatórios, seja no payload ou através de atributos na URL.|[ResponseError](#schemaresponseerrorconsentsv2)|
 |401|[Unauthorized](https://tools.ietf.org/html/rfc7235#section-3.1)|Cabeçalho de autenticação ausente/inválido ou token inválido|[ResponseError](#schemaresponseerrorconsentsv2)|
 |403|[Forbidden](https://tools.ietf.org/html/rfc7231#section-6.5.3)|O token tem escopo incorreto ou uma política de segurança foi violada|[ResponseError](#schemaresponseerrorconsentsv2)|
@@ -487,43 +622,66 @@ To perform this operation, you must be authenticated by means of one of the foll
 OAuth2Security ( Scopes: consents )
 </aside>
 
-
 <h2 id="deletar-revogar-o-consentimento-identificado-por-consentIdconsentIdv2">Deletar / Revogar o consentimento identificado por consentId.</h2>
+
+<a id="opIdconsentsDeleteConsentsConsentId"></a>
 
 > Code samples
 
+```javascript
+const data = null;
+
+const xhr = new XMLHttpRequest();
+xhr.withCredentials = true;
+
+xhr.addEventListener("readystatechange", function () {
+  if (this.readyState === this.DONE) {
+    console.log(this.responseText);
+  }
+});
+
+xhr.open("DELETE", "https://api.seguro.com.br/open-insurance/consents/v2/consents/string");
+xhr.setRequestHeader("Accept", "application/json; charset=utf-8");
+xhr.setRequestHeader("Authorization", "string");
+xhr.setRequestHeader("x-fapi-auth-date", "stringstringstringstringstrin");
+xhr.setRequestHeader("x-fapi-customer-ip-address", "string");
+xhr.setRequestHeader("x-fapi-interaction-id", "string");
+xhr.setRequestHeader("x-customer-user-agent", "string");
+
+xhr.send(data);
+```
+
 ```python
-import requests
+import http.client
+
+conn = http.client.HTTPSConnection("api.seguro.com.br")
+
 headers = {
-  'Accept': 'application/json; charset=utf-8',
-  'Authorization': 'string',
-  'x-fapi-auth-date': 'stringstringstringstringstrin',
-  'x-fapi-customer-ip-address': 'string',
-  'x-fapi-interaction-id': 'string',
-  'x-customer-user-agent': 'string'
-}
+    'Accept': "application/json; charset=utf-8",
+    'Authorization': "string",
+    'x-fapi-auth-date': "stringstringstringstringstrin",
+    'x-fapi-customer-ip-address': "string",
+    'x-fapi-interaction-id': "string",
+    'x-customer-user-agent': "string"
+    }
 
-r = requests.delete('https://api.seguro.com.br/open-insurance/consents/v2/consents/{consentId}', headers = headers)
+conn.request("DELETE", "/open-insurance/consents/v2/consents/string", headers=headers)
 
-print(r.json())
+res = conn.getresponse()
+data = res.read()
 
+print(data.decode("utf-8"))
 ```
 
 ```java
-URL obj = new URL("https://api.seguro.com.br/open-insurance/consents/v2/consents/{consentId}");
-HttpURLConnection con = (HttpURLConnection) obj.openConnection();
-con.setRequestMethod("DELETE");
-int responseCode = con.getResponseCode();
-BufferedReader in = new BufferedReader(
-    new InputStreamReader(con.getInputStream()));
-String inputLine;
-StringBuffer response = new StringBuffer();
-while ((inputLine = in.readLine()) != null) {
-    response.append(inputLine);
-}
-in.close();
-System.out.println(response.toString());
-
+HttpResponse<String> response = Unirest.delete("https://api.seguro.com.br/open-insurance/consents/v2/consents/string")
+  .header("Accept", "application/json; charset=utf-8")
+  .header("Authorization", "string")
+  .header("x-fapi-auth-date", "stringstringstringstringstrin")
+  .header("x-fapi-customer-ip-address", "string")
+  .header("x-fapi-interaction-id", "string")
+  .header("x-customer-user-agent", "string")
+  .asString();
 ```
 
 `DELETE /consents/{consentId}`
@@ -547,7 +705,7 @@ Método para deletar / revogar o consentimento identificado por consentId.
 
 > Example responses
 
-> 204 Response
+> 400 Response
 
 ```json
 {
@@ -570,7 +728,7 @@ Método para deletar / revogar o consentimento identificado por consentId.
 
 |Status|Meaning|Description|Schema|
 |---|---|---|---|
-|204|[No Content](https://tools.ietf.org/html/rfc7231#section-6.3.5)|O recurso solicitado não existe ou não foi localizado.|[ResponseError](#schemaresponseerrorconsentsv2)|
+|204|[No Content](https://tools.ietf.org/html/rfc7231#section-6.3.5)|Consentimento revogado com sucesso.|None|
 |400|[Bad Request](https://tools.ietf.org/html/rfc7231#section-6.5.1)|A requisição foi malformada, omitindo atributos obrigatórios, seja no payload ou através de atributos na URL.|[ResponseError](#schemaresponseerrorconsentsv2)|
 |401|[Unauthorized](https://tools.ietf.org/html/rfc7235#section-3.1)|Cabeçalho de autenticação ausente/inválido ou token inválido|[ResponseError](#schemaresponseerrorconsentsv2)|
 |403|[Forbidden](https://tools.ietf.org/html/rfc7231#section-6.5.3)|O token tem escopo incorreto ou uma política de segurança foi violada|[ResponseError](#schemaresponseerrorconsentsv2)|
@@ -586,6 +744,9 @@ Método para deletar / revogar o consentimento identificado por consentId.
 
 |Status|Header|Type|Format|Description|
 |---|---|---|---|---|
+|204|x-fapi-interaction-id|string||Um UID [RFC4122](https://tools.ietf.org/html/rfc4122) usado como um ID de correlação.  
+Se fornecido, o transmissor deve "reproduzir" esse valor no cabeçalho de resposta.
+|
 |default|x-fapi-interaction-id|string||Um UID [RFC4122](https://tools.ietf.org/html/rfc4122) usado como um ID de correlação.  
 Se fornecido, o transmissor deve "reproduzir" esse valor no cabeçalho de resposta.
 |

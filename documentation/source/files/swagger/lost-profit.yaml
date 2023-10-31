@@ -1,10 +1,9 @@
- 
 openapi: 3.0.0
 info:
   title: APIs Open Data do Open Insurance Brasil
   description:
     API de informações de dados do produto Lucros Cessantes . Os recursos que podem ser consumidos pelos participantes conforme a regra 3.1.2 do manual de escopo de dados..
-  version: 1.1.0
+  version: 1.2.0
   contact:
     url: 'https://www.gov.br/susep/'
 servers:
@@ -87,6 +86,7 @@ components:
             $ref: '#/components/schemas/Links'
         meta:
             $ref: '#/components/schemas/Meta'
+
     LostProfitBrand:
       type: object
       description: Organizacao controladora do grupo.
@@ -101,6 +101,7 @@ components:
           example: ACME Group Seguros
         companies:
           $ref: '#/components/schemas/LostProfitCompany'
+
     LostProfitCompany:
       type: array
       items:
@@ -118,10 +119,11 @@ components:
             cnpjNumber:
                 type: string
                 description: CNPJ da sociedade pertencente à marca.
-                maxLength: 14
-                example: "12345678901234"
+                pattern: ^\d{14}$
+                example: '12345678901234'
             products:
                 $ref: '#/components/schemas/LostProfitProduct'
+
     LostProfitProduct:
       type: array
       description: Lista de produtos de uma empresa.
@@ -134,7 +136,7 @@ components:
           - microinsurance
           - validity
           - termsAndConditions
-          - minimumRequirements
+          - targetAudiences
         properties:
           name:
             type: string
@@ -146,7 +148,6 @@ components:
             description: Código único a ser definido pela sociedade.
             maxLength: 100
             example: "01234589-0"
-          
           coverages:
             type: array
             items:
@@ -154,13 +155,17 @@ components:
               required:
                 - coverage
                 - coverageDescription
+                - coverageAttributes
                 - allowApartPurchase
               properties:
                 coverage:
-                  description: Listagem de coberturas incluídas no produto que deve observar a relação discriminada de coberturas, conforme Tabela II.12 do Anexo II
+                  description: Listagem de coberturas incluídas no produto que deve observar a relação discriminada de coberturas
                   type: string
-                  example: PERDA_DE_RECEITA_INTERRUPCAO_DE_NEGOCIOS
-                  enum: [PERDA_DE_RECEITA_INTERRUPCAO_DE_NEGOCIOS,
+                  example: PERDA_DE_RECEITA_OU_INTERRUPCAO_DE_NEGOCIOS
+                  enum: [LUCRO_BRUTO_LUCRO_LIQUIDO_E_DESPESAS_FIXAS,
+                    LUCRO_LIQUIDO,
+                    DESPESAS_FIXAS,
+                    PERDA_DE_RECEITA_OU_INTERRUPCAO_DE_NEGOCIOS,
                     OUTRAS]
                 coverageDescription:
                   type: string
@@ -184,12 +189,16 @@ components:
             type: array 
             description: Distribuição de frequência relativa aos valores referentes às taxas cobradas, nos termos do Anexo III
             items:
-                type: string
-                maxLength: 1024
+              type: string
+              maxLength: 1024
           termsAndConditions:
             $ref: '#/components/schemas/LostProfitTerms'
-          minimumRequirements:
-            $ref: '#/components/schemas/LostProfitMinimumRequirements'
+          targetAudiences:
+            type: array
+            items:
+              type: string
+              example: PESSOA_NATURAL
+              enum: [PESSOA_NATURAL, PESSOA_JURIDICA]
     
     LostProfitValidity:
       type: array
@@ -226,20 +235,6 @@ components:
           maxLength: 1024
           example: https://www.seguradora.com.br/produto/tradicional/pdf/condicoes_gerais.pdf   
 
-    
-    LostProfitMinimumRequirements:
-      type: object
-      description: Requisitos mínimos.
-      required:
-        - targetAudiences
-      properties:
-        targetAudiences:
-          type: array
-          items:
-            type: string
-            example: PESSOA_NATURAL
-            enum: [PESSOA_NATURAL, PESSOA_JURIDICA]
-    
     LostProfitCoverageAttributes:
       type: object
       description: Informações de cobertura do Seguro Residencial.
@@ -248,7 +243,7 @@ components:
       properties:
         maxLMI:
           $ref: '#/components/schemas/LostProfitLimit'
-
+        
     LostProfitLimit:
       type: object
       description: Lista com valor de LMI aceito pela sociedade para cada cobertura.

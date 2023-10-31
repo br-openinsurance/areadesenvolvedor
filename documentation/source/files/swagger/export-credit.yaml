@@ -1,10 +1,9 @@
-
 openapi: 3.0.0
 info:
   title: APIs Open Data do Open Insurance Brasil
   description:
     API de informações de dados do produto Credito à Exportação. Os recursos que podem ser consumidos pelos participantes conforme a regra 3.1.2 do manual de escopo de dados..
-  version: 1.1.0
+  version: 1.2.0
   contact:
     url: 'https://www.gov.br/susep/'
 servers:
@@ -87,6 +86,7 @@ components:
             $ref: '#/components/schemas/Links'
         meta:
             $ref: '#/components/schemas/Meta'
+
     ExportCreditBrand:
       type: object
       description: Organizacao controladora do grupo.
@@ -101,6 +101,7 @@ components:
           example: ACME Group Seguros
         companies:
           $ref: '#/components/schemas/ExportCreditCompany'
+
     ExportCreditCompany:
       type: array
       items:
@@ -118,10 +119,11 @@ components:
             cnpjNumber:
                 type: string
                 description: CNPJ da sociedade pertencente à marca.
-                maxLength: 14
-                example: "12345678901234"
+                pattern: ^\d{14}$
+                example: '12345678901234'
             products:
                 $ref: '#/components/schemas/ExportCreditProduct'
+
     ExportCreditProduct:
       type: array
       description: Lista de produtos de uma empresa.
@@ -133,7 +135,7 @@ components:
           - traits
           - validity
           - termsAndConditions
-          - minimumRequirements
+          - targetAudiences
         properties:
           name:
             type: string
@@ -152,11 +154,12 @@ components:
               required:
                 - coverage
                 - coverageDescription
+                - coverageAttributes
                 - allowApartPurchase
               properties:
                 coverage:
                   type: string
-                  description: Listagem de coberturas incluídas no produto que deve observar a relação discriminada de coberturas, conforme Tabela II.12 do Anexo II
+                  description: Listagem de coberturas incluídas no produto que deve observar a relação discriminada de coberturas.
                   example: NAO_PAGAMENTO_DA_CARTEIRA_DE_CLIENTES_DO_SEGURADO_INADIMPLENCIA_POR_QUESTAO_COMERCIAL
                   enum: [
                     NAO_PAGAMENTO_DA_CARTEIRA_DE_CLIENTES_DO_SEGURADO_INADIMPLENCIA_POR_QUESTAO_COMERCIAL,
@@ -185,9 +188,14 @@ components:
                 maxLength: 1024
           termsAndConditions:
             $ref: '#/components/schemas/ExportCreditTerms'
-          minimumRequirements:
-            $ref: '#/components/schemas/ExportCreditMinimumRequirements'
-    
+          targetAudiences:
+            description: Público Alvo
+            type: array
+            items:
+              type: string
+              example: PESSOA_NATURAL
+              enum: [PESSOA_NATURAL, PESSOA_JURIDICA]
+
     ExportCreditValidity:
       type: array
       items:
@@ -199,7 +207,6 @@ components:
             type: array
             items:
               type: string
-              maxLength: 23
               description: Prazo
               example: ANUAL
               enum: [ANUAL , ANUAL_INTERMITENTE , PLURIANUAL , PLURIANUAL_INTERMITENTE , MENSAL, MENSAL_INTERMITENTE , DIARIO , DIARIO_INTERMITENTE, OUTROS]
@@ -224,22 +231,6 @@ components:
           description: Campo aberto (possibilidade de incluir uma url).
           maxLength: 1024
           example: https://www.seguradora.com.br/produto/tradicional/pdf/condicoes_gerais.pdf
-
-    
-    ExportCreditMinimumRequirements:
-      type: object
-      description: Requisitos mínimos.
-      required:
-        - targetAudiences
-      properties:
-        targetAudiences:
-          description: Público Alvo
-          type: array
-          items:
-            type: string
-            maxLength: 15
-            example: PESSOA_NATURAL
-            enum: [PESSOA_NATURAL, PESSOA_JURIDICA]
     
     ExportCreditCoverageAttributes:
       type: object
@@ -249,6 +240,7 @@ components:
       properties:
         maxLMI:
           $ref: '#/components/schemas/ExportCreditLimit'
+       
 
     ExportCreditLimit:
       type: object

@@ -1,10 +1,9 @@
- 
 openapi: 3.0.0
 info:
   title: APIs Open Data do Open Insurance Brasil
   description:
     API de informações de dados do produto Garantia Estendida - Auto. Os recursos que podem ser consumidos pelos participantes conforme a regra 3.1.2 do manual de escopo de dados..
-  version: 1.1.0
+  version: 1.2.0
   contact:
     url: 'https://www.gov.br/susep/'
 servers:
@@ -87,6 +86,7 @@ components:
             $ref: '#/components/schemas/Links'
         meta:
             $ref: '#/components/schemas/Meta'
+
     AutoExtendedWarrantyBrand:
       type: object
       description: Organizacao controladora do grupo.
@@ -101,6 +101,7 @@ components:
           example: ACME Group Seguros
         companies:
           $ref: '#/components/schemas/AutoExtendedWarrantyCompany'
+
     AutoExtendedWarrantyCompany:
       type: array
       items:
@@ -118,10 +119,11 @@ components:
           cnpjNumber:
               type: string
               description: CNPJ da sociedade pertencente à marca.
-              maxLength: 14
+              pattern: ^\d{14}$
               example: '12345678901234'
           products:
               $ref: '#/components/schemas/AutoExtendedWarrantyProduct'
+
     AutoExtendedWarrantyProduct:
       type: array
       description: Lista de produtos de uma empresa.
@@ -133,13 +135,13 @@ components:
           - coverages
           - securityType
           - assistanceServices
-          - customerServices
           - microinsurance
           - traits
           - validity
           - premiumPayment
           - termsAndConditions
           - minimumRequirements
+          - targetAudiences
         properties:
           name:
             type: string
@@ -158,10 +160,11 @@ components:
               required:
                 - coverage
                 - coverageDescription
+                - coverageAttributes
                 - allowApartPurchase
               properties:
                 coverage:
-                  description: Listagem de coberturas incluídas no produto que deve observar a relação discriminada de coberturas, conforme Tabela II.8 do Anexo II.
+                  description: Listagem de coberturas incluídas no produto que deve observar a relação discriminada de coberturas.
                   type: string
                   example: GARANTIA_ESTENDIDA_ORIGINAL
                   enum: [GARANTIA_ESTENDIDA_ORIGINAL,
@@ -222,7 +225,13 @@ components:
             $ref: '#/components/schemas/AutoExtendedWarrantyTerms'
           minimumRequirements:
             $ref: '#/components/schemas/AutoExtendedWarrantyMinimumRequirements'
-    
+          targetAudiences:
+            type: array
+            items:
+              type: string
+              example: PESSOA_NATURAL
+              enum: [PESSOA_NATURAL, PESSOA_JURIDICA]
+
     AutoExtendedWarrantyAssistanceServices:
       type: object
       required:
@@ -252,7 +261,6 @@ components:
           type: string
           example: GRATUITO
           enum: [GRATUITO, PAGO]
-
     
     AutoExtendedWarrantyValidity:
       type: array
@@ -306,10 +314,10 @@ components:
               example: A_VISTA
               enum: [A_VISTA, PARCELADO]
           premiumRates:
-              description: Distribuição de frequência relativa aos valores referentes às taxas cobradas.
-              type: string
-              maxLength: 1024
-        
+            description: Distribuição de frequência relativa aos valores referentes às taxas cobradas.
+            type: string
+            maxLength: 1024
+          
     AutoExtendedWarrantyTerms:
       type: object
       description: Informações dos termos e condições conforme número do processo SUSEP.
@@ -326,7 +334,6 @@ components:
           description: Campo aberto (possibilidade de incluir uma url).
           maxLength: 1024
           example: https://www.seguradora.com.br/produto/tradicional/pdf/condicoes_gerais.pdf   
-
     
     AutoExtendedWarrantyMinimumRequirements:
       type: object
@@ -334,7 +341,6 @@ components:
       required:
         - contractType
         - minimumRequirementDetails
-        - targetAudiences
       properties:
         contractType:
           type: array
@@ -346,13 +352,7 @@ components:
           type: string
           description: Campo aberto contendo todos os requisitos mínimos para contratação (possibilidade de incluir URL).
           maxLength: 1024
-          example: https://openinsurance.com.br/aaa
-        targetAudiences:
-          type: array
-          items:
-            type: string
-            example: PESSOA_NATURAL
-            enum: [PESSOA_NATURAL, PESSOA_JURIDICA]
+          example: https://www.seguradora.com.br/produto/requisitos.pdf
     
     AutoExtendedWarrantyCoverageAttributes:
       type: object

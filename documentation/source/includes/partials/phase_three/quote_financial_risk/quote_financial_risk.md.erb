@@ -1,0 +1,1287 @@
+<h1 id="api-quote-financial-risk">API - Quote Financial Risk v1.5.3</h1>
+
+> Scroll down for code samples, example requests and responses. Select a language for code samples from the tabs above or the mobile navigation menu.
+
+**Especificação em OAS 3.0** </br>
+<a href="files/swagger/quote-financial-risk.yaml" download="quote-financial-risk.yaml">Download da Especificação</a>
+
+**Detalhamento Técnico** </br>
+<a href="files/docs/quote-financial-risk.docx" download="quote-financial-risk.docx">Download do Detalhamento Técnico</a>
+
+API de Cotação Risco Financeiro do Open Insurance Brasil - Fase 3.
+
+Recebe informações da solicitação de cotação e contratação vindas das instituições iniciadoras.
+
+Possui um conjunto de endpoints por ramo de produto e um conjunto específico de endpoints para ramos classificados como LEAD OPIN.
+
+Requer consentimento do cliente para todos os 'endpoints'.
+
+Base URLs:
+
+**Servidor de Produção** </br>
+* <a href="https://api.organizacao.com.br/open-insurance/quote-financial-risk/v1">https://api.organizacao.com.br/open-insurance/quote-financial-risk/v1</a>
+
+**Servidor de Homologação** </br>
+* <a href="https://apih.organizacao.com.br/open-insurance/quote-financial-risk/v1">https://apih.organizacao.com.br/open-insurance/quote-financial-risk/v1</a>
+    
+Web: <a href="https://www.gov.br/susep">Governança do Open Insurance Brasil</a> 
+
+Release Notes:
+
+- <a href="./1.3.6.html#api-quote-financial-risk-quote-financial-risk-yaml-v1-5-3">02/05/2023 </a>
+
+<h2 id="api-quote-financial-risk-orientacoes">Orientações</h2>
+
+A `Role`  do diretório de participantes relacionada à presente API é a `ICS`.
+
+Para todos os `endpoints` desta API é previsto o envio de um `token` através do header `Authorization`.
+
+Este `token` deverá estar relacionado ao consentimento (identificado pelo `consentId`) mantido na instituição transmissora dos dados, o qual permitirá a pesquisa e retorno, na API em questão, dos
+dados relacionados ao `consentId` específico.
+
+Os dados serão entregues pela iniciadora na seguradora desde que o `consentId` relacionado corresponda a um consentimento válido e com o status `AUTHORISED`.
+
+Além disso, as `permissions` necessárias deverão ter sido solicitadas quando da criação do consentimento relacionado.
+
+Relacionamos a seguir as `permissions` necessárias para o envio de dados em cada `endpoint` da presente API.
+
+<h2 id="api-quote-financial-risk-permissoes-necessarias">Permissions necessárias para a API Quote Financial Risk</h2>
+
+Para cada um dos `paths` desta API, além dos escopos (`scopes`) indicados existem `permissions` que deverão ser observadas:
+
+### `/lead/request`
+  - permissions:
+    - POST: **QUOTE_FINANCIAL_RISK_LEAD_CREATE**
+
+### `/lead/request/{consentId}`
+  - permissions:      
+    - PATCH: **QUOTE_FINANCIAL_RISK_LEAD_UPDATE**
+
+
+<h3 id="quote-financial-risk-authentication">Authentication</h3>
+
+- oAuth2 authentication. 
+
+    - Flow: clientCredentials
+
+    - Token URL = [https://authserver.example/token](https://authserver.example/token)
+
+|Scope|Scope Description|
+|---|---|
+|quote-financial-risk-lead|Escopo necessário para acesso à API FinancialRisk.|
+
+
+Iniciação de serviços de seguro Cotação Risco Financeiro (QuoteFinancialRiskLead)
+
+## Envia dados de cotação e contratação de Quote Financial Risk Lead
+
+<a id="opIdpostQuoteFinancialRiskLead"></a>
+
+> Code samples
+
+```javascript
+const data = JSON.stringify({
+  "data": {
+    "consentId": "urn:initiator:C1DD93123",
+    "quoteCustomer": {
+      "identificationData": {
+        "updateDateTime": "2021-05-21T08:30:00Z",
+        "personalId": "578-psd-71md6971kjh-2d414",
+        "brandName": "Organização A",
+        "civilName": "Juan Kaique Cláudio Fernandes",
+        "socialName": "string",
+        "cpfNumber": "string",
+        "companyInfo": {
+          "cnpjNumber": "01773247000563",
+          "name": "Empresa da Organização A"
+        },
+        "documents": [
+          {
+            "type": "CNH",
+            "number": "15291908",
+            "expirationDate": "2023-05-21",
+            "issueLocation": "string"
+          }
+        ],
+        "hasBrazilianNationality": false,
+        "otherNationalitiesInfo": "CAN",
+        "otherDocuments": {
+          "type": "SOCIAL SEC",
+          "number": "15291908",
+          "country": "string",
+          "expirationDate": "2023-05-21"
+        },
+        "contact": {
+          "postalAddresses": [
+            {
+              "address": "Av Naburo Ykesaki, 1270",
+              "additionalInfo": "Fundos",
+              "districtName": "Centro",
+              "townName": "Marília",
+              "countrySubDivision": "SP",
+              "postCode": "17500001",
+              "country": "BRA"
+            }
+          ],
+          "phones": [
+            {
+              "countryCallingCode": "55",
+              "areaCode": "19",
+              "number": "29875132",
+              "phoneExtension": "932"
+            }
+          ],
+          "emails": [
+            {
+              "email": "nome@br.net"
+            }
+          ]
+        },
+        "civilStatusCode": "SOLTEIRO",
+        "sex": "FEMININO",
+        "birthDate": "2021-05-21",
+        "filiation": {
+          "type": "MAE",
+          "civilName": "Marcelo Cláudio Fernandes"
+        },
+        "identificationDetails": {
+          "civilName": "Juan Kaique Cláudio Fernandes",
+          "cpfNumber": "string"
+        }
+      },
+      "qualificationData": {
+        "updateDateTime": "2021-05-21T08:30:00Z",
+        "pepIdentification": "NAO_EXPOSTO",
+        "occupation": [
+          {
+            "details": "string",
+            "occupationCode": "RECEITA_FEDERAL",
+            "occupationCodeType": "RFB"
+          }
+        ],
+        "lifePensionPlans": "SIM",
+        "informedRevenue": {
+          "incomeFrequency": "DIARIA",
+          "currency": "BRL",
+          "amount": "100000.04",
+          "date": "2012-05-21"
+        },
+        "informedPatrimony": {
+          "currency": "BRL",
+          "amount": "100000.04",
+          "year": "2010"
+        }
+      },
+      "complimentaryInformationData": {
+        "updateDateTime": "2021-05-21T08:30:00Z",
+        "startDate": "2014-05-21",
+        "relationshipBeginning": "2014-05-21",
+        "productsServices": [
+          {
+            "contract": "string",
+            "type": "MICROSSEGUROS",
+            "insuranceLineCode": "6272",
+            "procurators": [
+              {
+                "nature": "PROCURADOR",
+                "cpfNumber": "73677831148",
+                "civilName": "Elza Milena Stefany Teixeira",
+                "socialName": "string"
+              }
+            ]
+          }
+        ]
+      },
+      "customData": [
+        {
+          "fieldCategory": "IDENTIFICATION",
+          "fields": [
+            {
+              "fieldId": "578-psd-71md6971kjh-2d414",
+              "value": null
+            }
+          ]
+        }
+      ]
+    },
+    "historicalData": {
+      "customer": {
+        "identificationData": {
+          "updateDateTime": "2021-05-21T08:30:00Z",
+          "personalId": "578-psd-71md6971kjh-2d414",
+          "brandName": "Organização A",
+          "civilName": "Juan Kaique Cláudio Fernandes",
+          "socialName": "string",
+          "cpfNumber": "string",
+          "companyInfo": {
+            "cnpjNumber": "01773247000563",
+            "name": "Empresa da Organização A"
+          },
+          "documents": [
+            {
+              "type": "CNH",
+              "number": "15291908",
+              "expirationDate": "2023-05-21",
+              "issueLocation": "string"
+            }
+          ],
+          "hasBrazilianNationality": false,
+          "otherNationalitiesInfo": "CAN",
+          "otherDocuments": {
+            "type": "SOCIAL SEC",
+            "number": "15291908",
+            "country": "string",
+            "expirationDate": "2023-05-21"
+          },
+          "contact": {
+            "postalAddresses": [
+              {
+                "address": "Av Naburo Ykesaki, 1270",
+                "additionalInfo": "Fundos",
+                "districtName": "Centro",
+                "townName": "Marília",
+                "countrySubDivision": "SP",
+                "postCode": "17500001",
+                "country": "BRA"
+              }
+            ],
+            "phones": [
+              {
+                "countryCallingCode": "55",
+                "areaCode": "19",
+                "number": "29875132",
+                "phoneExtension": "932"
+              }
+            ],
+            "emails": [
+              {
+                "email": "nome@br.net"
+              }
+            ]
+          },
+          "civilStatusCode": "SOLTEIRO",
+          "sex": "FEMININO",
+          "birthDate": "2021-05-21",
+          "filiation": {
+            "type": "MAE",
+            "civilName": "Marcelo Cláudio Fernandes"
+          },
+          "identificationDetails": {
+            "civilName": "Juan Kaique Cláudio Fernandes",
+            "cpfNumber": "string"
+          }
+        },
+        "qualificationData": {
+          "updateDateTime": "2021-05-21T08:30:00Z",
+          "pepIdentification": "NAO_EXPOSTO",
+          "occupation": [
+            {
+              "details": "string",
+              "occupationCode": "RECEITA_FEDERAL",
+              "occupationCodeType": "RFB"
+            }
+          ],
+          "lifePensionPlans": "SIM",
+          "informedRevenue": {
+            "incomeFrequency": "DIARIA",
+            "currency": "BRL",
+            "amount": "100000.04",
+            "date": "2012-05-21"
+          },
+          "informedPatrimony": {
+            "currency": "BRL",
+            "amount": "100000.04",
+            "year": "2010"
+          }
+        },
+        "complimentaryInformationData": {
+          "updateDateTime": "2021-05-21T08:30:00Z",
+          "startDate": "2014-05-21",
+          "relationshipBeginning": "2014-05-21",
+          "productsServices": [
+            {
+              "contract": "string",
+              "type": "MICROSSEGUROS",
+              "insuranceLineCode": "6272",
+              "procurators": [
+                {
+                  "nature": "PROCURADOR",
+                  "cpfNumber": "73677831148",
+                  "civilName": "Elza Milena Stefany Teixeira",
+                  "socialName": "string"
+                }
+              ]
+            }
+          ]
+        }
+      },
+      "policies": [
+        {
+          "policyInfo": {
+            "documentType": "APOLICE_INDIVIDUAL",
+            "policyId": "111111",
+            "susepProcessNumber": "string",
+            "groupCertificateId": "string",
+            "issuanceType": "EMISSAO_PROPRIA",
+            "issuanceDate": "2022-12-31",
+            "termStartDate": "2022-12-31",
+            "termEndDate": "2022-12-31",
+            "leadInsurerCode": "string",
+            "leadInsurerPolicyId": "string",
+            "maxLMG": {
+              "amount": "2000.00",
+              "unit": {
+                "code": "R$",
+                "description": "BRL"
+              }
+            },
+            "proposalId": "string",
+            "insureds": [
+              {
+                "identification": "12345678900",
+                "identificationType": "CPF",
+                "name": "Nome Sobrenome",
+                "postCode": "10000000",
+                "email": "string",
+                "city": "string",
+                "state": "string",
+                "country": "BRA",
+                "address": "string"
+              }
+            ],
+            "beneficiaries": [
+              {
+                "identification": "12345678900",
+                "identificationType": "CPF",
+                "name": "Nome Sobrenome"
+              }
+            ],
+            "principals": [
+              {
+                "identification": "12345678900",
+                "identificationType": "CPF",
+                "name": "Nome Sobrenome",
+                "postCode": "10000000",
+                "email": "string",
+                "city": "string",
+                "state": "string",
+                "country": "BRA",
+                "address": "string"
+              }
+            ],
+            "intermediaries": [
+              {
+                "type": "REPRESENTANTE",
+                "identification": "12345678900",
+                "brokerId": "string",
+                "identificationType": "CPF",
+                "name": "Nome Sobrenome",
+                "postCode": "10000000",
+                "city": "string",
+                "state": "string",
+                "country": "BRA",
+                "address": "string"
+              }
+            ],
+            "insuredObjects": [
+              {
+                "identification": "string",
+                "type": "CONTRATO",
+                "typeAdditionalInfo": "string",
+                "description": "string",
+                "amount": {
+                  "amount": "2000.00",
+                  "unit": {
+                    "code": "R$",
+                    "description": "BRL"
+                  }
+                },
+                "coverages": [
+                  {
+                    "branch": "0111",
+                    "code": "PROTECAO_DE_BENS",
+                    "description": "string",
+                    "internalCode": "string",
+                    "susepProcessNumber": "string",
+                    "LMI": {},
+                    "isLMISublimit": true,
+                    "termStartDate": "2022-12-31",
+                    "termEndDate": "2022-12-31",
+                    "isMainCoverage": true,
+                    "feature": "MASSIFICADOS",
+                    "type": "PARAMETRICO",
+                    "gracePeriod": 0,
+                    "gracePeriodicity": "DIA",
+                    "gracePeriodCountingMethod": "DIAS_UTEIS",
+                    "gracePeriodStartDate": "2022-12-31",
+                    "gracePeriodEndDate": "2022-12-31"
+                  }
+                ]
+              }
+            ],
+            "coverages": [
+              {
+                "branch": "0111",
+                "code": "PROTECAO_DE_BENS",
+                "description": "string",
+                "deductible": {
+                  "type": "DEDUTIVEL",
+                  "typeAdditionalInfo": "string",
+                  "amount": {
+                    "amount": "2000.00",
+                    "unit": {}
+                  },
+                  "period": 10,
+                  "periodicity": "DIA",
+                  "periodCountingMethod": "DIAS_UTEIS",
+                  "periodStartDate": "2022-05-16",
+                  "periodEndDate": "2022-05-17",
+                  "description": "Franquia de exemplo"
+                },
+                "POS": {
+                  "applicationType": "VALOR",
+                  "description": "Descrição de exemplo",
+                  "minValue": {
+                    "amount": "2000.00",
+                    "unit": {}
+                  },
+                  "maxValue": {
+                    "amount": "2000.00",
+                    "unit": {}
+                  },
+                  "percentage": "10.00"
+                }
+              }
+            ],
+            "coinsuranceRetainedPercentage": "10.00",
+            "coinsurers": [
+              {
+                "identification": "string",
+                "cededPercentage": "10.00"
+              }
+            ],
+            "branchInfo": {
+              "identification": "string",
+              "userGroup": "string",
+              "technicalSurplus": "10.00"
+            }
+          },
+          "premium": {
+            "paymentsQuantity": 4,
+            "amount": {
+              "amount": "2000.00",
+              "unit": {
+                "code": "R$",
+                "description": "BRL"
+              }
+            },
+            "coverages": [
+              {
+                "branch": "0111",
+                "code": "PROTECAO_DE_BENS",
+                "description": "string",
+                "premiumAmount": {
+                  "amount": "2000.00",
+                  "unit": {
+                    "code": "R$",
+                    "description": "BRL"
+                  }
+                }
+              }
+            ],
+            "payments": [
+              {
+                "movementDate": "2022-12-31",
+                "movementType": "LIQUIDACAO_DE_PREMIO",
+                "movementOrigin": "EMISSAO_DIRETA",
+                "movementPaymentsNumber": 0,
+                "amount": {
+                  "amount": "2000.00",
+                  "unit": {
+                    "code": "R$",
+                    "description": "BRL"
+                  }
+                },
+                "maturityDate": "2022-12-31",
+                "tellerId": "string",
+                "tellerIdType": "CPF",
+                "tellerName": "string",
+                "financialInstitutionCode": "string",
+                "paymentType": "BOLETO"
+              }
+            ]
+          },
+          "claim": {
+            "identification": "string",
+            "documentationDeliveryDate": "2022-12-31",
+            "status": "ABERTO",
+            "statusAlterationDate": "2022-12-31",
+            "occurrenceDate": "2022-12-31",
+            "warningDate": "2022-12-31",
+            "thirdPartyClaimDate": "2022-12-31",
+            "amount": {
+              "amount": "2000.00",
+              "unit": {
+                "code": "R$",
+                "description": "BRL"
+              }
+            },
+            "denialJustification": "RISCO_EXCLUIDO",
+            "denialJustificationDescription": "string",
+            "coverages": [
+              {
+                "insuredObjectId": "string",
+                "branch": "0111",
+                "code": "PROTECAO_DE_BENS",
+                "description": "string",
+                "warningDate": "2022-12-31",
+                "thirdPartyClaimDate": "2022-12-31"
+              }
+            ]
+          }
+        }
+      ]
+    }
+  }
+});
+
+const xhr = new XMLHttpRequest();
+xhr.withCredentials = true;
+
+xhr.addEventListener("readystatechange", function () {
+  if (this.readyState === this.DONE) {
+    console.log(this.responseText);
+  }
+});
+
+xhr.open("POST", "https://api.organizacao.com.br/open-insurance/quote-financial-risk/v1/lead/request");
+xhr.setRequestHeader("Content-Type", "application/json");
+xhr.setRequestHeader("Accept", "application/json");
+xhr.setRequestHeader("Authorization", "string");
+xhr.setRequestHeader("x-fapi-auth-date", "stringstringstringstringstrin");
+xhr.setRequestHeader("x-fapi-customer-ip-address", "string");
+xhr.setRequestHeader("x-fapi-interaction-id", "string");
+xhr.setRequestHeader("x-customer-user-agent", "string");
+
+xhr.send(data);
+```
+
+```python
+import http.client
+
+conn = http.client.HTTPSConnection("api.organizacao.com.br")
+
+payload = "{\"data\":{\"consentId\":\"urn:initiator:C1DD93123\",\"quoteCustomer\":{\"identificationData\":{\"updateDateTime\":\"2021-05-21T08:30:00Z\",\"personalId\":\"578-psd-71md6971kjh-2d414\",\"brandName\":\"Organização A\",\"civilName\":\"Juan Kaique Cláudio Fernandes\",\"socialName\":\"string\",\"cpfNumber\":\"string\",\"companyInfo\":{\"cnpjNumber\":\"01773247000563\",\"name\":\"Empresa da Organização A\"},\"documents\":[{\"type\":\"CNH\",\"number\":\"15291908\",\"expirationDate\":\"2023-05-21\",\"issueLocation\":\"string\"}],\"hasBrazilianNationality\":false,\"otherNationalitiesInfo\":\"CAN\",\"otherDocuments\":{\"type\":\"SOCIAL SEC\",\"number\":\"15291908\",\"country\":\"string\",\"expirationDate\":\"2023-05-21\"},\"contact\":{\"postalAddresses\":[{\"address\":\"Av Naburo Ykesaki, 1270\",\"additionalInfo\":\"Fundos\",\"districtName\":\"Centro\",\"townName\":\"Marília\",\"countrySubDivision\":\"SP\",\"postCode\":\"17500001\",\"country\":\"BRA\"}],\"phones\":[{\"countryCallingCode\":\"55\",\"areaCode\":\"19\",\"number\":\"29875132\",\"phoneExtension\":\"932\"}],\"emails\":[{\"email\":\"nome@br.net\"}]},\"civilStatusCode\":\"SOLTEIRO\",\"sex\":\"FEMININO\",\"birthDate\":\"2021-05-21\",\"filiation\":{\"type\":\"MAE\",\"civilName\":\"Marcelo Cláudio Fernandes\"},\"identificationDetails\":{\"civilName\":\"Juan Kaique Cláudio Fernandes\",\"cpfNumber\":\"string\"}},\"qualificationData\":{\"updateDateTime\":\"2021-05-21T08:30:00Z\",\"pepIdentification\":\"NAO_EXPOSTO\",\"occupation\":[{\"details\":\"string\",\"occupationCode\":\"RECEITA_FEDERAL\",\"occupationCodeType\":\"RFB\"}],\"lifePensionPlans\":\"SIM\",\"informedRevenue\":{\"incomeFrequency\":\"DIARIA\",\"currency\":\"BRL\",\"amount\":\"100000.04\",\"date\":\"2012-05-21\"},\"informedPatrimony\":{\"currency\":\"BRL\",\"amount\":\"100000.04\",\"year\":\"2010\"}},\"complimentaryInformationData\":{\"updateDateTime\":\"2021-05-21T08:30:00Z\",\"startDate\":\"2014-05-21\",\"relationshipBeginning\":\"2014-05-21\",\"productsServices\":[{\"contract\":\"string\",\"type\":\"MICROSSEGUROS\",\"insuranceLineCode\":\"6272\",\"procurators\":[{\"nature\":\"PROCURADOR\",\"cpfNumber\":\"73677831148\",\"civilName\":\"Elza Milena Stefany Teixeira\",\"socialName\":\"string\"}]}]},\"customData\":[{\"fieldCategory\":\"IDENTIFICATION\",\"fields\":[{\"fieldId\":\"578-psd-71md6971kjh-2d414\",\"value\":null}]}]},\"historicalData\":{\"customer\":{\"identificationData\":{\"updateDateTime\":\"2021-05-21T08:30:00Z\",\"personalId\":\"578-psd-71md6971kjh-2d414\",\"brandName\":\"Organização A\",\"civilName\":\"Juan Kaique Cláudio Fernandes\",\"socialName\":\"string\",\"cpfNumber\":\"string\",\"companyInfo\":{\"cnpjNumber\":\"01773247000563\",\"name\":\"Empresa da Organização A\"},\"documents\":[{\"type\":\"CNH\",\"number\":\"15291908\",\"expirationDate\":\"2023-05-21\",\"issueLocation\":\"string\"}],\"hasBrazilianNationality\":false,\"otherNationalitiesInfo\":\"CAN\",\"otherDocuments\":{\"type\":\"SOCIAL SEC\",\"number\":\"15291908\",\"country\":\"string\",\"expirationDate\":\"2023-05-21\"},\"contact\":{\"postalAddresses\":[{\"address\":\"Av Naburo Ykesaki, 1270\",\"additionalInfo\":\"Fundos\",\"districtName\":\"Centro\",\"townName\":\"Marília\",\"countrySubDivision\":\"SP\",\"postCode\":\"17500001\",\"country\":\"BRA\"}],\"phones\":[{\"countryCallingCode\":\"55\",\"areaCode\":\"19\",\"number\":\"29875132\",\"phoneExtension\":\"932\"}],\"emails\":[{\"email\":\"nome@br.net\"}]},\"civilStatusCode\":\"SOLTEIRO\",\"sex\":\"FEMININO\",\"birthDate\":\"2021-05-21\",\"filiation\":{\"type\":\"MAE\",\"civilName\":\"Marcelo Cláudio Fernandes\"},\"identificationDetails\":{\"civilName\":\"Juan Kaique Cláudio Fernandes\",\"cpfNumber\":\"string\"}},\"qualificationData\":{\"updateDateTime\":\"2021-05-21T08:30:00Z\",\"pepIdentification\":\"NAO_EXPOSTO\",\"occupation\":[{\"details\":\"string\",\"occupationCode\":\"RECEITA_FEDERAL\",\"occupationCodeType\":\"RFB\"}],\"lifePensionPlans\":\"SIM\",\"informedRevenue\":{\"incomeFrequency\":\"DIARIA\",\"currency\":\"BRL\",\"amount\":\"100000.04\",\"date\":\"2012-05-21\"},\"informedPatrimony\":{\"currency\":\"BRL\",\"amount\":\"100000.04\",\"year\":\"2010\"}},\"complimentaryInformationData\":{\"updateDateTime\":\"2021-05-21T08:30:00Z\",\"startDate\":\"2014-05-21\",\"relationshipBeginning\":\"2014-05-21\",\"productsServices\":[{\"contract\":\"string\",\"type\":\"MICROSSEGUROS\",\"insuranceLineCode\":\"6272\",\"procurators\":[{\"nature\":\"PROCURADOR\",\"cpfNumber\":\"73677831148\",\"civilName\":\"Elza Milena Stefany Teixeira\",\"socialName\":\"string\"}]}]}},\"policies\":[{\"policyInfo\":{\"documentType\":\"APOLICE_INDIVIDUAL\",\"policyId\":\"111111\",\"susepProcessNumber\":\"string\",\"groupCertificateId\":\"string\",\"issuanceType\":\"EMISSAO_PROPRIA\",\"issuanceDate\":\"2022-12-31\",\"termStartDate\":\"2022-12-31\",\"termEndDate\":\"2022-12-31\",\"leadInsurerCode\":\"string\",\"leadInsurerPolicyId\":\"string\",\"maxLMG\":{\"amount\":\"2000.00\",\"unit\":{\"code\":\"R$\",\"description\":\"BRL\"}},\"proposalId\":\"string\",\"insureds\":[{\"identification\":\"12345678900\",\"identificationType\":\"CPF\",\"name\":\"Nome Sobrenome\",\"postCode\":\"10000000\",\"email\":\"string\",\"city\":\"string\",\"state\":\"string\",\"country\":\"BRA\",\"address\":\"string\"}],\"beneficiaries\":[{\"identification\":\"12345678900\",\"identificationType\":\"CPF\",\"name\":\"Nome Sobrenome\"}],\"principals\":[{\"identification\":\"12345678900\",\"identificationType\":\"CPF\",\"name\":\"Nome Sobrenome\",\"postCode\":\"10000000\",\"email\":\"string\",\"city\":\"string\",\"state\":\"string\",\"country\":\"BRA\",\"address\":\"string\"}],\"intermediaries\":[{\"type\":\"REPRESENTANTE\",\"identification\":\"12345678900\",\"brokerId\":\"string\",\"identificationType\":\"CPF\",\"name\":\"Nome Sobrenome\",\"postCode\":\"10000000\",\"city\":\"string\",\"state\":\"string\",\"country\":\"BRA\",\"address\":\"string\"}],\"insuredObjects\":[{\"identification\":\"string\",\"type\":\"CONTRATO\",\"typeAdditionalInfo\":\"string\",\"description\":\"string\",\"amount\":{\"amount\":\"2000.00\",\"unit\":{\"code\":\"R$\",\"description\":\"BRL\"}},\"coverages\":[{\"branch\":\"0111\",\"code\":\"PROTECAO_DE_BENS\",\"description\":\"string\",\"internalCode\":\"string\",\"susepProcessNumber\":\"string\",\"LMI\":{},\"isLMISublimit\":true,\"termStartDate\":\"2022-12-31\",\"termEndDate\":\"2022-12-31\",\"isMainCoverage\":true,\"feature\":\"MASSIFICADOS\",\"type\":\"PARAMETRICO\",\"gracePeriod\":0,\"gracePeriodicity\":\"DIA\",\"gracePeriodCountingMethod\":\"DIAS_UTEIS\",\"gracePeriodStartDate\":\"2022-12-31\",\"gracePeriodEndDate\":\"2022-12-31\"}]}],\"coverages\":[{\"branch\":\"0111\",\"code\":\"PROTECAO_DE_BENS\",\"description\":\"string\",\"deductible\":{\"type\":\"DEDUTIVEL\",\"typeAdditionalInfo\":\"string\",\"amount\":{\"amount\":\"2000.00\",\"unit\":{}},\"period\":10,\"periodicity\":\"DIA\",\"periodCountingMethod\":\"DIAS_UTEIS\",\"periodStartDate\":\"2022-05-16\",\"periodEndDate\":\"2022-05-17\",\"description\":\"Franquia de exemplo\"},\"POS\":{\"applicationType\":\"VALOR\",\"description\":\"Descrição de exemplo\",\"minValue\":{\"amount\":\"2000.00\",\"unit\":{}},\"maxValue\":{\"amount\":\"2000.00\",\"unit\":{}},\"percentage\":\"10.00\"}}],\"coinsuranceRetainedPercentage\":\"10.00\",\"coinsurers\":[{\"identification\":\"string\",\"cededPercentage\":\"10.00\"}],\"branchInfo\":{\"identification\":\"string\",\"userGroup\":\"string\",\"technicalSurplus\":\"10.00\"}},\"premium\":{\"paymentsQuantity\":4,\"amount\":{\"amount\":\"2000.00\",\"unit\":{\"code\":\"R$\",\"description\":\"BRL\"}},\"coverages\":[{\"branch\":\"0111\",\"code\":\"PROTECAO_DE_BENS\",\"description\":\"string\",\"premiumAmount\":{\"amount\":\"2000.00\",\"unit\":{\"code\":\"R$\",\"description\":\"BRL\"}}}],\"payments\":[{\"movementDate\":\"2022-12-31\",\"movementType\":\"LIQUIDACAO_DE_PREMIO\",\"movementOrigin\":\"EMISSAO_DIRETA\",\"movementPaymentsNumber\":0,\"amount\":{\"amount\":\"2000.00\",\"unit\":{\"code\":\"R$\",\"description\":\"BRL\"}},\"maturityDate\":\"2022-12-31\",\"tellerId\":\"string\",\"tellerIdType\":\"CPF\",\"tellerName\":\"string\",\"financialInstitutionCode\":\"string\",\"paymentType\":\"BOLETO\"}]},\"claim\":{\"identification\":\"string\",\"documentationDeliveryDate\":\"2022-12-31\",\"status\":\"ABERTO\",\"statusAlterationDate\":\"2022-12-31\",\"occurrenceDate\":\"2022-12-31\",\"warningDate\":\"2022-12-31\",\"thirdPartyClaimDate\":\"2022-12-31\",\"amount\":{\"amount\":\"2000.00\",\"unit\":{\"code\":\"R$\",\"description\":\"BRL\"}},\"denialJustification\":\"RISCO_EXCLUIDO\",\"denialJustificationDescription\":\"string\",\"coverages\":[{\"insuredObjectId\":\"string\",\"branch\":\"0111\",\"code\":\"PROTECAO_DE_BENS\",\"description\":\"string\",\"warningDate\":\"2022-12-31\",\"thirdPartyClaimDate\":\"2022-12-31\"}]}}]}}}"
+
+headers = {
+    'Content-Type': "application/json",
+    'Accept': "application/json",
+    'Authorization': "string",
+    'x-fapi-auth-date': "stringstringstringstringstrin",
+    'x-fapi-customer-ip-address': "string",
+    'x-fapi-interaction-id': "string",
+    'x-customer-user-agent': "string"
+    }
+
+conn.request("POST", "/open-insurance/quote-financial-risk/v1/lead/request", payload, headers)
+
+res = conn.getresponse()
+data = res.read()
+
+print(data.decode("utf-8"))
+```
+
+```java
+HttpResponse<String> response = Unirest.post("https://api.organizacao.com.br/open-insurance/quote-financial-risk/v1/lead/request")
+  .header("Content-Type", "application/json")
+  .header("Accept", "application/json")
+  .header("Authorization", "string")
+  .header("x-fapi-auth-date", "stringstringstringstringstrin")
+  .header("x-fapi-customer-ip-address", "string")
+  .header("x-fapi-interaction-id", "string")
+  .header("x-customer-user-agent", "string")
+  .body("{\"data\":{\"consentId\":\"urn:initiator:C1DD93123\",\"quoteCustomer\":{\"identificationData\":{\"updateDateTime\":\"2021-05-21T08:30:00Z\",\"personalId\":\"578-psd-71md6971kjh-2d414\",\"brandName\":\"Organização A\",\"civilName\":\"Juan Kaique Cláudio Fernandes\",\"socialName\":\"string\",\"cpfNumber\":\"string\",\"companyInfo\":{\"cnpjNumber\":\"01773247000563\",\"name\":\"Empresa da Organização A\"},\"documents\":[{\"type\":\"CNH\",\"number\":\"15291908\",\"expirationDate\":\"2023-05-21\",\"issueLocation\":\"string\"}],\"hasBrazilianNationality\":false,\"otherNationalitiesInfo\":\"CAN\",\"otherDocuments\":{\"type\":\"SOCIAL SEC\",\"number\":\"15291908\",\"country\":\"string\",\"expirationDate\":\"2023-05-21\"},\"contact\":{\"postalAddresses\":[{\"address\":\"Av Naburo Ykesaki, 1270\",\"additionalInfo\":\"Fundos\",\"districtName\":\"Centro\",\"townName\":\"Marília\",\"countrySubDivision\":\"SP\",\"postCode\":\"17500001\",\"country\":\"BRA\"}],\"phones\":[{\"countryCallingCode\":\"55\",\"areaCode\":\"19\",\"number\":\"29875132\",\"phoneExtension\":\"932\"}],\"emails\":[{\"email\":\"nome@br.net\"}]},\"civilStatusCode\":\"SOLTEIRO\",\"sex\":\"FEMININO\",\"birthDate\":\"2021-05-21\",\"filiation\":{\"type\":\"MAE\",\"civilName\":\"Marcelo Cláudio Fernandes\"},\"identificationDetails\":{\"civilName\":\"Juan Kaique Cláudio Fernandes\",\"cpfNumber\":\"string\"}},\"qualificationData\":{\"updateDateTime\":\"2021-05-21T08:30:00Z\",\"pepIdentification\":\"NAO_EXPOSTO\",\"occupation\":[{\"details\":\"string\",\"occupationCode\":\"RECEITA_FEDERAL\",\"occupationCodeType\":\"RFB\"}],\"lifePensionPlans\":\"SIM\",\"informedRevenue\":{\"incomeFrequency\":\"DIARIA\",\"currency\":\"BRL\",\"amount\":\"100000.04\",\"date\":\"2012-05-21\"},\"informedPatrimony\":{\"currency\":\"BRL\",\"amount\":\"100000.04\",\"year\":\"2010\"}},\"complimentaryInformationData\":{\"updateDateTime\":\"2021-05-21T08:30:00Z\",\"startDate\":\"2014-05-21\",\"relationshipBeginning\":\"2014-05-21\",\"productsServices\":[{\"contract\":\"string\",\"type\":\"MICROSSEGUROS\",\"insuranceLineCode\":\"6272\",\"procurators\":[{\"nature\":\"PROCURADOR\",\"cpfNumber\":\"73677831148\",\"civilName\":\"Elza Milena Stefany Teixeira\",\"socialName\":\"string\"}]}]},\"customData\":[{\"fieldCategory\":\"IDENTIFICATION\",\"fields\":[{\"fieldId\":\"578-psd-71md6971kjh-2d414\",\"value\":null}]}]},\"historicalData\":{\"customer\":{\"identificationData\":{\"updateDateTime\":\"2021-05-21T08:30:00Z\",\"personalId\":\"578-psd-71md6971kjh-2d414\",\"brandName\":\"Organização A\",\"civilName\":\"Juan Kaique Cláudio Fernandes\",\"socialName\":\"string\",\"cpfNumber\":\"string\",\"companyInfo\":{\"cnpjNumber\":\"01773247000563\",\"name\":\"Empresa da Organização A\"},\"documents\":[{\"type\":\"CNH\",\"number\":\"15291908\",\"expirationDate\":\"2023-05-21\",\"issueLocation\":\"string\"}],\"hasBrazilianNationality\":false,\"otherNationalitiesInfo\":\"CAN\",\"otherDocuments\":{\"type\":\"SOCIAL SEC\",\"number\":\"15291908\",\"country\":\"string\",\"expirationDate\":\"2023-05-21\"},\"contact\":{\"postalAddresses\":[{\"address\":\"Av Naburo Ykesaki, 1270\",\"additionalInfo\":\"Fundos\",\"districtName\":\"Centro\",\"townName\":\"Marília\",\"countrySubDivision\":\"SP\",\"postCode\":\"17500001\",\"country\":\"BRA\"}],\"phones\":[{\"countryCallingCode\":\"55\",\"areaCode\":\"19\",\"number\":\"29875132\",\"phoneExtension\":\"932\"}],\"emails\":[{\"email\":\"nome@br.net\"}]},\"civilStatusCode\":\"SOLTEIRO\",\"sex\":\"FEMININO\",\"birthDate\":\"2021-05-21\",\"filiation\":{\"type\":\"MAE\",\"civilName\":\"Marcelo Cláudio Fernandes\"},\"identificationDetails\":{\"civilName\":\"Juan Kaique Cláudio Fernandes\",\"cpfNumber\":\"string\"}},\"qualificationData\":{\"updateDateTime\":\"2021-05-21T08:30:00Z\",\"pepIdentification\":\"NAO_EXPOSTO\",\"occupation\":[{\"details\":\"string\",\"occupationCode\":\"RECEITA_FEDERAL\",\"occupationCodeType\":\"RFB\"}],\"lifePensionPlans\":\"SIM\",\"informedRevenue\":{\"incomeFrequency\":\"DIARIA\",\"currency\":\"BRL\",\"amount\":\"100000.04\",\"date\":\"2012-05-21\"},\"informedPatrimony\":{\"currency\":\"BRL\",\"amount\":\"100000.04\",\"year\":\"2010\"}},\"complimentaryInformationData\":{\"updateDateTime\":\"2021-05-21T08:30:00Z\",\"startDate\":\"2014-05-21\",\"relationshipBeginning\":\"2014-05-21\",\"productsServices\":[{\"contract\":\"string\",\"type\":\"MICROSSEGUROS\",\"insuranceLineCode\":\"6272\",\"procurators\":[{\"nature\":\"PROCURADOR\",\"cpfNumber\":\"73677831148\",\"civilName\":\"Elza Milena Stefany Teixeira\",\"socialName\":\"string\"}]}]}},\"policies\":[{\"policyInfo\":{\"documentType\":\"APOLICE_INDIVIDUAL\",\"policyId\":\"111111\",\"susepProcessNumber\":\"string\",\"groupCertificateId\":\"string\",\"issuanceType\":\"EMISSAO_PROPRIA\",\"issuanceDate\":\"2022-12-31\",\"termStartDate\":\"2022-12-31\",\"termEndDate\":\"2022-12-31\",\"leadInsurerCode\":\"string\",\"leadInsurerPolicyId\":\"string\",\"maxLMG\":{\"amount\":\"2000.00\",\"unit\":{\"code\":\"R$\",\"description\":\"BRL\"}},\"proposalId\":\"string\",\"insureds\":[{\"identification\":\"12345678900\",\"identificationType\":\"CPF\",\"name\":\"Nome Sobrenome\",\"postCode\":\"10000000\",\"email\":\"string\",\"city\":\"string\",\"state\":\"string\",\"country\":\"BRA\",\"address\":\"string\"}],\"beneficiaries\":[{\"identification\":\"12345678900\",\"identificationType\":\"CPF\",\"name\":\"Nome Sobrenome\"}],\"principals\":[{\"identification\":\"12345678900\",\"identificationType\":\"CPF\",\"name\":\"Nome Sobrenome\",\"postCode\":\"10000000\",\"email\":\"string\",\"city\":\"string\",\"state\":\"string\",\"country\":\"BRA\",\"address\":\"string\"}],\"intermediaries\":[{\"type\":\"REPRESENTANTE\",\"identification\":\"12345678900\",\"brokerId\":\"string\",\"identificationType\":\"CPF\",\"name\":\"Nome Sobrenome\",\"postCode\":\"10000000\",\"city\":\"string\",\"state\":\"string\",\"country\":\"BRA\",\"address\":\"string\"}],\"insuredObjects\":[{\"identification\":\"string\",\"type\":\"CONTRATO\",\"typeAdditionalInfo\":\"string\",\"description\":\"string\",\"amount\":{\"amount\":\"2000.00\",\"unit\":{\"code\":\"R$\",\"description\":\"BRL\"}},\"coverages\":[{\"branch\":\"0111\",\"code\":\"PROTECAO_DE_BENS\",\"description\":\"string\",\"internalCode\":\"string\",\"susepProcessNumber\":\"string\",\"LMI\":{},\"isLMISublimit\":true,\"termStartDate\":\"2022-12-31\",\"termEndDate\":\"2022-12-31\",\"isMainCoverage\":true,\"feature\":\"MASSIFICADOS\",\"type\":\"PARAMETRICO\",\"gracePeriod\":0,\"gracePeriodicity\":\"DIA\",\"gracePeriodCountingMethod\":\"DIAS_UTEIS\",\"gracePeriodStartDate\":\"2022-12-31\",\"gracePeriodEndDate\":\"2022-12-31\"}]}],\"coverages\":[{\"branch\":\"0111\",\"code\":\"PROTECAO_DE_BENS\",\"description\":\"string\",\"deductible\":{\"type\":\"DEDUTIVEL\",\"typeAdditionalInfo\":\"string\",\"amount\":{\"amount\":\"2000.00\",\"unit\":{}},\"period\":10,\"periodicity\":\"DIA\",\"periodCountingMethod\":\"DIAS_UTEIS\",\"periodStartDate\":\"2022-05-16\",\"periodEndDate\":\"2022-05-17\",\"description\":\"Franquia de exemplo\"},\"POS\":{\"applicationType\":\"VALOR\",\"description\":\"Descrição de exemplo\",\"minValue\":{\"amount\":\"2000.00\",\"unit\":{}},\"maxValue\":{\"amount\":\"2000.00\",\"unit\":{}},\"percentage\":\"10.00\"}}],\"coinsuranceRetainedPercentage\":\"10.00\",\"coinsurers\":[{\"identification\":\"string\",\"cededPercentage\":\"10.00\"}],\"branchInfo\":{\"identification\":\"string\",\"userGroup\":\"string\",\"technicalSurplus\":\"10.00\"}},\"premium\":{\"paymentsQuantity\":4,\"amount\":{\"amount\":\"2000.00\",\"unit\":{\"code\":\"R$\",\"description\":\"BRL\"}},\"coverages\":[{\"branch\":\"0111\",\"code\":\"PROTECAO_DE_BENS\",\"description\":\"string\",\"premiumAmount\":{\"amount\":\"2000.00\",\"unit\":{\"code\":\"R$\",\"description\":\"BRL\"}}}],\"payments\":[{\"movementDate\":\"2022-12-31\",\"movementType\":\"LIQUIDACAO_DE_PREMIO\",\"movementOrigin\":\"EMISSAO_DIRETA\",\"movementPaymentsNumber\":0,\"amount\":{\"amount\":\"2000.00\",\"unit\":{\"code\":\"R$\",\"description\":\"BRL\"}},\"maturityDate\":\"2022-12-31\",\"tellerId\":\"string\",\"tellerIdType\":\"CPF\",\"tellerName\":\"string\",\"financialInstitutionCode\":\"string\",\"paymentType\":\"BOLETO\"}]},\"claim\":{\"identification\":\"string\",\"documentationDeliveryDate\":\"2022-12-31\",\"status\":\"ABERTO\",\"statusAlterationDate\":\"2022-12-31\",\"occurrenceDate\":\"2022-12-31\",\"warningDate\":\"2022-12-31\",\"thirdPartyClaimDate\":\"2022-12-31\",\"amount\":{\"amount\":\"2000.00\",\"unit\":{\"code\":\"R$\",\"description\":\"BRL\"}},\"denialJustification\":\"RISCO_EXCLUIDO\",\"denialJustificationDescription\":\"string\",\"coverages\":[{\"insuredObjectId\":\"string\",\"branch\":\"0111\",\"code\":\"PROTECAO_DE_BENS\",\"description\":\"string\",\"warningDate\":\"2022-12-31\",\"thirdPartyClaimDate\":\"2022-12-31\"}]}}]}}}")
+  .asString();
+```
+
+`POST /lead/request`
+
+Método para criação de solicitação de cotação e contratação de Quote Financial Risk Lead
+
+> Body parameter
+
+```json
+{
+  "data": {
+    "consentId": "urn:initiator:C1DD93123",
+    "quoteCustomer": {
+      "identificationData": {
+        "updateDateTime": "2021-05-21T08:30:00Z",
+        "personalId": "578-psd-71md6971kjh-2d414",
+        "brandName": "Organização A",
+        "civilName": "Juan Kaique Cláudio Fernandes",
+        "socialName": "string",
+        "cpfNumber": "string",
+        "companyInfo": {
+          "cnpjNumber": "01773247000563",
+          "name": "Empresa da Organização A"
+        },
+        "documents": [
+          {
+            "type": "CNH",
+            "number": "15291908",
+            "expirationDate": "2023-05-21",
+            "issueLocation": "string"
+          }
+        ],
+        "hasBrazilianNationality": false,
+        "otherNationalitiesInfo": "CAN",
+        "otherDocuments": {
+          "type": "SOCIAL SEC",
+          "number": "15291908",
+          "country": "string",
+          "expirationDate": "2023-05-21"
+        },
+        "contact": {
+          "postalAddresses": [
+            {
+              "address": "Av Naburo Ykesaki, 1270",
+              "additionalInfo": "Fundos",
+              "districtName": "Centro",
+              "townName": "Marília",
+              "countrySubDivision": "SP",
+              "postCode": "17500001",
+              "country": "BRA"
+            }
+          ],
+          "phones": [
+            {
+              "countryCallingCode": "55",
+              "areaCode": "19",
+              "number": "29875132",
+              "phoneExtension": "932"
+            }
+          ],
+          "emails": [
+            {
+              "email": "nome@br.net"
+            }
+          ]
+        },
+        "civilStatusCode": "SOLTEIRO",
+        "sex": "FEMININO",
+        "birthDate": "2021-05-21",
+        "filiation": {
+          "type": "MAE",
+          "civilName": "Marcelo Cláudio Fernandes"
+        },
+        "identificationDetails": {
+          "civilName": "Juan Kaique Cláudio Fernandes",
+          "cpfNumber": "string"
+        }
+      },
+      "qualificationData": {
+        "updateDateTime": "2021-05-21T08:30:00Z",
+        "pepIdentification": "NAO_EXPOSTO",
+        "occupation": [
+          {
+            "details": "string",
+            "occupationCode": "RECEITA_FEDERAL",
+            "occupationCodeType": "RFB"
+          }
+        ],
+        "lifePensionPlans": "SIM",
+        "informedRevenue": {
+          "incomeFrequency": "DIARIA",
+          "currency": "BRL",
+          "amount": "100000.04",
+          "date": "2012-05-21"
+        },
+        "informedPatrimony": {
+          "currency": "BRL",
+          "amount": "100000.04",
+          "year": "2010"
+        }
+      },
+      "complimentaryInformationData": {
+        "updateDateTime": "2021-05-21T08:30:00Z",
+        "startDate": "2014-05-21",
+        "relationshipBeginning": "2014-05-21",
+        "productsServices": [
+          {
+            "contract": "string",
+            "type": "MICROSSEGUROS",
+            "insuranceLineCode": "6272",
+            "procurators": [
+              {
+                "nature": "PROCURADOR",
+                "cpfNumber": "73677831148",
+                "civilName": "Elza Milena Stefany Teixeira",
+                "socialName": "string"
+              }
+            ]
+          }
+        ]
+      },
+      "customData": [
+        {
+          "fieldCategory": "IDENTIFICATION",
+          "fields": [
+            {
+              "fieldId": "578-psd-71md6971kjh-2d414",
+              "value": null
+            }
+          ]
+        }
+      ]
+    },
+    "historicalData": {
+      "customer": {
+        "identificationData": {
+          "updateDateTime": "2021-05-21T08:30:00Z",
+          "personalId": "578-psd-71md6971kjh-2d414",
+          "brandName": "Organização A",
+          "civilName": "Juan Kaique Cláudio Fernandes",
+          "socialName": "string",
+          "cpfNumber": "string",
+          "companyInfo": {
+            "cnpjNumber": "01773247000563",
+            "name": "Empresa da Organização A"
+          },
+          "documents": [
+            {
+              "type": "CNH",
+              "number": "15291908",
+              "expirationDate": "2023-05-21",
+              "issueLocation": "string"
+            }
+          ],
+          "hasBrazilianNationality": false,
+          "otherNationalitiesInfo": "CAN",
+          "otherDocuments": {
+            "type": "SOCIAL SEC",
+            "number": "15291908",
+            "country": "string",
+            "expirationDate": "2023-05-21"
+          },
+          "contact": {
+            "postalAddresses": [
+              {
+                "address": "Av Naburo Ykesaki, 1270",
+                "additionalInfo": "Fundos",
+                "districtName": "Centro",
+                "townName": "Marília",
+                "countrySubDivision": "SP",
+                "postCode": "17500001",
+                "country": "BRA"
+              }
+            ],
+            "phones": [
+              {
+                "countryCallingCode": "55",
+                "areaCode": "19",
+                "number": "29875132",
+                "phoneExtension": "932"
+              }
+            ],
+            "emails": [
+              {
+                "email": "nome@br.net"
+              }
+            ]
+          },
+          "civilStatusCode": "SOLTEIRO",
+          "sex": "FEMININO",
+          "birthDate": "2021-05-21",
+          "filiation": {
+            "type": "MAE",
+            "civilName": "Marcelo Cláudio Fernandes"
+          },
+          "identificationDetails": {
+            "civilName": "Juan Kaique Cláudio Fernandes",
+            "cpfNumber": "string"
+          }
+        },
+        "qualificationData": {
+          "updateDateTime": "2021-05-21T08:30:00Z",
+          "pepIdentification": "NAO_EXPOSTO",
+          "occupation": [
+            {
+              "details": "string",
+              "occupationCode": "RECEITA_FEDERAL",
+              "occupationCodeType": "RFB"
+            }
+          ],
+          "lifePensionPlans": "SIM",
+          "informedRevenue": {
+            "incomeFrequency": "DIARIA",
+            "currency": "BRL",
+            "amount": "100000.04",
+            "date": "2012-05-21"
+          },
+          "informedPatrimony": {
+            "currency": "BRL",
+            "amount": "100000.04",
+            "year": "2010"
+          }
+        },
+        "complimentaryInformationData": {
+          "updateDateTime": "2021-05-21T08:30:00Z",
+          "startDate": "2014-05-21",
+          "relationshipBeginning": "2014-05-21",
+          "productsServices": [
+            {
+              "contract": "string",
+              "type": "MICROSSEGUROS",
+              "insuranceLineCode": "6272",
+              "procurators": [
+                {
+                  "nature": "PROCURADOR",
+                  "cpfNumber": "73677831148",
+                  "civilName": "Elza Milena Stefany Teixeira",
+                  "socialName": "string"
+                }
+              ]
+            }
+          ]
+        }
+      },
+      "policies": [
+        {
+          "policyInfo": {
+            "documentType": "APOLICE_INDIVIDUAL",
+            "policyId": "111111",
+            "susepProcessNumber": "string",
+            "groupCertificateId": "string",
+            "issuanceType": "EMISSAO_PROPRIA",
+            "issuanceDate": "2022-12-31",
+            "termStartDate": "2022-12-31",
+            "termEndDate": "2022-12-31",
+            "leadInsurerCode": "string",
+            "leadInsurerPolicyId": "string",
+            "maxLMG": {
+              "amount": "2000.00",
+              "unit": {
+                "code": "R$",
+                "description": "BRL"
+              }
+            },
+            "proposalId": "string",
+            "insureds": [
+              {
+                "identification": "12345678900",
+                "identificationType": "CPF",
+                "name": "Nome Sobrenome",
+                "postCode": "10000000",
+                "email": "string",
+                "city": "string",
+                "state": "string",
+                "country": "BRA",
+                "address": "string"
+              }
+            ],
+            "beneficiaries": [
+              {
+                "identification": "12345678900",
+                "identificationType": "CPF",
+                "name": "Nome Sobrenome"
+              }
+            ],
+            "principals": [
+              {
+                "identification": "12345678900",
+                "identificationType": "CPF",
+                "name": "Nome Sobrenome",
+                "postCode": "10000000",
+                "email": "string",
+                "city": "string",
+                "state": "string",
+                "country": "BRA",
+                "address": "string"
+              }
+            ],
+            "intermediaries": [
+              {
+                "type": "REPRESENTANTE",
+                "identification": "12345678900",
+                "brokerId": "string",
+                "identificationType": "CPF",
+                "name": "Nome Sobrenome",
+                "postCode": "10000000",
+                "city": "string",
+                "state": "string",
+                "country": "BRA",
+                "address": "string"
+              }
+            ],
+            "insuredObjects": [
+              {
+                "identification": "string",
+                "type": "CONTRATO",
+                "typeAdditionalInfo": "string",
+                "description": "string",
+                "amount": {
+                  "amount": "2000.00",
+                  "unit": {
+                    "code": "R$",
+                    "description": "BRL"
+                  }
+                },
+                "coverages": [
+                  {
+                    "branch": "0111",
+                    "code": "PROTECAO_DE_BENS",
+                    "description": "string",
+                    "internalCode": "string",
+                    "susepProcessNumber": "string",
+                    "LMI": {},
+                    "isLMISublimit": true,
+                    "termStartDate": "2022-12-31",
+                    "termEndDate": "2022-12-31",
+                    "isMainCoverage": true,
+                    "feature": "MASSIFICADOS",
+                    "type": "PARAMETRICO",
+                    "gracePeriod": 0,
+                    "gracePeriodicity": "DIA",
+                    "gracePeriodCountingMethod": "DIAS_UTEIS",
+                    "gracePeriodStartDate": "2022-12-31",
+                    "gracePeriodEndDate": "2022-12-31"
+                  }
+                ]
+              }
+            ],
+            "coverages": [
+              {
+                "branch": "0111",
+                "code": "PROTECAO_DE_BENS",
+                "description": "string",
+                "deductible": {
+                  "type": "DEDUTIVEL",
+                  "typeAdditionalInfo": "string",
+                  "amount": {
+                    "amount": "2000.00",
+                    "unit": {}
+                  },
+                  "period": 10,
+                  "periodicity": "DIA",
+                  "periodCountingMethod": "DIAS_UTEIS",
+                  "periodStartDate": "2022-05-16",
+                  "periodEndDate": "2022-05-17",
+                  "description": "Franquia de exemplo"
+                },
+                "POS": {
+                  "applicationType": "VALOR",
+                  "description": "Descrição de exemplo",
+                  "minValue": {
+                    "amount": "2000.00",
+                    "unit": {}
+                  },
+                  "maxValue": {
+                    "amount": "2000.00",
+                    "unit": {}
+                  },
+                  "percentage": "10.00"
+                }
+              }
+            ],
+            "coinsuranceRetainedPercentage": "10.00",
+            "coinsurers": [
+              {
+                "identification": "string",
+                "cededPercentage": "10.00"
+              }
+            ],
+            "branchInfo": {
+              "identification": "string",
+              "userGroup": "string",
+              "technicalSurplus": "10.00"
+            }
+          },
+          "premium": {
+            "paymentsQuantity": 4,
+            "amount": {
+              "amount": "2000.00",
+              "unit": {
+                "code": "R$",
+                "description": "BRL"
+              }
+            },
+            "coverages": [
+              {
+                "branch": "0111",
+                "code": "PROTECAO_DE_BENS",
+                "description": "string",
+                "premiumAmount": {
+                  "amount": "2000.00",
+                  "unit": {
+                    "code": "R$",
+                    "description": "BRL"
+                  }
+                }
+              }
+            ],
+            "payments": [
+              {
+                "movementDate": "2022-12-31",
+                "movementType": "LIQUIDACAO_DE_PREMIO",
+                "movementOrigin": "EMISSAO_DIRETA",
+                "movementPaymentsNumber": 0,
+                "amount": {
+                  "amount": "2000.00",
+                  "unit": {
+                    "code": "R$",
+                    "description": "BRL"
+                  }
+                },
+                "maturityDate": "2022-12-31",
+                "tellerId": "string",
+                "tellerIdType": "CPF",
+                "tellerName": "string",
+                "financialInstitutionCode": "string",
+                "paymentType": "BOLETO"
+              }
+            ]
+          },
+          "claim": {
+            "identification": "string",
+            "documentationDeliveryDate": "2022-12-31",
+            "status": "ABERTO",
+            "statusAlterationDate": "2022-12-31",
+            "occurrenceDate": "2022-12-31",
+            "warningDate": "2022-12-31",
+            "thirdPartyClaimDate": "2022-12-31",
+            "amount": {
+              "amount": "2000.00",
+              "unit": {
+                "code": "R$",
+                "description": "BRL"
+              }
+            },
+            "denialJustification": "RISCO_EXCLUIDO",
+            "denialJustificationDescription": "string",
+            "coverages": [
+              {
+                "insuredObjectId": "string",
+                "branch": "0111",
+                "code": "PROTECAO_DE_BENS",
+                "description": "string",
+                "warningDate": "2022-12-31",
+                "thirdPartyClaimDate": "2022-12-31"
+              }
+            ]
+          }
+        }
+      ]
+    }
+  }
+}
+```
+
+<h3 id="envia-dados-de-cotação-e-contratação-de-quote-financial-risk-lead-parameters">Parameters</h3>
+
+|Name|In|Type|Required|Description|
+|---|---|---|---|---|
+|Authorization|header|string|true|Cabeçalho HTTP padrão. Permite que as credenciais sejam fornecidas dependendo do tipo de recurso solicitado.|
+|x-fapi-auth-date|header|string|false|Data em que o usuário logou pela última vez com o receptor. Representada de acordo com a [RFC7231](https://tools.ietf.org/html/rfc7231). Exemplo: Sun, 10 Sep 2017 19:43:31 UTC|
+|x-fapi-customer-ip-address|header|string|false|O endereço IP do usuário se estiver atualmente logado com o receptor.|
+|x-fapi-interaction-id|header|string|false|Um UID [RFC4122](https://tools.ietf.org/html/rfc4122) usado como um ID de correlação. Se fornecido, o transmissor deve "reproduzir" esse valor no cabeçalho de resposta.|
+|x-customer-user-agent|header|string|false|Indica o user-agent que o usuário utiliza.|
+|page|query|integer(int32)|false|Número da página que está sendo requisitada (o valor da primeira página é 1).|
+|page-size|query|integer(int32)|false|Quantidade total de registros por páginas.|
+|body|body|[QuoteRequestFinancialRiskLead](#schemaquoterequestfinancialriskleadquotefinancialrisk)|false|none|
+
+> Example responses
+
+> 201 Response
+
+```json
+{
+  "data": {
+    "status": "RCVD",
+    "statusUpdateDateTime": "2019-08-24T14:15:22Z"
+  },
+  "links": {
+    "self": "https://api.organizacao.com.br/open-insurance/quote-financial-risk/v1/lead/request",
+    "first": "https://api.organizacao.com.br/open-insurance/quote-financial-risk/v1/lead/request",
+    "prev": "https://api.organizacao.com.br/open-insurance/quote-financial-risk/v1/lead/request",
+    "next": "https://api.organizacao.com.br/open-insurance/quote-financial-risk/v1/lead/request",
+    "last": "https://api.organizacao.com.br/open-insurance/quote-financial-risk/v1/lead/request"
+  },
+  "meta": {
+    "totalRecords": 10,
+    "totalPages": 1
+  }
+}
+```
+
+<h3 id="envia-dados-de-cotação-e-contratação-de-financialrisklead-responses">Responses</h3>
+
+|Status|Meaning|Description|Schema|
+|---|---|---|---|
+|201|[Created](https://tools.ietf.org/html/rfc7231#section-6.3.2)|Dados de FinancialRiskLead criados com sucesso|[ResponseQuoteFinancialRiskLead](#schemaresponsequotefinancialrisklead)|
+|400|[Bad Request](https://tools.ietf.org/html/rfc7231#section-6.5.1)|A requisição foi malformada, omitindo atributos obrigatórios, seja no payload ou através de atributos na URL|[ResponseError](#schemaresponseerrorquotefinancialrisk)|
+|401|[Unauthorized](https://tools.ietf.org/html/rfc7235#section-3.1)|Cabeçalho de autenticação ausente/inválido ou token inválido|[ResponseError](#schemaresponseerrorquotefinancialrisk)|
+|403|[Forbidden](https://tools.ietf.org/html/rfc7231#section-6.5.3)|O token tem escopo incorreto ou uma política de segurança foi violada|[ResponseError](#schemaresponseerrorquotefinancialrisk)|
+|404|[Not Found](https://tools.ietf.org/html/rfc7231#section-6.5.4)|O recurso solicitado não existe ou não foi implementado|[ResponseError](#schemaresponseerrorquotefinancialrisk)|
+|405|[Method Not Allowed](https://tools.ietf.org/html/rfc7231#section-6.5.5)|O consumidor tentou acessar o recurso com um método não suportado|[ResponseError](#schemaresponseerrorquotefinancialrisk)|
+|406|[Not Acceptable](https://tools.ietf.org/html/rfc7231#section-6.5.6)|A solicitação continha um cabeçalho Accept diferente dos tipos de mídia permitidos ou um conjunto de caracteres diferente de UTF-8|[ResponseError](#schemaresponseerrorquotefinancialrisk)|
+|422|[Unprocessable Entity](https://tools.ietf.org/html/rfc2518#section-10.3)|O servidor entende o tipo de conteúdo da entidade da requisição, e a sintaxe da requisição esta correta, mas não foi possível processar as instruções presentes|[ResponseError](#schemaresponseerrorquotefinancialrisk)|
+|429|[Too Many Requests](https://tools.ietf.org/html/rfc6585#section-4)|A operação foi recusada, pois muitas solicitações foram feitas dentro de um determinado período ou o limite global de requisições concorrentes foi atingido|[ResponseError](#schemaresponseerrorquotefinancialrisk)|
+|500|[Internal Server Error](https://tools.ietf.org/html/rfc7231#section-6.6.1)|Ocorreu um erro no gateway da API ou no microsserviço|[ResponseError](#schemaresponseerrorquotefinancialrisk)|
+|default|Default|Erro inesperado.|[ResponseError](#schemaresponseerrorquotefinancialrisk)|
+
+### Response Headers
+
+|Status|Header|Type|Format|Description|
+|---|---|---|---|---|
+|201|x-fapi-interaction-id|string||none|
+
+<aside class="warning">
+To perform this operation, you must be authenticated by means of one of the following methods:
+OAuth2Security ( Scopes: quote-financial-risk-lead )
+</aside>
+
+## Atualiza dados de cotação e contratação de Quote Financial Risk Lead identificado por consentId
+
+<a id="opIdpatchQuoteFinancialRiskLead"></a>
+
+> Code samples
+
+```javascript
+const data = JSON.stringify({
+  "data": {
+    "author": {
+      "identificationType": "CPF",
+      "identificationNumber": "73677831148"
+    }
+  }
+});
+
+const xhr = new XMLHttpRequest();
+xhr.withCredentials = true;
+
+xhr.addEventListener("readystatechange", function () {
+  if (this.readyState === this.DONE) {
+    console.log(this.responseText);
+  }
+});
+
+xhr.open("PATCH", "https://api.organizacao.com.br/open-insurance/quote-financial-risk/v1/lead/request/string");
+xhr.setRequestHeader("Content-Type", "application/json");
+xhr.setRequestHeader("Accept", "application/json");
+xhr.setRequestHeader("Authorization", "string");
+xhr.setRequestHeader("x-fapi-auth-date", "stringstringstringstringstrin");
+xhr.setRequestHeader("x-fapi-customer-ip-address", "string");
+xhr.setRequestHeader("x-fapi-interaction-id", "string");
+xhr.setRequestHeader("x-customer-user-agent", "string");
+
+xhr.send(data);
+```
+
+```python
+import http.client
+
+conn = http.client.HTTPSConnection("api.organizacao.com.br")
+
+payload = "{\"data\":{\"author\":{\"identificationType\":\"CPF\",\"identificationNumber\":\"73677831148\"}}}"
+
+headers = {
+    'Content-Type': "application/json",
+    'Accept': "application/json",
+    'Authorization': "string",
+    'x-fapi-auth-date': "stringstringstringstringstrin",
+    'x-fapi-customer-ip-address': "string",
+    'x-fapi-interaction-id': "string",
+    'x-customer-user-agent': "string"
+    }
+
+conn.request("PATCH", "/open-insurance/quote-financial-risk/v1/lead/request/string", payload, headers)
+
+res = conn.getresponse()
+data = res.read()
+
+print(data.decode("utf-8"))
+```
+
+```java
+HttpResponse<String> response = Unirest.patch("https://api.organizacao.com.br/open-insurance/quote-financial-risk/v1/lead/request/string")
+  .header("Content-Type", "application/json")
+  .header("Accept", "application/json")
+  .header("Authorization", "string")
+  .header("x-fapi-auth-date", "stringstringstringstringstrin")
+  .header("x-fapi-customer-ip-address", "string")
+  .header("x-fapi-interaction-id", "string")
+  .header("x-customer-user-agent", "string")
+  .body("{\"data\":{\"author\":{\"identificationType\":\"CPF\",\"identificationNumber\":\"73677831148\"}}}")
+  .asString();
+```
+
+`PATCH /lead/request/{consentId}`
+
+Método para atualização de solicitação de cotação e contratação de Quote Financial Risk Lead
+
+> Body parameter
+
+```json
+{
+  "data": {
+    "author": {
+      "identificationType": "CPF",
+      "identificationNumber": "73677831148"
+    }
+  }
+}
+```
+
+<h3 id="atualiza-dados-de-cotacao-e-contratacao-de-quote-financial-risk-lead-identificado-por-consentid-parameters">Parameters</h3>
+
+|Name|In|Type|Required|Description|
+|---|---|---|---|---|
+|consentId|path|string|true|none|
+|Authorization|header|string|true|Cabeçalho HTTP padrão. Permite que as credenciais sejam fornecidas dependendo do tipo de recurso solicitado.|
+|x-fapi-auth-date|header|string|false|Data em que o usuário logou pela última vez com o receptor. Representada de acordo com a [RFC7231](https://tools.ietf.org/html/rfc7231). Exemplo: Sun, 10 Sep 2017 19:43:31 UTC|
+|x-fapi-customer-ip-address|header|string|false|O endereço IP do usuário se estiver atualmente logado com o receptor.|
+|x-fapi-interaction-id|header|string|false|Um UID [RFC4122](https://tools.ietf.org/html/rfc4122) usado como um ID de correlação. Se fornecido, o transmissor deve "reproduzir" esse valor no cabeçalho de resposta.|
+|x-customer-user-agent|header|string|false|Indica o user-agent que o usuário utiliza.|
+|page|query|integer(int32)|false|Número da página que está sendo requisitada (o valor da primeira página é 1).|
+|page-size|query|integer(int32)|false|Quantidade total de registros por páginas.|
+|body|body|[RevokePatchPayload](#schemarevokepatchpayloadquotefinancialrisk)|true|Payload para postagem da atualização de proposta de cotação.|
+
+> Example responses
+
+> 200 Response
+
+```json
+{
+  "data": {
+    "status": "CANC"
+  }
+}
+```
+
+<h3 id="atualiza-dados-de-cotacao-e-contratacao-de-quote-financial-risk-lead-identificado-por-consentid-responses">Responses</h3>
+
+|Status|Meaning|Description|Schema|
+|---|---|---|---|
+|200|[OK](https://tools.ietf.org/html/rfc7231#section-6.3.1)|Atualização de Quote Financial Risk Lead feita com sucesso|[ResponseRevokePatch](#schemaresponserevokepatchquotefinancialrisk)|
+|400|[Bad Request](https://tools.ietf.org/html/rfc7231#section-6.5.1)|A requisição foi malformada, omitindo atributos obrigatórios, seja no payload ou através de atributos na URL|[ResponseError](#schemaresponseerrorquotefinancialrisk)|
+|401|[Unauthorized](https://tools.ietf.org/html/rfc7235#section-3.1)|Cabeçalho de autenticação ausente/inválido ou token inválido|[ResponseError](#schemaresponseerrorquotefinancialrisk)|
+|403|[Forbidden](https://tools.ietf.org/html/rfc7231#section-6.5.3)|O token tem escopo incorreto ou uma política de segurança foi violada|[ResponseError](#schemaresponseerrorquotefinancialrisk)|
+|404|[Not Found](https://tools.ietf.org/html/rfc7231#section-6.5.4)|O recurso solicitado não existe ou não foi implementado|[ResponseError](#schemaresponseerrorquotefinancialrisk)|
+|405|[Method Not Allowed](https://tools.ietf.org/html/rfc7231#section-6.5.5)|O consumidor tentou acessar o recurso com um método não suportado|[ResponseError](#schemaresponseerrorquotefinancialrisk)|
+|406|[Not Acceptable](https://tools.ietf.org/html/rfc7231#section-6.5.6)|A solicitação continha um cabeçalho Accept diferente dos tipos de mídia permitidos ou um conjunto de caracteres diferente de UTF-8|[ResponseError](#schemaresponseerrorquotefinancialrisk)|
+|422|[Unprocessable Entity](https://tools.ietf.org/html/rfc2518#section-10.3)|O servidor entende o tipo de conteúdo da entidade da requisição, e a sintaxe da requisição esta correta, mas não foi possível processar as instruções presentes|[ResponseError](#schemaresponseerrorquotefinancialrisk)|
+|429|[Too Many Requests](https://tools.ietf.org/html/rfc6585#section-4)|A operação foi recusada, pois muitas solicitações foram feitas dentro de um determinado período ou o limite global de requisições concorrentes foi atingido|[ResponseError](#schemaresponseerrorquotefinancialrisk)|
+|500|[Internal Server Error](https://tools.ietf.org/html/rfc7231#section-6.6.1)|Ocorreu um erro no gateway da API ou no microsserviço|[ResponseError](#schemaresponseerrorquotefinancialrisk)|
+|default|Default|Erro inesperado.|[ResponseError](#schemaresponseerrorquotefinancialrisk)|
+
+### Response Headers
+
+|Status|Header|Type|Format|Description|
+|---|---|---|---|---|
+|200|x-fapi-interaction-id|string||Um UID [RFC4122](https://tools.ietf.org/html/rfc4122) usado como um ID de correlação. Se fornecido, o transmissor deve "reproduzir" esse valor no cabeçalho de resposta.|
+
+<aside class="warning">
+To perform this operation, you must be authenticated by means of one of the following methods:
+OAuth2Security ( Scopes: quote-financial-risk-lead )
+</aside>

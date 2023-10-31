@@ -70,7 +70,7 @@ info:
 servers:
   - url: 'https://api.organizacao.com.br/open-insurance/quote-patrimonial/v1'
     description: Servidor de Produção
-  - url: 'https://api.organizacao.com.br/open-insurance/quote-patrimonial/v1'
+  - url: 'https://apih.organizacao.com.br/open-insurance/quote-patrimonial/v1'
     description: Servidor de Homologação
 tags:
   - name: PatrimonialLead
@@ -6200,16 +6200,15 @@ components:
           description: Modalides de Equipamentos Portáteis
           type: string
           enum: [
-            'Smartphone',
-            'Notebook',
-            'Tablet',
-            'Smartwatch',
-            'Câmeras, Filmadoras e Equipamentos Audiovisuais',
-            'Bike',
-            'Patinete ou scooter elétrico (com dispensa de CNH e Registro DETRAN)',
-            'Médicos, Cirúrgicos, Odontológicos ou Estéticos',
-            'Instrumentos Musicais']
-
+            'SMARTPHONE',
+            'NOTEBOOK',
+            'TABLET',
+            'SMARTWATCH',
+            'CAMERAS_FILMADORAS_EQUIPAMENTOS_AUDIOVISUAIS',
+            'BICICLETA',
+            'PATINETE_OU_SCOOTER_ELETRICO_COM_DISPENSA_DE_CNH_E_REGISTRO_DETRAN',
+            'MEDICOS_CIRURGICOS_ODONTOLOGICOS_OU_ESTETICOS',
+            'INSTRUMENTOS_MUSICAIS']
         brand:
           description: Fabricante ou Marca do Equipamento Portátil
           type: string
@@ -7313,7 +7312,6 @@ components:
         properties:
           type: 
             type: string
-            maxLength: 13
             example: SOCIO
             description: Tipo de vínculo com a pessoa jurídica
             enum:
@@ -7612,23 +7610,28 @@ components:
         self:
           type: string
           description: URL da página atualmente requisitada
-          example: 'https://api.organizacao.com.br/open-insurance/quote-patrimonial/v1'
+          pattern: ^(https:\/\/)(.*?)(\/open-insurance\/quote-patrimonial\/v\d+)(\/(lead|home|condominium|business|diverse-risks)\/.*)(\/request\d+)?$
+          example: "https://api.organizacao.com.br/open-insurance/quote-patrimonial/v1/lead/request"
         first:
           type: string
           description: URL da primeira página de registros
-          example: 'https://api.organizacao.com.br/open-insurance/quote-patrimonial/v1'
+          pattern: ^(https:\/\/)(.*?)(\/open-insurance\/quote-patrimonial\/v\d+)(\/(lead|home|condominium|business|diverse-risks)\/.*)(\/request\d+)?$
+          example: "https://api.organizacao.com.br/open-insurance/quote-patrimonial/v1/lead/request"
         prev:
           type: string
           description: URL da página anterior de registros
-          example: 'https://api.organizacao.com.br/open-insurance/quote-patrimonial/v1'
+          pattern: ^(https:\/\/)(.*?)(\/open-insurance\/quote-patrimonial\/v\d+)(\/(lead|home|condominium|business|diverse-risks)\/.*)(\/request\d+)?$
+          example: "https://api.organizacao.com.br/open-insurance/quote-patrimonial/v1/lead/request"
         next:
           type: string
           description: URL da próxima página de registros
-          example: 'https://api.organizacao.com.br/open-insurance/quote-patrimonial/v1'
+          pattern: ^(https:\/\/)(.*?)(\/open-insurance\/quote-patrimonial\/v\d+)(\/(lead|home|condominium|business|diverse-risks)\/.*)(\/request\d+)?$
+          example: "https://api.organizacao.com.br/open-insurance/quote-patrimonial/v1/lead/request"
         last:
           type: string
           description: URL da última página de registros
-          example: 'https://api.organizacao.com.br/open-insurance/quote-patrimonial/v1'
+          pattern: ^(https:\/\/)(.*?)(\/open-insurance\/quote-patrimonial\/v\d+)(\/(lead|home|condominium|business|diverse-risks)\/.*)(\/request\d+)?$
+          example: "https://api.organizacao.com.br/open-insurance/quote-patrimonial/v1/lead/request"
     Meta:
       type: object
       properties:
@@ -7901,6 +7904,7 @@ components:
         meta:
           $ref: '#/components/schemas/Meta'
 
+
     QuoteRequestPatrimonialCondominium:
       type: object
       required:
@@ -8155,6 +8159,7 @@ components:
           $ref: '#/components/schemas/Links'
         meta:
           $ref: '#/components/schemas/Meta'
+
 
     QuoteRequestPatrimonialDiverseRisks:
       type: object
@@ -8633,4 +8638,4 @@ components:
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/ResponsePatch'    
+            $ref: '#/components/schemas/ResponsePatch'
