@@ -1,6 +1,6 @@
 openapi: 3.0.0
 info:
-  title: API FinancialRisk - Open Insurance Brasil
+  title: API Quote FinancialRisk - Open Insurance Brasil
   description: |
     API de Cotação Risco Financeiro do Open Insurance Brasil - Fase 3.\
     Recebe informações da solicitação de cotação e contratação vindas das instituições iniciadoras.\
@@ -8,15 +8,12 @@ info:
     Requer consentimento do cliente para todos os 'endpoints'.
     
     # Orientações
-    A `Role`  do diretório de participantes relacionada à presente API é a `ICS`.\
+    A `Role`  do diretório de participantes relacionada à presente API é a ``.\
     Para todos os `endpoints` desta API é previsto o envio de um `token` através do header `Authorization`.\
-    Este `token` deverá estar relacionado ao consentimento (identificado pelo `consentId`) mantido na instituição transmissora dos dados, o qual permitirá a pesquisa e retorno, na API em questão, dos
-    dados relacionados ao `consentId` específico.\
-    Os dados serão entregues pela iniciadora na seguradora desde que o `consentId` relacionado corresponda a um consentimento válido e com o status `AUTHORISED`.\
-    Além disso, as `permissions` necessárias deverão ter sido solicitadas quando da criação do consentimento relacionado.\
+    Os dados serão entregues pela iniciadora na seguradora desde que o `consentId` relacionado co rresponda a um consentimento válido e com o status `AUTHORISED`.\
     Relacionamos a seguir as `permissions` necessárias para o envio de dados em cada `endpoint` da presente API.
 
-    ## Permissions necessárias para a API FinancialRisk
+    ## Permissions necessárias para a API Quote FinancialRisk
 
     Para cada um dos `paths` desta API, além dos escopos (`scopes`) indicados existem `permissions` que deverão ser observadas:
 
@@ -29,25 +26,26 @@ info:
      
 
 
-  version: 1.5.3
+  version: 1.7.0
   contact:
     name: Governança do Open Insurance Brasil
+    email: gt-interfaces@openinsurancebr.org
     url: 'https://www.gov.br/susep'
 servers:
   - url: 'https://api.organizacao.com.br/open-insurance/quote-financial-risk/v1'
     description: Servidor de Produção
-  - url: 'https://apih.organizacao.com.br/open-insurance/quote-financial-risk/v1'
+  - url: 'https://api.organizacao.com.br/open-insurance/quote-financial-risk/v1'
     description: Servidor de Homologação
 tags:
   - name: FinancialRiskLead
-    description: Iniciação de serviços de seguro Cotação Risco Financeiro (FinancialRiskLead)
+    description: Iniciação de serviços de Cotação Risco Financeiro Lead (FinancialRiskLead)
 paths:
   /lead/request:
     post:
       tags:
         - FinancialRiskLead
-      summary: Envia dados de cotação e contratação de FinancialRiskLead
-      description: "Método para criação de solicitação de cotação e contratação de FinancialRiskLead"
+      summary: Envia dados de solicitação de cotação de FinancialRiskLead
+      description: "Método para criação de solicitação de cotação de FinancialRiskLead"
       operationId: "postQuoteFinancialRiskLead"
       parameters:
         - $ref: '#/components/parameters/Authorization'
@@ -55,8 +53,6 @@ paths:
         - $ref: '#/components/parameters/xFapiCustomerIpAddress'
         - $ref: '#/components/parameters/xFapiInteractionId'
         - $ref: '#/components/parameters/xCustomerUserAgent'
-        - $ref: "#/components/parameters/page"
-        - $ref: "#/components/parameters/pageSize"
       requestBody:
         content:
           application/json:
@@ -64,7 +60,7 @@ paths:
               $ref: '#/components/schemas/QuoteRequestFinancialRiskLead'
       responses:
         '201':
-          $ref: '#/components/responses/OKResponseQuoteRequestFinancialRiskLead'
+          $ref: '#/components/responses/CreatedResponseQuoteRequestResponsibilityLead'
         '400':
           $ref: '#/components/responses/BadRequest'
         '401':
@@ -96,8 +92,8 @@ paths:
     patch:
       tags:
         - FinancialRiskLead
-      summary: Atualiza dados de cotação e contratação de FinancialRiskLead identificado por consentId
-      description: "Método para atualização de solicitação de cotação e contratação de FinancialRiskLead"
+      summary: Atualiza dados de solicitação de cotação de FinancialRiskLead identificado por consentId
+      description: "Método para atualização de solicitação de cotação de FinancialRiskLead"
       operationId: "patchQuoteFinancialRiskLead"
       parameters:
         - $ref: "#/components/parameters/consentId"
@@ -106,8 +102,6 @@ paths:
         - $ref: '#/components/parameters/xFapiCustomerIpAddress'
         - $ref: '#/components/parameters/xFapiInteractionId'
         - $ref: '#/components/parameters/xCustomerUserAgent'
-        - $ref: "#/components/parameters/page"
-        - $ref: "#/components/parameters/pageSize"
       requestBody:
         content:
           application/json:
@@ -150,6 +144,7 @@ components:
   schemas:
     PolicyDataFinancialRiskLead:
       type: array
+      description: Lista que agrupa os dados das apólices históricos em categorias.                                                                               
       items:
         type: object
         properties:
@@ -162,6 +157,7 @@ components:
 
     InsuranceFinancialRiskPolicyInfo:    
       type: object
+      description: Objeto que agrupa dados de ápolice.                                                 
       required:
         - documentType 
         - policyId
@@ -209,18 +205,21 @@ components:
           type: string
           format: date
           maxLength: 10
+          pattern: '^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])$'
           example: '2022-12-31'
         termStartDate: 
           description: Data de início de vigência do documento
           type: string
           format: date
           maxLength: 10
+          pattern: '^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])$'
           example: '2022-12-31'
         termEndDate:
           description: Data de fim de vigência do documento
           type: string
           format: date
           maxLength: 10
+          pattern: '^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])$'
           example: '2022-12-31'
         leadInsurerCode:
           description: "Código da seguradora líder para contratos com arranjo de cosseguro"
@@ -231,42 +230,51 @@ components:
           type: string
           maxLength: 1024
         maxLMG:
-          $ref: '#/components/schemas/AmountDetails'
+          description: Valor Limite máximo de garantia (LMG)
+          allOf:
+            - $ref: '#/components/schemas/AmountDetails'
         proposalId:
           description: Identificador da Proposta
           type: string
           maxLength: 60
         insureds:
           type: array
+          description: Lista que agrupa os dados dos segurados.
           items:
             $ref: '#/components/schemas/PersonalInfo'  
         beneficiaries: 
           type: array
+          description: Lista que agrupa os dados dos beneficiários.
           items:
             $ref: '#/components/schemas/BeneficiaryInfo'
         principals:
           type: array
+          description: Lista que agrupa os dados dos tomadores/garantidos.
           items:
             $ref: '#/components/schemas/PersonalInfo'
         intermediaries:
           type: array
+          description: Lista que agrupa os dados de intermediários.
           items:
             $ref: '#/components/schemas/Intermediary'
         insuredObjects:
           type: array
+          description: Lista que agrupa os dados de objetos segurados.
           items:
             $ref: '#/components/schemas/InsuranceFinancialRiskInsuredObject'
         coverages:    
           type: array
+          description: Lista que agrupa os dados das coberturas.                     
           items:
             $ref: '#/components/schemas/InsuranceFinancialRiskCoverage'
         coinsuranceRetainedPercentage:
-          description: "Percentual Retido em Cosseguro (Quando há cosseguro)"
           type: string
+          description: "Percentual Retido em Cosseguro (Quando há cosseguro)"                                                                    
           pattern: '^\d{1,3}\.\d{1,9}$'
           example: '10.00'
         coinsurers:
           type: array
+          description: Lista que agrupa os dados dos cosseguros.                     
           items:
             $ref: '#/components/schemas/Coinsurer'
         branchInfo:
@@ -500,8 +508,10 @@ components:
         susepProcessNumber:
             type: string
             maxLength: 50
-        LMI:          
-          $ref: '#/components/schemas/AmountDetails'
+        LMI:
+          description: Valor Limite Máximo de Indenização (LMI).
+          allOf:
+            - $ref: '#/components/schemas/AmountDetails'
         isLMISublimit:
           type: boolean
           description: Limite máximo de indenização (LMI) é sublimite (Caso aplicável)
@@ -509,12 +519,14 @@ components:
           type: string
           format: date
           maxLength: 10
+          pattern: '^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])$'
           example: '2022-12-31'
           description: "Data de início de vigência da cobertura"
         termEndDate:  
           type: string
           format: date
           maxLength: 10
+          pattern: '^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])$'
           example: '2022-12-31'
           description: "Data de fim de vigência da cobertura"
         isMainCoverage:
@@ -553,12 +565,14 @@ components:
           type: string
           format: date
           maxLength: 10
+          pattern: '^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])$'
           example: '2022-12-31'
           description: "Data de início da carência. OBS: Obrigatório, se houver"
         gracePeriodEndDate:            
           type: string
           format: date
           maxLength: 10
+          pattern: '^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])$'
           example: '2022-12-31'
           description: "Data de fim da carência. OBS: Obrigatório, se houver"
     InsuranceFinancialRiskCoverage:
@@ -652,12 +666,14 @@ components:
           description: Data de Início da Franquia
           type: string
           format: date
-          example: "2022-05-16"
+          pattern: '^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])$'
+          example: '2022-05-16'
         periodEndDate:
           description: Data de Fim da Franquia
           type: string
           format: date
-          example: "2022-05-17"
+          pattern: '^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])$'
+          example: '2022-05-17'
         description:
           description: Descrição da Franquia
           type: string
@@ -710,6 +726,7 @@ components:
           example: '10.00'
     InsuranceFinancialRiskPremium:
       type: object
+      description: Objeto que agrupa dados de prêmio.                  
       required:
         - amount
         - paymentsQuantity
@@ -717,7 +734,7 @@ components:
         - payments
       properties:
         paymentsQuantity:
-          description: Quantidade de parcelas do prêmio do contrato
+          description: Quantidade de parcelas do prêmio do contrato.
           type: number
           maxLength: 3
           example: 4
@@ -725,10 +742,12 @@ components:
           $ref: '#/components/schemas/AmountDetails'
         coverages:
           type: array
+          description: Lista que agrupa os dados de coberturas.                     
           items:
             $ref: '#/components/schemas/InsuranceFinancialRiskPremiumCoverage'
         payments:
           type: array
+          description: Lista que agrupa os dados de pagamentos.                     
           items:
             $ref: '#/components/schemas/Payment'
     InsuranceFinancialRiskPremiumCoverage:
@@ -778,6 +797,7 @@ components:
           description: Data do movimento de prêmio
           type: string
           format: date
+          pattern: '^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])$'
           example: '2022-12-31'
         movementType:
           description: Tipo do Movimento
@@ -810,6 +830,7 @@ components:
           description: Data de Vencimento da Parcela
           type: string
           format: date
+          pattern: '^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])$'
           example: '2022-12-31'
         tellerId:
           description: "Documento do Pagador/Recebedor Obs: Obrigatório caso Tipo de Movimento for  LIQUIDACAO_DE_PREMIO e LIQUIDACAO_DE_CUSTO_DE_AQUISICAO"
@@ -846,6 +867,7 @@ components:
           example: BOLETO
     InsuranceFinancialRiskClaim:
       type: object
+      description: Objeto que agrupa dados de sinistro.                  
       required:
         - identification
         - documentationDeliveryDate
@@ -864,6 +886,7 @@ components:
           type: string
           format: date
           maxLength: 10
+          pattern: '^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])$'
           example: '2022-12-31'
         status:
           description: Status do sinistro     
@@ -879,24 +902,28 @@ components:
           type: string
           format: date
           maxLength: 10
+          pattern: '^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])$'
           example: '2022-12-31'
         occurrenceDate:
           description: Data de ocorrência do sinistro
           type: string
           format: date
           maxLength: 10
+          pattern: '^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])$'
           example: '2022-12-31'
         warningDate:
           description: Data de aviso do sinistro
           type: string
           format: date
           maxLength: 10
+          pattern: '^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])$'
           example: '2022-12-31'
         thirdPartyClaimDate:
           description: Data de reclamação do terceiro
           type: string
           format: date
           maxLength: 10
+          pattern: '^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])$'
           example: '2022-12-31'
         amount:
           $ref: '#/components/schemas/AmountDetails'
@@ -916,6 +943,7 @@ components:
           maxLength: 100  
         coverages:
           type: array
+          description: Lista que agrupa os dados de coberturas.                     
           items:
             $ref: '#/components/schemas/InsuranceFinancialRiskClaimCoverage'   
     InsuranceFinancialRiskClaimCoverage:
@@ -957,11 +985,13 @@ components:
           description: Data de Aviso do Sinistro por Cobertura (Caso aplicável)
           type: string
           format: date
+          pattern: '^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])$'
           example: '2022-12-31'
         thirdPartyClaimDate:
           description: Data de Reclamação do Terceiro por Cobertura (Caso aplicável)
           type: string
           format: date
+          pattern: '^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])$'
           example: '2022-12-31'
     InsuranceStopLossSpecificPolicyInfo:    
       type: object
@@ -998,8 +1028,9 @@ components:
         cpfNumber:
           type: string
           maxLength: 11
+          pattern: '^\d{11}$'
           example: '73677831148'
-          description: '(Caso Natureza dos poderes vigentes de representantefor “Representante legal” ou “Procurador”) CPF ou CNPJ do representante'
+          description: '(Caso Natureza dos poderes vigentes de representante for “Representante legal” ou “Procurador”) CPF do representante'
         civilName:
           type: string
           maxLength: 70
@@ -1025,12 +1056,13 @@ components:
         - nature
       properties:
         nature:
-          $ref: '#/components/schemas/EnumProcuratorsNaturePersonal'
-        cpfNumber:
+          $ref: '#/components/schemas/EnumProcuratorsNatureBusiness'
+        cnpjCpfNumber:
           type: string
           maxLength: 14
+          pattern: '^\d{11}$|^\d{14}$'
           example: '73677831148'
-          description: '(Caso Natureza dos poderes vigentes de representantefor “Representante legal” ou “Procurador”) CPF ou CNPJ do representante'
+          description: '(Caso Natureza dos poderes vigentes de representante for “Representante legal” ou “Procurador”) CPF ou CNPJ do representante'
         civilName:
           type: string
           maxLength: 70
@@ -1119,6 +1151,7 @@ components:
           type: string
           maxLength: 20
           format: date-time
+          pattern: '^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])T(?:[01]\d|2[0123]):(?:[012345]\d):(?:[012345]\d)Z$'
           example: '2021-05-21T08:30:00Z'
           description: 'Data e hora da atualização do bloco, conforme especificação RFC-3339'
         businessId:
@@ -1196,6 +1229,7 @@ components:
           type: string
           maxLength: 20
           format: date-time
+          pattern: '^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])T(?:[01]\d|2[0123]):(?:[012345]\d):(?:[012345]\d)Z$'
           example: '2021-05-21T08:30:00Z'
           description: 'Data e hora da atualização do bloco, conforme especificação RFC-3339'
         mainBranch:
@@ -1208,6 +1242,7 @@ components:
           description: Códigos relativos às demais atividades econômicas da empresa, segundo padrão CNAE (Classificação Nacional de Atividades Econômicas). Se disponível.
         informedRevenue:
           type: object
+          description: Objeto que agrupa dados de receita informada.                                                                  
           properties:
             incomeFrequency:
               $ref: '#/components/schemas/EnumIncomeFrequency'
@@ -1228,11 +1263,13 @@ components:
               type: string
               maxLength: 4
               format: date-fullyear
+              pattern: '^\d{4}$'
               example: '2010'
               description: 'Ano de referência do faturamento, conforme especificação RFC-3339.' 
           additionalProperties: false
         informedPatrimony:
           type: object
+          description: Objeto que agrupa dados de informações de patrimônio.
           properties:
             currency:
               type: string
@@ -1420,6 +1457,7 @@ components:
           description: 'Data de nascimento, conforme especificação RFC-3339'  
         filiation:
           type: object
+          description: Objeto que agrupa dados da pessoa relativa à filiação.
           properties:
             type:
               $ref: '#/components/schemas/EnumFiliationType'
@@ -1507,6 +1545,7 @@ components:
             - NAO_SE_APLICA
         informedRevenue:
           type: object
+          description: Objeto que agrupa dados de receita informada.
           properties:
             incomeFrequency:
               $ref: '#/components/schemas/EnumIncomeFrequency'
@@ -1533,6 +1572,7 @@ components:
           additionalProperties: false
         informedPatrimony:
           type: object
+          description: Objeto que agrupa dados de informações de patrimônio.
           properties:
             currency:
               type: string
@@ -1551,6 +1591,7 @@ components:
               type: string
               maxLength: 4
               format: date-fullyear
+              pattern: '^\d{4}$'
               example: '2010'
               description: 'Ano de referência do patrimônio, conforme especificação RFC-3339.' 
           additionalProperties: false  
@@ -1571,9 +1612,16 @@ components:
                 RJCT,
                 ACKN,
                 CANC]
+        rejectionReason:
+              description: Campo condicionado ao status "RJCT", que deve apresentar a justificativa a recusa ao risco.
+              type: string
+              maxLength: 1024
         statusUpdateDateTime:
           type: string
+          description: Data e hora da atualização do status.
           format: date-time
+          pattern: '^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])T(?:[01]\d|2[0123]):(?:[012345]\d):(?:[012345]\d)Z$'
+          example: '2021-05-21T08:30:00Z'
                   
     PersonalDocuments:
       type: array
@@ -1601,6 +1649,7 @@ components:
       additionalProperties: false
     OtherPersonalDocuments:
       type: object
+      description: Objeto agrupador de informações relativas a Outros Documentos da pessoa natural.
       properties:
         type:
           type: string
@@ -1682,22 +1731,7 @@ components:
                 description: Moeda da Parcela, de acordo com ISO-4217.
                 pattern: ^(\w{3})$
                 example: BRL
-    CustomInfoData:
-      type: object
-      description: Estrutura para identificação e transmissão de dados customizáveis.
-      required:
-        - fieldId
-        - value
-      properties:
-        fieldId:
-          type: string
-          pattern: '^[a-zA-Z0-9][a-zA-Z0-9\-]{0,99}$'
-          maxLength: 100
-          description: Um identificador único usado para identificar o valor transmitido.
-          example: "578-psd-71md6971kjh-2d414"
-        value:
-          description: Valor do campo identificado acima, esse campo pode ser implementado como qualquer tipo de dado (objeto, texto, número, booleano, etc.)
-      additionalProperties: false    
+
     EnumProductServiceType:
       type: string
       enum:
@@ -1807,7 +1841,7 @@ components:
           type: string
           pattern: '\d{8}|^NA$'
           maxLength: 8
-          example: '17500001'
+          example: '10000000'
           description: |
             Código de Endereçamento Postal: Composto por um conjunto numérico de oito dígitos, o objetivo principal do CEP é orientar e acelerar o encaminhamento, o tratamento e a entrega de objetos postados nos Correios, por meio da sua atribuição a localidades, logradouros, unidades dos Correios, serviços, órgãos públicos, empresas e edifícios. p.ex. '01311000'.
         country:
@@ -1974,6 +2008,15 @@ components:
       example: PROCURADOR
       description: |
         Natureza dos poderes vigentes de representante
+    EnumProcuratorsNatureBusiness:
+      type: string
+      enum:
+        - REPRESENTANTE_LEGAL
+        - PROCURADOR
+        - NAO_SE_APLICA
+      example: PROCURADOR
+      description: |
+        Natureza dos poderes vigentes de representante
     BusinessParties:
       type: array
       description: Conjunto de informações referentes ao vínculo com uma pessoa.
@@ -1981,6 +2024,7 @@ components:
         properties:
           type: 
             type: string
+            maxLength: 13
             example: SOCIO
             description: Tipo de vínculo com a pessoa jurídica
             enum:
@@ -2109,14 +2153,14 @@ components:
           type: string
           pattern: '\d{8}|^NA$'
           maxLength: 8
-          example: '17500001'
+          example: '10000000'
           description: |
             Código de Endereçamento Postal: Composto por um conjunto numérico de oito dígitos, o objetivo principal do CEP é orientar e acelerar o encaminhamento, o tratamento e a entrega de objetos postados nos Correios, por meio da sua atribuição a localidades, logradouros, unidades dos Correios, serviços, órgãos públicos, empresas e edifícios. p.ex. '01311000'.
         ibgeTownCode:
           type: string
           pattern: '\d{7}|^NA$'
           maxLength: 8
-          example: '17500001'
+          example: '17500000'
           description: |
             Código IBGE do município
         country:
@@ -2199,28 +2243,23 @@ components:
         self:
           type: string
           description: URL da página atualmente requisitada
-          pattern: ^(https:\/\/)(.*?)(\/open-insurance\/quote-financial-risk\/v\d+)(\/lead\/request.*)?$
-          example: "https://api.organizacao.com.br/open-insurance/quote-financial-risk/v1/lead/request"
+          example: 'https://api.organizacao.com.br/open-insurance/quote-rural/v1'
         first:
           type: string
           description: URL da primeira página de registros
-          pattern: ^(https:\/\/)(.*?)(\/open-insurance\/quote-financial-risk\/v\d+)(\/lead\/request.*)?$
-          example: "https://api.organizacao.com.br/open-insurance/quote-financial-risk/v1/lead/request"
+          example: 'https://api.organizacao.com.br/open-insurance/quote-rural/v1'
         prev:
           type: string
           description: URL da página anterior de registros
-          pattern: ^(https:\/\/)(.*?)(\/open-insurance\/quote-financial-risk\/v\d+)(\/lead\/request.*)?$
-          example: "https://api.organizacao.com.br/open-insurance/quote-financial-risk/v1/lead/request"
+          example: 'https://api.organizacao.com.br/open-insurance/quote-rural/v1'
         next:
           type: string
           description: URL da próxima página de registros
-          pattern: ^(https:\/\/)(.*?)(\/open-insurance\/quote-financial-risk\/v\d+)(\/lead\/request.*)?$
-          example: "https://api.organizacao.com.br/open-insurance/quote-financial-risk/v1/lead/request"
+          example: 'https://api.organizacao.com.br/open-insurance/quote-rural/v1'
         last:
           type: string
           description: URL da última página de registros
-          pattern: ^(https:\/\/)(.*?)(\/open-insurance\/quote-financial-risk\/v\d+)(\/lead\/request.*)?$
-          example: "https://api.organizacao.com.br/open-insurance/quote-financial-risk/v1/lead/request"
+          example: 'https://api.organizacao.com.br/open-insurance/quote-rural/v1'
     Meta:
       type: object
       properties:
@@ -2267,12 +2306,13 @@ components:
               requestDateTime:
                 description: 'Data e hora da consulta, conforme especificação RFC-3339, formato UTC.'
                 type: string
-                maxLength: 2048
+                maxLength: 20
                 format: date-time
+                pattern: '^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])T(?:[01]\d|2[0123]):(?:[012345]\d):(?:[012345]\d)Z$'
                 example: '2021-08-20T08:30:00Z'
             additionalProperties: false
         meta:
-          $ref: '#/components/schemas/Meta'
+          $ref: '#/components/schemas/Meta'               
       additionalProperties: false
     XFapiInteractionId:
       type: string
@@ -2288,6 +2328,7 @@ components:
           type: object
           required:
             - consentId
+            - expirationDateTime
             - quoteCustomer
           properties:
             consentId:
@@ -2305,8 +2346,16 @@ components:
               pattern: '^urn:[a-zA-Z0-9][a-zA-Z0-9-]{0,31}:[a-zA-Z0-9()+,\-.:=@;$_!*''%\/?#]+$'
               maxLength: 256
               example: 'urn:initiator:C1DD93123'
+            expirationDateTime:
+              description: 'Data e hora de expiração da permissão. De preenchimento obrigatório, reflete a data limite de validade do consentimento. Uma string com data e hora conforme especificação RFC-3339, sempre com a utilização de timezone UTC(UTC time format).'
+              type: string
+              format: date-time
+              pattern: '^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])T(?:[01]\d|2[0123]):(?:[012345]\d):(?:[012345]\d)Z$'
+              example: '2021-05-21T08:30:00Z'
+              maxLength: 20
             quoteCustomer:
               type: object
+              description: Objeto que agrupa as categorias de dados cadastrais do cliente.
               properties:
                 identificationData:
                   oneOf:
@@ -2320,24 +2369,10 @@ components:
                   oneOf:
                     - $ref: '#/components/schemas/PersonalComplimentaryInformationData'
                     - $ref: '#/components/schemas/BusinessComplimentaryInformationData'
-                customData: 
-                  type: array
-                  maxItems: 3
-                  items:
-                    type: object
-                    properties:
-                      fieldCategory:
-                        type: string
-                        enum:
-                          - IDENTIFICATION
-                          - QUALIFICATION
-                          - COMPLIMENTARY_INFORMATION
-                      fields:
-                        type: array
-                        items:
-                          $ref: '#/components/schemas/CustomInfoData'
+
             historicalData:
               type: object
+              description: Objeto que agrupa todos dados históricos do cliente.
               properties:
                 customer:
                   type: object
@@ -2371,7 +2406,7 @@ components:
         links:
           $ref: '#/components/schemas/Links'
         meta:
-          $ref: '#/components/schemas/Meta'
+          $ref: '#/components/schemas/Meta'                                           
           
   parameters:
     consentId:
@@ -2390,25 +2425,6 @@ components:
         type: string
         pattern: '[\w\W\s]*'
         maxLength: 2048
-    page:
-      name: page
-      in: query
-      description: Número da página que está sendo requisitada (o valor da primeira página é 1).
-      schema:
-        type: integer
-        default: 1
-        minimum: 1
-        format: int32
-    pageSize:
-      name: page-size
-      in: query
-      description: Quantidade total de registros por páginas.
-      schema:
-        type: integer
-        default: 25
-        minimum: 1
-        format: int32
-        maximum: 1000
     xCustomerUserAgent:
       name: x-customer-user-agent
       in: header
@@ -2459,7 +2475,7 @@ components:
         clientCredentials:
           tokenUrl: "https://authserver.example/token"
           scopes:
-            quote-financial-risk-lead: Escopo necessário para acesso à API FinancialRisk.
+            quote-financial-risk-lead: Escopo necessário para acesso à API Quote FinancialRisk.
             
   responses:
     BadRequest:
@@ -2516,8 +2532,8 @@ components:
         application/json; charset=utf-8:
           schema:
             $ref: '#/components/schemas/ResponseError'
-    OKResponseQuoteRequestFinancialRiskLead:
-      description: Dados de FinancialRiskLead criados com sucesso
+    CreatedResponseQuoteRequestResponsibilityLead:
+      description: Dados de Cotação FinancialRiskLead criados com sucesso
       headers:
         x-fapi-interaction-id:
           schema:
@@ -2527,7 +2543,7 @@ components:
           schema:
             $ref: '#/components/schemas/ResponseQuoteFinancialRiskLead'       
     200UpdatedQuoteFinancialRiskLead:
-      description: "Atualização de FinancialRiskLead feita com sucesso"
+      description: "Atualização de Cotação FinancialRiskLead feita com sucesso"
       headers:
         x-fapi-interaction-id:
           description: |
