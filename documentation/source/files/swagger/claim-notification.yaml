@@ -14,6 +14,7 @@ info:
     dados relacionados ao `consentId` específico.\
     Os dados serão devolvidos na consulta desde que o `consentId` relacionado corresponda a um consentimento válido e com o status `AUTHORISED`.\
     É também necessário que o recurso em questão (endosso, etc.) esteja disponível na instituição transmissora (ou seja, sem boqueios de qualquer natureza e com todas as autorizações/consentimentos já autorizados).\
+    Os dados presentes na solicitação do endosso devem ser validados contra os dados presentes no campo `claimNotificationInformation` do consentimento. Caso exista uma divergência entre os dados informados na solicitação e no consentimento, a solicitação deve ser rejeitada com um retorno HTTP Status Code 422.
     Além disso, as `permissions` necessárias deverão ter sido solicitadas quando da criação do consentimento relacionado.\
     Relacionamos a seguir as `permissions` necessárias para a consulta de dados em cada `endpoint` da presente API.
 
@@ -27,7 +28,7 @@ info:
     ### `/request/person`
       - permissions:
         - POST: **CLAIM_NOTIFICATION_REQUEST_PERSON_CREATE**
-  version: 1.2.1
+  version: 1.2.2
   license:
     name: Apache 2.0
     url: 'http://www.apache.org/licenses/LICENSE-2.0'
