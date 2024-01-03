@@ -22,7 +22,7 @@
       ### `/resources`
         - permissions:
           - GET: **RESOURCES_READ**
-    version: 2.3.0
+    version: 2.4.0
     license:
       name: Apache 2.0
       url: 'https://www.apache.org/licenses/LICENSE-2.0'
@@ -76,7 +76,7 @@
           '500':
             $ref: '#/components/responses/InternalServerError'
           default:
-            $ref: '#/components/responses/OKResponseResourceList'
+            $ref: '#/components/responses/Default'
         security:
           - OpenId:
               - openid
@@ -436,6 +436,12 @@
               $ref: '#/components/schemas/ResponseError'
       InternalServerError:
         description: Ocorreu um erro no gateway da API ou no microsserviço
+        content:
+          application/json; charset=utf-8:
+            schema:
+              $ref: '#/components/schemas/ResponseError'
+      Default:
+        description: Erro inesperado.
         content:
           application/json; charset=utf-8:
             schema:

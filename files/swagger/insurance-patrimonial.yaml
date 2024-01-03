@@ -33,7 +33,7 @@ info:
     ### `/{policyId}/claim`
       - permissions:
         - GET: **DAMAGES_AND_PEOPLE_PATRIMONIAL_CLAIM_READ**
-  version: 1.3.1
+  version: 1.4.0
   contact:
     name: Governança do Open Insurance Brasil
     url: 'https://www.gov.br/susep/'
@@ -319,7 +319,6 @@ components:
         - proposalId
         - insureds
         - insuredObjects
-        
       properties:
         documentType:
           description: Tipo de Documento Emitido
@@ -355,18 +354,21 @@ components:
           type: string
           format: date
           maxLength: 10
+          pattern: ^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])$
           example: '2022-12-31'
         termStartDate: 
           description: Data de início de vigência do documento
           type: string
           format: date
           maxLength: 10
+          pattern: ^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])$
           example: '2022-12-31'
         termEndDate:
           description: Data de fim de vigência do documento
           type: string
           format: date
           maxLength: 10
+          pattern: ^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])$
           example: '2022-12-31'
         leadInsurerCode:
           description: "Código da seguradora líder para contratos com arranjo de cosseguro"
@@ -377,7 +379,9 @@ components:
           type: string
           maxLength: 1024
         maxLMG:
-          $ref: '#/components/schemas/AmountDetails'
+          description: Limite maximo de garantia (LMG)
+          allOf:
+            - $ref: '#/components/schemas/AmountDetails'
         proposalId:
           description: Identificador da Proposta
           type: string
@@ -443,6 +447,11 @@ components:
             OUTROS
           ]
           example: CPF
+        identificationTypeOthers:
+          description: Campo de detalhamento para quando a opcao do tipo de documento da pessoa for OUTROS
+          type: string
+          maxLength: 100
+          example: RNE        
         name:
           description: Nome ou Razão Social da Pessoa
           type: string
@@ -475,6 +484,13 @@ components:
           description: Endereço da Pessoa (restante do endereço, excluindo cidade, estado e país)
           type: string
           maxLength: 60
+        birthDate:
+          type: string
+          maxLength: 10
+          format: date
+          pattern: '^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])$'
+          example: '2021-05-21'
+          description: 'Data de nascimento, conforme especificação RFC-3339' 
     BeneficiaryInfo:
       type: object
       required:
@@ -496,6 +512,11 @@ components:
             OUTROS
           ]
           example: CPF
+        identificationTypeOthers:
+          description: Campo de detalhamento para quando a opcao do tipo de documento da pessoa for OUTROS
+          type: string
+          maxLength: 100
+          example: RNE
         name:
           description: Nome ou Razão Social da Pessoa
           type: string
@@ -504,6 +525,7 @@ components:
     Intermediary:
       type: object
       required:
+        - type
         - name
       properties:
         type:
@@ -518,11 +540,15 @@ components:
             OUTROS
           ]
           example: REPRESENTANTE
+        typeOthers:
+          description: Descricao do Tipo do Intermediador quando for informada a opcao OUTROS
+          type: string
+          maxLength: 100
         identification:
           description: Documento de Identificação do Intermediador(a) (Caso Tipo de Intermediador não seja CORRETOR ou quando for CORRETOR, porém o identificador do intermediador não seja informado)
           type: string
           maxLength: 60
-          pattern: '^\d{1,60}$'
+          pattern: ^[a-zA-Z0-9]{1,60}$
           example: "12345678900"
         brokerId:
           description: Identificador do intermediador da apólice - código Susep do corretor(a) (Caso Tipo de Intermediador for CORRETOR)
@@ -537,6 +563,11 @@ components:
             OUTROS
           ]
           example: CPF
+        identificationTypeOthers:
+          description: Campo de detalhamento para quando a opcao do tipo de documento do intermediador(a) for OUTROS
+          type: string
+          maxLength: 100
+          example: RNE
         name:
           description: Nome ou Razão Social da Intermediador
           type: string
@@ -568,7 +599,6 @@ components:
     InsurancePatrimonialInsuredObject:
       type: object
       required:
-        - identification
         - type
         - description
         - coverages
@@ -576,7 +606,7 @@ components:
         identification:
           type: string
           maxLength: 100
-          description: "Identificador do objeto segurado. Obs.: Para Fiança Locatícia, é a identificação do Contrato de Locação."
+          description: "Identificador do objeto segurado (Quando o Tipo de Objeto Segurado for diferente de PESSOA). Obs.: Para Fiança Locatícia, é a identificação do Contrato de Locação."
         type:
           type: string
           description: Tipo do objeto segurado
@@ -613,6 +643,7 @@ components:
         - termEndDate
         - feature
         - type
+        - premiumPeriodicity
       properties:
         branch:
           type: string
@@ -641,12 +672,14 @@ components:
           type: string
           format: date
           maxLength: 10
+          pattern: ^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])$
           example: '2022-12-31'
           description: "Data de início de vigência da cobertura"
         termEndDate:  
           type: string
           format: date
           maxLength: 10
+          pattern: ^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])$
           example: '2022-12-31'
           description: "Data de fim de vigência da cobertura"
         isMainCoverage:
@@ -685,14 +718,32 @@ components:
           type: string
           format: date
           maxLength: 10
+          pattern: ^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])$
           example: '2022-12-31'
           description: "Data de início da carência. OBS: Obrigatório, se houver"
         gracePeriodEndDate:            
           type: string
           format: date
           maxLength: 10
+          pattern: ^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])$
           example: '2022-12-31'
           description: "Data de fim da carência. OBS: Obrigatório, se houver"
+        premiumPeriodicity:
+          description: Periodicidade de pagamento do premio
+          type: string
+          enum: [MENSAL,
+                BIMESTRAL,
+                TRIMESTRAL,
+                QUADRIMESTRAL,
+                SEMESTRAL,
+                ANUAL,
+                ESPORADICA,
+                PAGAMENTO_UNICO,
+                OUTROS]
+        premiumPeriodicityOthers:
+          description: Descricao da Periodicidade de pagamento do premio quando for informada a opcao OUTROS
+          type: string
+          maxLength: 100
     InsurancePatrimonialCoverage:
       type: object
       required:
@@ -743,7 +794,9 @@ components:
           type: string
           maxLength: 500
         amount:
-          $ref: '#/components/schemas/AmountDetails'
+          description: Valor da franquia
+          allOf:
+            - $ref: '#/components/schemas/AmountDetails'
         period:
           description: Prazo da Franquia
           type: integer
@@ -770,11 +823,15 @@ components:
           description: Data de Início da Franquia
           type: string
           format: date
+          maxLength: 10
+          pattern: ^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])$
           example: "2022-05-16"
         periodEndDate:
           description: Data de Fim da Franquia
           type: string
           format: date
+          maxLength: 10
+          pattern: ^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])$
           example: "2022-05-17"
         description:
           description: Descrição da Franquia
@@ -786,7 +843,6 @@ components:
       description: Informações de franquia
       required:
         - applicationType
-        - description
       properties:
         applicationType:
           description: Forma de Aplicação do POS
@@ -797,15 +853,18 @@ components:
             OUTROS
           ]
           example: VALOR
-        description:
-          description: Descrição do POS
+        applicationTypeOthers:
+          description: Campo a ser preenchido quando houver OUTROS no campo applicationType
           type: string
           maxLength: 60
-          example: "Descrição de exemplo"
         minValue:
-          $ref: '#/components/schemas/AmountDetails'
+          description: Valor minimo do POS (caso aplicavel)
+          allOf:
+            - $ref: '#/components/schemas/AmountDetails'
         maxValue:
-          $ref: '#/components/schemas/AmountDetails'
+          description: Valor maximo do POS (caso aplicavel)
+          allOf:
+            - $ref: '#/components/schemas/AmountDetails'
         percentage:
           description: Percentual do POS
           type: string
@@ -842,8 +901,8 @@ components:
     InsurancePatrimonialPremium:
       type: object
       required:
-        - amount
         - paymentsQuantity
+        - amount
         - coverages
         - payments
       properties:
@@ -853,7 +912,9 @@ components:
           maxLength: 3
           example: 4
         amount:
-          $ref: '#/components/schemas/AmountDetails'
+          description: Valor total do premio do contrato
+          allOf:
+            - $ref: '#/components/schemas/AmountDetails'
         coverages:
           type: array
           items:
@@ -895,14 +956,20 @@ components:
           description: Data do movimento de prêmio
           type: string
           format: date
+          maxLength: 10
+          pattern: ^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])$
           example: '2022-12-31'
         movementType:
           description: Tipo do Movimento
           type: string
           enum: [LIQUIDACAO_DE_PREMIO,
                 LIQUIDACAO_DE_RESTITUICAO_DE_PREMIO,
+                LIQUIDACAO_DE_CUSTO_DE_AQUISICAO,
+                LIQUIDACAO_DE_RESTITUICAO_DE_CUSTO_DE_AQUISICAO,
+                COMPENSACAO_FINANCEIRA,
                 ESTORNO_DE_PREMIO,
                 ESTORNO_DE_RESTITUICAO_DE_PREMIO,
+                ESTORNO_DE_CUSTO_DE_AQUISICAO,
                 EMISSAO_DE_PREMIO,
                 CANCELAMENTO_DE_PARCELA,
                 EMISSAO_DE_RESTITUICAO_DE_PREMIO,
@@ -927,6 +994,8 @@ components:
           description: Data de Vencimento da Parcela
           type: string
           format: date
+          maxLength: 10
+          pattern: ^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])$
           example: '2022-12-31'
         tellerId:
           description: "Documento do Pagador/Recebedor Obs: Obrigatório caso Tipo de Movimento for  LIQUIDACAO_DE_PREMIO e LIQUIDACAO_DE_CUSTO_DE_AQUISICAO"
@@ -959,8 +1028,13 @@ components:
                 DESCONTO_EM_FOLHA,  
                 PIX,
                 DINHEIRO_EM_ESPECIE,
+                COMUNICABILIDADE,
                 OUTROS]
           example: BOLETO
+        paymentTypeOthers:
+          description: Campo de detalhamento para quando a opcao do meio de pagamento for OUTROS
+          type: string
+          maxLength: 100
     ResponseInsurancePatrimonialClaims:
       type: object
       required:
@@ -986,6 +1060,7 @@ components:
         - occurrenceDate
         - warningDate
         - amount
+        - coverages
       properties:
         identification:
           description: Identificador do processo de sinistro
@@ -996,6 +1071,7 @@ components:
           type: string
           format: date
           maxLength: 10
+          pattern: ^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])$
           example: '2022-12-31'
         status:
           description: Status do sinistro     
@@ -1011,24 +1087,28 @@ components:
           type: string
           format: date
           maxLength: 10
+          pattern: ^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])$
           example: '2022-12-31'
         occurrenceDate:
           description: Data de ocorrência do sinistro
           type: string
           format: date
           maxLength: 10
+          pattern: ^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])$
           example: '2022-12-31'
         warningDate:
           description: Data de aviso do sinistro
           type: string
           format: date
           maxLength: 10
+          pattern: ^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])$
           example: '2022-12-31'
         thirdPartyClaimDate:
           description: Data de reclamação do terceiro
           type: string
           format: date
           maxLength: 10
+          pattern: ^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])$
           example: '2022-12-31'
         amount:
           $ref: '#/components/schemas/AmountDetails'
@@ -1075,38 +1155,32 @@ components:
           description: Data de Aviso do Sinistro por Cobertura (Caso aplicável)
           type: string
           format: date
+          maxLength: 10
+          pattern: ^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])$
           example: '2022-12-31'
         thirdPartyClaimDate:
           description: Data de Reclamação do Terceiro por Cobertura (Caso aplicável)
           type: string
           format: date
+          maxLength: 10
+          pattern: ^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])$
           example: '2022-12-31'
     AmountDetails:
         type: object
         description: Detalhes de valores/limites
         required:
           - amount
-          - unit
+          - currency
         properties:
           amount:
             type: string
             pattern: ^\d{1,16}\.\d{2}$
             example: '2000.00'
-          unit:
-            type: object
-            required:
-              - code
-              - description
-            properties:
-              code:
-                type: string
-                maxLength: 2
-                example: R$
-              description:
-                type: string
-                description: Moeda da Parcela, de acordo com ISO-4217.
-                pattern: ^(\w{3})$
-                example: BRL
+          currency:
+            type: string
+            description: Moeda da Parcela, de acordo com ISO-4217.
+            pattern: ^(\w{3})$
+            example: BRL
     InsurancePatrimonialSpecificPolicyInfo:
       type: object
       description: Informações do Anexo Específico
@@ -1159,7 +1233,7 @@ components:
           example: "1234567"
     InsurancePatrimonialCoverageCode:
       type: string
-      description: Código da cobertura, conforme Anexo II do Manual de Escopo de Dados
+      description: Código da cobertura
       enum: [
         IMOVEL_BASICA,
         IMOVEL_AMPLA,
@@ -1375,8 +1449,9 @@ components:
               requestDateTime:
                 description: 'Data e hora da consulta, conforme especificação RFC-3339, formato UTC.'
                 type: string
-                maxLength: 2048
                 format: date-time
+                maxLength: 20
+                pattern: ^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])T(?:[01]\d|2[0123]):(?:[012345]\d):(?:[012345]\d)Z$
                 example: '2021-08-20T08:30:00Z'
             additionalProperties: false
         meta:

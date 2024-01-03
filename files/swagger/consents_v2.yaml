@@ -238,7 +238,7 @@ info:
     - Caso a instituição receptora envie somente a permissão "RESOURCES_READ" sem nenhuma outra permissão de fase 2, a transmissora deve rejeitar o pedido da receptora dando retorno HTTP Status Code 400.
     - Caso a instituição receptora envie permissões de fase 2 (compartilhamento de dados) e 3 (iniciação de serviços) em uma única solicitação, a transmissora deve rejeitar o pedido da receptora dando retorno HTTP Status Code 422.
     - A transmissora deve retornar, da lista de permissions requisitadas, apenas o subconjunto de permissions por ela suportada, removendo da lista as permissions de produtos não suportados e retornando HTTP Status Code 201. Caso não restem permissões funcionais, a instituição transmissora deve retornar o erro HTTP Code "422 Unprocessable Entity".
-  version: 2.4.0
+  version: 2.5.0
   license:
     name: Apache 2.0
     url: 'http://www.apache.org/licenses/LICENSE-2.0'
@@ -296,7 +296,7 @@ paths:
         '500':
           $ref: '#/components/responses/InternalServerError'
         default:
-          $ref: '#/components/responses/201ConsentsCreated'
+          $ref: '#/components/responses/Default'
       security:
         - OAuth2Security:
             - consents
@@ -336,7 +336,7 @@ paths:
         '500':
           $ref: '#/components/responses/InternalServerError'
         default:
-          $ref: '#/components/responses/200ConsentsConsentIdRead'
+          $ref: '#/components/responses/Default'
       security:
         - OAuth2Security:
             - consents
@@ -375,7 +375,7 @@ paths:
         '500':
           $ref: '#/components/responses/InternalServerError'
         default:
-          $ref: '#/components/responses/204ConsentsConsentIdDeleted'
+          $ref: '#/components/responses/Default'
       security:
         - OAuth2Security:
             - consents
@@ -610,6 +610,74 @@ components:
               maxLength: 20
               format: date-time
               example: '2021-02-01T23:59:59Z'
+            endorsementInformation:
+              description: Objeto contendo dados do endosso. Obrigatório para a permissão ENDORSEMENT_REQUEST_CREATE
+              type: object
+              required:
+                - policyNumber
+                - endorsementType
+                - requestDescription
+              properties:
+                policyNumber:
+                  description: Número da apólice, conforme regulamentação vigente
+                  type: string
+                  maxLength: 60
+                  example: "111111"
+                endorsementType:
+                  description: Tipo de endosso
+                  type: string
+                  enum: 
+                    [ALTERACAO,
+                    CANCELAMENTO,
+                    INCLUSAO,
+                    EXCLUSAO]
+                requestDescription:
+                  description: Descrição adicional do endosso
+                  type: string
+                  maxLength: 1024
+                  example:  Descrição adicional do endosso.
+            claimNotificationInformation:
+              description: Objeto contendo dados do aviso de sinistro. Obrigatório para as permissões CLAIM_NOTIFICATION_REQUEST_DAMAGE_CREATE e CLAIM_NOTIFICATION_REQUEST_PERSON_CREATE 
+              type: object
+              required:
+                - documentType
+                - policyNumber
+                - occurrenceDate
+                - occurrenceDescription
+              properties:
+                documentType:
+                  description: Tipo de Documento Emitido.
+                  type: string
+                  enum: [APOLICE_INDIVIDUAL,
+                        BILHETE,
+                        CERTIFICADO,
+                        APOLICE_INDIVIDUAL_AUTOMOVEL,
+                        APOLICE_FROTA_AUTOMOVEL,
+                        CERTIFICADO_AUTOMOVEL]
+                policyNumber:
+                  description: Número da apólice, conforme regulamentação vigente
+                  type: string
+                  maxLength: 60
+                  example: "111111"
+                groupCertificateId: 
+                  description: Identificador do Certificado(Caso Tipo de Documento Emitido for certificado)
+                  type: string
+                  maxLength: 60
+                occurrenceDate:
+                  description: Data de Ocorrência do Sinistro
+                  type: string
+                  format: date
+                  maxLength: 10
+                  example: 2022-01-01
+                occurrenceTime:
+                  description: Horário de ocorrência do sinistro
+                  type: string
+                  pattern: '[0-2][0-3]:[0-5][0-9]:[0-5][0-9]'
+                  example: '22:18:54'
+                occurrenceDescription:
+                  description: Descrição da Ocorrência/Relato da ocorrência
+                  type: string
+                  maxLength: 10000
           additionalProperties: false
       additionalProperties: false
     ResponseConsent:
@@ -816,6 +884,74 @@ components:
               format: date-time
               example: '2021-02-01T23:59:59Z'
               maxLength: 20
+            endorsementInformation:
+              description: Objeto contendo dados do endosso. Obrigatório para a permissão ENDORSEMENT_REQUEST_CREATE
+              type: object
+              required:
+                - policyNumber
+                - endorsementType
+                - requestDescription
+              properties:
+                policyNumber:
+                  description: Número da apólice, conforme regulamentação vigente
+                  type: string
+                  maxLength: 60
+                  example: "111111"
+                endorsementType:
+                  description: Tipo de endosso
+                  type: string
+                  enum: 
+                    [ALTERACAO,
+                    CANCELAMENTO,
+                    INCLUSAO,
+                    EXCLUSAO]
+                requestDescription:
+                  description: Descrição adicional do endosso
+                  type: string
+                  maxLength: 1024
+                  example:  Descrição adicional do endosso.
+            claimNotificationInformation:
+              description: Objeto contendo dados do aviso de sinistro. Obrigatório para as permissões CLAIM_NOTIFICATION_REQUEST_DAMAGE_CREATE e CLAIM_NOTIFICATION_REQUEST_PERSON_CREATE 
+              type: object
+              required:
+                - documentType
+                - policyNumber
+                - occurrenceDate
+                - occurrenceDescription
+              properties:
+                documentType:
+                  description: Tipo de Documento Emitido.
+                  type: string
+                  enum: [APOLICE_INDIVIDUAL,
+                        BILHETE,
+                        CERTIFICADO,
+                        APOLICE_INDIVIDUAL_AUTOMOVEL,
+                        APOLICE_FROTA_AUTOMOVEL,
+                        CERTIFICADO_AUTOMOVEL]
+                policyNumber:
+                  description: Número da apólice, conforme regulamentação vigente
+                  type: string
+                  maxLength: 60
+                  example: "111111"
+                groupCertificateId: 
+                  description: Identificador do Certificado(Caso Tipo de Documento Emitido for certificado)
+                  type: string
+                  maxLength: 60
+                occurrenceDate:
+                  description: Data de Ocorrência do Sinistro
+                  type: string
+                  format: date
+                  maxLength: 10
+                  example: 2022-01-01
+                occurrenceTime:
+                  description: Horário de ocorrência do sinistro
+                  type: string
+                  pattern: '[0-2][0-3]:[0-5][0-9]:[0-5][0-9]'
+                  example: '22:18:54'
+                occurrenceDescription:
+                  description: Descrição da Ocorrência/Relato da ocorrência
+                  type: string
+                  maxLength: 10000
             rejection:
               type: object
               description: Objeto a ser retornado caso o consentimento seja rejeitado.
@@ -1060,6 +1196,12 @@ components:
             $ref: '#/components/schemas/ResponseError'
     InternalServerError:
       description: Ocorreu um erro no gateway da API ou no microsserviço
+      content:
+        application/json; charset=utf-8:
+          schema:
+            $ref: '#/components/schemas/ResponseError'
+    Default:
+      description: Erro inesperado.
       content:
         application/json; charset=utf-8:
           schema:

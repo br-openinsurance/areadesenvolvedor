@@ -38,7 +38,7 @@ info:
     ### `/business/complimentary-information`
       - permissions:
         - GET: **CUSTOMERS_BUSINESS_ADDITIONALINFO_READ**
-  version: 1.4.0
+  version: 1.5.0
   license:
     name: Apache 2.0
     url: 'http://www.apache.org/licenses/LICENSE-2.0'
@@ -341,7 +341,7 @@ components:
           maxLength: 10
           pattern: '^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])$'
           example: '2014-05-21'
-          description: Data mais antiga de início de relacionamento, considerando todos os contratos (vigentes e não vigentes). Os contratos não vigentes considerados devem contemplar, no mínimo o período indicado na Tabela 4.1.
+          description: Data mais antiga de inicio de relacionamento, considerando todos os contratos (vigentes e nao vigentes). Os contratos nao vigentes considerados devem contemplar, no minimo o periodo indicado na Tabela 22.
         relationshipBeginning:
           type: string
           format: date
@@ -362,7 +362,7 @@ components:
               contract:
                 type: string
                 maxLength: 60
-                description: Campo deve conter todos os contratos do cliente nos últimos 12 meses (número da apólice individual ou contrato ou certificado ou bilhete)
+                description: Lista de todos os numeros dos contratos vigentes e nao vigentes. Os contratos nao vigentes considerados devem contemplar, no minimo o periodo indicado na Tabela 22.
               type:
                 $ref: '#/components/schemas/EnumProductServiceType'
               insuranceLineCode:
@@ -393,6 +393,7 @@ components:
           type: string
           maxLength: 20
           format: date-time
+          pattern: ^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])T(?:[01]\d|2[0123]):(?:[012345]\d):(?:[012345]\d)Z$
           example: '2021-05-21T08:30:00Z'
           description: 'Data e hora da atualização do bloco, conforme especificação RFC-3339'
         businessId:
@@ -417,7 +418,7 @@ components:
           properties:
               cnpjNumber:
                   type: string
-                  pattern: '\d{14}|^NA$'
+                  pattern: ^\d{14}$
                   maxLength: 14
                   example: '01773247000563'
                   description: |
@@ -470,6 +471,7 @@ components:
         cpfNumber:
           type: string
           maxLength: 14
+          pattern: '^\d{11}$|^\d{14}$'
           example: '73677831148'
           description: '(Caso Natureza dos poderes vigentes de representantefor “Representante legal” ou “Procurador”) CPF ou CNPJ do representante'
         civilName:
@@ -494,12 +496,13 @@ components:
           type: string
           maxLength: 20
           format: date-time
+          pattern: ^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])T(?:[01]\d|2[0123]):(?:[012345]\d):(?:[012345]\d)Z$
           example: '2021-05-21T08:30:00Z'
           description: 'Data e hora da atualização do bloco, conforme especificação RFC-3339'
         mainBranch:
           type: string
           maxLength: 20
-          description: 'Código do ramo da atividade da empresa consultada, segundo padrão CNAE (Classificação Nacional de Atividades Econômicas).'
+          description: 'Codigo do ramo da atividade da empresa consultada, segundo padrao CNAE (Classificacao Nacional de Atividades Economicas). Obrigatorio desde que a participante possua a informacao'
         secondaryBranch:
           type: string
           maxLength: 200
@@ -526,6 +529,7 @@ components:
               type: string
               maxLength: 4
               format: date-fullyear
+              pattern: '^(\d{4})$'
               example: '2010'
               description: 'Ano de referência do faturamento, conforme especificação RFC-3339.' 
           additionalProperties: false
@@ -561,7 +565,6 @@ components:
         properties:
           type: 
             type: string
-            maxLength: 13
             example: SOCIO
             description: Tipo de vínculo com a pessoa jurídica
             enum:
@@ -572,7 +575,7 @@ components:
             maxLength: 70
             pattern: '[\w\W\s]*'
             example: Juan Kaique Cláudio Fernandes
-            description: 'Nome civil completo da pessoa natural (Direito fundamental da pessoa, o nome civil é aquele atribuído à pessoa natural desde o registro de seu nascimento, com o qual será identificada por toda a sua vida, bem como após a sua morte)' 
+            description: 'Nome civil completo da pessoa natural (Direito fundamental da pessoa, o nome civil e aquele atribuido a pessoa natural desde o registro de seu nascimento, com o qual sera identificada por toda a sua vida, bem como apos a sua morte). Obrigatorio desde que a participante possua a informacao' 
           socialName:
             type: string
             maxLength: 70
@@ -588,7 +591,7 @@ components:
             maxLength: 10
             pattern: '^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])$'
             example: '2014-05-21'
-            description: 'Data de início da participação, conforme especificação RFC-3339.'
+            description: 'Data de inicio da participacao, conforme especificacao RFC-3339. Obrigatorio desde que a participante possua a informacao'
           shareholding:
             type: string
             format: double
@@ -597,26 +600,27 @@ components:
             pattern: '^[01]\.\d{6}$'
             example: '0.510000'
             description: |
-              Percentual de participação societária (informar com 6 casas decimais). 
-              O Sócio só deve ser informado se sua participação societária for igual ou superior a 25%.
+              Percentual de participacao societaria (informar com 6 casas decimais). 
+              O Socio so deve ser informado se sua participacao societaria for igual ou superior a 25%.
+              Obrigatorio desde que a participante possua a informacao.
           documentType:
             type: string
             maxLength: 15
             example: CPF
-            description: 'Tipo de documento de identificação do sócio ou administrador'
+            description: 'Tipo de documento de identificacao do socio ou administrador. Obrigatorio desde que a participante possua a informacao.'
           documentNumber:
             type: string
             maxLength: 20
             pattern: '[\w\W\s]*'
             example: '73677831148'
-            description: Número do documento informado. Campo Texto Livre para preencher número e dígito do documento se houver
+            description: Numero do documento informado. Campo Texto Livre para preencher numero e digito do documento se houver. Obrigatorio desde que a participante possua a informacao.
           documentCountry:
             type: string
             maxLength: 3
             pattern: '[\w*\W*]'
             example: BRA
             description: |
-              País de emissão do documento. Código do pais de acordo com o código alpha3 do ISO-3166.
+              Pais de emissao do documento. Codigo do pais de acordo com o codigo alpha3 do ISO-3166. Obrigatorio desde que a participante possua a informacao
           documentExpirationDate:
             type: string
             format: date
@@ -691,7 +695,7 @@ components:
         countryCallingCode:
           type: string
           maxLength: 4
-          pattern: '^\d{2,4}$|^NA$'
+          pattern: '^\d{1,4}$|^NA$'
           example: '55'
           description: Número de DDI (Discagem Direta Internacional) para telefone de acesso ao Cliente - se aplicável
         areaCode:
@@ -723,7 +727,7 @@ components:
           maxLength: 200
           pattern: '[\w\W\s]*'
           example: 'Av Naburo Ykesaki, 1270'
-          description: Corresponde ao endereço residencial do cliente.
+          description: Corresponde ao endereco comercial do cliente.
         additionalInfo:
           type: string
           maxLength: 30
@@ -755,8 +759,8 @@ components:
         ibgeTownCode:
           type: string
           pattern: '\d{7}|^NA$'
-          maxLength: 8
-          example: '17500001'
+          maxLength: 7
+          example: '1750000'
           description: |
             Código IBGE do município
         country:
@@ -774,6 +778,9 @@ components:
     GeographicCoordinates:
       type: object
       description: 'Conjunto de informações, que correspondem aos valores das coordenadas geográficas em graus decimais, no Sistema de referência WGS84'
+      required:
+        - latitude
+        - longitude
       properties:
         latitude:
           description: |
@@ -986,6 +993,7 @@ components:
       enum:
         - MAE
         - PAI
+        - SEM_FILIACAO
       example: PAI
       description: Tipo de filiação.    
     EnumProcuratorsNaturePersonal:
@@ -1073,11 +1081,17 @@ components:
       items:
         properties:
           type:
-            $ref: '#/components/schemas/EnumPersonalDocumentType'
+            description: Obrigatorio desde que a participante possua a informacao
+            allOf:
+              - $ref: '#/components/schemas/EnumPersonalDocumentType'
+          documentTypeOthers:
+            description: Descricao do tipo de documento quando for informada a opcao OUTROS
+            type: string
+            maxLength: 100
           number:
             type: string
             maxLength: 20
-            description: 'Número/código do(s) documento(s) de identificação - Se aplicável.'
+            description: 'Numero/codigo do(s) documento(s) de identificacao. Obrigatorio desde que a participante possua a informacao'
             example: '15291908'
           expirationDate:
             type: string
@@ -1102,7 +1116,7 @@ components:
         number:
           type: string
           maxLength: 20
-          description: 'Número/código do(s) documento(s) de identificação.'
+          description: 'Numero/codigo do(s) documento(s) de identificacao. Obrigatorio desde que a participante possua a informacao'
           example: '15291908'
         country: 
           type: string
@@ -1125,7 +1139,7 @@ components:
         businesscnpjNumber:
           type: string
           maxLength: 14
-          pattern: '\d{14}|^NA$'
+          pattern: ^\d{14}$
           example: '50685362006773'
           description: |
             Número completo do CNPJ da Empresa consultada  - o CNPJ corresponde ao número de inscrição no Cadastro de Pessoa Jurídica. Deve-se ter apenas os números do CNPJ, sem máscara
@@ -1169,7 +1183,7 @@ components:
           maxLength: 10
           pattern: '^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])$'
           example: '2014-05-21'
-          description: Data mais antiga de início de relacionamento, considerando todos os contratos (vigentes e não vigentes). Os contratos não vigentes considerados devem contemplar, no mínimo o período indicado na Tabela 4.1.
+          description: 'Data mais antiga de inicio de relacionamento, considerando todos os contratos (vigentes e nao vigentes). Os contratos nao vigentes considerados devem contemplar, no minimo o periodo indicado na Tabela 22.'
         relationshipBeginning:
           type: string
           format: date
@@ -1190,7 +1204,7 @@ components:
               contract:
                 type: string
                 maxLength: 60
-                description: Campo deve conter todos os contratos do cliente nos últimos 12 meses (número da apólice individual ou contrato ou certificado ou bilhete)
+                description: Lista de todos os numeros dos contratos vigentes e nao vigentes. Os contratos nao vigentes considerados devem contemplar, no minimo o periodo indicado na Tabela 22.
               type:
                 $ref: '#/components/schemas/EnumProductServiceType'
               insuranceLineCode:
@@ -1268,7 +1282,7 @@ components:
           properties:
               cnpjNumber:
                   type: string
-                  pattern: '\d{14}|^NA$'
+                  pattern: ^\d{14}$
                   maxLength: 14
                   example: '01773247000563'
                   description: |
@@ -1298,6 +1312,10 @@ components:
           $ref: '#/components/schemas/PersonalContact'
         civilStatusCode:
           $ref: '#/components/schemas/EnumCivilStatusCode'
+        civilStatusCodeOthers:
+          description: Descricao do tipo de estado civil quando for informada a opcao OUTROS
+          type: string
+          maxLength: 100
         sex:
           type: string
           maxLength: 20
@@ -1351,8 +1369,9 @@ components:
         cpfNumber:
           type: string
           maxLength: 11
+          pattern: '^\d{11}$'
           example: '73677831148'
-          description: '(Caso Natureza dos poderes vigentes de representantefor “Representante legal” ou “Procurador”) CPF ou CNPJ do representante'
+          description: '(Caso Natureza dos poderes vigentes de representantefor “Representante legal” ou “Procurador”) CPF do representante'
         civilName:
           type: string
           maxLength: 70
@@ -1413,6 +1432,10 @@ components:
                   - CBO 
                   - OUTROS
                 description: 'Tipo de código da ocupação'
+              occupationCodeTypeOthers:
+                description: Descricao do tipo de codigo da ocupacao quando for informada a opcao OUTROS
+                type: string
+                maxLength: 100
         lifePensionPlans:
           type: string
           description: Condição de proponente qualificado, aplicável à contratação de planos de previdência e vida por sobrevivência
@@ -1466,6 +1489,7 @@ components:
               type: string
               maxLength: 4
               format: date-fullyear
+              pattern: '^(\d{4})$'
               example: '2010'
               description: 'Ano de referência do patrimônio, conforme especificação RFC-3339.' 
           additionalProperties: false  
@@ -1555,6 +1579,7 @@ components:
                 type: string
                 maxLength: 20
                 format: date-time
+                pattern: ^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])T(?:[01]\d|2[0123]):(?:[012345]\d):(?:[012345]\d)Z$
                 example: '2021-05-21T08:30:00Z'
             additionalProperties: false
         meta:
