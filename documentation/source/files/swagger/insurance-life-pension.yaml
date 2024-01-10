@@ -24,22 +24,22 @@ info:
     ### `/contracts`
       - permissions:
         - GET: **LIFE_PENSION_READ**
-    ### `/{pensionIdentification}/contract-info`
+    ### `/{certificateId}/contract-info`
       - permissions:
         - GET: **LIFE_PENSION_CONTRACTINFO_READ**
-    ### `/{pensionIdentification}/movements`
+    ### `/{certificateId}/movements`
       - permissions:
         - GET: **LIFE_PENSION_MOVEMENTS_READ**
-    ### `/{pensionIdentification}/portabilites`
+    ### `/{certificateId}/portabilites`
       - permissions:
         - GET: **LIFE_PENSION_PORTABILITIES_READ**
-    ### `/{pensionIdentification}/withdrawals`
+    ### `/{certificateId}/withdrawals`
       - permissions:
         - GET: **LIFE_PENSION_WITHDRAWALS_READ**
-    ### `/{pensionIdentification}/claim`
+    ### `/{certificateId}/claim`
       - permissions:
         - GET: **LIFE_PENSION_CLAIM**
-  version: 1.2.0
+  version: 1.3.0
   contact:
     name: Governança do Open Insurance Brasil
     url: "https://www.gov.br/susep"
@@ -96,20 +96,22 @@ paths:
           OAuth2Security:
             - "consent:consentId"
             - insurance-life-pension
-  /insurance-life-pension/{pensionIdentification}/contract-info:
+  /insurance-life-pension/{certificateId}/contract-info:
     get:
       tags:
         - InsuranceLifePension
-      summary: Obtém as informações gerais do contrato identificado por {pensionIdentification}
+      summary: Obtém as informações gerais do contrato identificado por {certificateId}
       description: "Método para obter as informações gerais do contrato"
-      operationId: "getInsuranceLifePensionpensionIdentificationContractInfo"
+      operationId: "getInsuranceLifePensioncertificateIdContractInfo"
       parameters:
         - $ref: "#/components/parameters/Authorization"
         - $ref: "#/components/parameters/xFapiAuthDate"
         - $ref: "#/components/parameters/xFapiCustomerIpAddress"
         - $ref: "#/components/parameters/xFapiInteractionId"
         - $ref: "#/components/parameters/xCustomerUserAgent"
-        - $ref: "#/components/parameters/pensionIdentification"
+        - $ref: "#/components/parameters/certificateId"
+        - $ref: "#/components/parameters/page"
+        - $ref: "#/components/parameters/pageSize"
       responses:
         "200":
           $ref: "#/components/responses/OKResponseInsuranceLifePensionContractInfo"
@@ -139,20 +141,20 @@ paths:
           OAuth2Security:
             - "consent:consentId"
             - insurance-life-pension
-  /insurance-life-pension/{pensionIdentification}/movements:
+  /insurance-life-pension/{certificateId}/movements:
     get:
       tags:
         - InsuranceLifePension
-      summary: Obtém os dados de movimentação do contrato identificado por {pensionIdentification}
+      summary: Obtém os dados de movimentação do contrato identificado por {certificateId}
       description: "Método para obter os dados de movimentação do contrato."
-      operationId: "getInsuranceLifePensionpensionIdentificationMovements"
+      operationId: "getInsuranceLifePensioncertificateIdMovements"
       parameters:
         - $ref: "#/components/parameters/Authorization"
         - $ref: "#/components/parameters/xFapiAuthDate"
         - $ref: "#/components/parameters/xFapiCustomerIpAddress"
         - $ref: "#/components/parameters/xFapiInteractionId"
         - $ref: "#/components/parameters/xCustomerUserAgent"
-        - $ref: "#/components/parameters/pensionIdentification"
+        - $ref: "#/components/parameters/certificateId"
       responses:
         "200":
           $ref: "#/components/responses/OKResponseInsuranceLifePensionMovements"
@@ -182,20 +184,20 @@ paths:
           OAuth2Security:
             - "consent:consentId"
             - insurance-life-pension
-  /insurance-life-pension/{pensionIdentification}/portabilities:
+  /insurance-life-pension/{certificateId}/portabilities:
     get:
       tags:
         - InsuranceLifePension
-      summary: Obtém os dados de portabilidades do contrato identificada por {pensionIdentification}
+      summary: Obtém os dados de portabilidades do contrato identificada por {certificateId}
       description: "Método para obter os dados de portabilidades associadas ao contrato"
-      operationId: "getInsuranceLifePensionpensionIdentificationPortabilities"
+      operationId: "getInsuranceLifePensioncertificateIdPortabilities"
       parameters:
         - $ref: "#/components/parameters/Authorization"
         - $ref: "#/components/parameters/xFapiAuthDate"
         - $ref: "#/components/parameters/xFapiCustomerIpAddress"
         - $ref: "#/components/parameters/xFapiInteractionId"
         - $ref: "#/components/parameters/xCustomerUserAgent"
-        - $ref: "#/components/parameters/pensionIdentification"
+        - $ref: "#/components/parameters/certificateId"
         - $ref: "#/components/parameters/page"
         - $ref: "#/components/parameters/pageSize"
       responses:
@@ -227,20 +229,20 @@ paths:
           OAuth2Security:
             - "consent:consentId"
             - insurance-life-pension
-  /insurance-life-pension/{pensionIdentification}/withdrawals:
+  /insurance-life-pension/{certificateId}/withdrawals:
     get:
       tags:
         - InsuranceLifePension
-      summary: Obtém os dados de resgates do contrato identificado por {pensionIdentification}
+      summary: Obtém os dados de resgates do contrato identificado por {certificateId}
       description: "Método para obter os dados de resgates associados ao contrato"
-      operationId: "getInsuranceLifePensionpensionIdentificationWithdrawals"
+      operationId: "getInsuranceLifePensioncertificateIdWithdrawals"
       parameters:
         - $ref: "#/components/parameters/Authorization"
         - $ref: "#/components/parameters/xFapiAuthDate"
         - $ref: "#/components/parameters/xFapiCustomerIpAddress"
         - $ref: "#/components/parameters/xFapiInteractionId"
         - $ref: "#/components/parameters/xCustomerUserAgent"
-        - $ref: "#/components/parameters/pensionIdentification"
+        - $ref: "#/components/parameters/certificateId"
         - $ref: "#/components/parameters/page"
         - $ref: "#/components/parameters/pageSize"
       responses:
@@ -272,20 +274,20 @@ paths:
           OAuth2Security:
             - "consent:consentId"
             - insurance-life-pension
-  /insurance-life-pension/{pensionIdentification}/claim:
+  /insurance-life-pension/{certificateId}/claim:
     get:
       tags:
         - InsuranceLifePension
-      summary: Obtém os dados de sinistro do contrato identificado por {pensionIdentification}
+      summary: Obtém os dados de sinistro do contrato identificado por {certificateId}
       description: "Método para obter os dados de sinistro associados ao contrato"
-      operationId: "getInsuranceLifePensionpensionIdentificationPeople"
+      operationId: "getInsuranceLifePensioncertificateIdPeople"
       parameters:
         - $ref: "#/components/parameters/Authorization"
         - $ref: "#/components/parameters/xFapiAuthDate"
         - $ref: "#/components/parameters/xFapiCustomerIpAddress"
         - $ref: "#/components/parameters/xFapiInteractionId"
         - $ref: "#/components/parameters/xCustomerUserAgent"
-        - $ref: "#/components/parameters/pensionIdentification"
+        - $ref: "#/components/parameters/certificateId"
         - $ref: "#/components/parameters/page"
         - $ref: "#/components/parameters/pageSize"
       responses:
@@ -370,15 +372,15 @@ components:
                             type: object
                             required:
                               - productName
-                              - pensionIdentification
+                              - certificateId
                             properties:
                               productName:
                                 description: Nome comercial do produto, pelo qual é identificado nos canais de distribuição e atendimento da sociedade
                                 type: string
                                 maxLength: 100
                                 example: Produto A Previdência
-                              pensionIdentification:
-                                description: Código único a ser definido pela sociedade
+                              certificateId:
+                                description: Código único da sociedade
                                 type: string
                                 maxLength: 60
                                 example: "42"
@@ -386,6 +388,7 @@ components:
           $ref: "#/components/schemas/Links"
         meta:
           $ref: "#/components/schemas/Meta"
+
     ResponseInsuranceLifePensionContractInfo:
       type: object
       required:
@@ -399,43 +402,62 @@ components:
           $ref: "#/components/schemas/Links"
         meta:
           $ref: "#/components/schemas/Meta"
+
     InsuranceLifePensionContractInfo:
       type: object
       required:
-        - pensionIdentification
+        - certificateId
+        - productCode
         - conjugatedPlan
-        - documents
         - proposalId
+        - certificateActive
         - insureds
-        - plans
-        - PMBaC
+        - contractingType
+        - effectiveDateStart
+        - effectiveDateEnd
+        - periodicity
+        - taxRegime
+        - suseps
+        - links
+        - meta
       properties:
-        pensionIdentification:
-          description: Código único a ser definido pela sociedade
+        certificateId:
+          description: Identificador do certificado/apólice individual, caso contrato individual. Identificador do certificado, caso contrato coletivo.
           type: string
           maxLength: 60
-          example: "42"
-        documents:
-          type: array
-          items:
-            $ref: "#/components/schemas/InsuranceLifePensionDocuments"
+          example: "67"
+        productcode:
+          type: string
+          description: Código único a ser definido pela sociedade.
+          maxLength: 80
+          example: "1234"
+        conjugatedPlan:
+          description: O plano é conjugado?
+          type: boolean
+          example: true
         proposalId:
           description: Identificador da Proposta de seguro
           type: string
           maxLength: 60
           example: "987"
+        certificateActive:
+          description: O Certificado está Ativo?
+          type: boolean
+          example: true
         insureds:
-          type: array
-          items:
-            $ref: "#/components/schemas/InsuranceLifePensionDocumentsInsured"
-        beneficiary:
-          type: array
-          items:
-            $ref: "#/components/schemas/InsuranceLifePensionDocumentsBeneficiary"
+          $ref: "#/components/schemas/InsuranceLifePensionDocumentsInsured"
         intermediary:
-          type: array
-          items:
-            $ref: "#/components/schemas/InsuranceLifePensionDocumentsIntermediary"
+          $ref: "#/components/schemas/InsuranceLifePensionDocumentsIntermediary"
+        contractingType:
+          description: Tipo de contratação
+          type: string
+          enum: [COLETIVO, INDIVIDUAL]
+          example: INDIVIDUAL
+        contractId:
+          description: identificação do contrato/apólice, em caso de contratação coletiva, obrigatório caso Tipo de contratação seja COLETIVO
+          type: string
+          maxLength: 60
+          example: "681"
         planType:
           description: Tipo do Plano (Quando Contrato Coletivo)
           type: string
@@ -444,78 +466,6 @@ components:
             - INSTITUIDO_CONTRIBUTARIO
             - INSTITUIDO_NAO_CONTRIBUTARIO
           example: AVERBADO
-        plans:
-          type: array
-          items:
-            $ref: "#/components/schemas/InsuranceLifePensionPlans"
-        conjugatedPlan:
-          description: O plano é conjugado?
-          type: boolean
-          example: true
-        PMBaC:
-          type: object
-          description: PMBaC
-          required:
-            - pmbacAmount
-            - provisionSurplusAmount
-          properties:
-            pmbacAmount:
-              description: |
-                Valor PMBaC (fim do mês) 
-                Valor da Provisão Matemática de Benefícios a Conceder (PMBaC), no fim de cada mês. Caso não haja saldo informar nulo
-              allOf:
-                - $ref: "#/components/schemas/AmountDetails"
-            provisionSurplusAmount:
-              description: |
-                Valor da provisão de excedentes financeiros (PEF) (valor ao final do mês) Caso não haja saldo informar nulo
-              allOf:
-                - $ref: "#/components/schemas/AmountDetails"
-            FIE:
-              type: array
-              items:
-                type: object
-                required:
-                  - FIECNPJ
-                  - FIEName
-                  - FIETradeName
-                properties:
-                  FIECNPJ:
-                    description: CNPJ do FIE
-                    type: string
-                    pattern: '^\d{14}$'
-                    example: "12345678901234"
-                  FIEName:
-                    description: Razão social do FIE
-                    type: string
-                    example: RAZÃO SOCIAL
-                  FIETradeName:
-                    description: Nome fantasia do FIE
-                    type: string
-                    example: NOME FANTASIA
-        
-    InsuranceLifePensionDocuments:
-      type: object
-      required:
-        - contractingType
-        - certificateId
-        - effectiveDateStart
-        - effectiveDateEnd
-      properties:
-        contractingType:
-          description: Tipo de contratação
-          type: string
-          enum: [COLETIVO, INDIVIDUAL]
-          example: INDIVIDUAL
-        certificateId:
-          description: Identificador do certificado/apólice individual, caso contrato individual. Identificador do certificado, caso contrato coletivo.
-          type: string
-          maxLength: 60
-          example: "67"
-        contractId:
-          description: identificação do contrato/apólice, em caso de contratação coletiva, obrigatório caso Tipo de contratação seja COLETIVO
-          type: string
-          maxLength: 60
-          example: "681"
         effectiveDateStart:
           description: Data de Início da Vigência do documento.
           type: string
@@ -526,7 +476,40 @@ components:
           type: string
           format: date
           example: "2021-05-21"
-        
+        beneficiary:
+          type: array
+          items:
+            $ref: "#/components/schemas/InsuranceLifePensionDocumentsBeneficiary"
+        periodicity:
+          description: Peridicidade da Contribuição
+          type: string
+          enum:
+            [
+              MENSAL,
+              BIMESTRAL,
+              TRIMESTRAL,
+              QUADRIMESTRAL,
+              SEMESTRAL,
+              ANUAL,
+              ESPORADICA,
+              PAGAMENTO_UNICO,
+              OUTROS
+            ]
+          example: MENSAL
+        periodicityOthers:
+          description: Descricao do campo de Periodicidade da Contribuicao quando a opcao escolhida for OUTROS
+          type: string
+          maxLength: 100
+        taxRegime:
+          type: string
+          description: Regime Tributário
+          enum: [PROGRESSIVO, REGRESSIVO]
+          example: PROGRESSIVO
+        suseps:
+          type: array
+          items:
+            $ref: "#/components/schemas/InsuranceLifePensionSuseps"
+
     InsuranceLifePensionDocumentsInsured:
       description: Informações do segurado/participante
       type: object
@@ -610,12 +593,6 @@ components:
           maxLength: 200
           pattern: '[\w\W\s]*'
           example: "Av Naburo Ykesaki, 1270"
-        addressAdditionalInfo:
-          type: string
-          maxLength: 30
-          pattern: '[\w\W\s]*'
-          example: Fundos
-          description: Alguns logradouros ainda necessitam ser especificados por meio de complemento.
     InsuranceLifePensionDocumentsBeneficiary:
       description: Informações do beneficiário/pessoa associada, obrigatório se houver.
       type: object
@@ -644,7 +621,7 @@ components:
           maxLength: 80
           example: Juan Kaique Cláudio Fernandes
         participationPercentage:
-          description: Percentual de particiapação do beneficiário.
+          description: Percentual de participação do beneficiário.
           type: string
           pattern: '^\d{1,3}\.\d{1,9}$'
           example: "10.00"
@@ -729,28 +706,19 @@ components:
           type: string
           maxLength: 200
           pattern: '[\w\W\s]*'
-          example: "Av Naburo Ykesaki, 1270"
-        additionalInfo:
-          type: string
-          maxLength: 30
-          pattern: '[\w\W\s]*'
-          example: Fundos
-          description: Alguns logradouros ainda necessitam ser especificados por meio de complemento.
-    
-    InsuranceLifePensionPlans:
+          example: "Av Naburo Ykesaki, 1270"   
+    InsuranceLifePensionSuseps:
       type: object
       required:
         - coverageCode
         - susepProcessNumber
         - structureModality
-        - periodicity
-        - calculationBasis
         - type
         - lockedPlan
         - qualifiedProposer
         - benefitPaymentMethod
         - financialResultReversal
-        - taxRegime
+        - calculationBasis
       properties:
         coverageCode:
           type: string
@@ -776,26 +744,6 @@ components:
           type: string
           pattern: '^\d{1,3}\.\d{1,9}$'
           example: "10.00"
-        periodicity:
-          description: Peridicidade da Contribuição
-          type: string
-          enum:
-            [
-              MENSAL,
-              BIMESTRAL,
-              TRIMESTRAL,
-              QUADRIMESTRAL,
-              SEMESTRAL,
-              ANUAL,
-              ESPORADICA,
-              PAGAMENTO_UNICO,
-              OUTROS
-            ]
-          example: MENSAL
-        periodicityOthers:
-          description: Descricao do campo de Periodicidade da Contribuicao quando a opcao escolhida for OUTROS
-          type: string
-          maxLength: 100
         grace:
           type: array
           items:
@@ -946,7 +894,7 @@ components:
           type: string
           enum: [IPC-FGV, IGP-DI-FGV, IPCA-IBGE, IGPM-FGV, INPC-IBGE, TR, OUTROS]
           example: IPC-FGV
-        pmbacGuaranteePriceOthers:
+        pmbacGuaranteePriceIndexOthers:
           description: Descricao do Indice de Precos Garantido PMBaC quando a opcao escolhida for OUTROS
           type: string
           maxLength: 100
@@ -978,15 +926,45 @@ components:
           type: string
           pattern: '^\d{1,3}\.\d{1,9}$'
           example: "10.00"
-        taxRegime:
-          type: string
-          description: Regime Tributário
-          enum: [PROGRESSIVO, REGRESSIVO]
-          example: PROGRESSIVO
         calculationBasis:
           description: Base de Cálculo
           type: string
           enum: [MENSAL, ANUAL]
+        FIE:
+          type: array
+          items:
+            type: object
+            required:
+              - FIECNPJ
+              - FIEName
+              - FIETradeName
+              - pmbacAmount
+              - provisionSurplusAmount
+            properties:
+              FIECNPJ:
+                description: CNPJ do FIE
+                type: string
+                pattern: '^\d{14}$'
+                example: "12345678901234"
+              FIEName:
+                description: Razão social do FIE
+                type: string
+                example: RAZÃO SOCIAL
+              FIETradeName:
+                description: Nome fantasia do FIE
+                type: string
+                example: NOME FANTASIA
+              pmbacAmount:
+                description: |
+                  Valor PMBaC (fim do mês) 
+                  Valor da Provisão Matemática de Benefícios a Conceder (PMBaC), no fim de cada mês. Caso não haja saldo informar nulo
+                allOf:
+                  - $ref: "#/components/schemas/AmountDetails"
+              provisionSurplusAmount:
+                description: |
+                  Valor da provisão de excedentes financeiros (PEF) (valor ao final do mês) Caso não haja saldo informar nulo
+                allOf:
+                  - $ref: "#/components/schemas/AmountDetails"
 
     InsuranceLifePensionPlansGrace:
       description: Dados de Carência para RCC, Capitalização e Sobrevivência, obrigatório se houver
@@ -1611,9 +1589,9 @@ components:
       maxLength: 100
       description: 'Um UID [RFC4122](https://tools.ietf.org/html/rfc4122) usado como um ID de correlação. Se fornecido, o transmissor deve "reproduzir" esse valor no cabeçalho de resposta.'
   parameters:
-    pensionIdentification:
-      name: pensionIdentification
-      description: Código único a ser definido pela sociedade
+    certificateId:
+      name: certificateId
+      description: Código único da sociedade
       in: path
       required: true
       schema:
