@@ -33,7 +33,7 @@ info:
     ### `/{planId}/settlements`
       - permissions:
         - GET: **CAPITALIZATION_TITLE_SETTLEMENTS_READ**
-  version: 1.3.0
+  version: 1.4.0
   contact:
     name: Governança do Open Insurance Brasil
     url: 'https://www.gov.br/susep'
@@ -480,14 +480,12 @@ components:
           example: "2023-01-30"
         rafflePremiumAmount:
           description: Valor do premio de sorteio
-          type: number
-          pattern: '^\d{1,16}\.\d{2}$'
-          example: 2000.00
+          allOf:
+            - $ref: "#/components/schemas/AmountDetails"
         contributionAmount:
           description: Corresponde ao pagamento efetuado pelo subscritor à sociedade de capitalização para a aquisição do título de capitalização, podendo ser única, periódica ou mensal. Em todas as situações indicar para qual periodicidade de pagamento se aplicam os valores(pagamento mensal, pagamento único ou periódico). 
-          type: number
-          pattern: '^\d{1,16}\.\d{2}$'
-          example: 2000.00
+          allOf:
+            - $ref: "#/components/schemas/AmountDetails"
         subscriber:
           description: Dados Gerais do Título
           type: array
@@ -539,6 +537,12 @@ components:
           maxLength: 200
           pattern: '[\w\W\s]*'
           example: "Av Naburo Ykesaki, 1270"
+        subscriberAddressAdditionalInfo:
+          type: string
+          maxLength: 30
+          pattern: '[\w\W\s]*'
+          example: Fundos
+          description: Alguns logradouros ainda necessitam ser especificados por meio de complemento.
         subscriberTownName:
           type: string
           maxLength: 50
@@ -614,6 +618,12 @@ components:
           maxLength: 200
           pattern: '[\w\W\s]*'
           example: "Av Naburo Ykesaki, 1270"
+        holderAddressAdditionalInfo:
+          type: string
+          maxLength: 30
+          pattern: '[\w\W\s]*'
+          example: Fundos
+          description: Alguns logradouros ainda necessitam ser especificados por meio de complemento.
         holderTownName:
           type: string
           maxLength: 50
@@ -772,6 +782,7 @@ components:
         - TO
       example: RJ
     InsuranceCapitalizationTitleTechnicalProvisions:
+      description: (Esses valores poderão sofrer alterações no momento do resgate/pagamento,conforme regras do produto nas condições gerais)
       type: object
       required:
         - pmcAmount
@@ -1093,7 +1104,7 @@ components:
       name: x-fapi-interaction-id
       in: header
       description: 'Um UID [RFC4122](https://tools.ietf.org/html/rfc4122) usado como um ID de correlação. Se fornecido, o transmissor deve "reproduzir" esse valor no cabeçalho de resposta.'
-      required: false
+      required: true
       schema:
         type: string
         pattern: '^[a-zA-Z0-9][a-zA-Z0-9\-]{0,99}$'
