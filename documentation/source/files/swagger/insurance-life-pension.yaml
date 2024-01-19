@@ -39,7 +39,7 @@ info:
     ### `/{certificateId}/claim`
       - permissions:
         - GET: **LIFE_PENSION_CLAIM**
-  version: 1.3.0
+  version: 1.4.0
   contact:
     name: Governança do Open Insurance Brasil
     url: "https://www.gov.br/susep"
@@ -418,8 +418,6 @@ components:
         - periodicity
         - taxRegime
         - suseps
-        - links
-        - meta
       properties:
         certificateId:
           description: Identificador do certificado/apólice individual, caso contrato individual. Identificador do certificado, caso contrato coletivo.
@@ -593,6 +591,12 @@ components:
           maxLength: 200
           pattern: '[\w\W\s]*'
           example: "Av Naburo Ykesaki, 1270"
+        addressAdditionalInfo:
+          type: string
+          maxLength: 30
+          pattern: '[\w\W\s]*'
+          example: Fundos
+          description: Alguns logradouros ainda necessitam ser especificados por meio de complemento.
     InsuranceLifePensionDocumentsBeneficiary:
       description: Informações do beneficiário/pessoa associada, obrigatório se houver.
       type: object
@@ -706,7 +710,13 @@ components:
           type: string
           maxLength: 200
           pattern: '[\w\W\s]*'
-          example: "Av Naburo Ykesaki, 1270"   
+          example: "Av Naburo Ykesaki, 1270"
+        additionalInfo:
+          type: string
+          maxLength: 30
+          pattern: '[\w\W\s]*'
+          example: Fundos
+          description: Alguns logradouros ainda necessitam ser especificados por meio de complemento.   
     InsuranceLifePensionSuseps:
       type: object
       required:
@@ -769,116 +779,8 @@ components:
         biometricTable:
           type: string
           description: Tábua biométrica, se houver
-          example: 1  - Mortalidade Geral / Beneficiário - AT49 M
-          enum:
-            [
-              1  - Mortalidade Geral / Beneficiário - AT49 M,
-              2  - Mortalidade Geral / Beneficiário - AT49 F,
-              3  - Mortalidade Geral / Beneficiário - AT50 M,
-              4  - Mortalidade Geral / Beneficiário - AT50 F,
-              5  - Mortalidade Geral / Beneficiário - AT55 M,
-              6  - Mortalidade Geral / Beneficiário - AT55 F,
-              7  - Mortalidade Geral / Beneficiário - AT71 M,
-              8  - Mortalidade Geral / Beneficiário - AT71 F,
-              9  - Mortalidade Geral / Beneficiário - AT83 M,
-              10  - Mortalidade Geral / Beneficiário - AT83 F,
-              11  - Mortalidade Geral / Beneficiário - AT2000 M,
-              12  - Mortalidade Geral / Beneficiário - AT2000 F,
-              13  - Mortalidade Geral / Beneficiário - CS041,
-              14  - Mortalidade Geral / Beneficiário - CSO58,
-              15  - Mortalidade Geral / Beneficiário - CSO80 M,
-              16  - Mortalidade Geral / Beneficiário - CSO80 F,
-              17  - Mortalidade Geral / Beneficiário - CSG 60,
-              18  - Mortalidade Geral / Beneficiário - GAM71 M,
-              19  - Mortalidade Geral / Beneficiário - GAM71 F,
-              20  - Mortalidade Geral / Beneficiário - SGB51,
-              21  - Mortalidade Geral / Beneficiário - SGB55,
-              22  - Mortalidade Geral / Beneficiário - SGB71,
-              23  - Mortalidade Geral / Beneficiário - SGB75,
-              24  - Mortalidade Geral / Beneficiário - GKF70,
-              25  - Mortalidade Geral / Beneficiário - GKF80,
-              26  - Mortalidade Geral / Beneficiário - GKF95,
-              27  - Mortalidade Geral / Beneficiário - GKM70,
-              28  - Mortalidade Geral / Beneficiário - GKM80,
-              29  - Mortalidade Geral / Beneficiário - GKM95,
-              30  - Mortalidade Geral / Beneficiário - UP 84,
-              31  - Mortalidade de Inválidos - IAPB 57,
-              32  - Mortalidade de Inválidos - IAPB57 - Nivelada,
-              33  - Mortalidade de Inválidos - ZIMMERMANN,
-              34  - Mortalidade de Inválidos - WINKLEVOSS,
-              35  - Mortalidade de Inválidos - BENTZIEN,
-              36  - Mortalidade de Inválidos - EXP. IAPC,
-              37  - Mortalidade de Inválidos - TASA27,
-              38  - Mortalidade de Inválidos - MULLER,
-              39  - Entrada em Invalidez - IAPB 57 FRACA,
-              40  - Entrada em Invalidez - IAPB 57 FORTE,
-              41  - Entrada em Invalidez - ZIMMERMANN,
-              42  - Entrada em Invalidez - ÁLVARO VINDAS,
-              43  - Entrada em Invalidez - TASA 27,
-              44  - Entrada em Invalidez - MULLER,
-              45  - Entrada em Invalidez - HUNTER,
-              46  - Mortalidade Geral / Beneficiário - EB7,
-              47  - Mortalidade Geral / Beneficiário - UP94 M,
-              48  - Mortalidade Geral / Beneficiário - AT49,
-              49  - Mortalidade Geral / Beneficiário - AT2000 female suavizada 10%,
-              49  - Entrada em Invalidez - AT2000 female suavizada 10%,
-              50  - Mortalidade Geral / Beneficiário - TGA,
-              50  - Entrada em Invalidez - TGA,
-              51  - Mortalidade Geral / Beneficiário - AT2000 male suavizada 10%,
-              52  - Mortalidade Geral / Beneficiário - BR-EMSsb-V.2010-m,
-              53  - Mortalidade Geral / Beneficiário - BR-EMSsb-V.2010-f,
-              54  - Entrada em Invalidez - SUSEP_IBGE,
-              55  - Mortalidade Geral / Beneficiário - Percentual Fixo,
-              55  - Mortalidade de Inválidos - Percentual Fixo,
-              55  - Entrada em Invalidez - Percentual Fixo,
-              56  - Mortalidade Geral / Beneficiário - Perpétua,
-              56  - Mortalidade de Inválidos - Perpétua,
-              56  - Entrada em Invalidez - Perpétua,
-              57  - Mortalidade Geral / Beneficiário - BR-EMSmt-V.2010-m,
-              57  - Mortalidade de Inválidos - BR-EMSmt-V.2010-m,
-              57  - Entrada em Invalidez - BR-EMSmt-V.2010-m,
-              58  - Mortalidade Geral / Beneficiário - BR-EMSmt-V.2010-f,
-              58  - Mortalidade de Inválidos - BR-EMSmt-V.2010-f,
-              58  - Entrada em Invalidez - BR-EMSmt-V.2010-f,
-              59  - Mortalidade Geral / Beneficiário - BR-EMSsb-V.2015-m,
-              59  - Mortalidade de Inválidos - BR-EMSsb-V.2015-m,
-              59  - Entrada em Invalidez - BR-EMSsb-V.2015-m,
-              60  - Mortalidade Geral / Beneficiário - BR-EMSsb-V.2015-f,
-              60  - Mortalidade de Inválidos - BR-EMSsb-V.2015-f,
-              60  - Entrada em Invalidez - BR-EMSsb-V.2015-f,
-              61  - Mortalidade Geral / Beneficiário - BR-EMSmt-V.2015-m,
-              61  - Mortalidade de Inválidos - BR-EMSmt-V.2015-m,
-              61  - Entrada em Invalidez - BR-EMSmt-V.2015-m,
-              62  - Mortalidade Geral / Beneficiário - BR-EMSmt-V.2015-f,
-              62  - Mortalidade de Inválidos - BR-EMSmt-V.2015-f,
-              62  - Entrada em Invalidez - BR-EMSmt-V.2015-f,
-              63  - Mortalidade Geral / Beneficiário - BR-EMSsb-m,
-              63  - Mortalidade de Inválidos - BR-EMSsb-m,
-              63  - Entrada em Invalidez - BR-EMSsb-m,
-              64  - Mortalidade Geral / Beneficiário - BR-EMSsb-f,
-              64  - Mortalidade de Inválidos - BR-EMSsb-f,
-              64  - Entrada em Invalidez - BR-EMSsb-f,
-              65  - Mortalidade Geral / Beneficiário - BR-EMSmt-m,
-              65  - Mortalidade de Inválidos - BR-EMSmt-m,
-              65  - Entrada em Invalidez - BR-EMSmt-m,
-              66  - Mortalidade Geral / Beneficiário - BR-EMSmt-f,
-              66  - Mortalidade de Inválidos - BR-EMSmt-f,
-              66  - Entrada em Invalidez - BR-EMSmt-f,
-              67  - Mortalidade Geral / Beneficiário - BR-EMSsb-V.2021-m,
-              67  - Mortalidade de Inválidos - BR-EMSsb-V.2021-m,
-              67  - Entrada em Invalidez - BR-EMSsb-V.2021-m,
-              68  - Mortalidade Geral / Beneficiário - BR-EMSsb-V.2021-f,
-              68  - Mortalidade de Inválidos - BR-EMSsb-V.2021-f,
-              68  - Entrada em Invalidez - BR-EMSsb-V.2021-f,
-              69  - Mortalidade Geral / Beneficiário - BR-EMSmt-V.2021-m,
-              69  - Mortalidade de Inválidos - BR-EMSmt-V.2021-m,
-              69  - Entrada em Invalidez - BR-EMSmt-V.2021-m,
-              70  - Mortalidade Geral / Beneficiário - BR-EMSmt-V.2021-f,
-              70  - Mortalidade de Inválidos - BR-EMSmt-V.2021-f,
-              70  - Entrada em Invalidez - BR-EMSmt-V.2021-f,
-              99  - Mortalidade Geral / Beneficiário - OUTRAS,
-              99  - Mortalidade de Inválidos - OUTRAS,
-              99  - Entrada em Invalidez - OUTRAS]
+          example: AT_2000_FEMALE_SUAVIZADA_15
+          enum: [AT_2000_MALE, AT_2000_FEMALE, AT_2000_MALE_FEMALE, AT_2000_MALE_SUAVIZADA_10, AT_2000_FEMALE_SUAVIZADA_10, AT_2000_MALE_FEMALE_SUAVIZADA_10, AT_2000_MALE_SUAVIZADA_15, AT_2000_FEMALE_SUAVIZADA_15, AT_2000_MALE_FEMALE_SUAVIZADA_15, AT_83_MALE, AT_83_FEMALE, AT_83_MALE_FEMALE, BR_EMSSB_MALE, BR_EMSSB_FEMALE, BR_EMSSB_MALE_FEMALE]
         benefitPaymentMethod:
           description: Forma de pagamento do benefício
           type: string
@@ -894,7 +796,7 @@ components:
           type: string
           enum: [IPC-FGV, IGP-DI-FGV, IPCA-IBGE, IGPM-FGV, INPC-IBGE, TR, OUTROS]
           example: IPC-FGV
-        pmbacGuaranteePriceIndexOthers:
+        pmbacGuaranteePriceOthers:
           description: Descricao do Indice de Precos Garantido PMBaC quando a opcao escolhida for OUTROS
           type: string
           maxLength: 100
@@ -1659,7 +1561,7 @@ components:
       name: x-fapi-interaction-id
       in: header
       description: 'Um UID [RFC4122](https://tools.ietf.org/html/rfc4122) usado como um ID de correlação. Se fornecido, o transmissor deve "reproduzir" esse valor no cabeçalho de resposta.'
-      required: false
+      required: true
       schema:
         type: string
         pattern: '^[a-zA-Z0-9][a-zA-Z0-9\-]{0,99}$'
