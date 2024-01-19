@@ -33,7 +33,7 @@ info:
     ### `/{policyId}/claim`
       - permissions:
         - GET: **DAMAGES_AND_PEOPLE_PERSON_CLAIM_READ**
-  version: 1.4.0
+  version: 1.5.0
   contact:
     name: Governança do Open Insurance Brasil
     url: "https://www.gov.br/susep/"
@@ -334,6 +334,10 @@ components:
           type: string
           maxLength: 60
           example: "111111"
+        susepProcessNumber:
+          description: Numero SUSEP da apolice conforme regulamentacao vigente (Obrigatorio caso apolice com coberturas do ramo Garantia)
+          type: string
+          maxLength: 60
         groupCertificateId:
           description: Identificador do Certificado (Caso Tipo de Documento Emitido for certificado)
           type: string
@@ -614,6 +618,12 @@ components:
           description: Endereço do Segurado/Participante (restante do endereço, excluindo cidade, estado e país)
           type: string
           maxLength: 60
+        addressAdditionalInfo:
+          type: string
+          maxLength: 30
+          pattern: '[\w\W\s]*'
+          example: Fundos
+          description: Alguns logradouros ainda necessitam ser especificados por meio de complemento.
     BeneficiaryInfo:
       type: object
       required:
@@ -1173,7 +1183,9 @@ components:
           type: integer
           example: 5
         pmbacMonetaryUpdateIndex:
-          description: Índice de Preços Garantido PMBaC (quando houver)
+          description: |
+            Indice de Precos Garantido PMBaC
+            Obrigatorio em caso de regime financeiro de Capitalizacao
           type: string
           enum: [IPC-FGV, IGP-DI-FGV, IPCA-IBGE, IGPM-FGV, INPC-IBGE, TR, OUTROS]
           example: IGPM-FGV
@@ -1181,7 +1193,9 @@ components:
           description: Descricao do Indice de Precos Garantido PMBaC quando for informada a opcao OUTROS
           type: string
         pmbacIndexLag:
-          description: Defasagem do Índice PMBaC (quando houver
+          description: |
+            Defasagem do Indice PMBaC (em meses)
+            Obrigatorio em caso de regime financeiro de Capitalizacao
           type: integer
           example: 5
 
@@ -1293,17 +1307,14 @@ components:
     POS:
       type: object
       description: Informações de franquia
+      required:
+        - applicationType
       properties:
         applicationType:
           description: Forma de Aplicacao do POS
           type: string
           enum: [VALOR, PERCENTUAL, OUTROS]
           example: VALOR
-        applicationTypeOthers:
-          description: Descricao da forma de apliacacao do POS caso informado OUTROS
-          type: string
-          maxLength: 60
-          example: "Descricao de exemplo"
         description:
           description: Descricao do POS (caso Forma de aplicacao do POS for Outros)
           type: string
@@ -1621,6 +1632,10 @@ components:
           description: Descricao da Justificativa da Negativa (Caso Justificativa da Negativa for OUTROS
           type: string
           maxLength: 100
+        coverages:
+          type: array
+          items:
+            $ref: "#/components/schemas/InsurancePersonClaimCoverage"
         recipient:
           type: array
           items:
@@ -1731,12 +1746,63 @@ components:
           type: string
           format: date
           example: "2020-12-31"
-
-    
-    
-       
-      
-
+    InsurancePersonClaimCoverage:
+      type: object
+      required:
+        - branch
+        - code
+      properties:
+        insuredObjectId:
+          description: Identificador do Objeto Segurado (Caso aplicavel)
+          type: string
+          maxLength: 100
+        branch:
+          description: Grupo e ramo da cobertura
+          type: string
+          maxLength: 4
+          example: "0111"
+        code:
+          type: string
+          description: Codigo da cobertura
+          enum:
+            [
+              MORTE,
+              MORTE_ACIDENTAL,
+              INVALIDEZ_TOTAL_POR_ACIDENTE,
+              INVALIDEZ_PARCIAL_POR_ACIDENTE,
+              INVALIDEZ_TOTAL_E_PARCIAL_POR_ACIDENTE,
+              INVALIDEZ_FUNCIONAL_PERMANENTE_TOTAL_POR_DOENCA,
+              INVALIDEZ_LABORATIVA_PERMANENTE_TOTAL_POR_DOENCA,
+              DESEMPREGO_PERDA_DE_RENDA,
+              INCAPACIDADE_TEMPORARIA,
+              DOENCA_GRAVE,
+              INTERNACAO_HOSPITALAR,
+              DESPESAS_MEDICAS_HOSPITALARES_E_ODONTOLOGICAS_BRASIL,
+              DESPESAS_MEDICAS_HOSPITALARES_E_ODONTOLOGICAS_EXTERIOR,
+              TRANSPLANTE_DE_ORGAOS,
+              CIRURGIA,
+              TRASLADO_DE_CORPO,
+              REGRESSO_SANITARIO,
+              TRASLADO_MEDICO,
+              CANCELAMENTO_DE_VIAGEM,
+              REGRESSO_ANTECIPADO,
+              SOBREVIVENCIA,
+              OUTRAS
+            ]
+        description:
+          description: Campo de detalhamento do Codigo da cobertura. Obrigatorio quando a opcao escolhida para o mesmo for OUTRAS
+          type: string
+          maxLength: 500
+        warningDate:
+          description: Data de Aviso do Sinistro por Cobertura (Caso aplicavel)
+          type: string
+          format: date
+          example: "2022-12-31"
+        thirdPartyClaimDate:
+          description: Data de Reclamacao do Terceiro por Cobertura (Caso aplicavel)
+          type: string
+          format: date
+          example: "2022-12-31"
     AmountDetails:
       type: object
       description: Detalhes de valores/limites
@@ -1924,7 +1990,7 @@ components:
       name: x-fapi-interaction-id
       in: header
       description: 'Um UID [RFC4122](https://tools.ietf.org/html/rfc4122) usado como um ID de correlação. Se fornecido, o transmissor deve "reproduzir" esse valor no cabeçalho de resposta.'
-      required: false
+      required: true
       schema:
         type: string
         pattern: '^[a-zA-Z0-9][a-zA-Z0-9\-]{0,99}$'
