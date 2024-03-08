@@ -13,8 +13,8 @@ info:
     Este `token` deverá estar relacionado ao consentimento (identificado pelo `consentId`) mantido na instituição transmissora dos dados, o qual permitirá a pesquisa e retorno, na API em questão, dos
     dados relacionados ao `consentId` específico.\
     Os dados serão devolvidos na consulta desde que o `consentId` relacionado corresponda a um consentimento válido e com o status `AUTHORISED`.\
-    É também necessário que o recurso em questão (endosso, etc.) esteja disponível na instituição transmissora (ou seja, sem boqueios de qualquer natureza e com todas as autorizações/consentimentos já autorizados).\
-    Os dados presentes na solicitação do endosso devem ser validados contra os dados presentes no campo `claimNotificationInformation` do consentimento. Caso exista uma divergência entre os dados informados na solicitação e no consentimento, a solicitação deve ser rejeitada com um retorno HTTP Status Code 422.
+    É também necessário que o recurso em questão (aviso de sinistro, etc.) esteja disponível na instituição transmissora (ou seja, sem bloqueios de qualquer natureza e com todas as autorizações/consentimentos já autorizados).\
+    Os dados presentes na solicitação de aviso de sinistro devem ser validados contra os dados presentes no campo `claimNotificationInformation` do consentimento. Caso exista uma divergência entre os dados informados na solicitação e no consentimento, a solicitação deve ser rejeitada com um retorno HTTP Status Code 422.
     Além disso, as `permissions` necessárias deverão ter sido solicitadas quando da criação do consentimento relacionado.\
     Relacionamos a seguir as `permissions` necessárias para a consulta de dados em cada `endpoint` da presente API.
 
@@ -28,7 +28,7 @@ info:
     ### `/request/person`
       - permissions:
         - POST: **CLAIM_NOTIFICATION_REQUEST_PERSON_CREATE**
-  version: 1.2.2
+  version: 1.2.3
   license:
     name: Apache 2.0
     url: 'http://www.apache.org/licenses/LICENSE-2.0'
@@ -101,7 +101,7 @@ paths:
       tags:
         - Claim Notification Person
       summary: Enviar dados de solicitação de Aviso de Sinistro Pessoas
-      operationId: postClaimNotificationPerson
+      operationId: getClaimNotificationPerson
       description: Método para a criação de solicitação Aviso de Sinistro Pessoas
       parameters:
         - $ref: '#/components/parameters/consentId'
@@ -348,6 +348,57 @@ components:
               description: Descrição da Ocorrência/Relato da ocorrência
               type: string
               maxLength: 10000
+            customData:
+              type: object
+              properties:
+                customerIdentification:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/CustomInfoData'
+                customerQualification:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/CustomInfoData'
+                customerComplimentaryInfo:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/CustomInfoData'
+                businessIdentification:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/CustomInfoData'
+                businessQualification:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/CustomInfoData'
+                businessComplimentaryInfo:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/CustomInfoData'
+                generalQuoteInfo:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/CustomInfoData'
+                riskLocationInfo:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/CustomInfoData'
+                insuredObjects:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/CustomInfoData'
+                beneficiaries:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/CustomInfoData'
+                coverages:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/CustomInfoData'
+                generalClaimInfo:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/CustomInfoData'
     ResponseClaimNotificationDamage:
       type: object
       required:
