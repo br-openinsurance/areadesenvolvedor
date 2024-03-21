@@ -8,8 +8,11 @@ info:
     # Orientações importantes
     - O endPoint callBack deve ser utilizado em caso de sucesso ou falha no processo de manutenção de campos dinâmicos com o devido status.
     - O acesso a API dynamic-fields se da somente caso a entidade consumidora esteja presente com a role de `ICS` no diretório.
+    - Ao entrar no ecossistema, a `TCS` deve atualizar todas as `ICS`s e receber confirmação via webhook
+    - Ao atualizar seus dados, a `TCS` deve atualizar todas as `ICS`s e receber confirmação via webhook
+    - Ao entrar no ecossistema, a `ICS` deve consumir as APIs de todas as `TCS`s para garantir a atualização dos dados
 
-  version: 1.1.1
+  version: 1.1.2
   contact:
     name: Governança do Open Insurance Brasil
     url: 'https://www.gov.br/susep'
@@ -125,6 +128,9 @@ paths:
       responses:
         '202':
           $ref: '#/components/responses/202Callback'
+      security:
+        - OAuth2Security:
+            - dynamic-fields
 
   /callback/capitalization-title:
     post:
@@ -145,6 +151,9 @@ paths:
       responses:
         '202':
           $ref: '#/components/responses/202Callback'
+      security:
+        - OAuth2Security:
+            - dynamic-fields
 
 components:
   schemas:
@@ -170,8 +179,8 @@ components:
                 type: string
                 enum: [QUOTE_AUTO,
                       QUOTE_PATRIMONIAL,
-                      QUOTE_PERSON, 
-                      ENDORSEMENT, 
+                      QUOTE_PERSON,
+                      ENDORSEMENT,
                       CLAIM_NOTIFICATION_DAMAGE,
                       CLAIM_NOTIFICATION_PERSON]
               branch:
@@ -183,7 +192,7 @@ components:
                     - code
                     - fields
                   properties:
-                    code: 
+                    code:
                       description: Código do grupo e ramo de referência dos campos dinâmicos.
                       type: string
                       maxLength: 4
@@ -233,6 +242,7 @@ components:
         - fieldId
         - name
         - type
+        - category
       properties:
         fieldId:
           type: string
@@ -253,6 +263,17 @@ components:
             NUMBER,
             INTEGER,
             ARRAY]
+        category:
+          description: Categoria do campo
+          type: string
+          enum: [ customerIdentication,
+                  customerQualification,
+                  customerComplimentaryInfo,
+                  businessIdentification,
+                  businessQualification,
+                  businessComplimentaryInfo,
+                  generalQuoteInfo]
+          example: customerIdentification
         format:
           description: Formato do campo referente ao seu tipo.
           type: string
@@ -438,7 +459,7 @@ components:
               description: Descrição do erro e ou problema encontrado com o consumo do recurso de campos dinâmicos. Só deve ser implementado em caso do status ser FAILED.
               maxLength: 300
               example: Descrição do erro.
-    
+
     xCallbackInteractionId:
       type: string
       pattern: '^[a-zA-Z0-9][a-zA-Z0-9\-]{0,99}$'
@@ -533,15 +554,15 @@ components:
           tokenUrl: "https://authserver.example/token"
           scopes:
             dynamic-fields: Escopo necessário para acesso à API Dyncamic Fields.
-            
+
   responses:
     OKResponseDynamicFieldsList:
       description: "Consulta de dynamic fields list feita com sucesso"
       headers:
         x-fapi-interaction-id:
           description: |
-            Um UID [RFC4122](https://tools.ietf.org/html/rfc4122) usado como um ID de correlação.  
-            Se fornecido, o transmissor deve "reproduzir" esse valor no cabeçalho de resposta.          
+            Um UID [RFC4122](https://tools.ietf.org/html/rfc4122) usado como um ID de correlação.
+            Se fornecido, o transmissor deve "reproduzir" esse valor no cabeçalho de resposta.
           schema:
             type: string
             pattern: '^[a-zA-Z0-9][a-zA-Z0-9\-]{0,99}$'
@@ -557,8 +578,8 @@ components:
       headers:
         x-fapi-interaction-id:
           description: |
-            Um UID [RFC4122](https://tools.ietf.org/html/rfc4122) usado como um ID de correlação.  
-            Se fornecido, o transmissor deve "reproduzir" esse valor no cabeçalho de resposta.          
+            Um UID [RFC4122](https://tools.ietf.org/html/rfc4122) usado como um ID de correlação.
+            Se fornecido, o transmissor deve "reproduzir" esse valor no cabeçalho de resposta.
           schema:
             type: string
             pattern: '^[a-zA-Z0-9][a-zA-Z0-9\-]{0,99}$'
@@ -626,7 +647,7 @@ components:
     202Callback:
       description: Requisição aceita para processamento posterior.
       headers:
-        x-callback-interaction-id:      
+        x-callback-interaction-id:
           description: Identificador único para cada tentativa de notificação realizada. O identificador deverá seguir o padrão UID [RFC4122](https://tools.ietf.org/html/rfc4122).
           schema:
             $ref: '#/components/schemas/xCallbackInteractionId'
