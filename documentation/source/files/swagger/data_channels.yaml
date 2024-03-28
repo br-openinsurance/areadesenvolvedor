@@ -53,7 +53,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ResponseBranchesList'     
+                $ref: '#/components/schemas/ResponseBranchesList'
   /electronic-channels:
     get:
       tags:
@@ -96,7 +96,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ResponseElectronicChannelsList'  
+                $ref: '#/components/schemas/ResponseElectronicChannelsList'
   /phone-channels:
     get:
       tags:
@@ -246,8 +246,8 @@ components:
                       standards:
                       - weekday: DOMINGO
                         openingTime: 10:00:57Z
-                        closingTime: 16:00:57Z               
-                  
+                        closingTime: 16:00:57Z
+
         links:
           self: 'https://api.organizacao.com.br/open-insurance/channels/v1/electronic-channels'
           first: 'https://api.organizacao.com.br/open-insurance/channels/v1/electronic-channels'
@@ -388,7 +388,7 @@ components:
           maxLength: 3
           example: BRA
         geographicCoordinates:
-          $ref: '#/components/schemas/BranchesGeographicCoordinates'       
+          $ref: '#/components/schemas/BranchesGeographicCoordinates'
 
     BranchIdentification:
       type: object
@@ -415,15 +415,21 @@ components:
           maxLength: 100
           pattern: \w*\W*
           description: Nome da dependência
-          example: Marília      
+          example: Marília
 
     BranchAvailability:
       type: object
+      required:
+        - standards
       properties:
         standards:
           type: array
           description: Lista disponibilidade padrão da depêndencia próprias por dias da semana
           items:
+            required:
+              - weekday
+              - openingTime
+              - closingTime
             properties:
               weekday:
                 type: string
@@ -449,26 +455,26 @@ components:
                 maxLength: 13
                 pattern: ^(?:[01]\d|2[0123]):(?:[012345]\d):(?:[012345]\d)Z$|^NA$
                 example: 16:00:57Z
-            required:
-              - weekday
-              - openingTime
-              - closingTime
           minItems: 1
           maxItems: 7
         isPublicAccessAllowed:
           type: boolean
           description: Indica se a instalação da Dependência tem acesso restrito a clientes.
           example: true
-      required:
-        - standards
 
     EletronicChannelsAvailability:
       type: object
+      required:
+        - standards
       properties:
         standards:
           type: array
           description: Lista disponibilidade padrão da depêndencia próprias por dias da semana
           items:
+            required:
+              - weekday
+              - openingTime
+              - closingTime
             properties:
               weekday:
                 type: string
@@ -494,22 +500,22 @@ components:
                 maxLength: 13
                 pattern: ^(?:[01]\d|2[0123]):(?:[012345]\d):(?:[012345]\d)Z$|^NA$
                 example: 16:00:57Z
-            required:
-              - weekday
-              - openingTime
-              - closingTime
           minItems: 1
           maxItems: 7
-      required:
-        - standards
 
     PhoneChannelsAvailability:
       type: object
+      required:
+        - standards
       properties:
         standards:
           type: array
           description: Lista disponibilidade padrão da depêndencia próprias por dias da semana
           items:
+            required:
+              - weekday
+              - openingTime
+              - closingTime
             properties:
               weekday:
                 type: string
@@ -535,17 +541,14 @@ components:
                 maxLength: 13
                 pattern: ^(?:[01]\d|2[0123]):(?:[012345]\d):(?:[012345]\d)Z$|^NA$
                 example: 16:00:57Z
-            required:
-              - weekday
-              - openingTime
-              - closingTime
           minItems: 1
           maxItems: 7
-      required:
-        - standards
 
     BranchService:
       type: object
+      required:
+      - code
+      - name
       properties:
         name:
           type: string
@@ -595,9 +598,6 @@ components:
             - "19"
           description: Código dos Serviços efetivamente prestados pelo Canal de Atendimento
           example: "05"
-      required:
-      - code
-      - name
 
     ElectronicChannels:
       type: object
@@ -788,7 +788,7 @@ components:
                       standards:
                       - weekday: DOMINGO
                         openingTime: 10:00:57Z
-                        closingTime: 16:00:57Z 
+                        closingTime: 16:00:57Z
                   - identification:
                       type: 'SAC'
                       phones:
@@ -812,7 +812,7 @@ components:
                       standards:
                       - weekday: DOMINGO
                         openingTime: 10:00:57Z
-                        closingTime: 16:00:57Z 
+                        closingTime: 16:00:57Z
                   - identification:
                       type: 'OUVIDORIA'
                       phones:
@@ -834,7 +834,7 @@ components:
                       standards:
                       - weekday: DOMINGO
                         openingTime: 10:00:57Z
-                        closingTime: 16:00:57Z 
+                        closingTime: 16:00:57Z
         links:
           self: 'https://api.organizacao.com.br/open-insurance/channels/v1/phone-channels'
           first: 'https://api.organizacao.com.br/open-insurance/channels/v1/phone-channels'
@@ -964,7 +964,7 @@ components:
           maxLength: 13
           pattern: ^([0-9]{8,11})$|^NA$
           example: "08007787788"
-          description: "Número de telefone de acesso ao canal."      
+          description: "Número de telefone de acesso ao canal."
 
     #### PhoneChannelsServices ####
     PhoneChannelsServices:
@@ -1019,7 +1019,7 @@ components:
             - "17"
             - "18"
             - "19"
-          description: "Código dos Serviços efetivamente prestados pelo Canal de Atendimento"    
+          description: "Código dos Serviços efetivamente prestados pelo Canal de Atendimento"
 
     BranchesGeographicCoordinates:
       type: object
@@ -1067,6 +1067,9 @@ components:
 
     Meta:
       type: object
+      required:
+        - totalRecords
+        - totalPages
       properties:
         totalRecords:
           type: integer
@@ -1076,9 +1079,6 @@ components:
           type: integer
           description: Total de páginas para os registros encontrados
           example: 1
-      required:
-        - totalRecords
-        - totalPages
 
     ResponseError:
       type: object
@@ -1116,13 +1116,13 @@ components:
                 description: 'Data e hora da consulta, conforme especificação RFC-3339, formato UTC.'
                 type: string
                 pattern: '[\w\W\s]*'
-                maxLength: 2048  
+                maxLength: 2048
                 format: date-time
                 example: '2021-08-20T08:30:00Z'
             additionalProperties: false
         meta:
           $ref: '#/components/schemas/Meta'
-      additionalProperties: false   
+      additionalProperties: false
 
   parameters:
     page:
