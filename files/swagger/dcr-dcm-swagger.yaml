@@ -4,10 +4,10 @@ info:
   description: Especificação dos serviços de registro dinâmico de cliente (DCR) e manutenção dinâmica de cliente (DCM), baseados nas especificações a seguir<br/> <ul><li>RFC 7591 - https://datatracker.ietf.org/doc/html/rfc7591</li><li>RFC 7592 - https://datatracker.ietf.org/doc/html/rfc7592<li>OpenID Connect Dynamic Client Registration -  https://openid.net/specs/openid-connect-registration-1_0.html</li></ul>
   contact:
     url: 'https://www.gov.br/susep/'
-  version: 1.1.0
+  version: 1.2.0
 externalDocs:
   description: Documentação do processo de DCR / DCM no portal do desenvolvedor do Open Insurance Brasil
-  url: https://br-openinsurance.github.io/areadesenvolvedor/#dynamic-client-registration-dcr
+  url: https://opinbrasil.atlassian.net/wiki/spaces/RDD/pages/5472344/DCR
 tags:
   - name: DCR
     description: Operações de registro dinâmico de cliente (DCR)
@@ -437,6 +437,7 @@ components:
             - invalid_client_metadata
             - invalid_software_statement
             - unapproved_software_statement
+            - invalid_webhook_uris
           description: códigos de erro de registro de cliente, usados como descrito na seção 3.2.2 da RFC 7591
         error_description:
           type: string
@@ -586,7 +587,21 @@ components:
           items:
             type: string
             example: "https://amazinginsurance.com.br/apis/callback"
-
+        webhook_uris:
+          description: Array com as URLs a serem utilizadas como endereço base na composição utilizada para envio de webhooks de notificação.
+          type: array
+          items:
+            type: string
+            maxLength: 255
+            example: https://amazinginsurance.com.br/webhook
+  securitySchemes:
+    OAuth2Security:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: 'https://amazinginsurance.com.br/token'
+          scopes:
+            openid: OpenID Connect
     DCMSecurity:
       type: http
       description: Deve informar o registration_access_token obtido durante o processo de registro do cliente (DCR) para autorizar a operação
