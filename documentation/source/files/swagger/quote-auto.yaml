@@ -32,10 +32,13 @@ info:
     ### `/request/{consentId}`
       - permissions:   
         - PATCH: **QUOTE_AUTO_UPDATE**
-     
+
+    ## Válidações Semanticas - Entidade não processável - 422
+      - 1 - `Idempotência:` Valida se há divergência entre chave de idempotência e informações enviadas (ERRO_IDEMPOTENCIA);
+      - 2 - `Não Informado:` Valida itens não explicitamente informados pelo servidor - (NAO_INFORMADO).     
 
 
-  version: 1.7.0
+  version: 1.8.0
   contact:
     name: Governança do Open Insurance Brasil
     email: gt-interfaces@openinsurancebr.org
@@ -64,6 +67,7 @@ paths:
         - $ref: '#/components/parameters/xFapiCustomerIpAddress'
         - $ref: '#/components/parameters/xFapiInteractionId'
         - $ref: '#/components/parameters/xCustomerUserAgent'
+        - $ref: '#/components/parameters/xIdempotencyKey'
       requestBody:
         content:
           application/json:
@@ -85,7 +89,7 @@ paths:
         '406':
           $ref: '#/components/responses/NotAcceptable'
         '422':
-          $ref: '#/components/responses/UnprocessableEntity'
+          $ref: '#/components/responses/UnprocessableEntityQuote'
         '429':
           $ref: '#/components/responses/TooManyRequests'
         '500':
@@ -164,6 +168,7 @@ paths:
         - $ref: '#/components/parameters/xFapiCustomerIpAddress'
         - $ref: '#/components/parameters/xFapiInteractionId'
         - $ref: '#/components/parameters/xCustomerUserAgent'
+        - $ref: '#/components/parameters/xIdempotencyKey'
       requestBody:
         content:
           application/json:
@@ -185,7 +190,7 @@ paths:
         '406':
           $ref: '#/components/responses/NotAcceptable'
         '422':
-          $ref: '#/components/responses/UnprocessableEntity'
+          $ref: '#/components/responses/UnprocessableEntityQuote'
         '429':
           $ref: '#/components/responses/TooManyRequests'
         '500':
@@ -4620,11 +4625,50 @@ components:
         meta:
           $ref: '#/components/schemas/Meta'
       additionalProperties: false
+   
+    422ResponseErrorCreateQuote:
+        type: object
+        required:
+          - errors
+        properties:
+          errors:
+            type: object
+            minItems: 1
+            required:
+              - code
+              - title
+              - detail
+            properties:
+              code:
+                type: string
+                enum:
+                  - ERRO_IDEMPOTENCIA
+                  - NAO_INFORMADO
+                example: 'ERRO_IDEMPOTENCIA'
+                description: 'Código do erro 422 de Entidade não processada.'
+              title:
+                type: string
+                maxLength: 255
+                pattern: '[\w\W\s*]'
+                example: 'Tentativa de alteração de requisição já processada'
+                description: |
+                  - ERRO_ IDEMPOTENCIA: Tentativa de alteração de requisição já processada
+                  - NÃO_INFORMADO: Não informada pelo servidor
+              detail:
+                type: string
+                maxLength: 2048
+                pattern: '[\w\W\s*]'
+                example: 'Tentativa de alteração de requisição já processada'
+                description: |
+                  - ERRO_ IDEMPOTENCIA: Tentativa de alteração de requisição já processada
+                  - NÃO_INFORMADO: Não informada pelo servidor 
+
     XFapiInteractionId:
       type: string
       pattern: '^[a-zA-Z0-9][a-zA-Z0-9\-]{0,99}$'
       maxLength: 100
       description: 'Um UID [RFC4122](https://tools.ietf.org/html/rfc4122) usado como um ID de correlação. Se fornecido, o transmissor deve "reproduzir" esse valor no cabeçalho de resposta.'
+
     QuoteRequestAutoLead:
       type: object
       required:
@@ -4920,6 +4964,19 @@ components:
         pattern: '^[a-zA-Z0-9][a-zA-Z0-9\-]{0,99}$'
         minLength: 1
         maxLength: 100
+    
+    xIdempotencyKey:
+      name: x-idempotency-key
+      in: header
+      description: | 
+        Cabeçalho HTTP personalizado. Identificador de solicitação 
+        exclusivo para suportar a idempotência.
+      required: true
+      schema:
+        type: string
+        minLength: 1
+        maxLength: 40
+        pattern: ^(?!\s)(.*)(\S)$
   securitySchemes:
     OpenId:
       type: openIdConnect
@@ -4988,6 +5045,14 @@ components:
         application/json; charset=utf-8:
           schema:
             $ref: '#/components/schemas/ResponseError'
+    
+    UnprocessableEntityQuote:
+      description: Seguir as orientações presentes na descrição deste endpoint
+      content:
+        application/json; charset=utf-8:
+          schema:
+            $ref: '#/components/schemas/422ResponseErrorCreateQuote'
+
     CreatedResponseQuoteRequestAutoLead:
       description: Dados de AutoLead criados com sucesso
       headers:
