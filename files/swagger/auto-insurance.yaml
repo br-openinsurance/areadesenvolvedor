@@ -3,7 +3,7 @@ info:
   title: APIs Open Data do Open Insurance Brasil
   description: 
     API de informações de Seguro de Automóveis. Os recursos que podem ser consumidos pelos participantes conforme a regra 3.2.2 do manual de escopo de dados.
-  version: 1.4.0
+  version: 1.5.0
   contact:
     url: 'https://www.gov.br/susep/'
 servers:
@@ -154,7 +154,7 @@ components:
             $ref: '#/components/schemas/AutoInsuranceCarModel'
           vehicleOvernightZipCode:
             type: string
-            description: CEP do pernoite do veiculo
+            description: CEP de pernoite do veiculo
             maxLength: 8
             example: '01311000'
           additional:
@@ -174,7 +174,7 @@ components:
           termsAndConditions:
             $ref: '#/components/schemas/AutoInsuranceTermsAndConditions'
           terms:
-            type: array 
+            type: string 
             description: Prazo.
             items:
                 type: string
@@ -191,18 +191,91 @@ components:
             items:
                 type: string
                 example: REDE_REFERENCIADA
-                enum: [REDE_REFERENCIADA , LIVRE_ESCOLHA , REDE_REFERENCIADA_LIVRE_ESCOLHA]  
+                enum: [REDE_REFERENCIADA , LIVRE_ESCOLHA , REDE_REFERENCIADA_E_LIVRE_ESCOLHA]  
           premiumPayment:
-            $ref: '#/components/schemas/AutoInsurancePremiumPayment'      
+            $ref: '#/components/schemas/AutoInsurancePremiumPayment'    
+          premiumRates:
+            $ref: '#/components/schemas/structurePremiumRates'  
           minimumRequirements: 
             $ref: '#/components/schemas/AutoInsuranceMinimumRequirements'      
           targetAudiences:
-            type: array 
+            type: string 
             description: Público-alvo.
             items:
               type: string         
               example: PESSOA_NATURAL
               enum: [PESSOA_NATURAL, PESSOA_JURIDICA, AMBAS] 
+    
+    structurePremiumRates:
+      type: object
+      description: |
+          - O campo “Taxa de Prêmio” ou “Taxa de Contribuição” é apenas para referência sobre o valor praticado no mercado para
+          determinado produto e faixas de risco, servindo apenas como estimativa, e não representa o valor que será aplicado na cotação
+          do caso específico do cliente. O preço do seguro leva em consideração diversos fatores e variáveis, e o valor ofertado na
+          cotação/proposta da Seguradora/EAPC é a que prevalecerá. Desse modo, este valor NÃO substitui uma cotação e NÃO
+          garante a aceitação do risco do cliente.
+
+          - Para os produtos cujo LMI, LMG ou Capital Segurado transpassem da faixa máxima apresentada é necessário contatar
+          diretamente o seu intermediador (corretor) ou a sua seguradora para que seja realizada uma cotação adequada e uma estimativa
+          de valor correta seja transmitida.
+          - Esta informação não está sendo reportada para produtos que não são comercializados de forma individual, ou seja, não são
+          disponibilizadas as informações de seguros coletivos (Exceto Habitacional e Transportes) ou de produtos acessórios. Para
+          maiores detalhes de cotação é necessário entrar em contato comsua seguradora ou seu intermediador (corretor).
+          
+          - A metodologia utilizada para o levantamento destas informações é a que consta no Manual de Escopo de Dados e Serviços do
+          Open Insurance.
+
+          - Pode haver alterações entre produtos do mesmo ramo dependendo da seguradora, isso porque cada empresa possui
+          um grupo focal de clientes e um estilo operacional. Para mais detalhes entre em contato com a seguradora ou o intermediador
+          (corretor).
+
+          - As informações de Taxa de prêmio e Taxa de Contribuição são destinadas exclusivamente para o consumo do usuário final para
+          que ele tenha uma noção de quanto custa um seguro, não devem ser utilizadas para fins estatísticos.
+
+          - Os valores reportados no campo Taxa Prêmio e Taxa de Contribuição são valores que refletem um conjunto de
+          características de um seguro específico de cada companhia, logo,devem ser analisados em conjunto com as demais informações
+          dispostas na Fase I, não sendo factível comparar somente este campo entre Seguradoras.
+
+          - Para os produtos e modalidades que não estão com as estimativas de valores preenchidas neste campo, é necessário
+          que o cliente entre em contato com a seguradora ou intermediário para realizar a cotação e saber o valor de seu seguro.
+
+          - Essa informação considera somente para veículos leves, exceto motos e caminhões
+
+      required:
+        - range_1
+        - range_2
+        - range_3
+        - range_4
+      properties:
+        range_1:
+          $ref: '#/components/schemas/rangePremiumRates'
+        range_2:
+          $ref: '#/components/schemas/rangePremiumRates'
+        range_3:
+          $ref: '#/components/schemas/rangePremiumRates'
+        range_4:
+          $ref: '#/components/schemas/rangePremiumRates'
+          
+    rangePremiumRates:
+      type: object
+      required: 
+        - minimum
+        - maximum
+        - median
+      properties: 
+        minimum:
+          $ref: '#/components/schemas/amountRangePremiumRates'
+        maximum:
+          $ref: '#/components/schemas/amountRangePremiumRates'
+        median:
+          $ref: '#/components/schemas/amountRangePremiumRates'
+
+    amountRangePremiumRates: 
+      type: string
+      pattern: ^\d{1,16}\.\d{2}$
+      example: '10000.00'
+
+            
 
     AutoInsuranceCoverage:
       type: array
@@ -217,7 +290,7 @@ components:
         properties:
             coverage:
               type: string
-              description: Conjunto de riscos elencados na apólice.
+              description: Listagem de coberturas incluídas no produto que deve observar a relação discriminada de coberturas, conforme Tabela 51.
               example: VIDROS
               enum: [CASCO_COMPREENSIVA_COLISAO_INCENDIO_ROUBO_FURTO, 
                       CASCO_INCENDIO_ROUBO_FURTO,
@@ -262,38 +335,56 @@ components:
       properties:
         type:
           type: string
+          example: FINANCEIRO
           enum: [FINANCEIRO, PERCENTUAL]
         amount:
           $ref: '#/components/schemas/AutoInsuranceCoverageAttributesDetails'
         index:
           type: string
           description: Indexador. Condicional, vinculado ao preenchimento do campo Tipo com Percentual
+          example: LMG
           enum: [LMG, FINANCEIRO_COBERTURA, OUTRO]
         maxIndexAmount:
           $ref: '#/components/schemas/AutoInsuranceCoverageAttributesDetails'
 
     AutoInsuranceCoverageAttributesDetailsUnit:
       type: object
+      description: Obrigatório caso seja informando no campo "unitType" o valor MONETARIO.
       required:
         - code
         - description
       properties:
-        code: 
+        code:
           type: string
-        description: 
+          enum: [د.إ,Af, L, Դ,Kz,$,ƒ,ман,КМ,৳,лв,ب.د,₣,Bs.,R$,P,Br,¥,₡,Kč,kr,د.ج,£,Nfk,N/A,€,ლ,₵,D,Q,Kn,G,Ft,Rp,₪,₹, ع.د,﷼,Sh,៛,₩,د.ك,〒,₭,ل.ل,Rs,ل.د,.م.,ден,K,₮,UM,₨,ރ,MK,RM,MTn,₦,C$,ر.ع.,B/.,S/.,₱,zł,₲,ر.ق,din,р.,ر.س,Le,Db,ل.س,฿,ЅМ,m,د.ت,T$,₤,₴,Bs F,₫,Vt,T,R,ZK]
+          example: R$
+        description:
           type: string
+          example: BRL
+          enum: [ AFN,AFA,ALL,ALK,DZD,USD,EUR,ADP,ESP,FRF,AOA,AOK,AON,AOR,XCD,ARS,ARA,ARP,ARY,AMD,RUR,AWG,AUD,ATS,AZN,AYM,AZM,BSD,BHD,BDT,BBD,BYN,BYB,BYR,BEC,BEF,BEL,BZD,XOF,BMD,INR,BTN,BOP,BOB,BOV,BAM,BAD,BWP,NOK,BRL,BRB,BRC,BRE,BRN,BRR,BND,BGN,BGJ,BGK,BGL,BUK,BIF,CVE,KHR,XAF,CAD,KYD,CLP,CLF,CNY,COP,COU,KMF,CDF,NZD,CRC,HRK,HRD,CUP,CUC,ANG,CYP,CZK,CSJ,CSK,DKK,DJF,DOP,ECS,ECV,EGP,SVC,GQE,ERN,EEK,SZL,ETB,XEU,FKP,FJD,FIM,XPF,GMD,GEL,GEK,DDM,DEM,GHS,GHC,GHP,GIP,GRD,GTQ,GBP,GNF,GNE,GNS,GWE,GWP,GYD,HTG,ITL,HNL,HKD,HUF,ISK,ISJ,IDR,XDR,IRR,IQD,IEP,ILS,ILP,ILR,JMD,JPY,JOD,KZT,KES,KPW,KRW,KWD,KGS,LAJ,LAK,LVL,LVR,LBP,LSL,ZAR,LSM,ZAL,LRD,LYD,CHF,LTL,LTT,LUC,LUF,LUL,MOP,MGA,MGF,MWK,MYR,MVR,MVQ,MLF,MTL,MTP,MRU,MRO,MUR,XUA,MXN,MXV,MXP,MDL,MNT,MAD,MZN,MZE,MZM,MMK,NAD,NPR,NLG,NIO,NIC,NGN,MKD,OMR,PKR,PAB,PGK,PYG,PEN,PEH,PEI,PES,PHP,PLN,PLZ,PTE,QAR,RON,ROK,ROL,RUB,RWF,SHP,WST,STN,STD,SAR,RSD,CSD,SCR,SLL,SGD,XSU,SKK,SIT,SBD,SOS,SSP,SDG,RHD,ESA,ESB,LKR,SDD,SDP,SRD,SRG,SEK,CHE,CHW,CHC,SYP,TWD,TJS,TJR,TZS,THB,TPE,TOP,TTD,TND,TRY,TRL,TMT,TMM,UGX,UGS,UGW,UAH,UAK,SUR,AED,USS,USN,UYU,UYI,UYW,UYN,UYP,UZS,VUV,VEB,VEF,VES,VND,VNC,YER,YDD,YUD,YUM,YUN,ZRN,ZRZ,ZMW,ZMK,ZWL,ZWC,ZWD,ZWN,ZWR,XBA,XFO,XBB,XRE,XBC,XBD,XFU,XTS,XXX,XAU,XPD,XPT,XAG ]          
 
     AutoInsuranceCoverageAttributesDetails:
-        type: object
-        description: Listagem percentual de franquia e/ou percentual de participação obrigatória do segurado estabelecida pela sociedade para cada tipo de cobertura de produto.
-        required:
-          - amount
-          - unit
-        properties:
-          amount:
-            type: number
-          unit:
-            $ref: '#/components/schemas/AutoInsuranceCoverageAttributesDetailsUnit'
+      type: object
+      required:
+        - amount
+        - unitType
+      properties:
+        amount:
+          type: string
+          pattern: '^(^(100\.\00|\d{1,2}\.\d{2})$|^(\d{1,15}\.\d{2})$)$'
+          description: |
+              Valor.
+              Exemplos de preenchimento do campo:
+ 
+              PORCENTAGEM: 90.85
+                             
+              MONETARIO: 62500.67
+        unitType:
+          description: "Tipo da unidade referente ao valor inserido no campo Amount"
+          type: string
+          enum: [PORCENTAGEM, MONETARIO]
+        unit:
+          $ref: '#/components/schemas/AutoInsuranceCoverageAttributesDetailsUnit'
 
     AutoInsuranceContractBase:
       type: array
@@ -314,7 +405,7 @@ components:
               Quando a base de contratação for “valor de mercado” deve ser informado o percentual mínimo e máximo
               da referência da tabela comercializada.
             example: VALOR_DETERMINADO
-            enum: [VALOR_DETERMINADO, VALOR_MERCADO]
+            enum: [VALOR_DETERMINADO, VALOR_MERCADO, VALOR_DETERMINADO_E_VALOR_MERCADO]
           contractBaseMinValue:
             $ref: '#/components/schemas/AutoInsuranceCoverageAttributesDetails'
           contractBaseMaxValue:
@@ -352,7 +443,7 @@ components:
         fullIndemnityPercentage:
           $ref: '#/components/schemas/AutoInsuranceCoverageAttributesDetails'
         deductibleType:
-          type: array
+          type: string
           description: Listagem de tipo de franquia para cada tipo de cobertura do produto.
           items:
             type: string
@@ -369,11 +460,12 @@ components:
           $ref: '#/components/schemas/AutoInsuranceCoverageAttributesDetails'
         mandatoryParticipation:
           type: string
-          description: Participação Obrigatória do Segurado (em valor)
+          description: |
+            Listagem de percentual de Participação Obrigatória do Segurado (POS) estabelecida pela sociedade para cada tipo de cobertura do produto. A POS deve ser aplicada apenas às coberturas elegíveis.
           maxLength: 300
           example: '80.00'
         geographicScopeCoverage:
-          type: array
+          type: string
           description: Listagem de abrangência geográfica do produto para fins de cada cobertura.
           items:
             type: string
@@ -391,7 +483,7 @@ components:
         - contractingMinRequirement
       properties:
         contractingType:
-          type: array
+          type: string
           description: Informações sobre todos os requisitos mínimos para contratação.
           items:
             type: string
@@ -457,7 +549,7 @@ components:
         - chargeTypeSignaling
       properties:
         assistanceServicesPackage:
-            type: array
+            type: string
             description: Pacotes de Assistência - Agrupamento.
             items:
                 type: string
@@ -513,9 +605,10 @@ components:
               maxLength: 80
               example: KA 
             year:
-              type: number
+              type: string
               description: Ano de fabricação.
-              example: 2018
+              pattern: '^\d{4}$'
+              example: '2018'
             zeroKM:
               type: boolean
               description: Identifica se o veículo é zero kilômetro
@@ -603,8 +696,7 @@ components:
               requestDateTime:
                 description: 'Data e hora da consulta, conforme especificação RFC-3339, formato UTC.'
                 type: string
-                pattern: '[\w\W\s]*'
-                maxLength: 2048  
+                pattern: '^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])T(?:[01]\d|2[0123]):(?:[012345]\d):(?:[012345]\d)Z$'
                 format: date-time
                 example: '2021-08-20T08:30:00Z'
             additionalProperties: false

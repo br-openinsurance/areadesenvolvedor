@@ -3,7 +3,7 @@ info:
   title: APIs Open Data do Open Insurance Brasil
   description:
     API de informações de Título de Capitaliazação.
-  version: 1.3.0
+  version: 1.4.0
   contact:
     url: 'https://www.gov.br/susep/'
 servers:
@@ -97,8 +97,7 @@ components:
         requestTime:
           description: 'Data e hora da consulta, conforme especificação RFC-3339, formato UTC.'
           type: string
-          pattern: '[\w\W\s]*'
-          maxLength: 2048
+          pattern: '^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])T(?:[01]\d|2[0123]):(?:[012345]\d):(?:[012345]\d)Z$'
           format: date-time
           example: '2021-08-20T08:30:00Z'
         data:
@@ -218,7 +217,7 @@ components:
             $ref: '#/components/schemas/CapitalizationTitleMinimumRequirements'
           targetAudiences:
             description: Público Alvo
-            type: array
+            type: string
             items:
               type: string
               example: PESSOA_NATURAL
@@ -258,17 +257,17 @@ components:
             capitalizationQuota:
               type: string
               description: Percentual da contribuição destinado à constituição de capital referente ao direito de resgate.
-              pattern: ^[0-1]\.\d{6}$
+              pattern: ^1\.0{1,9}$|^0\.\d{1,6}$
               example: '0.000002'
             raffleQuota:
               type: string
               description: Percentual da contribuição designado a custear os sorteios, se previstos no plano
-              pattern: ^[0-1]\.\d{6}$
+              pattern: ^1\.0{1,9}$|^0\.\d{1,6}$
               example: '0.000002'
             chargingQuota:
               type: string
               description: Percentual da contribuição destinado aos custos de despesas com corretagem, colocação e administração do título de capitalização, emissão, divulgação, lucro da sociedade de capitalização e eventuais despesas relavas ao custeio da contemplação obrigatória e da distribuição de bônus.
-              pattern: ^[0-1]\.\d{6}$
+              pattern: ^1\.0{1,9}$|^0\.\d{1,6}$
               example: '0.000002'
 
     CapitalizationTitleValidity:
@@ -327,12 +326,12 @@ components:
                   type: integer
                   description: Número de parcela.
                 percentage:
-                  type: number
+                  type: string
                   description: Percentual da quota
           redemptionPercentageEndTerm:
             description: Percentual mínimo da soma das contribuições efetuadas que poderá ser resgatado ao final da vigência, tendo como condição os pagamentos das parcelas nos respectivos vencimentos.
             type: string
-            pattern: ^\d{1}\.\d{6}$
+            pattern: ^1\.0{1,9}$|^0\.\d{1,6}$
             example: '0.000002'
           gracePeriodRedemption:
             description: Intervalo de tempo mínimo entre contratação e resgate do direito, em meses.
@@ -344,20 +343,20 @@ components:
       type: object
       properties:
         minValue:
-          type: number
+          type: string
           description: Valor Mínimo
-          example: 500
+          example: '500'
         maxValue:
-          type: number
+          type: string
           description: Valor Máximo
-          example: 5000
+          example: '5000'
         frequency:
           type: string
           description: Pagamento mensal, pagamento único ou periódico.
           example: MENSAL
           enum: [MENSAL, UNICO, PERIODICO]
         value:
-          type: number
+          type: string
           description: valor
 
     CapitalizationTitleLatePayment:
@@ -389,8 +388,8 @@ components:
           type: array
           items:
             type: string
-            example: CARTAO_CREDITO
-            enum: [CARTAO_CREDITO, CARTAO_DEBITO, DEBITO_CONTA_CORRENTE, DEBITO_CONTA_POUPANCA, BOLETO_BANCARIO, PIX, CONSIGNACAO_FOLHA_PAGAMENTO, PAGAMENTO_COM_PONTOS, OUTROS]
+            example: CARTAO_DE_CREDITO
+            enum: [CARTAO_DE_CREDITO, CARTAO_DE_DEBITO, DEBITO_EM_CONTA_CORRENTE, DEBITO_EM_CONTA_POUPANCA, BOLETO_BANCARIO, PIX, CONSIGNACAO_EM_FOLHA_PAGAMENTO, PAGAMENTO_COM_PONTOS, OUTROS]
         paymentDetail:
           description: Descrição do Meio de Pagamento utilizados para pagamento da contribuição quando for informada a opção OUTROS
           type: string
@@ -404,7 +403,7 @@ components:
             example: IPCA
             enum: [IPCA, IGPM, INPC, TR, INDICE_REMUNERACAO_DEPOSITOS_POUPANCA, OUTROS]
         updateIndexOthers:
-            type: array
+            type: string
             description: Preenchida pelas participantes quando houver ‘Outros’ no campo.
             items:
                 type: string
@@ -418,7 +417,7 @@ components:
           redemption:
             description: Valor percentual (%) de resgate final permitido. Exemplo 1.000000 igual a 100 por cento
             type: string
-            pattern: ^\d{1}\.\d{6}$
+            pattern: ^1\.0{1,9}$|^0\.\d{1,6}$
             example: '0.000002'
 
     CapitalizationTitleRaffle:
@@ -442,7 +441,7 @@ components:
             example: 10000
           timeInterval:
             description: Intervalo de tempo regular previsto entre os sorteios.
-            type: array
+            type: string
             items:
               type: string
               example: QUINZENAL
@@ -453,9 +452,9 @@ components:
             maxLength: 100
             example: OUTROS
           raffleValue:
-            type: number
+            type: string
             description: Valor dos sorteios representado por múltiplo do valor de contribuição.
-            example: 5
+            example: '5'
           earlySettlementRaffle:
             type: boolean
             description: Liquidação antecipada em Sorteio. Modelo de sorteio que acarreta, ao título contemplado, o seu resgate total obrigatório (Resolução Normativa 384/20).
@@ -466,13 +465,13 @@ components:
             example: true
           ruleDescription:
             type: string
-            description: Campo aberto para descrição a ser feita por cada participante das regras dos sorteios do produto.
+            description: Campo aberto para descrição a ser feita por cada participante das regras dos sorteios do produto que deverá conter minimamente a periodicidade dos sorteios e se os sorteios são efetuados pela loteria federal ou por meios próprios.
             maxLength: 200
             example: Sorteio às quartas-feiras
           minimumContemplationProbability:
             type: string
             description: Número representativo da probabilidade mínima de contemplação nos sorteios, em porcentagem (%). Exemplo 1.000000 igual a 100 por cento
-            pattern: ^\d{1}\.\d{6}$
+            pattern: ^1\.0{1,9}$|^0\.\d{1,6}$
             example: '0.000002'
 
     CapitalizationTitleAdditionals:
@@ -482,7 +481,7 @@ components:
       properties:
         additionalDetails:
           type: string
-          description: Campo aberto (possibilidade de incluir URL).
+          description: Listagem de adicionais vinculado ao produto. Deve ser padronizada na proposta técnica submetida pela estrutura Inicial de Governança para observância comum por todas as sociedades participantes.
           maxLength: 1024
           example: https://example.com/openinsurance
 
@@ -577,8 +576,7 @@ components:
               requestDateTime:
                 description: 'Data e hora da consulta, conforme especificação RFC-3339, formato UTC.'
                 type: string
-                pattern: '[\w\W\s]*'
-                maxLength: 2048
+                pattern: '^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])T(?:[01]\d|2[0123]):(?:[012345]\d):(?:[012345]\d)Z$'
                 format: date-time
                 example: '2021-08-20T08:30:00Z'
             additionalProperties: false
