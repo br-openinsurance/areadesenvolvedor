@@ -3,7 +3,7 @@ info:
   title: APIs Open Data do Open Insurance Brasil
   description:
     API de informações de dados do produto Intermediarios. Os recursos que podem ser consumidos pelos participantes conforme a regra 3.1.2 do manual de escopo de dados..
-  version: 1.3.0
+  version: 1.4.0
   contact:
     url: 'https://www.gov.br/susep/'    
 servers:
@@ -91,7 +91,7 @@ components:
 
     IntermediaryBrand:
       type: object
-      description: Organizacao controladora do grupo.
+      description: Organização controladora do grupo.
       required:
         - name
         - companies
@@ -249,6 +249,7 @@ components:
             country:
               type: string
               description: Lista de países vide aba 'Lista de países'
+              example: BRASIL
               enum: [ANDORRA,
                     EMIRADOS_ARABES_UNIDOS,
                     AFEGANISTAO,
@@ -514,12 +515,12 @@ components:
           type: string
           description: Informação da Latitude referente a geolocalização informada. Entre -90 e 90. Formato numérico 2 casas antes da vírgula, 11 posições.
           example: '-89.8365180'
-          pattern: ^-?\d{1,3}\.\d{1,10}$
+          pattern: ^-?(90\.0{1,9}|[0-8][0-9]\.\d{1,9})$
         longitude:
           type: string
           description: Informação da Longitude referente a geolocalização informada. Formato numérico 3 casas antes da vírgula, 11 posições. Entre -180 e 180.'
           example: '-179.836519'
-          pattern: ^-?\d{1,3}\.\d{1,10}$
+          pattern: ^-?(180\.0{1,9}|1[0-7]\d{1}\.\d{1,9}|\d{1,2}\.\d{1,9})$
 
     IntermediaryAccess:
       type: object
@@ -548,13 +549,13 @@ components:
           openingTime:
             type: string
             maxLength: 9
-            pattern: ^\d{2}:\d{2}:\d{2}Z$
+            pattern: ^(?:[01]\d|2[0123]):(?:[012345]\d):(?:[012345]\d)Z$|^NA$
             example: 10:00:57Z
             description: Horário de abertura
           closingTime:
             type: string
             maxLength: 9
-            pattern: ^\d{2}:\d{2}:\d{2}Z$
+            pattern: ^(?:[01]\d|2[0123]):(?:[012345]\d):(?:[012345]\d)Z$|^NA$
             example: 16:00:57Z
             description: Horário de encerramento
           weekday:
@@ -580,10 +581,11 @@ components:
             type: string
             maxLength: 13
             example: FIXO
+            enum: [FIXO, MOVEL]
           countryCallingCode:
             description: Número de DDI (Discagem Direta Internacional) para telefone de acesso ao Canal - se houver.
             type: string
-            maxLength: 3
+            maxLength: 4
             example: '55'
           areaCode:
             description: Número de DDD (Discagem Direta à Distância) do telefone do intermediário - se houver. p.ex. '19'
@@ -715,7 +717,7 @@ components:
               requestDateTime:
                 description: 'Data e hora da consulta, conforme especificação RFC-3339, formato UTC.'
                 type: string
-                maxLength: 2048
+                pattern: '^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])T(?:[01]\d|2[0123]):(?:[012345]\d):(?:[012345]\d)Z$'
                 format: date-time
                 example: '2021-08-20T08:30:00Z'
             additionalProperties: false
