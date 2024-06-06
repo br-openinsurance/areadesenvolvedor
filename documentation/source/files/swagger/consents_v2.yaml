@@ -18,6 +18,7 @@ info:
     - A receptora deve enviar, no pedido de criação de consentimento, todas as permissions dos agrupamentos obrigatórios das
       categorias de dados as quais ela deseja consentimento, conforme tabela abaixo:
       (Para a fase 2, RESOURCES_READ é a única permissão obrigatória. Para a fase 3, todas as permissões de uma categoria de dados são obrigatórias)
+    - Durante o fluxo de cotação e contratação, a SPOC pode utilizar a API Consents tanto para gerar o consentimento de Fase 3 para ela mesma, bem como criar esse consentimento junto a outra participante. 
       ```
       |-----------------------------------------------------------------------------------------------------------------------------|
       | Fase 2:                                                                                                                     |
@@ -268,6 +269,8 @@ paths:
         - $ref: '#/components/parameters/xFapiCustomerIpAddress'
         - $ref: '#/components/parameters/xFapiInteractionId'
         - $ref: '#/components/parameters/xCustomerUserAgent'
+        - $ref: "#/components/parameters/x-v"
+        - $ref: "#/components/parameters/x-min-v"
       requestBody:
         content:
           application/json:
@@ -315,6 +318,8 @@ paths:
         - $ref: '#/components/parameters/xFapiCustomerIpAddress'
         - $ref: '#/components/parameters/xFapiInteractionId'
         - $ref: '#/components/parameters/xCustomerUserAgent'
+        - $ref: "#/components/parameters/x-v"
+        - $ref: "#/components/parameters/x-min-v"
       responses:
         '200':
           $ref: '#/components/responses/200ConsentsConsentIdRead'
@@ -354,6 +359,8 @@ paths:
         - $ref: '#/components/parameters/xFapiCustomerIpAddress'
         - $ref: '#/components/parameters/xFapiInteractionId'
         - $ref: '#/components/parameters/xCustomerUserAgent'
+        - $ref: "#/components/parameters/x-v"
+        - $ref: "#/components/parameters/x-min-v"
       responses:
         '204':
           $ref: '#/components/responses/204ConsentsConsentIdDeleted'
@@ -1074,6 +1081,15 @@ components:
               description: Tipo do documento de identificação oficial do titular pessoa jurídica.
               example: CNPJ
               pattern: '^[A-Z]{4}$'
+    XV:
+        type: string
+        description: |
+          Versão do endpoint da API requisitado pelo cliente. O titular dos dados deve 
+          responder com a versão mais alta suportada entre x-min-v e x-v. Se o valor de 
+          x-min-v for igual ou maior que o valor de x-v, o cabeçalho x-min-v deve ser 
+          tratado como ausente. Se todas as versões solicitadas não forem suportadas, 
+          o titular dos dados deve responder com o código de status 406 Not Acceptable.
+  
   parameters:
     consentId:
       name: consentId
@@ -1134,7 +1150,31 @@ components:
         pattern: '^[a-zA-Z0-9][a-zA-Z0-9\-]{0,99}$'
         minLength: 1
         maxLength: 100
-  securitySchemes:
+    x-v:
+      name: x-v
+      in: header
+      description: |
+        Versão do endpoint da API requisitado pelo cliente. O titular dos dados deve 
+        responder com a versão mais alta suportada entre x-min-v e x-v. Se o valor de 
+        x-min-v for igual ou maior que o valor de x-v, o cabeçalho x-min-v deve ser 
+        tratado como ausente. Se todas as versões solicitadas não forem suportadas, 
+        o titular dos dados deve responder com o código de status 406 Not Acceptable.
+      required: false
+      schema:
+        type: string
+      example: '2.1.3'
+    x-min-v:
+      name: x-min-v
+      in: header
+      description: |
+        Versão mínima do endpoint da API requisitado pelo cliente. O detentor dos dados 
+        deve responder com a versão mais alta suportada entre x-min-v e x-v. Se todas as 
+        versões solicitadas não forem suportadas, o titular dos dados deve responder com 
+        um código de status 406 Not Acceptable.
+      required: false
+      schema:
+        type: string
+      example: '2.0.0'
     OAuth2Security:
       type: oauth2
       flows:
@@ -1169,6 +1209,10 @@ components:
             $ref: '#/components/schemas/ResponseError'
     Default:
       description: Erro inesperado.
+      headers:  
+        x-v: 
+          schema:
+            $ref: '#/components/schemas/XV'
       content:
         application/json; charset=utf-8:
           schema:
@@ -1216,6 +1260,9 @@ components:
             minLength: 1
             maxLength: 100
             example: 73cac523-d3ae-2289-b106-330a6218710d
+        x-v: 
+          schema:
+            $ref: '#/components/schemas/XV'
       content:
         application/json:
           schema:
@@ -1233,6 +1280,9 @@ components:
             minLength: 1
             maxLength: 100
             example: 92cac523-d3ae-2289-b106-330a6218710d
+        x-v: 
+          schema:
+            $ref: '#/components/schemas/XV'
       content:
         application/json:
           schema:
@@ -1250,3 +1300,6 @@ components:
             minLength: 1
             maxLength: 100
             example: 85bac523-d3ae-2289-b106-330a6218710d
+        x-v: 
+          schema:
+            $ref: '#/components/schemas/XV'      
