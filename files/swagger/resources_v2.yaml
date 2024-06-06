@@ -22,7 +22,7 @@
       ### `/resources`
         - permissions:
           - GET: **RESOURCES_READ**
-    version: 2.4.0
+    version: 2.5.0
     license:
       name: Apache 2.0
       url: 'https://www.apache.org/licenses/LICENSE-2.0'
@@ -50,6 +50,8 @@
           - $ref: '#/components/parameters/xFapiCustomerIpAddress'
           - $ref: '#/components/parameters/xFapiInteractionId'
           - $ref: '#/components/parameters/xCustomerUserAgent'
+          - $ref: "#/components/parameters/x-v"
+          - $ref: "#/components/parameters/x-min-v"
           - $ref: '#/components/parameters/page'
           - $ref: '#/components/parameters/pageSize'
         responses:
@@ -134,22 +136,6 @@
                     - DAMAGES_AND_PEOPLE_HOUSING
                     - DAMAGES_AND_PEOPLE_PERSON
                     - DAMAGES_AND_PEOPLE_ACCEPTANCE_AND_BRANCHES_ABROAD
-                    - CLAIM_NOTIFICATION
-                    - ENDORSEMENT
-                    - QUOTE_PATRIMONIAL
-                    - QUOTE_ACCEPTANCE_AND_BRANCHES_ABROAD
-                    - QUOTE_AUTO
-                    - QUOTE_FINANCIAL_RISK
-                    - QUOTE_HOUSING
-                    - QUOTE_RESPONSIBILITY
-                    - QUOTE_RURAL
-                    - QUOTE_TRANSPORT
-                    - QUOTE_PERSON
-                    - QUOTE_CAPITALIZATION_TITLE
-                    - CONTRACT_LIFE_PENSION
-                    - CONTRACT_PENSION_PLAN
-                    - PENSION_WITHDRAWAL
-                    - CAPITALIZATION_TITLE_WITHDRAWAL
                   description: |
                     Tipo de recurso (vide Enum):
                     - CUSTOMERS_PERSONAL_IDENTIFICATIONS: Informações de identificação PF
@@ -171,22 +157,6 @@
                     - DAMAGES_AND_PEOPLE_HOUSING: Produtos de Habitacional
                     - DAMAGES_AND_PEOPLE_PERSON: Produtos de Pessoas (Repartição simples)
                     - DAMAGES_AND_PEOPLE_ACCEPTANCE_AND_BRANCHES_ABROAD: Aceitação e Sucursal no exterior
-                    - CLAIM_NOTIFICATION: Solicitação de Aviso de Sinistro
-                    - ENDORSEMENT: Solicitação de Endosso
-                    - QUOTE_PATRIMONIAL: Cotação do Seguro Patrimonial
-                    - QUOTE_ACCEPTANCE_AND_BRANCHES_ABROAD: Cotação do Seguro Aceitação e Sucursal no exterior
-                    - QUOTE_AUTO: Cotação do Seguro Automóvel
-                    - QUOTE_FINANCIAL_RISK: Cotação do Seguro Riscos Financeiros
-                    - QUOTE_HOUSING: Cotação do Seguro Habitacional
-                    - QUOTE_RESPONSIBILITY: Cotação do Seguro Responsabilidade
-                    - QUOTE_RURAL: Cotação do Seguro Rural
-                    - QUOTE_TRANSPORT: Cotação do Seguro Transportes
-                    - QUOTE_PERSON: Cotação do Seguro Pessoas
-                    - QUOTE_CAPITALIZATION_TITLE: Cotação de Títulos de Capitalização
-                    - CONTRACT_LIFE_PENSION: Contratação/Portabilidade de Previdência Sobrevivência
-                    - CONTRACT_PENSION_PLAN: Contratação/Portabilidade de Previdência Risco
-                    - PENSION_WITHDRAWAL: Resgate de Previdência
-                    - CAPITALIZATION_TITLE_WITHDRAWAL: Resgate de Títulos de Capitalização
                   example: CAPITALIZATION_TITLES             
                 status:
                   type: string
@@ -317,6 +287,14 @@
         pattern: '^[a-zA-Z0-9][a-zA-Z0-9\-]{0,99}$'
         maxLength: 100
         description: 'Um UID [RFC4122](https://tools.ietf.org/html/rfc4122) usado como um ID de correlação. Se fornecido, o transmissor deve "reproduzir" esse valor no cabeçalho de resposta.'
+      XV:
+        type: string
+        description: |
+          Versão do endpoint da API requisitado pelo cliente. O titular dos dados deve 
+          responder com a versão mais alta suportada entre x-min-v e x-v. Se o valor de 
+          x-min-v for igual ou maior que o valor de x-v, o cabeçalho x-min-v deve ser 
+          tratado como ausente. Se todas as versões solicitadas não forem suportadas, 
+          o titular dos dados deve responder com o código de status 406 Not Acceptable.
     parameters:
       Authorization:
         name: Authorization
@@ -380,12 +358,37 @@
         name: x-fapi-interaction-id
         in: header
         description: 'Um UID [RFC4122](https://tools.ietf.org/html/rfc4122) usado como um ID de correlação. Se fornecido, o transmissor deve "reproduzir" esse valor no cabeçalho de resposta.'
-        required: false
+        required: true
         schema:
           type: string
           pattern: '^[a-zA-Z0-9][a-zA-Z0-9\-]{0,99}$'
           minLength: 1
           maxLength: 100
+      x-v:
+        name: x-v
+        in: header
+        description: |
+          Versão do endpoint da API requisitado pelo cliente. O titular dos dados deve 
+          responder com a versão mais alta suportada entre x-min-v e x-v. Se o valor de 
+          x-min-v for igual ou maior que o valor de x-v, o cabeçalho x-min-v deve ser 
+          tratado como ausente. Se todas as versões solicitadas não forem suportadas, 
+          o titular dos dados deve responder com o código de status 406 Not Acceptable.
+        required: false
+        schema:
+          type: string
+        example: '2.1.3'
+      x-min-v:
+        name: x-min-v
+        in: header
+        description: |
+          Versão mínima do endpoint da API requisitado pelo cliente. O detentor dos dados 
+          deve responder com a versão mais alta suportada entre x-min-v e x-v. Se todas as 
+          versões solicitadas não forem suportadas, o titular dos dados deve responder com 
+          um código de status 406 Not Acceptable.
+        required: false
+        schema:
+          type: string
+        example: '2.0.0'
     securitySchemes:
       OpenId:
         type: openIdConnect
@@ -406,6 +409,9 @@
           x-fapi-interaction-id:
             schema:
               $ref: '#/components/schemas/XFapiInteractionId'
+          x-v: 
+            schema:
+              $ref: '#/components/schemas/XV'
         content:
           application/json:
             schema:
