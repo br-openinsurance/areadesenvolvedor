@@ -19,6 +19,13 @@ info:
       categorias de dados as quais ela deseja consentimento, conforme tabela abaixo:
       (Para a fase 2, RESOURCES_READ é a única permissão obrigatória. Para a fase 3, todas as permissões de uma categoria de dados são obrigatórias)
     - Durante o fluxo de cotação e contratação, a SPOC pode utilizar a API Consents tanto para gerar o consentimento de Fase 3 para ela mesma, bem como criar esse consentimento junto a outra participante. 
+     
+     ## Válidações Semanticas - Entidade não processável - 422
+      - 1 - `Idempotência:` Valida se há divergência entre chave de idempotência e informações enviadas (ERRO_IDEMPOTENCIA);
+      - 2 - `Não Informado:` Valida itens não explicitamente informados pelo servidor - (NAO_INFORMADO).     
+ 
+     
+     
       ```
       |-----------------------------------------------------------------------------------------------------------------------------|
       | Fase 2:                                                                                                                     |
@@ -271,6 +278,7 @@ paths:
         - $ref: '#/components/parameters/xCustomerUserAgent'
         - $ref: "#/components/parameters/x-v"
         - $ref: "#/components/parameters/x-min-v"
+        - $ref: "#/components/parameters/xIdempotencyKey"
       requestBody:
         content:
           application/json:
@@ -294,7 +302,7 @@ paths:
         '406':
           $ref: '#/components/responses/NotAcceptable'
         '422':
-          $ref: '#/components/responses/UnprocessableEntity'
+          $ref: '#/components/responses/UnprocessableEntityConsents'
         '429':
           $ref: '#/components/responses/TooManyRequests'
         '500':
@@ -1029,6 +1037,43 @@ components:
         meta:
           $ref: '#/components/schemas/Meta'
       additionalProperties: false
+      
+    422ResponseErrorCreateConsents:
+        type: object
+        required:
+          - errors
+        properties:
+          errors:
+            type: object
+            minItems: 1
+            required:
+              - code
+              - title
+              - detail
+            properties:
+              code:
+                type: string
+                enum:
+                  - ERRO_IDEMPOTENCIA
+                  - NAO_INFORMADO
+                example: 'ERRO_IDEMPOTENCIA'
+                description: 'Código do erro 422 de Entidade não processada.'
+              title:
+                type: string
+                maxLength: 255
+                pattern: '[\w\W\s*]'
+                example: 'Tentativa de alteração de requisição já processada'
+                description: |
+                  - ERRO_ IDEMPOTENCIA: Tentativa de alteração de requisição já processada
+                  - NÃO_INFORMADO: Não informada pelo servidor
+              detail:
+                type: string
+                maxLength: 2048
+                pattern: '[\w\W\s*]'
+                example: 'Tentativa de alteração de requisição já processada'
+                description: |
+                  - ERRO_ IDEMPOTENCIA: Tentativa de alteração de requisição já processada
+                  - NÃO_INFORMADO: Não informada pelo servidor 
     LoggedUser:
       type: object
       description: Usuário (pessoa natural) que encontra-se logado na instituição receptora e que iniciará o processo de consentimento para compartilhamento de dados.
@@ -1175,6 +1220,18 @@ components:
       schema:
         type: string
       example: '2.0.0'
+    xIdempotencyKey:
+      name: x-idempotency-key
+      in: header
+      description: | 
+        Cabeçalho HTTP personalizado. Identificador de solicitação 
+        exclusivo para suportar a idempotência.
+      required: true
+      schema:
+        type: string
+        minLength: 1
+        maxLength: 40
+        pattern: ^(?!\s)(.*)(\S)$
     OAuth2Security:
       type: oauth2
       flows:
@@ -1183,12 +1240,19 @@ components:
           scopes:
             consents: Criação do consentimento.
   responses:
+    UnprocessableEntityConsents:
+      description: Seguir as orientações presentes na descrição deste endpoint
+      content:
+        application/json; charset=utf-8:
+          schema:
+            $ref: '#/components/schemas/422ResponseErrorCreateConsents'
     UnprocessableEntity:
-      description: 'O servidor entende o tipo de conteúdo da entidade da requisição, e a sintaxe da requisição esta correta, mas não foi possível processar as instruções presente.'
+      description: O servidor entende o tipo de conteúdo da entidade da requisição, e a sintaxe da requisição esta correta, mas não foi possível processar as instruções presentes
       content:
         application/json; charset=utf-8:
           schema:
             $ref: '#/components/schemas/ResponseError'
+    
     BadRequest:
       description: 'A requisição foi malformada, omitindo atributos obrigatórios, seja no payload ou através de atributos na URL.'
       content:
