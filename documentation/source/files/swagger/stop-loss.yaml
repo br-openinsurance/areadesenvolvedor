@@ -105,6 +105,7 @@ components:
     StopLossCompany:
       type: array
       items:
+          type: object
           description: Informações referente a sociedade a qual a marca pertence.
           required:
           - name
@@ -185,7 +186,6 @@ components:
             type: string
             example: PESSOA_NATURAL
             enum: [PESSOA_NATURAL, PESSOA_JURIDICA]
-
           premiumRates: 
             $ref: '#/components/schemas/structurePremiumRates'
 
@@ -264,12 +264,10 @@ components:
           - term
         properties:
           term:
-            type: array
-            items:
-              type: string
-              description: Prazo
-              example: ANUAL
-              enum: [ANUAL , ANUAL_INTERMITENTE , PLURIANUAL , PLURIANUAL_INTERMITENTE , MENSAL, MENSAL_INTERMITENTE , DIARIO , DIARIO_INTERMITENTE, OUTROS]
+            type: string
+            description: Prazo
+            example: ANUAL
+            enum: [ANUAL , ANUAL_INTERMITENTE , PLURIANUAL , PLURIANUAL_INTERMITENTE , MENSAL, MENSAL_INTERMITENTE , DIARIO , DIARIO_INTERMITENTE, OUTROS]
           termOthers:
             type: string
             description: Campo livre para descrição por cada participante ao selecionar o domínio “Outros” no campo Prazo (acima).
@@ -338,11 +336,17 @@ components:
                                
               MONETARIO: 62500.67
 
-            pattern: '^(^(100\.\00|\d{1,2}\.\d{2})$|^(\d{1,15}\.\d{2})$)$'
+              OUTROS: 1000 (Exemplo de outro tipo: horas)
+
+            pattern: '^(^(100\.\00|\d{1,2}\.\d{2})$|^(\d{1,6})$|^(\d{1,15}\.\d{2})$)$'
           unitType:
             type: string
-            enum: [PORCENTAGEM, MONETARIO]
+            enum: [PORCENTAGEM, MONETARIO, OUTROS]
             example: MONETARIO
+          unitTypeOthers:
+            description: Caso o tipo do valor informado for "Outros", esse campo deve ser preenchido com o tipo do valor, obrigatoriamente.
+            type: string
+            example: Horas
           unit:
             $ref: '#/components/schemas/StopLossCoverageAttributesDetailsUnit'
     

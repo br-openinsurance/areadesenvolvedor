@@ -105,6 +105,7 @@ components:
     DirectorsOfficersLiabilityCompany:
       type: array
       items:
+          type: object
           description: Informações referente a sociedade a qual a marca pertence.
           required:
           - name
@@ -188,12 +189,10 @@ components:
             type: boolean
             description: Indicação se o produto é classificado como destinado para cobertura de grandes riscos, sendo tal classificação de acordo com regulamentação específica.
           customerServices:
-            type: string
             description: Rede de Atendimento.
-            items:
-              type: string
-              example: REDE_REFERENCIADA
-              enum: [REDE_REFERENCIADA, LIVRE_ESCOLHA, REDE_REFERENCIADA_E_LIVRE_ESCOLHA]
+            type: string
+            example: REDE_REFERENCIADA
+            enum: [REDE_REFERENCIADA, LIVRE_ESCOLHA, REDE_REFERENCIADA_E_LIVRE_ESCOLHA]
           assistanceServices:
             $ref: '#/components/schemas/DirectorsOfficersLiabilityAssistanceServices'
           premiumPayment:
@@ -207,10 +206,8 @@ components:
           targetAudiences:
             description: Público Alvo
             type: string
-            items:
-              type: string
-              example: PESSOA_NATURAL
-              enum: [PESSOA_NATURAL, PESSOA_JURIDICA]
+            example: PESSOA_NATURAL
+            enum: [PESSOA_NATURAL, PESSOA_JURIDICA]
 
     DirectorsOfficersLiabilityAssistanceServices:
       type: array
@@ -226,17 +223,16 @@ components:
             example: true
           assistanceServicesPackage:
             type: string
-            items:
-              description: Pacotes de Assistência
-              example: ATE_10_SERVICOS
-              enum: [ATE_10_SERVICOS, ATE_20_SERVICOS , ACIMA_20_SERVICOS, CUSTOMIZAVEL]
+            description: Pacotes de Assistência
+            example: ATE_10_SERVICOS
+            enum: [ATE_10_SERVICOS, ATE_20_SERVICOS , ACIMA_20_SERVICOS, CUSTOMIZAVEL]
           complementaryAssistanceServicesDetail:
             type: string
             description: Campo livre para descrição dos serviços ofertados por cada sociedade participante, contendo minimamente cada um dos serviços assistenciais complementares oferecidos e se o pacote se trata de uma cobertura de assistência securitária ou se serviços de assistência
             maxLength: 1000
           chargeTypeSignaling:
             type: string
-            description: Indicação se o pacote de assistência é gratuito ou contratado/pago..
+            description: Indicação se o pacote de assistência é gratuito ou contratado/pago.
             example: GRATUITO
             enum: [GRATUITO, PAGO]
 
@@ -267,10 +263,8 @@ components:
           paymentType:
             type: string
             description: tipo de pagamento  
-            items:
-              type: string
-              example: A_VISTA
-              enum: [A_VISTA, PARCELADO]
+            example: A_VISTA
+            enum: [A_VISTA, PARCELADO]
             
     DirectorsOfficersLiabilityValidity:
       type: array
@@ -281,11 +275,9 @@ components:
         properties:
           term:
             type: string
-            items:
-              type: string
-              description: Prazo
-              example: ANUAL
-              enum: [ANUAL , ANUAL_INTERMITENTE , PLURIANUAL , PLURIANUAL_INTERMITENTE , MENSAL, MENSAL_INTERMITENTE , DIARIO , DIARIO_INTERMITENTE, OUTROS]
+            description: Prazo
+            example: ANUAL
+            enum: [ANUAL , ANUAL_INTERMITENTE , PLURIANUAL , PLURIANUAL_INTERMITENTE , MENSAL, MENSAL_INTERMITENTE , DIARIO , DIARIO_INTERMITENTE, OUTROS]
           termOthers:
             type: string
             description: Campo livre para descrição por cada participante ao selecionar o domínio “Outros” no campo Prazo (acima).
@@ -318,9 +310,7 @@ components:
       properties:
         contractType:
           type: string
-          items:
-            type: string
-            enum: [COLETIVO, INDIVIDUAL]
+          enum: [COLETIVO, INDIVIDUAL]
         minimumRequirementDetails:
           type: string
           description: Campo aberto contendo todos os requisitos mínimos para contratação (possibilidade de incluir URL).
@@ -343,10 +333,8 @@ components:
         insuredParticipation:
           type: string
           description: Lista com indicativo do tipo de participação do segurado para cada cobertura
-          items:
-            type: string
-            example: FRANQUIA
-            enum: [FRANQUIA, POS, NAO_SE_APLICA, FRANQUIA_POS]
+          example: FRANQUIA
+          enum: [FRANQUIA, POS, NAO_SE_APLICA, FRANQUIA_E_POS]
         insuredParticipationDescription:
           type: string
           description: Lista com descrição referente ao campo “Participação do Segurado” para cada cobertura.
@@ -393,12 +381,14 @@ components:
         type:
           type: string
           enum: [FINANCEIRO, PERCENTUAL]
+          example: FINANCEIRO
         amount:
           $ref: '#/components/schemas/DirectorsOfficersLiabilityCoverageAttributesDetails'
         index:
           type: string
           description: Indexador. Condicional, vinculado ao preenchimento do campo Tipo com Percentual
           enum: [FINANCEIRO_COBERTURA, OUTRO]
+          example: FINANCEIRO_COBERTURA
         maxIndexAmount:
           $ref: '#/components/schemas/DirectorsOfficersLiabilityCoverageAttributesDetails'
 
@@ -409,19 +399,26 @@ components:
         - unitType
       properties:
         amount:
-          type: string
-          pattern: '^(^(100\.\00|\d{1,2}\.\d{2})$|^(\d{1,15}\.\d{2})$)$'
-          description: |
-            Valor.
-            Exemplos de preenchimento do campo:
+            type: string
+            description: |
+              Valor.
+              Exemplos de preenchimento do campo:
 
-            PORCENTAGEM: 90.85
-                            
-            MONETARIO: 62500.67
+              PORCENTAGEM: 90.85
+                               
+              MONETARIO: 62500.67
+
+              OUTROS: 1000 (Exemplo de outro tipo: horas)
+
+            pattern: '^(^(100\.\00|\d{1,2}\.\d{2})$|^(\d{1,6})$|^(\d{1,15}\.\d{2})$)$'
         unitType:
-          description: "Tipo da unidade referente ao valor inserido no campo Amount"
           type: string
-          enum: [PORCENTAGEM, MONETARIO]
+          enum: [PORCENTAGEM, MONETARIO, OUTROS]
+          example: MONETARIO
+        unitTypeOthers:
+          description: Caso o tipo do valor informado for "Outros", esse campo deve ser preenchido com o tipo do valor, obrigatoriamente.
+          type: string
+          example: Horas
         unit:
           $ref: '#/components/schemas/DirectorsOfficersLiabilityCoverageAttributesDetailsUnit'
     

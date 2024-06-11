@@ -105,6 +105,7 @@ components:
     TransportCompany:
       type: array
       items:
+          type: object
           description: Informações referente a sociedade a qual a marca pertence.
           required:
           - name
@@ -216,10 +217,6 @@ components:
             example: false 
           validity:
             $ref: '#/components/schemas/TransportValidity'
-          premiumRates:
-            description: Distribuição de frequência relativa aos valores referentes às taxas cobradas, nos termos do Anexo III.
-            type: string
-            maxLength: 1024
           policyType:
             description: Tipo de inclusão do risco na apólice.
             type: array
@@ -298,20 +295,25 @@ components:
           - unitType
         properties:
           amount:
-            type: string
             description: |
               Valor.
               Exemplos de preenchimento do campo:
 
               PORCENTAGEM: 90.85
-                              
+                               
               MONETARIO: 62500.67
 
-            pattern: '^(^(100\.\00|\d{1,2}\.\d{2})$|^(\d{1,15}\.\d{2})$)$'
+              OUTROS: 1000 (Exemplo de outro tipo: horas)
+
+            pattern: '^(^(100\.\00|\d{1,2}\.\d{2})$|^(\d{1,6})$|^(\d{1,15}\.\d{2})$)$'
           unitType:
             type: string
-            enum: [PORCENTAGEM, MONETARIO]
+            enum: [PORCENTAGEM, MONETARIO, OUTROS]
             example: MONETARIO
+          unitTypeOthers:
+            description: Caso o tipo do valor informado for "Outros", esse campo deve ser preenchido com o tipo do valor, obrigatoriamente.
+            type: string
+            example: Horas
           unit:
             $ref: '#/components/schemas/TransportCoverageAttributesDetailsUnit'
     
@@ -351,19 +353,17 @@ components:
         - term
       properties:
         term:
-          type: array
-          items:
-            type: string
-            description: Prazo
-            example: ANUAL
-            enum: [ANUAL, 
-                  ANUAL_INTERMITENTE,
-                  PLURIANUAL, 
-                  PLURIANUAL_INTERMITENTE, 
-                  MENSAL, MENSAL_INTERMITENTE, 
-                  DIARIO, 
-                  DIARIO_INTERMITENTE, 
-                  OUTROS]
+          type: string
+          description: Prazo
+          example: ANUAL
+          enum: [ANUAL, 
+                ANUAL_INTERMITENTE,
+                PLURIANUAL, 
+                PLURIANUAL_INTERMITENTE, 
+                MENSAL, MENSAL_INTERMITENTE, 
+                DIARIO, 
+                DIARIO_INTERMITENTE, 
+                OUTROS]
         termOthers:
           type: string
           description: Campo livre para descrição por cada participante ao selecionar o domínio “Outros” no campo Prazo (acima).
@@ -398,7 +398,7 @@ components:
           items:
             type: string
             example: FRANQUIA
-            enum: [FRANQUIA, POS, NAO_SE_APLICA, OUTROS]
+            enum: [FRANQUIA, POS, FRANQUIA_E_POS, NAO_SE_APLICA]
         insuredParticipationDescription:
           description: Lista com descrição referente ao campo “Participação do Segurado” para cada cobertura.
           type: string
@@ -425,7 +425,7 @@ components:
           example: 'https://api.organizacao.com.br/open-insurance/products-services/v1/transport'
         first:
           type: string
-          description: URL da primeira página de registros
+          description: URL da primeira página de  registros
           pattern: ^(https:\/\/)(.*?)(\/open-insurance\/products-services\/v\d+)(\/transport.*)?$
           example: 'https://api.organizacao.com.br/open-insurance/products-services/v1/transport'
         prev:
