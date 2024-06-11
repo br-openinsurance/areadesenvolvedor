@@ -102,6 +102,7 @@ components:
     HomeInsuranceCompany:
       type: array
       items:
+        type: object
         description: Informações referente a sociedade a qual a marca pertence.
         required:
           - name
@@ -227,7 +228,7 @@ components:
             type: string
             description: Código de Endereçamento Postal do Imóvel
             maxLength: 8
-            example: "1311000"
+            example: "13110002"
           protective:
             type: boolean
             description: Protecionais - Indicativo de exigência de itens protecionais.
@@ -254,12 +255,10 @@ components:
           validity:
             $ref: '#/components/schemas/HomeInsuranceValidity'          
           customerServices:
-            type: array 
             description: Rede de atendimento
-            items:
-                type: string
-                example: LIVRE_ESCOLHA
-                enum: [REDE_REFERENCIADA , LIVRE_ESCOLHA , REDE_REFERENCIADA_LIVRE_ESCOLHA]
+            type: string
+            example: LIVRE_ESCOLHA
+            enum: [REDE_REFERENCIADA , LIVRE_ESCOLHA , REDE_REFERENCIADA_E_LIVRE_ESCOLHA]
           premiumRates:
             $ref: '#/components/schemas/structurePremiumRates'   
           premiumPayments:
@@ -270,11 +269,9 @@ components:
               $ref: '#/components/schemas/HomeInsuranceMinimumRequirements'   
           targetAudiences:          
             type: string
-            items:
-              type: string
-              description: Público a quem se destina o produto
-              example: PESSOA_NATURAL
-              enum: [PESSOA_NATURAL , PESSOA_JURIDICA]
+            description: Público a quem se destina o produto
+            example: PESSOA_NATURAL
+            enum: [PESSOA_NATURAL, PESSOA_JURIDICA]
 
     HomeInsuranceMinimumRequirements:
       type: object
@@ -362,19 +359,26 @@ components:
         - unitType
       properties:
         amount:
-          type: string
-          pattern: '^(^(100\.\00|\d{1,2}\.\d{2})$|^(\d{1,15}\.\d{2})$)$'
-          description: |
-            Valor.
-            Exemplos de preenchimento do campo:
+            type: string
+            description: |
+              Valor.
+              Exemplos de preenchimento do campo:
 
-            PORCENTAGEM: 90.85
-                            
-            MONETARIO: 62500.67
+              PORCENTAGEM: 90.85
+                               
+              MONETARIO: 62500.67
+
+              OUTROS: 1000 (Exemplo de outro tipo: horas)
+
+            pattern: '^(^(100\.\00|\d{1,2}\.\d{2})$|^(\d{1,6})$|^(\d{1,15}\.\d{2})$)$'
         unitType:
-          description: "Tipo da unidade referente ao valor inserido no campo Amount"
           type: string
-          enum: [PORCENTAGEM, MONETARIO]
+          enum: [PORCENTAGEM, MONETARIO, OUTROS]
+          example: MONETARIO
+        unitTypeOthers:
+          description: Caso o tipo do valor informado for "Outros", esse campo deve ser preenchido com o tipo do valor, obrigatoriamente.
+          type: string
+          example: Horas
         unit:
           $ref: '#/components/schemas/HomeInsuranceCoverageAttributesDetailsUnit'  
 
@@ -435,12 +439,10 @@ components:
               description: Campo aberto para detalhamento do campo ‘Outros’ por cada participante.
               maxLength: 100
             paymentType:
-              type: array
               description: Forma de pagamento
-              items:
-                type: string
-                example: A_VISTA
-                enum: [A_VISTA, PARCELADO]
+              type: string
+              example: A_VISTA
+              enum: [A_VISTA, PARCELADO]
 
     HomeInsuranceAssistanceServices:    
       type: array
@@ -482,18 +484,18 @@ components:
           coverageType:
             type: string
             enum: [
-              IMOVEL_BASICA , 
-              IMOVEL_AMPLA , 
-              DANOS_ELETRICOS , 
-              DANOS_POR_AGUA , 
-              ALAGAMENTO , 
+              IMOVEL_BASICA, 
+              IMOVEL_AMPLA, 
+              DANOS_ELETRICOS, 
+              DANOS_POR_AGUA, 
+              ALAGAMENTO, 
               RESPONSABILIDADE_CIVIL_FAMILIAR,
-              RESPONSABILIDADE_CIVIL_DANOS_MORAIS , 
-              ROUBO_SUBTRACAO_BENS , 
-              ROUBO_SUBTRACAO_BENS_FORA_LOCAL_SEGURADO , 
-              TACOS_GOLFE_HOLE_ONE , 
+              RESPONSABILIDADE_CIVIL_DANOS_MORAIS, 
+              ROUBO_SUBTRACAO_BENS, 
+              ROUBO_SUBTRACAO_BENS_FORA_LOCAL_SEGURADO, 
+              TACOS_GOLFE_HOLE_ONE, 
               PEQUENAS_REFORMAS_OBRAS, 
-              GREVES_TUMULTOS_LOCKOUT , 
+              GREVES_TUMULTOS_LOCKOUT, 
               MICROEMPREENDEDOR, 
               ESCRITORIO_RESIDENCIA, 
               DANOS_EQUIPAMENTOS_ELETRONICOS, 
@@ -549,12 +551,12 @@ components:
                 type: string
                 description: Descrição do tipo de construção da propriedade.
                 example: ALVENARIA
-                enum: [ALVENARIA , MADEIRA , METALICA , MISTA]
+                enum: [ALVENARIA , MADEIRA, METALICA, MISTA]
             propertyUsageType:
                 type: string 
                 description: Descrição do tipo de uso da propriedade.
                 example: HABITUAL
-                enum: [HABITUAL , VERANEIO , DESOCUPADO , CASA_ESCRITORIO , ALUGUEL_TEMPORADA]                         
+                enum: [HABITUAL , VERANEIO, DESOCUPADO, CASA_ESCRITORIO, ALUGUEL_TEMPORADA]                         
             destinationInsuredImportance:
               type: string
               description: Destinação da Importância Segurada.

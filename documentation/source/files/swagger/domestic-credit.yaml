@@ -105,6 +105,7 @@ components:
     DomesticCreditCompany:
       type: array
       items:
+          type: object
           description: Informações referente a sociedade a qual a marca pertence.
           required:
           - name
@@ -340,11 +341,17 @@ components:
                                
               MONETARIO: 62500.67
 
-            pattern: '^(^(100\.\00|\d{1,2}\.\d{2})$|^(\d{1,15}\.\d{2})$)$'
+              OUTROS: 1000 (Exemplo de outro tipo: horas)
+
+            pattern: '^(^(100\.\00|\d{1,2}\.\d{2})$|^(\d{1,6})$|^(\d{1,15}\.\d{2})$)$'
           unitType:
             type: string
-            enum: [PORCENTAGEM, MONETARIO]
+            enum: [PORCENTAGEM, MONETARIO, OUTROS]
             example: MONETARIO
+          unitTypeOthers:
+            description: Caso o tipo do valor informado for "Outros", esse campo deve ser preenchido com o tipo do valor, obrigatoriamente.
+            type: string
+            example: Horas
           unit:
             $ref: '#/components/schemas/DomesticCreditCoverageAttributesDetailsUnit'
     

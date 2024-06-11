@@ -135,6 +135,7 @@ components:
     PensionPlanCompany:
       type: array
       items:
+        type: object
         description: Informações referente a sociedade a qual a marca pertence.
         required:
           - name
@@ -245,7 +246,7 @@ components:
           code:
             type: string
             description: Código único a ser definido pela sociedade.
-            example: 123456789_cap
+            example: '123456789'
           coverages:
             type: array
             items:
@@ -325,6 +326,7 @@ components:
                 ORIENTACAO_FITNESS,
                 ORIENTACAO_JURIDICA,
                 ORIENTACAO_PSICOSSOCIAL_FAMILIAR,
+                OUTROS,
                 PERDA_ROUBO_CARTAO,
                 PET,
                 PRORROGACAO_DE_ESTADIA,
@@ -343,9 +345,9 @@ components:
                 VITIMAS]
           assistanceTypeOthers:
             type: array
-            description: Outros tipos de assistências.
             items:
               type: string
+              description: Campo a ser preenchido pelas participantes quando houver ‘Outros’ no campo ‘Tipo de Assistência’   
           termsAndConditions:
             type: array
             items:
@@ -421,19 +423,26 @@ components:
         - unitType
       properties:
         amount:
-          type: string
-          pattern: '^(^(100\.\00|\d{1,2}\.\d{2})$|^(\d{1,15}\.\d{2})$)$'
-          description: |
-            Valor.
-            Exemplos de preenchimento do campo:
+            type: string
+            description: |
+              Valor.
+              Exemplos de preenchimento do campo:
 
-            PORCENTAGEM: 90.85
-                            
-            MONETARIO: 62500.67
+              PORCENTAGEM: 90.85
+                               
+              MONETARIO: 62500.67
+
+              OUTROS: 1000 (Exemplo de outro tipo: horas)
+
+            pattern: '^(^(100\.\00|\d{1,2}\.\d{2})$|^(\d{1,6})$|^(\d{1,15}\.\d{2})$)$'
         unitType:
-          description: "Tipo da unidade referente ao valor inserido no campo Amount"
           type: string
-          enum: [PORCENTAGEM, MONETARIO]
+          enum: [PORCENTAGEM, MONETARIO, OUTROS]
+          example: MONETARIO
+        unitTypeOthers:
+          description: Caso o tipo do valor informado for "Outros", esse campo deve ser preenchido com o tipo do valor, obrigatoriamente.
+          type: string
+          example: Horas
         unit:
           $ref: '#/components/schemas/PensionPlanCoverageAttributesDetailsUnit'
 
@@ -508,7 +517,8 @@ components:
         interestRate:
           type: string
           description: Taxa de juros para capitalização da PMBaC.
-          example: '14'
+          pattern: '^100\.0{1,9}$|^\d{1,2}\.\d{1,9}$'
+          example: '14.56'
         updateIndex:
           type: string
           description: Índice utilizado na atualização da PMBaC.
@@ -561,6 +571,8 @@ components:
         percentage:
           type: string
           description: Percentual da faixa de resgate da PMBaC para cada conjunto de prazo aplicável.
+          pattern: ^100\.0{1,9}$|^\d{1,2}\.\d{1,9}$
+          example: '20.53'
         differentiatedPercentage:
           type: string
           description: Campo aberto (possibilidade de incluir URL), caso o percentual de resgate não siga o padrão apenas no que se refere ao critério temporal padronizado no campo “Resgate-Percentual”
@@ -622,7 +634,7 @@ components:
       description: Período de carência.
       properties: 
         amount:
-          type: number
+          type: integer
           description: Prazo de Carência
         unit:
           type: string

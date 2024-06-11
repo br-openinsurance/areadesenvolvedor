@@ -123,6 +123,7 @@ components:
     PersonCompany:
       type: array
       items:
+        type: object
         description: Companies traz uma lista de todas as instituições da Marca.
         required:
           - name
@@ -212,7 +213,7 @@ components:
 
     PersonProducts:
       type: array
-      description: Lista de Dependências de uma Instituição.
+      description: Lista de produtos de uma empresa.
       items:
         type: object
         required:
@@ -238,7 +239,7 @@ components:
           code:
             type: string
             description: Código único a ser definido pela sociedade (código interno do produto) a critério da participante.
-            example: 123456789_cap
+            example: '123456789'
           category:
             type: string
             description: Indica a categoria do Produto
@@ -310,9 +311,8 @@ components:
                         VERBA_RESCISORIA,
                         OUTRAS]
                 coverageOthers:
-                  type: array
-                  items:
-                    type: string
+                  type: string
+                  description: Campo aberto para detalhamento da opção Outros no campo "coverage"
                 coverageAttributes:
                   $ref: '#/components/schemas/PersonCoverageAttributes'
                 contractType:
@@ -408,10 +408,8 @@ components:
             description: Seguro de pessoas com capital global modalidade de contratação coletiva da cobertura de risco, respeitados os critérios técnico-operacionais, forma e limites fixados pela SUSEP, segundo a qual o valor do capital segurado referente a cada componente sofrerá variações decorrentes de mudanças na composição do grupo segurado
           validity:
             type: string
-            items:
-              type: string
-              example: VITALICIA
-              enum: [VITALICIA, TEMPORARIA_PRAZO_FIXO, TEMPORARIA_INTERMITENTE]  
+            example: VITALICIA
+            enum: [VITALICIA, TEMPORARIA_PRAZO_FIXO, TEMPORARIA_INTERMITENTE]  
           pmbacRemuneration:
             $ref: '#/components/schemas/PersonPmbacRemuneration'
           benefitRecalculation:
@@ -478,19 +476,26 @@ components:
         - unitType
       properties:
         amount:
-          type: string
-          pattern: '^(^(100\.\00|\d{1,2}\.\d{2})$|^(\d{1,15}\.\d{2})$)$'
-          description: |
-            Valor.
-            Exemplos de preenchimento do campo:
+            type: string
+            description: |
+              Valor.
+              Exemplos de preenchimento do campo:
 
-            PORCENTAGEM: 90.85
-                            
-            MONETARIO: 62500.67
+              PORCENTAGEM: 90.85
+                               
+              MONETARIO: 62500.67
+
+              OUTROS: 1000 (Exemplo de outro tipo: horas)
+
+            pattern: '^(^(100\.\00|\d{1,2}\.\d{2})$|^(\d{1,6})$|^(\d{1,15}\.\d{2})$)$'
         unitType:
-          description: "Tipo da unidade referente ao valor inserido no campo Amount"
           type: string
-          enum: [PORCENTAGEM, MONETARIO]
+          enum: [PORCENTAGEM, MONETARIO, OUTROS]
+          example: MONETARIO
+        unitTypeOthers:
+          description: Caso o tipo do valor informado for "Outros", esse campo deve ser preenchido com o tipo do valor, obrigatoriamente.
+          type: string
+          example: Horas
         unit:
           $ref: '#/components/schemas/PersonCoverageAttributesDetailsUnit'
 
@@ -726,7 +731,8 @@ components:
           example: 12
         percentage:
           type: string
-          pattern: ^\d{1,3}\.\d{1,9}$
+          pattern: ^100\.0{1,9}$|^\d{1,2}\.\d{1,9}$
+          example: '10.45'
           description: Percentual da faixa de resgate
 
     PersonReclaim:
@@ -773,9 +779,6 @@ components:
             description: Periodicidade de pagamento do prêmio 
             example: DIARIA
             enum: [DIARIA  , MENSAL , UNICA, ANUAL, TRIMESTRAL , SEMESTRAL , FRACIONADO, OUTRA]
-        premiumTax:
-          type: string
-          description: Distribuição de frequência relativa aos valores referentes às taxas cobradas.
           
     PersonMinimumRequirements:
         description: Requisitos mínimos para contratação
