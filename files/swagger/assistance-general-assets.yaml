@@ -105,6 +105,7 @@ components:
     AssistanceGeneralAssetsCompany:
       type: array
       items:
+          type: object
           description: Informações referente a sociedade a qual a marca pertence.
           required:
           - name
@@ -226,10 +227,8 @@ components:
             $ref: '#/components/schemas/AssistanceGeneralAssetsMinimumRequirements'
           targetAudiences:
             type: string
-            items:
-              type: string
-              example: PESSOA_NATURAL
-              enum: [PESSOA_NATURAL, PESSOA_JURIDICA]
+            example: PESSOA_NATURAL
+            enum: [PESSOA_NATURAL, PESSOA_JURIDICA]
           premiumRates:
             $ref: '#/components/schemas/structurePremiumRates'
 
@@ -247,11 +246,9 @@ components:
             example: true
           assistanceServicesPackage:
             type: string
-            items:
-              type: string
-              description: Para efeitos de comparabilidade considerar agrupamentos de serviços em 4 categorias, conforme os domínios
-              example: ATE_10_SERVICOS
-              enum: [ATE_10_SERVICOS, ATE_20_SERVICOS , ACIMA_20_SERVICOS, CUSTOMIZAVEL]
+            description: Para efeitos de comparabilidade considerar agrupamentos de serviços em 4 categorias, conforme os domínios
+            example: ATE_10_SERVICOS
+            enum: [ATE_10_SERVICOS, ATE_20_SERVICOS , ACIMA_20_SERVICOS, CUSTOMIZAVEL]
           complementaryAssistanceServicesDetail:
             type: string
             description: Campo livre para descrição dos serviços ofertados por cada sociedade participante, contendo minimamente cada um dos serviços assistenciais complementares oferecidos e se o pacote se trata de uma cobertura de assistência securitária ou se serviços de assistência
@@ -271,12 +268,10 @@ components:
           - term
         properties:
           term:
-            type: array
-            items:
-              type: string
-              description: Prazo de vigência do seguro contratado Intervalo contínuo de tempo durante o qual está em vigor o contrato de seguro
-              example: ANUAL
-              enum: [ANUAL, ANUAL_INTERMITENTE, PLURIANUAL, PLURIANUAL_INTERMITENTE, MENSAL, MENSAL_INTERMITENTE, DIARIO, DIARIO_INTERMITENTE, OUTROS]
+            type: string
+            description: Prazo de vigência do seguro contratado Intervalo contínuo de tempo durante o qual está em vigor o contrato de seguro
+            example: ANUAL
+            enum: [ANUAL, ANUAL_INTERMITENTE, PLURIANUAL, PLURIANUAL_INTERMITENTE, MENSAL, MENSAL_INTERMITENTE, DIARIO, DIARIO_INTERMITENTE, OUTROS]
           termOthers:
             type: string
             description: Campo livre para descrição por cada participante ao selecionar o domínio “Outros” no campo Prazo (acima).
@@ -350,7 +345,7 @@ components:
       example: '10000.00'
     
     AssistanceGeneralAssetsPremiumPayment:
-      type: array 
+      type: array
       items:
         type: object
         required:
@@ -369,11 +364,9 @@ components:
           paymentType:
             type: string
             description: tipo de pagamento  
-            items:
-              type: string
-              example: A_VISTA
-              enum: [A_VISTA, PARCELADO]
-            
+            example: A_VISTA
+            enum: [A_VISTA, PARCELADO]
+              
     AssistanceGeneralAssetsTerms:
       type: object
       description: Informações dos termos e condições conforme número do processo SUSEP.
@@ -400,10 +393,8 @@ components:
       properties:
         contractType:
           type: string
-          items:
-            type: string
-            example: COLETIVO
-            enum: [COLETIVO, INDIVIDUAL]
+          example: COLETIVO
+          enum: [COLETIVO, INDIVIDUAL]
         minimumRequirementDetails:
           type: string
           maxLength: 1024
@@ -419,12 +410,10 @@ components:
         maxLMI:
           $ref: '#/components/schemas/AssistanceGeneralAssetsLimit'
         insuredParticipation:
-          type: array
           description: Lista com indicativo do tipo de participação do segurado para cada cobertura
-          items:
-            type: string
-            example: FRANQUIA
-            enum: [FRANQUIA, POS, NAO_SE_APLICA]
+          type: string
+          example: FRANQUIA
+          enum: [FRANQUIA, POS, FRANQUIA_E_POS, NAO_SE_APLICA]
         insuredParticipationDescription:
           type: string
           maxLength: 1024
@@ -452,25 +441,32 @@ components:
           $ref: '#/components/schemas/AssistanceGeneralAssetsCoverageAttributesDetails'
     
     AssistanceGeneralAssetsCoverageAttributesDetails:
-        type: object
-        required:
-          - amount
-          - unitType
-        properties:
+      type: object
+      required:
+        - amount
+        - unitType
+      properties:
           amount:
             type: string
-            pattern: '^(^(100\.\00|\d{1,2}\.\d{2})$|^(\d{1,15}\.\d{2})$)$'
             description: |
               Valor.
               Exemplos de preenchimento do campo:
- 
+
               PORCENTAGEM: 90.85
-                             
+                                
               MONETARIO: 62500.67
+
+              OUTROS: 1000 (Exemplo de outro tipo: horas)
+
+            pattern: '^(^(100\.\00|\d{1,2}\.\d{2})$|^(\d{1,6})$|^(\d{1,15}\.\d{2})$)$'
           unitType:
-            description: "Tipo da unidade referente ao valor inserido no campo Amount"
             type: string
-            enum: [PORCENTAGEM, MONETARIO]
+            enum: [PORCENTAGEM, MONETARIO, OUTROS]
+            example: MONETARIO
+          unitTypeOthers:
+            description: Caso o tipo do valor informado for "Outros", esse campo deve ser preenchido com o tipo do valor, obrigatoriamente.
+            type: string
+            example: Horas
           unit:
             $ref: '#/components/schemas/AssistanceGeneralAssetsCoverageAttributesDetailsUnit'
     

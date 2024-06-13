@@ -107,6 +107,7 @@ components:
     LifePensionCompany:
       type: array
       items:
+        type: object
         description: Informações referente a sociedade a qual a marca pertence.
         required:
           - name
@@ -227,7 +228,7 @@ components:
         interestRate:
           type: string
           description: Taxa de juros garantida que remunera o plano durante a fase de diferimento/acumulação.
-          example: '0.25123'
+          example: '25.123'
           pattern: ^\d{1,3}\.\d{1,9}$
           maxLength: 10
           multipleOf: 0.00001
@@ -254,7 +255,7 @@ components:
           type: string
           description: Percentual de reversão de excedente financeiro no período de diferimento.
           example: '5.123'
-          maxLength: 5
+          pattern: ^100\.0{1,9}$|^\d{1,2}\.\d{1,9}$
         minimumPremiumAmount:
           type: array
           items:
@@ -352,15 +353,13 @@ components:
                 maximumAdministrationFee:
                   type: string
                   description:  Taxa Máxima de Administração – em %.
-                  example: '20.1'
-                  maxLength: 5
+                  example: '5.123'
+                  pattern: ^100\.0{1,9}$|^\d{1,2}\.\d{1,9}$
                 typePerformanceFee:
                   type: string
-                  items:
-                    type: string
-                    description: Tipo de Taxa de Performance
-                    example: DIRETAMENTE
-                    enum: [DIRETAMENTE, INDIRETAMENTE, NAO_APLICA]
+                  description: Tipo de Taxa de Performance
+                  example: DIRETAMENTE
+                  enum: [DIRETAMENTE, INDIRETAMENTE, NAO_APLICA]
                 maximumPerformanceFee:
                   type: string
                   description:  Taxa Máxima de Performance. Caso o Tipo de Taxa de Performance seja ‘Diretamente’.
@@ -373,18 +372,18 @@ components:
                 minimumContributionAmount:
                   type: string
                   description: Valor Mínimo de Contribuição. Regra de Elegibilidade. Caso a Regra de Elegibilidade SIM.
-                  example: '1000000000'
-                  maxLength: 15
+                  example: '150000.45'
+                  pattern: ^\d{1,16}\.\d{2}$
                 minimumContributionValue:
                   type: string
                   description: Valor Mínimo de Aporte de Portabilidade. Caso a Regra de Elegibilidade SIM.
-                  example: '1000000000'
-                  maxLength: 15
+                  example: '150000.45'
+                  pattern: ^\d{1,16}\.\d{2}$
                 minimumMathematicalProvisionAmount:
                   type: string
                   description: Valor Mínimo Provisão Matemática. Caso a Regra de Elegibilidade SIM.
-                  maxLength: 5
-                  example: '1000'
+                  example: '150000.45'
+                  pattern: ^\d{1,16}\.\d{2}$
 
     LifePensionPeriodGrantBenefit:
       type: object
@@ -411,8 +410,8 @@ components:
         interestRate:
           type: string
           description: Taxa de juros garantida utilizada para conversão em renda. Em %.
-          example: '3.225'
-          maxLength: 6
+          example: '25.123'
+          pattern: ^\d{1,3}\.\d{1,9}$
         updateIndex:
           type: string
           description: É o índice contratado para atualização monetária dos valores relativos ao plano, na forma estabelecida por este regulamento.
@@ -421,9 +420,8 @@ components:
         reversalResultsFinancial:
           type: string
           description: Percentual de reversão de excedente financeiro na concessão. Em %.
-          example: '013.252'
-          pattern: ^\d{1,3}\.\d{1,9}$
-          maxLength: 8
+          example: '5.123'
+          pattern: ^100\.0{1,9}$|^\d{1,2}\.\d{1,9}$
         investmentFunds:
           $ref: '#/components/schemas/LifePensionInvestmentFunds'
 
@@ -451,13 +449,13 @@ components:
         minValue:
           type: string
           description: Valor mínimo em %.
-          example: '4.122'
-          maxLength: 7
+          example: '5.123'
+          pattern: ^100\.0{1,9}$|^\d{1,2}\.\d{1,9}$
         maxValue:
           type: string
-          description: alor máximo em %.
-          example: '10'
-          maxLength: 8
+          description: valor máximo em %.
+          example: '5.123'
+          pattern: ^100\.0{1,9}$|^\d{1,2}\.\d{1,9}$
 
     LifePensionMinimumRequirements:
       type: object
@@ -469,10 +467,8 @@ components:
         contractType:
           type: string
           description: Os tipos de serviços contratados.
-          items:
-            type: string
-            example: INDIVIDUAL
-            enum: [COLETIVO_AVERBADO, COLETIVO_INSTITUIDO, INDIVIDUAL]
+          example: INDIVIDUAL
+          enum: [COLETIVO_AVERBADO, COLETIVO_INSTITUIDO, INDIVIDUAL]
         participantQualified:
           type: boolean
           description: Indicação se o plano é destinado para participante qualificado.

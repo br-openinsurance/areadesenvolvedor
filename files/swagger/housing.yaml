@@ -105,24 +105,25 @@ components:
     HousingCompany:
       type: array
       items:
-          description: Informações referente a sociedade a qual a marca pertence.
-          required:
-          - name
-          - cnpjNumber
-          - products
-          properties:
-            name:
-                type: string
-                description: Nome da Instituição, pertencente à Marca.
-                maxLength: 80
-                example: Empresa da Organização A
-            cnpjNumber:
-                type: string
-                description: CNPJ da sociedade pertencente à marca.
-                pattern: ^\d{14}$
-                example: '12345678901234'
-            products:
-                $ref: '#/components/schemas/HousingProduct'
+        type: object
+        description: Informações referente a sociedade a qual a marca pertence.
+        required:
+        - name
+        - cnpjNumber
+        - products
+        properties:
+          name:
+              type: string
+              description: Nome da Instituição, pertencente à Marca.
+              maxLength: 80
+              example: Empresa da Organização A
+          cnpjNumber:
+              type: string
+              description: CNPJ da sociedade pertencente à marca.
+              pattern: ^\d{14}$
+              example: '12345678901234'
+          products:
+              $ref: '#/components/schemas/HousingProduct'
 
     structurePremiumRates:
       type: object
@@ -265,10 +266,8 @@ components:
             $ref: '#/components/schemas/HousingMinimumRequirements'
           targetAudiences:
             type: string
-            items:
-              type: string
-              example: PESSOA_FISICA
-              enum: [PESSOA_FISICA, PESSOA_JURIDICA]
+            example: PESSOA_FISICA
+            enum: [PESSOA_FISICA, PESSOA_JURIDICA]
     
     HousingCoverageAttributes:
       type: object
@@ -280,12 +279,10 @@ components:
         maxLMI:
           $ref: '#/components/schemas/HousingLimit'
         insuredParticipation:
-          type: string
           description: Lista com indicativo do tipo de participação do segurado para cada cobertura
-          items:
-            type: string
-            example: FRANQUIA
-            enum: [FRANQUIA, POS, NAO_SE_APLICA, FRANQUIA_POS]
+          type: string
+          example: FRANQUIA
+          enum: [FRANQUIA, POS, NAO_SE_APLICA, FRANQUIA_E_POS]
         insuredParticipationDescription:
           type: string
           maxLength: 1024
@@ -321,18 +318,25 @@ components:
       properties:
         amount:
           type: string
-          pattern: '^(^(100\.\00|\d{1,2}\.\d{2})$|^(\d{1,15}\.\d{2})$)$'
           description: |
             Valor.
             Exemplos de preenchimento do campo:
 
             PORCENTAGEM: 90.85
-                            
+                              
             MONETARIO: 62500.67
+
+            OUTROS: 1000 (Exemplo de outro tipo: horas)
+
+          pattern: '^(^(100\.\00|\d{1,2}\.\d{2})$|^(\d{1,6})$|^(\d{1,15}\.\d{2})$)$'
         unitType:
-          description: "Tipo da unidade referente ao valor inserido no campo Amount"
           type: string
-          enum: [PORCENTAGEM, MONETARIO]
+          enum: [PORCENTAGEM, MONETARIO, OUTROS]
+          example: MONETARIO
+        unitTypeOthers:
+          description: Caso o tipo do valor informado for "Outros", esse campo deve ser preenchido com o tipo do valor, obrigatoriamente.
+          type: string
+          example: Horas
         unit:
           $ref: '#/components/schemas/HousingCoverageAttributesDetailsUnit'
     

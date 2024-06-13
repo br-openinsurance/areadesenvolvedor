@@ -107,6 +107,7 @@ components:
     IntermediaryCompany:
       type: array
       items:
+          type: object
           description: Informações referente a sociedade a qual a marca pertence.
           required:
           - name
@@ -129,6 +130,7 @@ components:
     IntermediaryIdentification:
       type: array
       items:
+          type: object
           description: Informações referente a identificação.
           required:
             - name
@@ -178,6 +180,7 @@ components:
     IntermediaryCoveragePostalAddress:
         type: array
         items:
+          type: object
           required:
             - address
             - townName
@@ -240,7 +243,8 @@ components:
                     SC,
                     SP,
                     SE,
-                    TO]
+                    TO,
+                    XX]
             postCode:
               type: string
               maxLength: 8
@@ -501,10 +505,18 @@ components:
                     ZAMBIA,
                     ZIMBABUE]
             countryCode:
-                type: string
-                maxLength: 3
-                example: BRA
-                description: Código do país de acordo com o código “alpha3” do ISO-3166. p.ex.'BRA'
+              type: string
+              description: Código do país de acordo com o código “alpha3” do ISO-3166.
+              enum: [AFG,ALA,ALB,DZA,ASM,AND,AGO,AIA,ATA,ATG,ARG,ARM,ABW,AUS,AUT,AZE,BHS,BHR,BGD,BRB,BLR,BEL,BLZ,BEN,BMU,BTN,BOL,BES,
+                    BIH,BWA,BVT,BRA,IOT,BRN,BGR,BFA,BDI,CPV,KHM,CMR,CAN,CYM,CAF,TCD,CHL,CHN,CXR,CCK,COL,COM,COG,COD,COK,CRI,CIV,HRV,CUB,
+                    CUW,CYP,CZE,DNK,DJI,DMA,DOM,ECU,EGY,SLV,GNQ,ERI,EST,SWZ,ETH,FLK,FRO,FJI,FIN,FRA,GUF,PYF,ATF,GAB,GMB,GEO,DEU,GHA,GIB,
+                    GRC,GRL,GRD,GLP,GUM,GTM,GGY,GIN,GNB,GUY,HTI,HMD,VAT,HND,HKG,HUN,ISL,IND,IDN,IRN,IRQ,IRL,IMN,ISR,ITA,JAM,JPN,JEY,JOR,
+                    KAZ,KEN,KIR,PRK,KOR,KWT,KGZ,LAO,LVA,LBN,LSO,LBR,LBY,LIE,LTU,LUX,MAC,MDG,MWI,MYS,MDV,MLI,MLT,MHL,MTQ,MRT,MUS,MYT,MEX,
+                    FSM,MDA,MCO,MNG,MNE,MSR,MAR,MOZ,MMR,NAM,NRU,NPL,NLD,NCL,NZL,NIC,NER,NGA,NIU,NFK,MKD,MNP,NOR,OMN,PAK,PLW,PSE,PAN,PNG,
+                    PRY,PER,PHL,PCN,POL,PRT,PRI,QAT,REU,ROU,RUS,RWA,BLM,SHN,KNA,LCA,MAF,SPM,VCT,WSM,SMR,STP,SAU,SEN,SRB,SYC,SLE,SGP,SXM,
+                    SVK,SVN,SLB,SOM,ZAF,SGS,SSD,ESP,LKA,SDN,SUR,SJM,SWE,CHE,SYR,TWN,TJK,TZA,THA,TLS,TGO,TKL,TON,TTO,TUN,TUR,TKM,TCA,TUV,
+                    UGA,UKR,ARE,GBR,USA,UMI,URY,UZB,VUT,VEN,VNM,VGB,VIR,WLF,ESH,YEM,ZMB,ZWE]
+              example: BRA
             geographicCoordinates:
               $ref: '#/components/schemas/IntermediaryGeographicCoordinates'
 
@@ -533,6 +545,7 @@ components:
           type: string
           maxLength: 50
           example: Joao.silva@seguradora.com.br
+          pattern: '^\S+@\S+\.\S+$'
         site:
           type: string
           description: "Campo aberto
@@ -545,17 +558,16 @@ components:
     IntermediaryStandards:
       type: array
       items:
+        type: object
         properties:
           openingTime:
             type: string
-            maxLength: 9
-            pattern: ^(?:[01]\d|2[0123]):(?:[012345]\d):(?:[012345]\d)Z$|^NA$
+            pattern: ^([0-1][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]Z$|^NA$
             example: 10:00:57Z
             description: Horário de abertura
           closingTime:
             type: string
-            maxLength: 9
-            pattern: ^(?:[01]\d|2[0123]):(?:[012345]\d):(?:[012345]\d)Z$|^NA$
+            pattern: ^([0-1][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]Z$|^NA$
             example: 16:00:57Z
             description: Horário de encerramento
           weekday:
@@ -586,6 +598,7 @@ components:
             description: Número de DDI (Discagem Direta Internacional) para telefone de acesso ao Canal - se houver.
             type: string
             maxLength: 4
+            pattern: '^\d{1,4}$'
             example: '55'
           areaCode:
             description: Número de DDD (Discagem Direta à Distância) do telefone do intermediário - se houver. p.ex. '19'
@@ -601,6 +614,7 @@ components:
     IntermediaryServices:
       type: array
       items:
+        type: object
         description: Forma de acesso.
         required:
           - name

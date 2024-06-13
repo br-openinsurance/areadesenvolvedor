@@ -105,6 +105,7 @@ components:
     ExtendedWarrantyCompany:
       type: array
       items:
+          tpe: object
           description: Informações referente a sociedade a qual a marca pertence.
           required:
           - name
@@ -192,8 +193,8 @@ components:
                     NOTEBOOK,
                     TABLET,
                     EQUIPAMENTOS_PORTATEIS,
-                    ELETRODOMESTICOS_–_LINHA_BRANCA,
-                    ELETRODOMESTICOS_–_LINHA_MARROM,
+                    ELETRODOMESTICOS_LINHA_BRANCA,
+                    ELETRODOMESTICOS_LINHA_MARROM,
                     AUTOMOVEL,
                     BICICLETA,
                     BICICLETA_ELETRICA,
@@ -206,12 +207,10 @@ components:
           assistanceServices:
             $ref: '#/components/schemas/ExtendedWarrantyAssistanceServices'
           customerServices:
-            type: array
             description: Rede de Atendimento.
-            items:
-              type: string
-              enum: [REDE_REFERENCIADA, LIVRE_ESCOLHA, REDE_REFERENCIADA_E_LIVRE_ESCOLHA]
-              example: LIVRE_ESCOLHA
+            type: string
+            enum: [REDE_REFERENCIADA, LIVRE_ESCOLHA, REDE_REFERENCIADA_E_LIVRE_ESCOLHA]
+            example: LIVRE_ESCOLHA
           microinsurance:
             type: boolean
             description: Indicação se o produto é classificado como microsseguro.
@@ -229,13 +228,10 @@ components:
           premiumRates:
             $ref: '#/components/schemas/structurePremiumRates'
           targetAudiences:
-            description: Público Alvo
             type: string
-            items:
-              type: string
-              description: Público-alvo
-              example: PESSOA_NATURAL
-              enum: [PESSOA_NATURAL, PESSOA_JURIDICA]
+            description: Público-alvo
+            example: PESSOA_NATURAL
+            enum: [PESSOA_NATURAL, PESSOA_JURIDICA]
     
     ExtendedWarrantyAssistanceServices:
       type: object
@@ -248,12 +244,10 @@ components:
         assistanceServicesPackage:
           type: string
           description: Pacotes de Assistência
-          items:
-            type: string
-            example: ATE_10_SERVICOS
-            enum: [ATE_10_SERVICOS,
-              ATE_20_SERVICOS,
-              ACIMA_DE_20_SERVICOS,
+          example: ATE_10_SERVICOS
+          enum: [ATE_10_SERVICOS,
+            ATE_20_SERVICOS,
+            ACIMA_DE_20_SERVICOS,
               CUSTOMIZAVEL]
         complementaryAssistanceServicesDetail:
           type: string
@@ -273,12 +267,10 @@ components:
           - term
         properties:
           term:
-            type: array
-            items:
-              type: string
-              description: Prazo
-              example: ANUAL
-              enum: [ANUAL , ANUAL_INTERMITENTE , PLURIANUAL , PLURIANUAL_INTERMITENTE , MENSAL, MENSAL_INTERMITENTE , DIARIO , DIARIO_INTERMITENTE, OUTROS]
+            type: string
+            description: Prazo
+            example: ANUAL
+            enum: [ANUAL , ANUAL_INTERMITENTE , PLURIANUAL , PLURIANUAL_INTERMITENTE , MENSAL, MENSAL_INTERMITENTE , DIARIO , DIARIO_INTERMITENTE, OUTROS]
           termOthers:
             type: string
             description: Campo livre para descrição por cada participante ao selecionar o domínio “Outros” no campo Prazo (acima).
@@ -379,10 +371,8 @@ components:
           paymentType:
             type: string
             description: tipo de pagamento  
-            items:
-              type: string
-              example: A_VISTA
-              enum: [A_VISTA, PARCELADO]
+            example: A_VISTA
+            enum: [A_VISTA, PARCELADO]
         
     ExtendedWarrantyTerms:
       type: object
@@ -411,10 +401,8 @@ components:
         contractType:
           type: string
           description: Tipo de contratação
-          items:
-            type: string
-            example: COLETIVO
-            enum: [COLETIVO, INDIVIDUAL]
+          example: COLETIVO
+          enum: [COLETIVO, INDIVIDUAL]
         minimumRequirementDetails:
           type: string
           description: Campo aberto contendo todos os requisitos mínimos para contratação (possibilidade de incluir URL).
@@ -430,12 +418,10 @@ components:
         maxLMI:
           $ref: '#/components/schemas/ExtendedWarrantyLimit'
         insuredParticipation:
-          type: array
           description: Lista com indicativo do tipo de participação do segurado para cada cobertura.
-          items:
-            type: string
-            example: FRANQUIA
-            enum: [FRANQUIA, POS, NAO_SE_APLICA, FRANQUIA_POS]
+          type: string
+          example: FRANQUIA
+          enum: [FRANQUIA, POS, NAO_SE_APLICA, FRANQUIA_E_POS]
         insuredParticipationDescription:
           type: string
           maxLength: 1024
@@ -471,18 +457,25 @@ components:
       properties:
         amount:
           type: string
-          pattern: '^(^(100\.\00|\d{1,2}\.\d{2})$|^(\d{1,15}\.\d{2})$)$'
           description: |
-              Valor.
-              Exemplos de preenchimento do campo:
- 
-              PORCENTAGEM: 90.85
-                             
-              MONETARIO: 62500.67
+            Valor.
+            Exemplos de preenchimento do campo:
+
+            PORCENTAGEM: 90.85
+                              
+            MONETARIO: 62500.67
+
+            OUTROS: 1000 (Exemplo de outro tipo: horas)
+
+          pattern: '^(^(100\.\00|\d{1,2}\.\d{2})$|^(\d{1,6})$|^(\d{1,15}\.\d{2})$)$'
         unitType:
-          description: "Tipo da unidade referente ao valor inserido no campo Amount"
           type: string
-          enum: [PORCENTAGEM, MONETARIO]
+          enum: [PORCENTAGEM, MONETARIO, OUTROS]
+          example: MONETARIO
+        unitTypeOthers:
+          description: Caso o tipo do valor informado for "Outros", esse campo deve ser preenchido com o tipo do valor, obrigatoriamente.
+          type: string
+          example: Horas
         unit:
           $ref: '#/components/schemas/ExtendedWarrantyCoverageAttributesDetailsUnit'
     
