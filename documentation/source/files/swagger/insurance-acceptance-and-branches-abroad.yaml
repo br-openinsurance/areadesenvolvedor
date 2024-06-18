@@ -368,18 +368,21 @@ components:
           type: string
           format: date
           maxLength: 10
+          pattern: '^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])$'
           example: '2022-05-21'
         termStartDate: 
           description: Data de início de vigência do documento
           type: string
           format: date
           maxLength: 10
+          pattern: '^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])$'
           example: '2022-05-21'
         termEndDate:
           description: Data de fim de vigência do documento
           type: string
           format: date
           maxLength: 10
+          pattern: '^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])$'
           example: '2022-05-21'
         leadInsurerCode:
           description: "Código da seguradora líder para contratos com arranjo de cosseguro"
@@ -390,33 +393,41 @@ components:
           type: string
           maxLength: 1024
         maxLMG:
-          $ref: '#/components/schemas/AmountDetails'
+          description: Valor Limite máximo de garantia (LMG)
+          allOf:
+            - $ref: '#/components/schemas/AmountDetails'
         proposalId:
           description: Identificador da Proposta
           type: string
           maxLength: 60
         insureds:
           type: array
+          description: Lista que agrupa os dados dos segurados.  
           items:
             $ref: '#/components/schemas/PersonalInfo'  
         beneficiaries: 
           type: array
+          description: Lista que agrupa os dados dos beneficiários.
           items:
             $ref: '#/components/schemas/BeneficiaryInfo'
         principals:
           type: array
+          description: Lista que agrupa os dados dos tomadores/garantidos.  
           items:
-            $ref: '#/components/schemas/principalInfo'
+            $ref: '#/components/schemas/PrincipalInfo'
         intermediaries:
           type: array
+          description: Lista que agrupa os dados de intermediários.
           items:
             $ref: '#/components/schemas/Intermediary'
         insuredObjects:
           type: array
+          description: Lista que agrupa os dados de objetos segurados.
           items:
             $ref: '#/components/schemas/InsuranceAcceptanceAndBranchesAbroadInsuredObject'
         coverages:    
           type: array
+          description: Lista que agrupa os dados das coberturas.
           items:
             $ref: '#/components/schemas/InsuranceAcceptanceAndBranchesAbroadCoverage'
         coinsuranceRetainedPercentage:
@@ -426,12 +437,12 @@ components:
           example: '10.00'
         coinsurers:
           type: array
+          description: Lista que agrupa os dados dos cosseguros.  
           items:
             $ref: '#/components/schemas/Coinsurer'
         branchInfo:
           $ref: '#/components/schemas/InsuranceAcceptanceAndBranchesAbroadSpecificPolicyInfo'
-
-    principalInfo:
+    PrincipalInfo:
       type: object
       required:
         - identification
@@ -504,7 +515,6 @@ components:
         adressAditionalInfo:
           description:  informar dados complementares do endereço, caso houver.
           type: string
-
     PersonalInfo:
       type: object
       required:
@@ -564,7 +574,7 @@ components:
           type: string
           maxLength: 60
         state:
-          description: Estado do segurado (por extenso)
+          description: Estado do segurado 
           type: string
           enum: ['AC', 'AL', 'AP', 'AM', 'BA', 'CE', 'DF', 'ES', 'GO', 'MA', 'MT', 'MS', 'MG', 'PA', 'PB', 'PR', 'PE', 'PI', 'RJ', 'RN', 'RS', 'RO', 'RR', 'SC', 'SP', 'SE', 'TO', 'XX']
           example: SP
@@ -647,7 +657,7 @@ components:
         brokerId:
           description: Identificador do intermediador da apólice - código Susep do corretor(a) (Caso Tipo de Intermediador for CORRETOR)
           type: string
-          pattern: \d{9}
+          pattern: ^\d{9}$
         identificationType:
           description: Tipo de Documento do Intermediador(a) (Caso Tipo de Intermediador não seja CORRETOR ou quando for CORRETOR, porém o identificador do intermediador não seja informado)
           type: string
@@ -698,6 +708,7 @@ components:
     InsuranceAcceptanceAndBranchesAbroadInsuredObject:
       type: object
       required:
+        - identification
         - type
         - description
         - coverages
@@ -705,7 +716,7 @@ components:
         identification:
           type: string
           maxLength: 100
-          description: Identificador do objeto segurado (Quando o Tipo de Objeto Segurado for diferente de PESSOA). Para Fianca Locaticia, colocar a identificacao do Contrato de Locacao
+          description: "Identificador do objeto segurado (Quando o Tipo de Objeto Segurado for diferente de PESSOA). Para Fiança Locatícia, colocar a identificacao do Contrato de Locação"
         type:
           type: string
           description: Tipo do objeto segurado
@@ -765,7 +776,9 @@ components:
             type: string
             maxLength: 50
         LMI:          
-          $ref: '#/components/schemas/AmountDetails'
+          description: Valor Limite Máximo de Indenização (LMI).
+          allOf:
+            - $ref: '#/components/schemas/AmountDetails'
         isLMISublimit:
           type: boolean
           description: Limite máximo de indenização (LMI) é sublimite (Caso aplicável)
@@ -774,11 +787,13 @@ components:
           format: date
           maxLength: 10
           example: '2022-05-21'
+          pattern: '^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])$'
           description: "Data de início de vigência da cobertura"
         termEndDate:  
           type: string
           format: date
           maxLength: 10
+          pattern: '^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])$'
           example: '2022-05-21'
           description: "Data de fim de vigência da cobertura"
         isMainCoverage:
@@ -797,7 +812,8 @@ components:
                 INTERMITENTE,
                 REGULAR_COMUM,
                 CAPITAL_GLOBAL,
-                PARAMETRICO_E_INTERMITENTE]    
+                PARAMETRICO_E_INTERMITENTE]
+          example: PARAMETRICO    
         gracePeriod:
           type: integer
           maxLength: 5
@@ -817,12 +833,14 @@ components:
           type: string
           format: date
           maxLength: 10
+          pattern: '^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])$'
           example: '2022-05-21'
           description: "Data de início da carência. OBS: Obrigatório, se houver"
         gracePeriodEndDate:            
           type: string
           format: date
           maxLength: 10
+          pattern: '^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])$'
           example: '2022-05-21'
           description: "Data de fim da carência. OBS: Obrigatório, se houver"
         premiumPeriodicity:
@@ -920,6 +938,7 @@ components:
           description: Data de Início da Franquia
           type: string
           maxLength: 10
+          pattern: '^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])$'
           format: date
           example: "2022-05-16"
         periodEndDate:
@@ -927,6 +946,7 @@ components:
           type: string
           format: date
           maxLength: 10
+          pattern: '^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])$'
           example: "2022-05-17"
         description:
           description: Descrição da Franquia
@@ -938,6 +958,7 @@ components:
       description: Informações do POS
       required:
         - applicationType
+        - description
       properties:
         applicationType:
           description: Forma de Aplicação do POS
@@ -957,10 +978,9 @@ components:
         maxValue:
           $ref: '#/components/schemas/AmountDetails'
         percentage:
-          description: Percentual do POS
-          type: string
-          pattern: '^100\.0{1,9}$|^\d{1,2}\.\d{1,9}$'
-          example: '10.00'
+          $ref: '#/components/schemas/AmountDetails'
+        valueOthers: 
+          $ref: '#/components/schemas/AmountDetails'
     Coinsurer:
       type: object
       properties:
@@ -988,6 +1008,7 @@ components:
           $ref: '#/components/schemas/Meta'
     InsuranceAcceptanceAndBranchesAbroadPremium:
       type: object
+      description: Objeto que agrupa dados de prêmio.   
       required:
         - amount
         - paymentsQuantity
@@ -1005,10 +1026,12 @@ components:
             - $ref: '#/components/schemas/AmountDetails'
         coverages:
           type: array
+          description: Lista que agrupa os dados de coberturas. 
           items:
             $ref: '#/components/schemas/InsuranceAcceptanceAndBranchesAbroadPremiumCoverage'
         payments:
           type: array
+          description: Lista que agrupa os dados de pagamentos.
           items:
             $ref: '#/components/schemas/Payment'
     InsuranceAcceptanceAndBranchesAbroadPremiumCoverage:
@@ -1048,7 +1071,6 @@ components:
           description: Data do movimento de prêmio
           type: string
           format: date
-          maxLength: 10
           pattern: '^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])$'
           example: '2022-05-21'
         movementType:
@@ -1086,7 +1108,6 @@ components:
           description: Data de Vencimento da Parcela
           type: string
           format: date
-          maxLength: 10
           pattern: '^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])$'
           example: '2022-05-21'
         tellerId:
@@ -1101,7 +1122,7 @@ components:
             OUTROS]
           example: CPF
         tellerIdOthers:
-          description: Descricao do campo de tipo do documento do pagador/recebedor quando a opcao escolhida for OUTROS
+          description: Descrição do campo de tipo do documento do pagador/recebedor quando a opcao escolhida for OUTROS
           type: string
           maxLength: 100
           example: RNE
@@ -1167,6 +1188,7 @@ components:
           type: string
           format: date
           maxLength: 10
+          pattern: '^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])$'
           example: '2022-05-21'
         status:
           description: Status do sinistro     
@@ -1182,12 +1204,14 @@ components:
           type: string
           format: date
           maxLength: 10
+          pattern: '^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])$'
           example: '2022-05-21'
         occurrenceDate:
           description: Data de ocorrência do sinistro
           type: string
           format: date
           maxLength: 10
+          pattern: '^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])$'
           example: '2022-05-21'
         warningDate:
           description: Data de aviso do sinistro
@@ -1221,6 +1245,7 @@ components:
           maxLength: 100  
         coverages:
           type: array
+          description: Lista que agrupa os dados de coberturas. 
           items:
             $ref: '#/components/schemas/InsuranceAcceptanceAndBranchesAbroadClaimCoverage'   
     InsuranceAcceptanceAndBranchesAbroadClaimCoverage:
@@ -1250,25 +1275,43 @@ components:
           description: Data de Aviso do Sinistro por Cobertura (Caso aplicável)
           type: string
           format: date
+          pattern: '^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])$'
           example: '2022-12-31'
         thirdPartyClaimDate:
           description: Data de Reclamação do Terceiro por Cobertura (Caso aplicável)
           type: string
           format: date
+          pattern: '^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])$'
           example: '2022-12-31'
     AmountDetails:
         type: object
         description: Detalhes de limites/valores.
         required:
           - amount
-          - unit
+          - unitType
         properties:
           amount:
-            description: Valor.
             type: string
-            pattern: '^\d{1,16}\.\d{2}$'
-            example: '2000.00'
+            pattern: '^(^(100\.\00|\d{1,2}\.\d{2})$|^(\d{1,6})$|^(\d{1,15}\.\d{2})$)$'
+            description: |
+              Valor.
+              Exemplos de preenchimento do campo:
+
+              PORCENTAGEM: 90.85
+                              
+              MONETARIO: 62500.67
+
+              OUTROS: 1000 (Exemplo de outro tipo: horas)
+          unitType:
+            description: "Tipo da unidade referente ao valor inserido no campo Amount"
+            type: string
+            enum: [PORCENTAGEM, MONETARIO, OUTROS]
+          unitTypeOthers:
+            description: Caso o tipo do valor informado for "Outros", esse campo deve ser preenchido com o tipo do valor, obrigatoriamente.
+            type: string
+            example: Horas
           unit:
+            description: Obrigatório caso o valor inserido em  unitType seja "MONETARIO".
             type: object
             required:
               - code

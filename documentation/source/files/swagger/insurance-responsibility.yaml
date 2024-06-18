@@ -321,6 +321,7 @@ components:
           $ref: '#/components/schemas/Meta'
     InsuranceResponsibilityPolicyInfo:    
       type: object
+      description: Objeto que agrupa dados de ápolice.
       required:
         - documentType 
         - policyId
@@ -367,18 +368,21 @@ components:
           type: string
           format: date
           maxLength: 10
+          pattern: '^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])$'
           example: '2022-12-31'
         termStartDate: 
           description: Data de início de vigência do documento
           type: string
           format: date
           maxLength: 10
+          pattern: '^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])$'
           example: '2022-12-31'
         termEndDate:
           description: Data de fim de vigência do documento
           type: string
           format: date
           maxLength: 10
+          pattern: '^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])$'
           example: '2022-12-31'
         leadInsurerCode:
           description: "Código da seguradora líder para contratos com arranjo de cosseguro"
@@ -389,33 +393,41 @@ components:
           type: string
           maxLength: 1024
         maxLMG:
-          $ref: '#/components/schemas/AmountDetails'
+          description: Valor Limite máximo de garantia (LMG)
+          allOf:
+            - $ref: '#/components/schemas/AmountDetails'
         proposalId:
           description: Identificador da Proposta
           type: string
           maxLength: 60
         insureds:
           type: array
+          description: Lista que agrupa os dados dos segurados.
           items:
             $ref: '#/components/schemas/PersonalInfo'  
         beneficiaries: 
           type: array
+          description: Lista que agrupa os dados dos beneficiários.
           items:
             $ref: '#/components/schemas/BeneficiaryInfo'
         principals:
           type: array
+          description: Lista que agrupa os dados dos tomadores/garantidos.
           items:
             $ref: '#/components/schemas/PrincipalInfo'
         intermediaries:
           type: array
+          description: Lista que agrupa os dados de intermediários.
           items:
             $ref: '#/components/schemas/Intermediary'
         insuredObjects:
           type: array
+          description: Lista que agrupa os dados de objetos segurados.
           items:
             $ref: '#/components/schemas/InsuranceResponsibilityInsuredObject'
         coverages:    
           type: array
+          description: Lista que agrupa os dados das coberturas.
           items:
             $ref: '#/components/schemas/InsuranceResponsibilityCoverage'
         coinsuranceRetainedPercentage:
@@ -425,6 +437,7 @@ components:
           example: '10.00'
         coinsurers:
           type: array
+          description: Lista que agrupa os dados dos cosseguros.
           items:
             $ref: '#/components/schemas/Coinsurer'
         branchInfo:
@@ -445,7 +458,7 @@ components:
         identification:
           description: Documento de Identificação do Segurado
           type: string
-          maxLength: 60
+          maxLength: 11
           example: "12345678900"
         identificationType:
           description: Tipo de Documento do Segurado
@@ -475,7 +488,7 @@ components:
         postCode:
           description: Código Postal do segurado
           type: string
-          maxLength: 60
+          maxLength: 8
           example: "10000000"
         email:
           description: E-mail do segurado (caso possua)
@@ -508,12 +521,12 @@ components:
         - name
       properties:
         identification:
-          description: Documento de Identificação da Pessoa
+          description: Documento de Identificação do beneficiário
           type: string
-          maxLength: 60
+          maxLength: 11
           example: "12345678900"
         identificationType:
-          description: Tipo de Documento da Pessoa
+          description: Tipo de Documento do beneficiário
           type: string
           enum: [
             CPF,
@@ -522,12 +535,12 @@ components:
           ]
           example: CPF
         identificationTypeOthers:
-          description: Campo de detalhamento para quando a opcao do tipo de documento da pessoa for OUTROS
+          description: Campo de detalhamento para quando a opcao do tipo de documento do beneficiário for OUTROS
           type: string
           maxLength: 100
           example: RNE
         name:
-          description: Nome ou Razão Social da Pessoa
+          description: Nome ou Razão Social do beneficiário
           type: string
           maxLength: 60
           example: Nome Sobrenome
@@ -546,7 +559,7 @@ components:
         identification:
           description: Documento de Identificação do Tomador/Garantidor
           type: string
-          maxLength: 60
+          maxLength: 11
           example: "12345678900"
         identificationType:
           description: Tipo de Documento do Tomador/Garantidor
@@ -570,7 +583,7 @@ components:
         postCode:
           description: Código Postal do Tomador/Garantidor
           type: string
-          maxLength: 60
+          maxLength: 8
           example: "10000000"
         email:
           description: E-mail do Tomador/Garantidor (caso possua)
@@ -687,6 +700,7 @@ components:
         type:
           type: string
           description: Tipo do objeto segurado
+          example: CONTRATO
           enum: [CONTRATO,
                 PROCESSO_ADMINISTRATIVO,
                 PROCESSO_JUDICIAL,
@@ -729,7 +743,8 @@ components:
           description: Grupo e Ramo da Cobertura (Conforme regulamentação Susep vigente)
         code:
             type: string
-            description: Codigo da cobertura (Vide Tabela 50 até Tabela 62)
+            description: Código da cobertura (Vide Tabela 50 até Tabela 62)
+            example: DANOS_CAUSADOS_A_TERCEIROS
             enum: [
               DANOS_CAUSADOS_A_TERCEIROS,
               INSTALACOES_FIXAS,
@@ -785,7 +800,9 @@ components:
           description: Número do processo SUSEP relacionado à cobertura
           maxLength: 50
         LMI:          
-          $ref: '#/components/schemas/AmountDetails'
+          description: Valor Limite Máximo de Indenização (LMI).
+          allOf:
+            - $ref: '#/components/schemas/AmountDetails'
         isLMISublimit:
           type: boolean
           description: Limite máximo de indenização (LMI) é sublimite (Caso aplicável)
@@ -793,12 +810,14 @@ components:
           type: string
           format: date
           maxLength: 10
+          pattern: '^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])$'
           example: '2022-12-31'
           description: "Data de início de vigência da cobertura"
         termEndDate:  
           type: string
           format: date
           maxLength: 10
+          pattern: '^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])$'
           example: '2022-12-31'
           description: "Data de fim de vigência da cobertura"
         isMainCoverage:
@@ -807,12 +826,14 @@ components:
         feature:
           type: string
           description: "Característica da cobertura"
+          example: MASSIFICADOS
           enum: [MASSIFICADOS,
                 MASSIFICADOS_MICROSEGUROS,
                 GRANDES_RISCOS]
         type:    
           type: string
           description: "Tipo de cobertura"
+          example: PARAMETRICO
           enum: [PARAMETRICO,
                 INTERMITENTE,
                 REGULAR_COMUM,
@@ -825,29 +846,34 @@ components:
         gracePeriodicity:
           type: string
           description: "Periodicidade da carência. OBS: Obrigatório, se houver"
+          example: DIA
           enum: [DIA,
                 MES,
                 ANO]     
         gracePeriodCountingMethod:   
           type: string
           description: "Indicador de dias úteis ou corridos da carência. OBS: Obrigatório, se houver"
+          example: DIAS_UTEIS
           enum: [DIAS_UTEIS,
                 DIAS_CORRIDOS] 
         gracePeriodStartDate:            
           type: string
           format: date
           maxLength: 10
+          pattern: '^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])$'
           example: '2022-12-31'
           description: "Data de início da carência. OBS: Obrigatório, se houver"
         gracePeriodEndDate:            
           type: string
           format: date
           maxLength: 10
+          pattern: '^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])$'
           example: '2022-12-31'
           description: "Data de fim da carência. OBS: Obrigatório, se houver"
         premiumPeriodicity:
           description: Periodicidade de pagamento do premio
           type: string
+          example: MENSAL
           enum: [MENSAL,
                 BIMESTRAL,
                 TRIMESTRAL,
@@ -876,6 +902,7 @@ components:
         code:
             type: string
             description: Código da cobertura (Vide Tabela 50 até Tabela 62)
+            example: DANOS_CAUSADOS_A_TERCEIROS
             enum: [
               DANOS_CAUSADOS_A_TERCEIROS,
               INSTALACOES_FIXAS,
@@ -981,11 +1008,15 @@ components:
           description: Data de Início da Franquia
           type: string
           format: date
+          maxLength: 10
+          pattern: '^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])$'
           example: "2022-05-16"
         periodEndDate:
           description: Data de Fim da Franquia
           type: string
           format: date
+          maxLength: 10
+          pattern: '^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])$'
           example: "2022-05-17"
         description:
           description: Descrição da Franquia
@@ -994,9 +1025,10 @@ components:
           example: Franquia de exemplo
     POS:
       type: object
-      description: Informações de franquia
+      description: Informações da POS
       required:
         - applicationType
+        - description
       properties:
         applicationType:
           description: Forma de Aplicação do POS
@@ -1011,15 +1043,15 @@ components:
           description: Descricao do POS (caso Forma de aplicacao do POS for Outros)
           type: string
           maxLength: 60
+          example: "Descrição de exemplo"
         minValue:
           $ref: '#/components/schemas/AmountDetails'
         maxValue:
           $ref: '#/components/schemas/AmountDetails'
         percentage:
-          description: Percentual do POS
-          type: string
-          pattern: '100\.0{1,9}$|^\d{1,2}\.\d{1,9}$'
-          example: '10.00'
+          $ref: '#/components/schemas/AmountDetails'
+        valueOthers: 
+          $ref: '#/components/schemas/AmountDetails'
     Coinsurer:
       type: object
       required:
@@ -1067,10 +1099,12 @@ components:
             - $ref: '#/components/schemas/AmountDetails'
         coverages:
           type: array
+          description: Lista que agrupa os dados de coberturas.
           items:
             $ref: '#/components/schemas/InsuranceResponsibilityPremiumCoverage'
         payments:
           type: array
+          description: Lista que agrupa os dados de pagamentos.
           items:
             $ref: '#/components/schemas/Payment'
     InsuranceResponsibilityPremiumCoverage:
@@ -1088,6 +1122,7 @@ components:
         code:
             type: string
             description: Codigo da cobertura (Vide Tabela 50 até Tabela 62)
+            example: DANOS_CAUSADOS_A_TERCEIROS
             enum: [
               DANOS_CAUSADOS_A_TERCEIROS,
               INSTALACOES_FIXAS,
@@ -1151,6 +1186,8 @@ components:
           description: Data do movimento de prêmio
           type: string
           format: date
+          maxLength: 10
+          pattern: '^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])$'
           example: '2022-12-31'
         movementType:
           description: Tipo do Movimento
@@ -1267,10 +1304,12 @@ components:
           type: string
           format: date
           maxLength: 10
+          pattern: '^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])$'
           example: '2022-12-31'
         status:
           description: Status do sinistro     
           type: string
+          example: ABERTO
           enum: [ABERTO,
                 ENCERRADO_COM_INDENIZACAO,
                 ENCERRADO_SEM_INDENIZACAO,
@@ -1282,24 +1321,28 @@ components:
           type: string
           format: date
           maxLength: 10
+          pattern: '^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])$'
           example: '2022-12-31'
         occurrenceDate:
           description: Data de ocorrência do sinistro
           type: string
           format: date
           maxLength: 10
+          pattern: '^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])$'
           example: '2022-12-31'
         warningDate:
           description: Data de aviso do sinistro
           type: string
           format: date
           maxLength: 10
+          pattern: '^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])$'
           example: '2022-12-31'
         thirdPartyClaimDate:
           description: Data de reclamação do terceiro
           type: string
           format: date
           maxLength: 10
+          pattern: '^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])$'
           example: '2022-12-31'
         amount:
           description: Valor total bruto do sinistro considerando todos os movimentos e suas reavaliações. Não devem ser considerados valores de deduções (por exemplo, redutores e ressarcimento salvado)
@@ -1308,6 +1351,7 @@ components:
         denialJustification:
           description: "Justificativa da Negativa(Caso Status do Sinistro for 'ENCERRADO_SEM_INDENIZACAO')"
           type: string
+          example: RISCO_EXCLUIDO
           enum: [RISCO_EXCLUIDO,
             RISCO_AGRAVADO,
             SEM_DOCUMENTACAO,
@@ -1341,6 +1385,7 @@ components:
         code:
             type: string
             description: Codigo da cobertura (Vide Tabela 50 até Tabela 62)
+            example: DANOS_CAUSADOS_A_TERCEIROS
             enum: [
               DANOS_CAUSADOS_A_TERCEIROS,
               INSTALACOES_FIXAS,
@@ -1391,12 +1436,14 @@ components:
           description: Data de Aviso do Sinistro por Cobertura (Caso aplicável)
           type: string
           format: date
+          pattern: '^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])$'
           maxLength: 10
           example: '2022-12-31'
         thirdPartyClaimDate:
           description: Data de Reclamação do Terceiro por Cobertura (Caso aplicável)
           type: string
           format: date
+          pattern: '^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])$'
           maxLength: 10
           example: '2022-12-31'
     AmountDetails:
@@ -1404,13 +1451,30 @@ components:
         description: Detalhes de valores/limites
         required:
           - amount
-          - unit
+          - unitType
         properties:
           amount:
             type: string
-            pattern: '^\d{1,16}\.\d{2}$'
-            example: '2000.00'
+            pattern: '^(^(100\.\00|\d{1,2}\.\d{2})$|^(\d{1,6})$|^(\d{1,15}\.\d{2})$)$'
+            description: |
+              Valor.
+              Exemplos de preenchimento do campo:
+
+              PORCENTAGEM: 90.85
+                              
+              MONETARIO: 62500.67
+
+              OUTROS: 1000 (Exemplo de outro tipo: horas)
+          unitType:
+            description: "Tipo da unidade referente ao valor inserido no campo Amount"
+            type: string
+            enum: [PORCENTAGEM, MONETARIO, OUTROS]
+          unitTypeOthers:
+            description: Caso o tipo do valor informado for "Outros", esse campo deve ser preenchido com o tipo do valor, obrigatoriamente.
+            type: string
+            example: Horas
           unit:
+            description: Preenchimento obrigatório em caso de valor "MONETARIO" ser informado no campo "unitType"
             type: object
             required:
               - code
@@ -1428,6 +1492,7 @@ components:
                 description: Moeda da Parcela, de acordo com ISO-4217.
                 example: BRL
                 enum: [ AFN,AFA,ALL,ALK,DZD,USD,EUR,ADP,ESP,FRF,AOA,AOK,AON,AOR,XCD,ARS,ARA,ARP,ARY,AMD,RUR,AWG,AUD,ATS,AZN,AYM,AZM,BSD,BHD,BDT,BBD,BYN,BYB,BYR,BEC,BEF,BEL,BZD,XOF,BMD,INR,BTN,BOP,BOB,BOV,BAM,BAD,BWP,NOK,BRL,BRB,BRC,BRE,BRN,BRR,BND,BGN,BGJ,BGK,BGL,BUK,BIF,CVE,KHR,XAF,CAD,KYD,CLP,CLF,CNY,COP,COU,KMF,CDF,NZD,CRC,HRK,HRD,CUP,CUC,ANG,CYP,CZK,CSJ,CSK,DKK,DJF,DOP,ECS,ECV,EGP,SVC,GQE,ERN,EEK,SZL,ETB,XEU,FKP,FJD,FIM,XPF,GMD,GEL,GEK,DDM,DEM,GHS,GHC,GHP,GIP,GRD,GTQ,GBP,GNF,GNE,GNS,GWE,GWP,GYD,HTG,ITL,HNL,HKD,HUF,ISK,ISJ,IDR,XDR,IRR,IQD,IEP,ILS,ILP,ILR,JMD,JPY,JOD,KZT,KES,KPW,KRW,KWD,KGS,LAJ,LAK,LVL,LVR,LBP,LSL,ZAR,LSM,ZAL,LRD,LYD,CHF,LTL,LTT,LUC,LUF,LUL,MOP,MGA,MGF,MWK,MYR,MVR,MVQ,MLF,MTL,MTP,MRU,MRO,MUR,XUA,MXN,MXV,MXP,MDL,MNT,MAD,MZN,MZE,MZM,MMK,NAD,NPR,NLG,NIO,NIC,NGN,MKD,OMR,PKR,PAB,PGK,PYG,PEN,PEH,PEI,PES,PHP,PLN,PLZ,PTE,QAR,RON,ROK,ROL,RUB,RWF,SHP,WST,STN,STD,SAR,RSD,CSD,SCR,SLL,SGD,XSU,SKK,SIT,SBD,SOS,SSP,SDG,RHD,ESA,ESB,LKR,SDD,SDP,SRD,SRG,SEK,CHE,CHW,CHC,SYP,TWD,TJS,TJR,TZS,THB,TPE,TOP,TTD,TND,TRY,TRL,TMT,TMM,UGX,UGS,UGW,UAH,UAK,SUR,AED,USS,USN,UYU,UYI,UYW,UYN,UYP,UZS,VUV,VEB,VEF,VES,VND,VNC,YER,YDD,YUD,YUM,YUN,ZRN,ZRZ,ZMW,ZMK,ZWL,ZWC,ZWD,ZWN,ZWR,XBA,XFO,XBB,XRE,XBC,XBD,XFU,XTS,XXX,XAU,XPD,XPT,XAG ]
+ 
     InsuranceResponsibilitySpecificPolicyInfo:
       type: object
       description: Informações do Anexo Específico
@@ -1441,6 +1506,7 @@ components:
             $ref: '#/components/schemas/InsuranceResponsibilitySpecificCoverage'      
         insuredObjects:
           type: array
+          description: Lista que agrupa os dados de objetos segurados.
           items:
             $ref: '#/components/schemas/InsuranceResponsibilitySpecificInsuredObject' 
     InsuranceResponsibilitySpecificCoverage:
@@ -1458,6 +1524,7 @@ components:
         code:
             type: string
             description: Codigo da cobertura (Vide Tabela 50 até Tabela 62)
+            example: DANOS_CAUSADOS_A_TERCEIROS
             enum: [
               DANOS_CAUSADOS_A_TERCEIROS,
               INSTALACOES_FIXAS,
@@ -1507,6 +1574,7 @@ components:
         type:
           description: Base de indenização
           type: string
+          example: POR_OCORRENCIA
           enum: [POR_OCORRENCIA,
                 POR_RECLAMACAO,
                 OUTRA]
@@ -1518,6 +1586,8 @@ components:
           description: "Data limite da retroatividade(Caso Base de Indenização for 'Por Reclamação')."
           type: string
           format: date
+          maxLength: 10
+          pattern: '^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])$'
           example: '2022-12-31'
         retroactivityPeriod: 
           description: "Prazo de retroatividade a ser contado do início de vigência da cobertura."
@@ -1540,11 +1610,15 @@ components:
           description: "Data de início do prazo Adicional complementar(Caso Base de Indenização for 'Por Reclamação')."
           type: string
           format: date
+          maxLength: 10
+          pattern: '^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])$'
           example: '2022-12-31'
         complementaryTermEndDate:
           description: "Data de Fim do prazo Adicional complementar(Caso Base de Indenização for 'Por Reclamação')."
           type: string
           format: date
+          maxLength: 10
+          pattern: '^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])$'
           example: '2022-12-31'
         complementaryTerm:
           description: "Prazo Adicional complementar(Caso Base de Indenização for 'Por Reclamação')"
@@ -1567,11 +1641,15 @@ components:
           description: Data de início do prazo Adicional suplementar(Caso Base de Indenização for 'Por Reclamação').
           type: string
           format: date
+          maxLength: 10
+          pattern: '^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])$'
           example: '2022-12-31'          
         supplementaryTermEndDate:   
           description: Data de fim do prazo Adicional suplementar(Caso Base de Indenização for 'Por Reclamação').
           type: string
           format: date
+          maxLength: 10
+          pattern: '^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])$'
           example: '2022-12-31' 
         supplementaryTerm:
           description: "Prazo Adicional suplementar (Caso Base de Indenização for 'Por Reclamação')."
@@ -1622,11 +1700,15 @@ components:
           description: "Data de início da cobertura de passivos ambientais desconhecidos (Caso contrato de Responsabilidade Civil Riscos Ambientais)"
           type: string
           format: date
+          maxLength: 10
+          pattern: '^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])$'
           example: '2022-12-31'  
         coveragesTermEndDate:
           description: "Data de fim da cobertura de passivos ambientais desconhecidos (Caso contrato de Responsabilidade Civil Riscos Ambientais)"
           type: string
           format: date
+          maxLength: 10
+          pattern: '^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])$'
           example: '2022-12-31' 
         coveragesTerm:
           description: "Prazo da cobertura de passivos ambientais desconhecidos (Caso contrato de Responsabilidade Civil Riscos Ambientais)"
@@ -1680,6 +1762,7 @@ components:
           description: "Aplicação de retroatividade para cobertura de custo de Defesa Emergencial, Restauração ou Notificação"
           type: boolean
           example: true
+    
     Links:
       type: object
       properties:
