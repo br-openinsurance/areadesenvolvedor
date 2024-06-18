@@ -332,6 +332,7 @@ components:
           $ref: '#/components/schemas/Meta'
     InsurancePatrimonialPolicyInfo:    
       type: object
+      description: Objeto que agrupa dados de ápolice.
       required:
         - documentType 
         - policyId
@@ -503,7 +504,7 @@ components:
           type: string
           maxLength: 60
         state:
-          description: Estado do segurado (por extenso)
+          description: Estado do segurado 
           type: string
           example: AC
           enum: ['AC', 'AL', 'AP', 'AM', 'BA', 'CE', 'DF', 'ES', 'GO', 'MA', 'MT', 'MS', 'MG', 'PA', 'PB', 'PR', 'PE', 'PI', 'RJ', 'RN', 'RS', 'RO', 'RR', 'SC', 'SP', 'SE', 'TO', 'BR', 'XX']
@@ -516,6 +517,10 @@ components:
           description: Endereço do segurado (restante do endereço, excluindo cidade, estado e país)
           type: string
           maxLength: 60 
+        addressAdditionalInfo:
+          type: string
+          maxLength: 100
+          description: Informações adicionais do endereço do segurado
     BeneficiaryInfo:
       type: object
       required:
@@ -683,8 +688,7 @@ components:
         country:
           description: País da Intermediador (de acordo com o código "alpha3" do ISO-3166; Caso Tipo de Intermediador for ESTIPULANTE)
           type: string
-          maxLength: 3
-          pattern: '^(\w{3}){1}$'
+          enum: [AFG,ALA,ALB,DZA,ASM,AND,AGO,AIA,ATA,ATG,ARG,ARM,ABW,AUS,AUT,AZE,BHS,BHR,BGD,BRB,BLR,BEL,BLZ,BEN,BMU,BTN,BOL,BES,BIH,BWA,BVT,BRA,IOT,BRN,BGR,BFA,BDI,CPV,KHM,CMR,CAN,CYM,CAF,TCD,CHL,CHN,CXR,CCK,COL,COM,COG,COD,COK,CRI,CIV,HRV,CUB,CUW,CYP,CZE,DNK,DJI,DMA,DOM,ECU,EGY,SLV,GNQ,ERI,EST,SWZ,ETH,FLK,FRO,FJI,FIN,FRA,GUF,PYF,ATF,GAB,GMB,GEO,DEU,GHA,GIB,GRC,GRL,GRD,GLP,GUM,GTM,GGY,GIN,GNB,GUY,HTI,HMD,VAT,HND,HKG,HUN,ISL,IND,IDN,IRN,IRQ,IRL,IMN,ISR,ITA,JAM,JPN,JEY,JOR,KAZ,KEN,KIR,PRK,KOR,KWT,KGZ,LAO,LVA,LBN,LSO,LBR,LBY,LIE,LTU,LUX,MAC,MDG,MWI,MYS,MDV,MLI,MLT,MHL,MTQ,MRT,MUS,MYT,MEX,FSM,MDA,MCO,MNG,MNE,MSR,MAR,MOZ,MMR,NAM,NRU,NPL,NLD,NCL,NZL,NIC,NER,NGA,NIU,NFK,MKD,MNP,NOR,OMN,PAK,PLW,PSE,PAN,PNG,PRY,PER,PHL,PCN,POL,PRT,PRI,QAT,REU,ROU,RUS,RWA,BLM,SHN,KNA,LCA,MAF,SPM,VCT,WSM,SMR,STP,SAU,SEN,SRB,SYC,SLE,SGP,SXM,SVK,SVN,SLB,SOM,ZAF,SGS,SSD,ESP,LKA,SDN,SUR,SJM,SWE,CHE,SYR,TWN,TJK,TZA,THA,TLS,TGO,TKL,TON,TTO,TUN,TUR,TKM,TCA,TUV,UGA,UKR,ARE,GBR,USA,UMI,URY,UZB,VUT,VEN,VNM,VGB,VIR,WLF,ESH,YEM,ZMB,ZWE]
           example: BRA 
         address:
           description: Endereço da Intermediador (restante do do endereço, excluindo cidade, estado e país; Caso Tipo de Intermediador for ESTIPULANTE)
@@ -757,8 +761,10 @@ components:
         susepProcessNumber:
             type: string
             maxLength: 50
-        LMI:          
-          $ref: '#/components/schemas/AmountDetails'
+        LMI:
+          description: Valor de Limite Máximo de Indenização (LMI) solicitado
+          allOf:
+            - $ref: '#/components/schemas/AmountDetails'
         isLMISublimit:
           type: boolean
           description: Limite máximo de indenização (LMI) é sublimite (Caso aplicável)
@@ -766,14 +772,14 @@ components:
           type: string
           format: date
           maxLength: 10
-          pattern: ^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])$
+          pattern: ^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0[1-9])$
           example: '2022-12-31'
           description: "Data de início de vigência da cobertura"
         termEndDate:  
           type: string
           format: date
           maxLength: 10
-          pattern: ^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])$
+          pattern: ^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0[1-9])$
           example: '2022-12-31'
           description: "Data de fim de vigência da cobertura"
         isMainCoverage:
@@ -812,14 +818,14 @@ components:
           type: string
           format: date
           maxLength: 10
-          pattern: ^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])$
+          pattern: ^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0[1-9])$
           example: '2022-12-31'
           description: "Data de início da carência. OBS: Obrigatório, se houver"
         gracePeriodEndDate:            
           type: string
           format: date
           maxLength: 10
-          pattern: ^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])$
+          pattern: ^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0[1-9])$
           example: '2022-12-31'
           description: "Data de fim da carência. OBS: Obrigatório, se houver"
         premiumPeriodicity:
@@ -918,14 +924,14 @@ components:
           type: string
           format: date
           maxLength: 10
-          pattern: ^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])$
+          pattern: ^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0[1-9])$
           example: "2022-05-16"
         periodEndDate:
           description: Data de Fim da Franquia
           type: string
           format: date
           maxLength: 10
-          pattern: ^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])$
+          pattern: ^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0[1-9])$
           example: "2022-05-17"
         description:
           description: Descrição da Franquia
@@ -952,18 +958,13 @@ components:
           type: string
           maxLength: 60
         minValue:
-          description: Valor minimo do POS (caso aplicavel)
-          allOf:
-            - $ref: '#/components/schemas/AmountDetails'
+          $ref: '#/components/schemas/AmountDetails'
         maxValue:
-          description: Valor maximo do POS (caso aplicavel)
-          allOf:
-            - $ref: '#/components/schemas/AmountDetails'
+          $ref: '#/components/schemas/AmountDetails'
         percentage:
-          description: Percentual do POS
-          type: string
-          pattern: ^100\.0{1,9}$|^\d{1,2}\.\d{1,9}$
-          example: '10.00'
+          $ref: '#/components/schemas/AmountDetails'
+        valueOthers: 
+          $ref: '#/components/schemas/AmountDetails'
     Coinsurer:
       type: object
       required:
@@ -994,6 +995,7 @@ components:
           $ref: '#/components/schemas/Meta'
     InsurancePatrimonialPremium:
       type: object
+      description: Objeto que agrupa dados de prêmio.
       required:
         - paymentsQuantity
         - amount
@@ -1002,7 +1004,7 @@ components:
       properties:
         paymentsQuantity:
           description: Quantidade de parcelas do prêmio do contrato
-          type: number
+          type: integer
           maxLength: 3
           example: 4
         amount:
@@ -1015,6 +1017,7 @@ components:
             $ref: '#/components/schemas/InsurancePatrimonialPremiumCoverage'
         payments:
           type: array
+          description: Lista que agrupa os dados de pagamentos.
           items:
             $ref: '#/components/schemas/Payment'
     InsurancePatrimonialPremiumCoverage:
@@ -1036,7 +1039,9 @@ components:
           type: string
           maxLength: 500
         premiumAmount:
-          $ref: '#/components/schemas/AmountDetails'
+          description: Valor de Prêmio da Cobertura
+          allOf:
+            - $ref: '#/components/schemas/AmountDetails'
     Payment:
       type: object
       required:
@@ -1080,7 +1085,7 @@ components:
           example: EMISSAO_DIRETA
         movementPaymentsNumber:
           description: Identificador da parcela do movimento
-          type: number
+          type: string
           maxLength: 3
         amount:
           $ref: '#/components/schemas/AmountDetails'
@@ -1102,6 +1107,10 @@ components:
             CNPJ,
             OUTROS]
           example: CPF
+        tellerIdTypeOthers:
+          description: "Campo para descrever o tipo do documento quando for OUTROS"
+          type: string
+          maxLength: 100
         tellerName:
           description: "Nome ou Razão Social do Pagador/Recebedor Obs: Obrigatório caso Tipo de Movimento for  LIQUIDACAO_DE_PREMIO e LIQUIDACAO_DE_CUSTO_DE_AQUISICAO"
           type: string
@@ -1249,14 +1258,12 @@ components:
           description: Data de Aviso do Sinistro por Cobertura (Caso aplicável)
           type: string
           format: date
-          maxLength: 10
           pattern: ^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])$
           example: '2022-12-31'
         thirdPartyClaimDate:
           description: Data de Reclamação do Terceiro por Cobertura (Caso aplicável)
           type: string
           format: date
-          maxLength: 10
           pattern: ^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])$
           example: '2022-12-31'
     AmountDetails:
@@ -1287,6 +1294,7 @@ components:
           example: SIMPLES
         insuredObjects:
           type: array
+          description: Lista que agrupa os dados de objetos segurados.
           items:
             $ref: '#/components/schemas/InsurancePatrimonialSpecificInsuredObject'
     InsurancePatrimonialSpecificInsuredObject:
