@@ -327,6 +327,7 @@ components:
           $ref: '#/components/schemas/Meta'
     InsuranceRuralPolicyInfo:    
       type: object
+      description: Objeto que agrupa dados de ápolice.
       required:
         - documentType 
         - policyId
@@ -374,18 +375,21 @@ components:
           type: string
           format: date
           maxLength: 10
+          pattern: '^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])$'
           example: '2022-12-31'
         termStartDate: 
           description: Data de início de vigência do documento
           type: string
           format: date
           maxLength: 10
+          pattern: '^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])$'
           example: '2022-12-31'
         termEndDate:
           description: Data de fim de vigência do documento
           type: string
           format: date
           maxLength: 10
+          pattern: '^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])$'
           example: '2022-12-31'
         leadInsurerCode:
           description: "Código da seguradora líder para contratos com arranjo de cosseguro"
@@ -396,33 +400,41 @@ components:
           type: string
           maxLength: 1024
         maxLMG:
-          $ref: '#/components/schemas/AmountDetails'
+          description: Valor Limite máximo de garantia (LMG)
+          allOf:
+            - $ref: '#/components/schemas/AmountDetails'
         proposalId:
           description: Identificador da Proposta
           type: string
           maxLength: 60
         insureds:
           type: array
+          description: Lista que agrupa os dados dos segurados.
           items:
             $ref: '#/components/schemas/PersonalInfo'  
         beneficiaries: 
           type: array
+          description: Lista que agrupa os dados dos beneficiários.
           items:
             $ref: '#/components/schemas/BeneficiaryInfo'
         principals:
           type: array
+          description: Lista que agrupa os dados dos tomadores/garantidos.
           items:
             $ref: '#/components/schemas/PrincipalInfo'
         intermediaries:
           type: array
+          description: Lista que agrupa os dados de intermediários.
           items:
             $ref: '#/components/schemas/Intermediary'
         insuredObjects:
           type: array
+          description: Lista que agrupa os dados de objetos segurados.
           items:
             $ref: '#/components/schemas/InsuranceRuralInsuredObject'
         coverages:    
           type: array
+          description: Lista que agrupa os dados das coberturas.
           items:
             $ref: '#/components/schemas/InsuranceRuralCoverage'
         coinsuranceRetainedPercentage:
@@ -432,6 +444,7 @@ components:
           example: '10.00'
         coinsurers:
           type: array
+          description: Lista que agrupa os dados dos cosseguros.
           items:
             $ref: '#/components/schemas/Coinsurer'
         branchInfo:
@@ -515,12 +528,12 @@ components:
         - name
       properties:
         identification:
-          description: Documento de Identificação da Pessoa
+          description: Documento de Identificação do Beneficiário
           type: string
           maxLength: 60
           example: "12345678900"
         identificationType:
-          description: Tipo de Documento da Pessoa
+          description: Tipo de Documento do Beneficiário
           type: string
           enum: [
             CPF,
@@ -529,12 +542,12 @@ components:
           ]
           example: CPF
         identificationTypeOthers:
-          description: Campo de detalhamento para quando a opcao do tipo de documento da pessoa for OUTROS
+          description: Campo de detalhamento para quando a opcao do tipo de documento do beneficiário for OUTROS
           type: string
           maxLength: 100
           example: RNE
         name:
-          description: Nome ou Razão Social da Pessoa
+          description: Nome ou Razão Social do Beneficiário
           type: string
           maxLength: 60
           example: Nome Sobrenome
@@ -738,6 +751,7 @@ components:
         code:
             type: string
             description: Codigo da cobertura (Vide Tabela 50 até Tabela 62)
+            example: GRANIZO
             enum: [
               GRANIZO,
               GEADA,
@@ -784,7 +798,9 @@ components:
             type: string
             maxLength: 50
         LMI:          
-          $ref: '#/components/schemas/AmountDetails'
+          description: Valor Limite Máximo de Indenização (LMI).
+          allOf:
+            - $ref: '#/components/schemas/AmountDetails'
         isLMISublimit:
           type: boolean
           description: Limite máximo de indenização (LMI) é sublimite (Caso aplicável)
@@ -792,12 +808,14 @@ components:
           type: string
           format: date
           maxLength: 10
+          pattern: '^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])$'
           example: '2022-12-31'
           description: "Data de início de vigência da cobertura"
         termEndDate:  
           type: string
           format: date
           maxLength: 10
+          pattern: '^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])$'
           example: '2022-12-31'
           description: "Data de fim de vigência da cobertura"
         isMainCoverage:
@@ -806,6 +824,7 @@ components:
         feature:
           type: string
           description: "Característica da cobertura"
+          example: MASSIFICADOS
           enum: [MASSIFICADOS,
                 MASSIFICADOS_MICROSEGUROS,
                 GRANDES_RISCOS]
@@ -824,24 +843,28 @@ components:
         gracePeriodicity:
           type: string
           description: "Periodicidade da carência. OBS: Obrigatório, se houver"
+          example: DIA
           enum: [DIA,
                 MES,
                 ANO]     
         gracePeriodCountingMethod:   
           type: string
           description: "Indicador de dias úteis ou corridos da carência. OBS: Obrigatório, se houver"
+          example: DIAS_UTEIS
           enum: [DIAS_UTEIS,
                 DIAS_CORRIDOS] 
         gracePeriodStartDate:            
           type: string
           format: date
           maxLength: 10
+          pattern: '^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])$'
           example: '2022-12-31'
           description: "Data de início da carência. OBS: Obrigatório, se houver"
         gracePeriodEndDate:            
           type: string
           format: date
           maxLength: 10
+          pattern: '^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])$'
           example: '2022-12-31'
           description: "Data de fim da carência. OBS: Obrigatório, se houver"
         premiumPeriodicity:
@@ -876,6 +899,7 @@ components:
         code:
             type: string 
             description: Codigo da cobertura (Vide Tabela 50 até Tabela 62)
+            example: GRANIZO
             enum: [
               GRANIZO,
               GEADA,
@@ -973,11 +997,15 @@ components:
           description: Data de Início da Franquia
           type: string
           format: date
+          maxLength: 10
+          pattern: '^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])$'
           example: "2022-05-16"
         periodEndDate:
           description: Data de Fim da Franquia
           type: string
           format: date
+          maxLength: 10
+          pattern: '^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])$'
           example: "2022-05-17"
         description:
           description: Descrição da Franquia
@@ -1008,10 +1036,9 @@ components:
         maxValue:
           $ref: '#/components/schemas/AmountDetails'
         percentage:
-          description: Percentual do POS
-          type: string
-          pattern: ^100\.0{1,9}$|^\d{1,2}\.\d{1,9}$
-          example: '10.00'
+          $ref: '#/components/schemas/AmountDetails'
+        valueOthers: 
+          $ref: '#/components/schemas/AmountDetails'
     Coinsurer:
       type: object
       required:
@@ -1042,6 +1069,7 @@ components:
           $ref: '#/components/schemas/Meta'
     InsuranceRuralPremium:
       type: object
+      description: Objeto que agrupa dados de prêmio.
       required:
         - amount
         - paymentsQuantity
@@ -1059,10 +1087,12 @@ components:
             - $ref: '#/components/schemas/AmountDetails'
         coverages:
           type: array
+          description: Lista que agrupa os dados de coberturas.
           items:
             $ref: '#/components/schemas/InsuranceRuralPremiumCoverage'
         payments:
           type: array
+          description: Lista que agrupa os dados de pagamentos.
           items:
             $ref: '#/components/schemas/Payment'
     InsuranceRuralPremiumCoverage:
@@ -1080,6 +1110,7 @@ components:
         code:
             type: string
             description: Codigo da cobertura (Vide Tabela 50 até Tabela 62)
+            example: GRANIZO
             enum: [
               GRANIZO,
               GEADA,
@@ -1135,6 +1166,8 @@ components:
           description: Data do movimento de prêmio
           type: string
           format: date
+          maxLength: 10
+          pattern: '^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])$'
           example: '2022-12-31'
         movementType:
           description: Tipo do Movimento
@@ -1171,6 +1204,8 @@ components:
           description: Data de Vencimento da Parcela
           type: string
           format: date
+          maxLength: 10
+          pattern: '^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])$'
           example: '2022-12-31'
         tellerId:
           description: Documento do Pagador/Recebedor. Obrigatorio caso Tipo de Movimento for LIQUIDACAO_DE_PREMIO ou LIQUIDACAO_DE_CUSTO_DE_AQUISICAO
@@ -1234,6 +1269,7 @@ components:
             $ref: '#/components/schemas/Meta'
     InsuranceRuralClaim:
       type: object
+      description: Objeto que agrupa dados de sinistro.
       required:
         - identification
         - status
@@ -1252,10 +1288,12 @@ components:
           type: string
           format: date
           maxLength: 10
+          pattern: '^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])$'
           example: '2022-12-31'
         status:
           description: Status do sinistro     
           type: string
+          example: ABERTO
           enum: [ABERTO,
                 ENCERRADO_COM_INDENIZACAO,
                 ENCERRADO_SEM_INDENIZACAO,
@@ -1267,30 +1305,35 @@ components:
           type: string
           format: date
           maxLength: 10
+          pattern: '^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])$'
           example: '2022-12-31'
         occurrenceDate:
           description: Data de ocorrência do sinistro
           type: string
           format: date
           maxLength: 10
+          pattern: '^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])$'
           example: '2022-12-31'
         warningDate:
           description: Data de aviso do sinistro
           type: string
           format: date
           maxLength: 10
+          pattern: '^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])$'
           example: '2022-12-31'
         thirdPartyClaimDate:
           description: Data de reclamação do terceiro
           type: string
           format: date
           maxLength: 10
+          pattern: '^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])$'
           example: '2022-12-31'
         amount:
           $ref: '#/components/schemas/AmountDetails'
         denialJustification:
           description: "Justificativa da Negativa(Caso Status do Sinistro for 'ENCERRADO_SEM_INDENIZACAO')"
           type: string
+          example: RISCO_EXCLUIDO
           enum: [RISCO_EXCLUIDO,
             RISCO_AGRAVADO,
             SEM_DOCUMENTACAO,
@@ -1304,6 +1347,7 @@ components:
           maxLength: 100  
         coverages:
           type: array
+          description: Lista que agrupa os dados de coberturas.
           items:
             $ref: '#/components/schemas/InsuranceRuralClaimCoverage'
         branchInfo:
@@ -1326,6 +1370,7 @@ components:
         code:
             type: string
             description: Codigo da cobertura (Vide Tabela 50 até Tabela 62)
+            example: GRANIZO
             enum: [
               GRANIZO,
               GEADA,
@@ -1368,23 +1413,45 @@ components:
           description: Data de Aviso do Sinistro por Cobertura (Caso aplicável)
           type: string
           format: date
+          maxLength: 10
+          pattern: '^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])$'
           example: '2022-12-31'
         thirdPartyClaimDate:
           description: Data de Reclamação do Terceiro por Cobertura (Caso aplicável)
           type: string
           format: date
+          maxLength: 10
+          pattern: '^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])$'
           example: '2022-12-31'
     AmountDetails:
         type: object
+        description: Detalhes de valores/limites
         required:
           - amount
-          - unit
+          - unitType
         properties:
           amount:
             type: string
-            pattern: '^\d{1,16}\.\d{2}$'  
-            example: '2000.00'
+            pattern: '^(^(100\.\00|\d{1,2}\.\d{2})$|^(\d{1,6})$|^(\d{1,15}\.\d{2})$)$'
+            description: |
+              Valor.
+              Exemplos de preenchimento do campo:
+
+              PORCENTAGEM: 90.85
+                              
+              MONETARIO: 62500.67
+
+              OUTROS: 1000 (Exemplo de outro tipo: horas)
+          unitType:
+            description: "Tipo da unidade referente ao valor inserido no campo Amount"
+            type: string
+            enum: [PORCENTAGEM, MONETARIO, OUTROS]
+          unitTypeOthers:
+            description: Caso o tipo do valor informado for "Outros", esse campo deve ser preenchido com o tipo do valor, obrigatoriamente.
+            type: string
+            example: Horas
           unit:
+            description: Preenchimento obrigatório em caso de valor "MONETARIO" ser informado no campo "unitType"
             type: object
             required:
               - code
@@ -1407,6 +1474,7 @@ components:
       description: Informações do Anexo Específico
       properties:
         insuredObjects:
+          description: Lista que agrupa os dados de objetos segurados.
           type: array
           items:
             $ref: '#/components/schemas/InsuranceRuralSpecificInsuredObject'
@@ -1513,6 +1581,8 @@ components:
           description: Data da vistoria. Caso contrato for da modalidade "Agrícola", "Pecuário", "Aquícola" e "Florestas"
           type: string
           format: date
+          maxLength: 10
+          pattern: '^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])$'
           example: '2022-12-31'
         surveyAddress:
           description: Local da vistoria. Caso contrato for da modalidade "Agrícola", "Pecuário", "Aquícola" e "Florestas"
@@ -1617,6 +1687,8 @@ components:
           description: Data da vistoria. Caso contrato for da modalidade "Agrícola", "Pecuário", "Aquícola" e "Florestas"
           type: string
           format: date
+          maxLength: 10
+          pattern: '^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])$'
           example: '2022-12-31'
         surveyAddress:
           description: Local da vistoria. Caso contrato for da modalidade "Agrícola", "Pecuário", "Aquícola" e "Florestas"
