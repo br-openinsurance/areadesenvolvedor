@@ -319,7 +319,8 @@ components:
           $ref: '#/components/schemas/Links'
         meta:
           $ref: '#/components/schemas/Meta'
-    InsuranceTransportPolicyInfo:    
+    InsuranceTransportPolicyInfo:
+      description: Objeto que agrupa dados de ápolice.    
       type: object
       required:
         - documentType 
@@ -368,18 +369,21 @@ components:
           type: string
           format: date
           maxLength: 10
+          pattern: '^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])$'
           example: '2022-12-31'
         termStartDate: 
           description: Data de início de vigência do documento
           type: string
           format: date
           maxLength: 10
+          pattern: '^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])$'
           example: '2022-12-31'
         termEndDate:
           description: Data de fim de vigência do documento
           type: string
           format: date
           maxLength: 10
+          pattern: '^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])$'
           example: '2022-12-31'
         leadInsurerCode:
           description: "Código da seguradora líder para contratos com arranjo de cosseguro"
@@ -390,33 +394,41 @@ components:
           type: string
           maxLength: 1024
         maxLMG:
-          $ref: '#/components/schemas/AmountDetails'
+          description: Valor Limite máximo de garantia (LMG)
+          allOf:
+            - $ref: '#/components/schemas/AmountDetails'
         proposalId:
           description: Identificador da Proposta
           type: string
           maxLength: 60
         insureds:
           type: array
+          description: Lista que agrupa os dados dos segurados.
           items:
             $ref: '#/components/schemas/PersonalInfo'  
         beneficiaries: 
           type: array
+          description: Lista que agrupa os dados dos beneficiários.
           items:
             $ref: '#/components/schemas/BeneficiaryInfo'
         principals:
           type: array
+          description: Lista que agrupa os dados dos tomadores/garantidos.
           items:
             $ref: '#/components/schemas/PrincipalInfo'
         intermediaries:
           type: array
+          description: Lista que agrupa os dados de intermediários.
           items:
             $ref: '#/components/schemas/Intermediary'
         insuredObjects:
           type: array
+          description: Lista que agrupa os dados de objetos segurados.
           items:
             $ref: '#/components/schemas/InsuranceTransportInsuredObject'
         coverages:    
           type: array
+          description: Lista que agrupa os dados das coberturas.
           items:
             $ref: '#/components/schemas/InsuranceTransportCoverage'
         coinsuranceRetainedPercentage:
@@ -426,6 +438,7 @@ components:
           example: '10.00'
         coinsurers:
           type: array
+          description: Lista que agrupa os dados dos cosseguros.
           items:
             $ref: '#/components/schemas/Coinsurer'
         branchInfo:
@@ -446,7 +459,7 @@ components:
         identification:
           description: Documento de Identificação do Segurado
           type: string
-          maxLength: 60
+          maxLength: 11
           example: "12345678900"
         identificationType:
           description: Tipo de Documento do Segurado
@@ -509,12 +522,12 @@ components:
         - name
       properties:
         identification:
-          description: Documento de Identificação da Pessoa
+          description: Documento de Identificação do Beneficiário
           type: string
           maxLength: 60
           example: "12345678900"
         identificationType:
-          description: Tipo de Documento da Pessoa
+          description: Tipo de Documento do Beneficiário
           type: string
           enum: [
             CPF,
@@ -523,12 +536,12 @@ components:
           ]
           example: CPF
         identificationTypeOthers:
-          description: Campo de detalhamento para quando a opcao do tipo de documento da pessoa for OUTROS
+          description: Campo de detalhamento para quando a opcao do tipo de documento do bebeficiário for OUTROS
           type: string
           maxLength: 100
           example: RNE
         name:
-          description: Nome ou Razão Social da Pessoa
+          description: Nome ou Razão Social do Beneficiário
           type: string
           maxLength: 60
           example: Nome Sobrenome
@@ -648,28 +661,28 @@ components:
           maxLength: 100
           example: RNE
         name:
-          description: Nome ou Razão Social da Intermediador
+          description: Nome ou Razão Social do Intermediador
           type: string
           maxLength: 60
           example: Nome Sobrenome
         postCode:
-          description: Código Postal da Intermediador (Caso Tipo de Intermediador for ESTIPULANTE) 
+          description: Código Postal do Intermediador (Caso Tipo de Intermediador for ESTIPULANTE) 
           type: string
           maxLength: 60
           example: "10000000"
         city:
-          description: Cidade da Intermediador (por extenso; Caso Tipo de Intermediador for ESTIPULANTE)
+          description: Cidade do Intermediador (por extenso; Caso Tipo de Intermediador for ESTIPULANTE)
           type: string
           maxLength: 60
         state:
-          description: Estado da Intermediador (por extenso; Caso Tipo de Intermediador for ESTIPULANTE)
+          description: Estado do Intermediador (por extenso; Caso Tipo de Intermediador for ESTIPULANTE)
           type: string
           maxLength: 60
         country:
-          description: País da Intermediador (de acordo com o código "alpha3" do ISO-3166; Caso Tipo de Intermediador for ESTIPULANTE)
+          description: País do Intermediador (de acordo com o código "alpha3" do ISO-3166; Caso Tipo de Intermediador for ESTIPULANTE)
           type: string
           maxLength: 3
-          pattern: '^(\w{3}){1}$'
+          enum: [AFG,ALA,ALB,DZA,ASM,AND,AGO,AIA,ATA,ATG,ARG,ARM,ABW,AUS,AUT,AZE,BHS,BHR,BGD,BRB,BLR,BEL,BLZ,BEN,BMU,BTN,BOL,BES,BIH,BWA,BVT,BRA,IOT,BRN,BGR,BFA,BDI,CPV,KHM,CMR,CAN,CYM,CAF,TCD,CHL,CHN,CXR,CCK,COL,COM,COG,COD,COK,CRI,CIV,HRV,CUB,CUW,CYP,CZE,DNK,DJI,DMA,DOM,ECU,EGY,SLV,GNQ,ERI,EST,SWZ,ETH,FLK,FRO,FJI,FIN,FRA,GUF,PYF,ATF,GAB,GMB,GEO,DEU,GHA,GIB,GRC,GRL,GRD,GLP,GUM,GTM,GGY,GIN,GNB,GUY,HTI,HMD,VAT,HND,HKG,HUN,ISL,IND,IDN,IRN,IRQ,IRL,IMN,ISR,ITA,JAM,JPN,JEY,JOR,KAZ,KEN,KIR,PRK,KOR,KWT,KGZ,LAO,LVA,LBN,LSO,LBR,LBY,LIE,LTU,LUX,MAC,MDG,MWI,MYS,MDV,MLI,MLT,MHL,MTQ,MRT,MUS,MYT,MEX,FSM,MDA,MCO,MNG,MNE,MSR,MAR,MOZ,MMR,NAM,NRU,NPL,NLD,NCL,NZL,NIC,NER,NGA,NIU,NFK,MKD,MNP,NOR,OMN,PAK,PLW,PSE,PAN,PNG,PRY,PER,PHL,PCN,POL,PRT,PRI,QAT,REU,ROU,RUS,RWA,BLM,SHN,KNA,LCA,MAF,SPM,VCT,WSM,SMR,STP,SAU,SEN,SRB,SYC,SLE,SGP,SXM,SVK,SVN,SLB,SOM,ZAF,SGS,SSD,ESP,LKA,SDN,SUR,SJM,SWE,CHE,SYR,TWN,TJK,TZA,THA,TLS,TGO,TKL,TON,TTO,TUN,TUR,TKM,TCA,TUV,UGA,UKR,ARE,GBR,USA,UMI,URY,UZB,VUT,VEN,VNM,VGB,VIR,WLF,ESH,YEM,ZMB,ZWE]
           example: BRA 
         address:
           description: Endereço da Intermediador (restante do do endereço, excluindo cidade, estado e país; Caso Tipo de Intermediador for ESTIPULANTE)
@@ -689,6 +702,7 @@ components:
         type:
           type: string
           description: Tipo do objeto segurado
+          example: CONTRATO
           enum: [CONTRATO,
                 PROCESSO_ADMINISTRATIVO,
                 PROCESSO_JUDICIAL,
@@ -732,6 +746,7 @@ components:
         code:
             type: string
             description: Codigo da cobertura (Vide Tabela 50 até Tabela 62)
+            example: ACIDENTES_PESSOAIS_COM_PASSAGEIROS
             enum: [
               ACIDENTES_PESSOAIS_COM_PASSAGEIROS,
               ACIDENTES_PESSOAIS_COM_TRIPULANTES,
@@ -773,7 +788,9 @@ components:
           type: string
           maxLength: 50
         LMI:          
-          $ref: '#/components/schemas/AmountDetails'
+          description: Valor Limite Máximo de Indenização (LMI).
+          allOf:
+            - $ref: '#/components/schemas/AmountDetails'
         isLMISublimit:
           type: boolean
           description: Limite máximo de indenização (LMI) é sublimite (Caso aplicável)
@@ -781,12 +798,14 @@ components:
           type: string
           format: date
           maxLength: 10
+          pattern: '^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])$'
           example: '2022-12-31'
           description: "Data de início de vigência da cobertura"
         termEndDate:  
           type: string
           format: date
           maxLength: 10
+          pattern: '^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])$'
           example: '2022-12-31'
           description: "Data de fim de vigência da cobertura"
         isMainCoverage:
@@ -795,12 +814,14 @@ components:
         feature:
           type: string
           description: "Característica da cobertura"
+          example: MASSIFICADOS
           enum: [MASSIFICADOS,
                 MASSIFICADOS_MICROSEGUROS,
                 GRANDES_RISCOS]
         type:    
           type: string
           description: "Tipo de cobertura"
+          example: PARAMETRICO
           enum: [PARAMETRICO,
                 INTERMITENTE,
                 REGULAR_COMUM,
@@ -813,12 +834,14 @@ components:
         gracePeriodicity:
           type: string
           description: "Periodicidade da carência. OBS: Obrigatório, se houver"
+          example: DIA
           enum: [DIA,
                 MES,
                 ANO]     
         gracePeriodCountingMethod:   
           type: string
           description: "Indicador de dias úteis ou corridos da carência. OBS: Obrigatório, se houver"
+          example: DIAS_UTEIS
           enum: [DIAS_UTEIS,
                 DIAS_CORRIDOS] 
         gracePeriodStartDate:            
@@ -831,11 +854,13 @@ components:
           type: string
           format: date
           maxLength: 10
+          pattern: '^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])$'
           example: '2022-12-31'
           description: "Data de fim da carência. OBS: Obrigatório, se houver"
         premiumPeriodicity:
           description: Periodicidade de pagamento do premio
           type: string
+          example: MENSAL
           enum: [MENSAL,
                 BIMESTRAL,
                 TRIMESTRAL,
@@ -863,41 +888,42 @@ components:
           maxLength: 4
           example: '0111'
         code:
-            type: string
-            description: Codigo da cobertura (Vide Tabela 50 até Tabela 62)
-            enum: [
-              ACIDENTES_PESSOAIS_COM_PASSAGEIROS,
-              ACIDENTES_PESSOAIS_COM_TRIPULANTES,
-              DANOS_CORPORAIS_PASSAGEIROS,
-              DANOS_CORPORAIS_TERCEIROS,
-              DANOS_CORPORAIS_TRIPULANTES,
-              DANOS_ESTETICOS_PASSAGEIROS,
-              DANOS_ESTETICOS_TERCEIROS,
-              DANOS_ESTETICOS_TRIPULANTES,
-              DANOS_MATERIAIS_PASSAGEIROS,
-              DANOS_MATERIAIS_TERCEIROS,
-              DANOS_MATERIAIS_TRIPULANTES,
-              DANOS_MORAIS_PASSAGEIROS,
-              DANOS_MORAIS_TERCEIROS,
-              DANOS_MORAIS_TRIPULANTES,
-              DESPESAS_COM_HONORARIOS,
-              EMBARCADOR_AMPLA_A_RISCOS_DE_PERDA_OU_DANO_MATERIAL_SOFRIDOS_PELO_OBJETO_SEGURADO_EM_CONSEQUENCIA_DE_QUAISQUER_CAUSAS_EXTERNAS_EXCETO_AS_PREVISTAS_NA_CLAUSULA_DE_PREJUIZOS_NAO_INDENIZAVEIS,
-              EMBARCADOR_RESTRITA_B_COBERTURAS_ELENCADAS_NA_EMBARCADOR_RESTRITA_C_E_INCLUI_INUNDACAO_TRANSBORDAMENTO_DE_CURSOS_DAGUA_REPRESAS_LAGOS_OU_LAGOAS_DURANTE_A_VIAGEM_TERRESTRE_DESMORONAMENTO_OU_QUEDA_DE_PEDRAS_TERRAS_OBRAS_DE_ARTE_DE_QUALQUER_NATUREZA_OU_OUTROS_OBJETOS_DURANTE_A_VIAGEM_TERRESTRE_TERREMOTO_OU_ERUPCAO_VULCANICA_E,
-              ENTRADA_DE_AGUA_DO_MAR_LAGO_OU_RIO_NA_EMBARCACAO_OU_NO_NAVIO,
-              VEICULO_CONTAINER_FURGAO_LIFTVAN_OU_LOCAL_DE_ARMAZENAGEM,
-              EMBARCADOR_RESTRITA_C_PERDAS_E_DANOS_MATERIAIS_CAUSADOS_AO_OBJETO_SEGURADO_EXCLUSIVAMENTE_POR_INCENDIO_RAIO_OU_EXPLOSAO_ENCALHE,
-              NAUFRAGIO_OU_SOCOBRAMENTO_DO_NAVIO_OU_EMBARCACAO_CAPOTAGEM_COLISAO_TOMBAMENTO_OU_DESCARRILAMENTO_DE_VEICULO_TERRESTRE_ABALROAMENTO_COLISAO_OU_CONTATO_DO_NAVIO_OU_EMBARCACAO_COM_QUALQUER_OBJETO_EXTERNO_QUE_NAO_SEJA_AGUA_COLISAO_QUEDA_E_OU_ATERRISSAGEM_FORCADA_DA_AERONAVE_DEVIDAMENTE_COMPROVADA_DESCARGA_DA_CARGA_EM_PORTO_DE_ARRIBADA_CARGA_LANCADA_AO_MAR_PERDA_TOTAL_DE_QUALQUER_VOLUME_DURANTE_AS_OPERACOES_DE_CARGA_E_DESCARGA_DO_NAVIO_E,
-              PERDA_TOTAL_DECORRENTE_DE_FORTUNA_DO_MAR_E_OU_DE_ARREBATAMENTO_PELO_MAR,
-              RESPONSABILIDADE_CIVIL_DO_OPERADOR_DE_TRANSPORTES_MULTIMODAL_CARGA_RCOTM_C,
-              RESPONSABILIDADE_CIVIL_DO_TRANSPORTADOR_AEREO_CARGA_RCTA_C,
-              RESPONSABILIDADE_CIVIL_DO_TRANSPORTADOR_AQUAVIARIO_CARGA_RCA_C,
-              RESPONSABILIDADE_CIVIL_DO_TRANSPORTADOR_FERROVIARIO_CARGA_RCTF_C,
-              RESPONSABILIDADE_CIVIL_DO_TRANSPORTADOR_RODOVIARIO_CARGA_RCTR,
-              RESPONSABILIDADE_CIVIL_DO_TRANSPORTADOR_RODOVIARIO_EM_VIAGEM_INTERNACIONAL_DANOS_CAUSADOS_A_PESSOAS_OU_COISAS_TRANSPORTADAS_OU_NAO_A_EXCECAO_DA_CARGA_TRANSPORTADA_CARTA_AZUL,
-              RESPONSABILIDADE_CIVIL_DO_TRANSPORTADOR_RODOVIARIO_EM_VIAGEM_INTERNACIONAL_DANOS_A_CARGA_TRANSPORTADA_RCTR_VI_C_,
-              RESPONSABILIDADE_CIVIL_DO_TRANSPORTADOR_RODOVIARIO_POR_DESAPARECIMENTO_DE_CARGA_RCF_DC,
-              OUTRAS
-            ]
+          type: string
+          description: Codigo da cobertura (Vide Tabela 50 até Tabela 62)
+          enum: [
+            ACIDENTES_PESSOAIS_COM_PASSAGEIROS,
+            ACIDENTES_PESSOAIS_COM_TRIPULANTES,
+            DANOS_CORPORAIS_PASSAGEIROS,
+            DANOS_CORPORAIS_TERCEIROS,
+            DANOS_CORPORAIS_TRIPULANTES,
+            DANOS_ESTETICOS_PASSAGEIROS,
+            DANOS_ESTETICOS_TERCEIROS,
+            DANOS_ESTETICOS_TRIPULANTES,
+            DANOS_MATERIAIS_PASSAGEIROS,
+            DANOS_MATERIAIS_TERCEIROS,
+            DANOS_MATERIAIS_TRIPULANTES,
+            DANOS_MORAIS_PASSAGEIROS,
+            DANOS_MORAIS_TERCEIROS,
+            DANOS_MORAIS_TRIPULANTES,
+            DESPESAS_COM_HONORARIOS,
+            EMBARCADOR_AMPLA_A_RISCOS_DE_PERDA_OU_DANO_MATERIAL_SOFRIDOS_PELO_OBJETO_SEGURADO_EM_CONSEQUENCIA_DE_QUAISQUER_CAUSAS_EXTERNAS_EXCETO_AS_PREVISTAS_NA_CLAUSULA_DE_PREJUIZOS_NAO_INDENIZAVEIS,
+            EMBARCADOR_RESTRITA_B_COBERTURAS_ELENCADAS_NA_EMBARCADOR_RESTRITA_C_E_INCLUI_INUNDACAO_TRANSBORDAMENTO_DE_CURSOS_DAGUA_REPRESAS_LAGOS_OU_LAGOAS_DURANTE_A_VIAGEM_TERRESTRE_DESMORONAMENTO_OU_QUEDA_DE_PEDRAS_TERRAS_OBRAS_DE_ARTE_DE_QUALQUER_NATUREZA_OU_OUTROS_OBJETOS_DURANTE_A_VIAGEM_TERRESTRE_TERREMOTO_OU_ERUPCAO_VULCANICA_E,
+            ENTRADA_DE_AGUA_DO_MAR_LAGO_OU_RIO_NA_EMBARCACAO_OU_NO_NAVIO,
+            VEICULO_CONTAINER_FURGAO_LIFTVAN_OU_LOCAL_DE_ARMAZENAGEM,
+            EMBARCADOR_RESTRITA_C_PERDAS_E_DANOS_MATERIAIS_CAUSADOS_AO_OBJETO_SEGURADO_EXCLUSIVAMENTE_POR_INCENDIO_RAIO_OU_EXPLOSAO_ENCALHE,
+            NAUFRAGIO_OU_SOCOBRAMENTO_DO_NAVIO_OU_EMBARCACAO_CAPOTAGEM_COLISAO_TOMBAMENTO_OU_DESCARRILAMENTO_DE_VEICULO_TERRESTRE_ABALROAMENTO_COLISAO_OU_CONTATO_DO_NAVIO_OU_EMBARCACAO_COM_QUALQUER_OBJETO_EXTERNO_QUE_NAO_SEJA_AGUA_COLISAO_QUEDA_E_OU_ATERRISSAGEM_FORCADA_DA_AERONAVE_DEVIDAMENTE_COMPROVADA_DESCARGA_DA_CARGA_EM_PORTO_DE_ARRIBADA_CARGA_LANCADA_AO_MAR_PERDA_TOTAL_DE_QUALQUER_VOLUME_DURANTE_AS_OPERACOES_DE_CARGA_E_DESCARGA_DO_NAVIO_E,
+            PERDA_TOTAL_DECORRENTE_DE_FORTUNA_DO_MAR_E_OU_DE_ARREBATAMENTO_PELO_MAR,
+            RESPONSABILIDADE_CIVIL_DO_OPERADOR_DE_TRANSPORTES_MULTIMODAL_CARGA_RCOTM_C,
+            RESPONSABILIDADE_CIVIL_DO_TRANSPORTADOR_AEREO_CARGA_RCTA_C,
+            RESPONSABILIDADE_CIVIL_DO_TRANSPORTADOR_AQUAVIARIO_CARGA_RCA_C,
+            RESPONSABILIDADE_CIVIL_DO_TRANSPORTADOR_FERROVIARIO_CARGA_RCTF_C,
+            RESPONSABILIDADE_CIVIL_DO_TRANSPORTADOR_RODOVIARIO_CARGA_RCTR,
+            RESPONSABILIDADE_CIVIL_DO_TRANSPORTADOR_RODOVIARIO_EM_VIAGEM_INTERNACIONAL_DANOS_CAUSADOS_A_PESSOAS_OU_COISAS_TRANSPORTADAS_OU_NAO_A_EXCECAO_DA_CARGA_TRANSPORTADA_CARTA_AZUL,
+            RESPONSABILIDADE_CIVIL_DO_TRANSPORTADOR_RODOVIARIO_EM_VIAGEM_INTERNACIONAL_DANOS_A_CARGA_TRANSPORTADA_RCTR_VI_C_,
+            RESPONSABILIDADE_CIVIL_DO_TRANSPORTADOR_RODOVIARIO_POR_DESAPARECIMENTO_DE_CARGA_RCF_DC,
+            OUTRAS
+          ]
+          example: ACIDENTES_PESSOAIS_COM_PASSAGEIROS
         description:
           description: Descrição / Nome da Cobertura (Caso Código da Cobertura for "OUTRAS")
           type: string
@@ -961,11 +987,15 @@ components:
           description: Data de Início da Franquia
           type: string
           format: date
+          maxLength: 10
+          pattern: '^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])$'
           example: "2022-05-16"
         periodEndDate:
           description: Data de Fim da Franquia
           type: string
           format: date
+          maxLength: 10
+          pattern: '^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])$'
           example: "2022-05-17"
         description:
           description: Descrição da Franquia
@@ -991,15 +1021,15 @@ components:
           description: Descricao do POS (caso Forma de aplicacao do POS for Outros)
           type: string
           maxLength: 60
+          example: "Descrição de exemplo"
         minValue:
           $ref: '#/components/schemas/AmountDetails'
         maxValue:
           $ref: '#/components/schemas/AmountDetails'
         percentage:
-          description: Percentual do POS
-          type: string
-          pattern: '100\.0{1,9}$|^\d{1,2}\.\d{1,9}$'
-          example: '10.00'
+          $ref: '#/components/schemas/AmountDetails'
+        valueOthers: 
+          $ref: '#/components/schemas/AmountDetails'
     Coinsurer:
       type: object
       required:
@@ -1030,6 +1060,7 @@ components:
           $ref: '#/components/schemas/Meta'
     InsuranceTransportPremium:
       type: object
+      description: Objeto que agrupa dados de prêmio.
       required:
         - amount
         - paymentsQuantity
@@ -1047,10 +1078,12 @@ components:
             - $ref: '#/components/schemas/AmountDetails'
         coverages:
           type: array
+          description: Lista que agrupa os dados de coberturas.
           items:
             $ref: '#/components/schemas/InsuranceTransportPremiumCoverage'
         payments:
           type: array
+          description: Lista que agrupa os dados de pagamentos.
           items:
             $ref: '#/components/schemas/Payment'
     InsuranceTransportPremiumCoverage:
@@ -1117,6 +1150,8 @@ components:
           description: Data do movimento de prêmio
           type: string
           format: date
+          maxLength: 10
+          pattern: '^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])$'
           example: '2022-12-31'
         movementType:
           description: Tipo do Movimento
@@ -1215,6 +1250,7 @@ components:
             $ref: '#/components/schemas/Meta'
     InsuranceTransportClaim:
       type: object
+      description: Objeto que agrupa dados de sinistro.
       required:
         - identification
         - status
@@ -1248,24 +1284,28 @@ components:
           type: string
           format: date
           maxLength: 10
+          pattern: '^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])$'
           example: '2022-12-31'
         occurrenceDate:
           description: Data de ocorrência do sinistro
           type: string
           format: date
           maxLength: 10
+          pattern: '^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])$'
           example: '2022-12-31'
         warningDate:
           description: Data de aviso do sinistro
           type: string
           format: date
           maxLength: 10
+          pattern: '^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])$'
           example: '2022-12-31'
         thirdPartyClaimDate:
           description: Data de reclamação do terceiro
           type: string
           format: date
           maxLength: 10
+          pattern: '^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])$'
           example: '2022-12-31'
         amount:
           description: |
@@ -1276,6 +1316,7 @@ components:
         denialJustification:
           description: "Justificativa da Negativa(Caso Status do Sinistro for 'ENCERRADO_SEM_INDENIZACAO')"
           type: string
+          example: RISCO_EXCLUIDO
           enum: [RISCO_EXCLUIDO,
             RISCO_AGRAVADO,
             SEM_DOCUMENTACAO,
@@ -1337,6 +1378,7 @@ components:
               RESPONSABILIDADE_CIVIL_DO_TRANSPORTADOR_RODOVIARIO_POR_DESAPARECIMENTO_DE_CARGA,
               OUTRAS
             ]
+            example: ACIDENTES_PESSOAIS_COM_PASSAGEIROS
         description:
           description: Descrição / Nome da Cobertura (Caso Código da Cobertura for "OUTRAS")
           type: string
@@ -1345,12 +1387,14 @@ components:
           description: Data de Aviso do Sinistro por Cobertura (Caso aplicável)
           type: string
           maxLength: 10
+          pattern: '^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])$'
           format: date
           example: '2022-12-31'
         thirdPartyClaimDate:
           description: Data de Reclamação do Terceiro por Cobertura (Caso aplicável)
           type: string
           maxLength: 10
+          pattern: '^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])$'
           format: date
           example: '2022-12-31'
     AmountDetails:
@@ -1358,13 +1402,30 @@ components:
         description: Detalhes de valores/limites
         required:
           - amount
-          - unit
+          - unitType
         properties:
           amount:
             type: string
-            pattern: '^\d{1,16}\.\d{2}$'
-            example: '2000.00'
+            pattern: '^(^(100\.\00|\d{1,2}\.\d{2})$|^(\d{1,6})$|^(\d{1,15}\.\d{2})$)$'
+            description: |
+              Valor.
+              Exemplos de preenchimento do campo:
+
+              PORCENTAGEM: 90.85
+                              
+              MONETARIO: 62500.67
+
+              OUTROS: 1000 (Exemplo de outro tipo: horas)
+          unitType:
+            description: "Tipo da unidade referente ao valor inserido no campo Amount"
+            type: string
+            enum: [PORCENTAGEM, MONETARIO, OUTROS]
+          unitTypeOthers:
+            description: Caso o tipo do valor informado for "Outros", esse campo deve ser preenchido com o tipo do valor, obrigatoriamente.
+            type: string
+            example: Horas
           unit:
+            description: Preenchimento obrigatório em caso de valor "MONETARIO" ser informado no campo "unitType"
             type: object
             required:
               - code
@@ -1447,6 +1508,7 @@ components:
                 description: Preencher com valor em Reais da maior IS
                 allOf:
                   - $ref: '#/components/schemas/AmountDetails'
+    
     Links:
       type: object
       properties:
