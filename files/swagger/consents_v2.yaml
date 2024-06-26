@@ -229,8 +229,12 @@ info:
       | Portabilidade        | Previdência Risco Portabilidade  | CONTRACT_PENSION_PLAN_LEAD_PORTABILITY_CREATE                     |
       | Previdência Risco    | (Obrigatório)                    | CONTRACT_PENSION_PLAN_LEAD_PORTABILITY_UPDATE                     |
       |----------------------|----------------------------------|-------------------------------------------------------------------|
-      | Contratação          | Previdência Sobrevivência Lead   | CONTRACT_LIFE_PENSION_LEAD_CREATE                                 |
-      | Previ. Sobrevivência | (Obrigatório)                    | CONTRACT_LIFE_PENSION_LEAD_UPDATE                                 |
+      | Contratação Prev     | Previdência Sobrevivência Lead   | CONTRACT_LIFE_PENSION_LEAD_CREATE                                 |
+      | Sobrevivência Lead   | (Obrigatório)                    | CONTRACT_LIFE_PENSION_LEAD_UPDATE                                 |
+      |----------------------|----------------------------------|-------------------------------------------------------------------|
+      | Contratação Prev     | Previdência Sobrevivência        | CONTRACT_LIFE_PENSION_CREATE                                      |
+      | Sobrevivência        | (Obrigatório)                    | CONTRACT_LIFE_PENSION_UPDATE                                      |  
+      |                      |                                  | CONTRACT_LIFE_PENSION_READ
       |----------------------|----------------------------------|-------------------------------------------------------------------|
       | Portabilidade        | Previdência Sobrevivência Porta. | CONTRACT_LIFE_PENSION_LEAD_PORTABILITY_CREATE                     |
       | Previ. Sobrevivência | (Obrigatório)                    | CONTRACT_LIFE_PENSION_LEAD_PORTABILITY_UPDATE                     |
@@ -238,6 +242,8 @@ info:
       | Resgate Previdência  | Previdência (Obrigatório)        | PENSION_WITHDRAWAL_CREATE                                         |
       |----------------------|----------------------------------|-------------------------------------------------------------------|
       | Resgate Cap.         | Capitalização (Obrigatório)      | CAPITALIZATION_TITLE_WITHDRAWAL_CREATE                            |
+      |----------------------|----------------------------------|-------------------------------------------------------------------|
+      | Resgate Pessoas      | Pessoas (Obrigatório)            | PERSON_WITHDRAWAL_CREATE                                          |
       |----------------------|----------------------------------|-------------------------------------------------------------------|
       ```
     - A instituição transmissora deve validar o preenchimento correto dos agrupamentos submetidos pela receptora no momento da geração do consentimento.
@@ -599,6 +605,10 @@ components:
                   - PENSION_WITHDRAWAL_CREATE
                   - CAPITALIZATION_TITLE_WITHDRAWAL_CREATE
                   - RESOURCES_READ
+                  - CONTRACT_LIFE_PENSION_CREATE
+                  - CONTRACT_LIFE_PENSION_UPDATE
+                  - CONTRACT_LIFE_PENSION_READ
+                  - PERSON_WITHDRAWAL_CREATE 
               minItems: 1
               example:
                 - CAPITALIZATION_TITLE_READ
@@ -671,7 +681,7 @@ components:
                 occurrenceTime:
                   description: Horário de ocorrência do sinistro
                   type: string
-                  pattern: ([0-1][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]'
+                  pattern: ([0-1][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]
                   example: '22:18:54'
                 occurrenceDescription:
                   description: Descrição da Ocorrência/Relato da ocorrência
@@ -857,6 +867,10 @@ components:
                   - PENSION_WITHDRAWAL_CREATE
                   - CAPITALIZATION_TITLE_WITHDRAWAL_CREATE
                   - RESOURCES_READ
+                  - CONTRACT_LIFE_PENSION_CREATE
+                  - CONTRACT_LIFE_PENSION_UPDATE
+                  - CONTRACT_LIFE_PENSION_READ
+                  - PERSON_WITHDRAWAL_CREATE
               example:
                 - CAPITALIZATION_TITLE_READ
                 - RESOURCES_READ
@@ -928,7 +942,7 @@ components:
                 occurrenceTime:
                   description: Horário de ocorrência do sinistro
                   type: string
-                  pattern: ([0-1][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]'
+                  pattern: ([0-1][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]
                   example: '22:18:54'
                 occurrenceDescription:
                   description: Descrição da Ocorrência/Relato da ocorrência
@@ -1232,6 +1246,7 @@ components:
         minLength: 1
         maxLength: 40
         pattern: ^(?!\s)(.*)(\S)$
+  securitySchemes: 
     OAuth2Security:
       type: oauth2
       flows:
