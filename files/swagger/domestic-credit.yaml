@@ -89,7 +89,7 @@ components:
 
     DomesticCreditBrand:
       type: object
-      description: Organização controladora do grupo.
+      description: Organizacao controladora do grupo.
       required:
         - name
         - companies
@@ -105,91 +105,26 @@ components:
     DomesticCreditCompany:
       type: array
       items:
-          type: object
-          description: Informações referente a sociedade a qual a marca pertence.
-          required:
-          - name
-          - cnpjNumber
-          - products
-          properties:
-            name:
-                type: string
-                description: Nome da sociedade pertencente à marca.
-                maxLength: 80
-                example: ACME Seguros
-            cnpjNumber:
-                type: string
-                description: CNPJ da sociedade pertencente à marca.
-                pattern: ^\d{14}$
-                example: '12345678901234'
-            products:
-                $ref: '#/components/schemas/DomesticCreditProduct'
-
-    DomesticCreditProduct:
-      type: array
-      description: Lista de produtos de uma empresa.
-      items:
         type: object
+        description: Informações referente a sociedade a qual a marca pertence.
         required:
-          - code
-          - coverages
-          - traits
-          - validity
-          - termsAndConditions
-          - targetAudiences
+        - name
+        - cnpjNumber
+        - products
         properties:
           name:
-            type: string
-            description: Nome comercial do produto, pelo qual é identificado nos canais de distribuição e atendimento da sociedade.
-            maxLength: 80
-            example: Produto de Seguro
-          code:
-            type: string
-            description: Código único a ser definido pela sociedade.
-            maxLength: 80
-            example: "01234589-0"
-          coverages:
-            type: array
-            items:
-              type: object
-              required:
-                - coverage
-                - coverageDescription
-                - coverageAttributes
-                - allowApartPurchase
-              properties:
-                coverage:
-                  description: Listagem de coberturas incluídas no produto que deve observar a relação discriminada de coberturas.
-                  type: string
-                  example: NAO_PAGAMENTO_DA_CARTEIRA_DE_CLIENTES_DO_SEGURADO
-                  enum: [
-                    NAO_PAGAMENTO_DA_CARTEIRA_DE_CLIENTES_DO_SEGURADO,
-                    OUTRAS]
-                coverageDescription:
-                  type: string
-                  maxLength: 3000
-                  description: Campo aberto para detalhamento de cada uma das coberturas possíveis dos produtos
-                coverageAttributes:
-                      $ref: '#/components/schemas/DomesticCreditCoverageAttributes'
-                allowApartPurchase:
-                  type: boolean
-                  description: Indicação se a cobertura permite contratação separada (por cobertura selecionada).
-          traits:
-            type: boolean
-            description: Indicação se o produto é classificado como destinado para cobertura de grandes riscos, sendo tal classificação de acordo com regulamentação específica
-            example: true
-          validity:
-            $ref: '#/components/schemas/DomesticCreditValidity'
-          premiumRates:
-            $ref: '#/components/schemas/structurePremiumRates'
-          termsAndConditions:
-            $ref: '#/components/schemas/DomesticCreditTerms'
-          targetAudiences:
-            description: Público Alvo
-            type: string
-            example: PESSOA_NATURAL
-            enum: [PESSOA_NATURAL, PESSOA_JURIDICA]
-    
+              type: string
+              description: Nome da sociedade pertencente à marca.
+              maxLength: 80
+              example: ACME Seguros
+          cnpjNumber:
+              type: string
+              description: CNPJ da sociedade pertencente à marca.
+              pattern: ^\d{14}$
+              example: '12345678901234'
+          products:
+              $ref: '#/components/schemas/DomesticCreditProduct'
+
     structurePremiumRates:
       type: object
       description: |
@@ -256,7 +191,74 @@ components:
       type: string
       pattern: ^\d{1,16}\.\d{2}$
       example: '10000.00'
-
+    
+    DomesticCreditProduct:
+      type: array
+      description: Lista de produtos de uma empresa.
+      items:
+        type: object
+        required:
+          - code
+          - coverages
+          - traits
+          - validity
+          - termsAndConditions
+          - targetAudiences
+        properties:
+          name:
+            type: string
+            description: Nome comercial do produto, pelo qual é identificado nos canais de distribuição e atendimento da sociedade.
+            maxLength: 80
+            example: Produto de Seguro
+          code:
+            type: string
+            description: Código único a ser definido pela sociedade.
+            maxLength: 80
+            example: "01234589-0"
+          coverages:
+            type: array
+            items:
+              type: object
+              required:
+                - coverage
+                - coverageDescription
+                - coverageAttributes
+                - allowApartPurchase
+              properties:
+                coverage:
+                  description: Listagem de coberturas incluídas no produto que deve observar a relação discriminada de coberturas.
+                  type: string
+                  example: NAO_PAGAMENTO_DA_CARTEIRA_DE_CLIENTES_DO_SEGURADO
+                  enum: [
+                    NAO_PAGAMENTO_DA_CARTEIRA_DE_CLIENTES_DO_SEGURADO,
+                    OUTRAS]
+                coverageDescription:
+                  type: string
+                  maxLength: 3000
+                  description: Campo aberto para detalhamento de cada uma das coberturas possíveis dos produtos
+                coverageAttributes:
+                      $ref: '#/components/schemas/DomesticCreditCoverageAttributes'
+                allowApartPurchase:
+                  type: boolean
+                  description: Indicação se a cobertura permite contratação separada (por cobertura selecionada).
+          traits:
+            type: boolean
+            description: Indicação se o produto é classificado como destinado para cobertura de grandes riscos, sendo tal classificação de acordo com regulamentação específica
+            example: true
+          validity:
+            $ref: '#/components/schemas/DomesticCreditValidity'
+          premiumRates:
+            $ref: '#/components/schemas/structurePremiumRates'
+          termsAndConditions:
+            $ref: '#/components/schemas/DomesticCreditTerms'
+          targetAudiences:
+            description: Público Alvo
+            type: array
+            items:
+              type: string
+              example: PESSOA_NATURAL
+              enum: [PESSOA_NATURAL, PESSOA_JURIDICA]
+    
     DomesticCreditValidity:
       type: array
       items:
@@ -265,10 +267,12 @@ components:
           - term
         properties:
           term:
-            type: string
-            description: Prazo
-            example: ANUAL
-            enum: [ANUAL , ANUAL_INTERMITENTE , PLURIANUAL , PLURIANUAL_INTERMITENTE , MENSAL, MENSAL_INTERMITENTE , DIARIO , DIARIO_INTERMITENTE, OUTROS]
+            type: array
+            items:
+              type: string
+              description: Prazo
+              example: ANUAL
+              enum: [ANUAL , ANUAL_INTERMITENTE , PLURIANUAL , PLURIANUAL_INTERMITENTE , MENSAL, MENSAL_INTERMITENTE , DIARIO , DIARIO_INTERMITENTE, OUTROS]
           termOthers:
             type: string
             description: Campo livre para descrição por cada participante ao selecionar o domínio “Outros” no campo Prazo (acima).
@@ -317,11 +321,8 @@ components:
         index:
           type: string
           description: Indexador. Condicional, vinculado ao preenchimento do campo Tipo com Percentual
-          enum: [LMG, FINANCEIRO_COBERTURA, OUTRO]
           example: LMG
-        indexOthers:
-          type: string
-          description: Campo livre para descrição por cada participante ao selecionar o domínio “Outro” no campo Index (acima).
+          enum: [LMG, FINANCEIRO_COBERTURA, OUTRO]
         maxIndexAmount:
           $ref: '#/components/schemas/DomesticCreditCoverageAttributesDetails'
 
@@ -329,57 +330,26 @@ components:
         type: object
         required:
           - amount
-          - unitType
+          - unit
         properties:
           amount:
-            type: string
-            description: |
-              Valor.
-              Exemplos de preenchimento do campo:
-
-              PORCENTAGEM: 90.85
-                               
-              MONETARIO: 62500.67
-
-              OUTROS: 1000 (Exemplo de outro tipo: horas)
-
-            pattern: '^(^(100\.\00|\d{1,2}\.\d{2})$|^(\d{1,6})$|^(\d{1,15}\.\d{2})$)$'
-          unitType:
-            type: string
-            enum: [PORCENTAGEM, MONETARIO, OUTROS]
-            example: MONETARIO
-          unitTypeOthers:
-            description: Caso o tipo do valor informado for "Outros", esse campo deve ser preenchido com o tipo do valor, obrigatoriamente.
-            type: string
-            example: Horas
+            type: number
           unit:
             $ref: '#/components/schemas/DomesticCreditCoverageAttributesDetailsUnit'
     
     DomesticCreditCoverageAttributesDetailsUnit:
       type: object
-      description: Obrigatório caso seja informando no campo "unitType" o valor MONETARIO.
       required:
         - code
         - description
       properties:
-        code: 
+        code:
           type: string
-          enum: [د.إ,Af, L, Դ,Kz,$,ƒ,ман,КМ,৳,лв,ب.د,₣,Bs.,R$,P,Br,¥,₡,Kč,kr,د.ج,£,Nfk,N/A,€,ლ,₵,D,Q,Kn,G,Ft,Rp,₪,₹, ع.د,﷼,Sh,៛,₩,د.ك,〒,₭,ل.ل,Rs,ل.د,.م.,ден,K,₮,UM,₨,ރ,MK,RM,MTn,₦,C$,ر.ع.,B/.,S/.,₱,zł,₲,ر.ق,din,р.,ر.س,Le,Db,ل.س,฿,ЅМ,m,د.ت,T$,₤,₴,Bs F,₫,Vt,T,R,ZK]
           example: R$
-        description: 
+        description:
           type: string
-          enum: [AFN,AFA,ALL,ALK,DZD,USD,EUR,ADP,ESP,FRF,AOA,AOK,AON,AOR,XCD,ARS,ARA,ARP,ARY,AMD,RUR,AWG,AUD,ATS,AZN,AYM,AZM,
-                BSD,BHD,BDT,BBD,BYN,BYB,BYR,BEC,BEF,BEL,BZD,XOF,BMD,INR,BTN,BOP,BOB,BOV,BAM,BAD,BWP,NOK,BRL,BRB,BRC,BRE,BRN,BRR,
-                BND,BGN,BGJ,BGK,BGL,BUK,BIF,CVE,KHR,XAF,CAD,KYD,CLP,CLF,CNY,COP,COU,KMF,CDF,NZD,CRC,HRK,HRD,CUP,CUC,ANG,CYP,CZK,
-                CSJ,CSK,DKK,DJF,DOP,ECS,ECV,EGP,SVC,GQE,ERN,EEK,SZL,ETB,XEU,FKP,FJD,FIM,XPF,GMD,GEL,GEK,DDM,DEM,GHS,GHC,GHP,GIP,
-                GRD,GTQ,GBP,GNF,GNE,GNS,GWE,GWP,GYD,HTG,ITL,HNL,HKD,HUF,ISK,ISJ,IDR,XDR,IRR,IQD,IEP,ILS,ILP,ILR,JMD,JPY,JOD,KZT,
-                KES,KPW,KRW,KWD,KGS,LAJ,LAK,LVL,LVR,LBP,LSL,ZAR,LSM,ZAL,LRD,LYD,CHF,LTL,LTT,LUC,LUF,LUL,MOP,MGA,MGF,MWK,MYR,MVR,
-                MVQ,MLF,MTL,MTP,MRU,MRO,MUR,XUA,MXN,MXV,MXP,MDL,MNT,MAD,MZN,MZE,MZM,MMK,NAD,NPR,NLG,NIO,NIC,NGN,MKD,OMR,PKR,PAB,
-                PGK,PYG,PEN,PEH,PEI,PES,PHP,PLN,PLZ,PTE,QAR,RON,ROK,ROL,RUB,RWF,SHP,WST,STN,STD,SAR,RSD,CSD,SCR,SLL,SGD,XSU,SKK,
-                SIT,SBD,SOS,SSP,SDG,RHD,ESA,ESB,LKR,SDD,SDP,SRD,SRG,SEK,CHE,CHW,CHC,SYP,TWD,TJS,TJR,TZS,THB,TPE,TOP,TTD,TND,TRY,
-                TRL,TMT,TMM,UGX,UGS,UGW,UAH,UAK,SUR,AED,USS,USN,UYU,UYI,UYW,UYN,UYP,UZS,VUV,VEB,VEF,VES,VND,VNC,YER,YDD,YUD,YUM,
-                YUN,ZRN,ZRZ,ZMW,ZMK,ZWL,ZWC,ZWD,ZWN,ZWR,XBA,XFO,XBB,XRE,XBC,XBD,XFU,XTS,XXX,XAU,XPD,XPT,XAG]
-          example: BRL
+          example: REAL
+    
     Links:
       type: object
       properties:
@@ -457,10 +427,9 @@ components:
               requestDateTime:
                 description: 'Data e hora da consulta, conforme especificação RFC-3339, formato UTC.'
                 type: string
-                maxLength: 20
+                maxLength: 2048
                 format: date-time
                 example: '2021-08-20T08:30:00Z'
-                pattern: '^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])T(?:[01]\d|2[0123]):(?:[012345]\d):(?:[012345]\d)Z$'
             additionalProperties: false
         meta:
           $ref: '#/components/schemas/Meta'
