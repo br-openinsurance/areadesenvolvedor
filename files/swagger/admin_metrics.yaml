@@ -2,7 +2,7 @@ openapi: 3.0.0
 info:
   title: APIs Open Data do Open Insurance Brasil
   description: As API's administrativas são recursos que podem ser consumidos apenas pelo diretório para avaliação e controle da qualidade dos serviços fornecidos pelas instituições
-  version: 1.4.0 
+  version: 1.3.0 
   contact:
     url: 'https://www.gov.br/susep/'
 servers:
@@ -122,8 +122,7 @@ components:
           properties:
             generalUptimeRate:
               type: string
-              pattern: ^1\.0{1,9}$|^0\.\d{1,6}$
-              example: '0.559872'
+              pattern: ^\d{1}\.\d{1,16}$
               description: Taxa de disponibilidade (considerando todos os serviços ativos ao mesmo tempo).
             endpoints:
               $ref: '#/components/schemas/EndpointUptime'
@@ -156,9 +155,8 @@ components:
             description: URL do endpoint
           uptimeRate:
             type: string
+            pattern: ^\d{1}\.\d{1,16}$
             description: Taxa de disponibilidade do endpoint.
-            example: '0.559872'
-            pattern: ^1\.0{1,9}$|^0\.\d{1,6}$
     EndpointDowntime:
       type: array
       items:
@@ -442,7 +440,7 @@ components:
               requestDateTime:
                 description: 'Data e hora da consulta, conforme especificação RFC-3339, formato UTC.'
                 type: string
-                pattern: ^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])T(?:[01]\d|2[0123]):(?:[012345]\d):(?:[012345]\d)Z$
+                maxLength: 2048
                 format: date-time
                 example: '2021-08-20T08:30:00Z'
             additionalProperties: false
