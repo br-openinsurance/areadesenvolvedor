@@ -18,14 +18,6 @@ info:
     - A receptora deve enviar, no pedido de criação de consentimento, todas as permissions dos agrupamentos obrigatórios das
       categorias de dados as quais ela deseja consentimento, conforme tabela abaixo:
       (Para a fase 2, RESOURCES_READ é a única permissão obrigatória. Para a fase 3, todas as permissões de uma categoria de dados são obrigatórias)
-    - Durante o fluxo de cotação e contratação, a SPOC pode utilizar a API Consents tanto para gerar o consentimento de Fase 3 para ela mesma, bem como criar esse consentimento junto a outra participante. 
-     
-     ## Válidações Semanticas - Entidade não processável - 422
-      - 1 - `Idempotência:` Valida se há divergência entre chave de idempotência e informações enviadas (ERRO_IDEMPOTENCIA);
-      - 2 - `Não Informado:` Valida itens não explicitamente informados pelo servidor - (NAO_INFORMADO).     
- 
-     
-     
       ```
       |-----------------------------------------------------------------------------------------------------------------------------|
       | Fase 2:                                                                                                                     |
@@ -229,12 +221,8 @@ info:
       | Portabilidade        | Previdência Risco Portabilidade  | CONTRACT_PENSION_PLAN_LEAD_PORTABILITY_CREATE                     |
       | Previdência Risco    | (Obrigatório)                    | CONTRACT_PENSION_PLAN_LEAD_PORTABILITY_UPDATE                     |
       |----------------------|----------------------------------|-------------------------------------------------------------------|
-      | Contratação Prev     | Previdência Sobrevivência Lead   | CONTRACT_LIFE_PENSION_LEAD_CREATE                                 |
-      | Sobrevivência Lead   | (Obrigatório)                    | CONTRACT_LIFE_PENSION_LEAD_UPDATE                                 |
-      |----------------------|----------------------------------|-------------------------------------------------------------------|
-      | Contratação Prev     | Previdência Sobrevivência        | CONTRACT_LIFE_PENSION_CREATE                                      |
-      | Sobrevivência        | (Obrigatório)                    | CONTRACT_LIFE_PENSION_UPDATE                                      |  
-      |                      |                                  | CONTRACT_LIFE_PENSION_READ
+      | Contratação          | Previdência Sobrevivência Lead   | CONTRACT_LIFE_PENSION_LEAD_CREATE                                 |
+      | Previ. Sobrevivência | (Obrigatório)                    | CONTRACT_LIFE_PENSION_LEAD_UPDATE                                 |
       |----------------------|----------------------------------|-------------------------------------------------------------------|
       | Portabilidade        | Previdência Sobrevivência Porta. | CONTRACT_LIFE_PENSION_LEAD_PORTABILITY_CREATE                     |
       | Previ. Sobrevivência | (Obrigatório)                    | CONTRACT_LIFE_PENSION_LEAD_PORTABILITY_UPDATE                     |
@@ -242,8 +230,6 @@ info:
       | Resgate Previdência  | Previdência (Obrigatório)        | PENSION_WITHDRAWAL_CREATE                                         |
       |----------------------|----------------------------------|-------------------------------------------------------------------|
       | Resgate Cap.         | Capitalização (Obrigatório)      | CAPITALIZATION_TITLE_WITHDRAWAL_CREATE                            |
-      |----------------------|----------------------------------|-------------------------------------------------------------------|
-      | Resgate Pessoas      | Pessoas (Obrigatório)            | PERSON_WITHDRAWAL_CREATE                                          |
       |----------------------|----------------------------------|-------------------------------------------------------------------|
       ```
     - A instituição transmissora deve validar o preenchimento correto dos agrupamentos submetidos pela receptora no momento da geração do consentimento.
@@ -282,9 +268,6 @@ paths:
         - $ref: '#/components/parameters/xFapiCustomerIpAddress'
         - $ref: '#/components/parameters/xFapiInteractionId'
         - $ref: '#/components/parameters/xCustomerUserAgent'
-        - $ref: "#/components/parameters/x-v"
-        - $ref: "#/components/parameters/x-min-v"
-        - $ref: "#/components/parameters/xIdempotencyKey"
       requestBody:
         content:
           application/json:
@@ -308,7 +291,7 @@ paths:
         '406':
           $ref: '#/components/responses/NotAcceptable'
         '422':
-          $ref: '#/components/responses/UnprocessableEntityConsents'
+          $ref: '#/components/responses/UnprocessableEntity'
         '429':
           $ref: '#/components/responses/TooManyRequests'
         '500':
@@ -332,8 +315,6 @@ paths:
         - $ref: '#/components/parameters/xFapiCustomerIpAddress'
         - $ref: '#/components/parameters/xFapiInteractionId'
         - $ref: '#/components/parameters/xCustomerUserAgent'
-        - $ref: "#/components/parameters/x-v"
-        - $ref: "#/components/parameters/x-min-v"
       responses:
         '200':
           $ref: '#/components/responses/200ConsentsConsentIdRead'
@@ -373,8 +354,6 @@ paths:
         - $ref: '#/components/parameters/xFapiCustomerIpAddress'
         - $ref: '#/components/parameters/xFapiInteractionId'
         - $ref: '#/components/parameters/xCustomerUserAgent'
-        - $ref: "#/components/parameters/x-v"
-        - $ref: "#/components/parameters/x-min-v"
       responses:
         '204':
           $ref: '#/components/responses/204ConsentsConsentIdDeleted'
@@ -605,10 +584,6 @@ components:
                   - PENSION_WITHDRAWAL_CREATE
                   - CAPITALIZATION_TITLE_WITHDRAWAL_CREATE
                   - RESOURCES_READ
-                  - CONTRACT_LIFE_PENSION_CREATE
-                  - CONTRACT_LIFE_PENSION_UPDATE
-                  - CONTRACT_LIFE_PENSION_READ
-                  - PERSON_WITHDRAWAL_CREATE 
               minItems: 1
               example:
                 - CAPITALIZATION_TITLE_READ
@@ -681,7 +656,7 @@ components:
                 occurrenceTime:
                   description: Horário de ocorrência do sinistro
                   type: string
-                  pattern: ([0-1][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]
+                  pattern: ([0-1][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]'
                   example: '22:18:54'
                 occurrenceDescription:
                   description: Descrição da Ocorrência/Relato da ocorrência
@@ -867,10 +842,6 @@ components:
                   - PENSION_WITHDRAWAL_CREATE
                   - CAPITALIZATION_TITLE_WITHDRAWAL_CREATE
                   - RESOURCES_READ
-                  - CONTRACT_LIFE_PENSION_CREATE
-                  - CONTRACT_LIFE_PENSION_UPDATE
-                  - CONTRACT_LIFE_PENSION_READ
-                  - PERSON_WITHDRAWAL_CREATE
               example:
                 - CAPITALIZATION_TITLE_READ
                 - RESOURCES_READ
@@ -942,7 +913,7 @@ components:
                 occurrenceTime:
                   description: Horário de ocorrência do sinistro
                   type: string
-                  pattern: ([0-1][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]
+                  pattern: ([0-1][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]'
                   example: '22:18:54'
                 occurrenceDescription:
                   description: Descrição da Ocorrência/Relato da ocorrência
@@ -1051,43 +1022,6 @@ components:
         meta:
           $ref: '#/components/schemas/Meta'
       additionalProperties: false
-      
-    422ResponseErrorCreateConsents:
-        type: object
-        required:
-          - errors
-        properties:
-          errors:
-            type: object
-            minItems: 1
-            required:
-              - code
-              - title
-              - detail
-            properties:
-              code:
-                type: string
-                enum:
-                  - ERRO_IDEMPOTENCIA
-                  - NAO_INFORMADO
-                example: 'ERRO_IDEMPOTENCIA'
-                description: 'Código do erro 422 de Entidade não processada.'
-              title:
-                type: string
-                maxLength: 255
-                pattern: '[\w\W\s*]'
-                example: 'Tentativa de alteração de requisição já processada'
-                description: |
-                  - ERRO_ IDEMPOTENCIA: Tentativa de alteração de requisição já processada
-                  - NÃO_INFORMADO: Não informada pelo servidor
-              detail:
-                type: string
-                maxLength: 2048
-                pattern: '[\w\W\s*]'
-                example: 'Tentativa de alteração de requisição já processada'
-                description: |
-                  - ERRO_ IDEMPOTENCIA: Tentativa de alteração de requisição já processada
-                  - NÃO_INFORMADO: Não informada pelo servidor 
     LoggedUser:
       type: object
       description: Usuário (pessoa natural) que encontra-se logado na instituição receptora e que iniciará o processo de consentimento para compartilhamento de dados.
@@ -1140,15 +1074,6 @@ components:
               description: Tipo do documento de identificação oficial do titular pessoa jurídica.
               example: CNPJ
               pattern: '^[A-Z]{4}$'
-    XV:
-        type: string
-        description: |
-          Versão do endpoint da API requisitado pelo cliente. O titular dos dados deve 
-          responder com a versão mais alta suportada entre x-min-v e x-v. Se o valor de 
-          x-min-v for igual ou maior que o valor de x-v, o cabeçalho x-min-v deve ser 
-          tratado como ausente. Se todas as versões solicitadas não forem suportadas, 
-          o titular dos dados deve responder com o código de status 406 Not Acceptable.
-  
   parameters:
     consentId:
       name: consentId
@@ -1209,44 +1134,7 @@ components:
         pattern: '^[a-zA-Z0-9][a-zA-Z0-9\-]{0,99}$'
         minLength: 1
         maxLength: 100
-    x-v:
-      name: x-v
-      in: header
-      description: |
-        Versão do endpoint da API requisitado pelo cliente. O titular dos dados deve 
-        responder com a versão mais alta suportada entre x-min-v e x-v. Se o valor de 
-        x-min-v for igual ou maior que o valor de x-v, o cabeçalho x-min-v deve ser 
-        tratado como ausente. Se todas as versões solicitadas não forem suportadas, 
-        o titular dos dados deve responder com o código de status 406 Not Acceptable.
-      required: false
-      schema:
-        type: string
-      example: '2.1.3'
-    x-min-v:
-      name: x-min-v
-      in: header
-      description: |
-        Versão mínima do endpoint da API requisitado pelo cliente. O detentor dos dados 
-        deve responder com a versão mais alta suportada entre x-min-v e x-v. Se todas as 
-        versões solicitadas não forem suportadas, o titular dos dados deve responder com 
-        um código de status 406 Not Acceptable.
-      required: false
-      schema:
-        type: string
-      example: '2.0.0'
-    xIdempotencyKey:
-      name: x-idempotency-key
-      in: header
-      description: | 
-        Cabeçalho HTTP personalizado. Identificador de solicitação 
-        exclusivo para suportar a idempotência.
-      required: true
-      schema:
-        type: string
-        minLength: 1
-        maxLength: 40
-        pattern: ^(?!\s)(.*)(\S)$
-  securitySchemes: 
+  securitySchemes:
     OAuth2Security:
       type: oauth2
       flows:
@@ -1255,19 +1143,12 @@ components:
           scopes:
             consents: Criação do consentimento.
   responses:
-    UnprocessableEntityConsents:
-      description: Seguir as orientações presentes na descrição deste endpoint
-      content:
-        application/json; charset=utf-8:
-          schema:
-            $ref: '#/components/schemas/422ResponseErrorCreateConsents'
     UnprocessableEntity:
-      description: O servidor entende o tipo de conteúdo da entidade da requisição, e a sintaxe da requisição esta correta, mas não foi possível processar as instruções presentes
+      description: 'O servidor entende o tipo de conteúdo da entidade da requisição, e a sintaxe da requisição esta correta, mas não foi possível processar as instruções presente.'
       content:
         application/json; charset=utf-8:
           schema:
             $ref: '#/components/schemas/ResponseError'
-    
     BadRequest:
       description: 'A requisição foi malformada, omitindo atributos obrigatórios, seja no payload ou através de atributos na URL.'
       content:
@@ -1288,10 +1169,6 @@ components:
             $ref: '#/components/schemas/ResponseError'
     Default:
       description: Erro inesperado.
-      headers:  
-        x-v: 
-          schema:
-            $ref: '#/components/schemas/XV'
       content:
         application/json; charset=utf-8:
           schema:
@@ -1339,9 +1216,6 @@ components:
             minLength: 1
             maxLength: 100
             example: 73cac523-d3ae-2289-b106-330a6218710d
-        x-v: 
-          schema:
-            $ref: '#/components/schemas/XV'
       content:
         application/json:
           schema:
@@ -1359,9 +1233,6 @@ components:
             minLength: 1
             maxLength: 100
             example: 92cac523-d3ae-2289-b106-330a6218710d
-        x-v: 
-          schema:
-            $ref: '#/components/schemas/XV'
       content:
         application/json:
           schema:
@@ -1379,6 +1250,3 @@ components:
             minLength: 1
             maxLength: 100
             example: 85bac523-d3ae-2289-b106-330a6218710d
-        x-v: 
-          schema:
-            $ref: '#/components/schemas/XV'      
