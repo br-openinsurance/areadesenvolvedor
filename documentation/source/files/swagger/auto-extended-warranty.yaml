@@ -206,10 +206,12 @@ components:
           assistanceServices:
             $ref: '#/components/schemas/AutoExtendedWarrantyAssistanceServices'
           customerServices:
+            type: array
             description: Rede de Atendimento.
-            type: string
-            enum: [REDE_REFERENCIADA, LIVRE_ESCOLHA, REDE_REFERENCIADA_E_LIVRE_ESCOLHA]
-            example: REDE_REFERENCIADA
+            items:
+              type: string
+              enum: [REDE_REFERENCIADA, LIVRE_ESCOLHA]
+              example: REDE_REFERENCIADA
           microinsurance:
             type: boolean
             description: Indicação se o produto é classificado como microsseguro.
@@ -223,13 +225,15 @@ components:
           termsAndConditions:
             $ref: '#/components/schemas/AutoExtendedWarrantyTerms'
           minimumRequirements:
-            $ref: '#/components/schemas/AutoExtendedWarrantyMinimumRequirements'
+            $ref: '#/components/schemas/AutoExtendedWarrantyMinimumRequirements'          
           premiumRates:
             $ref: '#/components/schemas/structurePremiumRates'
           targetAudiences:
-            type: string
-            example: PESSOA_NATURAL
-            enum: [PESSOA_NATURAL, PESSOA_JURIDICA]
+            type: array
+            items:
+              type: string
+              example: PESSOA_NATURAL
+              enum: [PESSOA_NATURAL, PESSOA_JURIDICA]
 
     AutoExtendedWarrantyAssistanceServices:
       type: object
@@ -240,10 +244,12 @@ components:
           type: boolean
           description:  Indicação se o produto possui serviços de assistências complementares
         assistanceServicesPackage:
-          type: string
+          type: array
           description: Para efeitos de comparabilidade, considerar agrupamentos de serviços em 4 categorias
-          example: ATE_10_SERVICOS
-          enum: [
+          items:
+            type: string
+            example: ATE_10_SERVICOS
+            enum: [
               ATE_10_SERVICOS,
               ATE_20_SERVICOS,
               ACIMA_DE_20_SERVICOS,
@@ -267,15 +273,50 @@ components:
           - term
         properties:
           term:
-            type: string
-            description: Prazo
-            example: ANUAL
-            enum: [ANUAL , ANUAL_INTERMITENTE , PLURIANUAL , PLURIANUAL_INTERMITENTE , MENSAL, MENSAL_INTERMITENTE , DIARIO , DIARIO_INTERMITENTE, OUTROS]
+            type: array
+            items:
+              type: string
+              description: Prazo
+              example: ANUAL
+              enum: [ANUAL , ANUAL_INTERMITENTE , PLURIANUAL , PLURIANUAL_INTERMITENTE , MENSAL, MENSAL_INTERMITENTE , DIARIO , DIARIO_INTERMITENTE, OUTROS]
           termOthers:
             type: string
             description: Campo livre para descrição por cada participante ao selecionar o domínio “Outros” no campo Prazo (acima).
             maxLength: 100
-
+    
+    AutoExtendedWarrantyPremiumPayment:
+      type: array
+      items:
+        type: object
+        required:
+          - paymentMethod
+          - paymentType
+        properties:
+          paymentMethod:
+            description: Metodo de pagamento
+            type: string
+            example: CARTAO_DE_CREDITO
+            enum: [CARTAO_DE_CREDITO,
+              CARTAO_DE_DEBITO,
+              DEBITO_EM_CONTA_CORRENTE,
+              DEBITO_EM_CONTA_POUPANCA,
+              BOLETO_BANCARIO,
+              PIX,
+              CONSIGNACAO_EM_FOLHA_DE_PAGAMENTO,
+              PONTOS_DE_PROGRAMA_DE_BENEFICIO,
+              OUTROS]
+          paymentDetail:
+            type: string  
+            maxLength: 1024
+            description: Campo livre para descrição por cada participante ao selecionar o domínio “Outros” no campo Meio de pagamento (acima)
+          paymentType:
+            type: array
+            description: tipo de pagamento  
+            items:
+              type: string
+              example: A_VISTA
+              enum: [A_VISTA, PARCELADO]
+            
     structurePremiumRates:
       type: object
       description: |
@@ -342,37 +383,6 @@ components:
       type: string
       pattern: ^\d{1,16}\.\d{2}$
       example: '10000.00'
-    
-    AutoExtendedWarrantyPremiumPayment:
-      type: array
-      items:
-        type: object
-        required:
-          - paymentMethod
-          - paymentType
-        properties:
-          paymentMethod:
-            description: Metodo de pagamento
-            type: string
-            example: CARTAO_DE_CREDITO
-            enum: [CARTAO_DE_CREDITO,
-              CARTAO_DE_DEBITO,
-              DEBITO_EM_CONTA_CORRENTE,
-              DEBITO_EM_CONTA_POUPANCA,
-              BOLETO_BANCARIO,
-              PIX,
-              CONSIGNACAO_EM_FOLHA_DE_PAGAMENTO,
-              PONTOS_DE_PROGRAMA_DE_BENEFICIO,
-              OUTROS]
-          paymentDetail:
-            type: string  
-            maxLength: 1024
-            description: Campo livre para descrição por cada participante ao selecionar o domínio “Outros” no campo Meio de pagamento (acima)
-          paymentType:
-            type: string
-            description: tipo de pagamento  
-            example: A_VISTA
-            enum: [A_VISTA, PARCELADO]
           
     AutoExtendedWarrantyTerms:
       type: object
@@ -399,9 +409,11 @@ components:
         - minimumRequirementDetails
       properties:
         contractType:
-          type: string
-          example: COLETIVO
-          enum: [COLETIVO, INDIVIDUAL]
+          type: array
+          items:
+            type: string
+            example: COLETIVO
+            enum: [COLETIVO, INDIVIDUAL]
         minimumRequirementDetails:
           type: string
           description: Campo aberto contendo todos os requisitos mínimos para contratação (possibilidade de incluir URL).
@@ -418,10 +430,12 @@ components:
         maxLMI:
           $ref: '#/components/schemas/AutoExtendedWarrantyLimit'
         insuredParticipation:
+          type: array
           description: Lista com indicativo do tipo de participação do segurado para cada cobertura.
-          type: string
-          example: FRANQUIA
-          enum: [FRANQUIA, POS, NAO_SE_APLICA, FRANQUIA_E_POS]
+          items:
+            type: string
+            example: FRANQUIA
+            enum: [FRANQUIA, POS, NAO_SE_APLICA]
         insuredParticipationDescription:
           type: string
           maxLength: 1024
@@ -436,15 +450,15 @@ components:
       properties:
         type:
           type: string
-          example: FINANCEIRO
           enum: [FINANCEIRO, PERCENTUAL]
+          example: FINANCEIRO
         amount:
           $ref: '#/components/schemas/AutoExtendedWarrantyCoverageAttributesDetails'
         index:
           type: string
           description: Indexador. Condicional, vinculado ao preenchimento do campo Tipo com Percentual
-          example: LMG
           enum: [LMG, FINANCEIRO_COBERTURA, OUTRO]
+          example: LMG
         maxIndexAmount:
           $ref: '#/components/schemas/AutoExtendedWarrantyCoverageAttributesDetails'
 
@@ -452,50 +466,25 @@ components:
         type: object
         required:
           - amount
-          - unitType
+          - unit
         properties:
           amount:
-            type: string
-            description: |
-              Valor.
-              Exemplos de preenchimento do campo:
-
-              PORCENTAGEM: 90.85
-                               
-              MONETARIO: 62500.67
-
-              OUTROS: 1000 (Exemplo de outro tipo: horas)
-
-            pattern: '^(^(100\.\00|\d{1,2}\.\d{2})$|^(\d{1,6})$|^(\d{1,15}\.\d{2})$)$'
-          unitType:
-            type: string
-            enum: [PORCENTAGEM, MONETARIO, OUTROS]
-            example: MONETARIO
-          unitTypeOthers:
-            description: Caso o tipo do valor informado for "Outros", esse campo deve ser preenchido com o tipo do valor, obrigatoriamente.
-            type: string
-            example: Horas
+            type: number
           unit:
             $ref: '#/components/schemas/AutoExtendedWarrantyCoverageAttributesDetailsUnit'
 
     AutoExtendedWarrantyCoverageAttributesDetailsUnit:
       type: object
-      description: Obrigatório caso seja informando no campo "unitType" o valor MONETARIO.
       required:
         - code
         - description
       properties:
-        code:
+        code: 
           type: string
-          enum: [ د.إ , Af, L,  Դ,  Kz, $,  ƒ,  ман,  КМ, ৳,  лв, ب.د,  ₣,  Bs.,  R$, P,  Br, ¥,  ₡,  Kč, kr, د.ج,  £,  
-                  Nfk,  N/A,  €,  ლ,  ₵,  D,  Q,  Kn, G,  Ft, Rp, ₪,  ₹,  ع.د,  ﷼,  Sh, ៛,  ₩,  د.ك,  〒,  ₭,  ل.ل,  Rs,
-                  ل.د,  د.م., ден,  K,  ₮,  UM, ₨,  ރ., MK, RM, MTn,  ₦,  C$, ر.ع., B/.,  S/.,  ₱,  zł, ₲,  ر.ق,  din,  
-                  р., ر.س,  Le, Db, ل.س,  ฿,  ЅМ, m,  د.ت,  T$, ₤,  ₴,  Bs F, ₫,  Vt, T,  R,  ZK ]
           example: R$
-        description:
+        description: 
           type: string
-          example: BRL
-          enum: [ AFN,AFA,ALL,ALK,DZD,USD,EUR,ADP,ESP,FRF,AOA,AOK,AON,AOR,XCD,ARS,ARA,ARP,ARY,AMD,RUR,AWG,AUD,ATS,AZN,AYM,AZM,BSD,BHD,BDT,BBD,BYN,BYB,BYR,BEC,BEF,BEL,BZD,XOF,BMD,INR,BTN,BOP,BOB,BOV,BAM,BAD,BWP,NOK,BRL,BRB,BRC,BRE,BRN,BRR,BND,BGN,BGJ,BGK,BGL,BUK,BIF,CVE,KHR,XAF,CAD,KYD,CLP,CLF,CNY,COP,COU,KMF,CDF,NZD,CRC,HRK,HRD,CUP,CUC,ANG,CYP,CZK,CSJ,CSK,DKK,DJF,DOP,ECS,ECV,EGP,SVC,GQE,ERN,EEK,SZL,ETB,XEU,FKP,FJD,FIM,XPF,GMD,GEL,GEK,DDM,DEM,GHS,GHC,GHP,GIP,GRD,GTQ,GBP,GNF,GNE,GNS,GWE,GWP,GYD,HTG,ITL,HNL,HKD,HUF,ISK,ISJ,IDR,XDR,IRR,IQD,IEP,ILS,ILP,ILR,JMD,JPY,JOD,KZT,KES,KPW,KRW,KWD,KGS,LAJ,LAK,LVL,LVR,LBP,LSL,ZAR,LSM,ZAL,LRD,LYD,CHF,LTL,LTT,LUC,LUF,LUL,MOP,MGA,MGF,MWK,MYR,MVR,MVQ,MLF,MTL,MTP,MRU,MRO,MUR,XUA,MXN,MXV,MXP,MDL,MNT,MAD,MZN,MZE,MZM,MMK,NAD,NPR,NLG,NIO,NIC,NGN,MKD,OMR,PKR,PAB,PGK,PYG,PEN,PEH,PEI,PES,PHP,PLN,PLZ,PTE,QAR,RON,ROK,ROL,RUB,RWF,SHP,WST,STN,STD,SAR,RSD,CSD,SCR,SLL,SGD,XSU,SKK,SIT,SBD,SOS,SSP,SDG,RHD,ESA,ESB,LKR,SDD,SDP,SRD,SRG,SEK,CHE,CHW,CHC,SYP,TWD,TJS,TJR,TZS,THB,TPE,TOP,TTD,TND,TRY,TRL,TMT,TMM,UGX,UGS,UGW,UAH,UAK,SUR,AED,USS,USN,UYU,UYI,UYW,UYN,UYP,UZS,VUV,VEB,VEF,VES,VND,VNC,YER,YDD,YUD,YUM,YUN,ZRN,ZRZ,ZMW,ZMK,ZWL,ZWC,ZWD,ZWN,ZWR,XBA,XFO,XBB,XRE,XBC,XBD,XFU,XTS,XXX,XAU,XPD,XPT,XAG ]
+          example: REAL
 
     Links:
       type: object
@@ -574,8 +563,8 @@ components:
               requestDateTime:
                 description: 'Data e hora da consulta, conforme especificação RFC-3339, formato UTC.'
                 type: string
+                maxLength: 2048
                 format: date-time
-                pattern: '^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])T(?:[01]\d|2[0123]):(?:[012345]\d):(?:[012345]\d)Z$'
                 example: '2021-08-20T08:30:00Z'
             additionalProperties: false
         meta:

@@ -14,7 +14,7 @@ servers:
 tags:
 - name: "auto-insurance"
 paths:
-  /auto-insurance/{commercializationArea}/{fipeCode}/{year}:  
+  /auto-insurance/{vehicleOvernightZipCode}/{fipeCode}/{year}:  
     get:
       tags:
         - auto-insurance
@@ -30,7 +30,7 @@ paths:
         - $ref: "#/components/parameters/x-Frame-Options"
         - $ref: "#/components/parameters/page"
         - $ref: "#/components/parameters/pageSize"
-        - $ref: "#/components/parameters/commercializationArea"
+        - $ref: "#/components/parameters/vehicleOvernightZipCode"
         - $ref: "#/components/parameters/fipeCode"
         - $ref: "#/components/parameters/year"
       responses:
@@ -96,7 +96,6 @@ components:
         name:
           type: string
           description: Nome da marca reportada pelo participante do Open Insurance. O conceito a que se refere a marca é em essência uma promessa das sociedades sob ela em fornecer uma série específica de atributos, benefícios e serviços uniformes aos clientes.
-          example: ACME Group Seguros      
         companies:
           $ref: '#/components/schemas/AutoInsuranceCompany'  
 
@@ -154,11 +153,6 @@ components:
             $ref: '#/components/schemas/AutoInsuranceCarPart'
           carModels:         
             $ref: '#/components/schemas/AutoInsuranceCarModel'
-          vehicleOvernightZipCode:
-            type: string
-            description: CEP de pernoite do veiculo
-            maxLength: 8
-            example: '01311000'
           additional:
             type: array
             items:
@@ -176,31 +170,37 @@ components:
           termsAndConditions:
             $ref: '#/components/schemas/AutoInsuranceTermsAndConditions'
           terms:
-            type: string 
+            type: array 
             description: Prazo.
-            example: ANUAL
-            enum: [ANUAL, ANUAL_INTERMITENTE, PLURIANUAL, PLURIANUAL_INTERMITENTE, SEMESTRAL, SEMESTRAL_INTERMITENTE, MENSAL, MENSAL_INTERMITENTE, DIARIO, DIARIO_INTERMITENTE, OUTROS]
+            items:
+                type: string
+                example: ANUAL
+                enum: [ANUAL, ANUAL_INTERMITENTE, PLURIANUAL, PLURIANUAL_INTERMITENTE, SEMESTRAL, SEMESTRAL_INTERMITENTE, MENSAL, MENSAL_INTERMITENTE, DIARIO, DIARIO_INTERMITENTE, OUTROS]
           termsOthers:
             description: Descrição do Prazo quando for informada a opção OUTROS.
             type: string
             example: OUTROS
             maxLength: 100
           customerServices:
+            type: array 
             description: Rede de atendimento do seguro contratado.
-            type: string
-            example: REDE_REFERENCIADA
-            enum: [REDE_REFERENCIADA , LIVRE_ESCOLHA , REDE_REFERENCIADA_E_LIVRE_ESCOLHA]  
+            items:
+                type: string
+                example: REDE_REFERENCIADA
+                enum: [REDE_REFERENCIADA , LIVRE_ESCOLHA , REDE_REFERENCIADA_LIVRE_ESCOLHA]  
           premiumPayment:
-            $ref: '#/components/schemas/AutoInsurancePremiumPayment'    
-          premiumRates:
-            $ref: '#/components/schemas/structurePremiumRates'  
+            $ref: '#/components/schemas/AutoInsurancePremiumPayment'      
           minimumRequirements: 
             $ref: '#/components/schemas/AutoInsuranceMinimumRequirements'      
           targetAudiences:
-            type: string 
-            description: Público-alvo.        
-            example: PESSOA_NATURAL
-            enum: [PESSOA_NATURAL, PESSOA_JURIDICA, AMBAS] 
+            type: array 
+            description: Público-alvo.
+            items:
+              type: string         
+              example: PESSOA_NATURAL
+              enum: [PESSOA_NATURAL, PESSOA_JURIDICA, AMBAS] 
+          premiumRates:
+            $ref: '#/components/schemas/structurePremiumRates'  
     
     structurePremiumRates:
       type: object
@@ -271,8 +271,6 @@ components:
       pattern: ^\d{1,16}\.\d{2}$
       example: '10000.00'
 
-            
-
     AutoInsuranceCoverage:
       type: array
       description: Listagem de coberturas incluídas no produto que deve observar a relação discriminada de coberturas.
@@ -331,63 +329,40 @@ components:
       properties:
         type:
           type: string
-          example: FINANCEIRO
           enum: [FINANCEIRO, PERCENTUAL]
+          example: FINANCEIRO
         amount:
           $ref: '#/components/schemas/AutoInsuranceCoverageAttributesDetails'
         index:
           type: string
           description: Indexador. Condicional, vinculado ao preenchimento do campo Tipo com Percentual
-          example: LMG
           enum: [LMG, FINANCEIRO_COBERTURA, OUTRO]
+          example: LMG
         maxIndexAmount:
           $ref: '#/components/schemas/AutoInsuranceCoverageAttributesDetails'
 
     AutoInsuranceCoverageAttributesDetailsUnit:
       type: object
-      description: Obrigatório caso seja informando no campo "unitType" o valor MONETARIO.
       required:
         - code
         - description
       properties:
-        code:
+        code: 
           type: string
-          enum: [د.إ,Af, L, Դ,Kz,$,ƒ,ман,КМ,৳,лв,ب.د,₣,Bs.,R$,P,Br,¥,₡,Kč,kr,د.ج,£,Nfk,N/A,€,ლ,₵,D,Q,Kn,G,Ft,Rp,₪,₹, ع.د,﷼,Sh,៛,₩,د.ك,〒,₭,ل.ل,Rs,ل.د,.م.,ден,K,₮,UM,₨,ރ,MK,RM,MTn,₦,C$,ر.ع.,B/.,S/.,₱,zł,₲,ر.ق,din,р.,ر.س,Le,Db,ل.س,฿,ЅМ,m,د.ت,T$,₤,₴,Bs F,₫,Vt,T,R,ZK]
-          example: R$
-        description:
+        description: 
           type: string
-          example: BRL
-          enum: [ AFN,AFA,ALL,ALK,DZD,USD,EUR,ADP,ESP,FRF,AOA,AOK,AON,AOR,XCD,ARS,ARA,ARP,ARY,AMD,RUR,AWG,AUD,ATS,AZN,AYM,AZM,BSD,BHD,BDT,BBD,BYN,BYB,BYR,BEC,BEF,BEL,BZD,XOF,BMD,INR,BTN,BOP,BOB,BOV,BAM,BAD,BWP,NOK,BRL,BRB,BRC,BRE,BRN,BRR,BND,BGN,BGJ,BGK,BGL,BUK,BIF,CVE,KHR,XAF,CAD,KYD,CLP,CLF,CNY,COP,COU,KMF,CDF,NZD,CRC,HRK,HRD,CUP,CUC,ANG,CYP,CZK,CSJ,CSK,DKK,DJF,DOP,ECS,ECV,EGP,SVC,GQE,ERN,EEK,SZL,ETB,XEU,FKP,FJD,FIM,XPF,GMD,GEL,GEK,DDM,DEM,GHS,GHC,GHP,GIP,GRD,GTQ,GBP,GNF,GNE,GNS,GWE,GWP,GYD,HTG,ITL,HNL,HKD,HUF,ISK,ISJ,IDR,XDR,IRR,IQD,IEP,ILS,ILP,ILR,JMD,JPY,JOD,KZT,KES,KPW,KRW,KWD,KGS,LAJ,LAK,LVL,LVR,LBP,LSL,ZAR,LSM,ZAL,LRD,LYD,CHF,LTL,LTT,LUC,LUF,LUL,MOP,MGA,MGF,MWK,MYR,MVR,MVQ,MLF,MTL,MTP,MRU,MRO,MUR,XUA,MXN,MXV,MXP,MDL,MNT,MAD,MZN,MZE,MZM,MMK,NAD,NPR,NLG,NIO,NIC,NGN,MKD,OMR,PKR,PAB,PGK,PYG,PEN,PEH,PEI,PES,PHP,PLN,PLZ,PTE,QAR,RON,ROK,ROL,RUB,RWF,SHP,WST,STN,STD,SAR,RSD,CSD,SCR,SLL,SGD,XSU,SKK,SIT,SBD,SOS,SSP,SDG,RHD,ESA,ESB,LKR,SDD,SDP,SRD,SRG,SEK,CHE,CHW,CHC,SYP,TWD,TJS,TJR,TZS,THB,TPE,TOP,TTD,TND,TRY,TRL,TMT,TMM,UGX,UGS,UGW,UAH,UAK,SUR,AED,USS,USN,UYU,UYI,UYW,UYN,UYP,UZS,VUV,VEB,VEF,VES,VND,VNC,YER,YDD,YUD,YUM,YUN,ZRN,ZRZ,ZMW,ZMK,ZWL,ZWC,ZWD,ZWN,ZWR,XBA,XFO,XBB,XRE,XBC,XBD,XFU,XTS,XXX,XAU,XPD,XPT,XAG ]          
 
     AutoInsuranceCoverageAttributesDetails:
-      type: object
-      required:
-        - amount
-        - unitType
-      properties:
-        amount:
-          type: string
-          description: |
-            Valor.
-            Exemplos de preenchimento do campo:
-
-            PORCENTAGEM: 90.85
-                              
-            MONETARIO: 62500.67
-
-            OUTROS: 1000 (Exemplo de outro tipo: horas)
-
-          pattern: '^(^(100\.\00|\d{1,2}\.\d{2})$|^(\d{1,6})$|^(\d{1,15}\.\d{2})$)$'
-        unitType:
-          type: string
-          enum: [PORCENTAGEM, MONETARIO, OUTROS]
-          example: MONETARIO
-        unitTypeOthers:
-          description: Caso o tipo do valor informado for "Outros", esse campo deve ser preenchido com o tipo do valor, obrigatoriamente.
-          type: string
-          example: Horas
-        unit:
-          $ref: '#/components/schemas/AutoInsuranceCoverageAttributesDetailsUnit'
+        type: object
+        description: Listagem percentual de franquia e/ou percentual de participação obrigatória do segurado estabelecida pela sociedade para cada tipo de cobertura de produto.
+        required:
+          - amount
+          - unit
+        properties:
+          amount:
+            type: number
+          unit:
+            $ref: '#/components/schemas/AutoInsuranceCoverageAttributesDetailsUnit'
 
     AutoInsuranceContractBase:
       type: array
@@ -408,7 +383,7 @@ components:
               Quando a base de contratação for “valor de mercado” deve ser informado o percentual mínimo e máximo
               da referência da tabela comercializada.
             example: VALOR_DETERMINADO
-            enum: [VALOR_DETERMINADO, VALOR_MERCADO, VALOR_DETERMINADO_E_VALOR_MERCADO]
+            enum: [VALOR_DETERMINADO, VALOR_MERCADO]
           contractBaseMinValue:
             $ref: '#/components/schemas/AutoInsuranceCoverageAttributesDetails'
           contractBaseMaxValue:
@@ -446,34 +421,36 @@ components:
         fullIndemnityPercentage:
           $ref: '#/components/schemas/AutoInsuranceCoverageAttributesDetails'
         deductibleType:
-          type: string
+          type: array
           description: Listagem de tipo de franquia para cada tipo de cobertura do produto.
-          example: NORMAL
-          enum: [NORMAL, REDUZIDA, ISENTA, MAJORADA, FLEXIVEL]
+          items:
+            type: string
+            example: NORMAL
+            enum: [NORMAL, REDUZIDA, ISENTA, MAJORADA, FLEXIVEL]
         fullIndemnityDeductible:
           type: boolean
           description: Franquia para Indenização Integral.
           example: true
         deductiblePaymentByCoverage:
           type: boolean
-          description: Sinalizacão para cada cobertura se a seguradora exige pagamento de franquia. (Indicacao de existencia de franquia para cada cobertura).
+          description: Sinalizacao para cada cobertura se a seguradora exige pagamento de franquia. (Indicacao de existencia de franquia para cada cobertura).
         deductiblePercentage:
           $ref: '#/components/schemas/AutoInsuranceCoverageAttributesDetails'
         mandatoryParticipation:
           type: string
-          description: |
-            Listagem de percentual de Participação Obrigatória do Segurado (POS) estabelecida pela sociedade para cada tipo de cobertura do produto. 
-            A POS deve ser aplicada apenas às coberturas elegíveis.
+          description: Listagem de percentual de Participação Obrigatória do Segurado (POS) estabelecida pela sociedade para cada tipo de cobertura do produto. A POS deve ser aplicada apenas às coberturas elegíveis.
           maxLength: 300
           example: '80.00'
         geographicScopeCoverage:
-          type: string
+          type: array
           description: Listagem de abrangência geográfica do produto para fins de cada cobertura.
-          example: NACIONAL
-          enum: [NACIONAL, REGIONAL, INTERNACIONAL, OUTROS_PAISES]
+          items:
+            type: string
+            example: NACIONAL
+            enum: [NACIONAL, REGIONAL, INTERNACIONAL, OUTROS_PAISES]
         geographicScopeCoverageOthers:
           type: string
-          description: Âmbito geográfico da cobertura - OUTROS_PAISES
+          description: Âmbito geográfico da cobertura - Outros
 
     AutoInsuranceMinimumRequirements:
       type: object
@@ -483,10 +460,12 @@ components:
         - contractingMinRequirement
       properties:
         contractingType:
-          type: string
+          type: array
           description: Informações sobre todos os requisitos mínimos para contratação.
-          example: COLETIVO
-          enum: [COLETIVO , INDIVIDUAL, AMBAS]
+          items:
+            type: string
+            example: COLETIVO
+            enum: [COLETIVO , INDIVIDUAL, AMBAS]
         contractingMinRequirement:
           type: string
           description: Campo aberto contendo todos os requisitos mínimos para contratação (possibilidade de incluir URL).
@@ -528,10 +507,12 @@ components:
               example: CARTAO_CREDITO
               enum: [CARTAO_CREDITO, CARTAO_DEBITO, DEBITO_CONTA_CORRENTE , DEBITO_CONTA_POUPANCA , BOLETO_BANCARIO , PIX, CONSIGINACAO_FOLHA_PAGAMENTO, PONTOS_PROGRAMA_BENEFICIO, OUTROS]
         paymentType:
-            type: string
+            type: array
             description: Forma de pagamento.
-            example: PARCELADO
-            enum: [A_VISTA , PARCELADO, AMBOS]
+            items:
+              type: string
+              example: PARCELADO
+              enum: [A_VISTA , PARCELADO, AMBOS]
         paymentDetail:
           type: string
           description: Campo aberto para detalhamento do campo ‘Outros’ por cada participante.
@@ -545,10 +526,12 @@ components:
         - chargeTypeSignaling
       properties:
         assistanceServicesPackage:
-            type: string
+            type: array
             description: Pacotes de Assistência - Agrupamento.
-            example: ATE_10_SERVICOS
-            enum: [ATE_10_SERVICOS, ATE_20_SERVICOS, ACIMA_20_SERVICOS, CUSTOMIZAVEL]
+            items:
+                type: string
+                example: ATE_10_SERVICOS
+                enum: [ATE_10_SERVICOS, ATE_20_SERVICOS, ACIMA_20_SERVICOS, CUSTOMIZAVEL]
         assistanceServicesDetail:
             type: string
             description:  Serviços de assistência - Detalhamento.
@@ -601,10 +584,9 @@ components:
               maxLength: 80
               example: KA 
             year:
-              type: string
+              type: number
               description: Ano de fabricação.
-              pattern: '^\d{4}$'
-              example: '2018'
+              example: 2018
             zeroKM:
               type: boolean
               description: Identifica se o veículo é zero kilômetro
@@ -692,7 +674,8 @@ components:
               requestDateTime:
                 description: 'Data e hora da consulta, conforme especificação RFC-3339, formato UTC.'
                 type: string
-                pattern: '^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])T(?:[01]\d|2[0123]):(?:[012345]\d):(?:[012345]\d)Z$'
+                pattern: '[\w\W\s]*'
+                maxLength: 2048  
                 format: date-time
                 example: '2021-08-20T08:30:00Z'
             additionalProperties: false
@@ -731,10 +714,10 @@ components:
       required: true
       schema:
         type: string
-    commercializationArea:
-      name: commercializationArea
+    vehicleOvernightZipCode:
+      name: vehicleOvernightZipCode
       in: path
-      description: Area de comercialização.
+      description: CEP de pernoite do veículo.
       required: true
       schema:
         type: string
