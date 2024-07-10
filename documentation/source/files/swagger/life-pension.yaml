@@ -75,7 +75,8 @@ components:
         requestTime:
           description: 'Data e hora da consulta, conforme especificação RFC-3339, formato UTC.'
           type: string
-          pattern: '^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])T(?:[01]\d|2[0123]):(?:[012345]\d):(?:[012345]\d)Z$'  
+          pattern: '[\w\W\s]*'
+          maxLength: 2048  
           format: date-time
           example: '2021-08-20T08:30:00Z'
         data: 
@@ -124,7 +125,7 @@ components:
             pattern: ^\d{14}$
             example: '12345678901234'
           products:          
-            $ref: '#/components/schemas/LifePensionProduct'   
+            $ref: '#/components/schemas/LifePensionProduct'
 
     LifePensionProduct:
         type: array
@@ -226,10 +227,9 @@ components:
         - investmentFunds
       properties:
         interestRate:
-          type: string
+          type: number
           description: Taxa de juros garantida que remunera o plano durante a fase de diferimento/acumulação.
-          example: '25.123'
-          pattern: ^\d{1,3}\.\d{1,9}$
+          example: 25.123
           maxLength: 10
           multipleOf: 0.00001
         updateIndex:
@@ -249,13 +249,13 @@ components:
           description: |
             Para produtos do tipo PDR e VDR, indicação do percentual do índice de ampla
             divulgação utilizados como garantia mínima de desempenho. Exemplo 1.000000 igual a 100 por cento
-          pattern: ^1\.0{1,9}$|^0\.\d{1,6}$
+          pattern: ^\d{1}\.\d{6}$
           example: '1.000000'
         reversalFinancialResults:
-          type: string
+          type: number
           description: Percentual de reversão de excedente financeiro no período de diferimento.
-          example: '5.123'
-          pattern: ^100\.0{1,9}$|^\d{1,2}\.\d{1,9}$
+          example: 5.123
+          maxLength: 5
         minimumPremiumAmount:
           type: array
           items:
@@ -266,10 +266,10 @@ components:
               - minimumPremiumAmountDescription
             properties:
               minimumPremiumAmountValue:
-                type: string
+                type: number
                 description: Valor
                 maxLength: 13
-                example: '250'
+                example: 250
               minimumPremiumAmountDescription:
                 type: string
                 description: Descrição Período.
@@ -280,8 +280,8 @@ components:
           items:
             type: string
             description: Meio de pagamento escolhido pelo segurado.
-            example: CARTAO_DE_CREDITO
-            enum: [CARTAO_DE_CREDITO, DEBITO_EM_CONTA, DEBITO_EM_CONTA_POUPANCA, BOLETO_BANCARIO, PIX, CARTAO_DE_DEBITO, REGRA_PARCEIRO, CONSIGNACAO_EM_FOLHA_PAGAMENTO, PONTOS_PROGRAMA_BENEFICIO, TED_DOC, OUTROS]
+            example: CARTAO_CREDITO
+            enum: [CARTAO_CREDITO, DEBITO_CONTA, DEBITO_CONTA_POUPANCA, BOLETO_BANCARIO, PIX, CARTAO_DEBITO, REGRA_PARCEIRO, CONSIGNACAO_FOLHA_PAGAMENTO, PONTOS_PROGRAMA_BENEFICIO, TED_DOC, OUTROS]
         paymentDetail:
           description: Descrição de Meio(s) de pagamento do Prêmio disponíveis quando for informada a opção OUTROS.
           type: string
@@ -351,39 +351,41 @@ components:
                   example:  EYPREV
                   maxLength: 200
                 maximumAdministrationFee:
-                  type: string
+                  type: number
                   description:  Taxa Máxima de Administração – em %.
-                  example: '5.123'
-                  pattern: ^100\.0{1,9}$|^\d{1,2}\.\d{1,9}$
+                  example: 5.123
+                  maxLength: 5
                 typePerformanceFee:
-                  type: string
-                  description: Tipo de Taxa de Performance
-                  example: DIRETAMENTE
-                  enum: [DIRETAMENTE, INDIRETAMENTE, NAO_APLICA]
+                  type: array
+                  items:
+                    type: string
+                    description: Tipo de Taxa de Performance
+                    example: DIRETAMENTE
+                    enum: [DIRETAMENTE, INDIRETAMENTE, NAO_APLICA]
                 maximumPerformanceFee:
-                  type: string
+                  type: number
                   description:  Taxa Máxima de Performance. Caso o Tipo de Taxa de Performance seja ‘Diretamente’.
                   maxLength: 5
-                  example: '20.0'
+                  example: 20.0
                 eligibilityRule:
                   type: boolean
                   description:  Regra de Eligibilidade.
                   example: true
                 minimumContributionAmount:
-                  type: string
+                  type: number
                   description: Valor Mínimo de Contribuição. Regra de Elegibilidade. Caso a Regra de Elegibilidade SIM.
-                  example: '150000.45'
-                  pattern: ^\d{1,16}\.\d{2}$
+                  example: 150000.45
+                  maxLength: 15
                 minimumContributionValue:
-                  type: string
+                  type: number
                   description: Valor Mínimo de Aporte de Portabilidade. Caso a Regra de Elegibilidade SIM.
-                  example: '150000.45'
-                  pattern: ^\d{1,16}\.\d{2}$
+                  example: 150000.45
+                  maxLength: 15
                 minimumMathematicalProvisionAmount:
-                  type: string
+                  type: number
                   description: Valor Mínimo Provisão Matemática. Caso a Regra de Elegibilidade SIM.
-                  example: '150000.45'
-                  pattern: ^\d{1,16}\.\d{2}$
+                  maxLength: 5
+                  example: 150000.45
 
     LifePensionPeriodGrantBenefit:
       type: object
@@ -408,20 +410,20 @@ components:
             example: AT_2000_FEMALE_SUAVIZADA_15
             enum: [AT_2000_MALE, AT_2000_FEMALE, AT_2000_MALE_FEMALE, AT_2000_MALE_SUAVIZADA_10, AT_2000_FEMALE_SUAVIZADA_10, AT_2000_MALE_FEMALE_SUAVIZADA_10, AT_2000_MALE_SUAVIZADA_15, AT_2000_FEMALE_SUAVIZADA_15, AT_2000_MALE_FEMALE_SUAVIZADA_15, AT_83_MALE, AT_83_FEMALE, AT_83_MALE_FEMALE, BR_EMSSB_MALE, BR_EMSSB_FEMALE, BR_EMSSB_MALE_FEMALE]
         interestRate:
-          type: string
+          type: number
           description: Taxa de juros garantida utilizada para conversão em renda. Em %.
-          example: '25.123'
-          pattern: ^\d{1,3}\.\d{1,9}$
+          example: 3.225
+          maxLength: 6
         updateIndex:
           type: string
           description: É o índice contratado para atualização monetária dos valores relativos ao plano, na forma estabelecida por este regulamento.
           example: IPCA
           enum: [IPCA, IGP-M, INPC, NAO_SE_APLICA]
         reversalResultsFinancial:
-          type: string
+          type: number
           description: Percentual de reversão de excedente financeiro na concessão. Em %.
-          example: '5.123'
-          pattern: ^100\.0{1,9}$|^\d{1,2}\.\d{1,9}$
+          example: 013.252
+          maxLength: 8
         investmentFunds:
           $ref: '#/components/schemas/LifePensionInvestmentFunds'
 
@@ -447,15 +449,15 @@ components:
         - maxValue
       properties:
         minValue:
-          type: string
+          type: number
           description: Valor mínimo em %.
-          example: '5.123'
-          pattern: ^100\.0{1,9}$|^\d{1,2}\.\d{1,9}$
+          example: 4.122
+          maxLength: 7
         maxValue:
-          type: string
-          description: valor máximo em %.
-          example: '5.123'
-          pattern: ^100\.0{1,9}$|^\d{1,2}\.\d{1,9}$
+          type: number
+          description: alor máximo em %.
+          example: 90.225
+          maxLength: 8
 
     LifePensionMinimumRequirements:
       type: object
@@ -465,10 +467,12 @@ components:
         - minRequirementsContract
       properties:
         contractType:
-          type: string
+          type: array
           description: Os tipos de serviços contratados.
-          example: INDIVIDUAL
-          enum: [COLETIVO_AVERBADO, COLETIVO_INSTITUIDO, INDIVIDUAL]
+          items:
+            type: string
+            example: INDIVIDUAL
+            enum: [COLETIVO_AVERBADO, COLETIVO_INSTITUIDO, INDIVIDUAL]
         participantQualified:
           type: boolean
           description: Indicação se o plano é destinado para participante qualificado.
@@ -557,7 +561,8 @@ components:
               requestDateTime:
                 description: 'Data e hora da consulta, conforme especificação RFC-3339, formato UTC.'
                 type: string
-                pattern: ^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])T(?:[01]\d|2[0123]):(?:[012345]\d):(?:[012345]\d)Z$
+                pattern: '[\w\W\s]*'
+                maxLength: 2048
                 format: date-time
                 example: '2021-08-20T08:30:00Z'
             additionalProperties: false

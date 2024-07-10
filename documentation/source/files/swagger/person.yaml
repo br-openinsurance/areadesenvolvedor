@@ -311,8 +311,9 @@ components:
                         VERBA_RESCISORIA,
                         OUTRAS]
                 coverageOthers:
-                  type: string
-                  description: Campo aberto para detalhamento da opção Outros no campo "coverage"
+                  type: array
+                  items:
+                    type: string
                 coverageAttributes:
                   $ref: '#/components/schemas/PersonCoverageAttributes'
                 contractType:
@@ -404,12 +405,13 @@ components:
               $ref: '#/components/schemas/PersonTermsAndCondition' 
           globalCapital:
             type: boolean
-            example: true
             description: Seguro de pessoas com capital global modalidade de contratação coletiva da cobertura de risco, respeitados os critérios técnico-operacionais, forma e limites fixados pela SUSEP, segundo a qual o valor do capital segurado referente a cada componente sofrerá variações decorrentes de mudanças na composição do grupo segurado
           validity:
-            type: string
-            example: VITALICIA
-            enum: [VITALICIA, TEMPORARIA_PRAZO_FIXO, TEMPORARIA_INTERMITENTE]  
+            type: array
+            items:
+              type: string
+              example: VITALICIA
+              enum: [VITALICIA, TEMPORARIA_PRAZO_FIXO, TEMPORARIA_INTERMITENTE]  
           pmbacRemuneration:
             $ref: '#/components/schemas/PersonPmbacRemuneration'
           benefitRecalculation:
@@ -452,52 +454,31 @@ components:
 
     PersonCoverageAttributesDetailsUnit:
       type: object
-      description: Obrigatório caso seja informando no campo "unitType" o valor MONETARIO.
       required:
         - code
         - description
       properties:
-        code:
+        code: 
           type: string
-          enum: [ د.إ , Af, L, Դ,  Kz, $,  ƒ,  ман,  КМ, ৳,  лв, ب.د,  ₣,  Bs.,  R$, P,  Br, ¥,  ₡,  Kč, kr, د.ج,  £,  
-                  Nfk,  N/A,  €,  ლ,  ₵,  D,  Q,  Kn, G,  Ft, Rp, ₪,  ₹,  ع.د,  ﷼,  Sh, ៛,  ₩,  د.ك,  〒,  ₭,  ل.ل,  Rs,
-                  ل.د,  د.م., ден,  K,  ₮,  UM, ₨,  ރ., MK, RM, MTn,  ₦,  C$, ر.ع., B/.,  S/.,  ₱,  zł, ₲,  ر.ق,  din,  
-                  р., ر.س,  Le, Db, ل.س,  ฿,  ЅМ, m,  د.ت,  T$, ₤,  ₴,  Bs F, ₫,  Vt, T,  R,  ZK ]
+          description: Tipo unidade de medida.
           example: R$
-        description:
+        description: 
           type: string
-          example: BRL
-          enum: [ AFN,AFA,ALL,ALK,DZD,USD,EUR,ADP,ESP,FRF,AOA,AOK,AON,AOR,XCD,ARS,ARA,ARP,ARY,AMD,RUR,AWG,AUD,ATS,AZN,AYM,AZM,BSD,BHD,BDT,BBD,BYN,BYB,BYR,BEC,BEF,BEL,BZD,XOF,BMD,INR,BTN,BOP,BOB,BOV,BAM,BAD,BWP,NOK,BRL,BRB,BRC,BRE,BRN,BRR,BND,BGN,BGJ,BGK,BGL,BUK,BIF,CVE,KHR,XAF,CAD,KYD,CLP,CLF,CNY,COP,COU,KMF,CDF,NZD,CRC,HRK,HRD,CUP,CUC,ANG,CYP,CZK,CSJ,CSK,DKK,DJF,DOP,ECS,ECV,EGP,SVC,GQE,ERN,EEK,SZL,ETB,XEU,FKP,FJD,FIM,XPF,GMD,GEL,GEK,DDM,DEM,GHS,GHC,GHP,GIP,GRD,GTQ,GBP,GNF,GNE,GNS,GWE,GWP,GYD,HTG,ITL,HNL,HKD,HUF,ISK,ISJ,IDR,XDR,IRR,IQD,IEP,ILS,ILP,ILR,JMD,JPY,JOD,KZT,KES,KPW,KRW,KWD,KGS,LAJ,LAK,LVL,LVR,LBP,LSL,ZAR,LSM,ZAL,LRD,LYD,CHF,LTL,LTT,LUC,LUF,LUL,MOP,MGA,MGF,MWK,MYR,MVR,MVQ,MLF,MTL,MTP,MRU,MRO,MUR,XUA,MXN,MXV,MXP,MDL,MNT,MAD,MZN,MZE,MZM,MMK,NAD,NPR,NLG,NIO,NIC,NGN,MKD,OMR,PKR,PAB,PGK,PYG,PEN,PEH,PEI,PES,PHP,PLN,PLZ,PTE,QAR,RON,ROK,ROL,RUB,RWF,SHP,WST,STN,STD,SAR,RSD,CSD,SCR,SLL,SGD,XSU,SKK,SIT,SBD,SOS,SSP,SDG,RHD,ESA,ESB,LKR,SDD,SDP,SRD,SRG,SEK,CHE,CHW,CHC,SYP,TWD,TJS,TJR,TZS,THB,TPE,TOP,TTD,TND,TRY,TRL,TMT,TMM,UGX,UGS,UGW,UAH,UAK,SUR,AED,USS,USN,UYU,UYI,UYW,UYN,UYP,UZS,VUV,VEB,VEF,VES,VND,VNC,YER,YDD,YUD,YUM,YUN,ZRN,ZRZ,ZMW,ZMK,ZWL,ZWC,ZWD,ZWN,ZWR,XBA,XFO,XBB,XRE,XBC,XBD,XFU,XTS,XXX,XAU,XPD,XPT,XAG ]
+          description: Descrição da unidade de medida
+          example: description
 
     PersonCoverageAttributesDetails:
-      type: object
-      required:
-        - amount
-        - unitType
-      properties:
-        amount:
-            type: string
-            description: |
-              Valor.
-              Exemplos de preenchimento do campo:
-
-              PORCENTAGEM: 90.85
-                               
-              MONETARIO: 62500.67
-
-              OUTROS: 1000 (Exemplo de outro tipo: horas)
-
-            pattern: '^(^(100\.\00|\d{1,2}\.\d{2})$|^(\d{1,6})$|^(\d{1,15}\.\d{2})$)$'
-        unitType:
-          type: string
-          enum: [PORCENTAGEM, MONETARIO, OUTROS]
-          example: MONETARIO
-        unitTypeOthers:
-          description: Caso o tipo do valor informado for "Outros", esse campo deve ser preenchido com o tipo do valor, obrigatoriamente.
-          type: string
-          example: Horas
-        unit:
-          $ref: '#/components/schemas/PersonCoverageAttributesDetailsUnit'
+        type: object
+        required:
+          - amount
+          - unit
+        properties:
+          amount:
+            type: number
+            description: Valor.
+            example: 60
+          unit:
+            $ref: '#/components/schemas/PersonCoverageAttributesDetailsUnit'
 
     PersonGracePeriodUnit:
         type: object
@@ -511,7 +492,7 @@ components:
             maxLength: 500
             example: Descrições adicionais do período de carência
           amount:
-            type: integer
+            type: number
             description: Prazo de Carência
             example: 60
           unit:
@@ -528,7 +509,7 @@ components:
           - unit
         properties:
           amount:
-            type: integer
+            type: number
             description: Prazo de carência. Prazo (de acordo com o dado “Portabilidade – Critério de prazo de carência”)
             example: 60
           unit:
@@ -549,6 +530,7 @@ components:
         - deductibleDays 
         - deductibleBRL    
         - excludedRisks
+        - excludedRisksURL
         - allowApartPurchase
         - indemnityPaymentMode
         - ageAdjustment
@@ -565,8 +547,8 @@ components:
           description: Listagem de tipos de frequência de pagamento de indenização para cada combinação de modalidade/cobertura do produto 
           items:
            type: string
-           example: DIARIA
-           enum: ['PAGAMENTO_UNICO_OU_RENDA', 'DIARIA', 'PARCELA']
+           example: INDENIZACAO_UNICA
+           enum: [INDENIZACAO_UNICA, DIARIA_OU_PARCELA]
         minValue:
           type: array
           description: Listagem do valor mínimo de cobertura (Capital Segurado), diária ou parcela aceito pela  sociedade para cada  combinação de modalidade/cobertura do produto. Em reais
@@ -604,18 +586,16 @@ components:
           type: integer
           description: Listagem de franquia em dias para cada combinação de modalidade/cobertura do produto.         
         differentiatedDeductibleDays:
-          type: integer
-          description: Detalhamento da franquia em dias diferentes para cada cobertura que exista alguma especificidade. Caso a seguradora não tenha essa diferenciação, não retornará nada no campo.
+          type: number
           example: 10
+          description: Detalhamento da franquia em dias diferentes para cada cobertura que exista alguma especificidade. Caso a seguradora não tenha essa diferenciação, não retornará nada no campo.
         deductibleBRL:
-          type: string
-          example: '58.80'
-          pattern: ^\d{1,16}\.\d{2}$
+          type: number
+          example: 58.81
           description: Listagem de franquia em reais para cada combinação de modalidade/cobertura do produto.
         differentiatedDeductibleBRL:
           type: string
           example: '58.80'
-          pattern: ^\d{1,16}\.\d{2}$
           description: Detalhamento da franquia em reais diferentes para cada cobertura que exista alguma especificidade. Caso a seguradora não tenha essa diferenciação, não retornará nada no campo.
         excludedRisks:
           type: array
@@ -665,8 +645,7 @@ components:
         - pmbacUpdateIndex
       properties:
         interestRate:
-          type: string
-          pattern: ^\d{1,3}\.\d{1,9}$
+          type: number
           description: Taxa de juros para capitalização da PMBaC.
         pmbacUpdateIndex:
           type: string
@@ -699,8 +678,8 @@ components:
           maxLength: 100
 
     PersonAgeAdjustment:
-      description: Reenquadramento etário
       type: object
+      description: Reenquadramento etário
       required:
         - criterion
       properties:
@@ -730,10 +709,9 @@ components:
           description: Mês final do range
           example: 12
         percentage:
-          type: string
-          pattern: ^100\.0{1,9}$|^\d{1,2}\.\d{1,9}$
-          example: '10.45'
+          type: number
           description: Percentual da faixa de resgate
+          example: 10.45
 
     PersonReclaim:
       type: object
@@ -749,7 +727,7 @@ components:
           $ref: '#/components/schemas/personReclaimTable'
         differentiatedPercentage:
           type: string
-          description: Campo aberto para descrição (possibilidade de URL), caso o percentual de resgate não siga o padrão apenas no que se refere ao critério temporal padronizado no campo “Resgate-Percentual".
+          description: Campo aberto para descrição (possibilidade de URL), caso o percentual de resgate não siga o padrão apenas no que se refere ao critério temporal padronizado no campo “Resgate-Percentual”."
         gracePeriod:
           $ref: '#/components/schemas/PersonGracePeriodUnit'
 
@@ -765,8 +743,8 @@ components:
           items:
             type: string
             description: Meio(s) de pagamento do Prêmio disponíveis 
-            example: CARTAO_DE_CREDITO
-            enum: [CARTAO_DE_CREDITO, DEBITO_EM_CONTA, DEBITO_EM_CONTA_POUPANCA, BOLETO_BANCARIO, PIX, CARTAO_DE_DEBITO, REGRA_PARCEIRO, CONSIGNACAO_EM_FOLHA_PAGAMENTO, PONTOS_PROGRAMAS_BENEFICIO, TED_DOC, OUTROS]
+            example: CARTAO_CREDITO
+            enum: [CARTAO_CREDITO, DEBITO_CONTA, DEBITO_CONTA_POUPANCA, BOLETO_BANCARIO, PIX, CARTAO_DEBITO, REGRA_PARCEIRO, CONSIGNACAO_FOLHA_PAGAMENTO, PONTOS_PROGRAMAS_BENEFICIO, TED_DOC, OUTROS]
         paymentDetail:
           description: Descrição de Meio(s) de pagamento do Prêmio disponíveis quando for informada a opção OUTROS.
           type: string
@@ -781,19 +759,19 @@ components:
             enum: [DIARIA  , MENSAL , UNICA, ANUAL, TRIMESTRAL , SEMESTRAL , FRACIONADO, OUTRA]
           
     PersonMinimumRequirements:
-        description: Requisitos mínimos para contratação
-        type: object
-        required:
-            - contractingType
-            - contractingMinRequirement
-        properties:
-          contractingType:
-             type: string
-             example: COLETIVO
-             enum: [COLETIVO, INDIVIDUAL]
-          contractingMinRequirement:
+      description: Requisitos mínimos para contratação
+      type: object
+      required:
+          - contractingType
+          - contractingMinRequirement
+      properties:
+        contractingType:
             type: string
-            description: Requisitos mínimos para contratação
+            example: COLETIVO
+            enum: [COLETIVO, INDIVIDUAL]
+        contractingMinRequirement:
+          type: string
+          description: Requisitos mínimos para contratação
 
     Links: 
       type: object
@@ -874,7 +852,8 @@ components:
               requestDateTime:
                 description: 'Data e hora da consulta, conforme especificação RFC-3339, formato UTC.'
                 type: string
-                pattern: ^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])T(?:[01]\d|2[0123]):(?:[012345]\d):(?:[012345]\d)Z$
+                pattern: '[\w\W\s]*'
+                maxLength: 2048  
                 format: date-time
                 example: '2021-08-20T08:30:00Z'
             additionalProperties: false
