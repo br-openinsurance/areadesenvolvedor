@@ -6,7 +6,7 @@ info:
     Recebe informações da solicitação de cotação e contratação vindas das instituições iniciadoras.\
     Possui um conjunto de endpoints por ramo de produto e um conjunto específico de endpoints para ramos classificados como LEAD OPIN.\
     Requer consentimento do cliente para todos os 'endpoints'.
-    
+
     # Orientações
     A `Role`  do diretório de participantes relacionada à presente API é a ``.\
     Para todos os `endpoints` desta API é previsto o envio de um `token` através do header `Authorization`.\
@@ -43,15 +43,15 @@ info:
       - 1 - `Idempotência:` Valida se há divergência entre chave de idempotência e informações enviadas (ERRO_IDEMPOTENCIA);
       - 2 - `Demais validações:` Valida itens não explicitamente informados pelo servidor - (NAO_INFORMADO).      
      
-  version: 1.9.1
+  version: 1.9.2
   contact:
     name: Governança do Open Insurance Brasil
     email: gt-interfaces@openinsurancebr.org
-    url: 'https://www.gov.br/susep'
+    url: https://www.gov.br/susep
 servers:
-  - url: 'https://api.organizacao.com.br/open-insurance/quote-capitalization-title/v1'
+  - url: https://api.organizacao.com.br/open-insurance/quote-capitalization-title/v1
     description: Servidor de Produção
-  - url: 'https://api.organizacao.com.br/open-insurance/quote-capitalization-title/v1'
+  - url: https://api.organizacao.com.br/open-insurance/quote-capitalization-title/v1
     description: Servidor de Homologação
 tags:
   - name: CapitalizationTitleLead
@@ -66,14 +66,15 @@ paths:
       tags:
         - CapitalizationTitleLead
       summary: Envia dados de cotação e compra de CapitalizationTitleLead
-      description: "Método para criação de solicitação de cotação e compra de CapitalizationTitleLead"
-      operationId: "postQuoteCapitalizationTitleLead"
+      description: Método para criação de solicitação de cotação e compra de CapitalizationTitleLead
+      operationId: postQuoteCapitalizationTitleLead
       parameters:
         - $ref: '#/components/parameters/Authorization'
         - $ref: '#/components/parameters/xFapiAuthDate'
         - $ref: '#/components/parameters/xFapiCustomerIpAddress'
         - $ref: '#/components/parameters/xFapiInteractionId'
         - $ref: '#/components/parameters/xCustomerUserAgent'
+        - $ref: '#/components/parameters/xIdempotencyKey'
       requestBody:
         content:
           application/json:
@@ -95,7 +96,7 @@ paths:
         '406':
           $ref: '#/components/responses/NotAcceptable'
         '422':
-          $ref: '#/components/responses/UnprocessableEntity'
+          $ref: '#/components/responses/UnprocessableEntityRaffle'
         '429':
           $ref: '#/components/responses/TooManyRequests'
         '500':
@@ -110,17 +111,17 @@ paths:
         - OpenId:
             - openid
           OAuth2Security:
-            - 'consent:consentId'
+            - consent:consentId
             - quote-capitalization-title-lead
   /lead/request/{consentId}:
     patch:
       tags:
         - CapitalizationTitleLead
       summary: Atualiza dados de cotação e compra de CapitalizationTitleLead identificado por consentId
-      description: "Método para atualização de solicitação de cotação e compra de CapitalizationTitleLead"
-      operationId: "patchQuoteCapitalizationTitleLead"
+      description: Método para atualização de solicitação de cotação e compra de CapitalizationTitleLead
+      operationId: patchQuoteCapitalizationTitleLead
       parameters:
-        - $ref: "#/components/parameters/consentId"
+        - $ref: '#/components/parameters/consentId'
         - $ref: '#/components/parameters/Authorization'
         - $ref: '#/components/parameters/xFapiAuthDate'
         - $ref: '#/components/parameters/xFapiCustomerIpAddress'
@@ -164,21 +165,22 @@ paths:
         - OpenId:
             - openid
           OAuth2Security:
-            - 'consent:consentId'
+            - consent:consentId
             - quote-capitalization-title-lead
   /request:
     post:
       tags:
         - CapitalizationTitle
       summary: Envia dados de cotação e compra de CapitalizationTitle
-      description: "Método para criação de solicitação de cotação e compra de CapitalizationTitle"
-      operationId: "postQuoteCapitalizationTitle"
+      description: Método para criação de solicitação de cotação e compra de CapitalizationTitle
+      operationId: postQuoteCapitalizationTitle
       parameters:
         - $ref: '#/components/parameters/Authorization'
         - $ref: '#/components/parameters/xFapiAuthDate'
         - $ref: '#/components/parameters/xFapiCustomerIpAddress'
         - $ref: '#/components/parameters/xFapiInteractionId'
         - $ref: '#/components/parameters/xCustomerUserAgent'
+        - $ref: '#/components/parameters/xIdempotencyKey'
       requestBody:
         content:
           application/json:
@@ -200,7 +202,7 @@ paths:
         '406':
           $ref: '#/components/responses/NotAcceptable'
         '422':
-          $ref: '#/components/responses/UnprocessableEntity'
+          $ref: '#/components/responses/UnprocessableEntityRaffle'
         '429':
           $ref: '#/components/responses/TooManyRequests'
         '500':
@@ -215,24 +217,24 @@ paths:
         - OpenId:
             - openid
           OAuth2Security:
-            - 'consent:consentId'
+            - consent:consentId
             - quote-capitalization-title
   /request/{consentId}/quote-status:
     get:
       tags:
         - CapitalizationTitle
       summary: Obtém os dados de cotação e compra de CapitalizationTitle identificado por consentId
-      description: "Método para consulta dos dados de solicitação de cotação e compra de CapitalizationTitle"
-      operationId: "getQuoteCapitalizationTitle"
+      description: Método para consulta dos dados de solicitação de cotação e compra de CapitalizationTitle
+      operationId: getQuoteCapitalizationTitle
       parameters:
-        - $ref: "#/components/parameters/consentId"
+        - $ref: '#/components/parameters/consentId'
         - $ref: '#/components/parameters/Authorization'
         - $ref: '#/components/parameters/xFapiAuthDate'
         - $ref: '#/components/parameters/xFapiCustomerIpAddress'
         - $ref: '#/components/parameters/xFapiInteractionId'
         - $ref: '#/components/parameters/xCustomerUserAgent'
-        - $ref: "#/components/parameters/page"
-        - $ref: "#/components/parameters/pageSize"
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/pageSize'
       responses:
         '200':
           $ref: '#/components/responses/200QuoteStatusCapitalizationTitle'
@@ -264,17 +266,17 @@ paths:
         - OpenId:
             - openid
           OAuth2Security:
-            - 'consent:consentId'
+            - consent:consentId
             - quote-capitalization-title
   /request/{consentId}:
     patch:
       tags:
         - CapitalizationTitle
       summary: Atualiza dados de cotação e compra de CapitalizationTitle identificado por consentId
-      description: "Método para atualização de solicitação de cotação e compra de CapitalizationTitle"
-      operationId: "patchQuoteCapitalizationTitle"
+      description: Método para atualização de solicitação de cotação e compra de CapitalizationTitle
+      operationId: patchQuoteCapitalizationTitle
       parameters:
-        - $ref: "#/components/parameters/consentId"
+        - $ref: '#/components/parameters/consentId'
         - $ref: '#/components/parameters/Authorization'
         - $ref: '#/components/parameters/xFapiAuthDate'
         - $ref: '#/components/parameters/xFapiCustomerIpAddress'
@@ -318,14 +320,14 @@ paths:
         - OpenId:
             - openid
           OAuth2Security:
-            - 'consent:consentId'
+            - consent:consentId
             - quote-capitalization-title
   /raffle/request:
     post:
       tags:
-      - CapitalizationTitleRaffle
+        - CapitalizationTitleRaffle
       summary: Enviar os dados de solicitação de Pagamento de Sorteio de Título de Capitalização
-      operationId: "postQuoteCapitalizationTitleRaffle"
+      operationId: postQuoteCapitalizationTitleRaffle
       description: Método para a criação de solicitação de Pagamento de Sorteio de Título de Capitalização
       parameters:
         - $ref: '#/components/parameters/Authorization'
@@ -372,33 +374,32 @@ paths:
         - OpenId:
             - openid
           OAuth2Security:
-            - 'consent:consentId'
+            - consent:consentId
             - quote-capitalization-title-raffle
 components:
   schemas:
     PlanDataCapitalizationTitleLead:
       type: array
-      description: Lista que agrupa os dados dos planos históricos em categorias.                                                                               
+      description: Lista que agrupa os dados dos planos históricos em categorias.
       items:
         type: object
         properties:
           plan-info:
-            $ref: '#/components/schemas/CapitalizationTitlePlanInfo'  
+            $ref: '#/components/schemas/CapitalizationTitlePlanInfo'
           events:
-            $ref: '#/components/schemas/CapitalizationTitleEvent'  
+            $ref: '#/components/schemas/CapitalizationTitleEvent'
           settlements:
-            $ref: '#/components/schemas/CapitalizationTitleSettlement' 
-
-    CapitalizationTitlePlanInfo:    
+            $ref: '#/components/schemas/CapitalizationTitleSettlement'
+    CapitalizationTitlePlanInfo:
       type: object
       required:
         - series
       properties:
         series:
-          description: Dados Gerais da Série        
+          description: Dados Gerais da Série
           type: array
           items:
-            $ref: "#/components/schemas/InsuranceCapitalizationTitleSeries"
+            $ref: '#/components/schemas/InsuranceCapitalizationTitleSeries'
     InsuranceCapitalizationTitleSeries:
       description: Dados Gerais da Série
       type: object
@@ -427,15 +428,22 @@ components:
           type: string
           description: Modalidade
           example: TRADICIONAL
-          enum: [TRADICIONAL, INSTRUMENTO_GARANTIA, COMPRA_PROGRAMADA, POPULAR, FILANTROPIA_PREMIAVEL]
+          enum:
+            - TRADICIONAL
+            - INSTRUMENTO_GARANTIA
+            - COMPRA_PROGRAMADA
+            - POPULAR
+            - FILANTROPIA_PREMIAVEL
         susepProcessNumber:
           type: string
           description: Número do processo administrativo sob o qual o plano foi aprovado pela Susep.
           maxLength: 20
-          example: "15414622222222222"
-        commercialName:
+          example: '15414622222222222'
+        commercialDenomination:
           type: string
-          description: Denominação comercial do produto de propriedade exclusiva da sociedade de capitalização. Condicional, caso selecionada as opções "Filantropia Premiável" ou "Popular" no campo "Modalidade".
+          description: Denominação comercial do produto de propriedade exclusiva da 
+            sociedade de capitalização. Condicional, caso selecionada as opções 
+            "Filantropia Premiável" ou "Popular" no campo "Modalidade".
           maxLength: 100
           example: Denominação comercial do produto
         serieSize:
@@ -461,7 +469,13 @@ components:
           type: string
           description: Descreve o índice de atualização das reservas.
           example: IPCA
-          enum: [INDICE_REMUNERACAO_BASICA_DEPOSITOS_POUPANCA, IPCA, INCC, INPC, IGPM, OUTROS]
+          enum:
+            - INDICE_REMUNERACAO_BASICA_DEPOSITOS_POUPANCA
+            - IPCA
+            - INCC
+            - INPC
+            - IGPM
+            - OUTROS
         updateIndexOthers:
           type: string
           description: Descreve o índice de atualização utilizado quando outro que não previamente relacionado nos domínios do campo.
@@ -471,21 +485,30 @@ components:
           type: string
           description: Índice de reajuste das contribuições e do capital para vigências acima de doze meses
           example: IPCA
-          enum: [INDICE_REMUNERACAO_BASICA_DEPOSITOS_POUPANCA, IPCA, INCC, INPC, IGPM, OUTROS]
+          enum:
+            - INDICE_REMUNERACAO_BASICA_DEPOSITOS_POUPANCA
+            - IPCA
+            - INCC
+            - INPC
+            - IGPM
+            - OUTROS
         readjustmentIndexOthers:
           type: string
           description: Descreve o índice de reajuste utilizado quando outro que não previamente relacionado nos domínios do campo.
           maxLength: 100
           example: Índice de reajuste Outros
-        bonusClause: 
+        bonusClause:
           type: boolean
           description: Cláusula de bônus
           example: false
         frequency:
-          type: string         
+          type: string
           description: Tipo de Contribuição - pagamento único, pagamento mensal ou periódico
           example: PAGAMENTO_MENSAL
-          enum: ['PAGAMENTO_UNICO', 'PAGAMENTO_MENSAL','PAGAMENTO_PERIODICO']
+          enum:
+            - PAGAMENTO_UNICO
+            - PAGAMENTO_MENSAL
+            - PAGAMENTO_PERIODICO
         frequencyDescription:
           type: string
           description: Descrição do Tipo de Contribuição (Quando o Tipo de Contribuição for 3. Pagamento Periódico)
@@ -498,13 +521,12 @@ components:
           description: Dados do corretor (quando houver)
           type: array
           items:
-            $ref: "#/components/schemas/InsuranceCapitalizationTitleBroker"
+            $ref: '#/components/schemas/InsuranceCapitalizationTitleBroker'
         titles:
           description: Dados Gerais do Título
           type: array
           items:
-            $ref: "#/components/schemas/InsuranceCapitalizationTitleTitle"
-            
+            $ref: '#/components/schemas/InsuranceCapitalizationTitleTitle'
     InsuranceCapitalizationTitleBroker:
       type: object
       required:
@@ -515,12 +537,11 @@ components:
           type: string
           description: Código SUSEP do corretor.
           maxLength: 12
-          example: "123123123"
+          example: '123123123'
         brokerDescription:
           description: Nome ou Razão Social do Corretor
           type: string
           maxLength: 200
-          
     InsuranceCapitalizationTitleTitle:
       type: object
       required:
@@ -534,53 +555,47 @@ components:
         - subscriber
         - technicalProvisions
       properties:
-        titleId: 
+        titleId:
           description: Identificação do título de capitalização
           type: string
           maxLength: 60
-        registrationForm: 
+        registrationForm:
           description: Identificação da ﬁcha de cadastro ou contrato comercial
           type: string
           maxLength: 50
-        issueTitleDate: 
+        issueTitleDate:
           description: Data de Emissão do Título
           type: string
           format: date
-          example: "2023-01-30"         
-        termStartDate: 
+          example: '2023-01-30'
+        termStartDate:
           description: Data de início de vigência do título de capitalização.
           type: string
           format: date
-          example: "2023-01-30"         
+          example: '2023-01-30'
         termEndDate:
           description: Data de fim de vigência do título de capitalização.
           type: string
           format: date
-          example: "2023-01-30"
+          example: '2023-01-30'
         rafflePremiumAmount:
           description: Valor do premio de sorteio
           allOf:
-            - $ref: "#/components/schemas/AmountDetails"
+            - $ref: '#/components/schemas/AmountDetails'
         contributionAmount:
-          description: Valor vigente (atualizado), referente ao
-                       pagamento efetuado pelo subscritor à
-                       sociedade de capitalização para a aquisição
-                       do título de capitalização, de acordo com o
-                       tipo de contribuição da série à qual o título
-                        pertence. 
+          description: Valor vigente (atualizado), referente ao pagamento efetuado pelo subscritor à sociedade de capitalização para a aquisição do título de capitalização, de acordo com o tipo de contribuição da série à qual o título pertence.
           allOf:
-            - $ref: "#/components/schemas/AmountDetails"
+            - $ref: '#/components/schemas/AmountDetails'
         subscriber:
           description: Dados Gerais do Título
           type: array
           items:
-            $ref: "#/components/schemas/InsuranceCapitalizationTitleSubscriber"
+            $ref: '#/components/schemas/InsuranceCapitalizationTitleSubscriber'
         technicalProvisions:
           description: Informações de Provisões técnicas
           type: array
           items:
-            $ref: "#/components/schemas/InsuranceCapitalizationTitleTechnicalProvisions"
-            
+            $ref: '#/components/schemas/InsuranceCapitalizationTitleTechnicalProvisions'
     InsuranceCapitalizationTitleSubscriber:
       type: object
       required:
@@ -601,7 +616,11 @@ components:
         subscriberDocumentType:
           description: Tipo de Documento do Subscritor
           type: string
-          enum: [CPF, CNPJ, PASSAPORTE, OUTROS]
+          enum:
+            - CPF
+            - CNPJ
+            - PASSAPORTE
+            - OUTROS
           example: OUTROS
         subscriberDocumentTypeOthers:
           description: Tipo de Documento do Subscritor, caso seja selecionado OUTROS.
@@ -621,7 +640,7 @@ components:
           type: string
           maxLength: 200
           pattern: '[\w\W\s]*'
-          example: "Av Naburo Ykesaki, 1270"
+          example: Av Naburo Ykesaki, 1270
         subscriberAddressAdditionalInfo:
           type: string
           pattern: '[\w\W\s]*'
@@ -638,7 +657,7 @@ components:
         subscriberCountrySubDivision:
           description: Estado do subscritor
           allOf:
-            - $ref: "#/components/schemas/EnumCountrySubDivision"
+            - $ref: '#/components/schemas/EnumCountrySubDivision'
         subscriberCountryCode:
           description: |
             Código do pais de acordo com o código “alpha3” do ISO-3166.
@@ -651,44 +670,42 @@ components:
             Código de Endereçamento Postal: Composto por um conjunto numérico de oito dígitos, o objetivo principal do CEP é orientar e acelerar o encaminhamento, o tratamento e a entrega de objetos postados nos Correios, por meio da sua atribuição a localidades, logradouros, unidades dos Correios, serviços, órgãos públicos, empresas e edifícios. p.ex. '01311000'.
             Código Postal do subscritor, Obrigatório, se houver
           type: string
-          pattern: '\d{8}|^NA$'
+          pattern: \d{8}|^NA$
           maxLength: 8
-          example: "17500001"
+          example: '17500001'
         holder:
           description: Dados Gerais do Titular
           type: array
           items:
-            $ref: "#/components/schemas/InsuranceCapitalizationTitleHolder"
-
+            $ref: '#/components/schemas/InsuranceCapitalizationTitleHolder'
     CapitalizationTitleQuotas:
-        type: object
-        description: Quotas
-        required:
-          - quota
-          - capitalizationQuota
-          - raffleQuota
-          - chargingQuota
-        properties:
-            quota:
-              type: integer
-              description: Número da parcela.
-              example: 10
-            capitalizationQuota:
-              type: string
-              description: Percentual da contribuição destinado à constituição de capital referente ao direito de resgate.
-              pattern: ^1\.0{1,9}$|^0\.\d{1,9}$
-              example: '0.000002'
-            raffleQuota:
-              type: string
-              description: Percentual da contribuição designado a custear os sorteios, se previstos no plano
-              pattern: ^1\.0{1,9}$|^0\.\d{1,9}$
-              example: '0.000002'
-            chargingQuota:
-              type: string
-              description: Percentual da contribuição destinado aos custos de despesas com corretagem, colocação e administração do título de capitalização, emissão, divulgação, lucro da sociedade de capitalização e eventuais despesas relavas ao custeio da contemplação obrigatória e da distribuição de bónus.
-              pattern: ^1\.0{1,9}$|^0\.\d{1,9}$
-              example: '0.000002'
-              
+      type: object
+      description: Quotas
+      required:
+        - quota
+        - capitalizationQuota
+        - raffleQuota
+        - chargingQuota
+      properties:
+        quota:
+          type: integer
+          description: Número da parcela.
+          example: 10
+        capitalizationQuota:
+          type: string
+          description: Percentual da contribuição destinado à constituição de capital referente ao direito de resgate.
+          pattern: ^1\.0{1,9}$|^0\.\d{1,9}$
+          example: '0.000002'
+        raffleQuota:
+          type: string
+          description: Percentual da contribuição designado a custear os sorteios, se previstos no plano
+          pattern: ^1\.0{1,9}$|^0\.\d{1,9}$
+          example: '0.000002'
+        chargingQuota:
+          type: string
+          description: Percentual da contribuição destinado aos custos de despesas com corretagem, colocação e administração do título de capitalização, emissão, divulgação, lucro da sociedade de capitalização e eventuais despesas relavas ao custeio da contemplação obrigatória e da distribuição de bónus.
+          pattern: ^1\.0{1,9}$|^0\.\d{1,9}$
+          example: '0.000002'
     CapitalizationTitleEvent:
       type: array
       items:
@@ -696,11 +713,13 @@ components:
           titleId:
             description: Código identificador do título na sociedade.
             type: string
-            maxLength: 80        
+            maxLength: 80
           eventType:
             description: Tipo de Evento
             type: string
-            enum: [SORTEIO, RESGATE]
+            enum:
+              - SORTEIO
+              - RESGATE
           event:
             type: object
             properties:
@@ -719,12 +738,12 @@ components:
                     description: Data de realização do sorteio
                     type: string
                     format: date
-                    example: "2023-01-30"
+                    example: '2023-01-30'
                   raffleSettlementDate:
                     description: Data da liquidação financeira do capital sorteado
                     type: string
                     format: date
-                    example: "2023-01-30"
+                    example: '2023-01-30'
               redemption:
                 type: object
                 required:
@@ -737,7 +756,10 @@ components:
                   redemptionType:
                     description: Tipo de resgate
                     type: string
-                    enum: [ANTECIPADO_PARCIAL, ANTECIPADO_TOTAL, FINAL_VIGENCIA]
+                    enum:
+                      - ANTECIPADO_PARCIAL
+                      - ANTECIPADO_TOTAL
+                      - FINAL_VIGENCIA
                   redemptionAmount:
                     description: Valor de resgate. (Valor bruto de resgate, livre de IOF, quando aplicável)
                     allOf:
@@ -754,13 +776,12 @@ components:
                     description: Data de solicitação do resgate
                     type: string
                     format: date
-                    example: "2023-01-30"
+                    example: '2023-01-30'
                   redemptionSettlementDate:
                     description: Data da liquidação financeira do resgate
                     type: string
                     format: date
-                    example: "2023-01-30"
-                    
+                    example: '2023-01-30'
     CapitalizationTitleSettlement:
       type: array
       description: Lista que agrupa os dados de liquidação.
@@ -782,16 +803,16 @@ components:
             description: Data de pagamento da liquidação
             type: string
             format: date
-            example: "2023-01-30"
+            example: '2023-01-30'
           settlementDueDate:
             description: Data de Vencimento da liquidação
             type: string
             format: date
-            example: "2023-01-30"
+            example: '2023-01-30'
     PercentageDetails:
       type: number
-      pattern: '^\d{1,3}\.\d{1,9}$'
-      example: 10.00
+      pattern: ^\d{1,3}\.\d{1,9}$
+      example: 10
     PlanDataCapitalizationTitle:
       type: array
       description: Lista que agrupa os dados dos planos históricos em categorias.
@@ -799,41 +820,40 @@ components:
         type: object
         properties:
           plan-info:
-            $ref: '#/components/schemas/CapitalizationTitlePlanInfo'  
+            $ref: '#/components/schemas/CapitalizationTitlePlanInfo'
           events:
-            $ref: '#/components/schemas/CapitalizationTitleEvent'  
+            $ref: '#/components/schemas/CapitalizationTitleEvent'
           settlements:
-            $ref: '#/components/schemas/CapitalizationTitleSettlement' 
-
-    QuoteDataCapitalizationTitle:    
+            $ref: '#/components/schemas/CapitalizationTitleSettlement'
+    QuoteDataCapitalizationTitle:
       type: object
       description: Objeto que agrupa dados específicos da cotação.
       required:
-        - modality 
+        - modality
         - paymentType
       properties:
-        modality: 
+        modality:
           type: string
-          enum: [TRADICIONAL,
-                COMPRA_PROGRAMADA_LEAD,
-                INSTRUMENTO_DE_GARANTIA_LEAD,
-                POPULAR,
-                FILANTROPIA_PREMIAVEL]
-          description: "Modalidade"
+          enum:
+            - TRADICIONAL
+            - COMPRA_PROGRAMADA_LEAD
+            - INSTRUMENTO_DE_GARANTIA_LEAD
+            - POPULAR
+            - FILANTROPIA_PREMIAVEL
+          description: Modalidade
         paymentType:
           type: string
-          enum: [UNICO,
-                MENSAL]
-          description: 'Tipo de Pagamento'  
+          enum:
+            [UNICO,MENSAL, PERIODICO]
+          description: Tipo de Pagamento
         singlePayment:
-          description: 'Pagamento único. Condicional obrigatório, caso selecionada a opção de "Único" em "Tipo de Pagamento"'
+          description: Pagamento único. Condicional obrigatório, caso selecionada a opção de "Único" em "Tipo de Pagamento"
           allOf:
-            - $ref: '#/components/schemas/AmountDetails'  
+            - $ref: '#/components/schemas/AmountDetails'
         monthlyPayment:
-          description: 'Pagamento por mês. Condicional obrigatório, caso selecionada a opção de "Mensal" em "Tipo de Pagamento"'
+          description: Pagamento por mês. Condicional obrigatório, caso selecionada a opção de "Mensal" em "Tipo de Pagamento"
           allOf:
-            - $ref: '#/components/schemas/AmountDetails'  
-              
+            - $ref: '#/components/schemas/AmountDetails'
     QuoteStatusCapitalizationTitle:
       type: object
       required:
@@ -842,124 +862,126 @@ components:
         - quotes
       properties:
         quoteCustomer:
-          description: Objeto que agrupa as categorias de dados cadastrais do cliente.      
+          description: Objeto que agrupa as categorias de dados cadastrais do cliente.
           oneOf:
             - $ref: '#/components/schemas/PersonalQuoteCustomer'
             - $ref: '#/components/schemas/BusinessQuoteCustomer'
         quoteData:
-            $ref: '#/components/schemas/QuoteDataCapitalizationTitle'
+          $ref: '#/components/schemas/QuoteDataCapitalizationTitle'
         quotes:
-            type: array
-            description: Lista de cotações enviadas pela seguradora.
-            items:                                          
-              required:
-                - insurerQuoteId
-                - susepProcessNumber
-                - planId
-                - modality
-                - period
-                - grouperCode
-                - raffle
-                - paymentType
-              properties:
-                insurerQuoteId:
-                  type: string
-                  description: |
-                    Id da proposta da segurada 
-                commercialName:
-                  type: string
-                  maxLength: 100  
-                  description: 'Denominação comercial da série / título de capitalização, se houver'
-                susepProcessNumber:
-                  type: string
-                  maxLength: 20
-                  description: 'Número do processo SUSEP'
-                planId:
-                  type: string
-                  maxLength: 60
-                  description: 'Deve ser informado o número do plano de capitalização'
-                modality: 
-                  type: string
-                  enum: [TRADICIONAL,
-                        COMPRA_PROGRAMADA_LEAD,
-                        INSTRUMENTO_DE_GARANTIA_LEAD,
-                        POPULAR,
-                        FILANTROPIA_PREMIAVEL]
-                  description: "Modalidade"  
-                period:
-                  type: string
-                  maxLength: 3
-                  description: 'Prazo de vigência do título de capitalização em meses.'  
-                grouperCode:
-                  type: string
-                  maxLength: 60
-                  description: 'Código da instituição (Código agrupador do sorteio)'  
-                raffle:
-                  type: array
-                  description: Lista que agrupa os dados de sorteios.
-                  items:
-                    required:
-                      - amount
-                      - gracePeriodicity
-                      - rafflesQuantity
-                      - ticket
-                    properties:
-                      amount:
-                        description: 'Valor de cada sorteio'  
-                        allOf:
-                          - $ref: "#/components/schemas/AmountDetails"
-                      gracePeriodicity:
-                        type: string
-                        description: 'Intervalo de tempo regular previsto entre os sorteios'
-                        enum: [UNICO,
-                              DIARIO,
-                              SEMANAL,
-                              QUINZENAL,
-                              MENSAL,
-                              BIMESTRAL,
-                              TRIMESTRAL,
-                              QUADRIMESTRAL,
-                              SEMESTRAL,
-                              ANUAL,
-                              INSTANTANEO,
-                              OUTROS]
-                      multipleContribution:
-                        type: string
-                        maxLength: 12
-                        description: 'Múltiplo da contribuição (Obrigatório, se aplicável)'
-                      rafflesQuantity:
-                        type: string
-                        maxLength: 12
-                        description: 'Quantidade dos referidos sorteios'
-                      ticket:
-                        description: 'Valor da parcela de contribuição'
-                        allOf:
-                          - $ref: "#/components/schemas/AmountDetails"
-                paymentType:
-                  type: string
-                  enum: [UNICO,
-                        MENSAL,
-                        PERIODICO]
-                  description: 'Tipo de Pagamento'  
-                generalInfo:
-                  description: 'Mais informações sobre o Título (<Link contendo mais informações sobre o Título> Contendo informações gerais do produto como Resgate, Quotas, Pagamento)'
-                  allOf:
-                    - $ref: "#/components/schemas/LinkInfo"
-                url:
-                  description: 'Campo aberto (possibilidade de incluir URL). <Link contendo mais informações sobre o Título> '    
-                  allOf:
-                    - $ref: "#/components/schemas/LinkInfo"
+          type: array
+          description: Lista de cotações enviadas pela seguradora.
+          items:
+            required:
+              - insurerQuoteId
+              - susepProcessNumber
+              - planId
+              - modality
+              - period
+              - grouperCode
+              - raffle
+              - paymentType
+            properties:
+              insurerQuoteId:
+                type: string
+                description: |
+                  Id da proposta da segurada 
+              commercialName:
+                type: string
+                maxLength: 100
+                description: Denominação comercial da série / título de capitalização, se houver
+              susepProcessNumber:
+                type: string
+                maxLength: 20
+                description: Número do processo SUSEP
+              planId:
+                type: string
+                maxLength: 60
+                description: Deve ser informado o número do plano de capitalização
+              modality:
+                type: string
+                enum:
+                  - TRADICIONAL
+                  - COMPRA_PROGRAMADA_LEAD
+                  - INSTRUMENTO_DE_GARANTIA_LEAD
+                  - POPULAR
+                  - FILANTROPIA_PREMIAVEL
+                description: Modalidade
+              period:
+                type: string
+                maxLength: 3
+                description: Prazo de vigência do título de capitalização em meses.
+              grouperCode:
+                type: string
+                maxLength: 60
+                description: Código da instituição (Código agrupador do sorteio)
+              raffle:
+                type: array
+                description: Lista que agrupa os dados de sorteios.
+                items:
+                  required:
+                    - amount
+                    - gracePeriodicity
+                    - rafflesQuantity
+                    - paymentAmount
+                  properties:
+                    amount:
+                      description: Valor de cada sorteio
+                      allOf:
+                        - $ref: '#/components/schemas/AmountDetails'
+                    gracePeriodicity:
+                      type: string
+                      description: Intervalo de tempo regular previsto entre os sorteios
+                      enum:
+                        - UNICO
+                        - DIARIO
+                        - SEMANAL
+                        - QUINZENAL
+                        - MENSAL
+                        - BIMESTRAL
+                        - TRIMESTRAL
+                        - QUADRIMESTRAL
+                        - SEMESTRAL
+                        - ANUAL
+                        - INSTANTANEO
+                        - OUTROS
+                    multipleContribution:
+                      type: string
+                      maxLength: 12
+                      description: Múltiplo da contribuição (Obrigatório, se aplicável)
+                    rafflesQuantity:
+                      type: string
+                      maxLength: 12
+                      description: Quantidade dos referidos sorteios
+                    paymentAmount:
+                      description: Valor da parcela de contribuição
+                      allOf:
+                        - $ref: '#/components/schemas/AmountDetails'
+              paymentType:
+                type: string
+                enum:
+                  - UNICO
+                  - MENSAL
+                  - PERIODICO
+                description: Tipo de Pagamento
+              generalInfo:
+                description: Mais informações sobre o Título (<Link contendo mais informações sobre o Título> Contendo informações gerais do produto como Resgate, Quotas, Pagamento)
+                allOf:
+                  - $ref: '#/components/schemas/LinkInfo'
+              url:
+                description: 'Campo aberto (possibilidade de incluir URL). <Link contendo mais informações sobre o Título> '
+                allOf:
+                  - $ref: '#/components/schemas/LinkInfo'
         quoteCustomData:
           $ref: '#/components/schemas/QuoteCustomData'
-
     LinkInfo:
       type: string
       maxLength: 5000
-      example: 'https://www.abcseguros.com/raffle?id=000123'            
+      example: https://www.abcseguros.com/raffle?id=000123
     HistoricalPersonalComplimentaryInformationData:
-      $ref: "#/components/schemas/PersonalComplimentaryInformationData"
+      $ref: '#/components/schemas/PersonalComplimentaryInformationData'
     HistoricalPersonalIdentificationData:
-      $ref: "#/components/schemas/PersonalIdentificationData"
+      $ref: '#/components/schemas/PersonalIdentificationData'
     PersonalProcurator:
       type: object
       required:
@@ -971,26 +993,25 @@ components:
           type: string
           maxLength: 11
           example: '73677831148'
-          description: '(Caso Natureza dos poderes vigentes de representantefor “Representante legal” ou “Procurador”) CPF ou CNPJ do representante'
+          description: (Caso Natureza dos poderes vigentes de representantefor “Representante legal” ou “Procurador”) CPF ou CNPJ do representante
         civilName:
           type: string
           maxLength: 70
           example: Elza Milena Stefany Teixeira
-          description: '(Caso Natureza dos poderes vigentes de representante for “Representante legal” ou “Procurador”) Nome ou razão social do representante'
+          description: (Caso Natureza dos poderes vigentes de representante for “Representante legal” ou “Procurador”) Nome ou razão social do representante
         socialName:
           type: string
           maxLength: 70
-          pattern: '^[\w\W]*$'
-          example: 'string'
-          description: '(Caso Natureza dos poderes vigentes de representante for “Representante legal” ou “Procurador”) Nome social do representante'
+          pattern: '[\w\W\s]*'
+          example: string
+          description: (Caso Natureza dos poderes vigentes de representante for “Representante legal” ou “Procurador”) Nome social do representante
       additionalProperties: false
     HistoricalPersonalQualificationData:
-      $ref: "#/components/schemas/PersonalQualificationData"
-    
+      $ref: '#/components/schemas/PersonalQualificationData'
     HistoricalBusinessComplimentaryInformationData:
-      $ref: "#/components/schemas/BusinessComplimentaryInformationData"
+      $ref: '#/components/schemas/BusinessComplimentaryInformationData'
     HistoricalBusinessIdentificationData:
-      $ref: "#/components/schemas/BusinessIdentificationData"
+      $ref: '#/components/schemas/BusinessIdentificationData'
     BusinessProcurator:
       type: object
       required:
@@ -1002,25 +1023,24 @@ components:
           type: string
           maxLength: 14
           example: '73677831148'
-          description: '(Caso Natureza dos poderes vigentes de representantefor “Representante legal” ou “Procurador”) CPF ou CNPJ do representante'
+          description: (Caso Natureza dos poderes vigentes de representantefor “Representante legal” ou “Procurador”) CPF ou CNPJ do representante
         civilName:
           type: string
           maxLength: 70
           example: Elza Milena Stefany Teixeira
-          description: '(Caso Natureza dos poderes vigentes de representante for “Representante legal” ou “Procurador”) Nome ou razão social do representante'
+          description: (Caso Natureza dos poderes vigentes de representante for “Representante legal” ou “Procurador”) Nome ou razão social do representante
         socialName:
           type: string
           maxLength: 70
-          pattern: '^[\w\W]*$'
-          example: 'string'
-          description: '(Caso Natureza dos poderes vigentes de representante for “Representante legal” ou “Procurador”) Nome social do representante'  
+          pattern: '[\w\W\s]*'
+          example: string
+          description: (Caso Natureza dos poderes vigentes de representante for “Representante legal” ou “Procurador”) Nome social do representante
       additionalProperties: false
     HistoricalBusinessQualificationData:
-      $ref: "#/components/schemas/BusinessQualificationData"
-    
+      $ref: '#/components/schemas/BusinessQualificationData'
     BusinessComplimentaryInformationData:
       type: object
-      description: 'Objeto que reúne as informações relativas ao relacionamento do cliente junto à Instituição. Considera-se relacionamento as informações que permitam conhecer desde quando a pessoa consultada é cliente da instituição, bem como um indicador dos produtos e serviços que ela consome atualmente e seus representantes'
+      description: Objeto que reúne as informações relativas ao relacionamento do cliente junto à Instituição. Considera-se relacionamento as informações que permitam conhecer desde quando a pessoa consultada é cliente da instituição, bem como um indicador dos produtos e serviços que ela consome atualmente e seus representantes
       required:
         - startDate
         - updateDateTime
@@ -1030,21 +1050,21 @@ components:
           type: string
           format: date-time
           maxLength: 20
-          pattern: '^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])T(?:[01]\d|2[0123]):(?:[012345]\d):(?:[012345]\d)Z$'
+          pattern: ^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])T(?:[01]\d|2[0123]):(?:[012345]\d):(?:[012345]\d)Z$
           example: '2020-07-21T08:30:00Z'
-          description: 'Data e hora da atualização do bloco de Relacionamento, conforme especificação RFC-3339, formato UTC.'
+          description: Data e hora da atualização do bloco de Relacionamento, conforme especificação RFC-3339, formato UTC.
         startDate:
           type: string
           format: date
           maxLength: 10
-          pattern: '^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])$'
+          pattern: ^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])$
           example: '2014-05-21'
           description: Data mais antiga de início de relacionamento, considerando todos os contratos (vigentes e não vigentes). Os contratos não vigentes considerados devem contemplar, no mínimo o período indicado na Tabela 4.1.
         relationshipBeginning:
           type: string
           format: date
           maxLength: 10
-          pattern: '^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])$'
+          pattern: ^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])$
           example: '2014-05-21'
           description: Campo deve ser preenchido com a data da apólice/contrato vigente mais antiga. (caso haja contrato vigente)
         productsServices:
@@ -1053,7 +1073,7 @@ components:
           items:
             type: object
             description: Lista de todos os contratos vigentes e não vigentes.
-            required: 
+            required:
               - contract
               - type
             properties:
@@ -1067,7 +1087,7 @@ components:
                 type: string
                 maxLength: 4
                 example: '6272'
-                description: Indicar para cada contrato, caso aplicável, o código do ramo, conforme listagem de códigos definida em regulamentação específica sobre contabilização em ramos. - Caso tipo de produto do contrato for “Seguros de Danos.  
+                description: Indicar para cada contrato, caso aplicável, o código do ramo, conforme listagem de códigos definida em regulamentação específica sobre contabilização em ramos. - Caso tipo de produto do contrato for “Seguros de Danos.
               procurators:
                 type: array
                 items:
@@ -1092,11 +1112,11 @@ components:
           maxLength: 20
           format: date-time
           example: '2021-05-21T08:30:00Z'
-          description: 'Data e hora da atualização do bloco, conforme especificação RFC-3339'
+          description: Data e hora da atualização do bloco, conforme especificação RFC-3339
         businessId:
           type: string
           maxLength: 100
-          pattern: '^[a-zA-Z0-9][a-zA-Z0-9\-]{0,99}$'
+          pattern: ^[a-zA-Z0-9][a-zA-Z0-9\-]{0,99}$
           example: 578-psd-71md6971kjh-2d414
           description: Um identificador único e imutável usado para identificar o recurso cliente pessoa jurídica dentro da transmissora. Este identificador não tem significado para o cliente que deu o consentimento
         brandName:
@@ -1106,27 +1126,27 @@ components:
           example: Organização A
           description: |
             Nome da Marca reportada pelo participante do Open Insurance. O conceito a que se refere a 'marca' é em essência uma promessa da empresa em fornecer uma série específica de atributos, benefícios e serviços uniformes aos clientes
-        companyInfo:  
+        companyInfo:
           type: object
           description: Informações referente a sociedade a qual a marca pertence.
           required:
-          - name
-          - cnpjNumber
+            - name
+            - cnpjNumber
           properties:
-              cnpjNumber:
-                  type: string
-                  pattern: '\d{14}|^NA$'
-                  maxLength: 14
-                  example: '01773247000563'
-                  description: |
-                    Número completo do CNPJ da instituição responsável pelo Cadastro - o CNPJ corresponde ao número de inscrição no Cadastro de Pessoa Jurídica. 
-                    Deve-se ter apenas os números do CNPJ, sem máscara
-              name:
-                  type: string
-                  maxLength: 70
-                  pattern: '[\w\W\s]*'
-                  example: Empresa da Organização A
-                  description: Nome da Instituição, pertencente à Marca, responsável pela Dependência
+            cnpjNumber:
+              type: string
+              pattern: \d{14}|^NA$
+              maxLength: 14
+              example: '01773247000563'
+              description: |
+                Número completo do CNPJ da instituição responsável pelo Cadastro - o CNPJ corresponde ao número de inscrição no Cadastro de Pessoa Jurídica. 
+                Deve-se ter apenas os números do CNPJ, sem máscara
+            name:
+              type: string
+              maxLength: 70
+              pattern: '[\w\W\s]*'
+              example: Empresa da Organização A
+              description: Nome da Instituição, pertencente à Marca, responsável pela Dependência
         businessName:
           type: string
           maxLength: 70
@@ -1143,16 +1163,16 @@ components:
           type: string
           maxLength: 10
           format: date
-          pattern: '^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])$'
+          pattern: ^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])$
           example: '2012-05-21'
-          description: 'Data de constituição, conforme especificação RFC-3339' 
+          description: Data de constituição, conforme especificação RFC-3339
         document:
           $ref: '#/components/schemas/BusinessDocument'
         type:
           type: string
-          enum: 
-            - PRIVADO 
-            - PUBLICO 
+          enum:
+            - PRIVADO
+            - PUBLICO
           description: Campo deve ser preenchido com o Tipo Pessoa Jurídica
         contact:
           $ref: '#/components/schemas/BusinessContact'
@@ -1160,7 +1180,7 @@ components:
           $ref: '#/components/schemas/BusinessParties'
     BusinessQualificationData:
       type: object
-      description: 'Objeto que reúne as informações relativas ao processo de qualificação.'
+      description: Objeto que reúne as informações relativas ao processo de qualificação.
       required:
         - updateDateTime
       properties:
@@ -1169,11 +1189,11 @@ components:
           maxLength: 20
           format: date-time
           example: '2021-05-21T08:30:00Z'
-          description: 'Data e hora da atualização do bloco, conforme especificação RFC-3339'
+          description: Data e hora da atualização do bloco, conforme especificação RFC-3339
         mainBranch:
           type: string
           maxLength: 20
-          description: 'Código do ramo da atividade da empresa consultada, segundo padrão CNAE (Classificação Nacional de Atividades Econômicas).'
+          description: Código do ramo da atividade da empresa consultada, segundo padrão CNAE (Classificação Nacional de Atividades Econômicas).
         secondaryBranch:
           type: string
           maxLength: 200
@@ -1185,13 +1205,13 @@ components:
             incomeFrequency:
               $ref: '#/components/schemas/EnumIncomeFrequency'
             currency:
-              description: 'Moeda referente ao valor do faturamento, segundo modelo ISO-4217.'
+              description: Moeda referente ao valor do faturamento, segundo modelo ISO-4217.
               allOf:
                 - $ref: '#/components/schemas/EnumCurrencyCode'
             amount:
               type: string
               nullable: true
-              pattern: '^-?\d{1,15}\.\d{2,4}$'
+              pattern: ^-?\d{1,15}\.\d{2,4}$
               example: '100000.04'
               description: |
                 Valor do faturamento
@@ -1200,20 +1220,20 @@ components:
               maxLength: 4
               format: date-fullyear
               example: '2010'
-              description: 'Ano de referência do faturamento, conforme especificação RFC-3339.' 
+              description: Ano de referência do faturamento, conforme especificação RFC-3339.
           additionalProperties: false
         informedPatrimony:
           type: object
           description: Objeto que agrupa dados de informações de patrimônio.
           properties:
             currency:
-              description: 'Moeda referente ao valor do patrimônio, segundo modelo ISO-4217.'
+              description: Moeda referente ao valor do patrimônio, segundo modelo ISO-4217.
               allOf:
                 - $ref: '#/components/schemas/EnumCurrencyCode'
             amount:
               type: string
               nullable: true
-              pattern: '^-?\d{1,15}\.\d{2,4}$'
+              pattern: ^-?\d{1,15}\.\d{2,4}$
               example: '100000.04'
               description: |
                 Valor do patrimônio
@@ -1221,15 +1241,14 @@ components:
               type: string
               maxLength: 10
               format: date
-              pattern: '^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])$'
+              pattern: ^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])$
               example: '2012-05-21'
-              description: 'Data de referência do patrimônio, conforme especificação RFC-3339.' 
+              description: Data de referência do patrimônio, conforme especificação RFC-3339.
           additionalProperties: false
       additionalProperties: false
-      
     PersonalQuoteCustomer:
       type: object
-      description: Objeto de informações de pessoa física.  
+      description: Objeto de informações de pessoa física.
       properties:
         identification:
           $ref: '#/components/schemas/PersonalIdentificationData'
@@ -1239,7 +1258,7 @@ components:
           $ref: '#/components/schemas/PersonalComplimentaryInformationData'
     BusinessQuoteCustomer:
       type: object
-      description: Objeto de informações de pessoa jurídica. 
+      description: Objeto de informações de pessoa jurídica.
       properties:
         identification:
           $ref: '#/components/schemas/BusinessIdentificationData'
@@ -1247,10 +1266,9 @@ components:
           $ref: '#/components/schemas/BusinessQualificationData'
         complimentaryInfo:
           $ref: '#/components/schemas/BusinessComplimentaryInformationData'
-    
     PersonalComplimentaryInformationData:
       type: object
-      description: 'Objeto que reúne as informações relativas ao relacionamento do cliente junto à Instituição. Considera-se relacionamento as informações que permitam conhecer desde quando a pessoa consultada é cliente da instituição, bem como um indicador dos produtos e serviços que ela consome atualmente e seus representantes'
+      description: Objeto que reúne as informações relativas ao relacionamento do cliente junto à Instituição. Considera-se relacionamento as informações que permitam conhecer desde quando a pessoa consultada é cliente da instituição, bem como um indicador dos produtos e serviços que ela consome atualmente e seus representantes
       required:
         - updateDateTime
         - productsServices
@@ -1260,21 +1278,21 @@ components:
           type: string
           format: date-time
           maxLength: 20
-          pattern: '^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])T(?:[01]\d|2[0123]):(?:[012345]\d):(?:[012345]\d)Z$'
+          pattern: ^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])T(?:[01]\d|2[0123]):(?:[012345]\d):(?:[012345]\d)Z$
           example: '2021-05-21T08:30:00Z'
-          description: 'Data e hora da atualização do bloco de Relacionamento, conforme especificação RFC-3339, formato UTC.'
+          description: Data e hora da atualização do bloco de Relacionamento, conforme especificação RFC-3339, formato UTC.
         startDate:
           type: string
           format: date
           maxLength: 10
-          pattern: '^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])$'
+          pattern: ^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])$
           example: '2014-05-21'
           description: Data mais antiga de início de relacionamento, considerando todos os contratos (vigentes e não vigentes). Os contratos não vigentes considerados devem contemplar, no mínimo o período indicado na Tabela 4.1.
         relationshipBeginning:
           type: string
           format: date
           maxLength: 10
-          pattern: '^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])$'
+          pattern: ^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])$
           example: '2014-05-21'
           description: Campo deve ser preenchido com a data da apólice/contrato vigente mais antiga (caso haja contrato vigente)
         productsServices:
@@ -1283,7 +1301,7 @@ components:
           items:
             type: object
             description: Lista de todos os contratos vigentes e não vigentes.
-            required: 
+            required:
               - contract
               - type
             properties:
@@ -1297,14 +1315,14 @@ components:
                 type: string
                 maxLength: 4
                 example: '6272'
-                description: Indicar para cada contrato, caso aplicável, o código do ramo, conforme listagem de códigos definida em regulamentação específica sobre contabilização em ramos. Obs - Caso tipo de produto do contrato for “Seguros de Danos”     
+                description: Indicar para cada contrato, caso aplicável, o código do ramo, conforme listagem de códigos definida em regulamentação específica sobre contabilização em ramos. Obs - Caso tipo de produto do contrato for “Seguros de Danos”
               procurators:
                 type: array
                 items:
                   $ref: '#/components/schemas/PersonalProcurator'
                 minItems: 1
                 description: Lista dos representantes. De preenchimento obrigatório se houver representante.
-          additionalProperties: false 
+          additionalProperties: false
       additionalProperties: false
     PersonalIdentificationData:
       type: object
@@ -1322,12 +1340,12 @@ components:
           type: string
           maxLength: 20
           format: date-time
-          pattern: '^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])T(?:[01]\d|2[0123]):(?:[012345]\d):(?:[012345]\d)Z$'
+          pattern: ^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])T(?:[01]\d|2[0123]):(?:[012345]\d):(?:[012345]\d)Z$
           example: '2021-05-21T08:30:00Z'
-          description: 'Data e hora da atualização do bloco, conforme especificação RFC-3339'
+          description: Data e hora da atualização do bloco, conforme especificação RFC-3339
         personalId:
           type: string
-          pattern: '^[a-zA-Z0-9][a-zA-Z0-9\-]{0,99}$'
+          pattern: ^[a-zA-Z0-9][a-zA-Z0-9\-]{0,99}$
           maxLength: 100
           description: Um identificador único e imutável usado para identificar o recurso cliente pessoa natural dentro da transmissora. Este identificador não tem significado para o cliente que deu o consentimento
           example: 578-psd-71md6971kjh-2d414
@@ -1342,12 +1360,12 @@ components:
           maxLength: 70
           pattern: '[\w\W\s]*'
           example: Juan Kaique Cláudio Fernandes
-          description: 'Nome civil completo da pessoa natural (Direito fundamental da pessoa, o nome civil é aquele atribuído à pessoa natural desde o registro de seu nascimento, com o qual será identificada por toda a sua vida, bem como após a sua morte)'
+          description: Nome civil completo da pessoa natural (Direito fundamental da pessoa, o nome civil é aquele atribuído à pessoa natural desde o registro de seu nascimento, com o qual será identificada por toda a sua vida, bem como após a sua morte)
         socialName:
           type: string
           maxLength: 70
-          pattern: '^[\w\W]*$'
-          example: 'string'
+          pattern: '[\w\W\s]*'
+          example: string
           description: |
             Nome social da pessoa natural, se houver. 
             (aquele pelo qual travestis e transexuais se reconhecem, 
@@ -1355,31 +1373,31 @@ components:
         cpfNumber:
           type: string
           maxLength: 11
-          pattern: '^\d{11}$|^NA$'
+          pattern: ^\d{11}$|^NA$
           description: |
             Número completo do CPF. Atributo que corresponde às informações mínimas exigidas pela Regulamentação em vigor. O CPF é o Cadastro de Pessoa natural.  Ele é um documento feito pela Receita Federal e serve para identificar os contribuintes. O CPF é uma numeração com 11 dígitos, que só mudam por decisão judicial. O documento é emitido pela receita federal
             Condicional a seleção de true em hasBrazilianNationality
-        companyInfo:  
+        companyInfo:
           type: object
           description: Informações referente a sociedade a qual a marca pertence.
           required:
             - name
             - cnpjNumber
           properties:
-              cnpjNumber:
-                  type: string
-                  pattern: '\d{14}|^NA$'
-                  maxLength: 14
-                  example: '01773247000563'
-                  description: |
-                    Número completo do CNPJ da instituição responsável pelo Cadastro - o CNPJ corresponde ao número de inscrição no Cadastro de Pessoa Jurídica. 
-                    Deve-se ter apenas os números do CNPJ, sem máscara
-              name:
-                  type: string
-                  maxLength: 70
-                  pattern: '[\w\W\s]*'
-                  example: Empresa da Organização A
-                  description: Nome da Instituição, pertencente à Marca, responsável pela Dependência
+            cnpjNumber:
+              type: string
+              pattern: \d{14}|^NA$
+              maxLength: 14
+              example: '01773247000563'
+              description: |
+                Número completo do CNPJ da instituição responsável pelo Cadastro - o CNPJ corresponde ao número de inscrição no Cadastro de Pessoa Jurídica. 
+                Deve-se ter apenas os números do CNPJ, sem máscara
+            name:
+              type: string
+              maxLength: 70
+              pattern: '[\w\W\s]*'
+              example: Empresa da Organização A
+              description: Nome da Instituição, pertencente à Marca, responsável pela Dependência
         documents:
           $ref: '#/components/schemas/PersonalDocuments'
         hasBrazilianNationality:
@@ -1401,14 +1419,14 @@ components:
         sex:
           type: string
           maxLength: 20
-          example: FEMININO  
+          example: FEMININO
         birthDate:
           type: string
           maxLength: 10
           format: date
-          pattern: '^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])$'
+          pattern: ^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])$
           example: '2021-05-21'
-          description: 'Data de nascimento, conforme especificação RFC-3339'  
+          description: Data de nascimento, conforme especificação RFC-3339
         filiation:
           type: object
           properties:
@@ -1417,7 +1435,7 @@ components:
             civilName:
               type: string
               maxLength: 70
-              pattern: '^[\w\W]*$'
+              pattern: '[\w\W\s]*'
               example: Marcelo Cláudio Fernandes
               description: |
                 Nome civil completo da pessoa relativa à filiação.
@@ -1426,24 +1444,24 @@ components:
         identificationDetails:
           type: object
           description: Informações referente ao cônjuge.
-          properties: 
+          properties:
             civilName:
               type: string
               maxLength: 70
               pattern: '[\w\W\s]*'
               example: Juan Kaique Cláudio Fernandes
-              description: 'Nome civil completo da pessoa natural (Direito fundamental da pessoa, o nome civil é aquele atribuído à pessoa natural desde o registro de seu nascimento, com o qual será identificada por toda a sua vida, bem como após a sua morte)'
+              description: Nome civil completo da pessoa natural (Direito fundamental da pessoa, o nome civil é aquele atribuído à pessoa natural desde o registro de seu nascimento, com o qual será identificada por toda a sua vida, bem como após a sua morte)
             cpfNumber:
               type: string
               maxLength: 11
-              pattern: '^\d{11}$|^NA$'
+              pattern: ^\d{11}$|^NA$
               description: |
                 Número completo do CPF. Atributo que corresponde às informações mínimas exigidas pela Regulamentação em vigor. O CPF é o Cadastro de Pessoa natural.  Ele é um documento feito pela Receita Federal e serve para identificar os contribuintes. O CPF é uma numeração com 11 dígitos, que só mudam por decisão judicial. O documento é emitido pela receita federal
                 Condicional a seleção de true em hasBrazilianNationality
       additionalProperties: false
     PersonalQualificationData:
       type: object
-      description: 'Conjunto de informações relativas ao processo de qualificação.'
+      description: Conjunto de informações relativas ao processo de qualificação.
       required:
         - pepIdentification
         - updateDateTime
@@ -1453,15 +1471,15 @@ components:
           type: string
           maxLength: 20
           format: date-time
-          pattern: '^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])T(?:[01]\d|2[0123]):(?:[012345]\d):(?:[012345]\d)Z$'
+          pattern: ^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])T(?:[01]\d|2[0123]):(?:[012345]\d):(?:[012345]\d)Z$
           example: '2021-05-21T08:30:00Z'
-          description: 'Data e hora da atualização do bloco, conforme especificação RFC-3339' 
+          description: Data e hora da atualização do bloco, conforme especificação RFC-3339
         pepIdentification:
           type: string
           description: 'Campo deve ser preenchido com a exposição política do segurado:'
           example: NAO_EXPOSTO
-          enum: 
-            - NAO_EXPOSTO 
+          enum:
+            - NAO_EXPOSTO
             - PESSOA_POLITICAMENTE_EXPOSTA_PPE
             - PESSOA_PROXIMA_A_PESSOA_POLITICAMENTE_EXPOSTA_PPEE
             - SEM_INFORMACAO
@@ -1475,26 +1493,26 @@ components:
               details:
                 type: string
                 maxLength: 100
-                description: 'Ocupação'
+                description: Ocupação
               occupationCode:
                 type: string
                 maxLength: 100
-                example: 'RECEITA_FEDERAL'
-                description: 'Código da ocupação'
+                example: RECEITA_FEDERAL
+                description: Código da ocupação
               occupationCodeType:
                 type: string
                 example: RFB
-                enum: 
-                  - RFB 
-                  - CBO 
+                enum:
+                  - RFB
+                  - CBO
                   - OUTROS
-                description: 'Tipo de código da ocupação'
+                description: Tipo de código da ocupação
         lifePensionPlans:
           type: string
           description: Condição de proponente qualificado, aplicável à contratação de planos de previdência e vida por sobrevivência
-          enum: 
-            - SIM 
-            - NAO 
+          enum:
+            - SIM
+            - NAO
             - NAO_SE_APLICA
         informedRevenue:
           type: object
@@ -1503,13 +1521,13 @@ components:
             incomeFrequency:
               $ref: '#/components/schemas/EnumIncomeFrequency'
             currency:
-              description: 'Moeda referente ao valor da renda, segundo modelo ISO-4217.'
+              description: Moeda referente ao valor da renda, segundo modelo ISO-4217.
               allOf:
                 - $ref: '#/components/schemas/EnumCurrencyCode'
             amount:
               type: string
               nullable: true
-              pattern: '^-?\d{1,15}\.\d{2,4}$'
+              pattern: ^-?\d{1,15}\.\d{2,4}$
               example: '100000.04'
               description: |
                 Valor do rendimento
@@ -1517,22 +1535,22 @@ components:
               type: string
               maxLength: 10
               format: date
-              pattern: '^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])$'
+              pattern: ^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])$
               example: '2012-05-21'
-              description: 'Data de referência da renda, conforme especificação RFC-3339.' 
+              description: Data de referência da renda, conforme especificação RFC-3339.
           additionalProperties: false
         informedPatrimony:
           type: object
           description: Objeto que agrupa dados de informações de patrimônio.
           properties:
             currency:
-              description: 'Moeda referente ao valor do patrimônio, segundo modelo ISO-4217.'
+              description: Moeda referente ao valor do patrimônio, segundo modelo ISO-4217.
               allOf:
                 - $ref: '#/components/schemas/EnumCurrencyCode'
             amount:
               type: string
               nullable: true
-              pattern: '^-?\d{1,15}\.\d{2,4}$'
+              pattern: ^-?\d{1,15}\.\d{2,4}$
               example: '100000.04'
               description: |
                 Valor do patrimônio
@@ -1541,10 +1559,9 @@ components:
               maxLength: 4
               format: date-fullyear
               example: '2010'
-              description: 'Ano de referência do patrimônio, conforme especificação RFC-3339.' 
-          additionalProperties: false  
+              description: Ano de referência do patrimônio, conforme especificação RFC-3339.
+          additionalProperties: false
       additionalProperties: false
-    
     QuoteStatus:
       type: object
       required:
@@ -1554,17 +1571,17 @@ components:
         status:
           description: Status da cotação.
           type: string
-          enum: [RCVD,
-                EVAL,
-                ACPT,
-                RJCT,
-                ACKN,
-                CANC]
+          enum:
+            - RCVD
+            - EVAL
+            - ACPT
+            - RJCT
+            - ACKN
+            - CANC
         statusUpdateDateTime:
           type: string
-          description: Data e hora da atualização do status.                                                              
+          description: Data e hora da atualização do status.
           format: date-time
-                  
     PersonalDocuments:
       type: array
       description: Objeto agrupador de informações relativas a Documentos da pessoa natural
@@ -1581,10 +1598,10 @@ components:
             type: string
             maxLength: 10
             format: date
-            pattern: '^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])$'
+            pattern: ^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])$
             example: '2023-05-21'
             description: Data de validade do(s) documento(s) de identificação - Se aplicável.
-          issueLocation: 
+          issueLocation:
             type: string
             maxLength: 40
             description: Local de emissão - Se aplicável.
@@ -1597,13 +1614,13 @@ components:
           type: string
           maxLength: 40
           description: Tipo do(s) documento(s) estrangeiro(s) de identificação
-          example: 'SOCIAL SEC'
+          example: SOCIAL SEC
         number:
           type: string
           maxLength: 20
           description: Número/código do(s) documento(s) de identificação.
           example: '15291908'
-        country: 
+        country:
           type: string
           maxLength: 40
           description: País do(s) documento(s) estrangeiro(s) de identificação.
@@ -1611,7 +1628,7 @@ components:
           type: string
           maxLength: 10
           format: date
-          pattern: '^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])$'
+          pattern: ^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])$
           example: '2023-05-21'
           description: Data de vigência do documento de registro - conforme especificação RFC-3339.
       additionalProperties: false
@@ -1624,7 +1641,7 @@ components:
         businesscnpjNumber:
           type: string
           maxLength: 14
-          pattern: '\d{14}|^NA$'
+          pattern: \d{14}|^NA$
           example: '50685362006773'
           description: |
             Número completo do CNPJ da Empresa consultada  - o CNPJ corresponde ao número de inscrição no Cadastro de Pessoa Jurídica. Deve-se ter apenas os números do CNPJ, sem máscara
@@ -1632,7 +1649,7 @@ components:
         businessRegisterNumberOriginCountry:
           type: string
           maxLength: 20
-          description: | 
+          description: |
             Aplicável somente as pessoas jurídicas com domicílio ou sede no exterior desobrigadas de inscrição no CNPJ.
         country:
           type: string
@@ -1643,53 +1660,431 @@ components:
           type: string
           maxLength: 10
           format: date
-          pattern: '^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])$'
+          pattern: ^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])$
           example: '2023-05-21'
-          description: 'Data de vigência do documento de registro - conforme especificação RFC-3339.'
+          description: Data de vigência do documento de registro - conforme especificação RFC-3339.
       additionalProperties: false
-      
     AmountDetails:
-        type: object
-        description: Detalhes de valores/limites
-        required:
-          - amount
-          - unit
-        properties:
-          amount:
-            type: string
-            pattern: '^\d{1,16}\.\d{2}$'
-            example: '2000.00'
-          unit:
-            type: object
-            required:
-              - code
-              - description
-            properties:
-              code:
-                allOf:
-                  - $ref: '#/components/schemas/EnumCurrencySymbol'
-              description:
-                description: Moeda da Parcela, de acordo com ISO-4217.
-                allOf:
-                  - $ref: '#/components/schemas/EnumCurrencyCode'
-                  
+      type: object
+      description: Detalhes de valores/limites
+      required:
+        - amount
+        - unit
+      properties:
+        amount:
+          type: string
+          pattern: ^\d{1,16}\.\d{2}$
+          example: '2000.00'
+        unit:
+          type: object
+          required:
+            - code
+            - description
+          properties:
+            code:
+              allOf:
+                - $ref: '#/components/schemas/EnumCurrencySymbol'
+            description:
+              description: Moeda da Parcela, de acordo com ISO-4217.
+              allOf:
+                - $ref: '#/components/schemas/EnumCurrencyCode'
     EnumCurrencySymbol:
-      type: string           
-      description: 'Símbolo da Moeda.'
+      type: string
+      description: Símbolo da Moeda.
       example: R$
-      enum: [ د.إ, Af, L, Դ, Kz, $, ƒ, ман, КМ, ৳, лв, ب.د, ₣, Bs., R$, P, Br, ¥, ₡, Kč, kr, د.ج, £, Nfk, N/A, €, ლ, ₵, D, Q, Kn, G, Ft, Rp, ₪, ₹, ع.د, ﷼, Sh, ៛, ₩, د.ك, 〒, ₭, ل.ل, Rs, ل.د, د.م., ден, K, ₮, UM, ₨, ރ., MK, RM, MTn, ₦, C$, ر.ع., B/., S/., ₱, zł, ₲, ر.ق, din, р., ر.س, Le, Db, ل.س, ฿, ЅМ, m, د.ت, T$, ₤, ₴, Bs F, ₫, Vt, T, R, ZK ]
-    
+      enum:
+        - د.إ
+        - Af
+        - L
+        - Դ
+        - Kz
+        - $
+        - ƒ
+        - ман
+        - КМ
+        - ৳
+        - лв
+        - ب.د
+        - ₣
+        - Bs.
+        - R$
+        - P
+        - Br
+        - ¥
+        - ₡
+        - Kč
+        - kr
+        - د.ج
+        - £
+        - Nfk
+        - N/A
+        - €
+        - ლ
+        - ₵
+        - D
+        - Q
+        - Kn
+        - G
+        - Ft
+        - Rp
+        - ₪
+        - ₹
+        - ع.د
+        - ﷼
+        - Sh
+        - ៛
+        - ₩
+        - د.ك
+        - 〒
+        - ₭
+        - ل.ل
+        - Rs
+        - ل.د
+        - د.م.
+        - ден
+        - K
+        - ₮
+        - UM
+        - ₨
+        - ރ.
+        - MK
+        - RM
+        - MTn
+        - ₦
+        - C$
+        - ر.ع.
+        - B/.
+        - S/.
+        - ₱
+        - zł
+        - ₲
+        - ر.ق
+        - din
+        - р.
+        - ر.س
+        - Le
+        - Db
+        - ل.س
+        - ฿
+        - ЅМ
+        - m
+        - د.ت
+        - T$
+        - ₤
+        - ₴
+        - Bs F
+        - ₫
+        - Vt
+        - T
+        - R
+        - ZK
     EnumCurrencyCode:
-      type: string           
-      description: 'Sigla da Moeda, segundo modelo ISO-4217.'
+      type: string
+      description: Sigla da Moeda, segundo modelo ISO-4217.
       example: BRL
-      enum: [AFN,AFA,ALL,ALK,DZD,USD,EUR,ADP,ESP,FRF,AOA,AOK,AON,AOR,XCD,ARS,ARA,ARP,ARY,AMD,RUR,AWG,AUD,ATS,AZN,AYM,AZM,BSD,BHD,BDT,BBD,BYN,BYB,BYR,BEC,BEF,BEL,BZD,XOF,BMD,INR,BTN,BOP,BOB,BOV,BAM,BAD,BWP,NOK,BRL,BRB,BRC
-                ,BRE,BRN,BRR,BND,BGN,BGJ,BGK,BGL,BUK,BIF,CVE,KHR,XAF,CAD,KYD,CLP,CLF,CNY,COP,COU,KMF,CDF,NZD,CRC,HRK,HRD,CUP,CUC,ANG,CYP,CZK,CSJ,CSK,DKK,DJF,DOP,ECS,ECV,EGP,SVC,GQE,ERN,EEK,SZL,ETB,XEU,FKP,FJD,FIM,XPF,GMD,GEL,GEK,DDM,DEM,GHS,
-                GHC,GHP,GIP,GRD,GTQ,GBP,GNF,GNE,GNS,GWE,GWP,GYD,HTG,ITL,HNL,HKD,HUF,ISK,ISJ,IDR,XDR,IRR,IQD,IEP,ILS,ILP,ILR,JMD,JPY,JOD,KZT,KES,KPW,KRW,KWD,KGS,LAJ,LAK,LVL,LVR,LBP,LSL,ZAR,LSM,ZAL,LRD,LYD,CHF,LTL,LTT,LUC,LUF,LUL,MOP,MGA,MGF,MWK,MYR
-                ,MVR,MVQ,MLF,MTL,MTP,MRU,MRO,MUR,XUA,MXN,MXV,MXP,MDL,MNT,MAD,MZN,MZE,MZM,MMK,NAD,NPR,NLG,NIO,NIC,NGN,MKD,OMR,PKR,PAB,PGK,PYG,PEN,PEH,PEI,PES,PHP,PLN,PLZ,PTE,QAR,RON,ROK,ROL,RUB,RWF,SHP,WST,STN,STD,SAR,RSD,CSD,SCR,SLL,SGD,
-                XSU,SKK,SIT,SBD,SOS,SSP,SDG,RHD,ESA,ESB,LKR,SDD,SDP,SRD,SRG,SEK,CHE,CHW,CHC,SYP,TWD,TJS,TJR,TZS,THB,TPE,TOP,TTD,TND,TRY,TRL,TMT,TMM,UGX,UGS,UGW,UAH,UAK,SUR,AED,USS,USN,UYU,UYI,UYW,UYN,UYP,UZS,VUV,VEB,VEF,VES,VND,VNC,YER,YDD,YUD,
-                YUM,YUN,ZRN,ZRZ,ZMW,ZMK,ZWL,ZWC,ZWD,ZWN,ZWR,XBA,XFO,XBB,XRE,XBC,XBD,XFU,XTS,XXX,XAU,XPD,XPT,XAG]                  
-                  
+      enum:
+        - AFN
+        - AFA
+        - ALL
+        - ALK
+        - DZD
+        - USD
+        - EUR
+        - ADP
+        - ESP
+        - FRF
+        - AOA
+        - AOK
+        - AON
+        - AOR
+        - XCD
+        - ARS
+        - ARA
+        - ARP
+        - ARY
+        - AMD
+        - RUR
+        - AWG
+        - AUD
+        - ATS
+        - AZN
+        - AYM
+        - AZM
+        - BSD
+        - BHD
+        - BDT
+        - BBD
+        - BYN
+        - BYB
+        - BYR
+        - BEC
+        - BEF
+        - BEL
+        - BZD
+        - XOF
+        - BMD
+        - INR
+        - BTN
+        - BOP
+        - BOB
+        - BOV
+        - BAM
+        - BAD
+        - BWP
+        - NOK
+        - BRL
+        - BRB
+        - BRC
+        - BRE
+        - BRN
+        - BRR
+        - BND
+        - BGN
+        - BGJ
+        - BGK
+        - BGL
+        - BUK
+        - BIF
+        - CVE
+        - KHR
+        - XAF
+        - CAD
+        - KYD
+        - CLP
+        - CLF
+        - CNY
+        - COP
+        - COU
+        - KMF
+        - CDF
+        - NZD
+        - CRC
+        - HRK
+        - HRD
+        - CUP
+        - CUC
+        - ANG
+        - CYP
+        - CZK
+        - CSJ
+        - CSK
+        - DKK
+        - DJF
+        - DOP
+        - ECS
+        - ECV
+        - EGP
+        - SVC
+        - GQE
+        - ERN
+        - EEK
+        - SZL
+        - ETB
+        - XEU
+        - FKP
+        - FJD
+        - FIM
+        - XPF
+        - GMD
+        - GEL
+        - GEK
+        - DDM
+        - DEM
+        - GHS
+        - GHC
+        - GHP
+        - GIP
+        - GRD
+        - GTQ
+        - GBP
+        - GNF
+        - GNE
+        - GNS
+        - GWE
+        - GWP
+        - GYD
+        - HTG
+        - ITL
+        - HNL
+        - HKD
+        - HUF
+        - ISK
+        - ISJ
+        - IDR
+        - XDR
+        - IRR
+        - IQD
+        - IEP
+        - ILS
+        - ILP
+        - ILR
+        - JMD
+        - JPY
+        - JOD
+        - KZT
+        - KES
+        - KPW
+        - KRW
+        - KWD
+        - KGS
+        - LAJ
+        - LAK
+        - LVL
+        - LVR
+        - LBP
+        - LSL
+        - ZAR
+        - LSM
+        - ZAL
+        - LRD
+        - LYD
+        - CHF
+        - LTL
+        - LTT
+        - LUC
+        - LUF
+        - LUL
+        - MOP
+        - MGA
+        - MGF
+        - MWK
+        - MYR
+        - MVR
+        - MVQ
+        - MLF
+        - MTL
+        - MTP
+        - MRU
+        - MRO
+        - MUR
+        - XUA
+        - MXN
+        - MXV
+        - MXP
+        - MDL
+        - MNT
+        - MAD
+        - MZN
+        - MZE
+        - MZM
+        - MMK
+        - NAD
+        - NPR
+        - NLG
+        - NIO
+        - NIC
+        - NGN
+        - MKD
+        - OMR
+        - PKR
+        - PAB
+        - PGK
+        - PYG
+        - PEN
+        - PEH
+        - PEI
+        - PES
+        - PHP
+        - PLN
+        - PLZ
+        - PTE
+        - QAR
+        - RON
+        - ROK
+        - ROL
+        - RUB
+        - RWF
+        - SHP
+        - WST
+        - STN
+        - STD
+        - SAR
+        - RSD
+        - CSD
+        - SCR
+        - SLL
+        - SGD
+        - XSU
+        - SKK
+        - SIT
+        - SBD
+        - SOS
+        - SSP
+        - SDG
+        - RHD
+        - ESA
+        - ESB
+        - LKR
+        - SDD
+        - SDP
+        - SRD
+        - SRG
+        - SEK
+        - CHE
+        - CHW
+        - CHC
+        - SYP
+        - TWD
+        - TJS
+        - TJR
+        - TZS
+        - THB
+        - TPE
+        - TOP
+        - TTD
+        - TND
+        - TRY
+        - TRL
+        - TMT
+        - TMM
+        - UGX
+        - UGS
+        - UGW
+        - UAH
+        - UAK
+        - SUR
+        - AED
+        - USS
+        - USN
+        - UYU
+        - UYI
+        - UYW
+        - UYN
+        - UYP
+        - UZS
+        - VUV
+        - VEB
+        - VEF
+        - VES
+        - VND
+        - VNC
+        - YER
+        - YDD
+        - YUD
+        - YUM
+        - YUN
+        - ZRN
+        - ZRZ
+        - ZMW
+        - ZMK
+        - ZWL
+        - ZWC
+        - ZWD
+        - ZWN
+        - ZWR
+        - XBA
+        - XFO
+        - XBB
+        - XRE
+        - XBC
+        - XBD
+        - XFU
+        - XTS
+        - XXX
+        - XAU
+        - XPD
+        - XPT
+        - XAG
     QuoteCustomData:
       type: object
       description: Objeto que agrupa as categorias de dados customizáveis em listas.
@@ -1729,7 +2124,7 @@ components:
         generalClaimInfo:
           type: array
           items:
-            $ref: '#/components/schemas/CustomInfoData'              
+            $ref: '#/components/schemas/CustomInfoData'
     CustomInfoData:
       type: object
       description: Objeto para identificação dos campos e valores de dados customizáveis.
@@ -1739,14 +2134,13 @@ components:
       properties:
         fieldId:
           type: string
-          pattern: '^[a-zA-Z0-9][a-zA-Z0-9\-]{0,99}$'
+          pattern: ^[a-zA-Z0-9][a-zA-Z0-9\-]{0,99}$
           maxLength: 100
           description: Um identificador único usado para identificar o valor transmitido.
-          example: "578-psd-71md6971kjh-2d414"
+          example: 578-psd-71md6971kjh-2d414
         value:
           description: Valor do campo identificado acima, esse campo pode ser implementado como qualquer tipo de dado (objeto, texto, número, booleano, etc.)
       additionalProperties: false
-    
     RaffleCustomData:
       type: object
       description: Objeto que agrupa as categorias de dados customizáveis em listas.
@@ -1766,7 +2160,6 @@ components:
           description: Lista de campos com Informações de Dados Gerais da Série.
           items:
             $ref: '#/components/schemas/CustomInfoData'
-            
     EnumProductServiceType:
       type: string
       enum:
@@ -1809,7 +2202,7 @@ components:
           type: string
           description: Endereço de email
           maxLength: 320
-          pattern: '\S+@\S+\.\S+'
+          pattern: \S+@\S+\.\S+
           example: nome@br.net
       additionalProperties: false
     CustomerPhone:
@@ -1818,7 +2211,7 @@ components:
         countryCallingCode:
           type: string
           maxLength: 4
-          pattern: '^\d{2,4}$|^NA$'
+          pattern: ^\d{2,4}$|^NA$
           example: '55'
           description: Número de DDI (Discagem Direta Internacional) para telefone de acesso ao Cliente - se aplicável
         areaCode:
@@ -1826,13 +2219,13 @@ components:
         number:
           type: string
           maxLength: 11
-          pattern: '^([0-9]{8,11})|^NA$'
+          pattern: ^([0-9]{8,11})|^NA$
           example: '29875132'
           description: Número de telefone do cliente
         phoneExtension:
           type: string
           maxLength: 5
-          pattern: '^\d{1,5}$|^NA$'
+          pattern: ^\d{1,5}$|^NA$
           description: Número do ramal. De preenchimento obrigatório se fizer parte da identificação do número do telefone informado
           example: '932'
       additionalProperties: false
@@ -1849,7 +2242,7 @@ components:
           type: string
           maxLength: 200
           pattern: '[\w\W\s]*'
-          example: 'Av Naburo Ykesaki, 1270'
+          example: Av Naburo Ykesaki, 1270
           description: Corresponde ao endereço residencial do cliente.
         additionalInfo:
           type: string
@@ -1874,7 +2267,7 @@ components:
           $ref: '#/components/schemas/EnumCountrySubDivision'
         postCode:
           type: string
-          pattern: '\d{8}|^NA$'
+          pattern: \d{8}|^NA$
           maxLength: 8
           example: '17500001'
           description: |
@@ -1885,7 +2278,6 @@ components:
           example: BRA
           description: Código do pais de acordo com o código “alpha3” do ISO-3166.
       additionalProperties: false
-    
     InsuranceCapitalizationTitleHolder:
       type: object
       required:
@@ -1908,7 +2300,11 @@ components:
         holderDocumentType:
           description: Tipo de Documento do Titular
           type: string
-          enum: [CPF, CNPJ, PASSAPORTE, OUTROS]
+          enum:
+            - CPF
+            - CNPJ
+            - PASSAPORTE
+            - OUTROS
           example: OUTROS
         holderDocumentTypeOthers:
           description: Tipo de Documento do Titular, caso seja selecionado OUTROS.
@@ -1928,7 +2324,7 @@ components:
           type: string
           maxLength: 200
           pattern: '[\w\W\s]*'
-          example: "Av Naburo Ykesaki, 1270"
+          example: Av Naburo Ykesaki, 1270
         holderAddressAdditionalInfo:
           type: string
           pattern: '[\w\W\s]*'
@@ -1945,7 +2341,7 @@ components:
         holderCountrySubDivision:
           description: Estado do titular
           allOf:
-            - $ref: "#/components/schemas/EnumCountrySubDivision"
+            - $ref: '#/components/schemas/EnumCountrySubDivision'
         holderCountryCode:
           description: |
             Código do pais de acordo com o código “alpha3” do ISO-3166.
@@ -1958,9 +2354,9 @@ components:
             Código de Endereçamento Postal: Composto por um conjunto numérico de oito dígitos, o objetivo principal do CEP é orientar e acelerar o encaminhamento, o tratamento e a entrega de objetos postados nos Correios, por meio da sua atribuição a localidades, logradouros, unidades dos Correios, serviços, órgãos públicos, empresas e edifícios. p.ex. '01311000'.
             Código Postal do titular, Obrigatório, se houver
           type: string
-          pattern: '\d{8}|^NA$'
+          pattern: \d{8}|^NA$
           maxLength: 8
-          example: "17500001"
+          example: '17500001'
         holderRedemption:
           type: boolean
           description: Titular do direito de resgate?
@@ -1969,8 +2365,7 @@ components:
           type: boolean
           description: Titular do direito de sorteio?
           example: false
-          
-    InsuranceCapitalizationTitleTechnicalProvisions:      
+    InsuranceCapitalizationTitleTechnicalProvisions:
       description: (Esses valores poderão sofrer alterações no momento do resgate/pagamento,conforme regras do produto nas condições gerais)
       type: object
       required:
@@ -1995,10 +2390,9 @@ components:
           description: Valor da PSP (fim do mes) - Valor da Provisão de Sorteios a Pagar (PSP), no fim de cada mês. Caso não haja saldo informar nulo
           allOf:
             - $ref: '#/components/schemas/AmountDetails'
-            
     EnumCountrySubDivision:
       type: string
-      description: 'Enumeração referente a cada sigla da unidade da federação que identifica o estado ou o distrito federal, no qual o endereço está localizado. p.ex. ''AC''. São consideradas apenas as siglas para os estados brasileiros'
+      description: Enumeração referente a cada sigla da unidade da federação que identifica o estado ou o distrito federal, no qual o endereço está localizado. p.ex. 'AC'. São consideradas apenas as siglas para os estados brasileiros
       enum:
         - AC
         - AL
@@ -2041,14 +2435,13 @@ components:
       example: SOLTEIRO
       description: |
         Estado civil do cliente. 
-    
     RequestorPhone:
       type: object
       properties:
         countryCallingCode:
           type: string
           maxLength: 4
-          pattern: '^\d{1,4}$|^NA$'
+          pattern: ^\d{1,4}$|^NA$
           example: '55'
           description: Número de DDI (Discagem Direta Internacional) para telefone de acesso ao Cliente - se aplicável
         areaCode:
@@ -2056,11 +2449,10 @@ components:
         number:
           type: string
           maxLength: 11
-          pattern: '^([0-9]{8,11})|^NA$'
+          pattern: ^([0-9]{8,11})|^NA$
           example: '29875132'
           description: Número de telefone do cliente
       additionalProperties: false
-      
     EnumAreaCode:
       type: string
       example: '19'
@@ -2164,7 +2556,7 @@ components:
       enum:
         - MAE
         - PAI
-      description: Tipo de filiação.    
+      description: Tipo de filiação.
     EnumProcuratorsNaturePersonal:
       type: string
       enum:
@@ -2179,7 +2571,7 @@ components:
       description: Conjunto de informações referentes ao vínculo com uma pessoa.
       items:
         properties:
-          type: 
+          type:
             type: string
             maxLength: 13
             example: SOCIO
@@ -2192,12 +2584,12 @@ components:
             maxLength: 70
             pattern: '[\w\W\s]*'
             example: Juan Kaique Cláudio Fernandes
-            description: 'Nome civil completo da pessoa natural (Direito fundamental da pessoa, o nome civil é aquele atribuído à pessoa natural desde o registro de seu nascimento, com o qual será identificada por toda a sua vida, bem como após a sua morte)' 
+            description: Nome civil completo da pessoa natural (Direito fundamental da pessoa, o nome civil é aquele atribuído à pessoa natural desde o registro de seu nascimento, com o qual será identificada por toda a sua vida, bem como após a sua morte)
           socialName:
             type: string
             maxLength: 70
-            pattern: '^[\w\W]*$'
-            example: 'string'
+            pattern: '[\w\W\s]*'
+            example: string
             description: |
               Nome social da pessoa natural, se houver. 
               (aquele pelo qual travestis e transexuais se reconhecem, 
@@ -2206,15 +2598,15 @@ components:
             type: string
             format: date
             maxLength: 10
-            pattern: '^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])$'
+            pattern: ^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])$
             example: '2014-05-21'
-            description: 'Data de início da participação, conforme especificação RFC-3339.'
+            description: Data de início da participação, conforme especificação RFC-3339.
           shareholding:
             type: string
             format: double
             maxLength: 8
             minLength: 8
-            pattern: '^[01]\.\d{6}$'
+            pattern: ^[01]\.\d{6}$
             example: '0.510000'
             description: |
               Percentual de participação societária (informar com 6 casas decimais). 
@@ -2223,7 +2615,7 @@ components:
             type: string
             maxLength: 15
             example: CPF
-            description: 'Tipo de documento de identificação do sócio ou administrador'
+            description: Tipo de documento de identificação do sócio ou administrador
           documentNumber:
             type: string
             maxLength: 20
@@ -2242,8 +2634,8 @@ components:
             format: date
             maxLength: 10
             example: '2021-05-21'
-            pattern: '^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])$'
-            description: 'Data de validade do documento informado, conforme especificação RFC-3339.'
+            pattern: ^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])$
+            description: Data de validade do documento informado, conforme especificação RFC-3339.
       additionalProperties: false
     BusinessContact:
       type: object
@@ -2283,7 +2675,7 @@ components:
           type: string
           maxLength: 200
           pattern: '[\w\W\s]*'
-          example: 'Av Naburo Ykesaki, 1270'
+          example: Av Naburo Ykesaki, 1270
           description: Corresponde ao endereço residencial do cliente.
         additionalInfo:
           type: string
@@ -2308,14 +2700,14 @@ components:
           $ref: '#/components/schemas/EnumCountrySubDivision'
         postCode:
           type: string
-          pattern: '\d{8}|^NA$'
+          pattern: \d{8}|^NA$
           maxLength: 8
           example: '17500001'
           description: |
             Código de Endereçamento Postal: Composto por um conjunto numérico de oito dígitos, o objetivo principal do CEP é orientar e acelerar o encaminhamento, o tratamento e a entrega de objetos postados nos Correios, por meio da sua atribuição a localidades, logradouros, unidades dos Correios, serviços, órgãos públicos, empresas e edifícios. p.ex. '01311000'.
         ibgeTownCode:
           type: string
-          pattern: '\d{7}|^NA$'
+          pattern: \d{7}|^NA$
           maxLength: 8
           example: '17500001'
           description: |
@@ -2334,22 +2726,21 @@ components:
       additionalProperties: false
     GeographicCoordinates:
       type: object
-      description: 'Conjunto de informações, que correspondem aos valores das coordenadas geográficas em graus decimais, no Sistema de referência WGS84'
+      description: Conjunto de informações, que correspondem aos valores das coordenadas geográficas em graus decimais, no Sistema de referência WGS84
       properties:
         latitude:
           description: |
             Informação da Latitude referente a geolocalização informada. Entre -90 e 90.p.ex. '-23.5475000'. (2 casas antes da vírgula, 11 posições)
           type: string
-          pattern: '^-?\d{1,3}\.\d{1,10}$'
+          pattern: ^-?\d{1,3}\.\d{1,10}$
           example: '-23.5475000'
         longitude:
           description: |
             Informação da Longitude referente a geolocalização informada. Entre -180 e 180. p.ex '-46.6361100'. (3 casas antes da vírgula, 11 posições)
           type: string
-          pattern: '^-?\d{1,3}\.\d{1,10}$'
+          pattern: ^-?\d{1,3}\.\d{1,10}$
           example: '-46.6361100'
-      additionalProperties: false      
-    
+      additionalProperties: false
     RevokePatchPayload:
       type: object
       required:
@@ -2370,7 +2761,9 @@ components:
                 identificationType:
                   type: string
                   description: Tipo identificação (CPF ou CNPJ) do solicitante do cancelamento/revogação.
-                  enum: [CPF,CNPJ]
+                  enum:
+                    - CPF
+                    - CNPJ
                   example: CPF
                 identificationNumber:
                   type: string
@@ -2378,7 +2771,6 @@ components:
                   maxLength: 20
                   pattern: '[\w\W\s]*'
                   example: '73677831148'
-    
     ResponseRevokePatch:
       type: object
       required:
@@ -2393,7 +2785,8 @@ components:
             status:
               description: Status da cotação.
               type: string
-              enum: [CANC]
+              enum:
+                - CANC
     PatchPayload:
       type: object
       required:
@@ -2408,7 +2801,9 @@ components:
             status:
               description: Status da cotação.
               type: string
-              enum: [ACKN,CANC]
+              enum:
+                - ACKN
+                - CANC
             insurerQuoteId:
               type: string
               description: |
@@ -2424,7 +2819,9 @@ components:
                 identificationType:
                   type: string
                   description: Tipo identificação (CPF ou CNPJ) do solicitante do cancelamento/revogação.
-                  enum: [CPF,CNPJ]
+                  enum:
+                    - CPF
+                    - CNPJ
                   example: CPF
                 identificationNumber:
                   type: string
@@ -2432,7 +2829,6 @@ components:
                   maxLength: 20
                   pattern: '[\w\W\s]*'
                   example: '73677831148'
-
     ResponsePatch:
       type: object
       required:
@@ -2447,7 +2843,9 @@ components:
             status:
               description: Status da cotação.
               type: string
-              enum: [ACKN,CANC]
+              enum:
+                - ACKN
+                - CANC
             insurerQuoteId:
               type: string
               description: |
@@ -2466,32 +2864,32 @@ components:
               example: '2021-08-20T08:30:00Z'
             redirectLink:
               type: string
-              description: 'Link interno para direcionamento para o ambiente da sociedade de capitalização. Não possui restrição, ambiente de direcionamento escolhido a critério da sociedade de capitalização. Condicional ao status de ACKN.'
+              description: Link interno para direcionamento para o ambiente da sociedade de capitalização. Não possui restrição, ambiente de direcionamento escolhido a critério da sociedade de capitalização. Condicional ao status de ACKN.
               allOf:
-                - $ref: "#/components/schemas/LinkInfo"
+                - $ref: '#/components/schemas/LinkInfo'
     Links:
       type: object
       properties:
         self:
           type: string
           description: URL da página atualmente requisitada
-          example: 'https://api.organizacao.com.br/open-insurance/quote-capitalization-title/v1'
+          example: https://api.organizacao.com.br/open-insurance/quote-capitalization-title/v1
         first:
           type: string
           description: URL da primeira página de registros
-          example: 'https://api.organizacao.com.br/open-insurance/quote-capitalization-title/v1'
+          example: https://api.organizacao.com.br/open-insurance/quote-capitalization-title/v1
         prev:
           type: string
           description: URL da página anterior de registros
-          example: 'https://api.organizacao.com.br/open-insurance/quote-capitalization-title/v1'
+          example: https://api.organizacao.com.br/open-insurance/quote-capitalization-title/v1
         next:
           type: string
           description: URL da próxima página de registros
-          example: 'https://api.organizacao.com.br/open-insurance/quote-capitalization-title/v1'
+          example: https://api.organizacao.com.br/open-insurance/quote-capitalization-title/v1
         last:
           type: string
           description: URL da última página de registros
-          example: 'https://api.organizacao.com.br/open-insurance/quote-capitalization-title/v1'
+          example: https://api.organizacao.com.br/open-insurance/quote-capitalization-title/v1
     Meta:
       type: object
       properties:
@@ -2536,7 +2934,7 @@ components:
                 type: string
                 maxLength: 2048
               requestDateTime:
-                description: 'Data e hora da consulta, conforme especificação RFC-3339, formato UTC.'
+                description: Data e hora da consulta, conforme especificação RFC-3339, formato UTC.
                 type: string
                 maxLength: 2048
                 format: date-time
@@ -2563,21 +2961,21 @@ components:
               enum:
                 - ERRO_IDEMPOTENCIA
                 - NAO_INFORMADO
-              example: 'ERRO_IDEMPOTENCIA'
-              description: 'Código do erro 422 de Entidade não processada.' 
+              example: ERRO_IDEMPOTENCIA
+              description: Código do erro 422 de Entidade não processada.
             title:
               type: string
               maxLength: 255
-              pattern: '[\w\W\s*]'
-              example: 'Tentativa de alteração de requisição já processada'
+              pattern: '[\w\W\s]*'
+              example: Tentativa de alteração de requisição já processada
               description: |
                 - ERRO_ IDEMPOTENCIA: Tentativa de alteração de requisição já processada
                 - NÃO_INFORMADO: Não informada pelo servidor
             detail:
               type: string
               maxLength: 2048
-              pattern: '[\w\W\s*]'
-              example: 'Tentativa de alteração de requisição já processada'
+              pattern: '[\w\W\s]*'
+              example: Tentativa de alteração de requisição já processada
               description: |
                 - ERRO_ IDEMPOTENCIA: Tentativa de alteração de requisição já processada
                 - NÃO_INFORMADO: Não informada pelo servidor 
@@ -2585,9 +2983,9 @@ components:
           $ref: '#/components/schemas/Meta'
     XFapiInteractionId:
       type: string
-      pattern: '^[a-zA-Z0-9][a-zA-Z0-9\-]{0,99}$'
+      pattern: ^[a-zA-Z0-9][a-zA-Z0-9\-]{0,99}$
       maxLength: 100
-      description: 'Um UID [RFC4122](https://tools.ietf.org/html/rfc4122) usado como um ID de correlação. Se fornecido, o transmissor deve "reproduzir" esse valor no cabeçalho de resposta.'
+      description: Um UID [RFC4122](https://tools.ietf.org/html/rfc4122) usado como um ID de correlação. Se fornecido, o transmissor deve "reproduzir" esse valor no cabeçalho de resposta.
     QuoteRequestCapitalizationTitleLead:
       type: object
       required:
@@ -2611,12 +3009,12 @@ components:
                 - o identificador específico dentro do namespace (C1DD93123).  
                 Informações mais detalhadas sobre a construção de namespaces devem ser consultadas na [RFC8141](https://tools.ietf.org/html/rfc8141).
               type: string
-              pattern: '^urn:[a-zA-Z0-9][a-zA-Z0-9-]{0,31}:[a-zA-Z0-9()+,\-.:=@;$_!*''%\/?#]+$'
+              pattern: ^urn:[a-zA-Z0-9][a-zA-Z0-9-]{0,31}:[a-zA-Z0-9()+,\-.:=@;$_!*'%\/?#]+$
               maxLength: 256
-              example: 'urn:initiator:C1DD93123'
+              example: urn:initiator:C1DD93123
             quoteCustomer:
               type: object
-              description: Objeto que agrupa as categorias de dados cadastrais do cliente.                     
+              description: Objeto que agrupa as categorias de dados cadastrais do cliente.
               properties:
                 identificationData:
                   oneOf:
@@ -2632,28 +3030,26 @@ components:
                     - $ref: '#/components/schemas/BusinessComplimentaryInformationData'
             historicalData:
               type: object
-              description: Objeto que agrupa todos dados históricos do cliente.           
+              description: Objeto que agrupa todos dados históricos do cliente.
               properties:
                 customer:
                   type: object
                   description: Dados históricos cadastrais do cliente
-                  properties: 
+                  properties:
                     identificationData:
                       oneOf:
-                        - $ref: '#/components/schemas/HistoricalPersonalIdentificationData' ## schema dados cadastrais de fase 2 (customers v1.1.1)
-                        - $ref: '#/components/schemas/HistoricalBusinessIdentificationData' ## schema dados cadastrais de fase 2 (customers v1.1.1)
+                        - $ref: '#/components/schemas/HistoricalPersonalIdentificationData'
+                        - $ref: '#/components/schemas/HistoricalBusinessIdentificationData'
                     qualificationData:
                       oneOf:
-                        - $ref: '#/components/schemas/HistoricalPersonalQualificationData' ## schema dados cadastrais de fase 2 (customers v1.1.1)
-                        - $ref: '#/components/schemas/HistoricalBusinessQualificationData' ## schema dados cadastrais de fase 2 (customers v1.1.1)
+                        - $ref: '#/components/schemas/HistoricalPersonalQualificationData'
+                        - $ref: '#/components/schemas/HistoricalBusinessQualificationData'
                     complimentaryInformationData:
                       oneOf:
-                        - $ref: '#/components/schemas/HistoricalPersonalComplimentaryInformationData' ## schema dados cadastrais de fase 2 (customers v1.1.1)
-                        - $ref: '#/components/schemas/HistoricalBusinessComplimentaryInformationData' ## schema dados cadastrais de fase 2 (customers v1.1.1)
+                        - $ref: '#/components/schemas/HistoricalPersonalComplimentaryInformationData'
+                        - $ref: '#/components/schemas/HistoricalBusinessComplimentaryInformationData'
                 plans:
                   $ref: '#/components/schemas/PlanDataCapitalizationTitleLead'
-    ###### quoteRequest
-    
     ResponseQuoteCapitalizationTitleLead:
       type: object
       required:
@@ -2662,12 +3058,11 @@ components:
         - meta
       properties:
         data:
-          $ref: '#/components/schemas/QuoteStatus'                    
+          $ref: '#/components/schemas/QuoteStatus'
         links:
           $ref: '#/components/schemas/Links'
         meta:
           $ref: '#/components/schemas/Meta'
-       
     QuoteRequestCapitalizationTitle:
       type: object
       required:
@@ -2692,12 +3087,12 @@ components:
                 - o identificador específico dentro do namespace (C1DD93123).  
                 Informações mais detalhadas sobre a construção de namespaces devem ser consultadas na [RFC8141](https://tools.ietf.org/html/rfc8141).
               type: string
-              pattern: '^urn:[a-zA-Z0-9][a-zA-Z0-9-]{0,31}:[a-zA-Z0-9()+,\-.:=@;$_!*''%\/?#]+$'
+              pattern: ^urn:[a-zA-Z0-9][a-zA-Z0-9-]{0,31}:[a-zA-Z0-9()+,\-.:=@;$_!*'%\/?#]+$
               maxLength: 256
-              example: 'urn:initiator:C1DD93123'
+              example: urn:initiator:C1DD93123
             quoteCustomer:
               type: object
-              description: Objeto que agrupa as categorias de dados cadastrais do cliente.                     
+              description: Objeto que agrupa as categorias de dados cadastrais do cliente.
               properties:
                 identificationData:
                   oneOf:
@@ -2714,31 +3109,29 @@ components:
             quoteData:
               $ref: '#/components/schemas/QuoteDataCapitalizationTitle'
             quoteCustomData:
-              $ref: '#/components/schemas/QuoteCustomData'                                          
+              $ref: '#/components/schemas/QuoteCustomData'
             historicalData:
               type: object
-              description: Objeto que agrupa todos dados históricos do cliente.                                                                  
+              description: Objeto que agrupa todos dados históricos do cliente.
               properties:
                 customer:
                   type: object
                   description: Dados históricos cadastrais do cliente
-                  properties: 
+                  properties:
                     identificationData:
                       oneOf:
-                        - $ref: '#/components/schemas/HistoricalPersonalIdentificationData' ## schema dados cadastrais de fase 2 (customers v1.1.1)
-                        - $ref: '#/components/schemas/HistoricalBusinessIdentificationData' ## schema dados cadastrais de fase 2 (customers v1.1.1)
+                        - $ref: '#/components/schemas/HistoricalPersonalIdentificationData'
+                        - $ref: '#/components/schemas/HistoricalBusinessIdentificationData'
                     qualificationData:
                       oneOf:
-                        - $ref: '#/components/schemas/HistoricalPersonalQualificationData' ## schema dados cadastrais de fase 2 (customers v1.1.1)
-                        - $ref: '#/components/schemas/HistoricalBusinessQualificationData' ## schema dados cadastrais de fase 2 (customers v1.1.1)
+                        - $ref: '#/components/schemas/HistoricalPersonalQualificationData'
+                        - $ref: '#/components/schemas/HistoricalBusinessQualificationData'
                     complimentaryInformationData:
                       oneOf:
-                        - $ref: '#/components/schemas/HistoricalPersonalComplimentaryInformationData' ## schema dados cadastrais de fase 2 (customers v1.1.1)
-                        - $ref: '#/components/schemas/HistoricalBusinessComplimentaryInformationData' ## schema dados cadastrais de fase 2 (customers v1.1.1)
+                        - $ref: '#/components/schemas/HistoricalPersonalComplimentaryInformationData'
+                        - $ref: '#/components/schemas/HistoricalBusinessComplimentaryInformationData'
                 plans:
                   $ref: '#/components/schemas/PlanDataCapitalizationTitle'
-    ###### quoteRequest
-
     ResponseQuoteStatusCapitalizationTitle:
       type: object
       required:
@@ -2755,15 +3148,16 @@ components:
             status:
               description: Status da cotação.
               type: string
-              enum: [RCVD,
-                    EVAL,
-                    ACPT,
-                    RJCT,
-                    ACKN,
-                    CANC]
+              enum:
+                - RCVD
+                - EVAL
+                - ACPT
+                - RJCT
+                - ACKN
+                - CANC
             statusUpdateDateTime:
               type: string
-              description: Data e hora da atualização do status.                                                    
+              description: Data e hora da atualização do status.
               format: date-time
             quoteInfo:
               type: object
@@ -2774,7 +3168,6 @@ components:
           $ref: '#/components/schemas/Links'
         meta:
           $ref: '#/components/schemas/Meta'
-    
     ResponseQuoteCapitalizationTitle:
       type: object
       required:
@@ -2783,13 +3176,11 @@ components:
         - meta
       properties:
         data:
-          $ref: '#/components/schemas/QuoteStatus'                    
+          $ref: '#/components/schemas/QuoteStatus'
         links:
           $ref: '#/components/schemas/Links'
         meta:
           $ref: '#/components/schemas/Meta'
-
-
     RequestCapitalizationTitleRaffle:
       type: object
       required:
@@ -2799,45 +3190,51 @@ components:
           type: object
           description: Objeto contendo dados da solicitação de Pagamento de Sorteio de Título de Capitalização.
           required:
-          - modality
-          - susepProcessNumber
-          - contactType
-          - email
-          - phone
-          - cpfNumber
+            - modality
+            - susepProcessNumber
+            - contactType
+            - email
+            - phone
+            - cpfNumber
           properties:
             modality:
               type: string
               description: Modalidade
-              enum: [TRADICIONAL, INSTRUMENTO_GARANTIA, COMPRA_PROGRAMADA, POPULAR, INCENTIVO, FILANTROPIA_PREMIAVEL]
+              enum:
+                - TRADICIONAL
+                - INSTRUMENTO_GARANTIA
+                - COMPRA_PROGRAMADA
+                - POPULAR
+                - INCENTIVO
+                - FILANTROPIA_PREMIAVEL
             susepProcessNumber:
               description: Número do Processo Susep
               type: string
               maxLength: 70
-              example: "12345"
+              example: '12345'
             contactType:
               description: Tipo de contato de preferência
               type: string
-              enum: [EMAIL,
-                    TELEFONE]
+              enum:
+                - EMAIL
+                - TELEFONE
             email:
               type: string
               description: Endereço de email
               maxLength: 320
-              pattern: '\S+@\S+\.\S+'
+              pattern: \S+@\S+\.\S+
               example: nome@br.net
             phone:
-              $ref: "#/components/schemas/CustomerPhone"
+              $ref: '#/components/schemas/CustomerPhone'
             cpfNumber:
               type: string
               maxLength: 11
-              pattern: '^\d{11}$|^NA$'
+              pattern: ^\d{11}$|^NA$
               description: |
                 Número completo do CPF. Atributo que corresponde às informações mínimas exigidas pela Regulamentação em vigor. O CPF é o Cadastro de Pessoa natural.  Ele é um documento feito pela Receita Federal e serve para identificar os contribuintes. O CPF é uma numeração com 11 dígitos, que só mudam por decisão judicial. O documento é emitido pela receita federal
                 Condicional a seleção de true em hasBrazilianNationality             
             raffleCustomData:
               $ref: '#/components/schemas/RaffleCustomData'
-
     ResponseCapitalizationTitleRaffle:
       type: object
       required:
@@ -2845,7 +3242,7 @@ components:
       properties:
         data:
           type: object
-          description: Objeto contendo dados da resposta da solicitação de Pagamento de Sorteio de Título de Capitalização. 
+          description: Objeto contendo dados da resposta da solicitação de Pagamento de Sorteio de Título de Capitalização.
           required:
             - protocolNumber
             - protocolDateTime
@@ -2867,28 +3264,33 @@ components:
             modality:
               type: string
               description: Modalidade
-              enum: [TRADICIONAL, INSTRUMENTO_GARANTIA, COMPRA_PROGRAMADA, POPULAR, INCENTIVO, FILANTROPIA_PREMIAVEL]
+              enum:
+                - TRADICIONAL
+                - INSTRUMENTO_GARANTIA
+                - COMPRA_PROGRAMADA
+                - POPULAR
+                - INCENTIVO
+                - FILANTROPIA_PREMIAVEL
             susepProcessNumber:
               description: Número do Processo Susep
               type: string
               maxLength: 70
-              example: "12345"
+              example: '12345'
             rafflePaymentInformation:
-                $ref: '#/components/schemas/RafflePaymentInformationCapitalizationTitleRaffle'
+              $ref: '#/components/schemas/RafflePaymentInformationCapitalizationTitleRaffle'
             redirectLink:
-              description: 'Link interno para direcionamento para o ambiente da sociedade de capitalização. Não possui restrição, ambiente de direcionamento escolhido a critério da sociedade de capitalização.'    
+              description: Link interno para direcionamento para o ambiente da sociedade de capitalização. Não possui restrição, ambiente de direcionamento escolhido a critério da sociedade de capitalização.
               allOf:
-                - $ref: "#/components/schemas/LinkInfo"
+                - $ref: '#/components/schemas/LinkInfo'
             raffleCustomData:
               $ref: '#/components/schemas/RaffleCustomData'
         links:
           $ref: '#/components/schemas/Links'
         meta:
           $ref: '#/components/schemas/Meta'
-          
     RafflePaymentInformationCapitalizationTitleRaffle:
       type: object
-      description: Objeto contendo dados do resultado de Sorteio de Título de Capitalização. 
+      description: Objeto contendo dados do resultado de Sorteio de Título de Capitalização.
       required:
         - raffleResult
         - prizeValue
@@ -2896,9 +3298,10 @@ components:
         raffleResult:
           description: Resultado do sorteio. Se prevalece o resultado de CONTEMPLADO caso o cliente possua mais de um título com um ou mais CONTEMPLADO ou mais não CONTEMPLADO na seguradora.
           type: string
-          enum: [CONTEMPLADO,
-                NAO_EXISTEM_TITULOS_CONTEMPLADOS_A_SEREM_PAGOS,
-                NAO_POSSUI_TITULOS]
+          enum:
+            - CONTEMPLADO
+            - NAO_EXISTEM_TITULOS_CONTEMPLADOS_A_SEREM_PAGOS
+            - NAO_POSSUI_TITULOS
         raffleResultOthers:
           type: string
           description: Campo aberto para descrição do status.
@@ -2906,15 +3309,15 @@ components:
         prizeValue:
           description: Valor da premiação. Este valor será submetido a análise e estará sujeito as alterações (aplicação de impostos, variação de saldos, entre outros)
           allOf:
-            - $ref: "#/components/schemas/AmountDetails"    
+            - $ref: '#/components/schemas/AmountDetails'
   parameters:
     consentId:
-        name: consentId
-        in: path
-        required: true
-        schema:
-          type: string
-          maxLength: 60
+      name: consentId
+      in: path
+      required: true
+      schema:
+        type: string
+        maxLength: 60
     Authorization:
       name: Authorization
       in: header
@@ -2927,14 +3330,13 @@ components:
     xIdempotencyKey:
       name: x-idempotency-key
       in: header
-      description: Cabeçalho HTTP personalizado. Identificador de solicitação exclusivo 
-                   para suportar a idempotência.
+      description: Cabeçalho HTTP personalizado. Identificador de solicitação exclusivo para suportar a idempotência.
       required: true
       schema:
         type: string
         minLength: 1
         maxLength: 40
-        pattern: ^(?!\s)(.*)(\S)$    
+        pattern: ^(?!\s)(.*)(\S)$
     page:
       name: page
       in: query
@@ -2971,7 +3373,7 @@ components:
       required: false
       schema:
         type: string
-        pattern: '^(Mon|Tue|Wed|Thu|Fri|Sat|Sun), \d{2} (Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec) \d{4} \d{2}:\d{2}:\d{2} (GMT|UTC)$'
+        pattern: ^(Mon|Tue|Wed|Thu|Fri|Sat|Sun), \d{2} (Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec) \d{4} \d{2}:\d{2}:\d{2} (GMT|UTC)$
         minLength: 29
         maxLength: 29
     xFapiCustomerIpAddress:
@@ -2987,31 +3389,30 @@ components:
     xFapiInteractionId:
       name: x-fapi-interaction-id
       in: header
-      description: 'Um UID [RFC4122](https://tools.ietf.org/html/rfc4122) usado como um ID de correlação. Se fornecido, o transmissor deve "reproduzir" esse valor no cabeçalho de resposta.'
+      description: Um UID [RFC4122](https://tools.ietf.org/html/rfc4122) usado como um ID de correlação. Se fornecido, o transmissor deve "reproduzir" esse valor no cabeçalho de resposta.
       required: true
       schema:
         type: string
-        pattern: '^[a-zA-Z0-9][a-zA-Z0-9\-]{0,99}$'
+        pattern: ^[a-zA-Z0-9][a-zA-Z0-9\-]{0,99}$
         minLength: 1
         maxLength: 100
   securitySchemes:
     OpenId:
       type: openIdConnect
-      openIdConnectUrl: 'https://auth.mockbank.poc.raidiam.io/.well-known/openid-configuration'
+      openIdConnectUrl: https://auth.mockbank.poc.raidiam.io/.well-known/openid-configuration
     OAuth2Security:
       type: oauth2
       flows:
         authorizationCode:
-          authorizationUrl: 'https://authserver.example/authorization'
-          tokenUrl: 'https://authserver.example/token'
+          authorizationUrl: https://authserver.example/authorization
+          tokenUrl: https://authserver.example/token
           scopes:
             quote-capitalization-title-lead: Escopo necessário para acesso à API Quote Capitalization Title.
             quote-capitalization-title: Escopo necessário para acesso à API Quote Capitalization Title.
             quote-capitalization-title-raffle: Escopo necessário para acesso à API Quote Capitalization Title.
-            
   responses:
     BadRequest:
-      description: 'A requisição foi malformada, omitindo atributos obrigatórios, seja no payload ou através de atributos na URL'
+      description: A requisição foi malformada, omitindo atributos obrigatórios, seja no payload ou através de atributos na URL
       content:
         application/json; charset=utf-8:
           schema:
@@ -3047,7 +3448,7 @@ components:
           schema:
             $ref: '#/components/schemas/ResponseError'
     TooManyRequests:
-      description: 'A operação foi recusada, pois muitas solicitações foram feitas dentro de um determinado período ou o limite global de requisições concorrentes foi atingido'
+      description: A operação foi recusada, pois muitas solicitações foram feitas dentro de um determinado período ou o limite global de requisições concorrentes foi atingido
       content:
         application/json; charset=utf-8:
           schema:
@@ -3079,9 +3480,9 @@ components:
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/ResponseQuoteCapitalizationTitleLead'       
+            $ref: '#/components/schemas/ResponseQuoteCapitalizationTitleLead'
     200UpdatedQuoteCapitalizationTitleLead:
-      description: "Atualização de CapitalizationTitleLead feita com sucesso"
+      description: Atualização de CapitalizationTitleLead feita com sucesso
       headers:
         x-fapi-interaction-id:
           description: |
@@ -3089,7 +3490,7 @@ components:
             Se fornecido, o transmissor deve "reproduzir" esse valor no cabeçalho de resposta.          
           schema:
             type: string
-            pattern: '^[a-zA-Z0-9][a-zA-Z0-9\-]{0,99}$'
+            pattern: ^[a-zA-Z0-9][a-zA-Z0-9\-]{0,99}$
             minLength: 1
             maxLength: 100
             example: 73cac523-d3ae-2289-b106-330a6218710d
@@ -3106,7 +3507,7 @@ components:
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/ResponseQuoteCapitalizationTitle'       
+            $ref: '#/components/schemas/ResponseQuoteCapitalizationTitle'
     200QuoteStatusCapitalizationTitle:
       description: Dados de CapitalizationTitle obtidos com sucesso
       headers:
@@ -3116,7 +3517,7 @@ components:
             Se fornecido, o transmissor deve "reproduzir" esse valor no cabeçalho de resposta.          
           schema:
             type: string
-            pattern: '^[a-zA-Z0-9][a-zA-Z0-9\-]{0,99}$'
+            pattern: ^[a-zA-Z0-9][a-zA-Z0-9\-]{0,99}$
             minLength: 1
             maxLength: 100
             example: 73cac523-d3ae-2289-b106-330a6218710d
@@ -3125,7 +3526,7 @@ components:
           schema:
             $ref: '#/components/schemas/ResponseQuoteStatusCapitalizationTitle'
     200UpdatedQuoteCapitalizationTitle:
-      description: "Atualização de CapitalizationTitle feita com sucesso"
+      description: Atualização de CapitalizationTitle feita com sucesso
       headers:
         x-fapi-interaction-id:
           description: |
@@ -3133,14 +3534,14 @@ components:
             Se fornecido, o transmissor deve "reproduzir" esse valor no cabeçalho de resposta.          
           schema:
             type: string
-            pattern: '^[a-zA-Z0-9][a-zA-Z0-9\-]{0,99}$'
+            pattern: ^[a-zA-Z0-9][a-zA-Z0-9\-]{0,99}$
             minLength: 1
             maxLength: 100
             example: 73cac523-d3ae-2289-b106-330a6218710d
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/ResponsePatch'    
+            $ref: '#/components/schemas/ResponsePatch'
     CreatedCapitalizationTitleRaffle:
       description: Dados do sorteio enviado com sucesso
       headers:
