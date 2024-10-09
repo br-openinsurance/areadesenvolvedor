@@ -8,7 +8,10 @@ info:
      ## Permissions necessárias para a API withdrawal
 
     Para cada um dos `paths` desta API, além dos escopos (`scopes`) indicados existem `permissions` que deverão ser observadas:
-
+    
+    ### `/lead/request`
+      - permissions:
+        - POST: **WITHDRAWAL_LEAD_CREATE**
     ### `/pension/request`
       - permissions:
         - POST: **PENSION_WITHDRAWAL_CREATE**   
@@ -20,27 +23,77 @@ info:
       - 1 - `Idempotência:` Valida se há divergência entre chave de idempotência e informações enviadas (ERRO_IDEMPOTENCIA);
       - 2 - `Demais validações:` Valida itens não explicitamente informados pelo servidor - (NAO_INFORMADO).
       
-  version: 1.2.0
+  version: 1.3.0
   license:
     name: Apache 2.0
-    url: 'https://www.apache.org/licenses/LICENSE-2.0'
+    url: https://www.apache.org/licenses/LICENSE-2.0
   contact:
     name: Governança do Open Insurance Brasil – Especificações
     email: gt-interfaces@openbankingbr.org
-    url: 'https://openinsurance-brasil.github.io/areadesenvolvedor/'
+    url: https://openinsurance-brasil.github.io/areadesenvolvedor/
 servers:
-  - url: 'https://api.seguradora.com.br/open-insurance/withdrawal/v1'
+  - url: https://api.seguradora.com.br/open-insurance/withdrawal/v1
     description: Servidor de Produção
-  - url: 'https://apih.seguradora.com.br/open-insurance/withdrawal/v1'
+  - url: https://apih.seguradora.com.br/open-insurance/withdrawal/v1
     description: Servidor de Homologação
 tags:
+  - name: Withdrawal Lead
   - name: Pension Withdrawal
   - name: Capitalization Title Withdrawal
 paths:
+  /lead/request:
+    post:
+      tags:
+        - Withdrawal Lead
+      summary: Envia dados de solicitação de Resgate de Previdência Lead
+      description: Método para criação de solicitação de resgate de Withdrawal Lead
+      operationId: postWithdrawalLead
+      parameters:
+        - $ref: '#/components/parameters/Authorization'
+        - $ref: '#/components/parameters/xFapiAuthDate'
+        - $ref: '#/components/parameters/xFapiCustomerIpAddress'
+        - $ref: '#/components/parameters/xFapiInteractionId'
+        - $ref: '#/components/parameters/xCustomerUserAgent'
+        - $ref: '#/components/parameters/xIdempotencyKey'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RequestPensionWithdrawal'
+      responses:
+        '201':
+          $ref: '#/components/responses/OKResponseWithdrawalRequestLead'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '405':
+          $ref: '#/components/responses/MethodNotAllowed'
+        '406':
+          $ref: '#/components/responses/NotAcceptable'
+        '422':
+          $ref: '#/components/responses/UnprocessableEntity'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+        default:
+          description: Erro inesperado.
+          content:
+            application/json; charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/ResponseError'
+      security:
+        - OAuth2Security:
+            - withdrawal-lead
   /pension/request:
     post:
       tags:
-      - Pension Withdrawal
+        - Pension Withdrawal
       summary: Enviar os dados de solicitação de Resgate de Previdência
       operationId: postPensionWithdrawal
       description: Método para a criação de Resgate de Previdência
@@ -85,12 +138,12 @@ paths:
         - OpenId:
             - openid
         - OAuth2Security:
-            - 'consent:consentId'
+            - consent:consentId
             - withdrawal-pension
   /capitalization-title/request:
     post:
       tags:
-      - Capitalization Title Withdrawal
+        - Capitalization Title Withdrawal
       summary: Enviar os dados de solicitação de Resgate de Título de Capitalização
       operationId: postCapitalizationTitleWithdrawal
       description: Método para a criação de Resgate de Título de Capitalização
@@ -100,7 +153,7 @@ paths:
         - $ref: '#/components/parameters/xFapiCustomerIpAddress'
         - $ref: '#/components/parameters/xFapiInteractionId'
         - $ref: '#/components/parameters/xCustomerUserAgent'
-        - $ref: '#/components/parameters/xIdempotencyKey'        
+        - $ref: '#/components/parameters/xIdempotencyKey'
       requestBody:
         content:
           application/json:
@@ -135,8 +188,9 @@ paths:
         - OpenId:
             - openid
         - OAuth2Security:
-            - 'consent:consentId'
+            - consent:consentId
             - withdrawal-capitalization-title
+  
 components:
   schemas:
     RequestPensionWithdrawal:
@@ -148,8 +202,8 @@ components:
           type: object
           description: Objeto contendo dados de resgate.
           required:
-          - generalInfo
-          - withdrawalInfo
+            - generalInfo
+            - withdrawalInfo
           properties:
             generalInfo:
               $ref: '#/components/schemas/GeneralInfoPensionWithdrawal'
@@ -157,14 +211,13 @@ components:
               $ref: '#/components/schemas/WithdrawalInfoPensionWithdrawal'
             withdrawalCustomData:
               $ref: '#/components/schemas/WithdrawalCustomDataPension'
-              
     GeneralInfoPensionWithdrawal:
       type: object
       required:
         - certificateId
         - productName
       properties:
-        certificateId: 
+        certificateId:
           description: Identificador do Certificado (Caso Tipo de Documento Emitido for certificado)
           type: string
           maxLength: 60
@@ -172,8 +225,7 @@ components:
           description: Nome comercial do produto, pelo qual é identificado nos canais de distribuição e atendimento da sociedade
           type: string
           maxLength: 100
-          example: Produto A Previdência         
-    
+          example: Produto A Previdência
     WithdrawalInfoPensionWithdrawal:
       type: object
       required:
@@ -184,33 +236,34 @@ components:
         withdrawalType:
           description: Tipo de resgate. Este valor será submetido a análise e estará sujeito as alterações (aplicação de impostos, variação de saldos, e condições contratuais).
           type: string
-          enum: [1_TOTAL,
-                2_PARCIAL]
+          enum:
+            - 1_TOTAL
+            - 2_PARCIAL
         withdrawalReason:
-          description:  Motivo do resgate. Obrigatório para Previdência Sobrevivência.
+          description: Motivo do resgate. Obrigatório para Previdência Sobrevivência.
           type: string
-          enum: [ 1_EMERGENCIAS_DE_SAUDE,
-                  2_APLICACAO_EM_OUTROS_INVESTIMENTOS,
-                  3_INSATISFACAO_COM_A_ENTIDADE,
-                  4_INSATISFACAO_COM_A_RENTABILIDADE_DO_PRODUTO,
-                  5_INSATISFACAO_COM_O_PRODUTO,
-                  6_AQUISICAO_DE_BENS,
-                  7_LIQUIDEZ_FINANCEIRA,
-                  8_REALIZACAO_DO_OBJETIVO_DO_INVESTIMENTO,
-                  9_OUTROS]
+          enum:
+            - 1_EMERGENCIAS_DE_SAUDE
+            - 2_APLICACAO_EM_OUTROS_INVESTIMENTOS
+            - 3_INSATISFACAO_COM_A_ENTIDADE
+            - 4_INSATISFACAO_COM_A_RENTABILIDADE_DO_PRODUTO
+            - 5_INSATISFACAO_COM_O_PRODUTO
+            - 6_AQUISICAO_DE_BENS
+            - 7_LIQUIDEZ_FINANCEIRA
+            - 8_REALIZACAO_DO_OBJETIVO_DO_INVESTIMENTO
+            - 9_OUTROS
         withdrawalReasonOthers:
-          description:  Motivo do resgate para 'Outros'. Obrigatório, caso selecionado "outros" na pergunta " Motivo do resgate ".
+          description: Motivo do resgate para 'Outros'. Obrigatório, caso selecionado "outros" na pergunta " Motivo do resgate ".
           type: string
           maxLength: 100
         desiredTotalAmount:
-          description: 'Valor bruto desejado do resgate. Este valor será submetido a análise e estará sujeito as alterações (aplicação de impostos, variação de saldos, e condições contratuais). Este campo não deverá permitir a inclusão de valores maiores que o saldo atual dele. Condicional, caso a opção "2. Parcial" seja selecionada no campo "Tipo de resgate".'
+          description: Valor bruto desejado do resgate. Este valor será submetido a análise e estará sujeito as alterações (aplicação de impostos, variação de saldos, e condições contratuais). Este campo não deverá permitir a inclusão de valores maiores que o saldo atual dele. Condicional, caso a opção "2. Parcial" seja selecionada no campo "Tipo de resgate".
           allOf:
             - $ref: '#/components/schemas/AmountDetails'
         pmbacAmount:
-          description: Valor PMBaC (fim do mês). O valor exibido refere-se ao mês anterior, podendo estar sujeito a variações.     
+          description: Valor PMBaC (fim do mês). O valor exibido refere-se ao mês anterior, podendo estar sujeito a variações.
           allOf:
-            - $ref: "#/components/schemas/AmountDetails"
-
+            - $ref: '#/components/schemas/AmountDetails'
     ResponsePensionWithdrawal:
       type: object
       required:
@@ -222,11 +275,11 @@ components:
           type: object
           description: Objeto contendo dados de resgate.
           required:
-          - protocolNumber
-          - protocolDateTime
-          - generalInfo
-          - withdrawalInfo
-          - redirectLink
+            - protocolNumber
+            - protocolDateTime
+            - generalInfo
+            - withdrawalInfo
+            - redirectLink
           properties:
             protocolNumber:
               description: Protocolo de solicitação do resgate
@@ -236,20 +289,20 @@ components:
               description: Data e hora do protocolamento da cotação, conforme especificação RFC-3339, formato UTC. Condicional ao status de ACKN.
               type: string
               format: date-time
-              pattern: '^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])T(?:[01]\d|2[0123]):(?:[012345]\d):(?:[012345]\d)Z$'
+              pattern: ^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])T(?:[01]\d|2[0123]):(?:[012345]\d):(?:[012345]\d)Z$
               example: '2021-08-20T08:30:00Z'
             generalInfo:
               $ref: '#/components/schemas/GeneralInfoPensionWithdrawal'
             withdrawalInfo:
-              $ref: '#/components/schemas/WithdrawalInfoPensionWithdrawal'         
+              $ref: '#/components/schemas/WithdrawalInfoPensionWithdrawal'
             contactChannel:
               type: string
-              description: Canal de contato da instituição. 
+              description: Canal de contato da instituição.
             redirectLink:
               type: string
-              description: 'Link interno para direcionamento para o ambiente da instituição. Não possui restrição, ambiente de direcionamento escolhido a critério da sociedade de capitalização.'    
+              description: Link interno para direcionamento para o ambiente da instituição. Não possui restrição, ambiente de direcionamento escolhido a critério da sociedade de capitalização.
               allOf:
-                - $ref: "#/components/schemas/LinkInfo"
+                - $ref: '#/components/schemas/LinkInfo'
             withdrawalCustomData:
               $ref: '#/components/schemas/WithdrawalCustomDataPension'
         links:
@@ -257,6 +310,31 @@ components:
         meta:
           $ref: '#/components/schemas/Meta'
 
+    ResponseWithdrawalLead:
+      type: object
+      required:
+        - data
+        - links
+        - meta
+      properties:
+        data:
+          type: object
+          description: Objeto contendo dados de resgate.
+          required:
+            - generalInfo
+            - withdrawalInfo
+          properties:
+            generalInfo:
+              $ref: '#/components/schemas/GeneralInfoPensionWithdrawal'
+            withdrawalInfo:
+              $ref: '#/components/schemas/WithdrawalInfoPensionWithdrawal'
+            withdrawalCustomData:
+              $ref: '#/components/schemas/WithdrawalCustomDataPension'
+        links:
+          $ref: '#/components/schemas/Links'
+        meta:
+          $ref: '#/components/schemas/Meta'
+          
     RequestCapitalizationTitleWithdrawal:
       type: object
       required:
@@ -266,27 +344,32 @@ components:
           type: object
           description: Objeto contendo dados de resgate de capitalização.
           required:
-          - modality
-          - susepProcessNumber
-          - productInformation
-          - withdrawalInformation
+            - modality
+            - susepProcessNumber
+            - productInformation
+            - withdrawalInformation
           properties:
             modality:
               type: string
               description: Modalidade
-              enum: [TRADICIONAL, INSTRUMENTO_GARANTIA, COMPRA_PROGRAMADA, POPULAR, INCENTIVO, FILANTROPIA_PREMIAVEL]
+              enum:
+                - TRADICIONAL
+                - INSTRUMENTO_GARANTIA
+                - COMPRA_PROGRAMADA
+                - POPULAR
+                - INCENTIVO
+                - FILANTROPIA_PREMIAVEL
             susepProcessNumber:
               description: Número do Processo Susep
               type: string
               maxLength: 70
-              example: "12345"
+              example: '12345'
             productInformation:
-                $ref: '#/components/schemas/ProductInformationCapitalizationTitleWithdrawal'
+              $ref: '#/components/schemas/ProductInformationCapitalizationTitleWithdrawal'
             withdrawalInformation:
-                $ref: '#/components/schemas/WithdrawalInformationCapitalizationTitleWithdrawal'          
+              $ref: '#/components/schemas/WithdrawalInformationCapitalizationTitleWithdrawal'
             withdrawalCustomData:
               $ref: '#/components/schemas/WithdrawalCustomDataCapitalization'
-    
     ProductInformationCapitalizationTitleWithdrawal:
       type: object
       description: Objeto contendo dados de Informações do Produto.
@@ -305,22 +388,21 @@ components:
           description: Identificação do plano
           type: string
           maxLength: 60
-        titleId: 
+        titleId:
           description: Identificação do título de capitalização
           type: string
           maxLength: 60
-        seriesId: 
+        seriesId:
           description: Identificação da série
           type: string
           maxLength: 60
-        termEndDate: 
+        termEndDate:
           description: Data de fim de vigência do título
           type: string
           format: date
           maxLength: 10
-          pattern: '^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])$'
+          pattern: ^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])$
           example: '2022-10-27'
-    
     WithdrawalInformationCapitalizationTitleWithdrawal:
       type: object
       description: Objeto contendo dados de Informações do Resgate.
@@ -329,25 +411,25 @@ components:
         - withdrawalTotalAmount
       properties:
         withdrawalReason:
-          description:  Motivo do resgate. 
+          description: Motivo do resgate.
           type: string
-          enum: [IMPOSSIBILIDADE_DE_PAGAMENTO_DAS_PARCELAS,
-                COMPROMISSOS_PESSOAIS_EMERGENCIAIS,
-                INSATISFACAO_COM_CARACTERISTICAS_DO_PRODUTO,
-                INSATISFACAO_NO_RELACIONAMENTO_COM_SOCIEDADE_CAPITALIZACAO,
-                AQUISICAO_DE_OUTROS_BENS_OU_PRODUTOS,
-                PERDA_DE_INTERESSE,
-                PREFIRO_NAO_RESPONDER,
-                OUTROS]
+          enum:
+            - IMPOSSIBILIDADE_DE_PAGAMENTO_DAS_PARCELAS
+            - COMPROMISSOS_PESSOAIS_EMERGENCIAIS
+            - INSATISFACAO_COM_CARACTERISTICAS_DO_PRODUTO
+            - INSATISFACAO_NO_RELACIONAMENTO_COM_SOCIEDADE_CAPITALIZACAO
+            - AQUISICAO_DE_OUTROS_BENS_OU_PRODUTOS
+            - PERDA_DE_INTERESSE
+            - PREFIRO_NAO_RESPONDER
+            - OUTROS
         withdrawalReasonOthers:
-          description:  Motivo do resgate para 'Outros'. 
+          description: Motivo do resgate para 'Outros'.
           type: string
           maxLength: 500
         withdrawalTotalAmount:
           description: Valor bruto a resgatar. O pedido de resgate será analisado e o valor será submetido a análise e estará sujeito as alterações (aplicação de impostos, variação de saldos, viabilidade do pedido de resgate, entre outros). Ocorrendo o resgate do título, este será automaticamente cancelado.
           allOf:
             - $ref: '#/components/schemas/AmountDetails'
-          
     ResponseCapitalizationTitleWithdrawal:
       type: object
       required:
@@ -358,13 +440,13 @@ components:
           type: object
           description: Objeto contendo dados de resgate.
           required:
-          - protocolNumber
-          - protocolDateTime
-          - modality
-          - susepProcessNumber
-          - productInformation
-          - withdrawalInformation
-          - redirectLink
+            - protocolNumber
+            - protocolDateTime
+            - modality
+            - susepProcessNumber
+            - productInformation
+            - withdrawalInformation
+            - redirectLink
           properties:
             protocolNumber:
               description: Protocolo de solicitação do resgate
@@ -374,65 +456,451 @@ components:
               description: Data e hora do protocolamento da cotação, conforme especificação RFC-3339, formato UTC. Condicional ao status de ACKN.
               type: string
               format: date-time
-              pattern: '^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])T(?:[01]\d|2[0123]):(?:[012345]\d):(?:[012345]\d)Z$'
+              pattern: ^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])T(?:[01]\d|2[0123]):(?:[012345]\d):(?:[012345]\d)Z$
               example: '2021-08-20T08:30:00Z'
             modality:
               type: string
               description: Modalidade
-              enum: [TRADICIONAL, INSTRUMENTO_GARANTIA, COMPRA_PROGRAMADA, POPULAR, INCENTIVO, FILANTROPIA_PREMIAVEL]
+              enum:
+                - TRADICIONAL
+                - INSTRUMENTO_GARANTIA
+                - COMPRA_PROGRAMADA
+                - POPULAR
+                - INCENTIVO
+                - FILANTROPIA_PREMIAVEL
             susepProcessNumber:
               description: Número do Processo Susep
               type: string
               maxLength: 70
-              example: "12345"
+              example: '12345'
             productInformation:
-                $ref: '#/components/schemas/ProductInformationCapitalizationTitleWithdrawal'
+              $ref: '#/components/schemas/ProductInformationCapitalizationTitleWithdrawal'
             withdrawalInformation:
-                $ref: '#/components/schemas/WithdrawalInformationCapitalizationTitleWithdrawal'
+              $ref: '#/components/schemas/WithdrawalInformationCapitalizationTitleWithdrawal'
             redirectLink:
               type: string
-              description: 'Link interno para direcionamento para o ambiente da sociedade de capitalização. Não possui restrição, ambiente de direcionamento escolhido a critério da sociedade de capitalização.'    
+              description: Link interno para direcionamento para o ambiente da sociedade de capitalização. Não possui restrição, ambiente de direcionamento escolhido a critério da sociedade de capitalização.
               allOf:
-                - $ref: "#/components/schemas/LinkInfo"  
+                - $ref: '#/components/schemas/LinkInfo'
             withdrawalCustomData:
               $ref: '#/components/schemas/WithdrawalCustomDataCapitalization'
         links:
           $ref: '#/components/schemas/Links'
         meta:
           $ref: '#/components/schemas/Meta'
-
     AmountDetails:
-        type: object
-        description: Detalhes de valores/limites
-        required:
-          - amount
-          - unit
-        properties:
-          amount:
-            type: string
-            pattern: '^-?\d{1,15}\.\d{2}$'
-            example: '2000.00'
-          unit:
-            type: object
-            required:
-              - code
-              - description
-            properties:
-              code:
-                type: string
-                example: R$
-                enum: [ د.إ, Af, L, Դ, Kz, $, ƒ, ман, КМ, ৳, лв, ب.د, ₣, Bs., R$, P, Br, ¥, ₡, Kč, kr, د.ج, £, Nfk, N/A, €, ლ, ₵, D, Q, Kn, G, Ft, Rp, ₪, ₹, ع.د, ﷼, Sh, ៛, ₩, د.ك, 〒, ₭, ل.ل, Rs, ل.د, د.م., ден, K, ₮, UM, ₨, ރ., MK, RM, MTn, ₦, C$, ر.ع., B/., S/., ₱, zł, ₲, ر.ق, din, р., ر.س, Le, Db, ل.س, ฿, ЅМ, m, د.ت, T$, ₤, ₴, Bs F, ₫, Vt, T, R, ZK ]
-              description:
-                type: string
-                description: Moeda da Parcela, de acordo com ISO-4217.
-                example: BRL
-                enum: [AFN,AFA,ALL,ALK,DZD,USD,EUR,ADP,ESP,FRF,AOA,AOK,AON,AOR,XCD,ARS,ARA,ARP,ARY,AMD,RUR,AWG,AUD,ATS,AZN,AYM,AZM,BSD,BHD,BDT,BBD,BYN,BYB,BYR,BEC,BEF,BEL,BZD,XOF,BMD,INR,BTN,BOP,BOB,BOV,BAM,BAD,BWP,NOK,BRL,BRB,BRC
-                        ,BRE,BRN,BRR,BND,BGN,BGJ,BGK,BGL,BUK,BIF,CVE,KHR,XAF,CAD,KYD,CLP,CLF,CNY,COP,COU,KMF,CDF,NZD,CRC,HRK,HRD,CUP,CUC,ANG,CYP,CZK,CSJ,CSK,DKK,DJF,DOP,ECS,ECV,EGP,SVC,GQE,ERN,EEK,SZL,ETB,XEU,FKP,FJD,FIM,XPF,GMD,GEL,GEK,DDM,DEM,GHS,
-                        GHC,GHP,GIP,GRD,GTQ,GBP,GNF,GNE,GNS,GWE,GWP,GYD,HTG,ITL,HNL,HKD,HUF,ISK,ISJ,IDR,XDR,IRR,IQD,IEP,ILS,ILP,ILR,JMD,JPY,JOD,KZT,KES,KPW,KRW,KWD,KGS,LAJ,LAK,LVL,LVR,LBP,LSL,ZAR,LSM,ZAL,LRD,LYD,CHF,LTL,LTT,LUC,LUF,LUL,MOP,MGA,MGF,MWK,MYR
-                        ,MVR,MVQ,MLF,MTL,MTP,MRU,MRO,MUR,XUA,MXN,MXV,MXP,MDL,MNT,MAD,MZN,MZE,MZM,MMK,NAD,NPR,NLG,NIO,NIC,NGN,MKD,OMR,PKR,PAB,PGK,PYG,PEN,PEH,PEI,PES,PHP,PLN,PLZ,PTE,QAR,RON,ROK,ROL,RUB,RWF,SHP,WST,STN,STD,SAR,RSD,CSD,SCR,SLL,SGD,
-                        XSU,SKK,SIT,SBD,SOS,SSP,SDG,RHD,ESA,ESB,LKR,SDD,SDP,SRD,SRG,SEK,CHE,CHW,CHC,SYP,TWD,TJS,TJR,TZS,THB,TPE,TOP,TTD,TND,TRY,TRL,TMT,TMM,UGX,UGS,UGW,UAH,UAK,SUR,AED,USS,USN,UYU,UYI,UYW,UYN,UYP,UZS,VUV,VEB,VEF,VES,VND,VNC,YER,YDD,YUD,
-                        YUM,YUN,ZRN,ZRZ,ZMW,ZMK,ZWL,ZWC,ZWD,ZWN,ZWR,XBA,XFO,XBB,XRE,XBC,XBD,XFU,XTS,XXX,XAU,XPD,XPT,XAG]
-    
+      type: object
+      description: Detalhes de valores/limites
+      required:
+        - amount
+        - unit
+      properties:
+        amount:
+          type: string
+          pattern: ^-?\d{1,15}\.\d{2}$
+          example: '2000.00'
+        unit:
+          type: object
+          required:
+            - code
+            - description
+          properties:
+            code:
+              type: string
+              example: R$
+              enum:
+                - د.إ
+                - Af
+                - L
+                - Դ
+                - Kz
+                - $
+                - ƒ
+                - ман
+                - КМ
+                - ৳
+                - лв
+                - ب.د
+                - ₣
+                - Bs.
+                - R$
+                - P
+                - Br
+                - ¥
+                - ₡
+                - Kč
+                - kr
+                - د.ج
+                - £
+                - Nfk
+                - N/A
+                - €
+                - ლ
+                - ₵
+                - D
+                - Q
+                - Kn
+                - G
+                - Ft
+                - Rp
+                - ₪
+                - ₹
+                - ع.د
+                - ﷼
+                - Sh
+                - ៛
+                - ₩
+                - د.ك
+                - 〒
+                - ₭
+                - ل.ل
+                - Rs
+                - ل.د
+                - د.م.
+                - ден
+                - K
+                - ₮
+                - UM
+                - ₨
+                - ރ.
+                - MK
+                - RM
+                - MTn
+                - ₦
+                - C$
+                - ر.ع.
+                - B/.
+                - S/.
+                - ₱
+                - zł
+                - ₲
+                - ر.ق
+                - din
+                - р.
+                - ر.س
+                - Le
+                - Db
+                - ل.س
+                - ฿
+                - ЅМ
+                - m
+                - د.ت
+                - T$
+                - ₤
+                - ₴
+                - Bs F
+                - ₫
+                - Vt
+                - T
+                - R
+                - ZK
+            description:
+              type: string
+              description: Moeda da Parcela, de acordo com ISO-4217.
+              example: BRL
+              enum:
+                - AFN
+                - AFA
+                - ALL
+                - ALK
+                - DZD
+                - USD
+                - EUR
+                - ADP
+                - ESP
+                - FRF
+                - AOA
+                - AOK
+                - AON
+                - AOR
+                - XCD
+                - ARS
+                - ARA
+                - ARP
+                - ARY
+                - AMD
+                - RUR
+                - AWG
+                - AUD
+                - ATS
+                - AZN
+                - AYM
+                - AZM
+                - BSD
+                - BHD
+                - BDT
+                - BBD
+                - BYN
+                - BYB
+                - BYR
+                - BEC
+                - BEF
+                - BEL
+                - BZD
+                - XOF
+                - BMD
+                - INR
+                - BTN
+                - BOP
+                - BOB
+                - BOV
+                - BAM
+                - BAD
+                - BWP
+                - NOK
+                - BRL
+                - BRB
+                - BRC
+                - BRE
+                - BRN
+                - BRR
+                - BND
+                - BGN
+                - BGJ
+                - BGK
+                - BGL
+                - BUK
+                - BIF
+                - CVE
+                - KHR
+                - XAF
+                - CAD
+                - KYD
+                - CLP
+                - CLF
+                - CNY
+                - COP
+                - COU
+                - KMF
+                - CDF
+                - NZD
+                - CRC
+                - HRK
+                - HRD
+                - CUP
+                - CUC
+                - ANG
+                - CYP
+                - CZK
+                - CSJ
+                - CSK
+                - DKK
+                - DJF
+                - DOP
+                - ECS
+                - ECV
+                - EGP
+                - SVC
+                - GQE
+                - ERN
+                - EEK
+                - SZL
+                - ETB
+                - XEU
+                - FKP
+                - FJD
+                - FIM
+                - XPF
+                - GMD
+                - GEL
+                - GEK
+                - DDM
+                - DEM
+                - GHS
+                - GHC
+                - GHP
+                - GIP
+                - GRD
+                - GTQ
+                - GBP
+                - GNF
+                - GNE
+                - GNS
+                - GWE
+                - GWP
+                - GYD
+                - HTG
+                - ITL
+                - HNL
+                - HKD
+                - HUF
+                - ISK
+                - ISJ
+                - IDR
+                - XDR
+                - IRR
+                - IQD
+                - IEP
+                - ILS
+                - ILP
+                - ILR
+                - JMD
+                - JPY
+                - JOD
+                - KZT
+                - KES
+                - KPW
+                - KRW
+                - KWD
+                - KGS
+                - LAJ
+                - LAK
+                - LVL
+                - LVR
+                - LBP
+                - LSL
+                - ZAR
+                - LSM
+                - ZAL
+                - LRD
+                - LYD
+                - CHF
+                - LTL
+                - LTT
+                - LUC
+                - LUF
+                - LUL
+                - MOP
+                - MGA
+                - MGF
+                - MWK
+                - MYR
+                - MVR
+                - MVQ
+                - MLF
+                - MTL
+                - MTP
+                - MRU
+                - MRO
+                - MUR
+                - XUA
+                - MXN
+                - MXV
+                - MXP
+                - MDL
+                - MNT
+                - MAD
+                - MZN
+                - MZE
+                - MZM
+                - MMK
+                - NAD
+                - NPR
+                - NLG
+                - NIO
+                - NIC
+                - NGN
+                - MKD
+                - OMR
+                - PKR
+                - PAB
+                - PGK
+                - PYG
+                - PEN
+                - PEH
+                - PEI
+                - PES
+                - PHP
+                - PLN
+                - PLZ
+                - PTE
+                - QAR
+                - RON
+                - ROK
+                - ROL
+                - RUB
+                - RWF
+                - SHP
+                - WST
+                - STN
+                - STD
+                - SAR
+                - RSD
+                - CSD
+                - SCR
+                - SLL
+                - SGD
+                - XSU
+                - SKK
+                - SIT
+                - SBD
+                - SOS
+                - SSP
+                - SDG
+                - RHD
+                - ESA
+                - ESB
+                - LKR
+                - SDD
+                - SDP
+                - SRD
+                - SRG
+                - SEK
+                - CHE
+                - CHW
+                - CHC
+                - SYP
+                - TWD
+                - TJS
+                - TJR
+                - TZS
+                - THB
+                - TPE
+                - TOP
+                - TTD
+                - TND
+                - TRY
+                - TRL
+                - TMT
+                - TMM
+                - UGX
+                - UGS
+                - UGW
+                - UAH
+                - UAK
+                - SUR
+                - AED
+                - USS
+                - USN
+                - UYU
+                - UYI
+                - UYW
+                - UYN
+                - UYP
+                - UZS
+                - VUV
+                - VEB
+                - VEF
+                - VES
+                - VND
+                - VNC
+                - YER
+                - YDD
+                - YUD
+                - YUM
+                - YUN
+                - ZRN
+                - ZRZ
+                - ZMW
+                - ZMK
+                - ZWL
+                - ZWC
+                - ZWD
+                - ZWN
+                - ZWR
+                - XBA
+                - XFO
+                - XBB
+                - XRE
+                - XBC
+                - XBD
+                - XFU
+                - XTS
+                - XXX
+                - XAU
+                - XPD
+                - XPT
+                - XAG
     WithdrawalCustomDataPension:
       type: object
       properties:
@@ -444,7 +912,6 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/CustomInfoData'
-          
     WithdrawalCustomDataCapitalization:
       type: object
       description: Objeto que agrupa as categorias de dados customizáveis em listas.
@@ -479,7 +946,6 @@ components:
           description: Lista de campos com Dados Gerais da Série.
           items:
             $ref: '#/components/schemas/CustomInfoData'
-            
     CustomInfoData:
       type: object
       description: Objeto para identificação dos campos e valores de dados customizáveis.
@@ -489,38 +955,36 @@ components:
       properties:
         fieldId:
           type: string
-          pattern: '^[a-zA-Z0-9][a-zA-Z0-9\-]{0,99}$'
+          pattern: ^[a-zA-Z0-9][a-zA-Z0-9\-]{0,99}$
           maxLength: 100
           description: Um identificador único usado para identificar o valor transmitido.
-          example: "578-psd-71md6971kjh-2d414"
+          example: 578-psd-71md6971kjh-2d414
         value:
           description: Valor do campo identificado acima, esse campo pode ser implementado como qualquer tipo de dado (objeto, texto, número, booleano, etc.)
-      additionalProperties: false 
-    
+      additionalProperties: false
     Links:
       type: object
       properties:
         self:
           type: string
           description: URL da página atualmente requisitada
-          example: 'https://api.organizacao.com.br/open-insurance/quote-auto/v1'
+          example: https://api.organizacao.com.br/open-insurance/quote-auto/v1
         first:
           type: string
           description: URL da primeira página de registros
-          example: 'https://api.organizacao.com.br/open-insurance/quote-auto/v1'
+          example: https://api.organizacao.com.br/open-insurance/quote-auto/v1
         prev:
           type: string
           description: URL da página anterior de registros
-          example: 'https://api.organizacao.com.br/open-insurance/quote-auto/v1'
+          example: https://api.organizacao.com.br/open-insurance/quote-auto/v1
         next:
           type: string
           description: URL da próxima página de registros
-          example: 'https://api.organizacao.com.br/open-insurance/quote-auto/v1'
+          example: https://api.organizacao.com.br/open-insurance/quote-auto/v1
         last:
           type: string
           description: URL da última página de registros
-          example: 'https://api.organizacao.com.br/open-insurance/quote-auto/v1'
-      
+          example: https://api.organizacao.com.br/open-insurance/quote-auto/v1
     ResponseError:
       type: object
       required:
@@ -573,21 +1037,21 @@ components:
               enum:
                 - ERRO_IDEMPOTENCIA
                 - NAO_INFORMADO
-              example: 'ERRO_IDEMPOTENCIA'
-              description: 'Código do erro 422 de Entidade não processada.' 
+              example: ERRO_IDEMPOTENCIA
+              description: Código do erro 422 de Entidade não processada.
             title:
               type: string
               maxLength: 255
-              pattern: '[\w\W\s*]'
-              example: 'Tentativa de alteração de requisição já processada'
+              pattern: '[\w\W\s]*'
+              example: Tentativa de alteração de requisição já processada
               description: |
                 - ERRO_ IDEMPOTENCIA: Tentativa de alteração de requisição já processada
                 - NÃO_INFORMADO: Não informada pelo servidor
             detail:
               type: string
               maxLength: 2048
-              pattern: '[\w\W\s*]'
-              example: 'Tentativa de alteração de requisição já processada'
+              pattern: '[\w\W\s]*'
+              example: Tentativa de alteração de requisição já processada
               description: |
                 - ERRO_ IDEMPOTENCIA: Tentativa de alteração de requisição já processada
                 - NÃO_INFORMADO: Não informada pelo servidor 
@@ -596,15 +1060,13 @@ components:
       additionalProperties: false
     XFapiInteractionId:
       type: string
-      pattern: '^[a-zA-Z0-9][a-zA-Z0-9\-]{0,99}$'
+      pattern: ^[a-zA-Z0-9][a-zA-Z0-9\-]{0,99}$
       maxLength: 100
       description: Um UID [RFC4122](https://tools.ietf.org/html/rfc4122) usado como um ID de correlação. Se fornecido, o transmissor deve reproduzir" esse valor no cabeçalho de resposta.'
-                    
     LinkInfo:
       type: string
       maxLength: 5000
-      example: 'https://www.abcseguros.com/withdrawal?id=000123'  
-      
+      example: https://www.abcseguros.com/withdrawal?id=000123
     Meta:
       type: object
       description: Meta informações referente à API requisitada.
@@ -627,7 +1089,7 @@ components:
           description: Data e hora da consulta, conforme especificação RFC-3339, formato UTC.
           type: string
           format: date-time
-          pattern: '^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])T(?:[01]\d|2[0123]):(?:[012345]\d):(?:[012345]\d)Z$'        
+          pattern: ^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])T(?:[01]\d|2[0123]):(?:[012345]\d):(?:[012345]\d)Z$
           example: '2021-05-21T08:30:00Z'
       additionalProperties: false
   parameters:
@@ -643,14 +1105,13 @@ components:
     xIdempotencyKey:
       name: x-idempotency-key
       in: header
-      description: Cabeçalho HTTP personalizado. Identificador de solicitação exclusivo 
-                   para suportar a idempotência.
+      description: Cabeçalho HTTP personalizado. Identificador de solicitação exclusivo para suportar a idempotência.
       required: true
       schema:
         type: string
         minLength: 1
         maxLength: 40
-        pattern: ^(?!\s)(.*)(\S)$  
+        pattern: ^(?!\s)(.*)(\S)$
     xCustomerUserAgent:
       name: x-customer-user-agent
       in: header
@@ -664,11 +1125,11 @@ components:
     xFapiAuthDate:
       name: x-fapi-auth-date
       in: header
-      description: "Data em que o usuário logou pela última vez com o receptor. Representada de acordo com a [RFC7231](https://tools.ietf.org/html/rfc7231).Exemplo: Sun, 10 Sep 2017 19:43:31 UTC"
+      description: 'Data em que o usuário logou pela última vez com o receptor. Representada de acordo com a [RFC7231](https://tools.ietf.org/html/rfc7231).Exemplo: Sun, 10 Sep 2017 19:43:31 UTC'
       required: false
       schema:
         type: string
-        pattern: '^(Mon|Tue|Wed|Thu|Fri|Sat|Sun), \d{2} (Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec) \d{4} \d{2}:\d{2}:\d{2} (GMT|UTC)$'
+        pattern: ^(Mon|Tue|Wed|Thu|Fri|Sat|Sun), \d{2} (Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec) \d{4} \d{2}:\d{2}:\d{2} (GMT|UTC)$
         minLength: 29
         maxLength: 29
     xFapiCustomerIpAddress:
@@ -688,20 +1149,20 @@ components:
       required: true
       schema:
         type: string
-        pattern: '^[a-zA-Z0-9][a-zA-Z0-9\-]{0,99}$'
+        pattern: ^[a-zA-Z0-9][a-zA-Z0-9\-]{0,99}$
         minLength: 1
         maxLength: 100
   securitySchemes:
     OpenId:
       type: openIdConnect
-      openIdConnectUrl: 'https://auth.mockbank.poc.raidiam.io/.well-known/openid-configuration'
+      openIdConnectUrl: https://auth.mockbank.poc.raidiam.io/.well-known/openid-configuration
     OAuth2Security:
       type: oauth2
       description: Fluxo OAuth necessário para que a receptora tenha acesso aos dados na instituição transmissora. Inclui o processo de redirecionamento e autenticação do usuário a que se referem os dados.
       flows:
         authorizationCode:
-          authorizationUrl: 'https://authserver.example/authorization'
-          tokenUrl: 'https://authserver.example/token'
+          authorizationUrl: https://authserver.example/authorization
+          tokenUrl: https://authserver.example/token
           scopes:
             withdrawal-pension: Escopo necessário para acesso à API Withdrawal - Previdência.
             withdrawal-capitalization-title: Escopo necessário para acesso à API Withdrawal - Capitalização.
@@ -786,4 +1247,14 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/ResponseCapitalizationTitleWithdrawal'
+    OKResponseWithdrawalRequestLead:
+      description: Solicitação de WithdrawalLead recebida com sucesso
+      headers:
+        x-fapi-interaction-id:
+          schema:
+            $ref: '#/components/schemas/XFapiInteractionId'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ResponseWithdrawalLead'
 x-internal: false
