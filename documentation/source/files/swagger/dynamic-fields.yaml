@@ -11,15 +11,14 @@ info:
     - Ao entrar no ecossistema, a `TCS` deve atualizar todas as `ICS`s e receber confirmação via webhook
     - Ao atualizar seus dados, a `TCS` deve atualizar todas as `ICS`s e receber confirmação via webhook
     - Ao entrar no ecossistema, a `ICS` deve consumir as APIs de todas as `TCS`s para garantir a atualização dos dados
-
-  version: 1.1.2
+  version: 1.3.0
   contact:
     name: Governança do Open Insurance Brasil
-    url: 'https://www.gov.br/susep'
+    url: https://www.gov.br/susep
 servers:
-  - url: 'https://api.organizacao.com.br/open-insurance/dynamic-fields/v1'
+  - url: https://api.organizacao.com.br/open-insurance/dynamic-fields/v1
     description: Servidor de Produção
-  - url: 'https://api.organizacao.com.br/open-insurance/dynamic-fields/v1'
+  - url: https://api.organizacao.com.br/open-insurance/dynamic-fields/v1
     description: Servidor de Homologação
 tags:
   - name: Dynamic Fields
@@ -66,7 +65,6 @@ paths:
       security:
         - OAuth2Security:
             - dynamic-fields
-
   /capitalization-title:
     get:
       tags:
@@ -108,7 +106,6 @@ paths:
       security:
         - OAuth2Security:
             - dynamic-fields
-
   /callback/damage-and-person:
     post:
       tags:
@@ -131,7 +128,6 @@ paths:
       security:
         - OAuth2Security:
             - dynamic-fields
-
   /callback/capitalization-title:
     post:
       tags:
@@ -154,7 +150,6 @@ paths:
       security:
         - OAuth2Security:
             - dynamic-fields
-
 components:
   schemas:
     DynamicFieldList:
@@ -177,12 +172,18 @@ components:
               api:
                 description: API de referência dos campos dinâmicos.
                 type: string
-                enum: [QUOTE_AUTO,
-                      QUOTE_PATRIMONIAL,
-                      QUOTE_PERSON,
-                      ENDORSEMENT,
-                      CLAIM_NOTIFICATION_DAMAGE,
-                      CLAIM_NOTIFICATION_PERSON]
+                enum:
+                  - CLAIM_NOTIFICATION_DAMAGE
+                  - CLAIM_NOTIFICATION_PERSON
+                  - CONTRACT_LIFE_PENSION
+                  - ENDORSEMENT
+                  - QUOTE_AUTO
+                  - QUOTE_CAPTALIZATION_TITLE
+                  - QUOTE_CAPITALIZATION_TITLE_RAFFLE
+                  - QUOTE_PATRIMONIAL
+                  - QUOTE_PERSON
+                  - WITHDRAWAL_PENSION
+                  - WITHDRAWAL_CAPITALIZATION   
               branch:
                 description: Ramo relacionado
                 type: array
@@ -196,7 +197,7 @@ components:
                       description: Código do grupo e ramo de referência dos campos dinâmicos.
                       type: string
                       maxLength: 4
-                      example: "0111"
+                      example: '0111'
                     fields:
                       type: array
                       items:
@@ -205,7 +206,6 @@ components:
           $ref: '#/components/schemas/Links'
         meta:
           $ref: '#/components/schemas/Meta'
-
     DynamicFieldsCapitalizationList:
       type: object
       required:
@@ -226,7 +226,13 @@ components:
               modality:
                 type: string
                 description: Modalidade
-                enum: [TRADICIONAL, INSTRUMENTO_GARANTIA, COMPRA_PROGRAMADA, POPULAR, INCENTIVO, FILANTROPIA_PREMIAVEL]
+                enum:
+                  - TRADICIONAL
+                  - INSTRUMENTO_GARANTIA
+                  - COMPRA_PROGRAMADA
+                  - POPULAR
+                  - INCENTIVO
+                  - FILANTROPIA_PREMIAVEL
               fields:
                 type: array
                 items:
@@ -235,7 +241,6 @@ components:
           $ref: '#/components/schemas/Links'
         meta:
           $ref: '#/components/schemas/Meta'
-
     Fields:
       type: object
       required:
@@ -247,7 +252,7 @@ components:
         fieldId:
           type: string
           description: Identificador único do campo
-          pattern: '^[a-zA-Z0-9][a-zA-Z0-9\-]{0,99}$'
+          pattern: ^[a-zA-Z0-9][a-zA-Z0-9\-]{0,99}$
           minLength: 1
           maxLength: 100
         name:
@@ -258,44 +263,56 @@ components:
         type:
           description: Tipo do campo.
           type: string
-          enum: [BOOLEAN,
-            STRING,
-            NUMBER,
-            INTEGER,
-            ARRAY]
+          enum:
+            - BOOLEAN
+            - STRING
+            - NUMBER
+            - INTEGER
+            - ARRAY
         category:
           description: Categoria do campo
           type: string
-          enum: [customerIdentification,
-                  customerQualification,
-                  customerComplimentaryInfo,
-                  businessIdentification,
-                  businessQualification,
-                  businessComplimentaryInfo,
-                  generalQuoteInfo,
-                  riskLocationInfo,
-                  insuredObjects,
-                  beneficiaries,
-                  coverages,
-                  generalClaimInfo]
+          enum:
+            - customerIdentification
+            - customerQualification
+            - customerComplimentaryInfo
+            - businessIdentification
+            - businessQualification
+            - businessComplimentaryInfo
+            - generalQuoteInfo
+            - riskLocationInfo
+            - insuredObjects
+            - beneficiaries
+            - coverages
+            - generalClaimInfo
+            - customerRelationship
+            - portabilityData
+            - complementaryIdentification
+            - productData
+            - generalRiskProfileData
+            - relationshipInfo
+            - productInfo
+            - withdrawalInfo
+            - generalInfo
+            - generalSeriesInfo
           example: customerIdentification
         format:
           description: Formato do campo referente ao seu tipo.
           type: string
           example: NONE
-          enum: [FLOAT,
-            DOUBLE,
-            INT32,
-            INT64,
-            DATE,
-            DATE-TIME,
-            NONE
-          ]
+          enum:
+            - FLOAT
+            - DOUBLE
+            - INT32
+            - INT64
+            - DATE
+            - DATE-TIME
+            - NONE
         example:
           description: Exemplo do campo que pode ser apresentado ao usuário.
           type: string
           maxLength: 100
-          example: "true"
+          example: 'true'
         maxLength:
           description: Tamanho máximo da resposta do usuário.
           type: integer
@@ -306,7 +323,6 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/FieldsArray'
-
     FieldsArray:
       type: object
       required:
@@ -317,7 +333,7 @@ components:
         fieldId:
           type: string
           description: Identificador único do campo
-          pattern: '^[a-zA-Z0-9][a-zA-Z0-9\-]{0,99}$'
+          pattern: ^[a-zA-Z0-9][a-zA-Z0-9\-]{0,99}$
           minLength: 1
           maxLength: 100
         name:
@@ -328,57 +344,56 @@ components:
         type:
           description: Tipo do campo.
           type: string
-          enum: [BOOLEAN,
-            STRING,
-            NUMBER,
-            INTEGER]
+          enum:
+            - BOOLEAN
+            - STRING
+            - NUMBER
+            - INTEGER
         format:
           description: Formato do campo referente ao seu tipo.
           type: string
           example: NONE
-          enum: [FLOAT,
-            DOUBLE,
-            INT32,
-            INT64,
-            DATE,
-            DATE-TIME,
-            NONE
-          ]
+          enum:
+            - FLOAT
+            - DOUBLE
+            - INT32
+            - INT64
+            - DATE
+            - DATE-TIME
+            - NONE
         example:
           description: Exemplo do campo que pode ser apresentado ao usuário.
           type: string
           maxLength: 100
-          example: "true"
+          example: 'true'
         maxLength:
           description: Tamanho máximo da resposta do usuário.
           type: integer
           maxLength: 3
           example: 0
-
     Links:
       type: object
       properties:
         self:
           type: string
           description: URL da página atualmente requisitada
-          example: 'https://api.organizacao.com.br/open-insurance/dynamic-fields/v1'
+          example: https://api.organizacao.com.br/open-insurance/dynamic-fields/v1
         first:
           type: string
           description: URL da primeira página de registros
-          example: 'https://api.organizacao.com.br/open-insurance/dynamic-fields/v1'
+          example: https://api.organizacao.com.br/open-insurance/dynamic-fields/v1
         prev:
           type: string
           description: URL da página anterior de registros
-          example: 'https://api.organizacao.com.br/open-insurance/dynamic-fields/v1'
+          example: https://api.organizacao.com.br/open-insurance/dynamic-fields/v1
         next:
           type: string
           description: URL da próxima página de registros
-          example: 'https://api.organizacao.com.br/open-insurance/dynamic-fields/v1'
+          example: https://api.organizacao.com.br/open-insurance/dynamic-fields/v1
         last:
           type: string
           description: URL da última página de registros
-          example: 'https://api.organizacao.com.br/open-insurance/dynamic-fields/v1'
-
+          example: https://api.organizacao.com.br/open-insurance/dynamic-fields/v1
     Meta:
       type: object
       properties:
@@ -423,7 +438,7 @@ components:
                 type: string
                 maxLength: 2048
               requestDateTime:
-                description: 'Data e hora da consulta, conforme especificação RFC-3339, formato UTC.'
+                description: Data e hora da consulta, conforme especificação RFC-3339, formato UTC.
                 type: string
                 maxLength: 2048
                 format: date-time
@@ -432,7 +447,6 @@ components:
         meta:
           $ref: '#/components/schemas/Meta'
       additionalProperties: false
-
     RequestBodyCallback:
       type: object
       required:
@@ -450,7 +464,7 @@ components:
               format: date-time
               description: Data e hora em que ocorreu o evento responsável pelo disparo da notificação via callback, conforme especificação RFC-3339, sempre com a utilização de timezone UTC(UTC time format).
               maxLength: 20
-              pattern: '^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])T(?:[01]\d|2[0123]):(?:[012345]\d):(?:[012345]\d)Z$'
+              pattern: ^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])T(?:[01]\d|2[0123]):(?:[012345]\d):(?:[012345]\d)Z$
               example: '2021-05-21T08:30:00Z'
             status:
               type: string
@@ -458,19 +472,19 @@ components:
                 Status referente ao sucesso ou falha do processo de manutenção de campos dinâmicos.
                   - UPDATED: Campos atualizados com sucesso.
                   - FAILED: Campos não atualizados devido a problemas com o consumo do recurso de campos dinâmicos.
-              enum: [UPDATED, FAILED]
+              enum:
+                - UPDATED
+                - FAILED
             description:
               type: string
               description: Descrição do erro e ou problema encontrado com o consumo do recurso de campos dinâmicos. Só deve ser implementado em caso do status ser FAILED.
               maxLength: 300
               example: Descrição do erro.
-
     xCallbackInteractionId:
       type: string
-      pattern: '^[a-zA-Z0-9][a-zA-Z0-9\-]{0,99}$'
+      pattern: ^[a-zA-Z0-9][a-zA-Z0-9\-]{0,99}$
       maxLength: 100
       description: Identificador único para cada tentativa de notificação realizada. O identificador deverá seguir o padrão UID [RFC4122](https://tools.ietf.org/html/rfc4122).
-
   parameters:
     Authorization:
       name: Authorization
@@ -517,7 +531,7 @@ components:
       required: false
       schema:
         type: string
-        pattern: '^(Mon|Tue|Wed|Thu|Fri|Sat|Sun), \d{2} (Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec) \d{4} \d{2}:\d{2}:\d{2} (GMT|UTC)$'
+        pattern: ^(Mon|Tue|Wed|Thu|Fri|Sat|Sun), \d{2} (Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec) \d{4} \d{2}:\d{2}:\d{2} (GMT|UTC)$
         minLength: 29
         maxLength: 29
     xFapiCustomerIpAddress:
@@ -533,11 +547,11 @@ components:
     xFapiInteractionId:
       name: x-fapi-interaction-id
       in: header
-      description: 'Um UID [RFC4122](https://tools.ietf.org/html/rfc4122) usado como um ID de correlação. Se fornecido, o transmissor deve "reproduzir" esse valor no cabeçalho de resposta.'
+      description: Um UID [RFC4122](https://tools.ietf.org/html/rfc4122) usado como um ID de correlação. Se fornecido, o transmissor deve "reproduzir" esse valor no cabeçalho de resposta.
       required: false
       schema:
         type: string
-        pattern: '^[a-zA-Z0-9][a-zA-Z0-9\-]{0,99}$'
+        pattern: ^[a-zA-Z0-9][a-zA-Z0-9\-]{0,99}$
         minLength: 1
         maxLength: 100
     xCallbackInteractionId:
@@ -547,22 +561,20 @@ components:
       required: true
       schema:
         type: string
-        pattern: '^[a-zA-Z0-9][a-zA-Z0-9\-]{0,99}$'
+        pattern: ^[a-zA-Z0-9][a-zA-Z0-9\-]{0,99}$
         minLength: 1
         maxLength: 100
-
   securitySchemes:
     OAuth2Security:
       type: oauth2
       flows:
         clientCredentials:
-          tokenUrl: "https://authserver.example/token"
+          tokenUrl: https://authserver.example/token
           scopes:
             dynamic-fields: Escopo necessário para acesso à API Dyncamic Fields.
-
   responses:
     OKResponseDynamicFieldsList:
-      description: "Consulta de dynamic fields list feita com sucesso"
+      description: Consulta de dynamic fields list feita com sucesso
       headers:
         x-fapi-interaction-id:
           description: |
@@ -570,7 +582,7 @@ components:
             Se fornecido, o transmissor deve "reproduzir" esse valor no cabeçalho de resposta.
           schema:
             type: string
-            pattern: '^[a-zA-Z0-9][a-zA-Z0-9\-]{0,99}$'
+            pattern: ^[a-zA-Z0-9][a-zA-Z0-9\-]{0,99}$
             minLength: 1
             maxLength: 100
             example: 73cac523-d3ae-2289-b106-330a6218710d
@@ -579,7 +591,7 @@ components:
           schema:
             $ref: '#/components/schemas/DynamicFieldList'
     OKResponseDynamicFieldsCapitalizationList:
-      description: "Consulta de dynamic fields list feita com sucesso"
+      description: Consulta de dynamic fields list feita com sucesso
       headers:
         x-fapi-interaction-id:
           description: |
@@ -587,7 +599,7 @@ components:
             Se fornecido, o transmissor deve "reproduzir" esse valor no cabeçalho de resposta.
           schema:
             type: string
-            pattern: '^[a-zA-Z0-9][a-zA-Z0-9\-]{0,99}$'
+            pattern: ^[a-zA-Z0-9][a-zA-Z0-9\-]{0,99}$
             minLength: 1
             maxLength: 100
             example: 73cac523-d3ae-2289-b106-330a6218710d
@@ -596,7 +608,7 @@ components:
           schema:
             $ref: '#/components/schemas/DynamicFieldsCapitalizationList'
     BadRequest:
-      description: 'A requisição foi malformada, omitindo atributos obrigatórios, seja no payload ou através de atributos na URL'
+      description: A requisição foi malformada, omitindo atributos obrigatórios, seja no payload ou através de atributos na URL
       content:
         application/json; charset=utf-8:
           schema:
@@ -632,7 +644,7 @@ components:
           schema:
             $ref: '#/components/schemas/ResponseError'
     TooManyRequests:
-      description: 'A operação foi recusada, pois muitas solicitações foram feitas dentro de um determinado período ou o limite global de requisições concorrentes foi atingido'
+      description: A operação foi recusada, pois muitas solicitações foram feitas dentro de um determinado período ou o limite global de requisições concorrentes foi atingido
       content:
         application/json; charset=utf-8:
           schema:
