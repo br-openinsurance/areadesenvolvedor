@@ -18,6 +18,13 @@ info:
     - A receptora deve enviar, no pedido de criação de consentimento, todas as permissions dos agrupamentos obrigatórios das
       categorias de dados as quais ela deseja consentimento, conforme tabela abaixo:
       (Para a fase 2, RESOURCES_READ é a única permissão obrigatória. Para a fase 3, todas as permissões de uma categoria de dados são obrigatórias)
+     
+     ## Válidações Semanticas - Entidade não processável - 422
+      - 1 - `Idempotência:` Valida se há divergência entre chave de idempotência e informações enviadas (ERRO_IDEMPOTENCIA);
+      - 2 - `Não Informado:` Valida itens não explicitamente informados pelo servidor - (NAO_INFORMADO).     
+
+     
+     
       ```
       |-----------------------------------------------------------------------------------------------------------------------------|
       | Fase 2:                                                                                                                     |
@@ -221,8 +228,12 @@ info:
       | Portabilidade        | Previdência Risco Portabilidade  | CONTRACT_PENSION_PLAN_LEAD_PORTABILITY_CREATE                     |
       | Previdência Risco    | (Obrigatório)                    | CONTRACT_PENSION_PLAN_LEAD_PORTABILITY_UPDATE                     |
       |----------------------|----------------------------------|-------------------------------------------------------------------|
-      | Contratação          | Previdência Sobrevivência Lead   | CONTRACT_LIFE_PENSION_LEAD_CREATE                                 |
-      | Previ. Sobrevivência | (Obrigatório)                    | CONTRACT_LIFE_PENSION_LEAD_UPDATE                                 |
+      | Contratação Prev     | Previdência Sobrevivência Lead   | CONTRACT_LIFE_PENSION_LEAD_CREATE                                 |
+      | Sobrevivência Lead   | (Obrigatório)                    | CONTRACT_LIFE_PENSION_LEAD_UPDATE                                 |
+      |----------------------|----------------------------------|-------------------------------------------------------------------|
+      | Contratação Prev     | Previdência Sobrevivência        | CONTRACT_LIFE_PENSION_CREATE                                      |
+      | Sobrevivência        | (Obrigatório)                    | CONTRACT_LIFE_PENSION_UPDATE                                      |  
+      |                      |                                  | CONTRACT_LIFE_PENSION_READ                                        |
       |----------------------|----------------------------------|-------------------------------------------------------------------|
       | Portabilidade        | Previdência Sobrevivência Porta. | CONTRACT_LIFE_PENSION_LEAD_PORTABILITY_CREATE                     |
       | Previ. Sobrevivência | (Obrigatório)                    | CONTRACT_LIFE_PENSION_LEAD_PORTABILITY_UPDATE                     |
@@ -239,21 +250,23 @@ info:
     - Caso a instituição receptora envie permissões de fase 2 (compartilhamento de dados) e 3 (iniciação de serviços) em uma única solicitação, a transmissora deve rejeitar o pedido da receptora dando retorno HTTP Status Code 422.
     - Caso a instituição receptora envie permissões de fase 3 (iniciação de serviços) de diferentes agrupamentos em uma única solicitação, a transmissora deve rejeitar o pedido da receptora dando retorno HTTP Status Code 422.
     - A transmissora deve retornar, da lista de permissions requisitadas, apenas o subconjunto de permissions por ela suportada, removendo da lista as permissions de produtos não suportados e retornando HTTP Status Code 201. Caso não restem permissões funcionais, a instituição transmissora deve retornar o erro HTTP Code "422 Unprocessable Entity".
-  version: 2.5.1
+    - Durante o fluxo de cotação e contratação, a SPOC pode utilizar a API de Consents para gerar o consentimento de Fase 3 para ela mesma, entretanto não pode criar esse consentimento junto a uma transmissora. A transmissora deve rejeitar o pedido da receptora dando retorno HTTP Status Code 422 caso esse cenário ocorra.
+  
+  version: 2.6.0
   license:
     name: Apache 2.0
-    url: 'http://www.apache.org/licenses/LICENSE-2.0'
+    url: http://www.apache.org/licenses/LICENSE-2.0
   contact:
     name: Governança do Open Insurance Brasil - Especificações
-    url: 'https://www.gov.br/susep/'
+    url: https://www.gov.br/susep/
 servers:
-  - url: 'https://api.seguro.com.br/open-insurance/consents/v2'
+  - url: https://api.seguro.com.br/open-insurance/consents/v2
     description: Servidor de Produção
-  - url: 'https://apih.seguro.com.br/open-insurance/consents/v2'
+  - url: https://apih.seguro.com.br/open-insurance/consents/v2
     description: Servidor de Homologação
 tags:
   - name: Consents
-    description: 'Operações para criação, consulta e revogação do consentimento dado pelo cliente.'
+    description: Operações para criação, consulta e revogação do consentimento dado pelo cliente.
 paths:
   /consents:
     post:
@@ -268,6 +281,7 @@ paths:
         - $ref: '#/components/parameters/xFapiCustomerIpAddress'
         - $ref: '#/components/parameters/xFapiInteractionId'
         - $ref: '#/components/parameters/xCustomerUserAgent'
+        - $ref: '#/components/parameters/xIdempotencyKey'
       requestBody:
         content:
           application/json:
@@ -291,7 +305,7 @@ paths:
         '406':
           $ref: '#/components/responses/NotAcceptable'
         '422':
-          $ref: '#/components/responses/UnprocessableEntity'
+          $ref: '#/components/responses/UnprocessableEntityConsents'
         '429':
           $ref: '#/components/responses/TooManyRequests'
         '500':
@@ -394,35 +408,35 @@ components:
           maxLength: 2000
           description: URI completo que gerou a resposta atual.
           pattern: ^(https:\/\/)(.*?)(\/open-insurance\/consents\/v\d+)(\/.*)?$
-          example: 'https://api.organizacao.com.br/open-insurance/consents/v2/consents'
+          example: https://api.organizacao.com.br/open-insurance/consents/v2/consents
         first:
           type: string
           format: uri
           maxLength: 2000
           description: URI da primeira página que originou essa lista de resultados. Restrição - Obrigatório quando não for a primeira página da resposta
           pattern: ^(https:\/\/)(.*?)(\/open-insurance\/consents\/v\d+)(\/.*)?$
-          example: 'https://api.organizacao.com.br/open-insurance/consents/v2/consents'
+          example: https://api.organizacao.com.br/open-insurance/consents/v2/consents
         prev:
           type: string
           format: uri
           maxLength: 2000
           description: "URI da página anterior dessa lista de resultados. Restrição - \tObrigatório quando não for a primeira página da resposta"
           pattern: ^(https:\/\/)(.*?)(\/open-insurance\/consents\/v\d+)(\/.*)?$
-          example: 'https://api.organizacao.com.br/open-insurance/consents/v2/consents'
+          example: https://api.organizacao.com.br/open-insurance/consents/v2/consents
         next:
           type: string
           format: uri
           maxLength: 2000
           description: URI da próxima página dessa lista de resultados. Restrição - Obrigatório quando não for a última página da resposta
           pattern: ^(https:\/\/)(.*?)(\/open-insurance\/consents\/v\d+)(\/.*)?$
-          example: 'https://api.organizacao.com.br/open-insurance/consents/v2/consents'
+          example: https://api.organizacao.com.br/open-insurance/consents/v2/consents
         last:
           type: string
           format: uri
           maxLength: 2000
           description: URI da última página dessa lista de resultados. Restrição - Obrigatório quando não for a última página da resposta
           pattern: ^(https:\/\/)(.*?)(\/open-insurance\/consents\/v\d+)(\/.*)?$
-          example: 'https://api.organizacao.com.br/open-insurance/consents/v2/consents'
+          example: https://api.organizacao.com.br/open-insurance/consents/v2/consents
       additionalProperties: false
     Meta:
       type: object
@@ -461,7 +475,7 @@ components:
             permissions:
               type: array
               items:
-                description: 'Especifica os tipos de permissões de acesso às APIs no escopo do Open Insurance Brasil - Fase 2 e 3, de acordo com os blocos de consentimento fornecidos pelo usuário e necessários ao acesso a cada endpoint das APIs.'
+                description: Especifica os tipos de permissões de acesso às APIs no escopo do Open Insurance Brasil - Fase 2 e 3, de acordo com os blocos de consentimento fornecidos pelo usuário e necessários ao acesso a cada endpoint das APIs.
                 type: string
                 enum:
                   - CUSTOMERS_PERSONAL_IDENTIFICATIONS_READ
@@ -584,12 +598,15 @@ components:
                   - PENSION_WITHDRAWAL_CREATE
                   - CAPITALIZATION_TITLE_WITHDRAWAL_CREATE
                   - RESOURCES_READ
+                  - CONTRACT_LIFE_PENSION_CREATE
+                  - CONTRACT_LIFE_PENSION_UPDATE
+                  - CONTRACT_LIFE_PENSION_READ
               minItems: 1
               example:
                 - CAPITALIZATION_TITLE_READ
                 - RESOURCES_READ
             expirationDateTime:
-              description: 'Data e hora de expiração da permissão. De preenchimento obrigatório, reflete a data limite de validade do consentimento. Uma string com data e hora conforme especificação RFC-3339, sempre com a utilização de timezone UTC(UTC time format).'
+              description: Data e hora de expiração da permissão. De preenchimento obrigatório, reflete a data limite de validade do consentimento. Uma string com data e hora conforme especificação RFC-3339, sempre com a utilização de timezone UTC(UTC time format).
               type: string
               maxLength: 20
               format: date-time
@@ -606,20 +623,20 @@ components:
                   description: Número da apólice, conforme regulamentação vigente
                   type: string
                   maxLength: 60
-                  example: "111111"
+                  example: '111111'
                 endorsementType:
                   description: Tipo de endosso
                   type: string
                   enum:
-                    [ALTERACAO,
-                     CANCELAMENTO,
-                     INCLUSAO,
-                     EXCLUSAO]
+                    - ALTERACAO
+                    - CANCELAMENTO
+                    - INCLUSAO
+                    - EXCLUSAO
                 requestDescription:
                   description: Descrição adicional do endosso
                   type: string
                   maxLength: 1024
-                  example:  Descrição adicional do endosso.
+                  example: Descrição adicional do endosso.
             claimNotificationInformation:
               description: Objeto contendo dados do aviso de sinistro. Obrigatório para as permissões CLAIM_NOTIFICATION_REQUEST_DAMAGE_CREATE e CLAIM_NOTIFICATION_REQUEST_PERSON_CREATE
               type: object
@@ -632,17 +649,18 @@ components:
                 documentType:
                   description: Tipo de Documento Emitido.
                   type: string
-                  enum: [APOLICE_INDIVIDUAL,
-                         BILHETE,
-                         CERTIFICADO,
-                         APOLICE_INDIVIDUAL_AUTOMOVEL,
-                         APOLICE_FROTA_AUTOMOVEL,
-                         CERTIFICADO_AUTOMOVEL]
+                  enum:
+                    - APOLICE_INDIVIDUAL
+                    - BILHETE
+                    - CERTIFICADO
+                    - APOLICE_INDIVIDUAL_AUTOMOVEL
+                    - APOLICE_FROTA_AUTOMOVEL
+                    - CERTIFICADO_AUTOMOVEL
                 policyNumber:
                   description: Número da apólice, conforme regulamentação vigente
                   type: string
                   maxLength: 60
-                  example: "111111"
+                  example: '111111'
                 groupCertificateId:
                   description: Identificador do Certificado(Caso Tipo de Documento Emitido for certificado)
                   type: string
@@ -656,12 +674,144 @@ components:
                 occurrenceTime:
                   description: Horário de ocorrência do sinistro
                   type: string
-                  pattern: '[0-2][0-3]:[0-5][0-9]:[0-5][0-9]'
+                  pattern: ([0-1][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]
                   example: '22:18:54'
                 occurrenceDescription:
                   description: Descrição da Ocorrência/Relato da ocorrência
                   type: string
                   maxLength: 10000
+            withdrawalCaptalizationInformation:
+              type: object
+              description: Objeto contendo dados de Informações do Produto. Obrigatório para a permission "CAPITALIZATION_TITLE_WITHDRAWAL_CREATEE"
+              required:
+                - capitalizationTitleName
+                - planId
+                - titleId
+                - seriesId
+                - termEndDate
+                - withdrawalReason
+                - withdrawalTotalAmount
+              properties:
+                capitalizationTitleName:
+                  type: string
+                  description: Nome comercial do produto, pelo qual é identificado 
+                                nos canais de distribuição e atendimento da sociedade.
+                  maxLength: 100
+                planId:
+                  description: Identificação do plano
+                  type: string
+                  maxLength: 60
+                titleId: 
+                  description: Identificação do título de capitalização
+                  type: string
+                  maxLength: 60
+                seriesId: 
+                  description: Identificação da série
+                  type: string
+                  maxLength: 60
+                termEndDate: 
+                  description: Data de fim de vigência do título
+                  type: string
+                  format: date
+                  maxLength: 10
+                  pattern: '^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])$'
+                  example: '2022-10-27'
+                withdrawalReason:
+                  description:  Motivo do resgate. 
+                  type: string
+                  enum: [IMPOSSIBILIDADE_DE_PAGAMENTO_DAS_PARCELAS,
+                        COMPROMISSOS_PESSOAIS_EMERGENCIAIS,
+                        INSATISFACAO_COM_CARACTERISTICAS_DO_PRODUTO,
+                        INSATISFACAO_NO_RELACIONAMENTO_COM_SOCIEDADE_CAPITALIZACAO,
+                        AQUISICAO_DE_OUTROS_BENS_OU_PRODUTOS,
+                        PERDA_DE_INTERESSE,
+                        PREFIRO_NAO_RESPONDER,
+                        OUTROS]
+                withdrawalReasonOthers:
+                  description:  Motivo do resgate para 'Outros'. 
+                  type: string
+                  maxLength: 500
+                withdrawalTotalAmount:
+                  description: Valor bruto a resgatar. O pedido de resgate será analisado e o valor será submetido a análise e estará sujeito as alterações (aplicação de impostos, variação de saldos, viabilidade do pedido de resgate, entre outros). Ocorrendo o resgate do título, este será automaticamente cancelado.
+                  allOf:
+                    - $ref: '#/components/schemas/AmountDetails'
+            withdrawalLifePensionInformation:
+              type: object
+              description: Objeto contendo dados de Informações do Produto. Obrigatório para a permission "PENSION_WITHDRAWAL_CREATE"
+              required:
+                - certificateId
+                - productName
+                - withdrawalType
+                - withdrawalReason
+                - pmbacAmount
+              properties:
+                certificateId:
+                  description: Identificador do Certificado
+                  type: string
+                  maxLength: 60
+                productName:
+                  description: Nome comercial do produto, pelo qual é identificado nos canais de distribuição e atendimento da sociedade
+                  type: string
+                  maxLength: 100
+                  example: Produto A Previdência
+                withdrawalType:
+                  description: Tipo de resgate. Este valor será submetido a análise e estará 
+                                sujeito as alterações (aplicação de impostos, variação de saldos, 
+                                e condições contratuais).
+                  type: string
+                  enum: [1_TOTAL,
+                        2_PARCIAL]
+                withdrawalReason:
+                  description:  Motivo do resgate. Obrigatório para Previdência Sobrevivência.
+                  type: string
+                  enum: [ 1_EMERGENCIAS_DE_SAUDE,
+                          2_APLICACAO_EM_OUTROS_INVESTIMENTOS,
+                          3_INSATISFACAO_COM_A_ENTIDADE,
+                          4_INSATISFACAO_COM_A_RENTABILIDADE_DO_PRODUTO,
+                          5_INSATISFACAO_COM_O_PRODUTO,
+                          6_AQUISICAO_DE_BENS,
+                          7_LIQUIDEZ_FINANCEIRA,
+                          8_REALIZACAO_DO_OBJETIVO_DO_INVESTIMENTO,
+                          9_OUTROS]
+                withdrawalReasonOthers:
+                  description:  Motivo do resgate para 'Outros'. Obrigatório, caso selecionado "outros"
+                              na pergunta " Motivo do resgate ".
+                  type: string
+                  maxLength: 100
+                desiredTotalAmount:
+                  description: 'Valor bruto desejado do resgate. Este valor será submetido a 
+                                análise e estará sujeito as alterações (aplicação de impostos, 
+                                variação de saldos, e condições contratuais). Este campo não 
+                                deverá permitir a inclusão de valores maiores que o saldo atual 
+                                dele. Condicional, caso a opção "2. Parcial" seja selecionada no 
+                                campo "Tipo de resgate".'
+                  allOf:
+                    - $ref: '#/components/schemas/AmountDetails'
+
+                pmbacAmount:
+                  description: Valor PMBaC (fim do mês). O valor exibido refere-se ao mês anterior, podendo estar sujeito a variações
+                  allOf:
+                    - $ref: '#/components/schemas/AmountDetails'
+            raffleCaptalizationTitleInformation:
+              type: object
+              description: Objeto contendo dados de Informações do Produto. Obrigatório para a permission "QUOTE_CAPITALIZATION_TITLE_RAFFLE_CREATE"
+              required: 
+                - contactType
+              properties: 
+                contactType:
+                  type: string
+                  description: Forma de recebimento do contato informado pelo cliente.
+                  enum: 
+                    - EMAIL
+                    - TELEFONE
+                email:
+                  type: string
+                  description: Email informado pelo cliente. Obrigatorio no caso da seleção do valor "EMAIL" no campo contactType.
+                  pattern: ^\S+@\S+\.\S+$
+                phone:
+                  type: string
+                  description: Telefone informado pelo cliente. Obrigatorio no caso da seleção do valor "TELEFONE" no campo contactType.
+
           additionalProperties: false
       additionalProperties: false
     ResponseConsent:
@@ -691,11 +841,11 @@ components:
                 - o identificador específico dentro do namespace (C1DD93123).
                 Informações mais detalhadas sobre a construção de namespaces devem ser consultadas na [RFC8141](https://tools.ietf.org/html/rfc8141).
               type: string
-              pattern: '^urn:[a-zA-Z0-9][a-zA-Z0-9-]{0,31}:[a-zA-Z0-9()+,\-.:=@;$_!*''%\/?#]+$'
+              pattern: ^urn:[a-zA-Z0-9][a-zA-Z0-9-]{0,31}:[a-zA-Z0-9()+,\-.:=@;$_!*'%\/?#]+$
               maxLength: 256
-              example: 'urn:prudential:C1DD93123'
+              example: urn:prudential:C1DD93123
             creationDateTime:
-              description: 'Data e hora em que o recurso foi criado. Uma string com data e hora conforme especificação RFC-3339, sempre com a utilização de timezone UTC(UTC time format).'
+              description: Data e hora em que o recurso foi criado. Uma string com data e hora conforme especificação RFC-3339, sempre com a utilização de timezone UTC(UTC time format).
               type: string
               format: date-time
               example: '2021-05-21T08:30:00Z'
@@ -710,7 +860,7 @@ components:
                 - CONSUMED
               example: AWAITING_AUTHORISATION
             statusUpdateDateTime:
-              description: 'Data e hora em que o recurso foi atualizado. Uma string com data e hora conforme especificação RFC-3339, sempre com a utilização de timezone UTC(UTC time format).'
+              description: Data e hora em que o recurso foi atualizado. Uma string com data e hora conforme especificação RFC-3339, sempre com a utilização de timezone UTC(UTC time format).
               type: string
               format: date-time
               example: '2021-05-21T08:30:00Z'
@@ -718,7 +868,7 @@ components:
             permissions:
               type: array
               minItems: 1
-              description: 'Especifica os tipos de permissões de acesso às APIs no escopo do Open Insurance Brasil - Fase 2 e 3, de acordo com os blocos de consentimento fornecidos pelo usuário e necessários ao acesso a cada endpoint das APIs.'
+              description: Especifica os tipos de permissões de acesso às APIs no escopo do Open Insurance Brasil - Fase 2 e 3, de acordo com os blocos de consentimento fornecidos pelo usuário e necessários ao acesso a cada endpoint das APIs.
               items:
                 type: string
                 enum:
@@ -842,11 +992,14 @@ components:
                   - PENSION_WITHDRAWAL_CREATE
                   - CAPITALIZATION_TITLE_WITHDRAWAL_CREATE
                   - RESOURCES_READ
+                  - CONTRACT_LIFE_PENSION_CREATE
+                  - CONTRACT_LIFE_PENSION_UPDATE
+                  - CONTRACT_LIFE_PENSION_READ
               example:
                 - CAPITALIZATION_TITLE_READ
                 - RESOURCES_READ
             expirationDateTime:
-              description: 'Data e hora de expiração da permissão. De preenchimento obrigatório, reflete a data limite de validade do consentimento. Uma string com data e hora conforme especificação RFC-3339, sempre com a utilização de timezone UTC(UTC time format).'
+              description: Data e hora de expiração da permissão. De preenchimento obrigatório, reflete a data limite de validade do consentimento. Uma string com data e hora conforme especificação RFC-3339, sempre com a utilização de timezone UTC(UTC time format).
               type: string
               format: date-time
               example: '2021-05-21T08:30:00Z'
@@ -863,20 +1016,20 @@ components:
                   description: Número da apólice, conforme regulamentação vigente
                   type: string
                   maxLength: 60
-                  example: "111111"
+                  example: '111111'
                 endorsementType:
                   description: Tipo de endosso
                   type: string
                   enum:
-                    [ALTERACAO,
-                     CANCELAMENTO,
-                     INCLUSAO,
-                     EXCLUSAO]
+                    - ALTERACAO
+                    - CANCELAMENTO
+                    - INCLUSAO
+                    - EXCLUSAO
                 requestDescription:
                   description: Descrição adicional do endosso
                   type: string
                   maxLength: 1024
-                  example:  Descrição adicional do endosso.
+                  example: Descrição adicional do endosso.
             claimNotificationInformation:
               description: Objeto contendo dados do aviso de sinistro. Obrigatório para as permissões CLAIM_NOTIFICATION_REQUEST_DAMAGE_CREATE e CLAIM_NOTIFICATION_REQUEST_PERSON_CREATE
               type: object
@@ -889,17 +1042,18 @@ components:
                 documentType:
                   description: Tipo de Documento Emitido.
                   type: string
-                  enum: [APOLICE_INDIVIDUAL,
-                         BILHETE,
-                         CERTIFICADO,
-                         APOLICE_INDIVIDUAL_AUTOMOVEL,
-                         APOLICE_FROTA_AUTOMOVEL,
-                         CERTIFICADO_AUTOMOVEL]
+                  enum:
+                    - APOLICE_INDIVIDUAL
+                    - BILHETE
+                    - CERTIFICADO
+                    - APOLICE_INDIVIDUAL_AUTOMOVEL
+                    - APOLICE_FROTA_AUTOMOVEL
+                    - CERTIFICADO_AUTOMOVEL
                 policyNumber:
                   description: Número da apólice, conforme regulamentação vigente
                   type: string
                   maxLength: 60
-                  example: "111111"
+                  example: '111111'
                 groupCertificateId:
                   description: Identificador do Certificado(Caso Tipo de Documento Emitido for certificado)
                   type: string
@@ -913,12 +1067,144 @@ components:
                 occurrenceTime:
                   description: Horário de ocorrência do sinistro
                   type: string
-                  pattern: '[0-2][0-3]:[0-5][0-9]:[0-5][0-9]'
+                  pattern: ([0-1][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]
                   example: '22:18:54'
                 occurrenceDescription:
                   description: Descrição da Ocorrência/Relato da ocorrência
                   type: string
                   maxLength: 10000
+            withdrawalCaptalizationInformation:
+              type: object
+              description: Objeto contendo dados de Informações do Produto. Obrigatório para a permission "CAPITALIZATION_TITLE_WITHDRAWAL_CREATEE"
+              required:
+                - capitalizationTitleName
+                - planId
+                - titleId
+                - seriesId
+                - termEndDate
+                - withdrawalReason
+                - withdrawalTotalAmount
+              properties:
+                capitalizationTitleName:
+                  type: string
+                  description: Nome comercial do produto, pelo qual é identificado 
+                                nos canais de distribuição e atendimento da sociedade.
+                  maxLength: 100
+                planId:
+                  description: Identificação do plano
+                  type: string
+                  maxLength: 60
+                titleId: 
+                  description: Identificação do título de capitalização
+                  type: string
+                  maxLength: 60
+                seriesId: 
+                  description: Identificação da série
+                  type: string
+                  maxLength: 60
+                termEndDate: 
+                  description: Data de fim de vigência do título
+                  type: string
+                  format: date
+                  maxLength: 10
+                  pattern: '^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])$'
+                  example: '2022-10-27'
+                withdrawalReason:
+                  description:  Motivo do resgate. 
+                  type: string
+                  enum: [IMPOSSIBILIDADE_DE_PAGAMENTO_DAS_PARCELAS,
+                        COMPROMISSOS_PESSOAIS_EMERGENCIAIS,
+                        INSATISFACAO_COM_CARACTERISTICAS_DO_PRODUTO,
+                        INSATISFACAO_NO_RELACIONAMENTO_COM_SOCIEDADE_CAPITALIZACAO,
+                        AQUISICAO_DE_OUTROS_BENS_OU_PRODUTOS,
+                        PERDA_DE_INTERESSE,
+                        PREFIRO_NAO_RESPONDER,
+                        OUTROS]
+                withdrawalReasonOthers:
+                  description:  Motivo do resgate para 'Outros'. 
+                  type: string
+                  maxLength: 500
+                withdrawalTotalAmount:
+                  description: Valor bruto a resgatar. O pedido de resgate será analisado e o valor será submetido a análise e estará sujeito as alterações (aplicação de impostos, variação de saldos, viabilidade do pedido de resgate, entre outros). Ocorrendo o resgate do título, este será automaticamente cancelado.
+                  allOf:
+                    - $ref: '#/components/schemas/AmountDetails'
+            withdrawalLifePensionInformation:
+              type: object
+              description: Objeto contendo dados de Informações do Produto. Obrigatório para a permission "PENSION_WITHDRAWAL_CREATE"
+              required:
+                - certificateId
+                - productName
+                - withdrawalType
+                - withdrawalReason
+                - pmbacAmount
+              properties:
+                certificateId:
+                  description: Identificador do Certificado
+                  type: string
+                  maxLength: 60
+                productName:
+                  description: Nome comercial do produto, pelo qual é identificado nos canais de distribuição e atendimento da sociedade
+                  type: string
+                  maxLength: 100
+                  example: Produto A Previdência
+                withdrawalType:
+                  description: Tipo de resgate. Este valor será submetido a análise e estará 
+                                sujeito as alterações (aplicação de impostos, variação de saldos, 
+                                e condições contratuais).
+                  type: string
+                  enum: [1_TOTAL,
+                        2_PARCIAL]
+                withdrawalReason:
+                  description:  Motivo do resgate. Obrigatório para Previdência Sobrevivência.
+                  type: string
+                  enum: [ 1_EMERGENCIAS_DE_SAUDE,
+                          2_APLICACAO_EM_OUTROS_INVESTIMENTOS,
+                          3_INSATISFACAO_COM_A_ENTIDADE,
+                          4_INSATISFACAO_COM_A_RENTABILIDADE_DO_PRODUTO,
+                          5_INSATISFACAO_COM_O_PRODUTO,
+                          6_AQUISICAO_DE_BENS,
+                          7_LIQUIDEZ_FINANCEIRA,
+                          8_REALIZACAO_DO_OBJETIVO_DO_INVESTIMENTO,
+                          9_OUTROS]
+                withdrawalReasonOthers:
+                  description:  Motivo do resgate para 'Outros'. Obrigatório, caso selecionado "outros"
+                              na pergunta " Motivo do resgate ".
+                  type: string
+                  maxLength: 100
+                desiredTotalAmount:
+                  description: 'Valor bruto desejado do resgate. Este valor será submetido a 
+                                análise e estará sujeito as alterações (aplicação de impostos, 
+                                variação de saldos, e condições contratuais). Este campo não 
+                                deverá permitir a inclusão de valores maiores que o saldo atual 
+                                dele. Condicional, caso a opção "2. Parcial" seja selecionada no 
+                                campo "Tipo de resgate".'
+                  allOf:
+                    - $ref: '#/components/schemas/AmountDetails'
+
+                pmbacAmount:
+                  description: Valor PMBaC (fim do mês). O valor exibido refere-se ao mês anterior, podendo estar sujeito a variações
+                  allOf:
+                    - $ref: '#/components/schemas/AmountDetails'
+
+            raffleCaptalizationTitleInformation:
+              type: object
+              description: Objeto contendo dados de Informações do Produto. Obrigatório para a permission "QUOTE_CAPITALIZATION_TITLE_RAFFLE_CREATE"
+              required: 
+                - contactType
+              properties: 
+                contactType:
+                  type: string
+                  description: Forma de recebimento do contato informado pelo cliente.
+                  enum: 
+                    - EMAIL
+                    - TELEFONE
+                email:
+                  type: string
+                  description: Email informado pelo cliente. Obrigatorio no caso da seleção do valor "EMAIL" no campo contactType.
+                  pattern: ^\S+@\S+\.\S+$
+                phone:
+                  type: string
+                  description: Telefone informado pelo cliente. Obrigatorio no caso da seleção do valor "TELEFONE" no campo contactType.
             rejection:
               type: object
               description: Objeto a ser retornado caso o consentimento seja rejeitado.
@@ -948,6 +1234,37 @@ components:
         - ASPSP
         - TPP
       example: USER
+    AmountDetails:
+        type: object
+        description: Detalhes de valores/limites
+        required:
+          - amount
+          - unit
+        properties:
+          amount:
+            type: string
+            pattern: '^-?\d{1,15}\.\d{2}$'
+            example: '2000.00'
+          unit:
+            type: object
+            required:
+              - code
+              - description
+            properties:
+              code:
+                type: string
+                example: R$
+                enum: [ د.إ, Af, L, Դ, Kz, $, ƒ, ман, КМ, ৳, лв, ب.د, ₣, Bs., R$, P, Br, ¥, ₡, Kč, kr, د.ج, £, Nfk, N/A, €, ლ, ₵, D, Q, Kn, G, Ft, Rp, ₪, ₹, ع.د, ﷼, Sh, ៛, ₩, د.ك, 〒, ₭, ل.ل, Rs, ل.د, د.م., ден, K, ₮, UM, ₨, ރ., MK, RM, MTn, ₦, C$, ر.ع., B/., S/., ₱, zł, ₲, ر.ق, din, р., ر.س, Le, Db, ل.س, ฿, ЅМ, m, د.ت, T$, ₤, ₴, Bs F, ₫, Vt, T, R, ZK ]
+              description:
+                type: string
+                description: Moeda da Parcela, de acordo com ISO-4217.
+                example: BRL
+                enum: [AFN,AFA,ALL,ALK,DZD,USD,EUR,ADP,ESP,FRF,AOA,AOK,AON,AOR,XCD,ARS,ARA,ARP,ARY,AMD,RUR,AWG,AUD,ATS,AZN,AYM,AZM,BSD,BHD,BDT,BBD,BYN,BYB,BYR,BEC,BEF,BEL,BZD,XOF,BMD,INR,BTN,BOP,BOB,BOV,BAM,BAD,BWP,NOK,BRL,BRB,BRC
+                        ,BRE,BRN,BRR,BND,BGN,BGJ,BGK,BGL,BUK,BIF,CVE,KHR,XAF,CAD,KYD,CLP,CLF,CNY,COP,COU,KMF,CDF,NZD,CRC,HRK,HRD,CUP,CUC,ANG,CYP,CZK,CSJ,CSK,DKK,DJF,DOP,ECS,ECV,EGP,SVC,GQE,ERN,EEK,SZL,ETB,XEU,FKP,FJD,FIM,XPF,GMD,GEL,GEK,DDM,DEM,GHS,
+                        GHC,GHP,GIP,GRD,GTQ,GBP,GNF,GNE,GNS,GWE,GWP,GYD,HTG,ITL,HNL,HKD,HUF,ISK,ISJ,IDR,XDR,IRR,IQD,IEP,ILS,ILP,ILR,JMD,JPY,JOD,KZT,KES,KPW,KRW,KWD,KGS,LAJ,LAK,LVL,LVR,LBP,LSL,ZAR,LSM,ZAL,LRD,LYD,CHF,LTL,LTT,LUC,LUF,LUL,MOP,MGA,MGF,MWK,MYR
+                        ,MVR,MVQ,MLF,MTL,MTP,MRU,MRO,MUR,XUA,MXN,MXV,MXP,MDL,MNT,MAD,MZN,MZE,MZM,MMK,NAD,NPR,NLG,NIO,NIC,NGN,MKD,OMR,PKR,PAB,PGK,PYG,PEN,PEH,PEI,PES,PHP,PLN,PLZ,PTE,QAR,RON,ROK,ROL,RUB,RWF,SHP,WST,STN,STD,SAR,RSD,CSD,SCR,SLL,SGD,
+                        XSU,SKK,SIT,SBD,SOS,SSP,SDG,RHD,ESA,ESB,LKR,SDD,SDP,SRD,SRG,SEK,CHE,CHW,CHC,SYP,TWD,TJS,TJR,TZS,THB,TPE,TOP,TTD,TND,TRY,TRL,TMT,TMM,UGX,UGS,UGW,UAH,UAK,SUR,AED,USS,USN,UYU,UYI,UYW,UYN,UYP,UZS,VUV,VEB,VEF,VES,VND,VNC,YER,YDD,YUD,
+                        YUM,YUN,ZRN,ZRZ,ZMW,ZMK,ZWL,ZWC,ZWD,ZWN,ZWR,XBA,XFO,XBB,XRE,XBC,XBD,XFU,XTS,XXX,XAU,XPD,XPT,XAG]
     EnumReasonCode:
       type: string
       description: |
@@ -956,7 +1273,8 @@ components:
         - CUSTOMER_MANUALLY_REJECTED – cliente efetuou a rejeição do consentimento manualmente através de interação nas instituições participantes.
         - CUSTOMER_MANUALLY_REVOKED – cliente efetuou a revogação após a autorização do consentimento.
         - CONSENT_MAX_DATE_REACHED – consentimento que ultrapassou o tempo limite de compartilhamento.
-        - CONSENT_TECHNICAL_ISSUE – consentimento que foi rejeitado devido a um problema técnico que impossibilita seu uso pela instituição receptora, por exemplo: falha associada a troca do AuthCode pelo AccessToken, durante o processo de Hybid Flow.
+        - CONSENT_TECHNICAL_ISSUE – consentimento que foi rejeitado devido a um problema técnico que impossibilita seu uso pela instituição receptora, por exemplo: 
+            falha associada a troca do AuthCode pelo AccessToken, durante o processo de Hybid Flow.
         - INTERNAL_SECURITY_REASON – consentimento que foi rejeitado devido as políticas de segurança aplicada pela instituição transmissora.
       enum:
         - CONSENT_EXPIRED
@@ -966,6 +1284,7 @@ components:
         - CONSENT_TECHNICAL_ISSUE
         - INTERNAL_SECURITY_REASON
       example: CONSENT_EXPIRED
+
     RejectedReason:
       type: object
       description: Define a razão pela qual o consentimento foi rejeitado.
@@ -1013,7 +1332,7 @@ components:
                 pattern: '[\w\W\s]*'
                 maxLength: 2048
               requestDateTime:
-                description: 'Data e hora da consulta, conforme especificação RFC-3339, formato UTC.'
+                description: Data e hora da consulta, conforme especificação RFC-3339, formato UTC.
                 type: string
                 maxLength: 20
                 format: date-time
@@ -1022,6 +1341,42 @@ components:
         meta:
           $ref: '#/components/schemas/Meta'
       additionalProperties: false
+    422ResponseErrorCreateConsents:
+      type: object
+      required:
+        - errors
+      properties:
+        errors:
+          type: object
+          minItems: 1
+          required:
+            - code
+            - title
+            - detail
+          properties:
+            code:
+              type: string
+              enum:
+                - ERRO_IDEMPOTENCIA
+                - NAO_INFORMADO
+              example: ERRO_IDEMPOTENCIA
+              description: Código do erro 422 de Entidade não processada.
+            title:
+              type: string
+              maxLength: 255
+              pattern: '[\w\W\s]*'
+              example: Tentativa de alteração de requisição já processada
+              description: |
+                - ERRO_ IDEMPOTENCIA: Tentativa de alteração de requisição já processada
+                - NÃO_INFORMADO: Não informada pelo servidor
+            detail:
+              type: string
+              maxLength: 2048
+              pattern: '[\w\W\s]*'
+              example: Tentativa de alteração de requisição já processada
+              description: |
+                - ERRO_ IDEMPOTENCIA: Tentativa de alteração de requisição já processada
+                - NÃO_INFORMADO: Não informada pelo servidor 
     LoggedUser:
       type: object
       description: Usuário (pessoa natural) que encontra-se logado na instituição receptora e que iniciará o processo de consentimento para compartilhamento de dados.
@@ -1041,16 +1396,16 @@ components:
               maxLength: 11
               description: Número do documento de identificação oficial do usuário.
               example: '11111111111'
-              pattern: '^\d{11}$'
+              pattern: ^\d{11}$
             rel:
               type: string
               maxLength: 3
               description: Tipo do documento de identificação oficial do usuário.
               example: CPF
-              pattern: '^[A-Z]{3}$'
+              pattern: ^[A-Z]{3}$
     BusinessEntity:
       type: object
-      description: 'Titular, pessoa jurídica a quem se referem os dados que são objeto de compartilhamento.'
+      description: Titular, pessoa jurídica a quem se referem os dados que são objeto de compartilhamento.
       additionalProperties: false
       required:
         - document
@@ -1067,13 +1422,13 @@ components:
               maxLength: 14
               description: Número do documento de identificação oficial do titular pessoa jurídica.
               example: '11111111111111'
-              pattern: '^\d{14}$'
+              pattern: ^\d{14}$
             rel:
               type: string
               maxLength: 4
               description: Tipo do documento de identificação oficial do titular pessoa jurídica.
               example: CNPJ
-              pattern: '^[A-Z]{4}$'
+              pattern: ^[A-Z]{4}$
   parameters:
     consentId:
       name: consentId
@@ -1083,7 +1438,7 @@ components:
       required: true
       schema:
         type: string
-        pattern: '^urn:[a-zA-Z0-9][a-zA-Z0-9-]{0,31}:[a-zA-Z0-9()+,\-.:=@;$_!*''%\/?#]+$'
+        pattern: ^urn:[a-zA-Z0-9][a-zA-Z0-9-]{0,31}:[a-zA-Z0-9()+,\-.:=@;$_!*'%\/?#]+$
         maxLength: 256
     Authorization:
       name: Authorization
@@ -1111,7 +1466,7 @@ components:
       required: false
       schema:
         type: string
-        pattern: '^(Mon|Tue|Wed|Thu|Fri|Sat|Sun), \d{2} (Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec) \d{4} \d{2}:\d{2}:\d{2} (GMT|UTC)$'
+        pattern: ^(Mon|Tue|Wed|Thu|Fri|Sat|Sun), \d{2} (Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec) \d{4} \d{2}:\d{2}:\d{2} (GMT|UTC)$
         minLength: 29
         maxLength: 29
     xFapiCustomerIpAddress:
@@ -1127,30 +1482,48 @@ components:
     xFapiInteractionId:
       name: x-fapi-interaction-id
       in: header
-      description: 'Um UID [RFC4122](https://tools.ietf.org/html/rfc4122) usado como um ID de correlação. Se fornecido, o transmissor deve "reproduzir" esse valor no cabeçalho de resposta.'
+      description: Um UID [RFC4122](https://tools.ietf.org/html/rfc4122) usado como um ID de correlação. Se fornecido, o transmissor deve "reproduzir" esse valor no cabeçalho de resposta.
       required: false
       schema:
         type: string
-        pattern: '^[a-zA-Z0-9][a-zA-Z0-9\-]{0,99}$'
+        pattern: ^[a-zA-Z0-9][a-zA-Z0-9\-]{0,99}$
         minLength: 1
         maxLength: 100
+    xIdempotencyKey:
+      name: x-idempotency-key
+      in: header
+      description: |
+        Cabeçalho HTTP personalizado. Identificador de solicitação 
+        exclusivo para suportar a idempotência.
+      required: true
+      schema:
+        type: string
+        minLength: 1
+        maxLength: 40
+        pattern: ^(?!\s)(.*)(\S)$
   securitySchemes:
     OAuth2Security:
       type: oauth2
       flows:
         clientCredentials:
-          tokenUrl: 'https://authserver.example/token'
+          tokenUrl: https://authserver.example/token
           scopes:
             consents: Criação do consentimento.
   responses:
+    UnprocessableEntityConsents:
+      description: Seguir as orientações presentes na descrição deste endpoint
+      content:
+        application/json; charset=utf-8:
+          schema:
+            $ref: '#/components/schemas/422ResponseErrorCreateConsents'
     UnprocessableEntity:
-      description: 'O servidor entende o tipo de conteúdo da entidade da requisição, e a sintaxe da requisição esta correta, mas não foi possível processar as instruções presente.'
+      description: O servidor entende o tipo de conteúdo da entidade da requisição, e a sintaxe da requisição esta correta, mas não foi possível processar as instruções presentes
       content:
         application/json; charset=utf-8:
           schema:
             $ref: '#/components/schemas/ResponseError'
     BadRequest:
-      description: 'A requisição foi malformada, omitindo atributos obrigatórios, seja no payload ou através de atributos na URL.'
+      description: A requisição foi malformada, omitindo atributos obrigatórios, seja no payload ou através de atributos na URL.
       content:
         application/json; charset=utf-8:
           schema:
@@ -1192,7 +1565,7 @@ components:
           schema:
             $ref: '#/components/schemas/ResponseError'
     TooManyRequests:
-      description: 'A operação foi recusada, pois muitas solicitações foram feitas dentro de um determinado período ou o limite global de requisições concorrentes foi atingido'
+      description: A operação foi recusada, pois muitas solicitações foram feitas dentro de um determinado período ou o limite global de requisições concorrentes foi atingido
       content:
         application/json; charset=utf-8:
           schema:
@@ -1212,7 +1585,7 @@ components:
             Se fornecido, o transmissor deve "reproduzir" esse valor no cabeçalho de resposta.
           schema:
             type: string
-            pattern: '^[a-zA-Z0-9][a-zA-Z0-9\-]{0,99}$'
+            pattern: ^[a-zA-Z0-9][a-zA-Z0-9\-]{0,99}$
             minLength: 1
             maxLength: 100
             example: 73cac523-d3ae-2289-b106-330a6218710d
@@ -1229,7 +1602,7 @@ components:
             Se fornecido, o transmissor deve "reproduzir" esse valor no cabeçalho de resposta.
           schema:
             type: string
-            pattern: '^[a-zA-Z0-9][a-zA-Z0-9\-]{0,99}$'
+            pattern: ^[a-zA-Z0-9][a-zA-Z0-9\-]{0,99}$
             minLength: 1
             maxLength: 100
             example: 92cac523-d3ae-2289-b106-330a6218710d
@@ -1246,7 +1619,8 @@ components:
             Se fornecido, o transmissor deve "reproduzir" esse valor no cabeçalho de resposta.
           schema:
             type: string
-            pattern: '^[a-zA-Z0-9][a-zA-Z0-9\-]{0,99}$'
+            pattern: ^[a-zA-Z0-9][a-zA-Z0-9\-]{0,99}$
             minLength: 1
             maxLength: 100
             example: 85bac523-d3ae-2289-b106-330a6218710d
+
