@@ -11,7 +11,7 @@ info:
     
     ### `/lead/request`
       - permissions:
-        - POST: **WITHDRAWAL_LEAD_CREATE**
+        - POST: **PENSION_WITHDRAWAL_LEAD_CREATE**
     ### `/pension/request`
       - permissions:
         - POST: **PENSION_WITHDRAWAL_CREATE**   
@@ -88,8 +88,11 @@ paths:
               schema:
                 $ref: '#/components/schemas/ResponseError'
       security:
+        - OpenId:
+          - openid
         - OAuth2Security:
-            - withdrawal-lead
+          - consent:consentId
+          - withdrawal-pension-lead
   /pension/request:
     post:
       tags:
@@ -1164,6 +1167,7 @@ components:
           authorizationUrl: https://authserver.example/authorization
           tokenUrl: https://authserver.example/token
           scopes:
+            withdrawal-pension-lead: Escopo necessário para acesso à API Withdrawal - Previdência(Lead).
             withdrawal-pension: Escopo necessário para acesso à API Withdrawal - Previdência.
             withdrawal-capitalization-title: Escopo necessário para acesso à API Withdrawal - Capitalização.
   responses:

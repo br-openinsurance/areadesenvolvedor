@@ -240,6 +240,9 @@ info:
       |----------------------|----------------------------------|-------------------------------------------------------------------|
       | Resgate Previdência  | Previdência (Obrigatório)        | PENSION_WITHDRAWAL_CREATE                                         |
       |----------------------|----------------------------------|-------------------------------------------------------------------|
+      | Resgate Previdência  | Previdência Lead(Obrigatório)    | PENSION_WITHDRAWAL_LEAD_CREATE                                    |
+      | Lead                 |                                  |                                                                   |
+      |---------------------------------------------------------|-------------------------------------------------------------------|
       | Resgate Cap.         | Capitalização (Obrigatório)      | CAPITALIZATION_TITLE_WITHDRAWAL_CREATE                            |
       |----------------------|----------------------------------|-------------------------------------------------------------------|
       ```
@@ -587,6 +590,9 @@ components:
                   - QUOTE_CAPITALIZATION_TITLE_CREATE
                   - QUOTE_CAPITALIZATION_TITLE_UPDATE
                   - QUOTE_CAPITALIZATION_TITLE_RAFFLE_CREATE
+                  - CONTRACT_LIFE_PENSION_CREATE
+                  - CONTRACT_LIFE_PENSION_UPDATE
+                  - CONTRACT_LIFE_PENSION_READ
                   - CONTRACT_LIFE_PENSION_LEAD_CREATE
                   - CONTRACT_LIFE_PENSION_LEAD_UPDATE
                   - CONTRACT_LIFE_PENSION_LEAD_PORTABILITY_CREATE
@@ -596,11 +602,10 @@ components:
                   - CONTRACT_PENSION_PLAN_LEAD_PORTABILITY_CREATE
                   - CONTRACT_PENSION_PLAN_LEAD_PORTABILITY_UPDATE
                   - PENSION_WITHDRAWAL_CREATE
+                  - PENSION_WITHDRAWAL_LEAD_CREATE
                   - CAPITALIZATION_TITLE_WITHDRAWAL_CREATE
                   - RESOURCES_READ
-                  - CONTRACT_LIFE_PENSION_CREATE
-                  - CONTRACT_LIFE_PENSION_UPDATE
-                  - CONTRACT_LIFE_PENSION_READ
+
               minItems: 1
               example:
                 - CAPITALIZATION_TITLE_READ
@@ -682,7 +687,7 @@ components:
                   maxLength: 10000
             withdrawalCaptalizationInformation:
               type: object
-              description: Objeto contendo dados de Informações do Produto. Obrigatório para a permission "CAPITALIZATION_TITLE_WITHDRAWAL_CREATEE"
+              description: Objeto contendo dados de Informações do Produto. Obrigatório para a permission "CAPITALIZATION_TITLE_WITHDRAWAL_CREATE"
               required:
                 - capitalizationTitleName
                 - planId
@@ -737,7 +742,7 @@ components:
                     - $ref: '#/components/schemas/AmountDetails'
             withdrawalLifePensionInformation:
               type: object
-              description: Objeto contendo dados de Informações do Produto. Obrigatório para a permission "PENSION_WITHDRAWAL_CREATE"
+              description: Objeto contendo dados de Informações do Produto. Obrigatório para a permission "PENSION_WITHDRAWAL_CREATE" ou "PENSION_WITHDRAWAL_LEAD_CREATE".
               required:
                 - certificateId
                 - productName
@@ -981,6 +986,9 @@ components:
                   - QUOTE_CAPITALIZATION_TITLE_CREATE
                   - QUOTE_CAPITALIZATION_TITLE_UPDATE
                   - QUOTE_CAPITALIZATION_TITLE_RAFFLE_CREATE
+                  - CONTRACT_LIFE_PENSION_CREATE
+                  - CONTRACT_LIFE_PENSION_UPDATE
+                  - CONTRACT_LIFE_PENSION_READ
                   - CONTRACT_LIFE_PENSION_LEAD_CREATE
                   - CONTRACT_LIFE_PENSION_LEAD_UPDATE
                   - CONTRACT_LIFE_PENSION_LEAD_PORTABILITY_CREATE
@@ -990,11 +998,9 @@ components:
                   - CONTRACT_PENSION_PLAN_LEAD_PORTABILITY_CREATE
                   - CONTRACT_PENSION_PLAN_LEAD_PORTABILITY_UPDATE
                   - PENSION_WITHDRAWAL_CREATE
+                  - PENSION_WITHDRAWAL_LEAD_CREATE
                   - CAPITALIZATION_TITLE_WITHDRAWAL_CREATE
                   - RESOURCES_READ
-                  - CONTRACT_LIFE_PENSION_CREATE
-                  - CONTRACT_LIFE_PENSION_UPDATE
-                  - CONTRACT_LIFE_PENSION_READ
               example:
                 - CAPITALIZATION_TITLE_READ
                 - RESOURCES_READ
@@ -1075,7 +1081,7 @@ components:
                   maxLength: 10000
             withdrawalCaptalizationInformation:
               type: object
-              description: Objeto contendo dados de Informações do Produto. Obrigatório para a permission "CAPITALIZATION_TITLE_WITHDRAWAL_CREATEE"
+              description: Objeto contendo dados de Informações do Produto. Obrigatório para a permission "CAPITALIZATION_TITLE_WITHDRAWAL_CREATE"
               required:
                 - capitalizationTitleName
                 - planId
@@ -1130,7 +1136,7 @@ components:
                     - $ref: '#/components/schemas/AmountDetails'
             withdrawalLifePensionInformation:
               type: object
-              description: Objeto contendo dados de Informações do Produto. Obrigatório para a permission "PENSION_WITHDRAWAL_CREATE"
+              description: Objeto contendo dados de Informações do Produto. Obrigatório para a permission "PENSION_WITHDRAWAL_CREATE" ou "PENSION_WITHDRAWAL_LEAD_CREATE".
               required:
                 - certificateId
                 - productName
