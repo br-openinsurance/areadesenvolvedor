@@ -43,7 +43,7 @@ info:
       - 1 - `Idempotência:` Valida se há divergência entre chave de idempotência e informações enviadas (ERRO_IDEMPOTENCIA);
       - 2 - `Demais validações:` Valida itens não explicitamente informados pelo servidor - (NAO_INFORMADO).      
      
-  version: 1.9.3
+  version: 1.9.4
   contact:
     name: Governança do Open Insurance Brasil
     email: gt-interfaces@openinsurancebr.org
@@ -1578,6 +1578,10 @@ components:
             - RJCT
             - ACKN
             - CANC
+        rejectionReason:
+          type: string
+          description: Campo condicionado ao status "RJCT", que deve apresentar a justificativa a recusa ao risco.
+          maxLength: 1024
         statusUpdateDateTime:
           type: string
           description: Data e hora da atualização do status.
@@ -2995,6 +2999,7 @@ components:
           type: object
           required:
             - consentId
+            - expirationDateTime
             - quoteCustomer
           properties:
             consentId:
@@ -3012,6 +3017,13 @@ components:
               pattern: ^urn:[a-zA-Z0-9][a-zA-Z0-9-]{0,31}:[a-zA-Z0-9()+,\-.:=@;$_!*'%\/?#]+$
               maxLength: 256
               example: urn:initiator:C1DD93123
+            expirationDateTime:
+              description: Data e hora de expiração da permissão. De preenchimento obrigatório, reflete a data limite de validade do consentimento. Uma string com data e hora conforme especificação RFC-3339, sempre com a utilização de timezone UTC(UTC time format).
+              type: string
+              format: date-time
+              pattern: ^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])T(?:[01]\d|2[0123]):(?:[012345]\d):(?:[012345]\d)Z$
+              example: '2021-05-21T08:30:00Z'
+              maxLength: 20
             quoteCustomer:
               type: object
               description: Objeto que agrupa as categorias de dados cadastrais do cliente.
@@ -3072,6 +3084,7 @@ components:
           type: object
           required:
             - consentId
+            - expirationDateTime
             - quoteData
             - quoteCustomer
           properties:
@@ -3090,6 +3103,13 @@ components:
               pattern: ^urn:[a-zA-Z0-9][a-zA-Z0-9-]{0,31}:[a-zA-Z0-9()+,\-.:=@;$_!*'%\/?#]+$
               maxLength: 256
               example: urn:initiator:C1DD93123
+            expirationDateTime:
+              description: Data e hora de expiração da permissão. De preenchimento obrigatório, reflete a data limite de validade do consentimento. Uma string com data e hora conforme especificação RFC-3339, sempre com a utilização de timezone UTC(UTC time format).
+              type: string
+              format: date-time
+              pattern: ^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])T(?:[01]\d|2[0123]):(?:[012345]\d):(?:[012345]\d)Z$
+              example: '2021-05-21T08:30:00Z'
+              maxLength: 20
             quoteCustomer:
               type: object
               description: Objeto que agrupa as categorias de dados cadastrais do cliente.
@@ -3190,27 +3210,11 @@ components:
           type: object
           description: Objeto contendo dados da solicitação de Pagamento de Sorteio de Título de Capitalização.
           required:
-            - modality
-            - susepProcessNumber
             - contactType
             - email
             - phone
             - cpfNumber
           properties:
-            modality:
-              type: string
-              description: Modalidade
-              enum:
-                - TRADICIONAL
-                - INSTRUMENTO_GARANTIA
-                - COMPRA_PROGRAMADA
-                - POPULAR
-                - FILANTROPIA_PREMIAVEL
-            susepProcessNumber:
-              description: Número do Processo Susep
-              type: string
-              maxLength: 70
-              example: '12345'
             contactType:
               description: Tipo de contato de preferência
               type: string
