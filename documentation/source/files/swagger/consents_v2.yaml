@@ -22,7 +22,6 @@ info:
      ## Válidações Semanticas - Entidade não processável - 422
       - 1 - `Idempotência:` Valida se há divergência entre chave de idempotência e informações enviadas (ERRO_IDEMPOTENCIA);
       - 2 - `Não Informado:` Valida itens não explicitamente informados pelo servidor - (NAO_INFORMADO).     
-
      
      
       ```
@@ -245,6 +244,8 @@ info:
       |---------------------------------------------------------|-------------------------------------------------------------------|
       | Resgate Cap.         | Capitalização (Obrigatório)      | CAPITALIZATION_TITLE_WITHDRAWAL_CREATE                            |
       |----------------------|----------------------------------|-------------------------------------------------------------------|
+      | Resgate Pessoas      | Pessoas (Obrigatório)            | PERSON_WITHDRAWAL_CREATE                                          |
+      |----------------------|----------------------------------|-------------------------------------------------------------------|
       ```
     - A instituição transmissora deve validar o preenchimento correto dos agrupamentos submetidos pela receptora no momento da geração do consentimento.
     - Caso a instituição receptora envie permissões sem o acompanhamento de todas as permissões obrigatórias de uma categoria, a transmissora deve rejeitar o pedido da receptora
@@ -255,7 +256,7 @@ info:
     - A transmissora deve retornar, da lista de permissions requisitadas, apenas o subconjunto de permissions por ela suportada, removendo da lista as permissions de produtos não suportados e retornando HTTP Status Code 201. Caso não restem permissões funcionais, a instituição transmissora deve retornar o erro HTTP Code "422 Unprocessable Entity".
     - Durante o fluxo de cotação e contratação, a SPOC pode utilizar a API de Consents para gerar o consentimento de Fase 3 para ela mesma, entretanto não pode criar esse consentimento junto a uma transmissora. A transmissora deve rejeitar o pedido da receptora dando retorno HTTP Status Code 422 caso esse cenário ocorra.
   
-  version: 2.6.0
+  version: 2.7.0
   license:
     name: Apache 2.0
     url: http://www.apache.org/licenses/LICENSE-2.0
@@ -284,7 +285,9 @@ paths:
         - $ref: '#/components/parameters/xFapiCustomerIpAddress'
         - $ref: '#/components/parameters/xFapiInteractionId'
         - $ref: '#/components/parameters/xCustomerUserAgent'
-        - $ref: '#/components/parameters/xIdempotencyKey'
+        - $ref: "#/components/parameters/x-v"
+        - $ref: "#/components/parameters/x-min-v"
+        - $ref: "#/components/parameters/xIdempotencyKey"
       requestBody:
         content:
           application/json:
@@ -332,6 +335,8 @@ paths:
         - $ref: '#/components/parameters/xFapiCustomerIpAddress'
         - $ref: '#/components/parameters/xFapiInteractionId'
         - $ref: '#/components/parameters/xCustomerUserAgent'
+        - $ref: "#/components/parameters/x-v"
+        - $ref: "#/components/parameters/x-min-v"
       responses:
         '200':
           $ref: '#/components/responses/200ConsentsConsentIdRead'
@@ -371,6 +376,8 @@ paths:
         - $ref: '#/components/parameters/xFapiCustomerIpAddress'
         - $ref: '#/components/parameters/xFapiInteractionId'
         - $ref: '#/components/parameters/xCustomerUserAgent'
+        - $ref: "#/components/parameters/x-v"
+        - $ref: "#/components/parameters/x-min-v"
       responses:
         '204':
           $ref: '#/components/responses/204ConsentsConsentIdDeleted'
@@ -605,7 +612,7 @@ components:
                   - PENSION_WITHDRAWAL_LEAD_CREATE
                   - CAPITALIZATION_TITLE_WITHDRAWAL_CREATE
                   - RESOURCES_READ
-
+                  - PERSON_WITHDRAWAL_CREATE 
               minItems: 1
               example:
                 - CAPITALIZATION_TITLE_READ
@@ -621,6 +628,7 @@ components:
               type: object
               required:
                 - policyNumber
+                - insuredObjectId
                 - endorsementType
                 - requestDescription
               properties:
@@ -629,6 +637,13 @@ components:
                   type: string
                   maxLength: 60
                   example: '111111'
+                insuredObjectId:
+                  description: lista de Identificador do Objeto Segurado (Caso aplicável)
+                  type: array
+                  items:  
+                    type: string
+                    maxLength: 100
+                    example: "216731531723"
                 endorsementType:
                   description: Tipo de endosso
                   type: string
@@ -670,6 +685,13 @@ components:
                   description: Identificador do Certificado(Caso Tipo de Documento Emitido for certificado)
                   type: string
                   maxLength: 60
+                insuredObjectId:
+                  description: lista de Identificador do Objeto Segurado (Caso aplicável)
+                  type: array
+                  items:  
+                    type: string
+                    maxLength: 100
+                    example: "216731531723"
                 occurrenceDate:
                   description: Data de Ocorrência do Sinistro
                   type: string
@@ -1001,6 +1023,7 @@ components:
                   - PENSION_WITHDRAWAL_LEAD_CREATE
                   - CAPITALIZATION_TITLE_WITHDRAWAL_CREATE
                   - RESOURCES_READ
+                  - PERSON_WITHDRAWAL_CREATE
               example:
                 - CAPITALIZATION_TITLE_READ
                 - RESOURCES_READ
@@ -1016,6 +1039,7 @@ components:
               required:
                 - policyNumber
                 - endorsementType
+                - insuredObjectId
                 - requestDescription
               properties:
                 policyNumber:
@@ -1023,6 +1047,13 @@ components:
                   type: string
                   maxLength: 60
                   example: '111111'
+                insuredObjectId:
+                  description: lista de Identificador do Objeto Segurado (Caso aplicável)
+                  type: array
+                  items:  
+                    type: string
+                    maxLength: 100
+                    example: "216731531723"
                 endorsementType:
                   description: Tipo de endosso
                   type: string
@@ -1042,6 +1073,7 @@ components:
               required:
                 - documentType
                 - policyNumber
+                - insuredObjectId
                 - occurrenceDate
                 - occurrenceDescription
               properties:
@@ -1064,6 +1096,13 @@ components:
                   description: Identificador do Certificado(Caso Tipo de Documento Emitido for certificado)
                   type: string
                   maxLength: 60
+                insuredObjectId:
+                  description: lista de Identificador do Objeto Segurado (Caso aplicável)
+                  type: array
+                  items:  
+                    type: string
+                    maxLength: 100
+                    example: "216731531723"
                 occurrenceDate:
                   description: Data de Ocorrência do Sinistro
                   type: string
@@ -1434,7 +1473,16 @@ components:
               maxLength: 4
               description: Tipo do documento de identificação oficial do titular pessoa jurídica.
               example: CNPJ
-              pattern: ^[A-Z]{4}$
+              pattern: '^[A-Z]{4}$'
+    XV:
+        type: string
+        description: |
+          Versão do endpoint da API requisitado pelo cliente. O titular dos dados deve 
+          responder com a versão mais alta suportada entre x-min-v e x-v. Se o valor de 
+          x-min-v for igual ou maior que o valor de x-v, o cabeçalho x-min-v deve ser 
+          tratado como ausente. Se todas as versões solicitadas não forem suportadas, 
+          o titular dos dados deve responder com o código de status 406 Not Acceptable.
+  
   parameters:
     consentId:
       name: consentId
@@ -1488,17 +1536,42 @@ components:
     xFapiInteractionId:
       name: x-fapi-interaction-id
       in: header
-      description: Um UID [RFC4122](https://tools.ietf.org/html/rfc4122) usado como um ID de correlação. Se fornecido, o transmissor deve "reproduzir" esse valor no cabeçalho de resposta.
-      required: false
+      description: 'Um UID [RFC4122](https://tools.ietf.org/html/rfc4122) usado como um ID de correlação. Se fornecido, o transmissor deve "reproduzir" esse valor no cabeçalho de resposta.'
+      required: true
       schema:
         type: string
         pattern: ^[a-zA-Z0-9][a-zA-Z0-9\-]{0,99}$
         minLength: 1
         maxLength: 100
+    x-v:
+      name: x-v
+      in: header
+      description: |
+        Versão do endpoint da API requisitado pelo cliente. O titular dos dados deve 
+        responder com a versão mais alta suportada entre x-min-v e x-v. Se o valor de 
+        x-min-v for igual ou maior que o valor de x-v, o cabeçalho x-min-v deve ser 
+        tratado como ausente. Se todas as versões solicitadas não forem suportadas, 
+        o titular dos dados deve responder com o código de status 406 Not Acceptable.
+      required: false
+      schema:
+        type: string
+      example: '2.1.3'
+    x-min-v:
+      name: x-min-v
+      in: header
+      description: |
+        Versão mínima do endpoint da API requisitado pelo cliente. O detentor dos dados 
+        deve responder com a versão mais alta suportada entre x-min-v e x-v. Se todas as 
+        versões solicitadas não forem suportadas, o titular dos dados deve responder com 
+        um código de status 406 Not Acceptable.
+      required: false
+      schema:
+        type: string
+      example: '2.0.0'
     xIdempotencyKey:
       name: x-idempotency-key
       in: header
-      description: |
+      description: | 
         Cabeçalho HTTP personalizado. Identificador de solicitação 
         exclusivo para suportar a idempotência.
       required: true
@@ -1507,7 +1580,7 @@ components:
         minLength: 1
         maxLength: 40
         pattern: ^(?!\s)(.*)(\S)$
-  securitySchemes:
+  securitySchemes: 
     OAuth2Security:
       type: oauth2
       flows:
@@ -1528,6 +1601,7 @@ components:
         application/json; charset=utf-8:
           schema:
             $ref: '#/components/schemas/ResponseError'
+    
     BadRequest:
       description: A requisição foi malformada, omitindo atributos obrigatórios, seja no payload ou através de atributos na URL.
       content:
@@ -1548,6 +1622,10 @@ components:
             $ref: '#/components/schemas/ResponseError'
     Default:
       description: Erro inesperado.
+      headers:  
+        x-v: 
+          schema:
+            $ref: '#/components/schemas/XV'
       content:
         application/json; charset=utf-8:
           schema:
@@ -1595,6 +1673,9 @@ components:
             minLength: 1
             maxLength: 100
             example: 73cac523-d3ae-2289-b106-330a6218710d
+        x-v: 
+          schema:
+            $ref: '#/components/schemas/XV'
       content:
         application/json:
           schema:
@@ -1612,6 +1693,9 @@ components:
             minLength: 1
             maxLength: 100
             example: 92cac523-d3ae-2289-b106-330a6218710d
+        x-v: 
+          schema:
+            $ref: '#/components/schemas/XV'
       content:
         application/json:
           schema:
@@ -1629,4 +1713,6 @@ components:
             minLength: 1
             maxLength: 100
             example: 85bac523-d3ae-2289-b106-330a6218710d
-
+        x-v: 
+          schema:
+            $ref: '#/components/schemas/XV'      
