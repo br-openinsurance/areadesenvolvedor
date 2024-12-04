@@ -49,7 +49,7 @@ info:
       - 1 - `Idempotência:` Valida se há divergência entre chave de idempotência e informações enviadas (ERRO_IDEMPOTENCIA);
       - 2 - `Não Informado:` Valida itens não explicitamente informados pelo servidor - (NAO_INFORMADO).   
 
-  version: 1.10.2
+  version: 1.11.0
   contact:
     name: Governança do Open Insurance Brasil
     email: gt-interfaces@openinsurancebr.org
@@ -496,7 +496,9 @@ components:
           premium:
             $ref: '#/components/schemas/InsurancePersonPremium'
           claim:
-            $ref: '#/components/schemas/InsurancePersonClaim'
+            oneOf:
+              - $ref: '#/components/schemas/InsurancePersonClaim'
+              - $ref: '#/components/schemas/InsurancePersonClaimRecipient'
     PolicyDataPersonLife:
       type: array
       description: Lista que agrupa os dados das apólices em categorias.
@@ -508,7 +510,9 @@ components:
           premium:
             $ref: '#/components/schemas/InsurancePersonPremium'
           claim:
-            $ref: '#/components/schemas/InsurancePersonClaim'
+            oneOf:
+              - $ref: '#/components/schemas/InsurancePersonClaim'
+              - $ref: '#/components/schemas/InsurancePersonClaimRecipient'
     QuoteDataPersonLife:
       $ref: '#/components/schemas/QuotePerson'
     QuoteStatusPersonLife:
@@ -524,7 +528,9 @@ components:
           premium:
             $ref: '#/components/schemas/InsurancePersonPremium'
           claim:
-            $ref: '#/components/schemas/InsurancePersonClaim'
+            oneOf:
+              - $ref: '#/components/schemas/InsurancePersonClaim'
+              - $ref: '#/components/schemas/InsurancePersonClaimRecipient'
     QuoteDataPersonTravel:
       $ref: '#/components/schemas/QuotePersonTravel'
     QuoteStatusPersonTravel:
@@ -536,6 +542,7 @@ components:
         - termType
         - termEndDate
         - includeAssistanceServices
+        - requestedCoverages
       properties:
         termStartDate:
           type: string
@@ -648,6 +655,7 @@ components:
         quotes:
           type: array
           description: Lista de cotações enviadas pela seguradora.
+          minItems: 1
           items:
             required:
               - insurerQuoteId
@@ -1105,6 +1113,7 @@ components:
           type: string
           description: |
             Periodicidade da carência. OBS: Obrigatório, se houver
+          example: DIA
           enum:
             - DIA
             - MES
@@ -1116,6 +1125,7 @@ components:
           enum:
             - DIAS_UTEIS
             - DIAS_CORRIDOS
+          example: DIAS_UTEIS
         gracePeriodStartDate:
           type: string
           format: date
@@ -1252,7 +1262,7 @@ components:
         percentage:
           description: Percentual do POS
           type: string
-          pattern: ^\d{1,3}\.\d{1,9}$
+          pattern: ^100\.0{1,9}$|^\d{1,2}\.\d{1,9}$
           example: '10.5'
         fullIndemnityDeductible:
           description: Franquia sobre indenização integral
@@ -1455,6 +1465,8 @@ components:
         - OUTRAS
     QuotePersonTravel:
       type: object
+      required:
+        - coverages
       properties:
         termStartDate:
           type: string
@@ -1565,6 +1577,7 @@ components:
             - $ref: '#/components/schemas/QuoteInfoForTravelResult'
         quotes:
           type: array
+          minItems: 1
           description: Lista de cotações enviadas pela seguradora.
           items:
             type: object
@@ -1780,7 +1793,7 @@ components:
           type: string
           description: |
             Periodicidade da carência. OBS: Obrigatório, se houver
-            Periodicidade da carência. OBS: Obrigatório, se houver
+          example: DIA
           enum:
             - DIA
             - MES
@@ -1792,6 +1805,7 @@ components:
           enum:
             - DIAS_UTEIS
             - DIAS_CORRIDOS
+          example: DIAS_UTEIS
         gracePeriodStartDate:
           type: string
           format: date
@@ -1958,7 +1972,7 @@ components:
         coinsuranceRetainedPercentage:
           description: Percentual Retido em Cosseguro (Quando há cosseguro)
           type: string
-          pattern: ^\d{1,3}\.\d{1,9}$
+          pattern: ^100\.0{1,9}$|^\d{1,2}\.\d{1,9}$
           example: '10.00'
         coinsurers:
           type: array
@@ -2005,6 +2019,7 @@ components:
           gracePeriodicity:
             type: string
             description: 'Periodicidade da carência. OBS: Obrigatório, se houver'
+            example: DIA
             enum:
               - DIA
               - MES
@@ -2015,16 +2030,19 @@ components:
             enum:
               - DIAS_UTEIS
               - DIAS_CORRIDOS
+            example: DIAS_UTEIS
           gracePeriodStartDate:
             type: string
             format: date
             maxLength: 10
+            pattern: ^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])$
             example: '2022-12-31'
             description: 'Data de início da carência. OBS: Obrigatório, se houver'
           gracePeriodEndDate:
             type: string
             format: date
             maxLength: 10
+            pattern: ^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])$
             example: '2022-12-31'
             description: 'Data de fim da carência. OBS: Obrigatório, se houver'
           period:
@@ -2108,11 +2126,15 @@ components:
             description: Data solicitação
             type: string
             format: date
+            pattern: ^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])$
+            maxLength: 10
             example: '2020-12-31'
           movementDate:
             description: Data Movimentação (liquidação)
             type: string
             format: date
+            pattern: ^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])$
+            maxLength: 10
             example: '2020-12-31'
           sourceEntityCode:
             description: Código FIP da entidade de origem (cedente) da portabilidade
@@ -2353,10 +2375,8 @@ components:
           maxLength: 60
         country:
           description: País da Intermediador (de acordo com o código "alpha3" do ISO-3166; Caso Tipo de Intermediador for ESTIPULANTE)
-          type: string
-          maxLength: 3
-          pattern: ^(\w{3}){1}$
-          example: BRA
+          allOf:
+            - $ref: '#/components/schemas/EnumCountryCode'
         address:
           description: Endereço da Intermediador (restante do do endereço, excluindo cidade, estado e país; Caso Tipo de Intermediador for ESTIPULANTE)
           type: string
@@ -2380,6 +2400,7 @@ components:
             - FROTA
             - PESSOA
             - OUTROS
+          example: CONTRATO
         typeAdditionalInfo:
           description: Descricao do tipo do objeto segurado(caso tipo de objeto segurado for outros)
           type: string
@@ -2440,6 +2461,7 @@ components:
             - REGRESSO_ANTECIPADO
             - SOBREVIVENCIA
             - OUTRAS
+          example: MORTE
         description:
           description: Campo de detalhamento do Codigo da cobertura. Obrigatorio quando a opcao escolhida para o mesmo for OUTRAS
           type: string
@@ -2492,6 +2514,7 @@ components:
             - REGULAR_COMUM
             - CAPITAL_GLOBAL
             - PARAMETRICO_E_INTERMITENTE
+          example: PARAMETRICO
         grace:
           $ref: '#/components/schemas/GraceInfo'
         insuredDependentsInclusionClause:
@@ -2501,6 +2524,7 @@ components:
             - NAO_HA
             - FACULTATIVA
             - AUTOMATICA
+          example: NAO_HA
         tripScope:
           description: Abrangência da viagem. (Caso contrato Viagem)
           type: string
@@ -2508,6 +2532,7 @@ components:
             - NACIONAL
             - INTERNACIONAL
             - NACIONAL_E_INTERNACIONAL
+          example: NACIONAL
         insuredCapitalType:
           description: Modalidade de capital segurado. (Caso contrato Prestamista - exceto Habitacional e Rural)
           type: string
@@ -2515,6 +2540,7 @@ components:
             - FIXO
             - VINCULADO
             - VARIAVEL
+          example: FIXO
         moneylenderType:
           description: Tipo de prestamista. (Caso contrato Prestamista - exceto Habitacional e Rural)
           type: string
@@ -2522,6 +2548,7 @@ components:
             - BASICO
             - EMPRESARIAL
             - EMPRESARIAL_INTEGRAL
+          example: BASICO
         creditor:
           type: object
           properties:
@@ -2876,6 +2903,7 @@ components:
             - REGRESSO_ANTECIPADO
             - SOBREVIVENCIA
             - OUTRAS
+          example: MORTE
         description:
           description: Campo de detalhamento do Codigo da Cobertura quando a opcao escolhida for OUTRAS
           type: string
@@ -2965,6 +2993,10 @@ components:
             - PERCENTUAL
             - OUTROS
           example: VALOR
+        valueOthers:
+          description: Valor para quando a opção for OUTROS
+          allOf:
+            - $ref: '#/components/schemas/AmountDetails'
         description:
           description: Descricao do POS (caso Forma de aplicacao do POS for Outros)
           type: string
@@ -2979,10 +3011,9 @@ components:
           allOf:
             - $ref: '#/components/schemas/AmountDetails'
         percentage:
-          description: Percentual do POS
-          type: string
-          pattern: ^100\.0{1,9}$|^\d{1,2}\.\d{1,9}$
-          example: '10.00'
+          description: Valor Percentual do POS
+          allOf:
+            - $ref: '#/components/schemas/AmountDetails'
     Coinsurer:
       type: object
       required:
@@ -2996,7 +3027,7 @@ components:
         cededPercentage:
           description: 'Percentual cedido para a congênere para contratos de cosseguro cedido. Obs: Obrigatório quando há cosseguro'
           type: string
-          pattern: ^\d{1,3}\.\d{1,9}$
+          pattern: 100\.0{1,9}$|^\d{1,2}\.\d{1,9}$
           example: '10.00'
     InsurancePersonPremium:
       type: object
@@ -3064,6 +3095,7 @@ components:
             - REGRESSO_ANTECIPADO
             - SOBREVIVENCIA
             - OUTRAS
+          example: MORTE
         description:
           description: Descrição / Nome da Cobertura (Caso Código da Cobertura for "OUTRAS")
           type: string
@@ -3165,7 +3197,7 @@ components:
             - PIX
             - DINHEIRO_EM_ESPECIE
             - OUTROS
-          example: BOLETO
+          example: COMUNICABILIDADE
         paymentTypeOthers:
           description: Descricao do Meio de Pagamento quando for informada a opcao OUTROS
           type: string
@@ -3203,34 +3235,40 @@ components:
             - ENCERRADO_COM_PAGAMENTO_UNICO_BENEFICIO
             - ENCERRADO_COM_CONCESSAO_DE_RENDA_BENEFICIO
             - ENCERRADO_INDEFERIDO_BENEFICIO
+          example: ABERTO
         statusAlterationDate:
           description: Data de alteracao do status do sinistro
           type: string
           format: date
+          pattern: ^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])$
           maxLength: 10
           example: '2022-12-31'
         occurrenceDate:
           description: Data de ocorrencia do sinistro
           type: string
           format: date
+          pattern: ^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])$
           maxLength: 10
           example: '2022-12-31'
         warningDate:
           description: Data de aviso do sinistro
           type: string
           format: date
+          pattern: ^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])$
           maxLength: 10
           example: '2022-12-31'
         warningRegisterDate:
           description: Data do Registro de Aviso a Seguradora
           type: string
           format: date
+          pattern: ^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])$
           maxLength: 10
           example: '2022-12-31'
         thirdPartyClaimDate:
           description: Data de reclamacao do terceiro
           type: string
           format: date
+          pattern: ^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])$
           maxLength: 10
           example: '2022-12-31'
         amount:
@@ -3243,6 +3281,7 @@ components:
         denialJustification:
           description: Justificativa da Negativa (Caso Status do Sinistro for ENCERRADO_SEM_INDENIZACAO
           type: string
+          example: RISCO_EXCLUIDO
           enum:
             - RISCO_EXCLUIDO
             - RISCO_AGRAVADO
@@ -3314,6 +3353,8 @@ components:
           description: Data de nascimento do beneficiário da renda concedida
           type: string
           format: date
+          pattern: ^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])$
+          maxLength: 10
           example: '1990-12-31'
         incomeModality:
           type: string
@@ -3358,6 +3399,8 @@ components:
           description: Data de início de concessão do benefício
           type: string
           format: date
+          pattern: ^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])$
+          maxLength: 11
           example: '2020-12-31'
         monetaryUpdateIndex:
           type: string
@@ -3379,6 +3422,8 @@ components:
           description: Data da última atualização do benefício
           type: string
           format: date
+          pattern: ^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])$
+          maxLength: 12
           example: '2020-12-31'
     InsurancePersonClaimCoverage:
       type: object
@@ -3421,6 +3466,7 @@ components:
             - REGRESSO_ANTECIPADO
             - SOBREVIVENCIA
             - OUTRAS
+          example: MORTE
         description:
           description: Campo de detalhamento do Codigo da cobertura. Obrigatorio quando a opcao escolhida para o mesmo for OUTRAS
           type: string
@@ -3428,11 +3474,15 @@ components:
         warningDate:
           description: Data de Aviso do Sinistro por Cobertura (Caso aplicavel)
           type: string
+          pattern: ^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])$
+          maxLength: 12
           format: date
           example: '2022-12-31'
         thirdPartyClaimDate:
           description: Data de Reclamacao do Terceiro por Cobertura (Caso aplicavel)
           type: string
+          pattern: ^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])$
+          maxLength: 12
           format: date
           example: '2022-12-31'
     HistoricalPersonalComplimentaryInformationData:
@@ -4107,12 +4157,28 @@ components:
       description: Detalhes de valores/limites
       required:
         - amount
-        - unit
+        - unitType
       properties:
         amount:
           type: string
-          pattern: ^\d{1,16}\.\d{2}$
-          example: '2000.00'
+          pattern: '^(^(100\.\00|\d{1,2}\.\d{2})$|^(\d{1,6})$|^(\d{1,15}\.\d{2})$)$'
+          description: |
+            Valor.
+            Exemplos de preenchimento do campo:
+
+            PORCENTAGEM: 90.85
+                            
+            MONETARIO: 62500.67
+
+            OUTROS: 1000 (Exemplo de outro tipo: horas)
+        unitType:
+          description: "Tipo da unidade referente ao valor inserido no campo Amount"
+          type: string
+          enum: [PORCENTAGEM, MONETARIO, OUTROS]
+        unitTypeOthers:
+          description: Caso o tipo do valor informado for "Outros", esse campo deve ser preenchido com o tipo do valor, obrigatoriamente.
+          type: string
+          example: Horas
         unit:
           type: object
           required:
@@ -5509,6 +5575,7 @@ components:
             - consentId
             - expirationDateTime
             - quoteCustomer
+            - quoteData
           properties:
             consentId:
               description: |
@@ -5571,6 +5638,35 @@ components:
                         - $ref: '#/components/schemas/HistoricalBusinessComplimentaryInformationData'
                 policies:
                   $ref: '#/components/schemas/PolicyDataPersonLead'
+            quoteData: 
+              type: object
+              required:
+                - coverages
+              description: Objeto que agrupa dados específicos do ramo de cotação.
+              properties:
+                coverages:
+                  type: array
+                  description: Lista que agrupa os dados de coberturas.
+                  items:
+                    type: object
+                    required:
+                      - branch
+                      - code
+                      - description
+                    properties:
+                      branch:
+                        description: Grupo e ramo da cobertura
+                        type: string
+                        maxLength: 4
+                        example: '0111'
+                      code:
+                        description: Código da cobertura de suguro pessoas
+                        allOf:
+                          - $ref: '#/components/schemas/EnumCodeCoverage'
+                      description:
+                        description: Descrição / Nome da Cobertura (Caso Código da Cobertura for "OUTRAS")
+                        type: string
+                        maxLength: 500               
             quoteCustomData:
               $ref: '#/components/schemas/QuoteCustomData'
     ResponseQuotePersonLead:
@@ -5686,6 +5782,10 @@ components:
                 - RJCT
                 - ACKN
                 - CANC
+            rejectionReason:
+              description: Campo condicionado ao status "RJCT", que deve apresentar a justificativa a recusa ao risco.
+              type: string
+              maxLength: 1024
             statusUpdateDateTime:
               type: string
               description: Data e hora da atualização do status.
@@ -5811,6 +5911,10 @@ components:
                 - RJCT
                 - ACKN
                 - CANC
+            rejectionReason:
+              description: Campo condicionado ao status "RJCT", que deve apresentar a justificativa a recusa ao risco.
+              type: string
+              maxLength: 1024
             statusUpdateDateTime:
               type: string
               description: Data e hora da atualização do status.

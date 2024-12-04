@@ -40,7 +40,7 @@ info:
       - 1 - `Idempotência:` Valida se há divergência entre chave de idempotência e informações enviadas (ERRO_IDEMPOTENCIA);
       - 2 - `Não Informado:` Valida itens não explicitamente informados pelo servidor - (NAO_INFORMADO). 
       
-  version: 1.12.1
+  version: 1.13.0
   contact:
     name: Governança do Open Insurance Brasil
     email: gt-interfaces@openinsurancebr.org
@@ -356,7 +356,7 @@ components:
           type: string
           maxLength: 60
           example: '67'
-        productcode:
+        productCode:
           type: string
           description: Código único a ser definido pela sociedade.
           maxLength: 80
@@ -402,11 +402,15 @@ components:
           description: Data de Início da Vigência do documento.
           type: string
           format: date
+          maxLength: 10
+          pattern: ^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])$
           example: '2021-05-21'
         effectiveDateEnd:
           description: Data de Fim da Vigência do documento.
           type: string
           format: date
+          maxLength: 10
+          pattern: ^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])$
           example: '2021-05-21'
         beneficiary:
           type: array
@@ -453,6 +457,7 @@ components:
         - benefitPaymentMethod
         - financialResultReversal
         - calculationBasis
+        - FIE
       properties:
         coverageCode:
           type: string
@@ -460,7 +465,7 @@ components:
           maxLength: 5
           example: '1999'
         susepProcessNumber:
-          description: Número do Processo Susep
+          description: Número do processo administrativo da Susep relacionado à cobertura contratada
           type: string
           maxLength: 60
           example: '12345'
@@ -520,23 +525,15 @@ components:
         biometricTable:
           type: string
           description: Tábua biométrica, se houver
-          example: AT_2000_FEMALE_SUAVIZADA_15
-          enum:
-            - AT_2000_MALE
-            - AT_2000_FEMALE
-            - AT_2000_MALE_FEMALE
-            - AT_2000_MALE_SUAVIZADA_10
-            - AT_2000_FEMALE_SUAVIZADA_10
-            - AT_2000_MALE_FEMALE_SUAVIZADA_10
-            - AT_2000_MALE_SUAVIZADA_15
-            - AT_2000_FEMALE_SUAVIZADA_15
-            - AT_2000_MALE_FEMALE_SUAVIZADA_15
-            - AT_83_MALE
-            - AT_83_FEMALE
-            - AT_83_MALE_FEMALE
-            - BR_EMSSB_MALE
-            - BR_EMSSB_FEMALE
-            - BR_EMSSB_MALE_FEMALE
+          example: AT49_M
+          enum: [
+            AT49_M,AT49_F,AT50_M,AT50_F,AT55_M,AT55_F,AT71_M,AT71_F,AT83_M,AT83_F,AT2000_M,AT2000_F,CS041,CSO58,CSO80_M,CSO80_F,CSG_60,
+            GAM71_M,GAM71_F,SGB51,SGB55,SGB71,SGB75,GKF70,GKF80,GKF95,GKM70,GKM80,GKM95,UP_84,IAPB_57,IAPB57_NIVELADA,ZIMMERMANN,
+            WINKLEVOSS,BENTZIEN,EXP_IAPC,IAPB_57_FRACA,IAPB_57_FORTE,ALVARO_VINDAS,TASA_27,MULLER,HUNTER,EB7,UP94_M,AT49,
+            AT2000_FEMALE_SUAVIZADA_10,TGA,AT2000_MALE_SUAVIZADA_10,BR_EMSSB_V2010M,BR_EMSSB_V2010F,SUSEP_IBGE,PERCENTUAL_FIXO,
+            PERPETUA,BR_EMSMT_V2010M,BR_EMSMT_V2010F,BR_EMSSB_V2015M,BR_EMSSB_V2015F,BR_EMSMT_V2015M,BR_EMSMT_V2015F,BR_EMSMT_M,
+            BR_EMSMT_F,BR_EMSSB_M,BR_EMSSB_F,BR_EMSSB_V2021M,BR_EMSSB_V2021F,BR_EMSMT_V2021M,BR_EMSMT_V2021F,OUTRAS
+          ]
         benefitPaymentMethod:
           description: Forma de pagamento do benefício
           type: string
@@ -598,11 +595,12 @@ components:
         pdrOrVdrminimalGuaranteePercentage:
           description: Percentual de Garantia Mínima do PDR ou VDR, Obrigatório se houver
           type: string
-          pattern: ^\d{1,3}\.\d{1,9}$
+          pattern: ^100\.0{1,9}$|^\d{1,2}\.\d{1,9}
           example: '10.00'
         calculationBasis:
           description: Base de Cálculo
           type: string
+          example: MENSAL
           enum:
             - MENSAL
             - ANUAL
@@ -681,6 +679,8 @@ components:
           description: Data de nascimento, conforme especificação RFC-3339
           type: string
           format: date
+          maxLength: 10
+          pattern: ^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])$
           example: '2021-05-21'
         gender:
           description: Sexo do Segurado / Participante, Obrigatório, se houver
@@ -701,12 +701,12 @@ components:
           description: Endereço de email, Obrigatório, se houver
           type: string
           maxLength: 320
-          pattern: '[\w\W\s]*'
+          pattern: '^\S+@\S+\.\S+$'
           example: nome@br.net
         townName:
           type: string
           maxLength: 50
-          pattern: '[\w\W\s]*'
+          pattern: '^([a-z]|[A-Z]|\s)*$'          
           example: Rio de Janeiro
           description: |
             Localidade: O nome da localidade corresponde à designação da cidade ou município no qual o endereço está localizado.
@@ -719,9 +719,8 @@ components:
           description: |
             Código do pais de acordo com o código “alpha3” do ISO-3166.
             País do Segurado / Participante
-          type: string
-          maxLength: 3
-          example: BRA
+          allOf:
+            - $ref: '#/components/schemas/EnumCountryCode'
         address:
           description: |
             Endereço do Segurado / Participante
@@ -764,10 +763,25 @@ components:
           type: string
           maxLength: 80
           example: Juan Kaique Cláudio Fernandes
+        birthDate:  
+          description: Data de nascimento do beneficiário
+          type: string
+          format: date
+          example: '2022-12-31'
+          maxLength: 10
+          pattern: '^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])$'
+        kinship:
+          description: Grau de parentesco do beneficiário em relação ao segurado
+          type: string
+          enum: [CONJUGE, PAIS, SOGROS, AVOS, BISAVOS, FILHOS, NETOS, BISNETOS, IRMAOS, TIOS, SOBRINHOS, OUTROS]
+          example: PAIS
+        kinshipOthers:
+          description: Campo para que seja informado o parentesco de beneficiário caso seja infromado "OUTROS" no campo "kinship".
+          type: string
         participationPercentage:
           description: Percentual de participação do beneficiário.
           type: string
-          pattern: ^\d{1,3}\.\d{1,9}$
+          pattern: ^100\.0{1,9}$|^\d{1,2}\.\d{1,9}$
           example: '10.00'
     InsuranceLifePensionDocumentsIntermediary:
       description: Informações de intermediário, obrigatório se houver.
@@ -828,7 +842,7 @@ components:
         townName:
           type: string
           maxLength: 50
-          pattern: '[\w\W\s]*'
+          pattern: '^([a-z]|[A-Z]|\s)*$'
           example: Rio de Janeiro
           description: |
             Localidade: O nome da localidade corresponde à designação da cidade ou município no qual o endereço está localizado.
@@ -842,9 +856,8 @@ components:
           description: |
             Código do pais de acordo com o código “alpha3” do ISO-3166.
             País da Pessoa Intermediador, Campo obrigatório, caso Tipo de Intermediador for estipulante /averbador/ instituidor)
-          type: string
-          maxLength: 3
-          example: BRA
+          allOf:
+            - $ref: '#/components/schemas/EnumCountryCode'
         address:
           description: |
             Corresponde ao Endereço do Intermediador, Campo obrigatório, caso Tipo de Intermediador for estipulante /averbador/ instituidor)
@@ -893,11 +906,13 @@ components:
           description: Data de Início da Carência.
           type: string
           format: date
+          pattern: ^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])$
           example: '2021-05-21'
         gracePeriodEnd:
           description: Data de Fim da carência. Obrigatório se houver
           type: string
           format: date
+          pattern: ^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])$
           example: '2021-05-21'
         gracePeriodBetween:
           type: integer
@@ -934,11 +949,15 @@ components:
                 description: Datas de Pagamentos das contribuições/prêmios comerciais (em relação aos últimos 12 meses), Obrigatório, se houver
                 type: string
                 format: date
+                maxLength: 10
+                pattern: ^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])$
                 example: '2021-05-21'
               contributionExpirationDate:
                 description: Datas de Vencimentos das contribuições/prêmios comerciais (em relação aos últimos 12 meses)
                 type: string
                 format: date
+                maxLength: 10
+                pattern: ^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])$
                 example: '2021-05-21'
               chargedInAdvanceAmount:
                 description: Valor do carregamento cobrado de forma antecipada, Obrigatório se houver
@@ -978,6 +997,8 @@ components:
                 description: Datas de Pagamentos de benefícios recebidos (em relação aos últimos 12 meses), Obrigatório, se houver
                 type: string
                 format: date
+                maxLength: 10
+                pattern: ^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])$
                 example: '2021-05-21'
     InsuranceLifePensionPortability:
       type: object
@@ -999,6 +1020,7 @@ components:
               - requestDate
               - liquidationDate
               - postedChargedAmount
+              - FIE
             properties:
               direction:
                 description: Direção do fluxo de portabilidade
@@ -1022,12 +1044,16 @@ components:
                 description: Declara a data em que foi recebida a solicitação de portabilidade
                 type: string
                 format: date-time
-                example: '2022-05-16T00:00:00.000Z'
+                maxLength: 20
+                pattern: ^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])T(?:[01]\d|2[0123]):(?:[012345]\d):(?:[012345]\d)Z$
+                example: '2022-05-16T00:00:00Z'
               liquidationDate:
                 description: Declara a data de ocorrência da efetiva liquidação da portabilidade
                 type: string
                 format: date-time
-                example: '2022-05-16T00:00:00.000Z'
+                pattern: (\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])T(?:[01]\d|2[0123]):(?:[012345]\d):(?:[012345]\d)Z$
+                maxLength: 20
+                example: '2022-05-16T00:00:00Z'
               postedChargedAmount:
                 description: Valor do carregamento cobrado de forma postecipada (caso nao haja reportar nulo)
                 allOf:
@@ -1054,6 +1080,8 @@ components:
                 description: Informações do FIE do Valor Portado (Caso Ocorrência da portabilidade for Sim)
                 items:
                   type: object
+                  required:
+                    - portedType
                   properties:
                     FIECNPJ:
                       description: CNPJ do FIE
@@ -1096,7 +1124,9 @@ components:
           description: Declara a data da solicitação do resgate, Obrigatório, se houver
           type: string
           format: date-time
-          example: '2022-05-16T00:00:00.000Z'
+          maxLength: 20
+          pattern: ^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])T(?:[01]\d|2[0123]):(?:[012345]\d):(?:[012345]\d)Z$
+          example: '2022-05-16T00:00:00Z'
         amount:
           description: Declara o valor bruto resgatado, Obrigatório, se houver
           allOf:
@@ -1105,7 +1135,9 @@ components:
           description: Declara a data da efetiva liquidação do valor resgatado, Obrigatório, se houver
           type: string
           format: date-time
-          example: '2022-05-16T00:00:00.000Z'
+          pattern: (\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])T(?:[01]\d|2[0123]):(?:[012345]\d):(?:[012345]\d)Z$
+          maxLength: 20
+          example: '2022-05-16T00:00:00Z'
         postedChargedAmount:
           description: Valor do carregamento cobrado de forma postecipada, Obrigatório, se houver
           allOf:
@@ -1167,15 +1199,20 @@ components:
                 - ENCERRADO_COM_PAGAMENTO_UNICO_BENEFICIO
                 - ENCERRADO_COM_CONCESSAO_DE_RENDA_BENEFICIO
                 - ENCERRADO_INDEFERIDO_BENEFICIO
+              example: ABERTO
             eventAlertDate:
               description: Data de Aviso do Evento Gerador
               type: string
               format: date
+              maxLength: 10
+              pattern: ^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])$
               example: '2021-05-21'
             eventRegisterDate:
               description: Data do Registro de Aviso à Seguradora
               type: string
               format: date
+              maxLength: 10
+              pattern: ^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])$
               example: '2021-05-21'
         incomeInfo:
           type: object
@@ -1227,6 +1264,8 @@ components:
               description: Data de nascimento do beneficiário da renda concedida
               type: string
               format: date
+              maxLength: 10
+              pattern: ^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])$
               example: '2021-05-21'
             incomeType:
               description: Tipo de Renda, Obrigatório, se houver
@@ -1271,6 +1310,8 @@ components:
               description: Data de Concessão
               type: string
               format: date
+              pattern: ^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])$
+              maxLength: 10
               example: '2021-05-21'
             monetaryUpdateIndex:
               description: Índice de Atualização Monetária
@@ -1292,12 +1333,16 @@ components:
               description: Data da última atualização do benefício
               type: string
               format: date
+              pattern: ^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])$
+              maxLength: 10
               example: '2021-05-21'
             defermentDueDate:
               description: Data do fim do período de diferimento do benefício concedido/a conceder
               type: string
               format: date
               example: '2025-12-31'
+              pattern: ^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])$
+              maxLength: 10
     ContractDataPensionPlan:
       type: array
       description: Lista que agrupa os dados dos contratos de Previdência Risco históricos em categorias.
@@ -1322,7 +1367,7 @@ components:
         - documents
       properties:
         pensionIdentification:
-          description: Código único a ser definido pela sociedade
+          description: Código único a ser definido pela sociedade participante
           type: string
           maxLength: 60
           example: '42'
@@ -1369,11 +1414,15 @@ components:
           description: Data de Início da Vigência do documento.
           type: string
           format: date
+          maxLength: 10
+          pattern: ^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])$
           example: '2021-05-21'
         effectiveDateEnd:
           description: Data de Fim da Vigência do documento.
           type: string
           format: date
+          maxLength: 10
+          pattern: ^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])$
           example: '2021-05-21'
         proposalId:
           description: Identificador da Proposta
@@ -1393,8 +1442,6 @@ components:
           items:
             $ref: '#/components/schemas/InsurancePensionPlanDocumentsIntermediary'
         plans:
-          type: array
-          items:
             $ref: '#/components/schemas/InsurancePensionPlanDocumentsPlans'
     InsurancePensionPlanDocumentsInsured:
       description: Informações do segurado/participante
@@ -1436,6 +1483,8 @@ components:
           description: Data de nascimento, conforme especificação RFC-3339
           type: string
           format: date
+          maxLength: 10
+          pattern: ^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])$
           example: '2021-05-21'
         gender:
           description: Sexo do Segurado / Participante, Obrigatório, se houver
@@ -1456,7 +1505,7 @@ components:
           description: Endereço de email, Obrigatório, se houver
           type: string
           maxLength: 320
-          pattern: '[\w\W\s]*'
+          pattern: '^\S+@\S+\.\S+$'
           example: nome@br.net
         townName:
           type: string
@@ -1474,9 +1523,8 @@ components:
           description: |
             Código do pais de acordo com o código “alpha3” do ISO-3166.
             País do Segurado / Participante
-          type: string
-          maxLength: 3
-          example: BRA
+          allOf:
+            - $ref: '#/components/schemas/EnumCountryCode'
         address:
           description: |
             Endereço do Segurado / Participante
@@ -1519,10 +1567,17 @@ components:
           type: string
           maxLength: 80
           example: Juan Kaique Cláudio Fernandes
+        birthDate:  
+          description: Data de nascimento do beneficiário
+          type: string
+          format: date
+          example: '2022-12-31'
+          maxLength: 10
+          pattern: '^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])$'
         participationPercentage:
           description: Percentual de particiapação do beneficiário.
           type: string
-          pattern: ^\d{1,3}\.\d{1,9}$
+          pattern: ^100\.0{1,9}$|^\d{1,2}\.\d{1,9}$
           example: '10.00'
     InsurancePensionPlanDocumentsIntermediary:
       description: Informações de intermediário, obrigatório se houver.
@@ -1583,7 +1638,7 @@ components:
         townName:
           type: string
           maxLength: 50
-          pattern: '[\w\W\s]*'
+          pattern: '^([a-z]|[A-Z]|\s)*$'
           example: Rio de Janeiro
           description: |
             Localidade: O nome da localidade corresponde à designação da cidade ou município no qual o endereço está localizado.
@@ -1597,9 +1652,8 @@ components:
           description: |
             Código do pais de acordo com o código “alpha3” do ISO-3166.
             País da Pessoa Intermediador, Campo obrigatório, caso Tipo de Intermediador for estipulante /averbador/ instituidor)
-          type: string
-          maxLength: 3
-          example: BRA
+          allOf:
+            - $ref: '#/components/schemas/EnumCountryCode'
         address:
           description: |
             Corresponde ao Endereço do Intermediador, Campo obrigatório, caso Tipo de Intermediador for estipulante /averbador/ instituidor)
@@ -1702,11 +1756,14 @@ components:
           description: Data de início de vigência da cobertura
           type: string
           format: date
+          
           example: '2021-05-21'
         termEndDate:
           type: string
           format: date
           description: Data de fim de vigência da cobertura. Obrigatório se houver.
+          maxLength: 10
+          pattern: ^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])$
           example: '2021-05-21'
         financialRegime:
           description: Regime financeiro
@@ -1725,115 +1782,15 @@ components:
         biometricTable:
           type: string
           description: Tábua biométrica, se houver
-          example: 1  - Mortalidade Geral / Beneficiário - AT49 M
-          enum:
-            - 1  - Mortalidade Geral / Beneficiário - AT49 M
-            - 2  - Mortalidade Geral / Beneficiário - AT49 F
-            - 3  - Mortalidade Geral / Beneficiário - AT50 M
-            - 4  - Mortalidade Geral / Beneficiário - AT50 F
-            - 5  - Mortalidade Geral / Beneficiário - AT55 M
-            - 6  - Mortalidade Geral / Beneficiário - AT55 F
-            - 7  - Mortalidade Geral / Beneficiário - AT71 M
-            - 8  - Mortalidade Geral / Beneficiário - AT71 F
-            - 9  - Mortalidade Geral / Beneficiário - AT83 M
-            - 10  - Mortalidade Geral / Beneficiário - AT83 F
-            - 11  - Mortalidade Geral / Beneficiário - AT2000 M
-            - 12  - Mortalidade Geral / Beneficiário - AT2000 F
-            - 13  - Mortalidade Geral / Beneficiário - CS041
-            - 14  - Mortalidade Geral / Beneficiário - CSO58
-            - 15  - Mortalidade Geral / Beneficiário - CSO80 M
-            - 16  - Mortalidade Geral / Beneficiário - CSO80 F
-            - 17  - Mortalidade Geral / Beneficiário - CSG 60
-            - 18  - Mortalidade Geral / Beneficiário - GAM71 M
-            - 19  - Mortalidade Geral / Beneficiário - GAM71 F
-            - 20  - Mortalidade Geral / Beneficiário - SGB51
-            - 21  - Mortalidade Geral / Beneficiário - SGB55
-            - 22  - Mortalidade Geral / Beneficiário - SGB71
-            - 23  - Mortalidade Geral / Beneficiário - SGB75
-            - 24  - Mortalidade Geral / Beneficiário - GKF70
-            - 25  - Mortalidade Geral / Beneficiário - GKF80
-            - 26  - Mortalidade Geral / Beneficiário - GKF95
-            - 27  - Mortalidade Geral / Beneficiário - GKM70
-            - 28  - Mortalidade Geral / Beneficiário - GKM80
-            - 29  - Mortalidade Geral / Beneficiário - GKM95
-            - 30  - Mortalidade Geral / Beneficiário - UP 84
-            - 31  - Mortalidade de Inválidos - IAPB 57
-            - 32  - Mortalidade de Inválidos - IAPB57 - Nivelada
-            - 33  - Mortalidade de Inválidos - ZIMMERMANN
-            - 34  - Mortalidade de Inválidos - WINKLEVOSS
-            - 35  - Mortalidade de Inválidos - BENTZIEN
-            - 36  - Mortalidade de Inválidos - EXP. IAPC
-            - 37  - Mortalidade de Inválidos - TASA27
-            - 38  - Mortalidade de Inválidos - MULLER
-            - 39  - Entrada em Invalidez - IAPB 57 FRACA
-            - 40  - Entrada em Invalidez - IAPB 57 FORTE
-            - 41  - Entrada em Invalidez - ZIMMERMANN
-            - 42  - Entrada em Invalidez - ÁLVARO VINDAS
-            - 43  - Entrada em Invalidez - TASA 27
-            - 44  - Entrada em Invalidez - MULLER
-            - 45  - Entrada em Invalidez - HUNTER
-            - 46  - Mortalidade Geral / Beneficiário - EB7
-            - 47  - Mortalidade Geral / Beneficiário - UP94 M
-            - 48  - Mortalidade Geral / Beneficiário - AT49
-            - 49  - Mortalidade Geral / Beneficiário - AT2000 female suavizada 10%
-            - 49  - Entrada em Invalidez - AT2000 female suavizada 10%
-            - 50  - Mortalidade Geral / Beneficiário - TGA
-            - 50  - Entrada em Invalidez - TGA
-            - 51  - Mortalidade Geral / Beneficiário - AT2000 male suavizada 10%
-            - 52  - Mortalidade Geral / Beneficiário - BR-EMSsb-V.2010-m
-            - 53  - Mortalidade Geral / Beneficiário - BR-EMSsb-V.2010-f
-            - 54  - Entrada em Invalidez - SUSEP_IBGE
-            - 55  - Mortalidade Geral / Beneficiário - Percentual Fixo
-            - 55  - Mortalidade de Inválidos - Percentual Fixo
-            - 55  - Entrada em Invalidez - Percentual Fixo
-            - 56  - Mortalidade Geral / Beneficiário - Perpétua
-            - 56  - Mortalidade de Inválidos - Perpétua
-            - 56  - Entrada em Invalidez - Perpétua
-            - 57  - Mortalidade Geral / Beneficiário - BR-EMSmt-V.2010-m
-            - 57  - Mortalidade de Inválidos - BR-EMSmt-V.2010-m
-            - 57  - Entrada em Invalidez - BR-EMSmt-V.2010-m
-            - 58  - Mortalidade Geral / Beneficiário - BR-EMSmt-V.2010-f
-            - 58  - Mortalidade de Inválidos - BR-EMSmt-V.2010-f
-            - 58  - Entrada em Invalidez - BR-EMSmt-V.2010-f
-            - 59  - Mortalidade Geral / Beneficiário - BR-EMSsb-V.2015-m
-            - 59  - Mortalidade de Inválidos - BR-EMSsb-V.2015-m
-            - 59  - Entrada em Invalidez - BR-EMSsb-V.2015-m
-            - 60  - Mortalidade Geral / Beneficiário - BR-EMSsb-V.2015-f
-            - 60  - Mortalidade de Inválidos - BR-EMSsb-V.2015-f
-            - 60  - Entrada em Invalidez - BR-EMSsb-V.2015-f
-            - 61  - Mortalidade Geral / Beneficiário - BR-EMSmt-V.2015-m
-            - 61  - Mortalidade de Inválidos - BR-EMSmt-V.2015-m
-            - 61  - Entrada em Invalidez - BR-EMSmt-V.2015-m
-            - 62  - Mortalidade Geral / Beneficiário - BR-EMSmt-V.2015-f
-            - 62  - Mortalidade de Inválidos - BR-EMSmt-V.2015-f
-            - 62  - Entrada em Invalidez - BR-EMSmt-V.2015-f
-            - 63  - Mortalidade Geral / Beneficiário - BR-EMSsb-m
-            - 63  - Mortalidade de Inválidos - BR-EMSsb-m
-            - 63  - Entrada em Invalidez - BR-EMSsb-m
-            - 64  - Mortalidade Geral / Beneficiário - BR-EMSsb-f
-            - 64  - Mortalidade de Inválidos - BR-EMSsb-f
-            - 64  - Entrada em Invalidez - BR-EMSsb-f
-            - 65  - Mortalidade Geral / Beneficiário - BR-EMSmt-m
-            - 65  - Mortalidade de Inválidos - BR-EMSmt-m
-            - 65  - Entrada em Invalidez - BR-EMSmt-m
-            - 66  - Mortalidade Geral / Beneficiário - BR-EMSmt-f
-            - 66  - Mortalidade de Inválidos - BR-EMSmt-f
-            - 66  - Entrada em Invalidez - BR-EMSmt-f
-            - 67  - Mortalidade Geral / Beneficiário - BR-EMSsb-V.2021-m
-            - 67  - Mortalidade de Inválidos - BR-EMSsb-V.2021-m
-            - 67  - Entrada em Invalidez - BR-EMSsb-V.2021-m
-            - 68  - Mortalidade Geral / Beneficiário - BR-EMSsb-V.2021-f
-            - 68  - Mortalidade de Inválidos - BR-EMSsb-V.2021-f
-            - 68  - Entrada em Invalidez - BR-EMSsb-V.2021-f
-            - 69  - Mortalidade Geral / Beneficiário - BR-EMSmt-V.2021-m
-            - 69  - Mortalidade de Inválidos - BR-EMSmt-V.2021-m
-            - 69  - Entrada em Invalidez - BR-EMSmt-V.2021-m
-            - 70  - Mortalidade Geral / Beneficiário - BR-EMSmt-V.2021-f
-            - 70  - Mortalidade de Inválidos - BR-EMSmt-V.2021-f
-            - 70  - Entrada em Invalidez - BR-EMSmt-V.2021-f
-            - 99  - Mortalidade Geral / Beneficiário - OUTRAS
-            - 99  - Mortalidade de Inválidos - OUTRAS
-            - 99  - Entrada em Invalidez - OUTRAS
+          example: AT49_M
+          enum: [
+            AT49_M,AT49_F,AT50_M,AT50_F,AT55_M,AT55_F,AT71_M,AT71_F,AT83_M,AT83_F,AT2000_M,AT2000_F,CS041,CSO58,CSO80_M,CSO80_F,CSG_60,
+            GAM71_M,GAM71_F,SGB51,SGB55,SGB71,SGB75,GKF70,GKF80,GKF95,GKM70,GKM80,GKM95,UP_84,IAPB_57,IAPB57_NIVELADA,ZIMMERMANN,
+            WINKLEVOSS,BENTZIEN,EXP_IAPC,IAPB_57_FRACA,IAPB_57_FORTE,ALVARO_VINDAS,TASA_27,MULLER,HUNTER,EB7,UP94_M,AT49,
+            AT2000_FEMALE_SUAVIZADA_10,TGA,AT2000_MALE_SUAVIZADA_10,BR_EMSSB_V2010M,BR_EMSSB_V2010F,SUSEP_IBGE,PERCENTUAL_FIXO,
+            PERPETUA,BR_EMSMT_V2010M,BR_EMSMT_V2010F,BR_EMSSB_V2015M,BR_EMSSB_V2015F,BR_EMSMT_V2015M,BR_EMSMT_V2015F,BR_EMSMT_M,
+            BR_EMSMT_F,BR_EMSSB_M,BR_EMSSB_F,BR_EMSSB_V2021M,BR_EMSSB_V2021F,BR_EMSMT_V2021M,BR_EMSMT_V2021F,OUTRAS
+          ]
         pricingMethod:
           description: Forma de Tarifação
           type: string
@@ -1903,6 +1860,7 @@ components:
           enum:
             - PORTABILIDADE
             - RESGATE
+          example: PORTABILIDADE
         gracePeriod:
           description: Campo para preenchimento do período de carência de resgate / portabilidade, Obrigatório se houver
           type: integer
@@ -1915,6 +1873,7 @@ components:
             - DIA
             - MES
             - ANO
+          example: DIA
         dayIndicator:
           type: string
           description: Índicador de dias úteis ou Corridos, Obrigatório se houver
@@ -1925,11 +1884,13 @@ components:
           description: Data de Início da Carência. Obrigatório, se houver
           type: string
           format: date
+          pattern: ^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])$
           example: '2021-05-21'
         gracePeriodEnd:
           description: Data de Fim da carência. Obrigatório se houver
           type: string
           format: date
+          pattern: ^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])$
           example: '2021-05-21'
         gracePeriodBetween:
           type: integer
@@ -1956,6 +1917,7 @@ components:
             - INVALIDEZ
             - MORTE
             - OUTROS
+          example: INVALIDEZ
         eventTypeOthers:
           description: Descrição do tipo de evento gerador quando for informada a opção OUTROS
           type: string
@@ -1982,11 +1944,15 @@ components:
                 description: Datas de Pagamentos das contribuições/prêmios comerciais (em relação aos últimos 12 meses), Obrigatório, se houver
                 type: string
                 format: date
+                maxLength: 10
+                pattern: ^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])$
                 example: '2021-05-21'
               contributionExpirationDate:
                 description: Datas de Vencimentos das contribuições/prêmios comerciais (em relação aos últimos 12 meses)
                 type: string
                 format: date
+                maxLength: 10
+                pattern: ^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])$
                 example: '2021-05-21'
               chargedInAdvanceAmount:
                 description: Valor do carregamento cobrado de forma antecipada, Obrigatório se houver
@@ -2023,6 +1989,8 @@ components:
                 description: Datas de Pagamentos de benefícios recebidos (em relação aos últimos 12 meses), Obrigatório, se houver
                 type: string
                 format: date
+                maxLength: 10
+                pattern: ^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])$
                 example: '2021-05-21'
     InsurancePensionPlanPortability:
       type: object
@@ -2067,12 +2035,16 @@ components:
                 description: Declara a data em que foi recebida a solicitação de portabilidade
                 type: string
                 format: date-time
-                example: '2022-05-16T00:00:00.000Z'
+                maxLength: 20
+                pattern: ^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])T(?:[01]\d|2[0123]):(?:[012345]\d):(?:[012345]\d)Z$
+                example: '2022-05-16T00:00:00Z'
               liquidationDate:
                 description: Declara a data de ocorrência da efetiva liquidação da portabilidade
                 type: string
                 format: date-time
-                example: '2022-05-16T00:00:00.000Z'
+                pattern: (\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])T(?:[01]\d|2[0123]):(?:[012345]\d):(?:[012345]\d)Z$
+                maxLength: 20
+                example: '2022-05-16T00:00:00Z'
               chargingValue:
                 description: Valor de carregamento cobrado de forma postecipada
                 allOf:
@@ -2107,7 +2079,9 @@ components:
           description: Declara a data da solicitação do resgate, Obrigatório, se houver
           type: string
           format: date-time
-          example: '2022-05-16T00:00:00.000Z'
+          maxLength: 20
+          pattern: ^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])T(?:[01]\d|2[0123]):(?:[012345]\d):(?:[012345]\d)Z$
+          example: '2022-05-16T00:00:00Z'
         amount:
           description: Valor do Resgate
           allOf:
@@ -2116,7 +2090,9 @@ components:
           description: Declara a data da efetiva liquidação do valor resgatado, Obrigatório, se houver
           type: string
           format: date-time
-          example: '2022-05-16T00:00:00.000Z'
+          pattern: (\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])T(?:[01]\d|2[0123]):(?:[012345]\d):(?:[012345]\d)Z$
+          maxLength: 20
+          example: '2022-05-16T00:00:00Z'
         postedChargedAmount:
           description: Valor do carregamento cobrado de forma postecipada, Obrigatório, se houver
           allOf:
@@ -2158,15 +2134,20 @@ components:
                 - ENCERRADO_COM_PAGAMENTO_UNICO_BENEFICIO
                 - ENCERRADO_COM_CONCESSAO_DE_RENDA_BENEFICIO
                 - ENCERRADO_INDEFERIDO_BENEFICIO
+              example: ABERTO
             eventAlertDate:
               description: Data de Aviso do Evento Gerador
               type: string
               format: date
+              maxLength: 10
+              pattern: ^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])$
               example: '2021-05-21'
             eventRegisterDate:
               description: Data do Registro de Aviso à Seguradora
               type: string
               format: date
+              maxLength: 10
+              pattern: ^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])$
               example: '2021-05-21'
         incomeInfo:
           type: object
@@ -2218,6 +2199,8 @@ components:
               description: Data de nascimento do beneficiário da renda concedida
               type: string
               format: date
+              maxLength: 10
+              pattern: ^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])$
               example: '2021-05-21'
             incomeType:
               description: Tipo de Renda
@@ -2262,6 +2245,8 @@ components:
               description: Data de Concessão
               type: string
               format: date
+              pattern: ^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])$
+              maxLength: 10
               example: '2021-05-21'
             monetaryUpdateIndex:
               description: Índice de Atualização Monetária
@@ -2283,6 +2268,8 @@ components:
               description: Data da última atualização do benefício
               type: string
               format: date
+              pattern: ^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])$
+              maxLength: 10
               example: '2021-05-21'
     HistoricalPersonalComplimentaryInformationData:
       $ref: '#/components/schemas/PersonalComplimentaryInformationData'
@@ -3075,8 +3062,9 @@ components:
         quoteData:
           $ref: '#/components/schemas/QuoteDataLifePension'
         quotes:
-          type: array
           description: Lista de cotações enviadas pela seguradora.
+          type: array
+          minItems: 1
           items:
             required:
               - insurerQuoteId
@@ -3420,116 +3408,52 @@ components:
           example: '2023-05-21'
           description: Data de vigência do documento de registro - conforme especificação RFC-3339.
       additionalProperties: false
+   
     AmountDetails:
-      type: object
-      description: Detalhes de valores/limites
-      required:
-        - amount
-        - unit
-      properties:
-        amount:
-          type: string
-          pattern: ^-?\d{1,15}\.\d{2}$
-          example: '2000.00'
-        unit:
-          type: object
-          required:
-            - code
-            - description
-          properties:
-            code:
-              type: string
-              maxLength: 2
-              example: R$
-              enum:
-                - د.إ
-                - Af
-                - L
-                - Դ
-                - Kz
-                - $
-                - ƒ
-                - ман
-                - КМ
-                - ৳
-                - лв
-                - ب.د
-                - ₣
-                - Bs.
-                - R$
-                - P
-                - Br
-                - ¥
-                - ₡
-                - Kč
-                - kr
-                - د.ج
-                - £
-                - Nfk
-                - N/A
-                - €
-                - ლ
-                - ₵
-                - D
-                - Q
-                - Kn
-                - G
-                - Ft
-                - Rp
-                - ₪
-                - ₹
-                - ع.د
-                - ﷼
-                - Sh
-                - ៛
-                - ₩
-                - د.ك
-                - 〒
-                - ₭
-                - ل.ل
-                - Rs
-                - ل.د
-                - د.م.
-                - ден
-                - K
-                - ₮
-                - UM
-                - ₨
-                - ރ.
-                - MK
-                - RM
-                - MTn
-                - ₦
-                - C$
-                - ر.ع.
-                - B/.
-                - S/.
-                - ₱
-                - zł
-                - ₲
-                - ر.ق
-                - din
-                - р.
-                - ر.س
-                - Le
-                - Db
-                - ل.س
-                - ฿
-                - ЅМ
-                - m
-                - د.ت
-                - T$
-                - ₤
-                - ₴
-                - Bs F
-                - ₫
-                - Vt
-                - T
-                - R
-                - ZK
-            description:
-              allOf:
-                - $ref: '#/components/schemas/EnumCurrencyCode'
+        type: object
+        description: Detalhes de valores/limites
+        required:
+          - amount
+          - unitType
+        properties:
+          amount:
+            type: string
+            pattern: '^(^(100\.\00|\d{1,2}\.\d{2})$|^(\d{1,6})$|^(\d{1,15}\.\d{2})$)$'
+            description: |
+              Valor.
+              Exemplos de preenchimento do campo:
+
+              PORCENTAGEM: 90.85
+                              
+              MONETARIO: 62500.67
+
+              OUTROS: 1000 (Exemplo de outro tipo: horas)
+          unitType:
+            description: "Tipo da unidade referente ao valor inserido no campo Amount"
+            type: string
+            enum: [PORCENTAGEM, MONETARIO, OUTROS]
+          unitTypeOthers:
+            description: Caso o tipo do valor informado for "Outros", esse campo deve ser preenchido com o tipo do valor, obrigatoriamente.
+            type: string
+            example: "Horas"
+          unit:
+            description: Preenchimento obrigatório em caso de valor "MONETARIO" ser informado no campo "unitType"
+            type: object
+            required:
+              - code
+              - description
+            properties:
+              code:
+                type: string
+                enum: [ د.إ , Af, L,  Դ,  Kz, $,  ƒ,  ман,  КМ, ৳,  лв, ب.د,  ₣,  Bs.,  R$, P,  Br, ¥,  ₡,  Kč, kr, د.ج,  £,  
+                        Nfk,  N/A,  €,  ლ,  ₵,  D,  Q,  Kn, G,  Ft, Rp, ₪,  ₹,  ع.د,  ﷼,  Sh, ៛,  ₩,  د.ك,  〒,  ₭,  ل.ل,  Rs,
+                        ل.د,  د.م., ден,  K,  ₮,  UM, ₨,  ރ., MK, RM, MTn,  ₦,  C$, ر.ع., B/.,  S/.,  ₱,  zł, ₲,  ر.ق,  din,  
+                        р., ر.س,  Le, Db, ل.س,  ฿,  ЅМ, m,  د.ت,  T$, ₤,  ₴,  Bs F, ₫,  Vt, T,  R,  ZK ]
+                example: R$
+              description:
+                allOf:
+                  - $ref: '#/components/schemas/EnumCurrencyCode'
+
     EnumProductServiceType:
       type: string
       enum:
@@ -4733,6 +4657,7 @@ components:
                 description: Data e hora da consulta, conforme especificação RFC-3339, formato UTC.
                 type: string
                 format: date-time
+                maxLength: 20
                 pattern: ^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])T(?:[01]\d|2[0123]):(?:[012345]\d):(?:[012345]\d)Z$
                 example: '2021-08-20T08:30:00Z'
             additionalProperties: false
