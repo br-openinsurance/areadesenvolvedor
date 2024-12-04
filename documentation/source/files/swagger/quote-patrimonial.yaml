@@ -59,12 +59,11 @@ info:
     ### `/diverse-risks/request/{consentId}`
       - permissions:   
         - PATCH: **QUOTE_PATRIMONIAL_DIVERSE_RISKS_UPDATE**
-
     ## Válidações Semanticas - Entidade não processável - 422
       - 1 - `Idempotência:` Valida se há divergência entre chave de idempotência e informações enviadas (ERRO_IDEMPOTENCIA);
-      - 2 - `Não Informado:` Valida itens não explicitamente informados pelo servidor - (NAO_INFORMADO).   
-
-  version: 1.9.0
+      - 2 - `Não Informado:` Valida itens não explicitamente informados pelo servidor - (NAO_INFORMADO).
+  
+  version: 1.10.0
   contact:
     name: Governança do Open Insurance Brasil
     url: 'https://www.gov.br/susep'
@@ -840,21 +839,21 @@ components:
           type: string
           format: date
           maxLength: 10
-          pattern: '^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])$'
+          pattern: '^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])$'
           example: '2022-12-31'
         termStartDate: 
           description: Data de início de vigência do documento
           type: string
           format: date
           maxLength: 10
-          pattern: '^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])$'
+          pattern: '^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])$'
           example: '2022-12-31'
         termEndDate:
           description: Data de fim de vigência do documento
           type: string
           format: date
           maxLength: 10
-          pattern: '^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])$'
+          pattern: '^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])$'
           example: '2022-12-31'
         leadInsurerCode:
           description: "Código da seguradora líder para contratos com arranjo de cosseguro"
@@ -886,7 +885,7 @@ components:
           type: array
           description: Lista que agrupa os dados dos tomadores/garantidos.                                                                                          
           items:
-            $ref: '#/components/schemas/PersonalInfo'
+            $ref: '#/components/schemas/PrincipalInfo'
         intermediaries:
           type: array
           description: Lista que agrupa os dados de intermediários.                                                                                    
@@ -905,7 +904,7 @@ components:
         coinsuranceRetainedPercentage:
           description: "Percentual Retido em Cosseguro (Quando há cosseguro)"
           type: string
-          pattern: ^\d{1,3}\.\d{1,9}$
+          pattern: ^100\.0{1,9}$|^\d{1,2}\.\d{1,9}$
           example: '10.00'
         coinsurers:
           type: array
@@ -914,7 +913,8 @@ components:
             $ref: '#/components/schemas/Coinsurer'
         branchInfo:
           $ref: '#/components/schemas/InsurancePatrimonialSpecificPolicyInfo'
-    PersonalInfo:
+    
+    PrincipalInfo:
       type: object
       required:
         - identification
@@ -927,12 +927,12 @@ components:
         - address
       properties:
         identification:
-          description: Documento de Identificação da Pessoa
+          description: Documento de Identificação do Tomador/Garantidor
           type: string
           maxLength: 60
           example: "12345678900"
         identificationType:
-          description: Tipo de Documento da Pessoa
+          description: Tipo de Documento do Tomador/Garantidor
           type: string
           enum: [
             CPF,
@@ -940,38 +940,124 @@ components:
             OUTROS
           ]
           example: CPF
+        identificationTypeOthers:
+          description: Campo de detalhamento para quando a opcao do tipo de documento do Tomador/Garantidor for OUTROS
+          type: string
+          maxLength: 100
+          example: RNE
         name:
-          description: Nome ou Razão Social da Pessoa
+          description: Nome ou Razão Social do Tomador/Garantidor
           type: string
           maxLength: 60
           example: Nome Sobrenome
         postCode:
-          description: Código Postal da Pessoa
+          description: Código Postal do Tomador/Garantidor
           type: string
           maxLength: 60
           example: "10000000"
         email:
-          description: E-mail da Pessoa (caso possua)
+          description: E-mail do Tomador/Garantidor (caso possua)
           type: string
+          pattern: ^\S+@\S+\.\S+$
           maxLength: 256
         city:
-          description: Cidade da Pessoa (por extenso)
+          description: Cidade do Tomador/Garantidor (por extenso)
           type: string
           maxLength: 60
         state:
-          description: Estado da Pessoa (por extenso)
+          description: Estado do Tomador/Garantidor (por extenso)
+          type: string
+          example: AC
+          enum: ['AC', 'AL', 'AP', 'AM', 'BA', 'CE', 'DF', 'ES', 'GO', 'MA', 'MT', 'MS', 'MG', 'PA', 'PB', 'PR', 'PE', 'PI', 'RJ', 'RN', 'RS', 'RO', 'RR', 'SC', 'SP', 'SE', 'TO', 'BR', 'XX']
+        country:
+          description: País do Tomador/Garantidor (de acordo com o código "alpha3" do ISO-3166)
+          type: string
+          enum: [AFG,ALA,ALB,DZA,ASM,AND,AGO,AIA,ATA,ATG,ARG,ARM,ABW,AUS,AUT,AZE,BHS,BHR,BGD,BRB,BLR,BEL,BLZ,BEN,BMU,BTN,BOL,BES,BIH,BWA,BVT,BRA,IOT,BRN,BGR,BFA,BDI,CPV,KHM,CMR,CAN,CYM,CAF,TCD,CHL,CHN,CXR,CCK,COL,COM,COG,COD,COK,CRI,CIV,HRV,CUB,CUW,CYP,CZE,DNK,DJI,DMA,DOM,ECU,EGY,SLV,GNQ,ERI,EST,SWZ,ETH,FLK,FRO,FJI,FIN,FRA,GUF,PYF,ATF,GAB,GMB,GEO,DEU,GHA,GIB,GRC,GRL,GRD,GLP,GUM,GTM,GGY,GIN,GNB,GUY,HTI,HMD,VAT,HND,HKG,HUN,ISL,IND,IDN,IRN,IRQ,IRL,IMN,ISR,ITA,JAM,JPN,JEY,JOR,KAZ,KEN,KIR,PRK,KOR,KWT,KGZ,LAO,LVA,LBN,LSO,LBR,LBY,LIE,LTU,LUX,MAC,MDG,MWI,MYS,MDV,MLI,MLT,MHL,MTQ,MRT,MUS,MYT,MEX,FSM,MDA,MCO,MNG,MNE,MSR,MAR,MOZ,MMR,NAM,NRU,NPL,NLD,NCL,NZL,NIC,NER,NGA,NIU,NFK,MKD,MNP,NOR,OMN,PAK,PLW,PSE,PAN,PNG,PRY,PER,PHL,PCN,POL,PRT,PRI,QAT,REU,ROU,RUS,RWA,BLM,SHN,KNA,LCA,MAF,SPM,VCT,WSM,SMR,STP,SAU,SEN,SRB,SYC,SLE,SGP,SXM,SVK,SVN,SLB,SOM,ZAF,SGS,SSD,ESP,LKA,SDN,SUR,SJM,SWE,CHE,SYR,TWN,TJK,TZA,THA,TLS,TGO,TKL,TON,TTO,TUN,TUR,TKM,TCA,TUV,UGA,UKR,ARE,GBR,USA,UMI,URY,UZB,VUT,VEN,VNM,VGB,VIR,WLF,ESH,YEM,ZMB,ZWE]
+          example: BRA 
+        address:
+          description: Endereço do Tomador/Garantidor (restante do endereço, excluindo cidade, estado e país)
           type: string
           maxLength: 60
-        country:
-          description: País da Pessoa (de acordo com o código "alpha3" do ISO-3166)
+        addressAdditionalInfo:
+          description: Complemento do endereço do Tomador/Garantidor.
           type: string
-          maxLength: 3
-          pattern: '^(\w{3}){1}$'
+          maxLength: 30
+          example: Fundos
+    PersonalInfo:
+      type: object
+      required:
+        - identification
+        - identificationType
+        - name
+        - postCode
+        - birthDate
+        - city
+        - state
+        - country
+        - address
+      properties:
+        identification:
+          description: Documento de Identificação do segurado
+          type: string
+          maxLength: 60
+          example: "12345678900"
+        identificationType:
+          description: Tipo de Documento do segurado
+          type: string
+          enum: [
+            CPF,
+            CNPJ,
+            OUTROS
+          ]
+          example: CPF
+        identificationTypeOthers:
+          description: Campo de detalhamento para quando a opcao do tipo de documento do segurado for OUTROS
+          type: string
+          maxLength: 100
+          example: RNE
+        name:
+          description: Nome ou Razão Social do segurado
+          type: string
+          maxLength: 60
+          example: Nome Sobrenome
+        birthDate:
+          description: Data de nascimento do segurado
+          type: string
+          format: date
+          pattern: '^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])$'
+          example: '1999-06-12'
+        postCode:
+          description: Código Postal do Segurado
+          type: string
+          maxLength: 60
+          example: "10000000"
+        email:
+          description: E-mail da segurado (caso possua)
+          type: string
+          pattern: ^\S+@\S+\.\S+$
+          maxLength: 256
+        city:
+          description: Cidade o segurado(por extenso)
+          type: string
+          maxLength: 60
+        state:
+          description: Estado do segurado 
+          type: string
+          example: AC
+          enum: ['AC', 'AL', 'AP', 'AM', 'BA', 'CE', 'DF', 'ES', 'GO', 'MA', 'MT', 'MS', 'MG', 'PA', 'PB', 'PR', 'PE', 'PI', 'RJ', 'RN', 'RS', 'RO', 'RR', 'SC', 'SP', 'SE', 'TO', 'BR', 'XX']
+        country:
+          description: País do segurado (de acordo com o código "alpha3" do ISO-3166)
+          type: string
           example: BRA 
+          enum: [AFG,ALA,ALB,DZA,ASM,AND,AGO,AIA,ATA,ATG,ARG,ARM,ABW,AUS,AUT,AZE,BHS,BHR,BGD,BRB,BLR,BEL,BLZ,BEN,BMU,BTN,BOL,BES,BIH,BWA,BVT,BRA,IOT,BRN,BGR,BFA,BDI,CPV,KHM,CMR,CAN,CYM,CAF,TCD,CHL,CHN,CXR,CCK,COL,COM,COG,COD,COK,CRI,CIV,HRV,CUB,CUW,CYP,CZE,DNK,DJI,DMA,DOM,ECU,EGY,SLV,GNQ,ERI,EST,SWZ,ETH,FLK,FRO,FJI,FIN,FRA,GUF,PYF,ATF,GAB,GMB,GEO,DEU,GHA,GIB,GRC,GRL,GRD,GLP,GUM,GTM,GGY,GIN,GNB,GUY,HTI,HMD,VAT,HND,HKG,HUN,ISL,IND,IDN,IRN,IRQ,IRL,IMN,ISR,ITA,JAM,JPN,JEY,JOR,KAZ,KEN,KIR,PRK,KOR,KWT,KGZ,LAO,LVA,LBN,LSO,LBR,LBY,LIE,LTU,LUX,MAC,MDG,MWI,MYS,MDV,MLI,MLT,MHL,MTQ,MRT,MUS,MYT,MEX,FSM,MDA,MCO,MNG,MNE,MSR,MAR,MOZ,MMR,NAM,NRU,NPL,NLD,NCL,NZL,NIC,NER,NGA,NIU,NFK,MKD,MNP,NOR,OMN,PAK,PLW,PSE,PAN,PNG,PRY,PER,PHL,PCN,POL,PRT,PRI,QAT,REU,ROU,RUS,RWA,BLM,SHN,KNA,LCA,MAF,SPM,VCT,WSM,SMR,STP,SAU,SEN,SRB,SYC,SLE,SGP,SXM,SVK,SVN,SLB,SOM,ZAF,SGS,SSD,ESP,LKA,SDN,SUR,SJM,SWE,CHE,SYR,TWN,TJK,TZA,THA,TLS,TGO,TKL,TON,TTO,TUN,TUR,TKM,TCA,TUV,UGA,UKR,ARE,GBR,USA,UMI,URY,UZB,VUT,VEN,VNM,VGB,VIR,WLF,ESH,YEM,ZMB,ZWE]
         address:
           description: Endereço da Pessoa (restante do endereço, excluindo cidade, estado e país)
           type: string
           maxLength: 60
+        addressAdditionalInfo:
+          type: string
+          maxLength: 100
+          description: Informações adicionais do endereço do segurado
     PersonalQuoteCustomer:
       type: object
       description: Objeto de informações de pessoa física.  
@@ -991,8 +1077,7 @@ components:
         qualification:
           $ref: '#/components/schemas/BusinessQualificationData'
         complimentaryInfo:
-          $ref: '#/components/schemas/BusinessComplimentaryInformationData'
-      
+          $ref: '#/components/schemas/BusinessComplimentaryInformationData'   
     BeneficiaryInfo:
       type: object
       required:
@@ -1001,12 +1086,12 @@ components:
         - name
       properties:
         identification:
-          description: Documento de Identificação da Pessoa
+          description: Documento de Identificação do beneficiário
           type: string
           maxLength: 60
           example: "12345678900"
         identificationType:
-          description: Tipo de Documento da Pessoa
+          description: Tipo de Documento do beneficiário
           type: string
           enum: [
             CPF,
@@ -1014,14 +1099,20 @@ components:
             OUTROS
           ]
           example: CPF
+        identificationTypeOthers:
+          description: Campo de detalhamento para quando a opcao do tipo de documento do beneficiário for OUTROS
+          type: string
+          maxLength: 100
+          example: RNE
         name:
-          description: Nome ou Razão Social da Pessoa
+          description: Nome ou Razão Social do beneficiário
           type: string
           maxLength: 60
           example: Nome Sobrenome
     Intermediary:
       type: object
       required:
+        - type
         - name
       properties:
         type:
@@ -1036,16 +1127,20 @@ components:
             OUTROS
           ]
           example: REPRESENTANTE
+        typeOthers:
+          description: Descricao do Tipo do Intermediador quando for informada a opcao OUTROS
+          type: string
+          maxLength: 100
         identification:
           description: Documento de Identificação do Intermediador(a) (Caso Tipo de Intermediador não seja CORRETOR ou quando for CORRETOR, porém o identificador do intermediador não seja informado)
           type: string
           maxLength: 60
-          pattern: '^\d{1,60}$'
+          pattern: ^[a-zA-Z0-9]{1,60}$
           example: "12345678900"
         brokerId:
           description: Identificador do intermediador da apólice - código Susep do corretor(a) (Caso Tipo de Intermediador for CORRETOR)
           type: string
-          maxLength: 100
+          pattern: ^\d{9}$
         identificationType:
           description: Tipo de Documento do Intermediador(a) (Caso Tipo de Intermediador não seja CORRETOR ou quando for CORRETOR, porém o identificador do intermediador não seja informado)
           type: string
@@ -1055,6 +1150,11 @@ components:
             OUTROS
           ]
           example: CPF
+        identificationTypeOthers:
+          description: Campo de detalhamento para quando a opcao do tipo de documento do intermediador(a) for OUTROS
+          type: string
+          maxLength: 100
+          example: RNE
         name:
           description: Nome ou Razão Social da Intermediador
           type: string
@@ -1076,9 +1176,8 @@ components:
         country:
           description: País da Intermediador (de acordo com o código "alpha3" do ISO-3166; Caso Tipo de Intermediador for ESTIPULANTE)
           type: string
-          maxLength: 3
-          pattern: '^(\w{3}){1}$'
           example: BRA 
+          enum: [AFG,ALA,ALB,DZA,ASM,AND,AGO,AIA,ATA,ATG,ARG,ARM,ABW,AUS,AUT,AZE,BHS,BHR,BGD,BRB,BLR,BEL,BLZ,BEN,BMU,BTN,BOL,BES,BIH,BWA,BVT,BRA,IOT,BRN,BGR,BFA,BDI,CPV,KHM,CMR,CAN,CYM,CAF,TCD,CHL,CHN,CXR,CCK,COL,COM,COG,COD,COK,CRI,CIV,HRV,CUB,CUW,CYP,CZE,DNK,DJI,DMA,DOM,ECU,EGY,SLV,GNQ,ERI,EST,SWZ,ETH,FLK,FRO,FJI,FIN,FRA,GUF,PYF,ATF,GAB,GMB,GEO,DEU,GHA,GIB,GRC,GRL,GRD,GLP,GUM,GTM,GGY,GIN,GNB,GUY,HTI,HMD,VAT,HND,HKG,HUN,ISL,IND,IDN,IRN,IRQ,IRL,IMN,ISR,ITA,JAM,JPN,JEY,JOR,KAZ,KEN,KIR,PRK,KOR,KWT,KGZ,LAO,LVA,LBN,LSO,LBR,LBY,LIE,LTU,LUX,MAC,MDG,MWI,MYS,MDV,MLI,MLT,MHL,MTQ,MRT,MUS,MYT,MEX,FSM,MDA,MCO,MNG,MNE,MSR,MAR,MOZ,MMR,NAM,NRU,NPL,NLD,NCL,NZL,NIC,NER,NGA,NIU,NFK,MKD,MNP,NOR,OMN,PAK,PLW,PSE,PAN,PNG,PRY,PER,PHL,PCN,POL,PRT,PRI,QAT,REU,ROU,RUS,RWA,BLM,SHN,KNA,LCA,MAF,SPM,VCT,WSM,SMR,STP,SAU,SEN,SRB,SYC,SLE,SGP,SXM,SVK,SVN,SLB,SOM,ZAF,SGS,SSD,ESP,LKA,SDN,SUR,SJM,SWE,CHE,SYR,TWN,TJK,TZA,THA,TLS,TGO,TKL,TON,TTO,TUN,TUR,TKM,TCA,TUV,UGA,UKR,ARE,GBR,USA,UMI,URY,UZB,VUT,VEN,VNM,VGB,VIR,WLF,ESH,YEM,ZMB,ZWE]
         address:
           description: Endereço da Intermediador (restante do do endereço, excluindo cidade, estado e país; Caso Tipo de Intermediador for ESTIPULANTE)
           type: string
@@ -1086,7 +1185,6 @@ components:
     InsurancePatrimonialInsuredObject:
       type: object
       required:
-        - identification
         - type
         - description
         - coverages
@@ -1094,10 +1192,11 @@ components:
         identification:
           type: string
           maxLength: 100
-          description: "Identificador do objeto segurado. Obs.: Para Fiança Locatícia, é a identificação do Contrato de Locação."
+          description: "Identificador do objeto segurado (Quando o Tipo de Objeto Segurado for diferente de PESSOA). Obs.: Para Fiança Locatícia, é a identificação do Contrato de Locação."
         type:
           type: string
           description: Tipo do objeto segurado
+          example: CONTRATO
           enum: [CONTRATO,
                 PROCESSO_ADMINISTRATIVO,
                 PROCESSO_JUDICIAL,
@@ -1133,6 +1232,7 @@ components:
         - termEndDate
         - feature
         - type
+        - premiumPeriodicity
       properties:
         branch:
           type: string
@@ -1163,14 +1263,14 @@ components:
           type: string
           format: date
           maxLength: 10
-          pattern: '^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])$'
+          pattern: '^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])$'
           example: '2022-12-31'
           description: "Data de início de vigência da cobertura"
         termEndDate:  
           type: string
           format: date
           maxLength: 10
-          pattern: '^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])$'
+          pattern: '^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])$'
           example: '2022-12-31'
           description: "Data de fim de vigência da cobertura"
         isMainCoverage:
@@ -1179,12 +1279,14 @@ components:
         feature:
           type: string
           description: "Característica da cobertura"
+          example: MASSIFICADOS
           enum: [MASSIFICADOS,
                 MASSIFICADOS_MICROSEGUROS,
                 GRANDES_RISCOS]
         type:    
           type: string
           description: "Tipo de cobertura"
+          example: PARAMETRICO
           enum: [PARAMETRICO,
                 INTERMITENTE,
                 REGULAR_COMUM,
@@ -1197,19 +1299,21 @@ components:
         gracePeriodicity:
           type: string
           description: "Periodicidade da carência. OBS: Obrigatório, se houver"
+          example: DIA
           enum: [DIA,
                 MES,
                 ANO]     
         gracePeriodCountingMethod:   
           type: string
           description: "Indicador de dias úteis ou corridos da carência. OBS: Obrigatório, se houver"
+          example: DIAS_UTEIS
           enum: [DIAS_UTEIS,
                 DIAS_CORRIDOS] 
         gracePeriodStartDate:            
           type: string
           format: date
           maxLength: 10
-          pattern: '^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])$'
+          pattern: '^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])$'
           example: '2022-12-31'
           description: "Data de início da carência. OBS: Obrigatório, se houver"
         gracePeriodEndDate:            
@@ -1217,8 +1321,24 @@ components:
           format: date
           maxLength: 10
           example: '2022-12-31'
-          pattern: '^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])$'
+          pattern: '^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])$'
           description: "Data de fim da carência. OBS: Obrigatório, se houver"
+        premiumPeriodicity:
+          description: Periodicidade de pagamento do premio
+          type: string
+          enum: [MENSAL,
+                BIMESTRAL,
+                TRIMESTRAL,
+                QUADRIMESTRAL,
+                SEMESTRAL,
+                ANUAL,
+                ESPORADICA,
+                PAGAMENTO_UNICO,
+                OUTROS]
+        premiumPeriodicityOthers:
+          description: Descricao da Periodicidade de pagamento do premio quando for informada a opcao OUTROS
+          type: string
+          maxLength: 100
     InsurancePatrimonialCoverage:
       type: object
       required:
@@ -1268,8 +1388,10 @@ components:
           description: Descriçao do Tipo de Franquia (Caso Tipo de Franquia for "OUTROS")
           type: string
           maxLength: 500
-        amount:
-          $ref: '#/components/schemas/AmountDetails'
+        amount:  
+          description: Valor da franquia
+          allOf:
+            - $ref: '#/components/schemas/AmountDetails'
         period:
           description: Prazo da Franquia
           type: integer
@@ -1296,13 +1418,13 @@ components:
           description: Data de Início da Franquia
           type: string
           format: date
-          pattern: '^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])$'
+          pattern: '^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])$'
           example: '2022-05-16'
         periodEndDate:
           description: Data de Fim da Franquia
           type: string
           format: date
-          pattern: '^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])$'
+          pattern: '^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])$'
           example: '2022-05-17'
         description:
           description: Descrição da Franquia
@@ -1335,10 +1457,9 @@ components:
         maxValue:
           $ref: '#/components/schemas/AmountDetails'
         percentage:
-          description: Percentual do POS
-          type: string
-          pattern: ^\d{1,3}\.\d{1,9}$
-          example: '10.00'
+          $ref: '#/components/schemas/AmountDetails'
+        valueOthers: 
+          $ref: '#/components/schemas/AmountDetails'
     Coinsurer:
       type: object
       required:
@@ -1352,7 +1473,7 @@ components:
         cededPercentage:
           description: "Percentual cedido para a congênere para contratos de cosseguro cedido. Obs: Obrigatório quando há cosseguro"
           type: string
-          pattern: ^\d{1,3}\.\d{1,9}$
+          pattern: ^100\.0{1,9}$|^\d{1,2}\.\d{1,9}$
           example: '10.00'
     InsurancePatrimonialPremium:
       type: object
@@ -1365,7 +1486,7 @@ components:
       properties:
         paymentsQuantity:
           description: Quantidade de parcelas do prêmio do contrato
-          type: number
+          type: integer
           maxLength: 3
           example: 4
         amount:
@@ -1415,15 +1536,19 @@ components:
           description: Data do movimento de prêmio
           type: string
           format: date
-          pattern: '^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])$'
+          pattern: '^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])$'
           example: '2022-12-31'
         movementType:
           description: Tipo do Movimento
           type: string
           enum: [LIQUIDACAO_DE_PREMIO,
                 LIQUIDACAO_DE_RESTITUICAO_DE_PREMIO,
+                LIQUIDACAO_DE_CUSTO_DE_AQUISICAO,
+                LIQUIDACAO_DE_RESTITUICAO_DE_CUSTO_DE_AQUISICAO,
+                COMPENSACAO_FINANCEIRA,
                 ESTORNO_DE_PREMIO,
                 ESTORNO_DE_RESTITUICAO_DE_PREMIO,
+                ESTORNO_DE_CUSTO_DE_AQUISICAO,
                 EMISSAO_DE_PREMIO,
                 CANCELAMENTO_DE_PARCELA,
                 EMISSAO_DE_RESTITUICAO_DE_PREMIO,
@@ -1440,7 +1565,7 @@ components:
           example: EMISSAO_DIRETA
         movementPaymentsNumber:
           description: Identificador da parcela do movimento
-          type: number
+          type: string
           maxLength: 3
         amount:
           $ref: '#/components/schemas/AmountDetails'
@@ -1448,6 +1573,7 @@ components:
           description: Data de Vencimento da Parcela
           type: string
           format: date
+          pattern: ^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])$
           example: '2022-12-31'
         tellerId:
           description: "Documento do Pagador/Recebedor Obs: Obrigatório caso Tipo de Movimento for  LIQUIDACAO_DE_PREMIO e LIQUIDACAO_DE_CUSTO_DE_AQUISICAO"
@@ -1460,6 +1586,10 @@ components:
                 CNPJ,
                 OUTROS]
           example: CPF
+        tellerIdTypeOthers:
+          description: "Campo para descrever o tipo do documento quando for OUTROS"
+          type: string
+          maxLength: 100
         tellerName:
           description: "Nome ou Razão Social do Pagador/Recebedor Obs: Obrigatório caso Tipo de Movimento for  LIQUIDACAO_DE_PREMIO e LIQUIDACAO_DE_CUSTO_DE_AQUISICAO"
           type: string
@@ -1480,6 +1610,7 @@ components:
                 DESCONTO_EM_FOLHA,  
                 PIX,
                 DINHEIRO_EM_ESPECIE,
+                COMUNICABILIDADE,
                 OUTROS]
           example: BOLETO
     InsurancePatrimonialClaim:
@@ -1487,27 +1618,28 @@ components:
       description: Objeto que agrupa dados de sinistro.
       required:
         - identification
-        - documentationDeliveryDate
         - status
         - statusAlterationDate
         - occurrenceDate
         - warningDate
         - amount
+        - coverages
       properties:
         identification:
           description: Identificador do processo de sinistro
           type: string
           maxLength: 50
         documentationDeliveryDate:
-          description: Data de entrega da documentação completa
+          description: Data de entrega da documentação completa (Caso tenha ocorrido toda a entrega)
           type: string
           format: date
           maxLength: 10
-          pattern: '^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])$'
+          pattern: '^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])$'
           example: '2022-12-31'
         status:
           description: Status do sinistro     
           type: string
+          example: ABERTO
           enum: [ABERTO,
                 ENCERRADO_COM_INDENIZACAO,
                 ENCERRADO_SEM_INDENIZACAO,
@@ -1519,34 +1651,35 @@ components:
           type: string
           format: date
           maxLength: 10
-          pattern: '^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])$'
+          pattern: '^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])$'
           example: '2022-12-31'
         occurrenceDate:
           description: Data de ocorrência do sinistro
           type: string
           format: date
           maxLength: 10
-          pattern: '^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])$'
+          pattern: '^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])$'
           example: '2022-12-31'
         warningDate:
           description: Data de aviso do sinistro
           type: string
           format: date
           maxLength: 10
-          pattern: '^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])$'
+          pattern: '^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])$'
           example: '2022-12-31'
         thirdPartyClaimDate:
           description: Data de reclamação do terceiro
           type: string
           format: date
           maxLength: 10
-          pattern: '^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])$'
+          pattern: '^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])$'
           example: '2022-12-31'
         amount:
           $ref: '#/components/schemas/AmountDetails'
         denialJustification:
           description: "Justificativa da Negativa(Caso Status do Sinistro for 'ENCERRADO_SEM_INDENIZACAO')"
           type: string
+          example: RISCO_EXCLUIDO
           enum: [RISCO_EXCLUIDO,
             RISCO_AGRAVADO,
             SEM_DOCUMENTACAO,
@@ -1588,13 +1721,13 @@ components:
           description: Data de Aviso do Sinistro por Cobertura (Caso aplicável)
           type: string
           format: date
-          pattern: '^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])$'
+          pattern: '^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])$'
           example: '2022-12-31'
         thirdPartyClaimDate:
           description: Data de Reclamação do Terceiro por Cobertura (Caso aplicável)
           type: string
           format: date
-          pattern: '^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])$'
+          pattern: '^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])$'
           example: '2022-12-31'
     InsurancePatrimonialSpecificPolicyInfo:
       type: object
@@ -1801,6 +1934,7 @@ components:
         type:
           description: Tipo de prestação de serviços
           type: string
+          example: ASSISTENCIA_AUTO
           enum: [
             ASSISTENCIA_AUTO,   
             ASSISTENCIA_RE,     
@@ -1818,6 +1952,7 @@ components:
         service:
           description: Nome do serviço prestado
           type: string
+          example: AMPARO_DE_CRIANCAS
           enum: [
             ACIONAMENTO_E_OU_AGENDAMENTO_DE_LEVA_E_TRAZ,
             AMPARO_DE_CRIANCAS,
@@ -1975,7 +2110,7 @@ components:
       properties:
         paymentsQuantity:
           description: Quantidade de parcelas do prêmio do contrato
-          type: number
+          type: integer
           maxLength: 3
           example: 4
         totalPremiumAmount:
@@ -1992,9 +2127,9 @@ components:
             - $ref: '#/components/schemas/AmountDetails'
         interestRateOverPayments:
           description: Taxa de juros sobre o parcelamento do prêmio
-          type: number
+          type: string
           pattern: ^\d{1,3}\.\d{1,9}$
-          example: 10.00
+          example: "10.00"
         coverages:
           type: array
           description: Lista que agrupa os dados de coberturas.
@@ -2027,49 +2162,63 @@ components:
 
     QuoteDataPatrimonialCondominium:
       type: object
+      required:
+        - coverages
       description: Objeto que agrupa dados específicos do ramo de cotação.
       properties:
         mainActivity:
           description: "Principal atividade do local de risco"
           type: string
+          example: COMERCIO
           enum: [COMERCIO,    
                 INDUSTRIA,
                 SERVICO]
         isLegallyConstituted:  
           description: O condomínio está legalmente constituído?
           type: boolean
+        registryStarted:
+          description: O registro na receita federal foi iniciado? Condicional ao campo "isLegallyConstituted" ser false
+          type: boolean
+        timeRegistry:
+          description: O registro na receita federal possui mais de 12 meses? Condicional ao campo "registryStarted" ser true
+          type: boolean
         condominiumType:
-          description: "Trata-se de condomínio do tipo:
-            1. Condomínio Polo Industrial
-            2. Condomínio Logístico / Galpão
-            3. Condomínio Armazém/Depósito
-            4. Condomínio Garagem de veículos
-            5. Condomínio Shopping center"
+          description: | 
+            "Trata-se de condomínio do tipo:
+              
+              1. Condomínio Polo Industrial
+              2. Condomínio Logístico / Galpão
+              3. Condomínio Armazém/Depósito
+              4. Condomínio Garagem de veículos
+              5. Condomínio Shopping center"
+
+            Caso se encaixe em algum dos itens acima, a cotação será classificada como Lead.
           type: boolean  
         termStartDate: 
           type: string
           format: date
           maxLength: 10
-          pattern: '^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])$'
+          pattern: '^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])$'
           example: '2022-10-02'
           description: "Data de vigência dentro de 24 horas"
         termEndDate:  
           type: string
           format: date
           maxLength: 10
-          pattern: '^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])$'
+          pattern: '^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])$'
           example: '2022-10-02'
           description: "Data de fim de vigência até as 24 horas"
         insuranceTermStartDate:  
           type: string
           format: date
           maxLength: 10
-          pattern: '^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])$'
+          pattern: '^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])$'
           example: '2022-10-02'
           description: "Não permite retroagir vigência permite - vigência posterior"
         insuranceType: 
           type: string
           description: Tipo de Seguro
+          example: NOVO
           enum: [NOVO,    
                 RENOVACAO]
         policyId:
@@ -2084,11 +2233,12 @@ components:
         currency:
           description: Moeda de emissão do contrato de acordo com ISO-4217.
           type: string
-          pattern: '^(\w{3}){1}$'
           example: BRL
+          enum: [AFN,AFA,ALL,ALK,DZD,USD,EUR,ADP,ESP,FRF,AOA,AOK,AON,AOR,XCD,ARS,ARA,ARP,ARY,AMD,RUR,AWG,AUD,ATS,AZN,AYM,AZM,BSD,BHD,BDT,BBD,BYN,BYB,BYR,BEC,BEF,BEL,BZD,XOF,BMD,INR,BTN,BOP,BOB,BOV,BAM,BAD,BWP,NOK,BRL,BRB,BRC,BRE,BRN,BRR,BND,BGN,BGJ,BGK,BGL,BUK,BIF,CVE,KHR,XAF,CAD,KYD,CLP,CLF,CNY,COP,COU,KMF,CDF,NZD,CRC,HRK,HRD,CUP,CUC,ANG,CYP,CZK,CSJ,CSK,DKK,DJF,DOP,ECS,ECV,EGP,SVC,GQE,ERN,EEK,SZL,ETB,XEU,FKP,FJD,FIM,XPF,GMD,GEL,GEK,DDM,DEM,GHS,GHC,GHP,GIP,GRD,GTQ,GBP,GNF,GNE,GNS,GWE,GWP,GYD,HTG,ITL,HNL,HKD,HUF,ISK,ISJ,IDR,XDR,IRR,IQD,IEP,ILS,ILP,ILR,JMD,JPY,JOD,KZT,KES,KPW,KRW,KWD,KGS,LAJ,LAK,LVL,LVR,LBP,LSL,ZAR,LSM,ZAL,LRD,LYD,CHF,LTL,LTT,LUC,LUF,LUL,MOP,MGA,MGF,MWK,MYR,MVR,MVQ,MLF,MTL,MTP,MRU,MRO,MUR,XUA,MXN,MXV,MXP,MDL,MNT,MAD,MZN,MZE,MZM,MMK,NAD,NPR,NLG,NIO,NIC,NGN,MKD,OMR,PKR,PAB,PGK,PYG,PEN,PEH,PEI,PES,PHP,PLN,PLZ,PTE,QAR,RON,ROK,ROL,RUB,RWF,SHP,WST,STN,STD,SAR,RSD,CSD,SCR,SLL,SGD,XSU,SKK,SIT,SBD,SOS,SSP,SDG,RHD,ESA,ESB,LKR,SDD,SDP,SRD,SRG,SEK,CHE,CHW,CHC,SYP,TWD,TJS,TJR,TZS,THB,TPE,TOP,TTD,TND,TRY,TRL,TMT,TMM,UGX,UGS,UGW,UAH,UAK,SUR,AED,USS,USN,UYU,UYI,UYW,UYN,UYP,UZS,VUV,VEB,VEF,VES,VND,VNC,YER,YDD,YUD,YUM,YUN,ZRN,ZRZ,ZMW,ZMK,ZWL,ZWC,ZWD,ZWN,ZWR,XBA,XFO,XBB,XRE,XBC,XBD,XFU,XTS,XXX,XAU,XPD,XPT,XAG]
         basicCoverageIndex: 
           description: "Indicador de Modalidade de Cobertura Básica (Caso contrato de Compreensivo Condomínio)"
           type: string
+          example: SIMPLES
           enum: [SIMPLES,
                 AMPLA]        
         maxLMG:
@@ -2125,6 +2275,7 @@ components:
         structuringType:
           description: "Indica o tipo de estruturação"
           type: string
+          example: CONDOMINIO_VERTICAL
           enum: [
             CONDOMINIO_VERTICAL,  
             CONDOMINIO_HORIZONTAL,
@@ -2132,6 +2283,7 @@ components:
         propertyType:
           description: Tipo docondomínio segurado
           type: string
+          example: CONDOMINIO_EXCLUSIVAMENTE_RESIDENCIAL
           enum: [
             CONDOMINIO_RESIDENCIAL_COM_COMERCIO_NO_TERREO,
             CONDOMINIO_DE_ESCRITORIOS_CONSULTORIOS,
@@ -2166,6 +2318,7 @@ components:
           type: array
           items:
             type: string
+            example: PORTEIRO_ELETRONICO
             enum: [
               CAMERA_CFTV,
               PORTARIA_VINTE_E_QUATRO_HORAS,
@@ -2208,6 +2361,7 @@ components:
         code:
             type: string
             description: Código da cobertura, conforme Anexo II do Manuel de Escopo de Dados
+            example: RESIDENCIAL_IMOVEL_BASICA
             enum: [
               RESIDENCIAL_IMOVEL_BASICA,
               RESIDENCIAL_IMOVEL_AMPLA,
@@ -2402,11 +2556,13 @@ components:
         townName:
           type: string
           maxLength: 100
+          pattern: ^[a-z]|[A-Z]|\s$
           description: Município
           example: "São Paulo"
         countrySubDivision:
           type: string
           description: Sigla da Unidade da Federação
+          example: AC
           enum: [AC,
                 AL,
                 AP,
@@ -2456,6 +2612,7 @@ components:
           $ref: '#/components/schemas/ResultQuotePatrimonialCondominium'
         quotes:
           type: array
+          minItems: 1
           description: Lista de cotações enviadas pela seguradora.
           items:
             required:
@@ -2473,7 +2630,7 @@ components:
               quoteDateTime:
                 type: string
                 format: date-time
-                pattern: '^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])T(?:[01]\d|2[0123]):(?:[012345]\d):(?:[012345]\d)Z$'
+                pattern: '^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])T(?:[01]\d|2[0123]):(?:[012345]\d):(?:[012345]\d)Z$'
                 example: "2023-05-21T08:30:00Z"
                 description: Data e hora da cotação
               susepProcessNumbers:
@@ -2485,6 +2642,7 @@ components:
               updatingIndex:
                 description: Índice de atualização dos valores do contrato
                 type: string
+                example: IPCA
                 enum: [
                   IPCA,
                   IGP_M,
@@ -2492,13 +2650,22 @@ components:
                   OUTROS,
                   NAO_SE_APLICA
                 ]
+              updatingIndexOthers:
+                description: Campo para descrever o indice de atualização quando for outros
+                type: string
+                maxLength: 100
               updatingPeriodicity:
                 description: Periodicidade de atualização
                 type: string
+                example: ANUAL
                 enum: [
                   ANUAL,
                   OUTROS
-                ]    
+                ]
+              updatingPeriodicityOthers:
+                description: Campo para descrever a periodicidade do indice de atualização quando for outros
+                type: string
+                maxLength: 100    
               coverages:
                 type: array
                 description: Lista que agrupa os dados de coberturas.
@@ -2530,6 +2697,7 @@ components:
         code:
             type: string
             description: Código da cobertura, conforme Anexo II do Manuel de Escopo de Dados
+            example: RESIDENCIAL_IMOVEL_BASICA
             enum: [
               RESIDENCIAL_IMOVEL_BASICA,
               RESIDENCIAL_IMOVEL_AMPLA,
@@ -2716,26 +2884,28 @@ components:
         gracePeriodicity:
           type: string
           description: "Periodicidade da carência. OBS: Obrigatório, se houver"
+          example: DIA
           enum: [DIA,
                 MES,
                 ANO]     
         gracePeriodCountingMethod:   
           type: string
           description: "Indicador de dias úteis ou corridos da carência. OBS: Obrigatório, se houver"
+          example: DIAS_UTEIS
           enum: [DIAS_UTEIS,
                 DIAS_CORRIDOS] 
         gracePeriodStartDate:            
           type: string
           format: date
           maxLength: 10
-          pattern: '^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])$'
+          pattern: '^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])$'
           example: '2022-10-02'
           description: "Data de início da carência. OBS: Obrigatório, se houver"
         gracePeriodEndDate:            
           type: string
           format: date
           maxLength: 10
-          pattern: '^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])$'
+          pattern: '^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])$'
           example: '2022-10-02'
           description: "Data de fim da carência. OBS: Obrigatório, se houver"  
 
@@ -2746,44 +2916,53 @@ components:
         mainActivity:
           description: "Principal atividade do local de risco"
           type: string
+          example: COMERCIO
           enum: [COMERCIO,    
                 INDUSTRIA,
                 SERVICO]
-        isLegallyConstituted:  
-          description: O condomínio está legalmente constituído?
+        registryStarted:
+          description: O registro na receita federal foi iniciado? Condicional ao campo "isLegallyConstituted" ser false
+          type: boolean
+        timeRegistry:
+          description: O registro na receita federal possui mais de 12 meses? Condicional ao campo "registryStarted" ser true
           type: boolean
         condominiumType:
-          description: "Trata-se de condomínio do tipo:
-            1. Condomínio Polo Industrial
-            2. Condomínio Logístico / Galpão
-            3. Condomínio Armazém/Depósito
-            4. Condomínio Garagem de veículos
-            5. Condomínio Shopping center"
-          type: boolean  
+          description: | 
+            "Trata-se de condomínio do tipo:
+              
+              1. Condomínio Polo Industrial
+              2. Condomínio Logístico / Galpão
+              3. Condomínio Armazém/Depósito
+              4. Condomínio Garagem de veículos
+              5. Condomínio Shopping center"
+
+            Caso se encaixe em algum dos itens acima, a cotação será classificada como Lead.
+          type: boolean   
         termStartDate: 
           type: string
           format: date
           maxLength: 10
-          pattern: '^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])$'
+          pattern: '^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])$'
           example: '2022-10-02'
           description: "Data de vigência dentro de 24 horas"
         termEndDate:  
           type: string
           format: date
           maxLength: 10
-          pattern: '^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])$'
+          pattern: '^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])$'
           example: '2022-10-02'
           description: "Data de fim de vigência até as 24 horas"
         insuranceTermStartDate:  
           type: string
           format: date
           maxLength: 10
-          pattern: '^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])$'
+          pattern: '^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])$'
           example: '2022-10-02'
           description: "Não permite retroagir vigência permite - vigência posterior"
         insuranceType: 
           type: string
           description: Tipo de Seguro
+          example: NOVO
           enum: [NOVO,    
                 RENOVACAO]
         policyId:
@@ -2798,11 +2977,12 @@ components:
         currency:
           description: Moeda de emissão do contrato de acordo com ISO-4217.
           type: string
-          pattern: '^(\w{3}){1}$'
           example: BRL
+          enum: [AFN,AFA,ALL,ALK,DZD,USD,EUR,ADP,ESP,FRF,AOA,AOK,AON,AOR,XCD,ARS,ARA,ARP,ARY,AMD,RUR,AWG,AUD,ATS,AZN,AYM,AZM,BSD,BHD,BDT,BBD,BYN,BYB,BYR,BEC,BEF,BEL,BZD,XOF,BMD,INR,BTN,BOP,BOB,BOV,BAM,BAD,BWP,NOK,BRL,BRB,BRC,BRE,BRN,BRR,BND,BGN,BGJ,BGK,BGL,BUK,BIF,CVE,KHR,XAF,CAD,KYD,CLP,CLF,CNY,COP,COU,KMF,CDF,NZD,CRC,HRK,HRD,CUP,CUC,ANG,CYP,CZK,CSJ,CSK,DKK,DJF,DOP,ECS,ECV,EGP,SVC,GQE,ERN,EEK,SZL,ETB,XEU,FKP,FJD,FIM,XPF,GMD,GEL,GEK,DDM,DEM,GHS,GHC,GHP,GIP,GRD,GTQ,GBP,GNF,GNE,GNS,GWE,GWP,GYD,HTG,ITL,HNL,HKD,HUF,ISK,ISJ,IDR,XDR,IRR,IQD,IEP,ILS,ILP,ILR,JMD,JPY,JOD,KZT,KES,KPW,KRW,KWD,KGS,LAJ,LAK,LVL,LVR,LBP,LSL,ZAR,LSM,ZAL,LRD,LYD,CHF,LTL,LTT,LUC,LUF,LUL,MOP,MGA,MGF,MWK,MYR,MVR,MVQ,MLF,MTL,MTP,MRU,MRO,MUR,XUA,MXN,MXV,MXP,MDL,MNT,MAD,MZN,MZE,MZM,MMK,NAD,NPR,NLG,NIO,NIC,NGN,MKD,OMR,PKR,PAB,PGK,PYG,PEN,PEH,PEI,PES,PHP,PLN,PLZ,PTE,QAR,RON,ROK,ROL,RUB,RWF,SHP,WST,STN,STD,SAR,RSD,CSD,SCR,SLL,SGD,XSU,SKK,SIT,SBD,SOS,SSP,SDG,RHD,ESA,ESB,LKR,SDD,SDP,SRD,SRG,SEK,CHE,CHW,CHC,SYP,TWD,TJS,TJR,TZS,THB,TPE,TOP,TTD,TND,TRY,TRL,TMT,TMM,UGX,UGS,UGW,UAH,UAK,SUR,AED,USS,USN,UYU,UYI,UYW,UYN,UYP,UZS,VUV,VEB,VEF,VES,VND,VNC,YER,YDD,YUD,YUM,YUN,ZRN,ZRZ,ZMW,ZMK,ZWL,ZWC,ZWD,ZWN,ZWR,XBA,XFO,XBB,XRE,XBC,XBD,XFU,XTS,XXX,XAU,XPD,XPT,XAG]
         basicCoverageIndex: 
           description: "Indicador de Modalidade de Cobertura Básica (Caso contrato de Compreensivo Condomínio)"
           type: string
+          example: SIMPLES
           enum: [SIMPLES,
                 AMPLA]        
         maxLMG:
@@ -2841,6 +3021,7 @@ components:
         structuringType:
           description: "Indica o tipo de estruturação"
           type: string
+          example: CONDOMINIO_VERTICAL
           enum: [
             CONDOMINIO_VERTICAL,  
             CONDOMINIO_HORIZONTAL,
@@ -2848,6 +3029,7 @@ components:
         propertyType:
           description: Tipo docondomínio segurado
           type: string
+          example: CONDOMINIO_EXCLUSIVAMENTE_RESIDENCIAL
           enum: [
             CONDOMINIO_RESIDENCIAL_COM_COMERCIO_NO_TERREO,
             CONDOMINIO_DE_ESCRITORIOS_CONSULTORIOS,
@@ -2882,6 +3064,7 @@ components:
           type: array
           items:
             type: string
+            example: PORTEIRO_ELETRONICO
             enum: [
               CAMERA_CFTV,
               PORTARIA_VINTE_E_QUATRO_HORAS,
@@ -2920,6 +3103,7 @@ components:
         paymentType:
           description: "Meio de Pagamento Obs: Obrigatório caso Tipo de Movimento for  LIQUIDACAO_DE_PREMIO e LIQUIDACAO_DE_CUSTO_DE_AQUISICAO"
           type: string
+          example: BOLETO
           enum: [BOLETO,
                 TED,
                 TEF,
@@ -2945,6 +3129,7 @@ components:
         code:
             type: string
             description: Código da cobertura, conforme Anexo II do Manuel de Escopo de Dados
+            example: RESIDENCIAL_IMOVEL_BASICA
             enum: [
               RESIDENCIAL_IMOVEL_BASICA,
               RESIDENCIAL_IMOVEL_AMPLA,
@@ -3120,6 +3305,8 @@ components:
     QuoteDataPatrimonialHome:
       type: object
       description: Objeto que agrupa dados específicos do ramo de cotação.
+      required:
+        - coverages
       properties:
         hasCommercialActivity:
           description: "Existe algum objeto segurado que possui atividade comercial de produção, manufatura, atendimento presencial na Residência?"
@@ -3134,19 +3321,20 @@ components:
           type: string
           format: date
           maxLength: 10
-          pattern: '^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])$'
+          pattern: '^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])$'
           example: '2022-10-02'
           description: "Data de vigência dentro de 24 horas"
         termEndDate:  
           type: string
           format: date
           maxLength: 10
-          pattern: '^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])$'
+          pattern: '^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])$'
           example: '2022-10-02'
           description: "Data de fim de vigência até as 24 horas"
         insuranceType: 
           type: string
           description: Tipo de Seguro
+          example: NOVO
           enum: [NOVO,    
                 RENOVACAO]
         policyId:
@@ -3161,8 +3349,8 @@ components:
         currency:
           description: Moeda de emissão do contrato de acordo com ISO-4217.
           type: string
-          pattern: '^(\w{3}){1}$'
           example: BRL
+          enum: [AFN,AFA,ALL,ALK,DZD,USD,EUR,ADP,ESP,FRF,AOA,AOK,AON,AOR,XCD,ARS,ARA,ARP,ARY,AMD,RUR,AWG,AUD,ATS,AZN,AYM,AZM,BSD,BHD,BDT,BBD,BYN,BYB,BYR,BEC,BEF,BEL,BZD,XOF,BMD,INR,BTN,BOP,BOB,BOV,BAM,BAD,BWP,NOK,BRL,BRB,BRC,BRE,BRN,BRR,BND,BGN,BGJ,BGK,BGL,BUK,BIF,CVE,KHR,XAF,CAD,KYD,CLP,CLF,CNY,COP,COU,KMF,CDF,NZD,CRC,HRK,HRD,CUP,CUC,ANG,CYP,CZK,CSJ,CSK,DKK,DJF,DOP,ECS,ECV,EGP,SVC,GQE,ERN,EEK,SZL,ETB,XEU,FKP,FJD,FIM,XPF,GMD,GEL,GEK,DDM,DEM,GHS,GHC,GHP,GIP,GRD,GTQ,GBP,GNF,GNE,GNS,GWE,GWP,GYD,HTG,ITL,HNL,HKD,HUF,ISK,ISJ,IDR,XDR,IRR,IQD,IEP,ILS,ILP,ILR,JMD,JPY,JOD,KZT,KES,KPW,KRW,KWD,KGS,LAJ,LAK,LVL,LVR,LBP,LSL,ZAR,LSM,ZAL,LRD,LYD,CHF,LTL,LTT,LUC,LUF,LUL,MOP,MGA,MGF,MWK,MYR,MVR,MVQ,MLF,MTL,MTP,MRU,MRO,MUR,XUA,MXN,MXV,MXP,MDL,MNT,MAD,MZN,MZE,MZM,MMK,NAD,NPR,NLG,NIO,NIC,NGN,MKD,OMR,PKR,PAB,PGK,PYG,PEN,PEH,PEI,PES,PHP,PLN,PLZ,PTE,QAR,RON,ROK,ROL,RUB,RWF,SHP,WST,STN,STD,SAR,RSD,CSD,SCR,SLL,SGD,XSU,SKK,SIT,SBD,SOS,SSP,SDG,RHD,ESA,ESB,LKR,SDD,SDP,SRD,SRG,SEK,CHE,CHW,CHC,SYP,TWD,TJS,TJR,TZS,THB,TPE,TOP,TTD,TND,TRY,TRL,TMT,TMM,UGX,UGS,UGW,UAH,UAK,SUR,AED,USS,USN,UYU,UYI,UYW,UYN,UYP,UZS,VUV,VEB,VEF,VES,VND,VNC,YER,YDD,YUD,YUM,YUN,ZRN,ZRZ,ZMW,ZMK,ZWL,ZWC,ZWD,ZWN,ZWR,XBA,XFO,XBB,XRE,XBC,XBD,XFU,XTS,XXX,XAU,XPD,XPT,XAG]
         maxLMG:
           description: Valor Limite máximo de garantia (LMG)
           allOf:
@@ -3194,6 +3382,7 @@ components:
         propertyType:
           description:  Indica o tipo do imóvel ou condomínio segurado
           type: string
+          example: CASA
           enum: [
             CASA,
             APARTAMENTO,
@@ -3202,6 +3391,7 @@ components:
         geographicRegion:
           description: Descrição da região geográfica
           type: string
+          example: ZONA_URBANA
           enum: [
             ZONA_URBANA,
             ZONA_RURAL
@@ -3209,6 +3399,7 @@ components:
         propertiesForCoverage:
           description: "Deseja cobertura para:"
           type: string
+          example: PREDIO_E_CONTEUDO
           enum: [
             PREDIO_E_CONTEUDO, 
             APENAS_PARA_PREDIO,
@@ -3233,11 +3424,16 @@ components:
         identificationType: 
           description: Tipo de Documento do Beneficiário
           type: string
+          example: CPF
           enum: [
             CPF,
             CNPJ,
             OUTROS
           ]
+        identificationTypeOthers:
+          description: Descrição para quando o tipo de documento do beneficiários for outros.
+          type: string
+          example: PASSAPORTE
         name:
           description: Nome ou Razão Social do Beneficiário
           type: string
@@ -3258,7 +3454,8 @@ components:
           example: "0111"
         code:
             type: string
-            description: Código da cobertura, conforme Anexo II do Manuel de Escopo de Dados
+            description: Código da cobertura, conforme Anexo II do Manual de Escopo de Dados
+            example: RESIDENCIAL_IMOVEL_BASICA
             enum: [
               RESIDENCIAL_IMOVEL_BASICA,
               RESIDENCIAL_IMOVEL_AMPLA,
@@ -3455,11 +3652,13 @@ components:
         townName:
           type: string
           maxLength: 100
+          pattern: ^[a-z]|[A-Z]|\s$
           description: Município
           example: "São Paulo"
         countrySubDivision:
           type: string
           description: Sigla da Unidade da Federação
+          example: AC
           enum: [AC,
                 AL,
                 AP,
@@ -3495,6 +3694,7 @@ components:
         propertyUsageType:
           description: Tipo de moradia
           type: string 
+          example: HABITUAL
           enum: [
             HABITUAL,
             VERANEIO,
@@ -3505,6 +3705,7 @@ components:
         propertyBuildType:
           description: Tipo de construção
           type: string
+          example: ALVENARIA
           enum: [
             ALVENARIA,
             MADEIRA,
@@ -3520,6 +3721,7 @@ components:
           type: array
           items:
             type: string
+            example: CAMERA_CFTV
             enum: [
               CAMERA_CFTV,
               PORTARIA_HORAS,
@@ -3534,6 +3736,7 @@ components:
           type: array
           items:
             type: string
+            example: EXTINTOR
             enum: [
               EXTINTOR,
               HIDRANTES,
@@ -3544,6 +3747,7 @@ components:
         propertyUseType:
           description: Uso do imóvel
           type: string
+          example: PROPRIO
           enum: [
             PROPRIO,
             ALUGADO
@@ -3566,6 +3770,7 @@ components:
           $ref: '#/components/schemas/ResultQuotePatrimonialHome'
         quotes:
           type: array
+          minItems: 1
           description: Lista de cotações enviadas pela seguradora.
           items:
             required:
@@ -3583,7 +3788,7 @@ components:
               quoteDateTime:
                 type: string
                 format: date-time
-                pattern: '^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])T(?:[01]\d|2[0123]):(?:[012345]\d):(?:[012345]\d)Z$'
+                pattern: '^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])T(?:[01]\d|2[0123]):(?:[012345]\d):(?:[012345]\d)Z$'
                 example: '2023-05-21T08:30:00Z'
                 description: Data e hora da cotação
               susepProcessNumbers:
@@ -3595,6 +3800,7 @@ components:
               updatingIndex:
                 description: Índice de atualização dos valores do contrato
                 type: string
+                example: IPCA
                 enum: [
                   IPCA,
                   IGP_M,
@@ -3602,13 +3808,21 @@ components:
                   OUTROS,
                   NAO_SE_APLICA
                 ]
+              updatingIndexOthers:
+                description: Descrição para quando o tipo de índice de atualização for outros.
+                type: string
               updatingPeriodicity:
                 description: Periodicidade de atualização
                 type: string
+                example: ANUAL
                 enum: [
                   ANUAL,
                   OUTROS
                 ]
+              updatingPeriodicityOthers:
+                description: Descrição para quando a periodicidade de atualização for outros.
+                type: string
+                example: MENSAL
               coverages:
                 type: array
                 description: Lista que agrupa os dados de coberturas.
@@ -3641,19 +3855,20 @@ components:
           type: string
           format: date
           maxLength: 10
-          pattern: '^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])$'
+          pattern: '^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])$'
           example: '2022-10-02'
           description: "Data de vigência dentro de 24 horas"
         termEndDate:  
           type: string
           format: date
           maxLength: 10
-          pattern: '^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])$'
+          pattern: '^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])$'
           example: '2022-10-02'
           description: "Data de fim de vigência até as 24 horas"
         insuranceType: 
           type: string
           description: Tipo de Seguro
+          example: NOVO
           enum: [NOVO,    
                 RENOVACAO]
         policyId:
@@ -3668,8 +3883,8 @@ components:
         currency:
           description: Moeda de emissão do contrato de acordo com ISO-4217.
           type: string
-          pattern: '^(\w{3}){1}$'
           example: BRL
+          enum: [AFN,AFA,ALL,ALK,DZD,USD,EUR,ADP,ESP,FRF,AOA,AOK,AON,AOR,XCD,ARS,ARA,ARP,ARY,AMD,RUR,AWG,AUD,ATS,AZN,AYM,AZM,BSD,BHD,BDT,BBD,BYN,BYB,BYR,BEC,BEF,BEL,BZD,XOF,BMD,INR,BTN,BOP,BOB,BOV,BAM,BAD,BWP,NOK,BRL,BRB,BRC,BRE,BRN,BRR,BND,BGN,BGJ,BGK,BGL,BUK,BIF,CVE,KHR,XAF,CAD,KYD,CLP,CLF,CNY,COP,COU,KMF,CDF,NZD,CRC,HRK,HRD,CUP,CUC,ANG,CYP,CZK,CSJ,CSK,DKK,DJF,DOP,ECS,ECV,EGP,SVC,GQE,ERN,EEK,SZL,ETB,XEU,FKP,FJD,FIM,XPF,GMD,GEL,GEK,DDM,DEM,GHS,GHC,GHP,GIP,GRD,GTQ,GBP,GNF,GNE,GNS,GWE,GWP,GYD,HTG,ITL,HNL,HKD,HUF,ISK,ISJ,IDR,XDR,IRR,IQD,IEP,ILS,ILP,ILR,JMD,JPY,JOD,KZT,KES,KPW,KRW,KWD,KGS,LAJ,LAK,LVL,LVR,LBP,LSL,ZAR,LSM,ZAL,LRD,LYD,CHF,LTL,LTT,LUC,LUF,LUL,MOP,MGA,MGF,MWK,MYR,MVR,MVQ,MLF,MTL,MTP,MRU,MRO,MUR,XUA,MXN,MXV,MXP,MDL,MNT,MAD,MZN,MZE,MZM,MMK,NAD,NPR,NLG,NIO,NIC,NGN,MKD,OMR,PKR,PAB,PGK,PYG,PEN,PEH,PEI,PES,PHP,PLN,PLZ,PTE,QAR,RON,ROK,ROL,RUB,RWF,SHP,WST,STN,STD,SAR,RSD,CSD,SCR,SLL,SGD,XSU,SKK,SIT,SBD,SOS,SSP,SDG,RHD,ESA,ESB,LKR,SDD,SDP,SRD,SRG,SEK,CHE,CHW,CHC,SYP,TWD,TJS,TJR,TZS,THB,TPE,TOP,TTD,TND,TRY,TRL,TMT,TMM,UGX,UGS,UGW,UAH,UAK,SUR,AED,USS,USN,UYU,UYI,UYW,UYN,UYP,UZS,VUV,VEB,VEF,VES,VND,VNC,YER,YDD,YUD,YUM,YUN,ZRN,ZRZ,ZMW,ZMK,ZWL,ZWC,ZWD,ZWN,ZWR,XBA,XFO,XBB,XRE,XBC,XBD,XFU,XTS,XXX,XAU,XPD,XPT,XAG]
         maxLMG:
           description: Valor Limite máximo de garantia (LMG)
           allOf:
@@ -3702,7 +3917,8 @@ components:
           example: "0111"
         code:
             type: string
-            description: Código da cobertura, conforme Anexo II do Manuel de Escopo de Dados
+            description: Código da cobertura, conforme Anexo II do Manual de Escopo de Dados
+            example: RESIDENCIAL_IMOVEL_BASICA
             enum: [
               RESIDENCIAL_IMOVEL_BASICA,
               RESIDENCIAL_IMOVEL_AMPLA,
@@ -3889,26 +4105,28 @@ components:
         gracePeriodicity:
           type: string
           description: "Periodicidade da carência. OBS: Obrigatório, se houver"
+          example: DIA
           enum: [DIA,
                 MES,
                 ANO]     
         gracePeriodCountingMethod:   
           type: string
           description: "Indicador de dias úteis ou corridos da carência. OBS: Obrigatório, se houver"
+          example: DIAS_UTEIS
           enum: [DIAS_UTEIS,
                 DIAS_CORRIDOS] 
         gracePeriodStartDate:            
           type: string
           format: date
           maxLength: 10
-          pattern: '^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])$'
+          pattern: '^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])$'
           example: '2022-10-02'
           description: "Data de início da carência. OBS: Obrigatório, se houver"
         gracePeriodEndDate:            
           type: string
           format: date
           maxLength: 10
-          pattern: '^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])$'
+          pattern: '^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])$'
           example: '2022-10-02'
           description: "Data de fim da carência. OBS: Obrigatório, se houver"    
     
@@ -3925,6 +4143,7 @@ components:
         propertyType:
           description:  Indica o tipo do imóvel ou condomínio segurado
           type: string
+          example: CASA
           enum: [
             CASA,
             APARTAMENTO,
@@ -3933,6 +4152,7 @@ components:
         geographicRegion:
           description: Descrição da região geográfica
           type: string
+          example: ZONA_URBANA
           enum: [
             ZONA_URBANA,
             ZONA_RURAL
@@ -3940,6 +4160,7 @@ components:
         propertiesForCoverage:
           description: "Deseja cobertura para:"
           type: string
+          example: PREDIO_E_CONTEUDO
           enum: [
             PREDIO_E_CONTEUDO, 
             APENAS_PARA_PREDIO,
@@ -3985,6 +4206,8 @@ components:
     QuoteDataPatrimonialBusiness:  
       type: object
       description: Objeto que agrupa dados específicos do ramo de cotação.
+      required:
+        - coverages
       properties:
         isCollectiveStipulated:
           description: "Apólice é coletiva ou por estipulação?"
@@ -3996,19 +4219,20 @@ components:
           type: string
           format: date
           maxLength: 10
-          pattern: '^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])$'
+          pattern: '^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])$'
           example: '2022-10-02'
           description: "Data de vigência dentro de 24 horas"
         termEndDate:  
           type: string
           format: date
           maxLength: 10
-          pattern: '^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])$'
+          pattern: '^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])$'
           example: '2022-10-02'
           description: "Data de fim de vigência até as 24 horas" 
         insuranceType: 
           type: string
           description: Tipo de Seguro
+          example: NOVO
           enum: [NOVO,    
                 RENOVACAO]
         policyId:
@@ -4023,8 +4247,8 @@ components:
         currency:
           description: Moeda de emissão do contrato de acordo com ISO-4217.
           type: string
-          pattern: '^(\w{3}){1}$'
           example: BRL
+          enum: [AFN,AFA,ALL,ALK,DZD,USD,EUR,ADP,ESP,FRF,AOA,AOK,AON,AOR,XCD,ARS,ARA,ARP,ARY,AMD,RUR,AWG,AUD,ATS,AZN,AYM,AZM,BSD,BHD,BDT,BBD,BYN,BYB,BYR,BEC,BEF,BEL,BZD,XOF,BMD,INR,BTN,BOP,BOB,BOV,BAM,BAD,BWP,NOK,BRL,BRB,BRC,BRE,BRN,BRR,BND,BGN,BGJ,BGK,BGL,BUK,BIF,CVE,KHR,XAF,CAD,KYD,CLP,CLF,CNY,COP,COU,KMF,CDF,NZD,CRC,HRK,HRD,CUP,CUC,ANG,CYP,CZK,CSJ,CSK,DKK,DJF,DOP,ECS,ECV,EGP,SVC,GQE,ERN,EEK,SZL,ETB,XEU,FKP,FJD,FIM,XPF,GMD,GEL,GEK,DDM,DEM,GHS,GHC,GHP,GIP,GRD,GTQ,GBP,GNF,GNE,GNS,GWE,GWP,GYD,HTG,ITL,HNL,HKD,HUF,ISK,ISJ,IDR,XDR,IRR,IQD,IEP,ILS,ILP,ILR,JMD,JPY,JOD,KZT,KES,KPW,KRW,KWD,KGS,LAJ,LAK,LVL,LVR,LBP,LSL,ZAR,LSM,ZAL,LRD,LYD,CHF,LTL,LTT,LUC,LUF,LUL,MOP,MGA,MGF,MWK,MYR,MVR,MVQ,MLF,MTL,MTP,MRU,MRO,MUR,XUA,MXN,MXV,MXP,MDL,MNT,MAD,MZN,MZE,MZM,MMK,NAD,NPR,NLG,NIO,NIC,NGN,MKD,OMR,PKR,PAB,PGK,PYG,PEN,PEH,PEI,PES,PHP,PLN,PLZ,PTE,QAR,RON,ROK,ROL,RUB,RWF,SHP,WST,STN,STD,SAR,RSD,CSD,SCR,SLL,SGD,XSU,SKK,SIT,SBD,SOS,SSP,SDG,RHD,ESA,ESB,LKR,SDD,SDP,SRD,SRG,SEK,CHE,CHW,CHC,SYP,TWD,TJS,TJR,TZS,THB,TPE,TOP,TTD,TND,TRY,TRL,TMT,TMM,UGX,UGS,UGW,UAH,UAK,SUR,AED,USS,USN,UYU,UYI,UYW,UYN,UYP,UZS,VUV,VEB,VEF,VES,VND,VNC,YER,YDD,YUD,YUM,YUN,ZRN,ZRZ,ZMW,ZMK,ZWL,ZWC,ZWD,ZWN,ZWR,XBA,XFO,XBB,XRE,XBC,XBD,XFU,XTS,XXX,XAU,XPD,XPT,XAG]
         maxLMG:
           description: Valor Limite máximo de garantia (LMG)
           allOf:
@@ -4064,11 +4288,16 @@ components:
         identificationType: 
           description: Tipo de Documento do Beneficiário
           type: string
+          example: CPF
           enum: [
             CPF,
             CNPJ,
             OUTROS
           ]
+        identificationTypeOthers:
+          description: Descrição para quando o tipo de documento do beneficiário for outros.
+          type: string
+          example: PASSAPORTE
         name:
           description: Nome ou Razão Social do Beneficiário
           type: string
@@ -4089,6 +4318,7 @@ components:
         mainActivity:
           description: "Principal atividade do local de risco"
           type: string
+          example: COMERCIO
           enum: [COMERCIO,    
                 INDUSTRIA,
                 SERVICO]
@@ -4113,6 +4343,7 @@ components:
         selfEmployeeJobTitle:
           description: Título para autônomos com contratação na pessoa física, que possuam registro na respectiva prefeitura do local de risco
           type: string
+          example: ADMINISTRADORES
           enum: [
             ADMINISTRADORES,
             ADVOGADOS,
@@ -4216,9 +4447,13 @@ components:
             ZOOTECNISTAS,
             OUTROS
           ]
+        selfEmployeeJobTitleOthers:
+          type: string
+          description: Descrição do título para autonomos com contratação na pessoa fisica quando o tipo for outros.  
         propertiesForCoverage:
           description: "Deseja cobertura para:"
           type: string
+          example: PREDIO_E_CONTEUDO
           enum: [
             PREDIO_E_CONTEUDO, 
             APENAS_PARA_PREDIO,
@@ -4250,7 +4485,8 @@ components:
           example: "0111"
         code:
             type: string
-            description: Código da cobertura, conforme Anexo II do Manuel de Escopo de Dados
+            description: Código da cobertura, conforme Anexo II do Manual de Escopo de Dados
+            example: RESIDENCIAL_IMOVEL_BASICA
             enum: [
               RESIDENCIAL_IMOVEL_BASICA,
               RESIDENCIAL_IMOVEL_AMPLA,
@@ -4445,11 +4681,13 @@ components:
         townName:
           type: string
           maxLength: 100
+          pattern: ^[a-z]|[A-Z]|\s$
           description: Município do Local de Risco
           example: "São Paulo"
         countrySubDivision:
           type: string
           description: Sigla da Unidade da Federação do Local de Risco
+          example: AC
           enum: [AC,
                 AL,
                 AP,
@@ -4505,6 +4743,7 @@ components:
         billingCountrySubDivision:
           type: string
           description: Sigla da Unidade da Federação do Local de Cobrança
+          example: AC
           enum: [AC,
                 AL,
                 AP,
@@ -4540,6 +4779,7 @@ components:
         propertyUsageType:
           description: Tipo de moradia
           type: string
+          example: HABITUAL
           enum: [
             HABITUAL,
             VERANEIO,
@@ -4550,6 +4790,7 @@ components:
         propertyBuildType:
           description: Tipo de construção
           type: string
+          example: SUPERIOR
           enum: [
             SUPERIOR,
             SOLIDA,
@@ -4567,6 +4808,7 @@ components:
           type: array
           items:
             type: string
+            example: CAMERA_CFTV
             enum: [
               CAMERA_CFTV,
               PORTARIA_VINTE_E_QUATRO_HORAS,
@@ -4585,6 +4827,7 @@ components:
           type: array
           items:
             type: string
+            example: EXTINTOR
             enum: [
               EXTINTOR,
               HIDRANTES,
@@ -4598,6 +4841,7 @@ components:
         propertyUseType:
           description: Uso do imóvel
           type: string
+          example: PROPRIO
           enum: [
             PROPRIO,
             ALUGADO
@@ -4628,7 +4872,8 @@ components:
           $ref: '#/components/schemas/ResultQuoteQuotePatrimonialBusiness'
         quotes:
           type: array
-          description: Lista de cotações enviadas pela seguradora.
+          minItems: 1
+          description: Lista de cotações enviadas pela seguradora. Condicional a cotação ter sido aceita pela seguradora.
           items:
             required:
               - premiumInfo
@@ -4645,7 +4890,7 @@ components:
               quoteDateTime:
                 type: string
                 format: date-time
-                pattern: '^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])T(?:[01]\d|2[0123]):(?:[012345]\d):(?:[012345]\d)Z$'
+                pattern: '^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])T(?:[01]\d|2[0123]):(?:[012345]\d):(?:[012345]\d)Z$'
                 example: '2023-05-21T08:30:00Z'
                 description: Data e hora da cotação
               susepProcessNumbers:
@@ -4657,6 +4902,7 @@ components:
               updatingIndex:
                 description: Índice de atualização dos valores do contrato
                 type: string
+                example: IPCA
                 enum: [
                   IPCA,
                   IGP_M,
@@ -4664,13 +4910,20 @@ components:
                   OUTROS,
                   NAO_SE_APLICA
                 ]
+              updatingIndexOthers:
+                description: Descrição para quando o tipo de índice de atualização for outros.
+                type: string
               updatingPeriodicity:
                 description: Periodicidade de atualização
                 type: string
+                example: ANUAL
                 enum: [
                   ANUAL,
                   OUTROS
                 ]
+              updatingPeriodicityOthers: 
+                description: Descrição para quando o tipo de periodicidade de atualização for outros.
+                type: string
               coverages:
                 type: array
                 description: Lista que agrupa os dados de coberturas.
@@ -4702,6 +4955,7 @@ components:
         code:
             type: string
             description: Código da cobertura, conforme Anexo II do Manuel de Escopo de Dados
+            example: RESIDENCIAL_IMOVEL_BASICA
             enum: [
               RESIDENCIAL_IMOVEL_BASICA,
               RESIDENCIAL_IMOVEL_AMPLA,
@@ -4888,26 +5142,28 @@ components:
         gracePeriodicity:
           type: string
           description: "Periodicidade da carência. OBS: Obrigatório, se houver"
+          example: DIA
           enum: [DIA,
                 MES,
                 ANO]     
         gracePeriodCountingMethod:   
           type: string
           description: "Indicador de dias úteis ou corridos da carência. OBS: Obrigatório, se houver"
+          example: DIAS_UTEIS
           enum: [DIAS_UTEIS,
                 DIAS_CORRIDOS] 
         gracePeriodStartDate:            
           type: string
           format: date
           maxLength: 10
-          pattern: '^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])$'
+          pattern: '^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])$'
           example: '2022-10-02'
           description: "Data de início da carência. OBS: Obrigatório, se houver"
         gracePeriodEndDate:            
           type: string
           format: date
           maxLength: 10
-          pattern: '^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])$'
+          pattern: '^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])$'
           example: '2022-10-02'
           description: "Data de fim da carência. OBS: Obrigatório, se houver"
           
@@ -4925,19 +5181,20 @@ components:
           type: string
           format: date
           maxLength: 10
-          pattern: '^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])$'
+          pattern: '^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])$'
           example: '2022-10-02'
           description: "Data de vigência dentro de 24 horas"
         termEndDate:  
           type: string
           format: date
           maxLength: 10
-          pattern: '^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])$'
+          pattern: '^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])$'
           example: '2022-10-02'
           description: "Data de fim de vigência até as 24 horas"
         insuranceType: 
           type: string
           description: Tipo de Seguro
+          example: NOVO
           enum: [NOVO,    
                 RENOVACAO]
         policyId:
@@ -4952,8 +5209,8 @@ components:
         currency:
           description: Moeda de emissão do contrato de acordo com ISO-4217.
           type: string
-          pattern: '^(\w{3}){1}$'
           example: BRL
+          enum: [AFN,AFA,ALL,ALK,DZD,USD,EUR,ADP,ESP,FRF,AOA,AOK,AON,AOR,XCD,ARS,ARA,ARP,ARY,AMD,RUR,AWG,AUD,ATS,AZN,AYM,AZM,BSD,BHD,BDT,BBD,BYN,BYB,BYR,BEC,BEF,BEL,BZD,XOF,BMD,INR,BTN,BOP,BOB,BOV,BAM,BAD,BWP,NOK,BRL,BRB,BRC,BRE,BRN,BRR,BND,BGN,BGJ,BGK,BGL,BUK,BIF,CVE,KHR,XAF,CAD,KYD,CLP,CLF,CNY,COP,COU,KMF,CDF,NZD,CRC,HRK,HRD,CUP,CUC,ANG,CYP,CZK,CSJ,CSK,DKK,DJF,DOP,ECS,ECV,EGP,SVC,GQE,ERN,EEK,SZL,ETB,XEU,FKP,FJD,FIM,XPF,GMD,GEL,GEK,DDM,DEM,GHS,GHC,GHP,GIP,GRD,GTQ,GBP,GNF,GNE,GNS,GWE,GWP,GYD,HTG,ITL,HNL,HKD,HUF,ISK,ISJ,IDR,XDR,IRR,IQD,IEP,ILS,ILP,ILR,JMD,JPY,JOD,KZT,KES,KPW,KRW,KWD,KGS,LAJ,LAK,LVL,LVR,LBP,LSL,ZAR,LSM,ZAL,LRD,LYD,CHF,LTL,LTT,LUC,LUF,LUL,MOP,MGA,MGF,MWK,MYR,MVR,MVQ,MLF,MTL,MTP,MRU,MRO,MUR,XUA,MXN,MXV,MXP,MDL,MNT,MAD,MZN,MZE,MZM,MMK,NAD,NPR,NLG,NIO,NIC,NGN,MKD,OMR,PKR,PAB,PGK,PYG,PEN,PEH,PEI,PES,PHP,PLN,PLZ,PTE,QAR,RON,ROK,ROL,RUB,RWF,SHP,WST,STN,STD,SAR,RSD,CSD,SCR,SLL,SGD,XSU,SKK,SIT,SBD,SOS,SSP,SDG,RHD,ESA,ESB,LKR,SDD,SDP,SRD,SRG,SEK,CHE,CHW,CHC,SYP,TWD,TJS,TJR,TZS,THB,TPE,TOP,TTD,TND,TRY,TRL,TMT,TMM,UGX,UGS,UGW,UAH,UAK,SUR,AED,USS,USN,UYU,UYI,UYW,UYN,UYP,UZS,VUV,VEB,VEF,VES,VND,VNC,YER,YDD,YUD,YUM,YUN,ZRN,ZRZ,ZMW,ZMK,ZWL,ZWC,ZWD,ZWN,ZWR,XBA,XFO,XBB,XRE,XBC,XBD,XFU,XTS,XXX,XAU,XPD,XPT,XAG]
         maxLMG:
           description: Valor Limite máximo de garantia (LMG)
           allOf:
@@ -4999,6 +5256,7 @@ components:
         mainActivity:
           description: "Principal atividade do local de risco"
           type: string
+          example: COMERCIO
           enum: [COMERCIO,    
                 INDUSTRIA,
                 SERVICO]
@@ -5023,6 +5281,7 @@ components:
         selfEmployeeJobTitle:
           description: Título para autônomos com contratação na pessoa física, que possuam registro na respectiva prefeitura do local de risco
           type: string
+          example: ADMINISTRADORES
           enum: [
             ADMINISTRADORES,
             ADVOGADOS,
@@ -5126,9 +5385,13 @@ components:
             ZOOTECNISTAS,
             OUTROS
           ]
+        selfEmployeeJobTitleOthers:
+          type: string
+          description: Descrição do título de autonomo com contratação na pessoa física para quando o tipo for outros.
         propertiesForCoverage:
           description: "Deseja cobertura para:"
           type: string
+          example: PREDIO_E_CONTEUDO
           enum: [
             PREDIO_E_CONTEUDO, 
             APENAS_PARA_PREDIO,
@@ -5150,8 +5413,13 @@ components:
 
     QuoteDataPatrimonialDiverseRisks:  
       type: object
+      required:
+        - coverages
       description: Objeto que agrupa dados específicos do ramo de cotação.
-      properties:
+      properties:              
+        productModalityType:
+          type: boolean
+          description:  A modalidade do produto é obras de arte, joalherias, valores, assemelhados ou Cartão/Pix?
         isCollectiveStipulated:
           description: "Apólice é coletiva ou por estipulação?"
           type: boolean
@@ -5162,26 +5430,27 @@ components:
           type: string
           format: date
           maxLength: 10
-          pattern: '^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])$'
+          pattern: '^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])$'
           example: '2022-10-02'
           description: "Data de vigência dentro de 24 horas"
         termEndDate:  
           type: string
           format: date
           maxLength: 10
-          pattern: '^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])$'
+          pattern: '^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])$'
           example: '2022-10-02'
           description: "Data de fim de vigência até as 24 horas"
         insuranceTermStartDate:  
           type: string
           format: date
           maxLength: 10
-          pattern: '^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])$'
+          pattern: '^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])$'
           example: '2022-10-02'
           description: "Data de fim de vigência até as 24 horas"
         insuranceType: 
           type: string
           description: Tipo de Seguro
+          example: NOVO
           enum: [NOVO,    
                 RENOVACAO]
         policyId:
@@ -5196,11 +5465,12 @@ components:
         currency:
           description: Moeda de emissão do contrato de acordo com ISO-4217.
           type: string
-          pattern: '^(\w{3}){1}$'
           example: BRL
+          enum: [AFN,AFA,ALL,ALK,DZD,USD,EUR,ADP,ESP,FRF,AOA,AOK,AON,AOR,XCD,ARS,ARA,ARP,ARY,AMD,RUR,AWG,AUD,ATS,AZN,AYM,AZM,BSD,BHD,BDT,BBD,BYN,BYB,BYR,BEC,BEF,BEL,BZD,XOF,BMD,INR,BTN,BOP,BOB,BOV,BAM,BAD,BWP,NOK,BRL,BRB,BRC,BRE,BRN,BRR,BND,BGN,BGJ,BGK,BGL,BUK,BIF,CVE,KHR,XAF,CAD,KYD,CLP,CLF,CNY,COP,COU,KMF,CDF,NZD,CRC,HRK,HRD,CUP,CUC,ANG,CYP,CZK,CSJ,CSK,DKK,DJF,DOP,ECS,ECV,EGP,SVC,GQE,ERN,EEK,SZL,ETB,XEU,FKP,FJD,FIM,XPF,GMD,GEL,GEK,DDM,DEM,GHS,GHC,GHP,GIP,GRD,GTQ,GBP,GNF,GNE,GNS,GWE,GWP,GYD,HTG,ITL,HNL,HKD,HUF,ISK,ISJ,IDR,XDR,IRR,IQD,IEP,ILS,ILP,ILR,JMD,JPY,JOD,KZT,KES,KPW,KRW,KWD,KGS,LAJ,LAK,LVL,LVR,LBP,LSL,ZAR,LSM,ZAL,LRD,LYD,CHF,LTL,LTT,LUC,LUF,LUL,MOP,MGA,MGF,MWK,MYR,MVR,MVQ,MLF,MTL,MTP,MRU,MRO,MUR,XUA,MXN,MXV,MXP,MDL,MNT,MAD,MZN,MZE,MZM,MMK,NAD,NPR,NLG,NIO,NIC,NGN,MKD,OMR,PKR,PAB,PGK,PYG,PEN,PEH,PEI,PES,PHP,PLN,PLZ,PTE,QAR,RON,ROK,ROL,RUB,RWF,SHP,WST,STN,STD,SAR,RSD,CSD,SCR,SLL,SGD,XSU,SKK,SIT,SBD,SOS,SSP,SDG,RHD,ESA,ESB,LKR,SDD,SDP,SRD,SRG,SEK,CHE,CHW,CHC,SYP,TWD,TJS,TJR,TZS,THB,TPE,TOP,TTD,TND,TRY,TRL,TMT,TMM,UGX,UGS,UGW,UAH,UAK,SUR,AED,USS,USN,UYU,UYI,UYW,UYN,UYP,UZS,VUV,VEB,VEF,VES,VND,VNC,YER,YDD,YUD,YUM,YUN,ZRN,ZRZ,ZMW,ZMK,ZWL,ZWC,ZWD,ZWN,ZWR,XBA,XFO,XBB,XRE,XBC,XBD,XFU,XTS,XXX,XAU,XPD,XPT,XAG]
         insuredObjectType:
           description: Tipo e/ou modalidade de bem segurado
           type: string
+          example: EQUIPAMENTO_MOVEL
           enum: ['EQUIPAMENTO_MOVEL',
                 'EQUIPAMENTO_ESTACIONARIO',
                 'EQUIPAMENTOS_PORTÁTEIS']
@@ -5232,11 +5502,16 @@ components:
         identificationType: 
           description: Tipo de Documento do Beneficiário
           type: string
+          example: CPF
           enum: [
             CPF,
             CNPJ,
             OUTROS
           ]
+        identificationTypeOthers:
+          type: string
+          description: descrição para quando o tipo de documento do Beneficiário for outros.
+          example: PASSAPORTE
         name:
           description: Nome ou Razão Social do Beneficiário
           type: string
@@ -5253,6 +5528,7 @@ components:
         equipmentType:
           description:  Modalide de Equipamentos Móveis, Estácionários e/ou Arrendados, Portátil
           type: string
+          example: EQUIPAMENTO_DE_CONSTRUCAO_CIVIL
           enum: [
             EQUIPAMENTO_DE_CONSTRUCAO_CIVIL,
             EQUIPAMENTO_MEDICO_ODONTOLOGICO,
@@ -5260,22 +5536,31 @@ components:
             EQUIPAMENTOS_INDUSTRIAIS,
             EQUIPAMENTOS_DE_USO_COMERCIAL
           ]
-
+        equipmentCategory:
+          description: Informar a categoria do equipamento
+          type: string
+          example: FIXED_MACHINERY
+          enum: [
+            FIXED_MACHINERY,
+            SELF_PROPELLED_MACHINERY,
+            PORTABLE_EQUIPMENT
+          ]
         equipmentData:
           oneOf:
-            - $ref: '#/components/schemas/FixedMachinery'
-            - $ref: '#/components/schemas/SelfPropelledMachinery'
+            - $ref: '#/components/schemas/FixedMachinery' 
+            - $ref: '#/components/schemas/SelfPropelledMachinery' 
             - $ref: '#/components/schemas/PortableEquipment'
-
         geographicRegion:
           description: Descrição da região geográfica
           type: string
+          example: ZONA_URBANA
           enum: [
             ZONA_URBANA,
             ZONA_RURAL]
         propertiesForCoverage:
           description: "Deseja cobertura para:"
           type: string
+          example: PREDIO_E_CONTEUDO
           enum: [
             PREDIO_E_CONTEUDO, 
             APENAS_PARA_PREDIO,
@@ -5320,11 +5605,13 @@ components:
         townName:
           type: string
           maxLength: 100
+          pattern: ^[a-z]|[A-Z]|\s$
           description: Município
           example: "São Paulo"
         countrySubDivision:
           type: string
           description: Sigla da Unidade da Federação
+          example: AC
           enum: [AC,
                 AL,
                 AP,
@@ -5380,6 +5667,7 @@ components:
         billingCountrySubDivision:
           type: string
           description: Sigla da Unidade da Federação do Local de Cobrança
+          example: AC
           enum: [AC,
                 AL,
                 AP,
@@ -5417,6 +5705,7 @@ components:
           type: array
           items:
             type: string
+            example: CAMERA_CFTV
             enum: [
               CAMERA_CFTV,
               PORTARIA_HORAS,
@@ -5431,6 +5720,7 @@ components:
           type: array
           items:
             type: string
+            example: EXTINTOR
             enum: [
               EXTINTOR,
               HIDRANTES,
@@ -5454,7 +5744,8 @@ components:
           example: "0111"
         code:
             type: string
-            description: Código da cobertura, conforme Anexo II do Manuel de Escopo de Dados
+            description: Código da cobertura, conforme Anexo II do Manual de Escopo de Dados
+            example: RESIDENCIAL_IMOVEL_BASICA
             enum: [
               RESIDENCIAL_IMOVEL_BASICA,
               RESIDENCIAL_IMOVEL_AMPLA,
@@ -5642,6 +5933,7 @@ components:
           $ref: '#/components/schemas/ResultQuotePatrimonialDiverseRisks'
         quotes:
           type: array
+          minItems: 1
           description: Lista de cotações enviadas pela seguradora.
           items:
             required:
@@ -5659,7 +5951,7 @@ components:
               quoteDateTime:
                 type: string
                 format: date-time
-                pattern: '^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])T(?:[01]\d|2[0123]):(?:[012345]\d):(?:[012345]\d)Z$'
+                pattern: '^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])T(?:[01]\d|2[0123]):(?:[012345]\d):(?:[012345]\d)Z$'
                 example: '2023-05-21T08:30:00Z'
                 description: Data e hora da cotação
               susepProcessNumbers:
@@ -5672,6 +5964,7 @@ components:
               updatingIndex:
                 description: Índice de atualização dos valores do contrato
                 type: string
+                example: IPCA
                 enum: [
                   IPCA,
                   IGP_M,
@@ -5679,13 +5972,21 @@ components:
                   OUTROS,
                   NAO_SE_APLICA
                 ]
+              updatingIndexOthers:
+                type: string
+                description: Descrição para quando o tipo de índice de atualização for outros.
               updatingPeriodicity:
                 description: Periodicidade de atualização
                 type: string
+                example: ANUAL
                 enum: [
                   ANUAL,
                   OUTROS
                 ]
+              updatingPeriodicityOthers:
+                type: string
+                description: Descrição para quando o tipo de periodicidade de atualização for outros.
+                example: MENSAL
               coverages:
                 type: array
                 description: Lista que agrupa os dados de coberturas.
@@ -5716,7 +6017,8 @@ components:
           example: "0111"
         code:
             type: string
-            description: Código da cobertura, conforme Anexo II do Manuel de Escopo de Dados
+            description: Código da cobertura, conforme Anexo II do Manual de Escopo de Dados
+            example: RESIDENCIAL_IMOVEL_BASICA
             enum: [
               RESIDENCIAL_IMOVEL_BASICA,
               RESIDENCIAL_IMOVEL_AMPLA,
@@ -5903,26 +6205,28 @@ components:
         gracePeriodicity:
           type: string
           description: "Periodicidade da carência. OBS: Obrigatório, se houver"
+          example: DIA
           enum: [DIA,
                 MES,
                 ANO]     
         gracePeriodCountingMethod:   
           type: string
           description: "Indicador de dias úteis ou corridos da carência. OBS: Obrigatório, se houver"
+          example: DIAS_UTEIS
           enum: [DIAS_UTEIS,
                 DIAS_CORRIDOS] 
         gracePeriodStartDate:            
           type: string
           format: date
           maxLength: 10
-          pattern: '^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])$'
+          pattern: '^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])$'
           example: '2022-10-02'
           description: "Data de início da carência. OBS: Obrigatório, se houver"
         gracePeriodEndDate:            
           type: string
           format: date
           maxLength: 10
-          pattern: '^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])$'
+          pattern: '^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])$'
           example: '2022-10-02'
           description: "Data de fim da carência. OBS: Obrigatório, se houver"  
     ResultQuotePatrimonialDiverseRisks:
@@ -5939,26 +6243,27 @@ components:
           type: string
           format: date
           maxLength: 10
-          pattern: '^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])$'
+          pattern: '^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])$'
           example: '2022-10-02'
           description: "Data de vigência dentro de 24 horas"
         termEndDate:  
           type: string
           format: date
           maxLength: 10
-          pattern: '^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])$'
+          pattern: '^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])$'
           example: '2022-10-02'
           description: "Data de fim de vigência até as 24 horas"
         insuranceTermStartDate:  
           type: string
           format: date
           maxLength: 10
-          pattern: '^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])$'
+          pattern: '^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])$'
           example: '2022-10-02'
           description: "Data de fim de vigência até as 24 horas"
         insuranceType: 
           type: string
           description: Tipo de Seguro
+          example: NOVO
           enum: [NOVO,    
                 RENOVACAO]
         policyId:
@@ -5973,11 +6278,12 @@ components:
         currency:
           description: Moeda de emissão do contrato de acordo com ISO-4217.
           type: string
-          pattern: '^(\w{3}){1}$'
           example: BRL
+          enum: [AFN,AFA,ALL,ALK,DZD,USD,EUR,ADP,ESP,FRF,AOA,AOK,AON,AOR,XCD,ARS,ARA,ARP,ARY,AMD,RUR,AWG,AUD,ATS,AZN,AYM,AZM,BSD,BHD,BDT,BBD,BYN,BYB,BYR,BEC,BEF,BEL,BZD,XOF,BMD,INR,BTN,BOP,BOB,BOV,BAM,BAD,BWP,NOK,BRL,BRB,BRC,BRE,BRN,BRR,BND,BGN,BGJ,BGK,BGL,BUK,BIF,CVE,KHR,XAF,CAD,KYD,CLP,CLF,CNY,COP,COU,KMF,CDF,NZD,CRC,HRK,HRD,CUP,CUC,ANG,CYP,CZK,CSJ,CSK,DKK,DJF,DOP,ECS,ECV,EGP,SVC,GQE,ERN,EEK,SZL,ETB,XEU,FKP,FJD,FIM,XPF,GMD,GEL,GEK,DDM,DEM,GHS,GHC,GHP,GIP,GRD,GTQ,GBP,GNF,GNE,GNS,GWE,GWP,GYD,HTG,ITL,HNL,HKD,HUF,ISK,ISJ,IDR,XDR,IRR,IQD,IEP,ILS,ILP,ILR,JMD,JPY,JOD,KZT,KES,KPW,KRW,KWD,KGS,LAJ,LAK,LVL,LVR,LBP,LSL,ZAR,LSM,ZAL,LRD,LYD,CHF,LTL,LTT,LUC,LUF,LUL,MOP,MGA,MGF,MWK,MYR,MVR,MVQ,MLF,MTL,MTP,MRU,MRO,MUR,XUA,MXN,MXV,MXP,MDL,MNT,MAD,MZN,MZE,MZM,MMK,NAD,NPR,NLG,NIO,NIC,NGN,MKD,OMR,PKR,PAB,PGK,PYG,PEN,PEH,PEI,PES,PHP,PLN,PLZ,PTE,QAR,RON,ROK,ROL,RUB,RWF,SHP,WST,STN,STD,SAR,RSD,CSD,SCR,SLL,SGD,XSU,SKK,SIT,SBD,SOS,SSP,SDG,RHD,ESA,ESB,LKR,SDD,SDP,SRD,SRG,SEK,CHE,CHW,CHC,SYP,TWD,TJS,TJR,TZS,THB,TPE,TOP,TTD,TND,TRY,TRL,TMT,TMM,UGX,UGS,UGW,UAH,UAK,SUR,AED,USS,USN,UYU,UYI,UYW,UYN,UYP,UZS,VUV,VEB,VEF,VES,VND,VNC,YER,YDD,YUD,YUM,YUN,ZRN,ZRZ,ZMW,ZMK,ZWL,ZWC,ZWD,ZWN,ZWR,XBA,XFO,XBB,XRE,XBC,XBD,XFU,XTS,XXX,XAU,XPD,XPT,XAG]
         insuredObjectType:
           description: Tipo e/ou modalidade de bem segurado
           type: string
+          example: EQUIPAMENTO_MOVEL
           enum: ['EQUIPAMENTO_MOVEL',
                 'EQUIPAMENTO_ESTACIONARIO',
                 'EQUIPAMENTOS_PORTÁTEIS']
@@ -6012,6 +6318,7 @@ components:
         equipmentType:
           description:  Modalide de Equipamentos Móveis, Estácionários e/ou Arrendados, Portátil
           type: string
+          example: EQUIPAMENTO_DE_CONSTRUCAO_CIVIL
           enum: [
             EQUIPAMENTO_DE_CONSTRUCAO_CIVIL,
             EQUIPAMENTO_MEDICO_ODONTOLOGICO,
@@ -6029,12 +6336,14 @@ components:
         geographicRegion:
           description: Descrição da região geográfica
           type: string
+          example: ZONA_URBANA
           enum: [
             ZONA_URBANA,
             ZONA_RURAL]
         propertiesForCoverage:
           description: "Deseja cobertura para:"
           type: string
+          example: PREDIO_E_CONTEUDO
           enum: [
             PREDIO_E_CONTEUDO, 
             APENAS_PARA_PREDIO,
@@ -6069,6 +6378,7 @@ components:
         equipmentLocal:
           description: Local de operação do equipamento estacionário
           type: string
+          example: COMERCIO
           enum: [
                 SERVICOS,
                 INDUSTRIA,
@@ -6093,11 +6403,11 @@ components:
 
         manufacturingYear:
           description: Ano de Fabricação 
-          type: number
+          type: string
 
         serialNumber:
           description: Número de série ou chassi
-          type: number
+          type: string
 
         brandNew:
           description: Equipamento Zero km?
@@ -6108,12 +6418,12 @@ components:
           type: string
           maxLength: 10
           format: date
-          pattern: '^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])$'
+          pattern: '^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])$'
           example: '2022-10-02'
 
         invoiceNumber:
           description: Número da Nota Fiscal
-          type: number
+          type: string
 
         isRented:
           description: Equipamento é alugado?
@@ -6134,6 +6444,7 @@ components:
         operationLocation:
           description: Equipamento opera em local fechado ou ao ar-livre?
           type: string
+          example: LOCAL_FECHADO
           enum: [
             LOCAL_FECHADO,
             AR-LIVRE]
@@ -6156,6 +6467,7 @@ components:
         equipmentLocal:
           description: Local de operação do equipamento móvel
           type: string
+          example: COMERCIO
           enum: [
             SERVICOS,
             INDUSTRIA,
@@ -6180,11 +6492,11 @@ components:
 
         manufacturingYear:
           description: Ano de Fabricação 
-          type: number
+          type: string
 
         serialNumber:
           description: Número de série ou chassi
-          type: number
+          type: string
 
         brandNew:
           description: Equipamento Zero km?
@@ -6195,12 +6507,12 @@ components:
           type: string
           maxLength: 10 
           format: date
-          pattern: '^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])$'
+          pattern: '^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])$'
           example: '2022-10-02'
 
         invoiceNumber:
           description: Número da Nota Fiscal
-          type: number
+          type: string
 
         isRented:
           description: Equipamento é alugado?
@@ -6221,6 +6533,7 @@ components:
         operationLocation:
           description: Equipamento opera em local fechado ou ao ar-livre?
           type: string
+          example: LOCAL_FECHADO
           enum: [
             LOCAL_FECHADO,
             AR-LIVRE]
@@ -6256,16 +6569,17 @@ components:
         portableType:
           description: Modalides de Equipamentos Portáteis
           type: string
+          example: SMARTPHONE
           enum: [
-            'Smartphone',
-            'Notebook',
-            'Tablet',
-            'Smartwatch',
-            'Câmeras, Filmadoras e Equipamentos Audiovisuais',
-            'Bike',
-            'Patinete ou scooter elétrico (com dispensa de CNH e Registro DETRAN)',
-            'Médicos, Cirúrgicos, Odontológicos ou Estéticos',
-            'Instrumentos Musicais']
+            'SMARTPHONE',
+            'NOTEBOOK',
+            'TABLET',
+            'SMARTWATCH', 
+            'CAMERAS_FILMADORAS_E_EQUIPAMENTOS_AUDIOVISUAIS',
+            'BIKE',
+            'PATINETE_OU_SCOOTER_ELETRICO_COM_DISPENSA_DE_CNH_E_REGISTRO_DETRAN',
+            'MEDICOS_CIRURGICOS_ODONTOLOGICOS_OU_ESTETICOS',
+            'INSTRUMENTOS_MUSICAIS']
 
         brand:
           description: Fabricante ou Marca do Equipamento Portátil
@@ -6279,19 +6593,19 @@ components:
 
         serialNumber:
           description: Número de série
-          type: number
+          type: string
 
         invoiceIssuedDate:
           description: Data de Emissão da Nota Fiscal
           type: string
           maxLength: 10 
           format: date
-          pattern: '^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])$'
+          pattern: '^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])$'
           example: '2022-10-02'
 
         invoiceNumber:
           description: Número da Nota Fiscal
-          type: number
+          type: string
 
         brandNew:
           description: Equipamento Zero km?
@@ -6299,7 +6613,7 @@ components:
 
         IMEI:
           description: IMEI (em caso de Smartphones)
-          type: number
+          type: string
 
         isRented:
           description: Equipamento é alugado?
@@ -6315,11 +6629,12 @@ components:
 
         userCPF:
           description: CPF de quem utiliza o aparelho
-          type: number
+          type: string
 
         geographicalCoverage:
           description: Âmbito geográfico de cobertura
           type: string
+          example: TERRITORIO_NACIONAL
           enum: [  
             'TERRITORIO_NACIONAL',
             'EXTERIOR',
@@ -6346,12 +6661,13 @@ components:
         civilName:
           type: string
           maxLength: 70
+          pattern: '[a-z]|[A-Z]|\s$'
           example: Elza Milena Stefany Teixeira
           description: '(Caso Natureza dos poderes vigentes de representante for “Representante legal” ou “Procurador”) Nome ou razão social do representante'
         socialName:
           type: string
           maxLength: 70
-          pattern: '^[\w\W]*$'
+          pattern: '[a-z]|[A-Z]|\s$'
           example: 'string'
           description: '(Caso Natureza dos poderes vigentes de representante for “Representante legal” ou “Procurador”) Nome social do representante'
       additionalProperties: false
@@ -6378,12 +6694,13 @@ components:
         civilName:
           type: string
           maxLength: 70
+          pattern: '[a-z]|[A-Z]|\s$'
           example: Elza Milena Stefany Teixeira
           description: '(Caso Natureza dos poderes vigentes de representante for “Representante legal” ou “Procurador”) Nome ou razão social do representante'
         socialName:
           type: string
           maxLength: 70
-          pattern: '^[\w\W]*$'
+          pattern: '[a-z]|[A-Z]|\s$'
           example: 'string'
           description: '(Caso Natureza dos poderes vigentes de representante for “Representante legal” ou “Procurador”) Nome social do representante'  
       additionalProperties: false
@@ -6402,21 +6719,21 @@ components:
           type: string
           format: date-time
           maxLength: 20
-          pattern: '^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])T(?:[01]\d|2[0123]):(?:[012345]\d):(?:[012345]\d)Z$'
+          pattern: '^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])T(?:[01]\d|2[0123]):(?:[012345]\d):(?:[012345]\d)Z$'
           example: '2020-07-21T08:30:00Z'
           description: 'Data e hora da atualização do bloco de Relacionamento, conforme especificação RFC-3339, formato UTC.'
         startDate:
           type: string
           format: date
           maxLength: 10
-          pattern: '^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])$'
+          pattern: '^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])$'
           example: '2014-05-21'
           description: Data mais antiga de início de relacionamento, considerando todos os contratos (vigentes e não vigentes). Os contratos não vigentes considerados devem contemplar, no mínimo o período indicado na Tabela 4.1.
         relationshipBeginning:
           type: string
           format: date
           maxLength: 10
-          pattern: '^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])$'
+          pattern: '^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])$'
           example: '2014-05-21'
           description: Campo deve ser preenchido com a data da apólice/contrato vigente mais antiga. (caso haja contrato vigente)
         productsServices:
@@ -6463,7 +6780,7 @@ components:
           type: string
           maxLength: 20
           format: date-time
-          pattern: '^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])T(?:[01]\d|2[0123]):(?:[012345]\d):(?:[012345]\d)Z$'
+          pattern: '^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])T(?:[01]\d|2[0123]):(?:[012345]\d):(?:[012345]\d)Z$'
           example: '2021-05-21T08:30:00Z'
           description: 'Data e hora da atualização do bloco, conforme especificação RFC-3339'
         businessId:
@@ -6489,7 +6806,6 @@ components:
               cnpjNumber:
                   type: string
                   pattern: '\d{14}|^NA$'
-                  maxLength: 14
                   example: '01773247000563'
                   description: |
                     Número completo do CNPJ da instituição responsável pelo Cadastro - o CNPJ corresponde ao número de inscrição no Cadastro de Pessoa Jurídica. 
@@ -6516,13 +6832,14 @@ components:
           type: string
           maxLength: 10
           format: date
-          pattern: '^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])$'
+          pattern: '^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])$'
           example: '2012-05-21'
           description: 'Data de constituição, conforme especificação RFC-3339' 
         document:
           $ref: '#/components/schemas/BusinessDocument'
         type:
           type: string
+          example: PRIVADO
           enum: 
             - PRIVADO 
             - PUBLICO 
@@ -6541,7 +6858,7 @@ components:
           type: string
           maxLength: 20
           format: date-time
-          pattern: '^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])T(?:[01]\d|2[0123]):(?:[012345]\d):(?:[012345]\d)Z$'
+          pattern: '^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])T(?:[01]\d|2[0123]):(?:[012345]\d):(?:[012345]\d)Z$'
           example: '2021-05-21T08:30:00Z'
           description: 'Data e hora da atualização do bloco, conforme especificação RFC-3339'
         mainBranch:
@@ -6559,21 +6876,19 @@ components:
             incomeFrequency:
               $ref: '#/components/schemas/EnumIncomeFrequency'
             currency:
-              type: string
-              pattern: '^(\w{3}){1}$|^NA$'
-              maxLength: 3
-              example: BRL
               description: 'Moeda referente ao valor do faturamento, segundo modelo ISO-4217.'
+              type: string
+              example: BRL
+              enum: [AFN,AFA,ALL,ALK,DZD,USD,EUR,ADP,ESP,FRF,AOA,AOK,AON,AOR,XCD,ARS,ARA,ARP,ARY,AMD,RUR,AWG,AUD,ATS,AZN,AYM,AZM,BSD,BHD,BDT,BBD,BYN,BYB,BYR,BEC,BEF,BEL,BZD,XOF,BMD,INR,BTN,BOP,BOB,BOV,BAM,BAD,BWP,NOK,BRL,BRB,BRC,BRE,BRN,BRR,BND,BGN,BGJ,BGK,BGL,BUK,BIF,CVE,KHR,XAF,CAD,KYD,CLP,CLF,CNY,COP,COU,KMF,CDF,NZD,CRC,HRK,HRD,CUP,CUC,ANG,CYP,CZK,CSJ,CSK,DKK,DJF,DOP,ECS,ECV,EGP,SVC,GQE,ERN,EEK,SZL,ETB,XEU,FKP,FJD,FIM,XPF,GMD,GEL,GEK,DDM,DEM,GHS,GHC,GHP,GIP,GRD,GTQ,GBP,GNF,GNE,GNS,GWE,GWP,GYD,HTG,ITL,HNL,HKD,HUF,ISK,ISJ,IDR,XDR,IRR,IQD,IEP,ILS,ILP,ILR,JMD,JPY,JOD,KZT,KES,KPW,KRW,KWD,KGS,LAJ,LAK,LVL,LVR,LBP,LSL,ZAR,LSM,ZAL,LRD,LYD,CHF,LTL,LTT,LUC,LUF,LUL,MOP,MGA,MGF,MWK,MYR,MVR,MVQ,MLF,MTL,MTP,MRU,MRO,MUR,XUA,MXN,MXV,MXP,MDL,MNT,MAD,MZN,MZE,MZM,MMK,NAD,NPR,NLG,NIO,NIC,NGN,MKD,OMR,PKR,PAB,PGK,PYG,PEN,PEH,PEI,PES,PHP,PLN,PLZ,PTE,QAR,RON,ROK,ROL,RUB,RWF,SHP,WST,STN,STD,SAR,RSD,CSD,SCR,SLL,SGD,XSU,SKK,SIT,SBD,SOS,SSP,SDG,RHD,ESA,ESB,LKR,SDD,SDP,SRD,SRG,SEK,CHE,CHW,CHC,SYP,TWD,TJS,TJR,TZS,THB,TPE,TOP,TTD,TND,TRY,TRL,TMT,TMM,UGX,UGS,UGW,UAH,UAK,SUR,AED,USS,USN,UYU,UYI,UYW,UYN,UYP,UZS,VUV,VEB,VEF,VES,VND,VNC,YER,YDD,YUD,YUM,YUN,ZRN,ZRZ,ZMW,ZMK,ZWL,ZWC,ZWD,ZWN,ZWR,XBA,XFO,XBB,XRE,XBC,XBD,XFU,XTS,XXX,XAU,XPD,XPT,XAG]
             amount:
               type: string
               nullable: true
-              pattern: '^-?\d{1,15}\.\d{2,4}$'
+              pattern: '^\d{1,16}\.\d{2}$'
               example: '100000.04'
               description: |
                 Valor do faturamento
             year:
               type: string
-              maxLength: 4
               format: date-fullyear
               pattern: '^\d{4}$'
               example: '2010'
@@ -6584,15 +6899,14 @@ components:
           description: Objeto que agrupa dados de informações de patrimônio.
           properties:
             currency:
-              type: string
-              pattern: '^(\w{3}){1}$|^NA$'
-              maxLength: 3
-              example: BRL
               description: 'Moeda referente ao valor do patrimônio, segundo modelo ISO-4217.'
+              type: string
+              example: BRL
+              enum: [AFN,AFA,ALL,ALK,DZD,USD,EUR,ADP,ESP,FRF,AOA,AOK,AON,AOR,XCD,ARS,ARA,ARP,ARY,AMD,RUR,AWG,AUD,ATS,AZN,AYM,AZM,BSD,BHD,BDT,BBD,BYN,BYB,BYR,BEC,BEF,BEL,BZD,XOF,BMD,INR,BTN,BOP,BOB,BOV,BAM,BAD,BWP,NOK,BRL,BRB,BRC,BRE,BRN,BRR,BND,BGN,BGJ,BGK,BGL,BUK,BIF,CVE,KHR,XAF,CAD,KYD,CLP,CLF,CNY,COP,COU,KMF,CDF,NZD,CRC,HRK,HRD,CUP,CUC,ANG,CYP,CZK,CSJ,CSK,DKK,DJF,DOP,ECS,ECV,EGP,SVC,GQE,ERN,EEK,SZL,ETB,XEU,FKP,FJD,FIM,XPF,GMD,GEL,GEK,DDM,DEM,GHS,GHC,GHP,GIP,GRD,GTQ,GBP,GNF,GNE,GNS,GWE,GWP,GYD,HTG,ITL,HNL,HKD,HUF,ISK,ISJ,IDR,XDR,IRR,IQD,IEP,ILS,ILP,ILR,JMD,JPY,JOD,KZT,KES,KPW,KRW,KWD,KGS,LAJ,LAK,LVL,LVR,LBP,LSL,ZAR,LSM,ZAL,LRD,LYD,CHF,LTL,LTT,LUC,LUF,LUL,MOP,MGA,MGF,MWK,MYR,MVR,MVQ,MLF,MTL,MTP,MRU,MRO,MUR,XUA,MXN,MXV,MXP,MDL,MNT,MAD,MZN,MZE,MZM,MMK,NAD,NPR,NLG,NIO,NIC,NGN,MKD,OMR,PKR,PAB,PGK,PYG,PEN,PEH,PEI,PES,PHP,PLN,PLZ,PTE,QAR,RON,ROK,ROL,RUB,RWF,SHP,WST,STN,STD,SAR,RSD,CSD,SCR,SLL,SGD,XSU,SKK,SIT,SBD,SOS,SSP,SDG,RHD,ESA,ESB,LKR,SDD,SDP,SRD,SRG,SEK,CHE,CHW,CHC,SYP,TWD,TJS,TJR,TZS,THB,TPE,TOP,TTD,TND,TRY,TRL,TMT,TMM,UGX,UGS,UGW,UAH,UAK,SUR,AED,USS,USN,UYU,UYI,UYW,UYN,UYP,UZS,VUV,VEB,VEF,VES,VND,VNC,YER,YDD,YUD,YUM,YUN,ZRN,ZRZ,ZMW,ZMK,ZWL,ZWC,ZWD,ZWN,ZWR,XBA,XFO,XBB,XRE,XBC,XBD,XFU,XTS,XXX,XAU,XPD,XPT,XAG]
             amount:
               type: string
               nullable: true
-              pattern: '^-?\d{1,15}\.\d{2,4}$'
+              pattern: '^-?\d{1,15}\.\d{2}$'
               example: '100000.04'
               description: |
                 Valor do patrimônio
@@ -6600,7 +6914,7 @@ components:
               type: string
               maxLength: 10
               format: date
-              pattern: '^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])$'
+              pattern: '^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])$'
               example: '2012-05-21'
               description: 'Data de referência do patrimônio, conforme especificação RFC-3339.' 
           additionalProperties: false
@@ -6618,21 +6932,21 @@ components:
           type: string
           format: date-time
           maxLength: 20
-          pattern: '^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])T(?:[01]\d|2[0123]):(?:[012345]\d):(?:[012345]\d)Z$'
+          pattern: '^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])T(?:[01]\d|2[0123]):(?:[012345]\d):(?:[012345]\d)Z$'
           example: '2021-05-21T08:30:00Z'
           description: 'Data e hora da atualização do bloco de Relacionamento, conforme especificação RFC-3339, formato UTC.'
         startDate:
           type: string
           format: date
           maxLength: 10
-          pattern: '^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])$'
+          pattern: '^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])$'
           example: '2014-05-21'
           description: Data mais antiga de início de relacionamento, considerando todos os contratos (vigentes e não vigentes). Os contratos não vigentes considerados devem contemplar, no mínimo o período indicado na Tabela 4.1.
         relationshipBeginning:
           type: string
           format: date
           maxLength: 10
-          pattern: '^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])$'
+          pattern: '^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])$'
           example: '2014-05-21'
           description: Campo deve ser preenchido com a data da apólice/contrato vigente mais antiga (caso haja contrato vigente)
         productsServices:
@@ -6680,7 +6994,7 @@ components:
           type: string
           maxLength: 20
           format: date-time
-          pattern: '^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])T(?:[01]\d|2[0123]):(?:[012345]\d):(?:[012345]\d)Z$'
+          pattern: '^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])T(?:[01]\d|2[0123]):(?:[012345]\d):(?:[012345]\d)Z$'
           example: '2021-05-21T08:30:00Z'
           description: 'Data e hora da atualização do bloco, conforme especificação RFC-3339'
         personalId:
@@ -6698,13 +7012,13 @@ components:
         civilName:
           type: string
           maxLength: 70
-          pattern: '[\w\W\s]*'
+          pattern: '[a-z]|[A-Z]|\s$'
           example: Juan Kaique Cláudio Fernandes
           description: 'Nome civil completo da pessoa natural (Direito fundamental da pessoa, o nome civil é aquele atribuído à pessoa natural desde o registro de seu nascimento, com o qual será identificada por toda a sua vida, bem como após a sua morte)'
         socialName:
           type: string
           maxLength: 70
-          pattern: '^[\w\W]*$'
+          pattern: '[a-z]|[A-Z]|\s$'
           example: 'string'
           description: |
             Nome social da pessoa natural, se houver. 
@@ -6747,7 +7061,7 @@ components:
           description: Informa se o Cliente tem nacionalidade brasileira.
         otherNationalitiesInfo:
           type: string
-          maxLength: 3
+          enum: [AFG,ALA,ALB,DZA,ASM,AND,AGO,AIA,ATA,ATG,ARG,ARM,ABW,AUS,AUT,AZE,BHS,BHR,BGD,BRB,BLR,BEL,BLZ,BEN,BMU,BTN,BOL,BES,BIH,BWA,BVT,IOT,BRN,BGR,BFA,BDI,CPV,KHM,CMR,CAN,CYM,CAF,TCD,CHL,CHN,CXR,CCK,COL,COM,COG,COD,COK,CRI,CIV,HRV,CUB,CUW,CYP,CZE,DNK,DJI,DMA,DOM,ECU,EGY,SLV,GNQ,ERI,EST,SWZ,ETH,FLK,FRO,FJI,FIN,FRA,GUF,PYF,ATF,GAB,GMB,GEO,DEU,GHA,GIB,GRC,GRL,GRD,GLP,GUM,GTM,GGY,GIN,GNB,GUY,HTI,HMD,VAT,HND,HKG,HUN,ISL,IND,IDN,IRN,IRQ,IRL,IMN,ISR,ITA,JAM,JPN,JEY,JOR,KAZ,KEN,KIR,PRK,KOR,KWT,KGZ,LAO,LVA,LBN,LSO,LBR,LBY,LIE,LTU,LUX,MAC,MDG,MWI,MYS,MDV,MLI,MLT,MHL,MTQ,MRT,MUS,MYT,MEX,FSM,MDA,MCO,MNG,MNE,MSR,MAR,MOZ,MMR,NAM,NRU,NPL,NLD,NCL,NZL,NIC,NER,NGA,NIU,NFK,MKD,MNP,NOR,OMN,PAK,PLW,PSE,PAN,PNG,PRY,PER,PHL,PCN,POL,PRT,PRI,QAT,REU,ROU,RUS,RWA,BLM,SHN,KNA,LCA,MAF,SPM,VCT,WSM,SMR,STP,SAU,SEN,SRB,SYC,SLE,SGP,SXM,SVK,SVN,SLB,SOM,ZAF,SGS,SSD,ESP,LKA,SDN,SUR,SJM,SWE,CHE,SYR,TWN,TJK,TZA,THA,TLS,TGO,TKL,TON,TTO,TUN,TUR,TKM,TCA,TUV,UGA,UKR,ARE,GBR,USA,UMI,URY,UZB,VUT,VEN,VNM,VGB,VIR,WLF,ESH,YEM,ZMB,ZWE]
           example: CAN
           description: Código do pais de acordo com o código “alpha3” do ISO-3166
         otherDocuments:
@@ -6764,7 +7078,7 @@ components:
           type: string
           maxLength: 10
           format: date
-          pattern: '^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])$'
+          pattern: '^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])$'
           example: '2021-05-21'
           description: 'Data de nascimento, conforme especificação RFC-3339'  
         filiation:
@@ -6776,7 +7090,7 @@ components:
             civilName:
               type: string
               maxLength: 70
-              pattern: '^[\w\W]*$'
+              pattern: '[a-z]|[A-Z]|\s$'
               example: Marcelo Cláudio Fernandes
               description: |
                 Nome civil completo da pessoa relativa à filiação.
@@ -6789,7 +7103,7 @@ components:
             civilName:
               type: string
               maxLength: 70
-              pattern: '[\w\W\s]*'
+              pattern: '[a-z]|[A-Z]|\s$'
               example: Juan Kaique Cláudio Fernandes
               description: 'Nome civil completo da pessoa natural (Direito fundamental da pessoa, o nome civil é aquele atribuído à pessoa natural desde o registro de seu nascimento, com o qual será identificada por toda a sua vida, bem como após a sua morte)'
             cpfNumber:
@@ -6812,7 +7126,7 @@ components:
           type: string
           maxLength: 20
           format: date-time
-          pattern: '^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])T(?:[01]\d|2[0123]):(?:[012345]\d):(?:[012345]\d)Z$'
+          pattern: '^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])T(?:[01]\d|2[0123]):(?:[012345]\d):(?:[012345]\d)Z$'
           example: '2021-05-21T08:30:00Z'
           description: 'Data e hora da atualização do bloco, conforme especificação RFC-3339' 
         pepIdentification:
@@ -6848,9 +7162,14 @@ components:
                   - CBO 
                   - OUTROS
                 description: 'Tipo de código da ocupação'
+              occupationCodeTypeOthers:
+                description: Descricao do tipo de codigo da ocupacao quando for informada a opcao OUTROS
+                type: string
+                maxLength: 100
         lifePensionPlans:
           type: string
           description: Condição de proponente qualificado, aplicável à contratação de planos de previdência e vida por sobrevivência
+          example: SIM
           enum: 
             - SIM 
             - NAO 
@@ -6862,15 +7181,14 @@ components:
             incomeFrequency:
               $ref: '#/components/schemas/EnumIncomeFrequency'
             currency:
-              type: string
-              pattern: '^(\w{3}){1}$|^NA$'
-              maxLength: 3
-              example: BRL
               description: 'Moeda referente ao valor da renda, segundo modelo ISO-4217.'
+              type: string
+              example: BRL
+              enum: [AFN,AFA,ALL,ALK,DZD,USD,EUR,ADP,ESP,FRF,AOA,AOK,AON,AOR,XCD,ARS,ARA,ARP,ARY,AMD,RUR,AWG,AUD,ATS,AZN,AYM,AZM,BSD,BHD,BDT,BBD,BYN,BYB,BYR,BEC,BEF,BEL,BZD,XOF,BMD,INR,BTN,BOP,BOB,BOV,BAM,BAD,BWP,NOK,BRL,BRB,BRC,BRE,BRN,BRR,BND,BGN,BGJ,BGK,BGL,BUK,BIF,CVE,KHR,XAF,CAD,KYD,CLP,CLF,CNY,COP,COU,KMF,CDF,NZD,CRC,HRK,HRD,CUP,CUC,ANG,CYP,CZK,CSJ,CSK,DKK,DJF,DOP,ECS,ECV,EGP,SVC,GQE,ERN,EEK,SZL,ETB,XEU,FKP,FJD,FIM,XPF,GMD,GEL,GEK,DDM,DEM,GHS,GHC,GHP,GIP,GRD,GTQ,GBP,GNF,GNE,GNS,GWE,GWP,GYD,HTG,ITL,HNL,HKD,HUF,ISK,ISJ,IDR,XDR,IRR,IQD,IEP,ILS,ILP,ILR,JMD,JPY,JOD,KZT,KES,KPW,KRW,KWD,KGS,LAJ,LAK,LVL,LVR,LBP,LSL,ZAR,LSM,ZAL,LRD,LYD,CHF,LTL,LTT,LUC,LUF,LUL,MOP,MGA,MGF,MWK,MYR,MVR,MVQ,MLF,MTL,MTP,MRU,MRO,MUR,XUA,MXN,MXV,MXP,MDL,MNT,MAD,MZN,MZE,MZM,MMK,NAD,NPR,NLG,NIO,NIC,NGN,MKD,OMR,PKR,PAB,PGK,PYG,PEN,PEH,PEI,PES,PHP,PLN,PLZ,PTE,QAR,RON,ROK,ROL,RUB,RWF,SHP,WST,STN,STD,SAR,RSD,CSD,SCR,SLL,SGD,XSU,SKK,SIT,SBD,SOS,SSP,SDG,RHD,ESA,ESB,LKR,SDD,SDP,SRD,SRG,SEK,CHE,CHW,CHC,SYP,TWD,TJS,TJR,TZS,THB,TPE,TOP,TTD,TND,TRY,TRL,TMT,TMM,UGX,UGS,UGW,UAH,UAK,SUR,AED,USS,USN,UYU,UYI,UYW,UYN,UYP,UZS,VUV,VEB,VEF,VES,VND,VNC,YER,YDD,YUD,YUM,YUN,ZRN,ZRZ,ZMW,ZMK,ZWL,ZWC,ZWD,ZWN,ZWR,XBA,XFO,XBB,XRE,XBC,XBD,XFU,XTS,XXX,XAU,XPD,XPT,XAG]
             amount:
               type: string
               nullable: true
-              pattern: '^-?\d{1,15}\.\d{2,4}$'
+              pattern: '^-?\d{1,15}\.\d{2}$'
               example: '100000.04'
               description: |
                 Valor do rendimento
@@ -6878,7 +7196,7 @@ components:
               type: string
               maxLength: 10
               format: date
-              pattern: '^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])$'
+              pattern: '^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])$'
               example: '2012-05-21'
               description: 'Data de referência da renda, conforme especificação RFC-3339.' 
           additionalProperties: false
@@ -6887,15 +7205,14 @@ components:
           description: Objeto que agrupa dados de informações de patrimônio.
           properties:
             currency:
-              type: string
-              pattern: '^(\w{3}){1}$|^NA$'
-              maxLength: 3
-              example: BRL
               description: 'Moeda referente ao valor do patrimônio, segundo modelo ISO-4217.'
+              type: string
+              example: BRL
+              enum: [AFN,AFA,ALL,ALK,DZD,USD,EUR,ADP,ESP,FRF,AOA,AOK,AON,AOR,XCD,ARS,ARA,ARP,ARY,AMD,RUR,AWG,AUD,ATS,AZN,AYM,AZM,BSD,BHD,BDT,BBD,BYN,BYB,BYR,BEC,BEF,BEL,BZD,XOF,BMD,INR,BTN,BOP,BOB,BOV,BAM,BAD,BWP,NOK,BRL,BRB,BRC,BRE,BRN,BRR,BND,BGN,BGJ,BGK,BGL,BUK,BIF,CVE,KHR,XAF,CAD,KYD,CLP,CLF,CNY,COP,COU,KMF,CDF,NZD,CRC,HRK,HRD,CUP,CUC,ANG,CYP,CZK,CSJ,CSK,DKK,DJF,DOP,ECS,ECV,EGP,SVC,GQE,ERN,EEK,SZL,ETB,XEU,FKP,FJD,FIM,XPF,GMD,GEL,GEK,DDM,DEM,GHS,GHC,GHP,GIP,GRD,GTQ,GBP,GNF,GNE,GNS,GWE,GWP,GYD,HTG,ITL,HNL,HKD,HUF,ISK,ISJ,IDR,XDR,IRR,IQD,IEP,ILS,ILP,ILR,JMD,JPY,JOD,KZT,KES,KPW,KRW,KWD,KGS,LAJ,LAK,LVL,LVR,LBP,LSL,ZAR,LSM,ZAL,LRD,LYD,CHF,LTL,LTT,LUC,LUF,LUL,MOP,MGA,MGF,MWK,MYR,MVR,MVQ,MLF,MTL,MTP,MRU,MRO,MUR,XUA,MXN,MXV,MXP,MDL,MNT,MAD,MZN,MZE,MZM,MMK,NAD,NPR,NLG,NIO,NIC,NGN,MKD,OMR,PKR,PAB,PGK,PYG,PEN,PEH,PEI,PES,PHP,PLN,PLZ,PTE,QAR,RON,ROK,ROL,RUB,RWF,SHP,WST,STN,STD,SAR,RSD,CSD,SCR,SLL,SGD,XSU,SKK,SIT,SBD,SOS,SSP,SDG,RHD,ESA,ESB,LKR,SDD,SDP,SRD,SRG,SEK,CHE,CHW,CHC,SYP,TWD,TJS,TJR,TZS,THB,TPE,TOP,TTD,TND,TRY,TRL,TMT,TMM,UGX,UGS,UGW,UAH,UAK,SUR,AED,USS,USN,UYU,UYI,UYW,UYN,UYP,UZS,VUV,VEB,VEF,VES,VND,VNC,YER,YDD,YUD,YUM,YUN,ZRN,ZRZ,ZMW,ZMK,ZWL,ZWC,ZWD,ZWN,ZWR,XBA,XFO,XBB,XRE,XBC,XBD,XFU,XTS,XXX,XAU,XPD,XPT,XAG]
             amount:
               type: string
               nullable: true
-              pattern: '^-?\d{1,15}\.\d{2,4}$'
+              pattern: '^-?\d{1,15}\.\d{2}$'
               example: '100000.04'
               description: |
                 Valor do patrimônio
@@ -6918,6 +7235,8 @@ components:
         status:
           description: Status da cotação.
           type: string
+          minItems: 1
+          example: RCVD
           enum: [RCVD,
                 EVAL,
                 ACPT,
@@ -6932,16 +7251,21 @@ components:
           type: string
           description: Data e hora da atualização do status.
           format: date-time
-          pattern: '^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])T(?:[01]\d|2[0123]):(?:[012345]\d):(?:[012345]\d)Z$'
+          pattern: '^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])T(?:[01]\d|2[0123]):(?:[012345]\d):(?:[012345]\d)Z$'
           example: '2021-05-21T08:30:00Z'
                   
     PersonalDocuments:
       type: array
       description: Objeto agrupador de informações relativas a Documentos da pessoa natural
       items:
+        type: object
         properties:
           type:
             $ref: '#/components/schemas/EnumPersonalDocumentType'
+          documentTypeOthers:
+            description: Descricao do tipo de documento quando for informada a opcao OUTROS
+            type: string
+            maxLength: 100
           number:
             type: string
             maxLength: 20
@@ -6951,7 +7275,7 @@ components:
             type: string
             maxLength: 10
             format: date
-            pattern: '^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])$'
+            pattern: '^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])$'
             example: '2023-05-21'
             description: Data de validade do(s) documento(s) de identificação - Se aplicável.
           issueLocation: 
@@ -6981,7 +7305,7 @@ components:
           type: string
           maxLength: 10
           format: date
-          pattern: '^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])$'
+          pattern: '^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])$'
           example: '2023-05-21'
           description: Data de vigência do documento de registro - conforme especificação RFC-3339.
       additionalProperties: false
@@ -7005,15 +7329,15 @@ components:
           description: | 
             Aplicável somente as pessoas jurídicas com domicílio ou sede no exterior desobrigadas de inscrição no CNPJ.
         country:
-          type: string
-          maxLength: 3
-          example: BRA
           description: Código do pais de acordo com o código “alpha3” do ISO-3166.
+          type: string
+          enum: [AFG,ALA,ALB,DZA,ASM,AND,AGO,AIA,ATA,ATG,ARG,ARM,ABW,AUS,AUT,AZE,BHS,BHR,BGD,BRB,BLR,BEL,BLZ,BEN,BMU,BTN,BOL,BES,BIH,BWA,BVT,BRA,IOT,BRN,BGR,BFA,BDI,CPV,KHM,CMR,CAN,CYM,CAF,TCD,CHL,CHN,CXR,CCK,COL,COM,COG,COD,COK,CRI,CIV,HRV,CUB,CUW,CYP,CZE,DNK,DJI,DMA,DOM,ECU,EGY,SLV,GNQ,ERI,EST,SWZ,ETH,FLK,FRO,FJI,FIN,FRA,GUF,PYF,ATF,GAB,GMB,GEO,DEU,GHA,GIB,GRC,GRL,GRD,GLP,GUM,GTM,GGY,GIN,GNB,GUY,HTI,HMD,VAT,HND,HKG,HUN,ISL,IND,IDN,IRN,IRQ,IRL,IMN,ISR,ITA,JAM,JPN,JEY,JOR,KAZ,KEN,KIR,PRK,KOR,KWT,KGZ,LAO,LVA,LBN,LSO,LBR,LBY,LIE,LTU,LUX,MAC,MDG,MWI,MYS,MDV,MLI,MLT,MHL,MTQ,MRT,MUS,MYT,MEX,FSM,MDA,MCO,MNG,MNE,MSR,MAR,MOZ,MMR,NAM,NRU,NPL,NLD,NCL,NZL,NIC,NER,NGA,NIU,NFK,MKD,MNP,NOR,OMN,PAK,PLW,PSE,PAN,PNG,PRY,PER,PHL,PCN,POL,PRT,PRI,QAT,REU,ROU,RUS,RWA,BLM,SHN,KNA,LCA,MAF,SPM,VCT,WSM,SMR,STP,SAU,SEN,SRB,SYC,SLE,SGP,SXM,SVK,SVN,SLB,SOM,ZAF,SGS,SSD,ESP,LKA,SDN,SUR,SJM,SWE,CHE,SYR,TWN,TJK,TZA,THA,TLS,TGO,TKL,TON,TTO,TUN,TUR,TKM,TCA,TUV,UGA,UKR,ARE,GBR,USA,UMI,URY,UZB,VUT,VEN,VNM,VGB,VIR,WLF,ESH,YEM,ZMB,ZWE]
+          example: BRA 
         expirationDate:
           type: string
           maxLength: 10
           format: date
-          pattern: '^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])$'
+          pattern: '^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])$'
           example: '2023-05-21'
           description: 'Data de vigência do documento de registro - conforme especificação RFC-3339.'
       additionalProperties: false
@@ -7022,13 +7346,30 @@ components:
         description: Detalhes de valores/limites
         required:
           - amount
-          - unit
+          - unitType
         properties:
           amount:
             type: string
-            pattern: '^\d{1,16}\.\d{2}$'
-            example: '2000.00'
+            pattern: '^(^(100\.\00|\d{1,2}\.\d{2})$|^(\d{1,6})$|^(\d{1,15}\.\d{2})$)$'
+            description: |
+              Valor.
+              Exemplos de preenchimento do campo:
+
+              PORCENTAGEM: 90.85
+                              
+              MONETARIO: 62500.67
+
+              OUTROS: 1000 (Exemplo de outro tipo: horas)
+          unitType:
+            description: "Tipo da unidade referente ao valor inserido no campo Amount"
+            type: string
+            enum: [PORCENTAGEM, MONETARIO, OUTROS]
+          unitTypeOthers:
+            description: Caso o tipo do valor informado for "Outros", esse campo deve ser preenchido com o tipo do valor, obrigatoriamente.
+            type: string
+            example: Horas
           unit:
+            description: Preenchimento obrigatório em caso de valor "MONETARIO" ser informado no campo "unitType"
             type: object
             required:
               - code
@@ -7036,13 +7377,17 @@ components:
             properties:
               code:
                 type: string
-                maxLength: 2
+                enum: [ د.إ , Af, L,  Դ,  Kz, $,  ƒ,  ман,  КМ, ৳,  лв, ب.د,  ₣,  Bs.,  R$, P,  Br, ¥,  ₡,  Kč, kr, د.ج,  £,  
+                        Nfk,  N/A,  €,  ლ,  ₵,  D,  Q,  Kn, G,  Ft, Rp, ₪,  ₹,  ع.د,  ﷼,  Sh, ៛,  ₩,  د.ك,  〒,  ₭,  ل.ل,  Rs,
+                        ل.د,  د.م., ден,  K,  ₮,  UM, ₨,  ރ., MK, RM, MTn,  ₦,  C$, ر.ع., B/.,  S/.,  ₱,  zł, ₲,  ر.ق,  din,  
+                        р., ر.س,  Le, Db, ل.س,  ฿,  ЅМ, m,  د.ت,  T$, ₤,  ₴,  Bs F, ₫,  Vt, T,  R,  ZK ]
                 example: R$
               description:
                 type: string
                 description: Moeda da Parcela, de acordo com ISO-4217.
-                pattern: ^(\w{3})$
                 example: BRL
+                enum: [ AFN,AFA,ALL,ALK,DZD,USD,EUR,ADP,ESP,FRF,AOA,AOK,AON,AOR,XCD,ARS,ARA,ARP,ARY,AMD,RUR,AWG,AUD,ATS,AZN,AYM,AZM,BSD,BHD,BDT,BBD,BYN,BYB,BYR,BEC,BEF,BEL,BZD,XOF,BMD,INR,BTN,BOP,BOB,BOV,BAM,BAD,BWP,NOK,BRL,BRB,BRC,BRE,BRN,BRR,BND,BGN,BGJ,BGK,BGL,BUK,BIF,CVE,KHR,XAF,CAD,KYD,CLP,CLF,CNY,COP,COU,KMF,CDF,NZD,CRC,HRK,HRD,CUP,CUC,ANG,CYP,CZK,CSJ,CSK,DKK,DJF,DOP,ECS,ECV,EGP,SVC,GQE,ERN,EEK,SZL,ETB,XEU,FKP,FJD,FIM,XPF,GMD,GEL,GEK,DDM,DEM,GHS,GHC,GHP,GIP,GRD,GTQ,GBP,GNF,GNE,GNS,GWE,GWP,GYD,HTG,ITL,HNL,HKD,HUF,ISK,ISJ,IDR,XDR,IRR,IQD,IEP,ILS,ILP,ILR,JMD,JPY,JOD,KZT,KES,KPW,KRW,KWD,KGS,LAJ,LAK,LVL,LVR,LBP,LSL,ZAR,LSM,ZAL,LRD,LYD,CHF,LTL,LTT,LUC,LUF,LUL,MOP,MGA,MGF,MWK,MYR,MVR,MVQ,MLF,MTL,MTP,MRU,MRO,MUR,XUA,MXN,MXV,MXP,MDL,MNT,MAD,MZN,MZE,MZM,MMK,NAD,NPR,NLG,NIO,NIC,NGN,MKD,OMR,PKR,PAB,PGK,PYG,PEN,PEH,PEI,PES,PHP,PLN,PLZ,PTE,QAR,RON,ROK,ROL,RUB,RWF,SHP,WST,STN,STD,SAR,RSD,CSD,SCR,SLL,SGD,XSU,SKK,SIT,SBD,SOS,SSP,SDG,RHD,ESA,ESB,LKR,SDD,SDP,SRD,SRG,SEK,CHE,CHW,CHC,SYP,TWD,TJS,TJR,TZS,THB,TPE,TOP,TTD,TND,TRY,TRL,TMT,TMM,UGX,UGS,UGW,UAH,UAK,SUR,AED,USS,USN,UYU,UYI,UYW,UYN,UYP,UZS,VUV,VEB,VEF,VES,VND,VNC,YER,YDD,YUD,YUM,YUN,ZRN,ZRZ,ZMW,ZMK,ZWL,ZWC,ZWD,ZWN,ZWR,XBA,XFO,XBB,XRE,XBC,XBD,XFU,XTS,XXX,XAU,XPD,XPT,XAG ]
+
     QuoteCustomData:
       type: object
       description: Objeto que agrupa as categorias de dados customizáveis em listas.
@@ -7142,7 +7487,7 @@ components:
           type: string
           description: Endereço de email
           maxLength: 320
-          pattern: '[\w\W\s]*'
+          pattern: '^\S+@\S+\.\S+$'
           example: nome@br.net
       additionalProperties: false
     CustomerPhone:
@@ -7151,7 +7496,7 @@ components:
         countryCallingCode:
           type: string
           maxLength: 4
-          pattern: '^\d{2,4}$|^NA$'
+          pattern: '^\d{1,4}$'
           example: '55'
           description: Número de DDI (Discagem Direta Internacional) para telefone de acesso ao Cliente - se aplicável
         areaCode:
@@ -7199,7 +7544,7 @@ components:
         townName:
           type: string
           maxLength: 50
-          pattern: '[\w\W\s]*'
+          pattern: ^[a-z]|[A-Z]|\s$
           example: Marília
           description: |
             Localidade: O nome da localidade corresponde à designação da cidade ou município no qual o endereço está localizado.
@@ -7213,10 +7558,10 @@ components:
           description: |
             Código de Endereçamento Postal: Composto por um conjunto numérico de oito dígitos, o objetivo principal do CEP é orientar e acelerar o encaminhamento, o tratamento e a entrega de objetos postados nos Correios, por meio da sua atribuição a localidades, logradouros, unidades dos Correios, serviços, órgãos públicos, empresas e edifícios. p.ex. '01311000'.
         country:
+          description: País do segurado (de acordo com o código "alpha3" do ISO-3166)
           type: string
-          maxLength: 3
+          enum: [AFG,ALA,ALB,DZA,ASM,AND,AGO,AIA,ATA,ATG,ARG,ARM,ABW,AUS,AUT,AZE,BHS,BHR,BGD,BRB,BLR,BEL,BLZ,BEN,BMU,BTN,BOL,BES,BIH,BWA,BVT,BRA,IOT,BRN,BGR,BFA,BDI,CPV,KHM,CMR,CAN,CYM,CAF,TCD,CHL,CHN,CXR,CCK,COL,COM,COG,COD,COK,CRI,CIV,HRV,CUB,CUW,CYP,CZE,DNK,DJI,DMA,DOM,ECU,EGY,SLV,GNQ,ERI,EST,SWZ,ETH,FLK,FRO,FJI,FIN,FRA,GUF,PYF,ATF,GAB,GMB,GEO,DEU,GHA,GIB,GRC,GRL,GRD,GLP,GUM,GTM,GGY,GIN,GNB,GUY,HTI,HMD,VAT,HND,HKG,HUN,ISL,IND,IDN,IRN,IRQ,IRL,IMN,ISR,ITA,JAM,JPN,JEY,JOR,KAZ,KEN,KIR,PRK,KOR,KWT,KGZ,LAO,LVA,LBN,LSO,LBR,LBY,LIE,LTU,LUX,MAC,MDG,MWI,MYS,MDV,MLI,MLT,MHL,MTQ,MRT,MUS,MYT,MEX,FSM,MDA,MCO,MNG,MNE,MSR,MAR,MOZ,MMR,NAM,NRU,NPL,NLD,NCL,NZL,NIC,NER,NGA,NIU,NFK,MKD,MNP,NOR,OMN,PAK,PLW,PSE,PAN,PNG,PRY,PER,PHL,PCN,POL,PRT,PRI,QAT,REU,ROU,RUS,RWA,BLM,SHN,KNA,LCA,MAF,SPM,VCT,WSM,SMR,STP,SAU,SEN,SRB,SYC,SLE,SGP,SXM,SVK,SVN,SLB,SOM,ZAF,SGS,SSD,ESP,LKA,SDN,SUR,SJM,SWE,CHE,SYR,TWN,TJK,TZA,THA,TLS,TGO,TKL,TON,TTO,TUN,TUR,TKM,TCA,TUV,UGA,UKR,ARE,GBR,USA,UMI,URY,UZB,VUT,VEN,VNM,VGB,VIR,WLF,ESH,YEM,ZMB,ZWE]
           example: BRA
-          description: Código do pais de acordo com o código “alpha3” do ISO-3166.
       additionalProperties: false
     EnumCountrySubDivision:
       type: string
@@ -7366,6 +7711,7 @@ components:
       enum:
         - MAE
         - PAI
+        - SEM_FILIACAO
       description: Tipo de filiação.    
     EnumProcuratorsNaturePersonal:
       type: string
@@ -7389,10 +7735,10 @@ components:
       type: array
       description: Conjunto de informações referentes ao vínculo com uma pessoa.
       items:
+        type: object
         properties:
           type: 
             type: string
-            maxLength: 13
             example: SOCIO
             description: Tipo de vínculo com a pessoa jurídica
             enum:
@@ -7401,13 +7747,13 @@ components:
           civilName:
             type: string
             maxLength: 70
-            pattern: '[\w\W\s]*'
+            pattern: '[a-z]|[A-Z]|\s$'
             example: Juan Kaique Cláudio Fernandes
             description: 'Nome civil completo da pessoa natural (Direito fundamental da pessoa, o nome civil é aquele atribuído à pessoa natural desde o registro de seu nascimento, com o qual será identificada por toda a sua vida, bem como após a sua morte)' 
           socialName:
             type: string
             maxLength: 70
-            pattern: '^[\w\W]*$'
+            pattern: '[a-z]|[A-Z]|\s$'
             example: 'string'
             description: |
               Nome social da pessoa natural, se houver. 
@@ -7417,15 +7763,13 @@ components:
             type: string
             format: date
             maxLength: 10
-            pattern: '^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])$'
+            pattern: '^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])$'
             example: '2014-05-21'
             description: 'Data de início da participação, conforme especificação RFC-3339.'
           shareholding:
             type: string
             format: double
-            maxLength: 8
-            minLength: 8
-            pattern: '^[01]\.\d{6}$'
+            pattern: '^100\.0{1,9}$|^\d{1,2}\.\d{1,9}$'
             example: '0.510000'
             description: |
               Percentual de participação societária (informar com 6 casas decimais). 
@@ -7443,8 +7787,7 @@ components:
             description: Número do documento informado. Campo Texto Livre para preencher número e dígito do documento se houver
           documentCountry:
             type: string
-            maxLength: 3
-            pattern: '[\w*\W*]'
+            enum: [AFG,ALA,ALB,DZA,ASM,AND,AGO,AIA,ATA,ATG,ARG,ARM,ABW,AUS,AUT,AZE,BHS,BHR,BGD,BRB,BLR,BEL,BLZ,BEN,BMU,BTN,BOL,BES,BIH,BWA,BVT,BRA,IOT,BRN,BGR,BFA,BDI,CPV,KHM,CMR,CAN,CYM,CAF,TCD,CHL,CHN,CXR,CCK,COL,COM,COG,COD,COK,CRI,CIV,HRV,CUB,CUW,CYP,CZE,DNK,DJI,DMA,DOM,ECU,EGY,SLV,GNQ,ERI,EST,SWZ,ETH,FLK,FRO,FJI,FIN,FRA,GUF,PYF,ATF,GAB,GMB,GEO,DEU,GHA,GIB,GRC,GRL,GRD,GLP,GUM,GTM,GGY,GIN,GNB,GUY,HTI,HMD,VAT,HND,HKG,HUN,ISL,IND,IDN,IRN,IRQ,IRL,IMN,ISR,ITA,JAM,JPN,JEY,JOR,KAZ,KEN,KIR,PRK,KOR,KWT,KGZ,LAO,LVA,LBN,LSO,LBR,LBY,LIE,LTU,LUX,MAC,MDG,MWI,MYS,MDV,MLI,MLT,MHL,MTQ,MRT,MUS,MYT,MEX,FSM,MDA,MCO,MNG,MNE,MSR,MAR,MOZ,MMR,NAM,NRU,NPL,NLD,NCL,NZL,NIC,NER,NGA,NIU,NFK,MKD,MNP,NOR,OMN,PAK,PLW,PSE,PAN,PNG,PRY,PER,PHL,PCN,POL,PRT,PRI,QAT,REU,ROU,RUS,RWA,BLM,SHN,KNA,LCA,MAF,SPM,VCT,WSM,SMR,STP,SAU,SEN,SRB,SYC,SLE,SGP,SXM,SVK,SVN,SLB,SOM,ZAF,SGS,SSD,ESP,LKA,SDN,SUR,SJM,SWE,CHE,SYR,TWN,TJK,TZA,THA,TLS,TGO,TKL,TON,TTO,TUN,TUR,TKM,TCA,TUV,UGA,UKR,ARE,GBR,USA,UMI,URY,UZB,VUT,VEN,VNM,VGB,VIR,WLF,ESH,YEM,ZMB,ZWE]
             example: BRA
             description: |
               País de emissão do documento. Código do pais de acordo com o código alpha3 do ISO-3166.
@@ -7453,7 +7796,7 @@ components:
             format: date
             maxLength: 10
             example: '2021-05-21'
-            pattern: '^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])$'
+            pattern: '^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])$'
             description: 'Data de validade do documento informado, conforme especificação RFC-3339.'
       additionalProperties: false
     BusinessContact:
@@ -7511,7 +7854,7 @@ components:
         townName:
           type: string
           maxLength: 50
-          pattern: '[\w\W\s]*'
+          pattern: ^[a-z]|[A-Z]|\s$
           example: Marília
           description: |
             Localidade: O nome da localidade corresponde à designação da cidade ou município no qual o endereço está localizado.
@@ -7527,8 +7870,8 @@ components:
         ibgeTownCode:
           type: string
           pattern: '\d{7}|^NA$'
-          maxLength: 8
-          example: '17500000'
+          maxLength: 7
+          example: '1750000'
           description: |
             Código IBGE do município
         country:
@@ -7536,10 +7879,10 @@ components:
           maxLength: 60
           example: Brasil
         countryCode:
+          description: País do segurado (de acordo com o código "alpha3" do ISO-3166)
           type: string
-          maxLength: 3
+          enum: [AFG,ALA,ALB,DZA,ASM,AND,AGO,AIA,ATA,ATG,ARG,ARM,ABW,AUS,AUT,AZE,BHS,BHR,BGD,BRB,BLR,BEL,BLZ,BEN,BMU,BTN,BOL,BES,BIH,BWA,BVT,BRA,IOT,BRN,BGR,BFA,BDI,CPV,KHM,CMR,CAN,CYM,CAF,TCD,CHL,CHN,CXR,CCK,COL,COM,COG,COD,COK,CRI,CIV,HRV,CUB,CUW,CYP,CZE,DNK,DJI,DMA,DOM,ECU,EGY,SLV,GNQ,ERI,EST,SWZ,ETH,FLK,FRO,FJI,FIN,FRA,GUF,PYF,ATF,GAB,GMB,GEO,DEU,GHA,GIB,GRC,GRL,GRD,GLP,GUM,GTM,GGY,GIN,GNB,GUY,HTI,HMD,VAT,HND,HKG,HUN,ISL,IND,IDN,IRN,IRQ,IRL,IMN,ISR,ITA,JAM,JPN,JEY,JOR,KAZ,KEN,KIR,PRK,KOR,KWT,KGZ,LAO,LVA,LBN,LSO,LBR,LBY,LIE,LTU,LUX,MAC,MDG,MWI,MYS,MDV,MLI,MLT,MHL,MTQ,MRT,MUS,MYT,MEX,FSM,MDA,MCO,MNG,MNE,MSR,MAR,MOZ,MMR,NAM,NRU,NPL,NLD,NCL,NZL,NIC,NER,NGA,NIU,NFK,MKD,MNP,NOR,OMN,PAK,PLW,PSE,PAN,PNG,PRY,PER,PHL,PCN,POL,PRT,PRI,QAT,REU,ROU,RUS,RWA,BLM,SHN,KNA,LCA,MAF,SPM,VCT,WSM,SMR,STP,SAU,SEN,SRB,SYC,SLE,SGP,SXM,SVK,SVN,SLB,SOM,ZAF,SGS,SSD,ESP,LKA,SDN,SUR,SJM,SWE,CHE,SYR,TWN,TJK,TZA,THA,TLS,TGO,TKL,TON,TTO,TUN,TUR,TKM,TCA,TUV,UGA,UKR,ARE,GBR,USA,UMI,URY,UZB,VUT,VEN,VNM,VGB,VIR,WLF,ESH,YEM,ZMB,ZWE]
           example: BRA
-          description: Código do pais de acordo com o código “alpha3” do ISO-3166.
         geographicCoordinates:
           $ref: '#/components/schemas/GeographicCoordinates'
       additionalProperties: false
@@ -7551,13 +7894,13 @@ components:
           description: |
             Informação da Latitude referente a geolocalização informada. Entre -90 e 90.p.ex. '-23.5475000'. (2 casas antes da vírgula, 11 posições)
           type: string
-          pattern: '^-?\d{1,3}\.\d{1,10}$'
+          pattern: '^-?(90\.0{1,9}|[0-8][0-9]\.\d{1,9})$'
           example: '-23.5475000'
         longitude:
           description: |
             Informação da Longitude referente a geolocalização informada. Entre -180 e 180. p.ex '-46.6361100'. (3 casas antes da vírgula, 11 posições)
           type: string
-          pattern: '^-?\d{1,3}\.\d{1,10}$'
+          pattern: '^-?(180\.0{1,9}|1[0-7]\d{1}\.\d{1,9}|\d{1,2}\.\d{1,9})$'
           example: '-46.6361100'
       additionalProperties: false      
     
@@ -7604,6 +7947,7 @@ components:
             status:
               description: Status da cotação.
               type: string
+              example: CANC
               enum: [CANC]
     PatchPayload:
       type: object
@@ -7619,6 +7963,7 @@ components:
             status:
               description: Status da cotação.
               type: string
+              example: CANC
               enum: [ACKN,CANC]
             insurerQuoteId:
               type: string
@@ -7658,6 +8003,7 @@ components:
             status:
               description: Status da cotação.
               type: string
+              example: CANC
               enum: [ACKN,CANC]
             insurerQuoteId:
               type: string
@@ -7674,7 +8020,7 @@ components:
               type: string
               maxLength: 2048
               format: date-time
-              pattern: '^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])T(?:[01]\d|2[0123]):(?:[012345]\d):(?:[012345]\d)Z$'
+              pattern: '^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])T(?:[01]\d|2[0123]):(?:[012345]\d):(?:[012345]\d)Z$'
               example: '2021-08-20T08:30:00Z'
             links:
               description: Condicional ao status de ACKN.
@@ -7757,13 +8103,12 @@ components:
                 type: string
                 maxLength: 20
                 format: date-time
-                pattern: '^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])T(?:[01]\d|2[0123]):(?:[012345]\d):(?:[012345]\d)Z$'
+                pattern: '^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])T(?:[01]\d|2[0123]):(?:[012345]\d):(?:[012345]\d)Z$'
                 example: '2021-08-20T08:30:00Z'
             additionalProperties: false
         meta:
           $ref: '#/components/schemas/Meta'
       additionalProperties: false
-    
     422ResponseErrorCreateQuote:
       type: object
       required:
@@ -7800,7 +8145,6 @@ components:
               description: |
                 - ERRO_ IDEMPOTENCIA: Tentativa de alteração de requisição já processada
                 - NÃO_INFORMADO: Não informada pelo servidor
-
     XFapiInteractionId:
       type: string
       pattern: '^[a-zA-Z0-9][a-zA-Z0-9\-]{0,99}$'
@@ -7817,6 +8161,7 @@ components:
             - consentId
             - expirationDateTime
             - quoteCustomer
+            - quoteData
           properties:
             consentId:
               description: |
@@ -7837,7 +8182,7 @@ components:
               description: 'Data e hora de expiração da permissão. De preenchimento obrigatório, reflete a data limite de validade do consentimento. Uma string com data e hora conforme especificação RFC-3339, sempre com a utilização de timezone UTC(UTC time format).'
               type: string
               format: date-time
-              pattern: '^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])T(?:[01]\d|2[0123]):(?:[012345]\d):(?:[012345]\d)Z$'
+              pattern: '^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])T(?:[01]\d|2[0123]):(?:[012345]\d):(?:[012345]\d)Z$'
               example: '2021-05-21T08:30:00Z'
               maxLength: 20
             quoteCustomer:
@@ -7878,6 +8223,192 @@ components:
                         - $ref: '#/components/schemas/HistoricalBusinessComplimentaryInformationData' ## schema dados cadastrais de fase 2 (customers v1.1.1) - atualização pendente
                 policies:
                   $ref: '#/components/schemas/PolicyDataPatrimonialLead' ## schema dados transacionais de fase 2 - atualização pendente
+            quoteData: 
+              type: object
+              required:
+                - coverages
+              description: Objeto que agrupa dados específicos do ramo de cotação.
+              properties:
+                coverages:
+                  type: array
+                  description: Lista que agrupa os dados de coberturas.
+                  items:
+                    type: object
+                    required:
+                      - branch
+                      - code
+                      - description
+                    properties:
+                      branch:
+                        description: Grupo e ramo da cobertura
+                        type: string
+                        maxLength: 4
+                        example: "0111"
+                      code:
+                          type: string
+                          description: Código da cobertura, conforme Anexo II do Manual de Escopo de Dados
+                          example: RESIDENCIAL_IMOVEL_BASICA
+                          enum: [
+                            RESIDENCIAL_IMOVEL_BASICA,
+                            RESIDENCIAL_IMOVEL_AMPLA,
+                            RESIDENCIAL_INCENDIO,
+                            RESIDENCIAL_QUEDA_DE_RAIO,
+                            RESIDENCIAL_EXPLOSAO,
+                            RESIDENCIAL_IMPACTO_DE_AERONAVES,
+                            RESIDENCIAL_ALAGAMENTO,
+                            RESIDENCIAL_DANOS_ELETRICOS,
+                            RESIDENCIAL_DANOS_POR_AGUA,
+                            RESIDENCIAL_RESPONSABILIDADE_CIVIL_FAMILIAR,
+                            RESIDENCIAL_VENDAVAL,
+                            RESIDENCIAL_DANOS_A_EQUIPAMENTOS_ELETRONICOS,
+                            RESIDENCIAL_TERREMOTO,
+                            RESIDENCIAL_PERDA_E_PAGAMENTO_DE_ALUGUEL,
+                            RESIDENCIAL_ROUBO_E_SUBTRACAO_DE_BENS,
+                            RESIDENCIAL_QUEBRA_DE_VIDROS,
+                            RESIDENCIAL_IMPACTO_DE_VEICULOS,
+                            RESIDENCIAL_DESMORONAMENTO,
+                            RESIDENCIAL_TUMULTOS_GREVES_E_LOCKOUTS,
+                            RESIDENCIAL_DESPESAS_EXTRAORDINARIAS,
+                            RESIDENCIAL_JOIAS_E_OBRAS_DE_ARTE,
+                            CONDOMINIAL_COBERTURA_BASICA_SIMPLES,
+                            CONDOMINIAL_COBERTURA_BASICA_AMPLA,
+                            CONDOMINIAL_ANUNCIOS_LUMINOSOS,
+                            CONDOMINIAL_DANOS_AO_JARDIM,
+                            CONDOMINIAL_DANOS_ELETRICOS,
+                            CONDOMINIAL_DESMORONAMENTO,
+                            CONDOMINIAL_DESPESAS_COM_ALUGUEL,
+                            CONDOMINIAL_EQUIPAMENTOS,
+                            CONDOMINIAL_FIDELIDADE_DE_EMPREGADOS,
+                            CONDOMINIAL_IMPACTO_DE_VEICULOS,
+                            CONDOMINIAL_VIDA_E_ACIDENTES_PESSOAIS_EMPREGADOS,
+                            CONDOMINIAL_LUCROS_CESSANTES,
+                            CONDOMINIAL_QUEBRA_DE_VIDROS_ESPELHOS_MARMORES_E_GRANITOS,
+                            CONDOMINIAL_RESPONSABILIDADE_CIVIL,
+                            CONDOMINIAL_ROUBO,
+                            CONDOMINIAL_VALORES,
+                            CONDOMINIAL_VAZAMENTO,
+                            CONDOMINIAL_VENDAVAL,
+                            CONDOMINIAL_ALAGAMENTO,
+                            CONDOMINIAL_TUMULTO,
+                            EMPRESARIAL_INCENDIO_QUEDA_DE_RAIO_E_EXPLOSAO,
+                            EMPRESARIAL_DANOS_ELETRICOS,
+                            EMPRESARIAL_VENDAVAL_ATE_FUMACA,
+                            EMPRESARIAL_DESMORONAMENTO,
+                            EMPRESARIAL_ALAGAMENTO_E_INUNDACAO,
+                            EMPRESARIAL_TUMULTOS_GREVES_LOCKOUT_E_ATOS_DOLOSOS,
+                            EMPRESARIAL_ROUBO_E_FURTO_QUALIFICADO,
+                            EMPRESARIAL_VALORES,
+                            EMPRESARIAL_QUEBRA_DE_VIDROS_ESPELHOS_MARMORES_E_GRANITOS,
+                            EMPRESARIAL_ANUNCIOS_LUMINOSOS,
+                            EMPRESARIAL_FIDELIDADE_DE_EMPREGADOS,
+                            EMPRESARIAL_RECOMPOSICAO_DE_REGISTROS_E_DOCUMENTOS,
+                            EMPRESARIAL_DETERIORACAO_DE_MERCADORIAS_EM_AMBIENTES_FRIGORIFICADOS,
+                            EMPRESARIAL_DERRAME,
+                            EMPRESARIAL_VAZAMENTO,
+                            EMPRESARIAL_EQUIPAMENTOS,
+                            EMPRESARIAL_QUEBRA_DE_MAQUINAS,
+                            EMPRESARIAL_RESPONSABILIDADE_CIVIL,
+                            EMPRESARIAL_DESPESAS_EXTRAORDINARIAS,
+                            EMPRESARIAL_LUCROS_CESSANTES_DESPESAS_FIXAS_LUCRO_LIQUIDO_LUCRO_BRUTO,
+                            EMPRESARIAL_PERDA_OU_PAGAMENTO_DE_ALUGUEL,
+                            EMPRESARIAL_PEQUENAS_OBRAS_DE_ENGENHARIA,
+                            DIVERSOS_DANOS_DE_CAUSA_EXTERNA,
+                            DIVERSOS_DANOS_DE_CAUSA_EXTERNA_E_ROUBO,
+                            DIVERSOS_ROUBO,
+                            SERVICOS_EMERGENCIAIS,
+                            SERVICOS_DE_CONVENIENCIA,
+                            GARANTIA_ESTENDIDA_ORIGINAL,
+                            GARANTIA_ESTENDIDA_AMPLIADA,
+                            GARANTIA_ESTENDIDA_REDUZIDA,
+                            COMPLEMENTACAO_DE_GARANTIA,
+                            CESSANTES_LUCRO_BRUTO_LUCRO_LIQUIDO_E_DESPESAS_FIXAS,
+                            CESSANTES_LUCRO_LIQUIDO,
+                            CESSANTES_DESPESAS_FIXAS,
+                            CESSANTES_PERDA_DE_RECEITA_OU_INTERRUPCAO_DE_NEGOCIOS,
+                            ENGENHARIA_OBRAS_CIVIS_CONSTRUCAO_E_INSTALACAO_E_MONTAGEM,
+                            ENGENHARIA_AFRETAMENTOS_DE_AERONAVES,
+                            ENGENHARIA_ARMAZENAGEM_FORA_DO_CANTEIRO_DE_OBRAS_OU_LOCAL_SEGURADO,
+                            ENGENHARIA_DANOS_EM_CONSEQUENCIA_DE_ERRO_DE_PROJETO_RISCO_DO_FABRICANTE,
+                            ENGENHARIA_DANOS_MORAIS,
+                            ENGENHARIA_DESPESAS_COM_DESENTULHO_DO_LOCAL,
+                            ENGENHARIA_DESPESAS_DE_SALVAMENTO_E_CONTENCAO_DE_SINISTROS,
+                            ENGENHARIA_DESPESAS_EXTRAORDINARIAS,
+                            ENGENHARIA_EQUIPAMENTOS_DE_ESCRITORIO_E_INFORMATICA,
+                            ENGENHARIA_EQUIPAMENTOS_MOVEIS_OU_ESTACIONARIOS_UTILIZADOS_NA_OBRA,
+                            ENGENHARIA_FERRAMENTAS_DE_PEQUENO_E_MEDIO_PORTE,
+                            ENGENHARIA_HONORARIOS_DE_PERITO,
+                            ENGENHARIA_INCENDIO_APOS_O_TERMINO_DE_OBRAS_ATE_TRINTA_DIAS_EXCETO_PARA_REFORMAS_OU_AMPLIACOES,
+                            ENGENHARIA_LUCROS_CESSANTES,
+                            ENGENHARIA_MANUTENCAO_AMPLA_ATE_VINTE_E_QUATRO_MESES,
+                            ENGENHARIA_MANUTENCAO_SIMPLES_ATE_VINTE_E_QUATRO_MESES,
+                            ENGENHARIA_OBRAS_CONCLUIDAS,
+                            ENGENHARIA_OBRAS_TEMPORARIAS,
+                            ENGENHARIA_OBRAS_INSTALACOES_CONTRATADAS_ACEITAS_E_OU_COLOCADAS_EM_OPERACAO,
+                            ENGENHARIA_PROPRIEDADES_CIRCUNVIZINHAS,
+                            ENGENHARIA_RECOMPOSICAO_DE_DOCUMENTOS,
+                            ENGENHARIA_RESPONSABILIDADE_CIVIL_EMPREGADOR,
+                            ENGENHARIA_FUNDACAO,
+                            ENGENHARIA_STANDS_DE_VENDA,
+                            ENGENHARIA_TRANSPORTE_TERRESTRE,
+                            ENGENHARIA_TUMULTOS_GREVES_E_LOCKOUT,
+                            BANCOS_DANOS_MATERIAIS_CAUSADOS_AO_COFRE_FORTE,
+                            BANCOS_DANOS_MATERIAIS_CAUSADOS_AOS_CAIXAS_ELETRONICOS_ATM,
+                            BANCOS_INFIDELIDADE_DE_FUNCIONARIOS,
+                            BANCOS_VALORES_NO_INTERIOR_DO_ESTABELECIMENTO_DENTRO_E_OU_FORA_DE_COFRE_FORTE,
+                            BANCOS_VALORES_NO_INTERIOR_DE_CAIXAS_ELETRONICOS_ATM,
+                            BANCOS_VALORES_EM_MAOS_DE_PORTADORES_EM_TRANSITO,
+                            RNO_ALAGAMENTO_INUNDACAO,
+                            RNO_ALUGUEL_PERDA_OU_PAGAMENTO,
+                            RNO_ANUNCIOS_LUMINOSOS,
+                            RNO_BAGAGEM,
+                            RNO_BASICA_INCENDIO_RAIO_EXPLOSAO,
+                            RNO_BASICA_DANOS_MATERIAIS,
+                            RNO_BASICA_DE_OBRAS_CIVIS_EM_CONSTRUCAO_E_INSTALACOES_E_MONTAGENS,
+                            RNO_BENS_DE_TERCEIROS_EM_PODER_DO_SEGURADO,
+                            RNO_CARGA_DESCARGA_ICAMENTO_E_DESCIDA,
+                            RNO_DANOS_ELETRICOS,
+                            RNO_DANOS_NA_FABRICACAO,
+                            RNO_DERRAME_D_AGUA_OU_OUTRA_SUBSTANCIA_LIQUIDA_DE_INSTALACOES_DE_CHUVEIROS_AUTOMATICOS_SPRINKLERS,
+                            RNO_DESMORONAMENTO,
+                            RNO_DESPESAS_ADICIONAIS_OUTRAS_DESPESAS,
+                            RNO_DESPESAS_EXTRAORDINARIAS,
+                            RNO_DESPESAS_FIXA,
+                            RNO_DETERIORACAO_DE_MERCADORIAS_EM_AMBIENTES_FRIGORIFICADOS,
+                            RNO_EQUIPAMENTOS_ARRENDADOS,
+                            RNO_EQUIPAMENTOS_CEDIDOS_A_TERCEIROS,
+                            RNO_EQUIPAMENTOS_CINEMATOGRAFICOS_FOTOGRAFICOS_DE_AUDIO_E_VIDEO,
+                            RNO_EQUIPAMENTOS_DIVERSOS_OUTRAS_MODALIDADES,
+                            RNO_EQUIPAMENTOS_ELETRONICOS,
+                            RNO_EQUIPAMENTOS_ESTACIONARIOS,
+                            RNO_EQUIPAMENTOS_MOVEIS,
+                            RNO_EQUIPAMENTOS_PORTATEIS,
+                            RNO_FIDELIDADE_DE_EMPREGADOS,
+                            RNO_HONORARIOS_DE_PERITOS,
+                            RNO_IMPACTO_DE_VEICULOS_E_QUEDA_DE_AERONAVES,
+                            RNO_IMPACTO_DE_VEICULOS_TERRESTRES,
+                            RNO_LINHAS_DE_TRANSMISSAO_E_DISTRIBUICAO,
+                            RNO_LUCROS_CESSANTES,
+                            RNO_MOVIMENTACAO_INTERNA_DE_MERCADORIAS,
+                            RNO_PATIOS,
+                            RNO_QUEBRA_DE_MAQUINAS,
+                            RNO_QUEBRA_DE_VIDROS_ESPELHOS_MARMORES_E_GRANITOS,
+                            RNO_RECOMPOSICAO_DE_REGISTROS_E_DOCUMENTOS,
+                            RNO_ROUBO_DE_BENS_DE_HOSPEDES,
+                            RNO_ROUBO_DE_VALORES_EM_TRANSITO_EM_MAOS_DE_PORTADOR,
+                            RNO_ROUBO_E_FURTO_MEDIANTE_ARROMBAMENTO,
+                            RNO_ROUBO_E_OU_FURTO_QUALIFICADO_DE_VALORES_NO_INTERIOR_DO_ESTABELECIMENTO_DENTRO_E_OU_FORA_DE_COFRES_FORTES_OU_CAIXAS_FORTES,
+                            RNO_TERRORISMO_E_SABOTAGEM,
+                            RNO_TUMULTOS_GREVES_LOCKOUT_E_ATOS_DOLOSOS,
+                            RNO_VAZAMENTO_DE_TUBULACOES_E_TANQUES,
+                            RNO_VAZAMENTO_DE_TUBULACOES_HIDRAULICAS,
+                            RNO_VENDAVAL_FURACAO_CICLONE_TORNADO_GRANIZO_QUEDA_DE_AERONAVES_OU_QUAISQUER_OUTROS_ENGENHOS_AEREOS_OU_ESPACIAIS_IMPACTO_DE_VEICULOS_TERRESTRES_E_FUMACA,
+                            OUTRAS
+                          ]
+                      description:
+                        description: Descrição / Nome da Cobertura (Caso Código da Cobertura for "OUTRAS")
+                        type: string
+                        maxLength: 500
+                      
     ###### quoteRequest
     
     ResponseQuotePatrimonialLead:
@@ -7926,7 +8457,7 @@ components:
               description: 'Data e hora de expiração da permissão. De preenchimento obrigatório, reflete a data limite de validade do consentimento. Uma string com data e hora conforme especificação RFC-3339, sempre com a utilização de timezone UTC(UTC time format).'
               type: string
               format: date-time
-              pattern: '^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])T(?:[01]\d|2[0123]):(?:[012345]\d):(?:[012345]\d)Z$'
+              pattern: '^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])T(?:[01]\d|2[0123]):(?:[012345]\d):(?:[012345]\d)Z$'
               example: '2021-05-21T08:30:00Z'
               maxLength: 20
             quoteCustomer:
@@ -7989,17 +8520,22 @@ components:
             status:
               description: Status da cotação.
               type: string
+              example: CANC
               enum: [RCVD,
                     EVAL,
                     ACPT,
                     RJCT,
                     ACKN,
                     CANC]
+            rejectionReason:
+              description: Campo condicionado ao status "RJCT", que deve apresentar a justificativa a recusa ao risco.
+              type: string
+              maxLength: 1024
             statusUpdateDateTime:
               type: string
               description: Data e hora da atualização do status.
               format: date-time
-              pattern: '^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])T(?:[01]\d|2[0123]):(?:[012345]\d):(?:[012345]\d)Z$'
+              pattern: '^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])T(?:[01]\d|2[0123]):(?:[012345]\d):(?:[012345]\d)Z$'
               example: '2021-05-21T08:30:00Z'
             quoteInfo:
               description: Objeto que agrupa todos os dados de cotação. Condicional ao pedido de cotação já ter sido aceita.
@@ -8057,7 +8593,7 @@ components:
               type: string
               format: date-time
               example: '2021-05-21T08:30:00Z'
-              pattern: '^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])T(?:[01]\d|2[0123]):(?:[012345]\d):(?:[012345]\d)Z$'
+              pattern: '^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])T(?:[01]\d|2[0123]):(?:[012345]\d):(?:[012345]\d)Z$'
               maxLength: 20
             quoteCustomer:
               type: object
@@ -8119,17 +8655,22 @@ components:
             status:
               description: Status da cotação.
               type: string
+              example: CANC
               enum: [RCVD,
                     EVAL,
                     ACPT,
                     RJCT,
                     ACKN,
                     CANC]
+            rejectionReason:
+              description: Campo condicionado ao status "RJCT", que deve apresentar a justificativa a recusa ao risco.
+              type: string
+              maxLength: 1024
             statusUpdateDateTime:
               type: string
               description: Data e hora da atualização do status.
               format: date-time
-              pattern: '^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])T(?:[01]\d|2[0123]):(?:[012345]\d):(?:[012345]\d)Z$'
+              pattern: '^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])T(?:[01]\d|2[0123]):(?:[012345]\d):(?:[012345]\d)Z$'
               example: '2021-05-21T08:30:00Z'
             quoteInfo:
               description: Objeto que agrupa todos os dados de cotação. Condicional ao pedido de cotação já ter sido aceita.
@@ -8187,7 +8728,7 @@ components:
               description: 'Data e hora de expiração da permissão. De preenchimento obrigatório, reflete a data limite de validade do consentimento. Uma string com data e hora conforme especificação RFC-3339, sempre com a utilização de timezone UTC(UTC time format).'
               type: string
               format: date-time
-              pattern: '^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])T(?:[01]\d|2[0123]):(?:[012345]\d):(?:[012345]\d)Z$'
+              pattern: '^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])T(?:[01]\d|2[0123]):(?:[012345]\d):(?:[012345]\d)Z$'
               example: '2021-05-21T08:30:00Z'
               maxLength: 20
             quoteCustomer:
@@ -8250,17 +8791,22 @@ components:
             status:
               description: Status da cotação.
               type: string
+              example: CANC
               enum: [RCVD,
                     EVAL,
                     ACPT,
                     RJCT,
                     ACKN,
                     CANC]
+            rejectionReason:
+              description: Campo condicionado ao status "RJCT", que deve apresentar a justificativa a recusa ao risco.
+              type: string
+              maxLength: 1024
             statusUpdateDateTime:
               type: string
               description: Data e hora da atualização do status.
               format: date-time
-              pattern: '^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])T(?:[01]\d|2[0123]):(?:[012345]\d):(?:[012345]\d)Z$'
+              pattern: '^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])T(?:[01]\d|2[0123]):(?:[012345]\d):(?:[012345]\d)Z$'
               example: '2021-05-21T08:30:00Z'
             quoteInfo:
               description: Objeto que agrupa todos os dados de cotação. Condicional ao pedido de cotação já ter sido aceita.
@@ -8317,7 +8863,7 @@ components:
               description: 'Data e hora de expiração da permissão. De preenchimento obrigatório, reflete a data limite de validade do consentimento. Uma string com data e hora conforme especificação RFC-3339, sempre com a utilização de timezone UTC(UTC time format).'
               type: string
               format: date-time
-              pattern: '^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])T(?:[01]\d|2[0123]):(?:[012345]\d):(?:[012345]\d)Z$'
+              pattern: '^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])T(?:[01]\d|2[0123]):(?:[012345]\d):(?:[012345]\d)Z$'
               example: '2021-05-21T08:30:00Z'
               maxLength: 20
             quoteCustomer:
@@ -8380,12 +8926,17 @@ components:
             status:
               description: Status da cotação.
               type: string
+              example: CANC
               enum: [RCVD,
                     EVAL,
                     ACPT,
                     RJCT,
                     ACKN,
                     CANC]
+            rejectionReason:
+              description: Campo condicionado ao status "RJCT", que deve apresentar a justificativa a recusa ao risco.
+              type: string
+              maxLength: 1024
             statusUpdateDateTime:
               type: string
               description: Data e hora da atualização do status.
@@ -8492,7 +9043,6 @@ components:
         pattern: '^[a-zA-Z0-9][a-zA-Z0-9\-]{0,99}$'
         minLength: 1
         maxLength: 100
-
     xIdempotencyKey:
       name: x-idempotency-key
       in: header
@@ -8505,7 +9055,6 @@ components:
         minLength: 1
         maxLength: 40
         pattern: ^(?!\s)(.*)(\S)$
-
   securitySchemes:
     OpenId:
       type: openIdConnect
@@ -8577,14 +9126,12 @@ components:
         application/json; charset=utf-8:
           schema:
             $ref: '#/components/schemas/ResponseError'
-
     UnprocessableEntityQuote:
       description: Seguir as orientações presentes na descrição deste endpoint
       content:
         application/json; charset=utf-8:
           schema:
             $ref: '#/components/schemas/422ResponseErrorCreateQuote'
-    
     OKResponseQuoteRequestPatrimonialLead:
       description: Dados de PatrimonialLead criados com sucesso
       headers:
