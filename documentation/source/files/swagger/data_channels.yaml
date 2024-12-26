@@ -2,7 +2,7 @@ openapi: 3.0.0
 info:
   title: APIs Open Data do Open Insurance Brasil
   description: As APIs descritas neste documento são referentes as APIs da fase Open Data do Open Insurance Brasil.
-  version: 1.4.0
+  version: 1.5.0
   contact:
     url: 'https://www.gov.br/susep/'
 tags:
@@ -169,7 +169,7 @@ components:
       properties:
         name:
           type: string
-          description: Nome da Marca reportada pelo participante do Open Insurance. O conceito a que se refere a 'marca' é em essência uma promessa da empresa em fornecer uma série específica de atributos, benefícios e serviços uniformes aos clientes.
+          description: Nome da marca reportada pelo participante do Open Insurance. O conceito a que se refere a marca é em essência uma promessa das sociedades sob ela em fornecer uma série específica de atributos, benefícios e serviços uniformes aos clientes.
           maxLength: 80
           pattern: \w*\W*
           example: Organização AZ
@@ -178,7 +178,7 @@ components:
           items:
             $ref: '#/components/schemas/BranchesCompany'
           minItems: 1
-          description: Companies traz uma lista de todas as instuituições da Marca.
+          description: Companies traz uma lista de todas as instituições da Marca.
 
     BranchesCompany:
       type: object
@@ -224,39 +224,7 @@ components:
         links:
           $ref: '#/components/schemas/Links'
         meta:
-          $ref: '#/components/schemas/Meta'
-      example:
-        data:
-          brand:
-            name: 'Organização A'
-            companies:
-              - name: 'Empresa A1'
-                cnpjNumber: '12345678901234'
-                urlComplementaryList: 'https://empresaa1.com/branches-insurance'
-                electronicChannels:
-                  - identification:
-                      type: 'INTERNET'
-                      accessType: 'INTERNET'
-                      urls:
-                        - 'https://empresa1.com/insurance'
-                    services:
-                      - name: 'ALTERACOES_FORMA_PAGAMENTO'
-                        code: '01'
-                    availability:
-                      standards:
-                      - weekday: DOMINGO
-                        openingTime: 10:00:57Z
-                        closingTime: 16:00:57Z               
-                  
-        links:
-          self: 'https://api.organizacao.com.br/open-insurance/channels/v1/electronic-channels'
-          first: 'https://api.organizacao.com.br/open-insurance/channels/v1/electronic-channels'
-          prev: 'https://api.organizacao.com.br/open-insurance/channels/v1/electronic-channels'
-          next: 'https://api.organizacao.com.br/open-insurance/channels/v1/electronic-channels'
-          last: 'https://api.organizacao.com.br/open-insurance/channels/v1/electronic-channels'
-        meta:
-          totalRecords: 1
-          totalPages: 1
+          $ref: '#/components/schemas/Meta'      
 
     ElectronicChannelsBrand:
       type: object
@@ -266,7 +234,7 @@ components:
       properties:
         name:
           type: string
-          description: Nome da marca selecionada pela Organização proprietária da dependência (titular).
+          description: Nome da sociedade responsável pelo canal eletrônico.
           example: "Marca A"
           maxLength: 80
           pattern: \w*\W*
@@ -292,7 +260,7 @@ components:
           pattern: \w*\W*
         cnpjNumber:
           type: string
-          description: CNPJ da sociedade responsável pelo canal de atendimento - o CNPJ corresponde ao número de inscrição no Cadastro de Pessoa Jurídica.
+          description: CNPJ da sociedade responsável pelo canal eletrônico.
           pattern: ^\d{14}$
           example: '12345678901234'
         electronicChannels:
@@ -396,8 +364,8 @@ components:
         type:
           type: string
           description: Tipo de dependência.
-          enum: [POSTO_ATENDIMENTO, UNIDADE_ADMINISTRATIVA_DESMEMBRADA]
-          example: POSTO_ATENDIMENTO
+          enum: ['FILIAL','UNIDADE_ADMINISTRATIVA_DESMEMBRADA', 'DEPENDENCIAS_DE_TERCEIROS']
+          example: FILIAL
         code:
           type: string
           maxLength: 4
@@ -415,7 +383,7 @@ components:
           maxLength: 100
           pattern: \w*\W*
           description: Nome da dependência
-          example: Marília      
+          example: Dependência ABC    
 
     BranchAvailability:
       type: object
@@ -440,14 +408,12 @@ components:
               openingTime:
                 type: string
                 description: Horário de abertura da dependência (UTC)
-                maxLength: 13
-                pattern: ^(?:[01]\d|2[0123]):(?:[012345]\d):(?:[012345]\d)Z$|^NA$
+                pattern: ^([0-1][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]Z$
                 example: 10:00:57Z
               closingTime:
                 type: string
                 description: Horário de fechamento da dependência (UTC)
-                maxLength: 13
-                pattern: ^(?:[01]\d|2[0123]):(?:[012345]\d):(?:[012345]\d)Z$|^NA$
+                pattern: ^([0-1][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]Z$
                 example: 16:00:57Z
             required:
               - weekday
@@ -485,14 +451,12 @@ components:
               openingTime:
                 type: string
                 description: Horário padrão de início de atendimento do canal eletrônico. (UTC)
-                maxLength: 13
-                pattern: ^(?:[01]\d|2[0123]):(?:[012345]\d):(?:[012345]\d)Z$|^NA$
+                pattern: ^([0-1][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]Z$
                 example: 10:00:57Z
               closingTime:
                 type: string
                 description: Horário padrão de encerramento de atendimento do canal eletrônico (UTC)
-                maxLength: 13
-                pattern: ^(?:[01]\d|2[0123]):(?:[012345]\d):(?:[012345]\d)Z$|^NA$
+                pattern: ^([0-1][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]Z$
                 example: 16:00:57Z
             required:
               - weekday
@@ -526,14 +490,12 @@ components:
               openingTime:
                 type: string
                 description: Horário de abertura da dependência (UTC)
-                maxLength: 13
-                pattern: ^(?:[01]\d|2[0123]):(?:[012345]\d):(?:[012345]\d)Z$|^NA$
+                pattern: ^([0-1][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]Z$
                 example: 10:00:57Z
               closingTime:
                 type: string
                 description: Horário de fechamento da dependência (UTC)
-                maxLength: 13
-                pattern: ^(?:[01]\d|2[0123]):(?:[012345]\d):(?:[012345]\d)Z$|^NA$
+                pattern: ^([0-1][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]Z$
                 example: 16:00:57Z
             required:
               - weekday
@@ -632,14 +594,14 @@ components:
             - MOBILE
             - CHAT
             - WHATSAPP
-            - CONSUMIDOR
+            - CONSUMIDOR_GOV_BR
             - OUTROS
           description: "Tipo de canal de atendimento eletrônico"
           example: "CHAT"
         accessType:
           type: string
           description: Tipo de acesso
-          enum: [EMAIL, INTERNET, APP, CHAT, WHATSAPP, CONSUMIDOR, OUTROS]
+          enum: [EMAIL, INTERNET, APP, CHAT, WHATSAPP, CONSUMIDOR_GOV_BR, OUTROS]
         urls:
           type: array
           items:
@@ -759,91 +721,6 @@ components:
           $ref: '#/components/schemas/Links'
         meta:
           $ref: '#/components/schemas/Meta'
-      example:
-        data:
-          brand:
-            name: 'Organização A'
-            companies:
-              - name: 'Empresa A1'
-                cnpjNumber: '12345678901234'
-                urlComplementaryList: 'https://empresaa1.com/branches-insurance'
-                phoneChannels:
-                  - identification:
-                      type: 'CENTRAL_TELEFONICA'
-                      phones:
-                        - countryCallingCode: '55'
-                          areaCode: '14'
-                          number: '35721199'
-                        - countryCallingCode: '55'
-                          areaCode: '14'
-                          number: '997865532'
-                    services:
-                      - name: 'ALTERACOES_FORMA_PAGAMENTO'
-                        code: '01'
-                      - name: 'AVISO_SINISTRO'
-                        code: '02'
-                      - name: 'ENDOSSO'
-                        code: '05'
-                    availability:
-                      standards:
-                      - weekday: DOMINGO
-                        openingTime: 10:00:57Z
-                        closingTime: 16:00:57Z 
-                  - identification:
-                      type: 'SAC'
-                      phones:
-                        - countryCallingCode: '55'
-                          areaCode: '14'
-                          number: '40044828'
-                        - countryCallingCode: '55'
-                          areaCode: '14'
-                          number: '40044828'
-                        - countryCallingCode: '55'
-                          areaCode: '14'
-                          number: '40044828'
-                    services:
-                      - name: 'RECLAMACAO'
-                        code: '16'
-                      - name: 'PORTABILIDADE'
-                        code: '15'
-                      - name: 'ENDOSSO'
-                        code: '05'
-                    availability:
-                      standards:
-                      - weekday: DOMINGO
-                        openingTime: 10:00:57Z
-                        closingTime: 16:00:57Z 
-                  - identification:
-                      type: 'OUVIDORIA'
-                      phones:
-                        - countryCallingCode: '55'
-                          areaCode: '14'
-                          number: '40045555'
-                        - countryCallingCode: '55'
-                          areaCode: '14'
-                          number: '40045555'
-                        - countryCallingCode: '55'
-                          areaCode: '14'
-                          number: '40045555'
-                    services:
-                      - name: 'RECLAMACAO'
-                        code: '16'
-                      - name: 'PORTABILIDADE'
-                        code: '15'
-                    availability:
-                      standards:
-                      - weekday: DOMINGO
-                        openingTime: 10:00:57Z
-                        closingTime: 16:00:57Z 
-        links:
-          self: 'https://api.organizacao.com.br/open-insurance/channels/v1/phone-channels'
-          first: 'https://api.organizacao.com.br/open-insurance/channels/v1/phone-channels'
-          prev: 'https://api.organizacao.com.br/open-insurance/channels/v1/phone-channels'
-          next: 'https://api.organizacao.com.br/open-insurance/channels/v1/phone-channels'
-          last: 'https://api.organizacao.com.br/open-insurance/channels/v1/phone-channels'
-        meta:
-          totalRecords: 1
-          totalPages: 1
 
     #### PhoneChannelsBrand ####
     PhoneChannelsBrand:
@@ -999,6 +876,7 @@ components:
           example: "AVISO_SINISTRO"
         code:
           type: string
+          example: '01'
           enum:
             - "01"
             - "02"

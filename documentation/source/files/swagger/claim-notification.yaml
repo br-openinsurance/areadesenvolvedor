@@ -33,7 +33,7 @@ info:
       - 1 - `Idempotência:` Valida se há divergência entre chave de idempotência e informações enviadas (ERRO_IDEMPOTENCIA);
       - 2 - `Não Informado:` Valida itens não explicitamente informados pelo servidor - (NAO_INFORMADO).  
       
-  version: 1.3.0
+  version: 1.4.0
   license:
     name: Apache 2.0
     url: 'http://www.apache.org/licenses/LICENSE-2.0'
@@ -119,6 +119,13 @@ paths:
         - $ref: '#/components/parameters/page'
         - $ref: '#/components/parameters/pageSize'
         - $ref: '#/components/parameters/xIdempotencyKey'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateClaimNotificationPerson'
+        description: Payload para criação do Aviso de Sinistro Pessoas.
+        required: true
       responses:
         '201':
           $ref: '#/components/responses/201ClaimNotificationPersonCreated'
@@ -142,13 +149,6 @@ paths:
           $ref: '#/components/responses/InternalServerError'
         default:
           $ref: '#/components/responses/Default'
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/CreateClaimNotificationPerson'
-        description: Payload para criação do Aviso de Sinistro Pessoas.
-        required: true
       security:
         - OpenId:
             - openid
@@ -179,7 +179,7 @@ components:
                     APOLICE_INDIVIDUAL_AUTOMOVEL,
                     APOLICE_FROTA_AUTOMOVEL,
                     CERTIFICADO_AUTOMOVEL]
-            policyNumber:
+            policyId:
               description: 'Número da apólice, conforme regulamentação vigente. Condicional a seleção dos campos 1. Apólices Individual ou 2. Bilhete no campo "Tipo de Documento Emitido"'
               type: string
               maxLength: 60
@@ -188,6 +188,13 @@ components:
               description: Identificador do Certificado (Caso Tipo de Documento Emitido for certificado)
               type: string
               maxLength: 60
+            insuredObjectId:
+              description: lista de Identificador do Objeto Segurado (Caso aplicável)
+              type: array
+              items:  
+                type: string
+                maxLength: 100
+                example: "216731531723"
             occurrenceDate:
               description: Data de Ocorrência do Sinistro
               type: string
@@ -267,6 +274,7 @@ components:
             - occurrenceDate
             - occurrenceDescription
             - requestorIsInsured
+            - proposalId
           properties:
             requestorIsInsured:
                   type: boolean
@@ -334,7 +342,7 @@ components:
                     APOLICE_INDIVIDUAL_AUTOMOVEL,
                     APOLICE_FROTA_AUTOMOVEL,
                     CERTIFICADO_AUTOMOVEL]
-            policyNumber:
+            policyId:
               description: Número da apólice, conforme regulamentação vigente
               type: string
               maxLength: 60
@@ -343,6 +351,18 @@ components:
               description: Identificador do Certificado(Caso Tipo de Documento Emitido for certificado)
               type: string
               maxLength: 60
+            insuredObjectId:
+              description: lista de Identificador do Objeto Segurado (Caso aplicável)
+              type: array
+              items:  
+                type: string
+                maxLength: 100
+                example: "216731531723"
+            proposalId:
+              description: Identificador da proposta ou certificado
+              type: string
+              maxLength: 60
+              example: "987"
             occurrenceDate:
               description: Data de Ocorrência do Sinistro
               type: string
@@ -444,7 +464,7 @@ components:
                     APOLICE_INDIVIDUAL_AUTOMOVEL,
                     APOLICE_FROTA_AUTOMOVEL,
                     CERTIFICADO_AUTOMOVEL]
-            policyNumber:
+            policyId:
               description: 'Número da apólice, conforme regulamentação vigente. Condicional a seleção dos campos 1. Apólices Individual ou 2. Bilhete no campo "Tipo de Documento Emitido"'
               type: string
               maxLength: 60
@@ -453,6 +473,13 @@ components:
               description: Identificador do Certificado (Caso Tipo de Documento Emitido for certificado)
               type: string
               maxLength: 60
+            insuredObjectId:
+              description: lista de Identificador do Objeto Segurado (Caso aplicável)
+              type: array
+              items:  
+                type: string
+                maxLength: 100
+                example: "216731531723"
             occurrenceDate:
               description: Data de Ocorrência do Sinistro
               type: string
@@ -537,6 +564,7 @@ components:
             - requestorIsInsured
             - protocolNumber
             - protocolDateTime
+            - proposalId
           properties:
             protocolNumber:
               description: Identificador da Solicitação do aviso de sinistro, conforme protocolo interno da seguradora avisada.
@@ -614,7 +642,7 @@ components:
                     APOLICE_INDIVIDUAL_AUTOMOVEL,
                     APOLICE_FROTA_AUTOMOVEL,
                     CERTIFICADO_AUTOMOVEL]
-            policyNumber:
+            policyId:
               description: Número da apólice, conforme regulamentação vigente
               type: string
               maxLength: 60
@@ -623,6 +651,18 @@ components:
               description: Identificador do Certificado(Caso Tipo de Documento Emitido for certificado)
               type: string
               maxLength: 60
+            insuredObjectId:
+              description: lista de Identificador do Objeto Segurado (Caso aplicável)
+              type: array
+              items:  
+                type: string
+                maxLength: 100
+                example: "216731531723"
+            proposalId:
+              description: Identificador da proposta ou certificado
+              type: string
+              maxLength: 60
+              example: "987"
             occurrenceDate:
               description: Data de Ocorrência do Sinistro
               type: string

@@ -3,7 +3,7 @@ info:
   title: APIs Open Data do Open Insurance Brasil
   description:
     API de informações de dados do produto Garantia Pública. Os recursos que podem ser consumidos pelos participantes conforme a regra 3.1.2 do manual de escopo de dados..
-  version: 1.2.0
+  version: 1.3.0
   contact:
     url: 'https://www.gov.br/susep/'
 servers:
@@ -105,6 +105,7 @@ components:
     PublicGuaranteeCompany:
       type: array
       items:
+          type: object
           description: Informações referente a sociedade a qual a marca pertence.
           required:
           - name
@@ -181,6 +182,7 @@ components:
                       ADMINISTRATIVO_DE_CREDITOS_TRIBUTARIOS,
                       ACOES_TRABALHISTAS_E_PREVIDENCIARIAS,
                       OUTRAS]
+                   example: LICITANTE
                  coverageDescription:
                    type: string
                    maxLength: 3000
@@ -240,12 +242,14 @@ components:
         type:
           type: string
           enum: [FINANCEIRO, PERCENTUAL]
+          example: FINANCEIRO
         amount:
           $ref: '#/components/schemas/PublicGuaranteeCoverageAttributesDetails'
         index:
           type: string
           description: Indexador. Condicional, vinculado ao preenchimento do campo Tipo com Percentual
           enum: [LMG, FINANCEIRO_COBERTURA, OUTRO]
+          example: LMG
         maxIndexAmount:
           $ref: '#/components/schemas/PublicGuaranteeCoverageAttributesDetails'
 
@@ -311,6 +315,7 @@ components:
               CONSIGNACAO_EM_FOLHA_DE_PAGAMENTO,
               PONTOS_DE_PROGRAMA_DE_BENEFICIO,
               OUTROS]
+            example: CARTAO_DE_CREDITO
           paymentDetail:
             type: string  
             maxLength: 1024
@@ -322,13 +327,7 @@ components:
               type: string
               example: A_VISTA
               enum: [A_VISTA, PARCELADO]
-          premiumRates:
-            type: array
-            description: Distribuição de frequência relativa aos valores referentes às taxas cobradas.
-            items:
-              type: string
-              maxLength: 1024
-              
+
     PublicGuaranteeTerms:
       type: object
       description: Informações dos termos e condições conforme número do processo SUSEP.
