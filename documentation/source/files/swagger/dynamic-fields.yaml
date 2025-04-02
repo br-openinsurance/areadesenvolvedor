@@ -11,7 +11,7 @@ info:
     - Ao entrar no ecossistema, a `TCS` deve atualizar todas as `ICS`s e receber confirmação via webhook
     - Ao atualizar seus dados, a `TCS` deve atualizar todas as `ICS`s e receber confirmação via webhook
     - Ao entrar no ecossistema, a `ICS` deve consumir as APIs de todas as `TCS`s para garantir a atualização dos dados
-  version: 1.4.0
+  version: 1.5.0
   contact:
     name: Governança do Open Insurance Brasil
     url: https://www.gov.br/susep
@@ -162,7 +162,6 @@ components:
         data:
           type: array
           minItems: 0
-          maxItems: 6
           items:
             type: object
             required:
@@ -188,18 +187,8 @@ components:
                   - CAPITALIZATION_TITLE_WITHDRAWAL
                   - PERSON_WITHDRAWAL
                   - CONTRACT_LIFE_PENSION
-                  - CONTRACT_LIFE_PENSION_LEA
-                  - CLAIM_NOTIFICATION_DAMAGE
-                  - CLAIM_NOTIFICATION_PERSON
-                  - CONTRACT_LIFE_PENSION
-                  - ENDORSEMENT
-                  - QUOTE_AUTO
-                  - QUOTE_CAPTALIZATION_TITLE
-                  - QUOTE_CAPITALIZATION_TITLE_RAFFLE
-                  - QUOTE_PATRIMONIAL
-                  - QUOTE_PERSON
-                  - WITHDRAWAL_PENSION
-                  - WITHDRAWAL_CAPITALIZATION   
+                  - CONTRACT_LIFE_PENSION_LEAD
+                example: ENDORSEMENT
               branch:
                 description: Ramo relacionado
                 type: array
@@ -218,6 +207,15 @@ components:
                       type: array
                       items:
                         $ref: '#/components/schemas/Fields'
+                    quoteRequiredFields:
+                      description: |
+                                   Nesta lista, informe apenas os campos opcionais do formulário de cotação que a seguradora necessita para precificação do risco. 
+                                   Importante: esta lista NÃO se refere a campos adicionais. Apenas campos presentes em 'QuoteData' devem ser incluídos.
+                      type: array
+                      items:  
+                        type: string
+                        pattern: "^[a-zA-Z0-9_]+$"
+                        example: "issuanceDate"
         links:
           $ref: '#/components/schemas/Links'
         meta:
@@ -232,7 +230,6 @@ components:
         data:
           type: array
           minItems: 0
-          maxItems: 6
           items:
             type: object
             required:
@@ -253,6 +250,15 @@ components:
                 type: array
                 items:
                   $ref: '#/components/schemas/Fields'
+              quoteRequiredFields:
+                      description: |
+                                   Nessa lista devem ser informados os campos opcionais do formulário de cotação, 
+                                   que a seguradora necessita para precificar o risco atrelado a cotação. Essa lista NÃO é referente a campos adicionais.
+                      type: array
+                      items:  
+                        type: string
+                        pattern: "^[a-zA-Z0-9_]+$"
+                        example: "issuanceDate"
         links:
           $ref: '#/components/schemas/Links'
         meta:

@@ -63,7 +63,7 @@ info:
       - 1 - `Idempotência:` Valida se há divergência entre chave de idempotência e informações enviadas (ERRO_IDEMPOTENCIA);
       - 2 - `Não Informado:` Valida itens não explicitamente informados pelo servidor - (NAO_INFORMADO).
   
-  version: 1.10.0
+  version: 1.11.0
   contact:
     name: Governança do Open Insurance Brasil
     url: 'https://www.gov.br/susep'
@@ -2167,6 +2167,9 @@ components:
       type: object
       required:
         - coverages
+        - mainActivity
+        - isLegallyConstituted
+        - condominiumType
       description: Objeto que agrupa dados específicos do ramo de cotação.
       properties:
         mainActivity:
@@ -2915,6 +2918,11 @@ components:
     ResultQuotePatrimonialCondominium:
       type: object
       description: Objeto que agrupa dados específicos do ramo de cotação.
+      required:
+        - coverages
+        - mainActivity
+        - isLegallyConstituted
+        - condominiumType
       properties:
         mainActivity:
           description: "Principal atividade do local de risco"
@@ -2923,6 +2931,9 @@ components:
           enum: [COMERCIO,    
                 INDUSTRIA,
                 SERVICO]
+        isLegallyConstituted:  
+          description: O condomínio está legalmente constituído?
+          type: boolean
         registryStarted:
           description: O registro na receita federal foi iniciado? Condicional ao campo "isLegallyConstituted" ser false
           type: boolean
@@ -3310,6 +3321,9 @@ components:
       description: Objeto que agrupa dados específicos do ramo de cotação.
       required:
         - coverages
+        - hasCommercialActivity
+        - isCollectiveStipulated
+        - hasOneRiskLocation
       properties:
         hasCommercialActivity:
           description: "Existe algum objeto segurado que possui atividade comercial de produção, manufatura, atendimento presencial na Residência?"
@@ -3844,6 +3858,11 @@ components:
     ResultQuotePatrimonialHome:
       type: object
       description: Objeto que agrupa dados específicos do ramo de cotação.
+      required:
+        - coverages
+        - hasCommercialActivity
+        - isCollectiveStipulated
+        - hasOneRiskLocation 
       properties:
         hasCommercialActivity:
           description: "Existe algum objeto segurado que possui atividade comercial de produção, manufatura, atendimento presencial na Residência?"
@@ -4211,6 +4230,8 @@ components:
       description: Objeto que agrupa dados específicos do ramo de cotação.
       required:
         - coverages
+        - isCollectiveStipulated
+        - hasOneRiskLocation
       properties:
         isCollectiveStipulated:
           description: "Apólice é coletiva ou por estipulação?"
@@ -5173,6 +5194,10 @@ components:
     ResultQuoteQuotePatrimonialBusiness:
       type: object
       description: Objeto que agrupa dados específicos do ramo de cotação.
+      required:
+        - coverages
+        - isCollectiveStipulated
+        - hasOneRiskLocation
       properties:
         isCollectiveStipulated:
           description: "Apólice é coletiva ou por estipulação?"
@@ -5418,6 +5443,8 @@ components:
       type: object
       required:
         - coverages
+        - isCollectiveStipulated
+        - productModalityType
       description: Objeto que agrupa dados específicos do ramo de cotação.
       properties:              
         productModalityType:
@@ -6235,7 +6262,14 @@ components:
     ResultQuotePatrimonialDiverseRisks:
       type: object
       description: Objeto que agrupa dados específicos do ramo de cotação.
+      required:
+        - coverages
+        - isCollectiveStipulated
+        - productModalityType
       properties:
+        productModalityType:
+          type: boolean
+          description:  A modalidade do produto é obras de arte, joalherias, valores, assemelhados ou Cartão/Pix?
         isCollectiveStipulated:
           description: "Apólice é coletiva ou por estipulação?"
           type: boolean
