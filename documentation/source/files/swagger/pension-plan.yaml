@@ -3,7 +3,7 @@ info:
   title: APIs Open Data do Open Insurance Brasil
   description: 
     API de informações de Plano de Previdência com cobertura de risco. Os recursos que podem ser consumidos pelos participantes conforme a regra 3.1.2 do manual de escopo de dados.
-  version: 1.4.0
+  version: 1.5.0
   contact:
     url: 'https://www.gov.br/susep/'
 servers:
@@ -284,6 +284,7 @@ components:
           additionalOthers: 
             type: string
             description: Lista a ser preenchida pelas participantes quando houver ‘Outros’ no campo ‘additional’
+            maxLength: 100
           assistanceType:
             type: array
             description: Tipos de assistências.
@@ -341,7 +342,8 @@ components:
                 SUSTENTAVEL_(DESCARTE_ECOLOGICO),
                 TELEMEDICINA,
                 VIAGEM,
-                VITIMAS]
+                VITIMAS,
+                OUTROS]
           assistanceTypeOthers:
             type: array
             description: Outros tipos de assistências.
@@ -397,27 +399,54 @@ components:
 
     PensionPlanCoverageAttributesDetailsUnit:
       type: object
+      description: Descrição da unidade monetaria. Condicional ao valor 'MONETARIO' em unitType.
       required:
         - code
         - description
       properties:
         code: 
           type: string
-          description: Tipo unidade de medida 
-        description:
+          enum: [د.إ ,Af,L,Դ,Kz,$,ƒ,ман,КМ,৳,лв,ب.د,₣,Bs.,R$,P,Br,¥,₡,Kč,kr,د.ج,£,Nfk,N/A,€,ლ,₵,D,Q,Kn,G,Ft,Rp,₪,₹,ع.د,﷼,Sh,៛,₩,د.ك,〒,₭,ل.ل,Rs,ل.د,د.م.,ден,K,₮,UM,₨,ރ.,MK,RM,MTn,
+            ₦,C$,ر.ع.,B/.,S/.,₱,zł,₲,ر.ق,din,р.,ر.س,Le,Db,ل.س,฿,ЅМ,m,د.ت,T$,₤,₴,Bs_F,₫,Vt,T,R,ZK ]
+          example: R$
+        description: 
           type: string
-          description: Descrição da unidade de medida
+          enum: [AFN,AFA,ALL,ALK,DZD,USD,EUR,ADP,ESP,FRF,AOA,AOK,AON,AOR,XCD,ARS,ARA,ARP,ARY,AMD,RUR,AWG,AUD,ATS,AZN,AYM,AZM,BSD,BHD,BDT,BBD,BYN,BYB,BYR,BEC,BEF,BEL,BZD,XOF,BMD,
+            INR,BTN,BOP,BOB,BOV,BAM,BAD,BWP,NOK,BRL,BRB,BRC,BRE,BRN,BRR,BND,BGN,BGJ,BGK,BGL,BUK,BIF,CVE,KHR,XAF,CAD,KYD,CLP,CLF,CNY,COP,COU,KMF,CDF,NZD,CRC,HRK,HRD,CUP,CUC,ANG,
+            CYP,CZK,CSJ,CSK,DKK,DJF,DOP,ECS,ECV,EGP,SVC,GQE,ERN,EEK,SZL,ETB,XEU,FKP,FJD,FIM,XPF,GMD,GEL,GEK,DDM,DEM,GHS,GHC,GHP,GIP,GRD,GTQ,GBP,GNF,GNE,GNS,GWE,GWP,GYD,HTG,ITL,
+            HNL,HKD,HUF,ISK,ISJ,IDR,XDR,IRR,IQD,IEP,ILS,ILP,ILR,JMD,JPY,JOD,KZT,KES,KPW,KRW,KWD,KGS,LAJ,LAK,LVL,LVR,LBP,LSL,ZAR,LSM,ZAL,LRD,LYD,CHF,LTL,LTT,LUC,LUF,LUL,MOP,MGA,
+            MGF,MWK,MYR,MVR,MVQ,MLF,MTL,MTP,MRU,MRO,MUR,XUA,MXN,MXV,MXP,MDL,MNT,MAD,MZN,MZE,MZM,MMK,NAD,NPR,NLG,NIO,NIC,NGN,MKD,OMR,PKR,PAB,PGK,PYG,PEN,PEH,PEI,PES,PHP,PLN,PLZ,
+            PTE,QAR,RON,ROK,ROL,RUB,RWF,SHP,WST,STN,STD,SAR,RSD,CSD,SCR,SLL,SGD,XSU,SKK,SIT,SBD,SOS,SSP,SDG,RHD,ESA,ESB,LKR,SDD,SDP,SRD,SRG,SEK,CHE,CHW,CHC,SYP,TWD,TJS,TJR,TZS,
+            THB,TPE,TOP,TTD,TND,TRY,TRL,TMT,TMM,UGX,UGS,UGW,UAH,UAK,SUR,AED,USS,USN,UYU,UYI,UYW,UYN,UYP,UZS,VUV,VEB,VEF,VES,VND,VNC,YER,YDD,YUD,YUM,YUN,ZRN,ZRZ,ZMW,ZMK,ZWL,ZWC,
+            ZWD,ZWN,ZWR,XBA,XFO,XBB,XRE,XBC,XBD,XFU,XTS,XXX,XAU,XPD,XPT,XAG]
+          example: BRL
 
     PensionPlanCoverageAttributesDetails:
         type: object
-        description: Valor mínimo/máximo de cobertura diária ou parcelada. Em reais.
         required:
           - amount
-          - unit
+          - unitType
         properties:
           amount:
-            type: number
-            example: 14
+            type: string
+            description: |
+                Valor.
+                Exemplos de preenchimento do campo:
+
+                PORCENTAGEM: 90.85
+                                  
+                MONETARIO: 62500.67
+
+                OUTROS: 1000 (Exemplo de outro tipo: horas)
+            pattern: ^(^(100\.\00|\d{1,2}\.\d{2})$|^(\d{1,6})$|^(\d{1,15}\.\d{2})$)$
+          unitType:
+            type: string
+            description: Tipo da unidade
+            enum: [MONETARIO, PORCENTAGEM, OUTROS]
+          unitTypeOthers:
+            type: string
+            maxLength: 100
+            description: Campo para informar o tipo da Unidade, condicional ao valor 'OUTROS' em unitType
           unit:
             $ref: '#/components/schemas/PensionPlanCoverageAttributesDetailsUnit'
 
@@ -537,15 +566,16 @@ components:
         - percentage
       properties: 
         initialMonthRange: 
-          type: number
+          type: integer
           description: Mês inicial do range
         finalMonthRange:
-          type: number
+          type: integer
           description: Mês final do range
         percentage:
           type: string
           example: '20.53'
           description: Percentual da faixa de resgate da PMBaC para cada conjunto de prazo aplicável.
+          pattern: '^100\.0{1,9}$|^\d{1,2}\.\d{1,9}$'
         differentiatedPercentage:
           type: string
           description: Campo aberto (possibilidade de incluir URL), caso o percentual de resgate não siga o padrão apenas no que se refere ao critério temporal padronizado no campo “Resgate-Percentual”
@@ -607,7 +637,7 @@ components:
       description: Período de carência.
       properties: 
         amount:
-          type: number
+          type: integer
           description: Prazo de Carência
         unit:
           type: string
