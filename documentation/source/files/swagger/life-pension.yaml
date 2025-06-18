@@ -3,7 +3,7 @@ info:
   title: APIs Open Data do Open Insurance Brasil
   description:
     API de informações de Planos de Previdência e Seguros de Pessoas ambos com cobertura por sobrevivência (excluindo seguros Dotais). Os recursos que podem ser consumidos pelos participantes conforme a regra 3.1.1 do manual de escopo de dados.
-  version: 1.5.0
+  version: 1.6.0
   contact:
     url: 'https://www.gov.br/susep/'
 servers:
@@ -227,9 +227,9 @@ components:
         - investmentFunds
       properties:
         interestRate:
-          type: number
+          type: string
           description: Taxa de juros garantida que remunera o plano durante a fase de diferimento/acumulação.
-          example: 25.123
+          example: '25.123'
           maxLength: 10
           multipleOf: 0.00001
         updateIndex:
@@ -249,12 +249,12 @@ components:
           description: |
             Para produtos do tipo PDR e VDR, indicação do percentual do índice de ampla
             divulgação utilizados como garantia mínima de desempenho. Exemplo 1.000000 igual a 100 por cento
-          pattern: ^\d{1}\.\d{6}$
+          pattern: ^1\.0{1,9}$|^0\.\d{1,9}$
           example: '1.000000'
         reversalFinancialResults:
-          type: number
+          type: string
           description: Percentual de reversão de excedente financeiro no período de diferimento.
-          example: 5.123
+          example: '5.123'
           maxLength: 5
         minimumPremiumAmount:
           type: array
@@ -266,10 +266,10 @@ components:
               - minimumPremiumAmountDescription
             properties:
               minimumPremiumAmountValue:
-                type: number
+                type: string
                 description: Valor
                 maxLength: 13
-                example: 250
+                example: '250'
               minimumPremiumAmountDescription:
                 type: string
                 description: Descrição Período.
@@ -351,9 +351,9 @@ components:
                   example:  EYPREV
                   maxLength: 200
                 maximumAdministrationFee:
-                  type: number
+                  type: string
                   description:  Taxa Máxima de Administração – em %.
-                  example: 5.123
+                  example: '5.123'
                   maxLength: 5
                 typePerformanceFee:
                   type: array
@@ -363,29 +363,29 @@ components:
                     example: DIRETAMENTE
                     enum: [DIRETAMENTE, INDIRETAMENTE, NAO_APLICA]
                 maximumPerformanceFee:
-                  type: number
+                  type: string
                   description:  Taxa Máxima de Performance. Caso o Tipo de Taxa de Performance seja ‘Diretamente’.
                   maxLength: 5
-                  example: 20.0
+                  example: '20.0'
                 eligibilityRule:
                   type: boolean
                   description:  Regra de Eligibilidade.
                   example: true
                 minimumContributionAmount:
-                  type: number
+                  type: string
                   description: Valor Mínimo de Contribuição. Regra de Elegibilidade. Caso a Regra de Elegibilidade SIM.
-                  example: 150000.45
+                  example: '150000.45'
                   maxLength: 15
                 minimumContributionValue:
-                  type: number
+                  type: string
                   description: Valor Mínimo de Aporte de Portabilidade. Caso a Regra de Elegibilidade SIM.
-                  example: 150000.45
+                  example: '150000.45'
                   maxLength: 15
                 minimumMathematicalProvisionAmount:
-                  type: number
+                  type: string
                   description: Valor Mínimo Provisão Matemática. Caso a Regra de Elegibilidade SIM.
                   maxLength: 5
-                  example: 150000.45
+                  example: '150'
 
     LifePensionPeriodGrantBenefit:
       type: object
@@ -410,9 +410,9 @@ components:
             example: AT_2000_FEMALE_SUAVIZADA_15
             enum: [AT_2000_MALE, AT_2000_FEMALE, AT_2000_MALE_FEMALE, AT_2000_MALE_SUAVIZADA_10, AT_2000_FEMALE_SUAVIZADA_10, AT_2000_MALE_FEMALE_SUAVIZADA_10, AT_2000_MALE_SUAVIZADA_15, AT_2000_FEMALE_SUAVIZADA_15, AT_2000_MALE_FEMALE_SUAVIZADA_15, AT_83_MALE, AT_83_FEMALE, AT_83_MALE_FEMALE, BR_EMSSB_MALE, BR_EMSSB_FEMALE, BR_EMSSB_MALE_FEMALE]
         interestRate:
-          type: number
+          type: string
           description: Taxa de juros garantida utilizada para conversão em renda. Em %.
-          example: 3.225
+          example: '3.225'
           maxLength: 6
         updateIndex:
           type: string
@@ -420,9 +420,9 @@ components:
           example: IPCA
           enum: [IPCA, IGP-M, INPC, NAO_SE_APLICA]
         reversalResultsFinancial:
-          type: number
+          type: string
           description: Percentual de reversão de excedente financeiro na concessão. Em %.
-          example: 013.252
+          example: '13.252'
           maxLength: 8
         investmentFunds:
           $ref: '#/components/schemas/LifePensionInvestmentFunds'
@@ -449,14 +449,14 @@ components:
         - maxValue
       properties:
         minValue:
-          type: number
+          type: string
           description: Valor mínimo em %.
-          example: 4.122
+          example: '4.122'
           maxLength: 7
         maxValue:
-          type: number
+          type: string
           description: alor máximo em %.
-          example: 90.225
+          example: '90.225'
           maxLength: 8
 
     LifePensionMinimumRequirements:

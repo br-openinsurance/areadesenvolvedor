@@ -3,7 +3,7 @@ info:
   title: APIs Open Data do Open Insurance Brasil
   description:
     API de informações de dados do produto RD Equipamento. Os recursos que podem ser consumidos pelos participantes conforme a regra 3.1.2 do manual de escopo de dados..
-  version: 1.3.0
+  version: 1.4.0
   contact:
     url: 'https://www.gov.br/susep/'
 servers:
@@ -208,11 +208,9 @@ components:
           assistanceServices:
             $ref: '#/components/schemas/EquipmentBreakdownAssistanceServices'
           customerServices:
-            type: array
-            items:
-                type: string
-                example: LIVRE_ESCOLHA
-                enum: [REDE_REFERENCIADA , LIVRE_ESCOLHA, REDE_REFERENCIADA_E_LIVRE_ESCOLHA]
+            type: string
+            example: LIVRE_ESCOLHA
+            enum: [REDE_REFERENCIADA, LIVRE_ESCOLHA, REDE_REFERENCIADA_E_LIVRE_ESCOLHA]
           microInsurance:
             type: boolean
             description: Indicação se o produto é classificado como microsseguro.
@@ -232,11 +230,9 @@ components:
           minimumRequirements:
             $ref: '#/components/schemas/EquipmentBreakdownMinimumRequirements'
           targetAudiences:
-            type: array
-            items:
-              type: string
-              example: PESSOA_NATURAL
-              enum: [PESSOA_NATURAL, PESSOA_JURIDICA]
+            type: string
+            example: PESSOA_NATURAL
+            enum: [PESSOA_NATURAL, PESSOA_JURIDICA]
     
     EquipmentBreakdownPremiumPayment:
       type: object
@@ -256,12 +252,10 @@ components:
           maxLength: 1024
           description: Campo livre para descrição por cada participante ao selecionar o domínio “Outros” no campo Meio de pagamento (acima)
         paymentType:
-          type: array
+          type: string
           description: tipo de pagamento  
-          items: 
-            type: string
-            example: A_VISTA
-            enum: [A_VISTA, PARCELADO]
+          example: A_VISTA
+          enum: [A_VISTA, PARCELADO]
         
 
     structurePremiumRates:
@@ -339,11 +333,9 @@ components:
           - term
         properties:
           term:
-            type: array
-            items:
-              type: string
-              example: ANUAL
-              enum: [ANUAL, ANUAL_INTERMITENTE, PLURIANUAL, PLURIANUAL_INTERMITENTE, MENSAL, MENSAL_INTERMITENTE, DIARIO, DIARIO_INTERMITENTE, OUTROS]
+            type: string
+            example: ANUAL
+            enum: [ANUAL, ANUAL_INTERMITENTE, PLURIANUAL, PLURIANUAL_INTERMITENTE, MENSAL, MENSAL_INTERMITENTE, DIARIO, DIARIO_INTERMITENTE, OUTROS]
           termOthers:
             type: string
             description: Campo livre para descrição por cada participante ao selecionar o domínio “Outros” no campo Prazo (acima).
@@ -362,12 +354,10 @@ components:
             description: Indicação se o produto possui serviços de assistências complementares.
             example: true
           assistanceServicesPackage:
-            type: array
-            items:
-              type: string
-              description: Para efeitos de comparabilidade, considerar agrupamentos de serviços em 4 categorias
-              example: ATE_10_SERVICOS
-              enum: [ATE_10_SERVICOS, ATE_20_SERVICOS , ACIMA_20_SERVICOS, CUSTOMIZAVEL]
+            type: string
+            description: Para efeitos de comparabilidade, considerar agrupamentos de serviços em 4 categorias
+            example: ATE_10_SERVICOS
+            enum: [ATE_10_SERVICOS, ATE_20_SERVICOS , ACIMA_20_SERVICOS, CUSTOMIZAVEL]
           complementaryAssistanceServicesDetail:
             type: string
             description: Campo livre para descrição dos serviços ofertados por cada sociedade participante, contendo minimamente cada um dos serviços assistenciais complementares oferecidos e se o pacote se trata de uma cobertura de assistência securitária ou se serviços de assistência
@@ -403,10 +393,8 @@ components:
         - minimumRequirementDetails
       properties:
         contractType:
-          type: array
-          items:
-            type: string
-            enum: [COLETIVO, INDIVIDUAL]
+          type: string
+          enum: [COLETIVO, INDIVIDUAL]
         minimumRequirementDetails:
           type: string
           description: Campo aberto contendo todos os requisitos mínimos para contratação (possibilidade de incluir URL).
@@ -423,12 +411,10 @@ components:
         maxLMI:
           $ref: '#/components/schemas/EquipmentBreakdownLimit'
         insuredParticipation:
-          type: array
+          type: string
           description: Lista com indicativo do tipo de participação do segurado para cada cobertura.
-          items: 
-            type: string
-            example: FRANQUIA
-            enum: [FRANQUIA, POS, NAO_SE_APLICA]
+          example: FRANQUIA
+          enum: [FRANQUIA, POS,  FRANQUIA_E_POS, NAO_SE_APLICA]
         insuredParticipationDescription:
           type: string
           maxLength: 1024
@@ -460,10 +446,24 @@ components:
         description: Lista com valor de LMI aceito pela sociedade para cada cobertura
         required:
           - amount
-          - unit
+          - unitType
         properties:
           amount:
-            type: number
+            type: string
+            description: |
+                            Valor. Exemplos de preenchimento do campo:
+                            PORCENTAGEM: 90.85
+                            MONETARIO: 62500.67
+                            OUTROS: 1000 (Exemplo de outro tipo: horas)
+            pattern: ^(^(100\.\00|\d{1,2}\.\d{2})$|^(\d{1,6})$|^(\d{1,15}\.\d{2})$)$
+          unitType:
+            type: string
+            description: Tipo da unidade
+            enum: [MONETARIO, PORCENTAGEM, OUTROS]
+          unitTypeOthers:
+            type: string
+            maxLength: 100
+            description: Campo para informar o tipo da Unidade, condicional ao valor 'OUTROS' em unitType
           unit:
             $ref: '#/components/schemas/EquipmentBreakdownCoverageAttributesDetailsUnit'
     
@@ -473,12 +473,27 @@ components:
         - code
         - description
       properties:
-        code:
+        code: 
           type: string
+          enum:  [ د.إ , Af, L,  Դ,  Kz, $,  ƒ,  ман,  КМ, ৳,  лв, ب.د,  ₣,  Bs.,  R$, P,  Br, ¥,  ₡,  Kč, kr, د.ج,  
+                  £, Nfk,  N/A,  €,  ლ,  ₵,  D,  Q,  Kn, G,  Ft, Rp, ₪,  ₹,  ع.د,  ﷼,  Sh, ៛,  ₩,  د.ك,  〒,  ₭,  ل.ل,  
+                  Rs,   ل.د,  د.م., ден,  K,  ₮,  UM, ₨,  ރ., MK, RM, MTn,  ₦,  C$, ر.ع., B/.,  S/.,  ₱,  zł, ₲,  ر.ق,  
+                  din, р., ر.س,  Le, Db, ل.س,  ฿,  ЅМ, m,  د.ت,  T$, ₤,  ₴,  Bs F, ₫,  Vt, T,  R,  ZK ]
           example: R$
-        description:
+        description: 
           type: string
-          example: REAL
+          enum: [ AFN,AFA,ALL,ALK,DZD,USD,EUR,ADP,ESP,FRF,AOA,AOK,AON,AOR,XCD,ARS,ARA,ARP,ARY,AMD,RUR,AWG,AUD,ATS,AZN,AYM,
+                  AZM,BSD,BHD,BDT,BBD,BYN,BYB,BYR,BEC,BEF,BEL,BZD,XOF,BMD,INR,BTN,BOP,BOB,BOV,BAM,BAD,BWP,NOK,BRL,BRB,BRC,
+                  BRE,BRN,BRR,BND,BGN,BGJ,BGK,BGL,BUK,BIF,CVE,KHR,XAF,CAD,KYD,CLP,CLF,CNY,COP,COU,KMF,CDF,NZD,CRC,HRK,HRD,
+                  CUP,CUC,ANG,CYP,CZK,CSJ,CSK,DKK,DJF,DOP,ECS,ECV,EGP,SVC,GQE,ERN,EEK,SZL,ETB,XEU,FKP,FJD,FIM,XPF,GMD,GEL,
+                  GEK,DDM,DEM,GHS,GHC,GHP,GIP,GRD,GTQ,GBP,GNF,GNE,GNS,GWE,GWP,GYD,HTG,ITL,HNL,HKD,HUF,ISK,ISJ,IDR,XDR,IRR,
+                  IQD,IEP,ILS,ILP,ILR,JMD,JPY,JOD,KZT,KES,KPW,KRW,KWD,KGS,LAJ,LAK,LVL,LVR,LBP,LSL,ZAR,LSM,ZAL,LRD,LYD,CHF,
+                  LTL,LTT,LUC,LUF,LUL,MOP,MGA,MGF,MWK,MYR,MVR,MVQ,MLF,MTL,MTP,MRU,MRO,MUR,XUA,MXN,MXV,MXP,MDL,MNT,MAD,MZN,MZE,
+                  MZM,MMK,NAD,NPR,NLG,NIO,NIC,NGN,MKD,OMR,PKR,PAB,PGK,PYG,PEN,PEH,PEI,PES,PHP,PLN,PLZ,PTE,QAR,RON,ROK,ROL,RUB,
+                  RWF,SHP,WST,STN,STD,SAR,RSD,CSD,SCR,SLL,SGD,XSU,SKK,SIT,SBD,SOS,SSP,SDG,RHD,ESA,ESB,LKR,SDD,SDP,SRD,SRG,SEK,
+                  CHE,CHW,CHC,SYP,TWD,TJS,TJR,TZS,THB,TPE,TOP,TTD,TND,TRY,TRL,TMT,TMM,UGX,UGS,UGW,UAH,UAK,SUR,AED,USS,USN,UYU,
+                  UYI,UYW,UYN,UYP,UZS,VUV,VEB,VEF,VES,VND,VNC,YER,YDD,YUD,YUM,YUN,ZRN,ZRZ,ZMW,ZMK,ZWL,ZWC,ZWD,ZWN,ZWR,XBA,XFO,
+                  XBB,XRE,XBC,XBD,XFU,XTS,XXX,XAU,XPD,XPT,XAG]
 
     Links:
       type: object

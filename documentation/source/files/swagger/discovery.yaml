@@ -2,7 +2,7 @@ openapi: 3.0.0
 info:
   title: APIs Open Data do Open Insurance Brasil
   description: As APIs descritas neste documento são referentes as APIs da fase Open Data do Open Insurance Brasil.
-  version: 1.2.0
+  version: 1.3.0
   contact:
     email: "apiteam@swagger.io"
 servers:
@@ -116,12 +116,12 @@ components:
         data:
           type: array
           items:
+            type: object
             required:
               - outageTime
               - duration
               - isPartial
               - explanation
-              - unavailableEndpoints
             properties:
               outageTime:
                 type: string
@@ -134,7 +134,7 @@ components:
                 example: PT2H30M
               isPartial:
                 type: boolean
-                description: Flag que indica se a indisponibilidade é parcial (atingindo apenas alguns end points) ou total (atingindo todos os end points)
+                description: Flag que indica se a indisponibilidade é parcial (atingindo apenas alguns endpoints) ou total (atingindo todos os endpoints)
                 example: false
               explanation:
                 type: string
@@ -142,9 +142,9 @@ components:
                 example: Atualização do API Gateway
               unavailableEndpoints:
                 type: array
-                description: Endpoints com indisponibilidade.
-                example:
-                  - electronic-channels  
+                description: Endpoints com indisponibilidade. Condional ao campo isPartial ser 'true'.
+                example: 
+                  - electronic-channels 
         links:
           $ref: '#/components/schemas/Links'
         meta:
