@@ -3,7 +3,7 @@ info:
   title: APIs Open Data do Open Insurance Brasil
   description:
     API de informações de Título de Capitaliazação.
-  version: 1.4.0
+  version: 1.5.0
   contact:
     url: 'https://www.gov.br/susep/'
 servers:
@@ -219,11 +219,9 @@ components:
             $ref: '#/components/schemas/CapitalizationTitleMinimumRequirements'
           targetAudiences:
             description: Público Alvo
-            type: array
-            items:
-              type: string
-              example: PESSOA_NATURAL
-              enum: [PESSOA_NATURAL, PESSOA_JURIDICA]
+            type: string
+            example: PESSOA_NATURAL
+            enum: [PESSOA_NATURAL, PESSOA_JURIDICA]
 
     CapitalizationTitleTerms:
       type: object
@@ -259,17 +257,17 @@ components:
             capitalizationQuota:
               type: string
               description: Percentual da contribuição destinado à constituição de capital referente ao direito de resgate.
-              pattern: ^[0-1]\.\d{6}$
+              pattern: ^1\.0{1,9}$|^0\.\d{1,9}$
               example: '0.000002'
             raffleQuota:
               type: string
               description: Percentual da contribuição designado a custear os sorteios, se previstos no plano
-              pattern: ^[0-1]\.\d{6}$
+              pattern: ^1\.0{1,9}$|^0\.\d{1,9}$
               example: '0.000002'
             chargingQuota:
               type: string
               description: Percentual da contribuição destinado aos custos de despesas com corretagem, colocação e administração do título de capitalização, emissão, divulgação, lucro da sociedade de capitalização e eventuais despesas relavas ao custeio da contemplação obrigatória e da distribuição de bônus.
-              pattern: ^[0-1]\.\d{6}$
+              pattern: ^1\.0{1,9}$|^0\.\d{1,9}$
               example: '0.000002'
 
     CapitalizationTitleValidity:
@@ -302,7 +300,7 @@ components:
               ou seja, a Provisão Matemática de Resgate, também chamada de saldo de capitalização.
               Em porcentagem ao mês (% a.m)). Exemplo 1.000000 igual a 100 por cento
             type: string
-            pattern: ^[0-1]\.\d{6}$
+            pattern: ^1\.0{1,9}$|^0\.\d{1,9}$
             example: '0.000002'
           updateIndex:
             type: string
@@ -329,12 +327,13 @@ components:
                   description: Número de parcela.
                   example: 10
                 percentage:
-                  type: number
+                  type: string
                   description: Percentual da quota
+                  pattern: ^1\.0{1,9}$|^0\.\d{1,9}$
           redemptionPercentageEndTerm:
             description: Percentual mínimo da soma das contribuições efetuadas que poderá ser resgatado ao final da vigência, tendo como condição os pagamentos das parcelas nos respectivos vencimentos.
             type: string
-            pattern: ^\d{1}\.\d{6}$
+            pattern: ^1\.0{1,9}$|^0\.\d{1,9}$
             example: '0.000002'
           gracePeriodRedemption:
             description: Intervalo de tempo mínimo entre contratação e resgate do direito, em meses.
@@ -346,22 +345,22 @@ components:
       type: object
       properties:
         minValue:
-          type: number
+          type: string
           description: Valor Mínimo
-          example: 500
+          example: "500"
         maxValue:
-          type: number
+          type: string
           description: Valor Máximo
-          example: 5000
+          example: "5000"
         frequency:
           type: string
           description: Pagamento mensal, pagamento único ou periódico.
           example: MENSAL
           enum: [MENSAL, UNICO, PERIODICO]
         value:
-          type: number
+          type: string
           description: valor
-          example: 1000
+          example: "1000"
 
     CapitalizationTitleLatePayment:
         type: object
@@ -407,11 +406,10 @@ components:
             example: IPCA
             enum: [IPCA, IGPM, INPC, TR, INDICE_REMUNERACAO_DEPOSITOS_POUPANCA, OUTROS]
         updateIndexOthers:
-            type: array
+            type: string
             description: Preenchida pelas participantes quando houver ‘Outros’ no campo.
-            items:
-                type: string
-                example: Índice de atualização
+            example: Índice de atualização
+            maxLength: 200
 
     CapitalizationTitleRedemption:
         type: object
@@ -445,20 +443,18 @@ components:
             example: 10000
           timeInterval:
             description: Intervalo de tempo regular previsto entre os sorteios.
-            type: array
-            items:
-              type: string
-              example: QUINZENAL
-              enum: [UNICO, DIARIO, SEMANAL, QUINZENAL, MENSAL, BIMESTRAL, TRIMESTRAL, QUADRIMESTRAL, SEMESTRAL, ANUAL, OUTROS]
+            type: string
+            example: QUINZENAL
+            enum: [UNICO, DIARIO, SEMANAL, QUINZENAL, MENSAL, BIMESTRAL, TRIMESTRAL, QUADRIMESTRAL, SEMESTRAL, ANUAL, OUTROS]
           timeIntervalOthers:
             description: Descrição do Intervalo de tempo regular previsto entre os sorteios quando for informada a opção OUTROS.
             type: string
             maxLength: 100
             example: OUTROS
           raffleValue:
-            type: number
+            type: string
             description: Valor dos sorteios representado por múltiplo do valor de contribuição.
-            example: 5
+            example: "5"
           earlySettlementRaffle:
             type: boolean
             description: Liquidação antecipada em Sorteio. Modelo de sorteio que acarreta, ao título contemplado, o seu resgate total obrigatório (Resolução Normativa 384/20).
@@ -615,6 +611,7 @@ components:
       required: true
       schema:
         type: string
+        pattern: ^\d{14}$
     cache-Control:
       name: cache-control
       in: header
