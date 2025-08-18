@@ -3,7 +3,7 @@ info:
   title: APIs Open Data do Open Insurance Brasil
   description:
     API de informações de Planos de Previdência e Seguros de Pessoas ambos com cobertura por sobrevivência (excluindo seguros Dotais). Os recursos que podem ser consumidos pelos participantes conforme a regra 3.1.1 do manual de escopo de dados.
-  version: 1.6.0
+  version: 1.5.0
   contact:
     url: 'https://www.gov.br/susep/'
 servers:
@@ -12,7 +12,7 @@ servers:
   - url: 'https://api.organizacao.com.br/open-insurance/products-services/v1'
     description: Servidor de Homologação
 tags:
-- name: "life-pension"
+  - name: "life-pension"
 paths:
   /life-pension:
     get:
@@ -76,10 +76,10 @@ components:
           description: 'Data e hora da consulta, conforme especificação RFC-3339, formato UTC.'
           type: string
           pattern: '[\w\W\s]*'
-          maxLength: 2048  
+          maxLength: 2048
           format: date-time
           example: '2021-08-20T08:30:00Z'
-        data: 
+        data:
           type: object
           required:
             - brand
@@ -100,10 +100,10 @@ components:
       properties:
         name:
           type: string
-          description: Nome da marca reportada pelo participante do Open Insurance. O conceito a que se refere a marca é em essência uma promessa das sociedades sob ela em fornecer uma série específica de atributos, benefícios e serviços uniformes aos clientes.
+          description: Nome da marca reportada pelo participante do Open Insurance. O conceito a que se refere a marca é em essência uma promessa das sociedades sob ela em fornecer uma série específica de atributos, benefícios e serviços uniformes aos clientes.
           example: EMPRESA
         companies:
-          $ref: '#/components/schemas/LifePensionCompany'  
+          $ref: '#/components/schemas/LifePensionCompany'
 
     LifePensionCompany:
       type: array
@@ -124,61 +124,61 @@ components:
             description: CNPJ da sociedade pertencente à marca.
             pattern: ^\d{14}$
             example: '12345678901234'
-          products:          
+          products:
             $ref: '#/components/schemas/LifePensionProduct'
 
     LifePensionProduct:
-        type: array
-        items:
-          type: object
-          required:
-            - name
-            - code
-            - segment
-            - type
-            - modality
-            - productDetails
-            - minimumRequirements
-            - targetAudience
-          properties:
-            name:
-              type: string
-              description: Nome comercial do produto, pelo qual é identificado nos canais de distribuição e atendimento da sociedade.
-              maxLength: 80
-              example: Brasilprev Private Multimercado 2020
-            code:
-              type: string
-              description: Código único a ser definido pela sociedade.
-              maxLength: 80
-              example: "1234"
-            segment:
-              type: string
-              description: Segmento do qual se trata o produto contratado.
-              example: PREVIDENCIA
-              enum: [SEGURO_PESSOAS , PREVIDENCIA]
-            type:
-                type: string
-                description: Tipo do produto contratado.
-                example: PGBL
-                enum: [PGBL , PRGP , PAGP, PRSA, PRI, PDR, VGBL, VRGP, VAGP, VRSA, VRI, VDR, DEMAIS_PRODUTOS_PREVIDENCIA]
-            modality:
-              type: string
-              description: Modalidade do produto contratado.
-              example: CONTRIBUICAO_VARIAVEL
-              enum: [CONTRIBUICAO_VARIAVEL , BENEFICIO_DEFINIDO]
-            optionalCoverage:
-              type: string
-              description: Campo aberto (possibilidade de incluir URL) para a descricao das coberturas de risco (previdencia) comercializadas facultativamente a cobertura de sobrevivencia
-              maxLength: 1024
-            productDetails:
-              $ref: '#/components/schemas/LifePensionProductDetails'
-            minimumRequirements:
-                $ref: '#/components/schemas/LifePensionMinimumRequirements'
-            targetAudience:
-              type: string
-              description: Público-alvo.
-              example: PESSOA_NATURAL
-              enum: [PESSOA_NATURAL, PESSOA_JURIDICA]
+      type: array
+      items:
+        type: object
+        required:
+          - name
+          - code
+          - segment
+          - type
+          - modality
+          - productDetails
+          - minimumRequirements
+          - targetAudience
+        properties:
+          name:
+            type: string
+            description: Nome comercial do produto, pelo qual é identificado nos canais de distribuição e atendimento da sociedade.
+            maxLength: 80
+            example: Brasilprev Private Multimercado 2020
+          code:
+            type: string
+            description: Código único a ser definido pela sociedade.
+            maxLength: 80
+            example: "1234"
+          segment:
+            type: string
+            description: Segmento do qual se trata o produto contratado.
+            example: PREVIDENCIA
+            enum: [SEGURO_PESSOAS , PREVIDENCIA]
+          type:
+            type: string
+            description: Tipo do produto contratado.
+            example: PGBL
+            enum: [PGBL , PRGP , PAGP, PRSA, PRI, PDR, VGBL, VRGP, VAGP, VRSA, VRI, VDR, DEMAIS_PRODUTOS_PREVIDENCIA]
+          modality:
+            type: string
+            description: Modalidade do produto contratado.
+            example: CONTRIBUICAO_VARIAVEL
+            enum: [CONTRIBUICAO_VARIAVEL , BENEFICIO_DEFINIDO]
+          optionalCoverage:
+            type: string
+            description: Campo aberto (possibilidade de incluir URL) para a descricao das coberturas de risco (previdencia) comercializadas facultativamente a cobertura de sobrevivencia
+            maxLength: 1024
+          productDetails:
+            $ref: '#/components/schemas/LifePensionProductDetails'
+          minimumRequirements:
+            $ref: '#/components/schemas/LifePensionMinimumRequirements'
+          targetAudience:
+            type: string
+            description: Público-alvo.
+            example: PESSOA_NATURAL
+            enum: [PESSOA_NATURAL, PESSOA_JURIDICA]
 
     LifePensionProductDetails:
       type: array
@@ -191,22 +191,22 @@ components:
           - grantPeriodBenefit
           - costs
         properties:
-            susepProcessNumber:
-              type: string
-              description: Sequência numérica utilizada para consulta dos processos eletrônicos na SUSEP, com caracteres especiais.
-              example: 15414.614141/2020-71
-              maxLength: 30
-            contractTermsConditions:
-              type: string
-              description: Campo aberto (possibilidade de incluir URL).
-              example: https://www.seguradora.com.br/produto/pdf/condicoes_gerais.pdf
-              maxLength: 1024
-            defferalPeriod:
-              $ref: '#/components/schemas/LifePensionDefferalPeriod'
-            grantPeriodBenefit:
-              $ref: '#/components/schemas/LifePensionPeriodGrantBenefit'
-            costs:
-              $ref: '#/components/schemas/LifePensionCosts'
+          susepProcessNumber:
+            type: string
+            description: Sequência numérica utilizada para consulta dos processos eletrônicos na SUSEP, com caracteres especiais.
+            example: 15414.614141/2020-71
+            maxLength: 30
+          contractTermsConditions:
+            type: string
+            description: Campo aberto (possibilidade de incluir URL).
+            example: https://www.seguradora.com.br/produto/pdf/condicoes_gerais.pdf
+            maxLength: 1024
+          defferalPeriod:
+            $ref: '#/components/schemas/LifePensionDefferalPeriod'
+          grantPeriodBenefit:
+            $ref: '#/components/schemas/LifePensionPeriodGrantBenefit'
+          costs:
+            $ref: '#/components/schemas/LifePensionCosts'
 
     LifePensionDefferalPeriod:
       type: object
@@ -227,9 +227,9 @@ components:
         - investmentFunds
       properties:
         interestRate:
-          type: string
+          type: number
           description: Taxa de juros garantida que remunera o plano durante a fase de diferimento/acumulação.
-          example: '25.123'
+          example: 25.123
           maxLength: 10
           multipleOf: 0.00001
         updateIndex:
@@ -249,12 +249,12 @@ components:
           description: |
             Para produtos do tipo PDR e VDR, indicação do percentual do índice de ampla
             divulgação utilizados como garantia mínima de desempenho. Exemplo 1.000000 igual a 100 por cento
-          pattern: ^1\.0{1,9}$|^0\.\d{1,9}$
+          pattern: ^\d{1}\.\d{6}$
           example: '1.000000'
         reversalFinancialResults:
-          type: string
+          type: number
           description: Percentual de reversão de excedente financeiro no período de diferimento.
-          example: '5.123'
+          example: 5.123
           maxLength: 5
         minimumPremiumAmount:
           type: array
@@ -266,10 +266,10 @@ components:
               - minimumPremiumAmountDescription
             properties:
               minimumPremiumAmountValue:
-                type: string
+                type: number
                 description: Valor
                 maxLength: 13
-                example: '250'
+                example: 250
               minimumPremiumAmountDescription:
                 type: string
                 description: Descrição Período.
@@ -329,63 +329,63 @@ components:
           $ref: '#/components/schemas/LifePensionInvestmentFunds'
 
     LifePensionInvestmentFunds:
-        type: array
-        description: Lista com as informações do(s) Fundo(s) de Investimento(s) disponíveis para o período de diferimento/acumulação ou de concessão.
-        items:
-            type: object
-            required:
-              - cnpjNumber
-              - companyName
-              - maximumAdministrationFee
-              - typePerformanceFee
-              - eligibilityRule
-            properties:
-                cnpjNumber:
-                  type: string
-                  description: Número de CNPJ.
-                  pattern: ^\d{14}$
-                  example: '12345678901234'
-                companyName:
-                  type: string
-                  description: Nome Fantasia.
-                  example:  EYPREV
-                  maxLength: 200
-                maximumAdministrationFee:
-                  type: string
-                  description:  Taxa Máxima de Administração – em %.
-                  example: '5.123'
-                  maxLength: 5
-                typePerformanceFee:
-                  type: array
-                  items:
-                    type: string
-                    description: Tipo de Taxa de Performance
-                    example: DIRETAMENTE
-                    enum: [DIRETAMENTE, INDIRETAMENTE, NAO_APLICA]
-                maximumPerformanceFee:
-                  type: string
-                  description:  Taxa Máxima de Performance. Caso o Tipo de Taxa de Performance seja ‘Diretamente’.
-                  maxLength: 5
-                  example: '20.0'
-                eligibilityRule:
-                  type: boolean
-                  description:  Regra de Eligibilidade.
-                  example: true
-                minimumContributionAmount:
-                  type: string
-                  description: Valor Mínimo de Contribuição. Regra de Elegibilidade. Caso a Regra de Elegibilidade SIM.
-                  example: '150000.45'
-                  maxLength: 15
-                minimumContributionValue:
-                  type: string
-                  description: Valor Mínimo de Aporte de Portabilidade. Caso a Regra de Elegibilidade SIM.
-                  example: '150000.45'
-                  maxLength: 15
-                minimumMathematicalProvisionAmount:
-                  type: string
-                  description: Valor Mínimo Provisão Matemática. Caso a Regra de Elegibilidade SIM.
-                  maxLength: 5
-                  example: '150'
+      type: array
+      description: Lista com as informações do(s) Fundo(s) de Investimento(s) disponíveis para o período de diferimento/acumulação ou de concessão.
+      items:
+        type: object
+        required:
+          - cnpjNumber
+          - companyName
+          - maximumAdministrationFee
+          - typePerformanceFee
+          - eligibilityRule
+        properties:
+          cnpjNumber:
+            type: string
+            description: Número de CNPJ.
+            pattern: ^\d{14}$
+            example: '12345678901234'
+          companyName:
+            type: string
+            description: Nome Fantasia.
+            example:  EYPREV
+            maxLength: 200
+          maximumAdministrationFee:
+            type: number
+            description:  Taxa Máxima de Administração – em %.
+            example: 5.123
+            maxLength: 5
+          typePerformanceFee:
+            type: array
+            items:
+              type: string
+              description: Tipo de Taxa de Performance
+              example: DIRETAMENTE
+              enum: [DIRETAMENTE, INDIRETAMENTE, NAO_APLICA]
+          maximumPerformanceFee:
+            type: number
+            description:  Taxa Máxima de Performance. Caso o Tipo de Taxa de Performance seja ‘Diretamente’.
+            maxLength: 5
+            example: 20.0
+          eligibilityRule:
+            type: boolean
+            description:  Regra de Eligibilidade.
+            example: true
+          minimumContributionAmount:
+            type: number
+            description: Valor Mínimo de Contribuição. Regra de Elegibilidade. Caso a Regra de Elegibilidade SIM.
+            example: 150000.45
+            maxLength: 15
+          minimumContributionValue:
+            type: number
+            description: Valor Mínimo de Aporte de Portabilidade. Caso a Regra de Elegibilidade SIM.
+            example: 150000.45
+            maxLength: 15
+          minimumMathematicalProvisionAmount:
+            type: number
+            description: Valor Mínimo Provisão Matemática. Caso a Regra de Elegibilidade SIM.
+            maxLength: 5
+            example: 150000.45
 
     LifePensionPeriodGrantBenefit:
       type: object
@@ -410,9 +410,9 @@ components:
             example: AT_2000_FEMALE_SUAVIZADA_15
             enum: [AT_2000_MALE, AT_2000_FEMALE, AT_2000_MALE_FEMALE, AT_2000_MALE_SUAVIZADA_10, AT_2000_FEMALE_SUAVIZADA_10, AT_2000_MALE_FEMALE_SUAVIZADA_10, AT_2000_MALE_SUAVIZADA_15, AT_2000_FEMALE_SUAVIZADA_15, AT_2000_MALE_FEMALE_SUAVIZADA_15, AT_83_MALE, AT_83_FEMALE, AT_83_MALE_FEMALE, BR_EMSSB_MALE, BR_EMSSB_FEMALE, BR_EMSSB_MALE_FEMALE]
         interestRate:
-          type: string
+          type: number
           description: Taxa de juros garantida utilizada para conversão em renda. Em %.
-          example: '3.225'
+          example: 3.225
           maxLength: 6
         updateIndex:
           type: string
@@ -420,9 +420,9 @@ components:
           example: IPCA
           enum: [IPCA, IGP-M, INPC, NAO_SE_APLICA]
         reversalResultsFinancial:
-          type: string
+          type: number
           description: Percentual de reversão de excedente financeiro na concessão. Em %.
-          example: '13.252'
+          example: 013.252
           maxLength: 8
         investmentFunds:
           $ref: '#/components/schemas/LifePensionInvestmentFunds'
@@ -449,14 +449,14 @@ components:
         - maxValue
       properties:
         minValue:
-          type: string
+          type: number
           description: Valor mínimo em %.
-          example: '4.122'
+          example: 4.122
           maxLength: 7
         maxValue:
-          type: string
+          type: number
           description: alor máximo em %.
-          example: '90.225'
+          example: 90.225
           maxLength: 8
 
     LifePensionMinimumRequirements:
@@ -637,7 +637,7 @@ components:
       schema:
         type: string
         pattern: '[\w\W\s]*'
-  
+
   responses:
     UnprocessableEntity:
       description: 'O servidor entende o tipo de conteúdo da entidade da requisição, e a sintaxe da requisição esta correta, mas não foi possível processar as instruções presente.'
