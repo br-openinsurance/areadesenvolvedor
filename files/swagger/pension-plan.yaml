@@ -1,18 +1,18 @@
 openapi: 3.0.0
 info:
   title: APIs Open Data do Open Insurance Brasil
-  description: 
+  description:
     API de informações de Plano de Previdência com cobertura de risco. Os recursos que podem ser consumidos pelos participantes conforme a regra 3.1.2 do manual de escopo de dados.
-  version: 1.5.0
+  version: 1.3.0
   contact:
     url: 'https://www.gov.br/susep/'
 servers:
   - url: 'https://api.organizacao.com.br/open-insurance/products-services/v1'
     description: Servidor de Produção
   - url: 'https://api.organizacao.com.br/open-insurance/products-services/v1'
-    description: Servidor de Homologação  
+    description: Servidor de Homologação
 tags:
-- name: "pension-plan"
+  - name: "pension-plan"
 paths:
   /pension-plan:
     get:
@@ -70,7 +70,7 @@ paths:
         '406':
           $ref: '#/components/responses/NotAcceptable'
         '422':
-           $ref: '#/components/responses/UnprocessableEntity'
+          $ref: '#/components/responses/UnprocessableEntity'
         '429':
           $ref: '#/components/responses/TooManyRequests'
         '500':
@@ -80,7 +80,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ResponsePensionPlanList'   
+                $ref: '#/components/schemas/ResponsePensionPlanList'
           headers:
             x-v:
               description: |
@@ -90,7 +90,7 @@ paths:
                 com a versao que esta sendo utilizada naquele momento.
               required: true
               schema:
-                type: string         
+                type: string
 components:
   schemas:
     ResponsePensionPlanList:
@@ -104,10 +104,10 @@ components:
           description: 'Data e hora da consulta, conforme especificação RFC-3339, formato UTC.'
           type: string
           pattern: '[\w\W\s]*'
-          maxLength: 2048  
+          maxLength: 2048
           format: date-time
           example: '2021-08-20T08:30:00Z'
-        data: 
+        data:
           type: object
           required:
             - brand
@@ -131,7 +131,7 @@ components:
           description: Nome da marca reportada pelo participante do Open Insurance. O conceito a que se refere a marca é em essência uma promessa das sociedades sob ela em fornecer uma série específica de atributos, benefícios e serviços uniformes aos clientes.
           example: EMPRESA
         companies:
-          $ref: '#/components/schemas/PensionPlanCompany'  
+          $ref: '#/components/schemas/PensionPlanCompany'
 
     PensionPlanCompany:
       type: array
@@ -152,77 +152,8 @@ components:
             description: CNPJ da sociedade pertencente à marca.
             pattern: ^\d{14}$
             example: '12345678901234'
-          products:          
+          products:
             $ref: '#/components/schemas/PensionPlanProduct'
-
-    structurePremiumRates:
-      type: object
-      description: |
-          - O campo “Taxa de Prêmio” ou “Taxa de Contribuição” é apenas para referência sobre o valor praticado no mercado para
-          determinado produto e faixas de risco, servindo apenas como estimativa, e não representa o valor que será aplicado na cotação
-          do caso específico do cliente. O preço do seguro leva em consideração diversos fatores e variáveis, e o valor ofertado na
-          cotação/proposta da Seguradora/EAPC é a que prevalecerá. Desse modo, este valor NÃO substitui uma cotação e NÃO
-          garante a aceitação do risco do cliente.
- 
-          - Para os produtos cujo LMI, LMG ou Capital Segurado transpassem da faixa máxima apresentada é necessário contatar
-          diretamente o seu intermediador (corretor) ou a sua seguradora para que seja realizada uma cotação adequada e uma estimativa
-          de valor correta seja transmitida.
-          - Esta informação não está sendo reportada para produtos que não são comercializados de forma individual, ou seja, não são
-          disponibilizadas as informações de seguros coletivos (Exceto Habitacional e Transportes) ou de produtos acessórios. Para
-          maiores detalhes de cotação é necessário entrar em contato comsua seguradora ou seu intermediador (corretor).
-         
-          - A metodologia utilizada para o levantamento destas informações é a que consta no Manual de Escopo de Dados e Serviços do
-          Open Insurance.
- 
-          - Pode haver alterações entre produtos do mesmo ramo dependendo da seguradora, isso porque cada empresa possui
-          um grupo focal de clientes e um estilo operacional. Para mais detalhes entre em contato com a seguradora ou o intermediador
-          (corretor).
- 
-          - As informações de Taxa de prêmio e Taxa de Contribuição são destinadas exclusivamente para o consumo do usuário final para
-          que ele tenha uma noção de quanto custa um seguro, não devem ser utilizadas para fins estatísticos.
- 
-          - Os valores reportados no campo Taxa Prêmio e Taxa de Contribuição são valores que refletem um conjunto de
-          características de um seguro específico de cada companhia, logo,devem ser analisados em conjunto com as demais informações
-          dispostas na Fase I, não sendo factível comparar somente este campo entre Seguradoras.
- 
-          - Para os produtos e modalidades que não estão com as estimativas de valores preenchidas neste campo, é necessário
-          que o cliente entre em contato com a seguradora ou intermediário para realizar a cotação e saber o valor de seu seguro.
-
-          - Essa informação considera as modalidades relacionadas a pensão, a renda e ao pecúlio.
- 
-      required:
-        - range_1
-        - range_2
-        - range_3
-        - range_4
-      properties:
-        range_1:
-          $ref: '#/components/schemas/rangePremiumRates'
-        range_2:
-          $ref: '#/components/schemas/rangePremiumRates'
-        range_3:
-          $ref: '#/components/schemas/rangePremiumRates'
-        range_4:
-          $ref: '#/components/schemas/rangePremiumRates'
-         
-    rangePremiumRates:
-      type: object
-      required:
-        - minimum
-        - maximum
-        - median
-      properties:
-        minimum:
-          $ref: '#/components/schemas/amountRangePremiumRates'
-        maximum:
-          $ref: '#/components/schemas/amountRangePremiumRates'
-        median:
-          $ref: '#/components/schemas/amountRangePremiumRates'
- 
-    amountRangePremiumRates:
-      type: string
-      pattern: ^\d{1,16}\.\d{2}$
-      example: '10000.00'
 
     PensionPlanProduct:
       type: array
@@ -234,7 +165,9 @@ components:
           - code
           - coverages
           - termsAndConditions
+          - premiumUpdateIndex
           - ageReframing
+          - otherGuaranteedValues
           - contributionPayment
           - minimumRequirements
           - targetAudience
@@ -246,7 +179,7 @@ components:
           code:
             type: string
             description: Código único a ser definido pela sociedade.
-            example: '123456789'
+            example: 123456789_cap
           coverages:
             type: array
             items:
@@ -257,7 +190,7 @@ components:
                 - coveragePeriod
                 - financialRegimeContractType
               properties:
-                coverage:        
+                coverage:
                   type: string
                   description: Formas de coberturas.
                   example: INVALIDEZ
@@ -280,11 +213,9 @@ components:
             type: string
             description: Adicional ao plano.
             enum: [SORTEIO, OUTROS]
-            example: SORTEIO
-          additionalOthers: 
+          additionalOthers:
             type: string
             description: Lista a ser preenchida pelas participantes quando houver ‘Outros’ no campo ‘additional’
-            maxLength: 100
           assistanceType:
             type: array
             description: Tipos de assistências.
@@ -292,58 +223,57 @@ components:
               type: string
               example: FUNERAL
               enum: [ACOMPANHANTE_CASO_HOSPITALIZACAO_PROLONGADA,
-                ARQUITETO_VIRTUAL,
-                ASSESSORIA_FINANCEIRA,
-                AUTOMOVEL,
-                AUXILIO_NATALIDADE,
-                AVALIACAO_CLINICA_PREVENTIVA,
-                BOLSA_PROTEGIDA,
-                CESTA_BASICA,
-                CHECKUP_ODONTOLOGICO,
-                CLUBE_DE_VANTAGENS_BENEFICIOS,
-                CONVALESCENCIA,
-                DECESSO_FAMILIAR_E_OU_INDIVIDUAL,
-                DESCONTO_FARMACIAS_MEDICAMENTOS,
-                DESPESAS_FARMACEUTICAS_VIAGEM,
-                DIGITAL,
-                EDUCACIONAL,
-                EMPRESARIAL,
-                ENTRETENIMENTO,
-                EQUIPAMENTOS_MEDICOS,
-                FIANCAS_E_DESPESAS_LEGAIS,
-                FISIOTERAPIA,
-                FUNERAL,
-                HELP_LINE,
-                HOSPEDAGEM_DE_ACOMPANHANTE,
-                INTERRUPCAO_DA_VIAGEM,
-                INVENTARIO,
-                MAIS_EM_VIDA,
-                MAMAE_BEBE,
-                MEDICA_POR_ACIDENTE_OU_DOENCA,
-                MOTOCICLETA,
-                MULHER,
-                NUTRICIONISTA,
-                ODONTOLOGICA,
-                ORIENTACAO_FITNESS,
-                ORIENTACAO_JURIDICA,
-                ORIENTACAO_PSICOSSOCIAL_FAMILIAR,
-                PERDA_ROUBO_CARTAO,
-                PET,
-                PRORROGACAO_DE_ESTADIA,
-                PROTECAO_DE_DADOS,
-                RECOLOCACAO_PROFISSIONAL,
-                REDE_DESCONTO_NUTRICIONAL,
-                RESIDENCIAL,
-                RETORNO_MENORES_E_OU_SEGURADO,
-                SAQUE_SOB_COACAO,
-                SAUDE_BEMESTAR,
-                SEGUNDA_OPINIAO_MEDICA,
-                SENIOR,
-                SUSTENTAVEL_(DESCARTE_ECOLOGICO),
-                TELEMEDICINA,
-                VIAGEM,
-                VITIMAS,
-                OUTROS]
+                     ARQUITETO_VIRTUAL,
+                     ASSESSORIA_FINANCEIRA,
+                     AUTOMOVEL,
+                     AUXILIO_NATALIDADE,
+                     AVALIACAO_CLINICA_PREVENTIVA,
+                     BOLSA_PROTEGIDA,
+                     CESTA_BASICA,
+                     CHECKUP_ODONTOLOGICO,
+                     CLUBE_DE_VANTAGENS_BENEFICIOS,
+                     CONVALESCENCIA,
+                     DECESSO_FAMILIAR_E_OU_INDIVIDUAL,
+                     DESCONTO_FARMACIAS_MEDICAMENTOS,
+                     DESPESAS_FARMACEUTICAS_VIAGEM,
+                     DIGITAL,
+                     EDUCACIONAL,
+                     EMPRESARIAL,
+                     ENTRETENIMENTO,
+                     EQUIPAMENTOS_MEDICOS,
+                     FIANCAS_E_DESPESAS_LEGAIS,
+                     FISIOTERAPIA,
+                     FUNERAL,
+                     HELP_LINE,
+                     HOSPEDAGEM_DE_ACOMPANHANTE,
+                     INTERRUPCAO_DA_VIAGEM,
+                     INVENTARIO,
+                     MAIS_EM_VIDA,
+                     MAMAE_BEBE,
+                     MEDICA_POR_ACIDENTE_OU_DOENCA,
+                     MOTOCICLETA,
+                     MULHER,
+                     NUTRICIONISTA,
+                     ODONTOLOGICA,
+                     ORIENTACAO_FITNESS,
+                     ORIENTACAO_JURIDICA,
+                     ORIENTACAO_PSICOSSOCIAL_FAMILIAR,
+                     PERDA_ROUBO_CARTAO,
+                     PET,
+                     PRORROGACAO_DE_ESTADIA,
+                     PROTECAO_DE_DADOS,
+                     RECOLOCACAO_PROFISSIONAL,
+                     REDE_DESCONTO_NUTRICIONAL,
+                     RESIDENCIAL,
+                     RETORNO_MENORES_E_OU_SEGURADO,
+                     SAQUE_SOB_COACAO,
+                     SAUDE_BEMESTAR,
+                     SEGUNDA_OPINIAO_MEDICA,
+                     SENIOR,
+                     SUSTENTAVEL_(DESCARTE_ECOLOGICO),
+                     TELEMEDICINA,
+                     VIAGEM,
+                     VITIMAS]
           assistanceTypeOthers:
             type: array
             description: Outros tipos de assistências.
@@ -352,7 +282,7 @@ components:
           termsAndConditions:
             type: array
             items:
-              $ref: '#/components/schemas/PensionPlanTerms'          
+              $ref: '#/components/schemas/PensionPlanTerms'
           updatePMBaC:
             $ref: '#/components/schemas/PensionPlanUpdatePMBaC'
           premiumUpdateIndex:
@@ -370,16 +300,15 @@ components:
             enum: [SALDAMENTO, BENEFICIO_PROLOGANDO, NAO_APLICA]
           contributionPayment:
             $ref: '#/components/schemas/PensionPlanContributionPayment'
-          premiumRates:
-            $ref: '#/components/schemas/structurePremiumRates'
           contributionTax:
-            $ref: '#/components/schemas/structurePremiumRates'
+            type: string
+            description: Distribuição de frequência relativa aos valores referentes às taxas cobradas
           minimumRequirements:
             $ref: '#/components/schemas/PensionPlanMinimumRequirements'
           targetAudience:
             type: string
             example: PESSOA_NATURAL
-            enum: [PESSOA_NATURAL, PESSOA_JURIDICA]           
+            enum: [PESSOA_NATURAL, PESSOA_JURIDICA]
 
     PensionPlanTerms:
       type: object
@@ -387,7 +316,7 @@ components:
       required:
         - susepProcessNumber
         - definition
-      properties:  
+      properties:
         susepProcessNumber:
           type: string
           description: Número do processo SUSEP.
@@ -399,81 +328,54 @@ components:
 
     PensionPlanCoverageAttributesDetailsUnit:
       type: object
-      description: Descrição da unidade monetaria. Condicional ao valor 'MONETARIO' em unitType.
       required:
         - code
         - description
       properties:
-        code: 
+        code:
           type: string
-          enum: [د.إ ,Af,L,Դ,Kz,$,ƒ,ман,КМ,৳,лв,ب.د,₣,Bs.,R$,P,Br,¥,₡,Kč,kr,د.ج,£,Nfk,N/A,€,ლ,₵,D,Q,Kn,G,Ft,Rp,₪,₹,ع.د,﷼,Sh,៛,₩,د.ك,〒,₭,ل.ل,Rs,ل.د,د.م.,ден,K,₮,UM,₨,ރ.,MK,RM,MTn,
-            ₦,C$,ر.ع.,B/.,S/.,₱,zł,₲,ر.ق,din,р.,ر.س,Le,Db,ل.س,฿,ЅМ,m,د.ت,T$,₤,₴,Bs_F,₫,Vt,T,R,ZK ]
-          example: R$
-        description: 
+          description: Tipo unidade de medida
+        description:
           type: string
-          enum: [AFN,AFA,ALL,ALK,DZD,USD,EUR,ADP,ESP,FRF,AOA,AOK,AON,AOR,XCD,ARS,ARA,ARP,ARY,AMD,RUR,AWG,AUD,ATS,AZN,AYM,AZM,BSD,BHD,BDT,BBD,BYN,BYB,BYR,BEC,BEF,BEL,BZD,XOF,BMD,
-            INR,BTN,BOP,BOB,BOV,BAM,BAD,BWP,NOK,BRL,BRB,BRC,BRE,BRN,BRR,BND,BGN,BGJ,BGK,BGL,BUK,BIF,CVE,KHR,XAF,CAD,KYD,CLP,CLF,CNY,COP,COU,KMF,CDF,NZD,CRC,HRK,HRD,CUP,CUC,ANG,
-            CYP,CZK,CSJ,CSK,DKK,DJF,DOP,ECS,ECV,EGP,SVC,GQE,ERN,EEK,SZL,ETB,XEU,FKP,FJD,FIM,XPF,GMD,GEL,GEK,DDM,DEM,GHS,GHC,GHP,GIP,GRD,GTQ,GBP,GNF,GNE,GNS,GWE,GWP,GYD,HTG,ITL,
-            HNL,HKD,HUF,ISK,ISJ,IDR,XDR,IRR,IQD,IEP,ILS,ILP,ILR,JMD,JPY,JOD,KZT,KES,KPW,KRW,KWD,KGS,LAJ,LAK,LVL,LVR,LBP,LSL,ZAR,LSM,ZAL,LRD,LYD,CHF,LTL,LTT,LUC,LUF,LUL,MOP,MGA,
-            MGF,MWK,MYR,MVR,MVQ,MLF,MTL,MTP,MRU,MRO,MUR,XUA,MXN,MXV,MXP,MDL,MNT,MAD,MZN,MZE,MZM,MMK,NAD,NPR,NLG,NIO,NIC,NGN,MKD,OMR,PKR,PAB,PGK,PYG,PEN,PEH,PEI,PES,PHP,PLN,PLZ,
-            PTE,QAR,RON,ROK,ROL,RUB,RWF,SHP,WST,STN,STD,SAR,RSD,CSD,SCR,SLL,SGD,XSU,SKK,SIT,SBD,SOS,SSP,SDG,RHD,ESA,ESB,LKR,SDD,SDP,SRD,SRG,SEK,CHE,CHW,CHC,SYP,TWD,TJS,TJR,TZS,
-            THB,TPE,TOP,TTD,TND,TRY,TRL,TMT,TMM,UGX,UGS,UGW,UAH,UAK,SUR,AED,USS,USN,UYU,UYI,UYW,UYN,UYP,UZS,VUV,VEB,VEF,VES,VND,VNC,YER,YDD,YUD,YUM,YUN,ZRN,ZRZ,ZMW,ZMK,ZWL,ZWC,
-            ZWD,ZWN,ZWR,XBA,XFO,XBB,XRE,XBC,XBD,XFU,XTS,XXX,XAU,XPD,XPT,XAG]
-          example: BRL
+          description: Descrição da unidade de medida
 
     PensionPlanCoverageAttributesDetails:
-        type: object
-        required:
-          - amount
-          - unitType
-        properties:
-          amount:
-            type: string
-            description: |
-                Valor.
-                Exemplos de preenchimento do campo:
-
-                PORCENTAGEM: 90.85
-                                  
-                MONETARIO: 62500.67
-
-                OUTROS: 1000 (Exemplo de outro tipo: horas)
-            pattern: ^(^(100\.\00|\d{1,2}\.\d{2})$|^(\d{1,6})$|^(\d{1,15}\.\d{2})$)$
-          unitType:
-            type: string
-            description: Tipo da unidade
-            enum: [MONETARIO, PORCENTAGEM, OUTROS]
-          unitTypeOthers:
-            type: string
-            maxLength: 100
-            description: Campo para informar o tipo da Unidade, condicional ao valor 'OUTROS' em unitType
-          unit:
-            $ref: '#/components/schemas/PensionPlanCoverageAttributesDetailsUnit'
+      type: object
+      description: Valor mínimo/máximo de cobertura diária ou parcelada. Em reais.
+      required:
+        - amount
+        - unit
+      properties:
+        amount:
+          type: number
+          example: 14
+        unit:
+          $ref: '#/components/schemas/PensionPlanCoverageAttributesDetailsUnit'
 
     PensionPlanCoverageAttributes:
       type: object
       description: Atributos da cobertura.
       required:
-       - modality
-       - indenizationPaymentMethod
-       - minValue
-       - maxValue
-       - currency
-       - gracePeriod
-       - excludedRisk
+        - modality
+        - indenizationPaymentMethod
+        - minValue
+        - maxValue
+        - currency
+        - gracePeriod
+        - excludedRisk
       properties:
         modality:
           type: string
           description: Modalidade da cobertura.
           example: RENDA
           enum: [PECULIO,
-                RENDA,
-                PENSAO_PRAZO_CERTO,
-                PENSAO_MENORES_21,
-                PENSAO_MENORES_24,
-                PENSAO_CONJUGE_VITALICIA,
-                PENSAO_CONJUGE_TEMPORARIA
-                ]
+                 RENDA,
+                 PENSAO_PRAZO_CERTO,
+                 PENSAO_MENORES_21,
+                 PENSAO_MENORES_24,
+                 PENSAO_CONJUGE_VITALICIA,
+                 PENSAO_CONJUGE_TEMPORARIA
+          ]
         indenizationPaymentMethod:
           type: array
           description: Forma de pagamento da indenização.
@@ -492,7 +394,7 @@ components:
           enum: [PRAZO, ATE_FIM_CICLO_DETERMINADO]
         indemnifiableDeadline:
           type: integer
-          description: Número máximo de parcelas indenizáveis. Caso seja relacionado a parcelas. 
+          description: Número máximo de parcelas indenizáveis. Caso seja relacionado a parcelas.
           example: 48
         currency:
           type: string
@@ -506,29 +408,31 @@ components:
           description: Riscos excluídos.
           items:
             type: string
-            example: ATO_RECONHECIMENTO_PERIGOSO
             enum: [ATO_RECONHECIMENTO_PERIGOSO, ATO_ILICITO_DOLOSO_PRATICADO_SEGURADO, OPERACOES_DE_GUERRA, FURACOES_CICLONES_TERREMOTOS, MATERIAL_NUCLEAR, DOENCAS_LESOES_PREEXISTENTES, EPIDEMIAS_PANDEMIAS, SUICIDIO, ATO_ILICITO_DOLOSO_PRATICADO_CONTROLADOR, OUTROS, NAO_SE_APLICA]
         excludedRiskURL:
           type: string
           description: Campo aberto (possibilidade de incluir URL)
-       
-       
+
+
 
     PensionPlanUpdatePMBaC:
       type: object
       description: Atualização/ Remuneração da PMaC.
+      required:
+        - interestRate
+        - updateIndex
       properties:
         interestRate:
           type: number
           description: Taxa de juros para capitalização da PMBaC.
-          example: 14.56
+          example: 14
         updateIndex:
           type: string
           description: Índice utilizado na atualização da PMBaC.
           example: IPCA
           enum: [IPCA, IGPM, INPC]
 
-    PensionPlanAgeReframing:     
+    PensionPlanAgeReframing:
       type: object
       description: Reenquadramento etário.
       required:
@@ -538,13 +442,13 @@ components:
           type: string
           description: Critério para reenquadramento etário.
           example: APOS_PERIODO_ANOS
-          enum: [APOS_PERIODO_ANOS, CADA_PERIODO_ANOS, MUDANCA_FAIXA_ETARIA, NAO_APLICAVEL]      
+          enum: [APOS_PERIODO_ANOS, CADA_PERIODO_ANOS, MUDANCA_FAIXA_ETARIA, NAO_APLICAVEL]
         reframingPeriodicity:
           type: integer
           description: Período em anos para reenquadramento etário.
           example: 10
 
-    PensionPlanReclaim:     
+    PensionPlanReclaim:
       type: object
       description: Resgate.
       required:
@@ -558,29 +462,27 @@ components:
         gracePeriod:
           $ref: '#/components/schemas/PensionPlanGracePeriod'
 
-    PensionPlanReclaimTable: 
+    PensionPlanReclaimTable:
       type: object
-      required: 
+      required:
         - initialMonthRange
         - finalMonthRange
         - percentage
-      properties: 
-        initialMonthRange: 
-          type: integer
+      properties:
+        initialMonthRange:
+          type: number
           description: Mês inicial do range
         finalMonthRange:
-          type: integer
+          type: number
           description: Mês final do range
         percentage:
           type: string
-          example: '20.53'
           description: Percentual da faixa de resgate da PMBaC para cada conjunto de prazo aplicável.
-          pattern: '^100\.0{1,9}$|^\d{1,2}\.\d{1,9}$'
         differentiatedPercentage:
           type: string
           description: Campo aberto (possibilidade de incluir URL), caso o percentual de resgate não siga o padrão apenas no que se refere ao critério temporal padronizado no campo “Resgate-Percentual”
 
-    PensionPlanContributionPayment:     
+    PensionPlanContributionPayment:
       type: object
       description: Pagamento da contribuição.
       required:
@@ -631,13 +533,13 @@ components:
 
     PensionPlanGracePeriod:
       type: object
-      required: 
+      required:
         - amount
         - unit
       description: Período de carência.
-      properties: 
+      properties:
         amount:
-          type: integer
+          type: number
           description: Prazo de Carência
         unit:
           type: string
@@ -646,7 +548,7 @@ components:
 
     Links:
       type: object
-      required: 
+      required:
         - self
       properties:
         self:
@@ -726,13 +628,13 @@ components:
                 description: 'Data e hora da consulta, conforme especificação RFC-3339, formato UTC.'
                 type: string
                 pattern: '[\w\W\s]*'
-                maxLength: 2048  
+                maxLength: 2048
                 format: date-time
                 example: '2021-08-20T08:30:00Z'
             additionalProperties: false
         meta:
           $ref: '#/components/schemas/Meta'
-      additionalProperties: false    
+      additionalProperties: false
 
   parameters:
     page:
@@ -763,7 +665,7 @@ components:
       in: header
       description: Controle de cache para evitar que informações confidenciais sejam armazenadas em cache.
       required: true
-      schema: 
+      schema:
         type: string
         pattern: '[\w\W\s]*'
     content-Security-Policy:
@@ -826,7 +728,7 @@ components:
       schema:
         type: string
       example: '2.0.0'
-     
+
   responses:
     UnprocessableEntity:
       description: 'O servidor entende o tipo de conteúdo da entidade da requisição, e a sintaxe da requisição esta correta, mas não foi possível processar as instruções presente.'
