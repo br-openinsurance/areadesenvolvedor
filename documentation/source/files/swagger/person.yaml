@@ -1,24 +1,24 @@
 openapi: 3.0.0
 info:
   title: APIs Open Data do Open Insurance Brasil
-  description:
+  description: 
     Obtém a lista dos produtos Seguros de Pessoas – Coberturas de Risco (excluindo VGBL).
-  version: 1.5.1
+  version: 1.7.0
   contact:
     url: 'https://www.gov.br/susep/'
 servers:
   - url: 'https://api.organizacao.com.br/open-insurance/products-services/v1'
     description: Servidor de Produção
   - url: 'https://api.organizacao.com.br/open-insurance/products-services/v1'
-    description: Servidor de Homologação
+    description: Servidor de Homologação  
 tags:
-  - name: "person"
+- name: "person"
 paths:
   /person:
     get:
       tags:
         - person
-      summary: Obtém a lista dos produtos do tipo seguro de pessoas.
+      summary: Obtém a lista dos produtos do tipo seguro de pessoas. 
       description: "Obtém a lista dos produtos do tipo seguro de pessoas."
       operationId: "getPerson"
       parameters:
@@ -90,21 +90,21 @@ components:
     ResponsePersonList:
       type: object
       required:
-        - data
-        - links
-        - meta
+       - data
+       - links
+       - meta
       properties:
-        data:
-          type: object
-          required:
-            - brand
-          properties:
-            brand:
-              $ref: '#/components/schemas/PersonBrand'
-        links:
-          $ref: '#/components/schemas/Links'
-        meta:
-          $ref: '#/components/schemas/Meta'
+       data: 
+        type: object
+        required:
+          - brand
+        properties:
+          brand:
+            $ref: '#/components/schemas/PersonBrand'
+       links:
+         $ref: '#/components/schemas/Links'
+       meta:
+         $ref: '#/components/schemas/Meta'
 
     PersonBrand:
       type: object
@@ -118,7 +118,7 @@ components:
           description: Nome da marca reportada pelo participante do Open Insurance. O conceito a que se refere a marca é em essência uma promessa das sociedades sob ela em fornecer uma série específica de atributos, benefícios e serviços uniformes aos clientes.
           example: Marca
         companies:
-          $ref: '#/components/schemas/PersonCompany'
+            $ref: '#/components/schemas/PersonCompany'  
 
     PersonCompany:
       type: array
@@ -139,19 +139,88 @@ components:
             description: CNPJ da sociedade pertencente à marca.
             pattern: ^\d{14}$
             example: '12345678901234'
-          products:
+          products:          
             $ref: '#/components/schemas/PersonProducts'
+
+    structurePremiumRates:
+      type: object
+      description: |
+          - O campo “Taxa de Prêmio” ou “Taxa de Contribuição” é apenas para referência sobre o valor praticado no mercado para
+          determinado produto e faixas de risco, servindo apenas como estimativa, e não representa o valor que será aplicado na cotação
+          do caso específico do cliente. O preço do seguro leva em consideração diversos fatores e variáveis, e o valor ofertado na
+          cotação/proposta da Seguradora/EAPC é a que prevalecerá. Desse modo, este valor NÃO substitui uma cotação e NÃO
+          garante a aceitação do risco do cliente.
+ 
+          - Para os produtos cujo LMI, LMG ou Capital Segurado transpassem da faixa máxima apresentada é necessário contatar
+          diretamente o seu intermediador (corretor) ou a sua seguradora para que seja realizada uma cotação adequada e uma estimativa
+          de valor correta seja transmitida.
+          - Esta informação não está sendo reportada para produtos que não são comercializados de forma individual, ou seja, não são
+          disponibilizadas as informações de seguros coletivos (Exceto Habitacional e Transportes) ou de produtos acessórios. Para
+          maiores detalhes de cotação é necessário entrar em contato comsua seguradora ou seu intermediador (corretor).
+         
+          - A metodologia utilizada para o levantamento destas informações é a que consta no Manual de Escopo de Dados e Serviços do
+          Open Insurance.
+ 
+          - Pode haver alterações entre produtos do mesmo ramo dependendo da seguradora, isso porque cada empresa possui
+          um grupo focal de clientes e um estilo operacional. Para mais detalhes entre em contato com a seguradora ou o intermediador
+          (corretor).
+ 
+          - As informações de Taxa de prêmio e Taxa de Contribuição são destinadas exclusivamente para o consumo do usuário final para
+          que ele tenha uma noção de quanto custa um seguro, não devem ser utilizadas para fins estatísticos.
+ 
+          - Os valores reportados no campo Taxa Prêmio e Taxa de Contribuição são valores que refletem um conjunto de
+          características de um seguro específico de cada companhia, logo,devem ser analisados em conjunto com as demais informações
+          dispostas na Fase I, não sendo factível comparar somente este campo entre Seguradoras.
+ 
+          - Para os produtos e modalidades que não estão com as estimativas de valores preenchidas neste campo, é necessário
+          que o cliente entre em contato com a seguradora ou intermediário para realizar a cotação e saber o valor de seu seguro.
+
+          - Essa informação considera as modalidades de “vida” e “acidentes pessoais”.
+ 
+      required:
+        - range_1
+        - range_2
+        - range_3
+        - range_4
+      properties:
+        range_1:
+          $ref: '#/components/schemas/rangePremiumRates'
+        range_2:
+          $ref: '#/components/schemas/rangePremiumRates'
+        range_3:
+          $ref: '#/components/schemas/rangePremiumRates'
+        range_4:
+          $ref: '#/components/schemas/rangePremiumRates'
+         
+    rangePremiumRates:
+      type: object
+      required:
+        - minimum
+        - maximum
+        - median
+      properties:
+        minimum:
+          $ref: '#/components/schemas/amountRangePremiumRates'
+        maximum:
+          $ref: '#/components/schemas/amountRangePremiumRates'
+        median:
+          $ref: '#/components/schemas/amountRangePremiumRates'
+ 
+    amountRangePremiumRates:
+      type: string
+      pattern: ^\d{1,16}\.\d{2}$
+      example: '10000.00'
 
     PersonProducts:
       type: array
-      description: Lista de Dependências de uma Instituição.
+      description: Lista de produtos de uma empresa.
       items:
         type: object
         required:
           - name
           - code
           - category
-          - insuranceModality
+          - insuranceModality 
           - coverages
           - assistanceType
           - additional
@@ -170,15 +239,16 @@ components:
           code:
             type: string
             description: Código único a ser definido pela sociedade (código interno do produto) a critério da participante.
-            example: 123456789_cap
+            example: '123456789'
           category:
             type: string
             description: Indica a categoria do Produto
+            example: TRADICIONAL
             enum: [TRADICIONAL, MICROSSEGURO]
           insuranceModality:
             type: string
             example: FUNERAL
-            enum: [FUNERAL, PRESTAMISTA, VIAGEM, EDUCACIONAL, DOTAL, ACIDENTES_PESSOAIS, VIDA, PERDA_CERTIFICADO_HABILITACAOO_VOO, DOENCAS_GRAVES_DOENCA_TERMINAL, DESEMPREGO_PERDA_RENDA, EVENTOS_ALEATORIOS]
+            enum: [FUNERAL, PRESTAMISTA, VIAGEM, EDUCACIONAL, DOTAL, ACIDENTES_PESSOAIS, VIDA, PERDA_CERTIFICADO_HABILITACAOO_VOO, DOENCAS_GRAVES_DOENCA_TERMINAL, DESEMPREGO_PERDA_RENDA, EVENTOS_ALEATORIOS] 
           coverages:
             type: array
             items:
@@ -192,54 +262,54 @@ components:
                   type: string
                   example: AUXILIO_CESTA_BASICA
                   enum: [ADIANTAMENTO_DOENCA_ESTAGIO_TERMINAL,
-                         AUXILIO_CESTA_BASICA,
-                         AUXILIO_FINANCEIRO_IMEDIATO,
-                         CANCELAMENTO_DE_VIAGEM,
-                         CIRURGIA,
-                         COBERTURA_PARA_HERNIA,
-                         COBERTURA_PARA_LER_DORT,
-                         CUIDADOS_PROLONGADOS_ACIDENTE,
-                         DESEMPREGO_PERDA_DE_RENDA,
-                         DESPESAS_EXTRA_INVALIDEZ_PERMANENTE_TOTAL_PARCIAL_ACIDENTE_DEI,
-                         DESPESAS_EXTRA_MORTE_DEM,
-                         DESPESAS_MEDICAS_HOSPITALARES_ODONTOLOGICAS,
-                         DESPESAS_MEDICAS_HOSPITALARES_ODONTOLOGICAS_BRASIL,
-                         DESPESAS_MEDICAS_HOSPITALARES_ODONTOLOGICAS_EXTERIOR,
-                         DIARIA_INCAPACIDADE_TOTAL_TEMPORARIA,
-                         DIARIA_INTERNACAO_HOSPITALAR,
-                         INTERNACAO_HOSPITALAR,
-                         DIARIAS_INCAPACIDADE_PECUNIARIA_DIP,
-                         DOENCA_GRAVE,
-                         DOENCA_CONGENITA_FILHOS_DCF,
-                         FRATURA_OSSEA,
-                         DOENCAS_TROPICAIS,
-                         INCAPACIDADE_TOTAL_OU_TEMPORARIA,
-                         INVALIDEZ_PERMANENTE_TOTAL_PARCIAL,
-                         INVALIDEZ_TOTAL_ACIDENTE,
-                         INVALIDEZ_PARCIAL_ACIDENTE,
-                         INVALIDEZ_FUNCIONAL_PERMANENTE_DOENCA,
-                         INVALIDEZ_LABORATIVA_DOENCA,
-                         MORTE,
-                         MORTE_ACIDENTAL,
-                         MORTE_CONJUGE,
-                         MORTE_FILHOS,
-                         MORTE_ADIATAMENTO_DOENCA_ESTAGIO_TERMINAL,
-                         PAGAMENTO_ANTECIPADO_ESPECIAL_DOENCA_PROFISSIONAL_PAED,
-                         PERDA_DA_AUTONOMIA_PESSOAL,
-                         PERDA_INVOLUNTARIA_EMPREGO,
-                         QUEIMADURA_GRAVE,
-                         REGRESSO_ANTECIPADO_SANITARIO,
-                         RENDA_INCAPACIDADE_TEMPORARIA,
-                         RESCISAO_CONTRATUAL_CASO_MORTE_RCM,
-                         RESCISAO_TRABALHISTA,
-                         SERVICO_AUXILIO_FUNERAL,
-                         SOBREVIVENCIA,
-                         TRANSPLANTE_ORGAOS,
-                         TRANSLADO,
-                         TRANSLADO_MEDICO,
-                         TRANSLADO_CORPO,
-                         VERBA_RESCISORIA,
-                         OUTRAS]
+                        AUXILIO_CESTA_BASICA,
+                        AUXILIO_FINANCEIRO_IMEDIATO,
+                        CANCELAMENTO_DE_VIAGEM,
+                        CIRURGIA,
+                        COBERTURA_PARA_HERNIA,
+                        COBERTURA_PARA_LER_DORT,
+                        CUIDADOS_PROLONGADOS_ACIDENTE,
+                        DESEMPREGO_PERDA_DE_RENDA,
+                        DESPESAS_EXTRA_INVALIDEZ_PERMANENTE_TOTAL_PARCIAL_ACIDENTE_DEI,
+                        DESPESAS_EXTRA_MORTE_DEM,
+                        DESPESAS_MEDICAS_HOSPITALARES_ODONTOLOGICAS,
+                        DESPESAS_MEDICAS_HOSPITALARES_ODONTOLOGICAS_BRASIL,
+                        DESPESAS_MEDICAS_HOSPITALARES_ODONTOLOGICAS_EXTERIOR,
+                        DIARIA_INCAPACIDADE_TOTAL_TEMPORARIA,
+                        DIARIA_INTERNACAO_HOSPITALAR,
+                        INTERNACAO_HOSPITALAR,
+                        DIARIAS_INCAPACIDADE_PECUNIARIA_DIP,
+                        DOENCA_GRAVE,
+                        DOENCA_CONGENITA_FILHOS_DCF,
+                        FRATURA_OSSEA,
+                        DOENCAS_TROPICAIS,
+                        INCAPACIDADE_TOTAL_OU_TEMPORARIA,
+                        INVALIDEZ_PERMANENTE_TOTAL_PARCIAL,
+                        INVALIDEZ_TOTAL_ACIDENTE,
+                        INVALIDEZ_PARCIAL_ACIDENTE,
+                        INVALIDEZ_FUNCIONAL_PERMANENTE_DOENCA,
+                        INVALIDEZ_LABORATIVA_DOENCA,
+                        MORTE,
+                        MORTE_ACIDENTAL,
+                        MORTE_CONJUGE,
+                        MORTE_FILHOS,
+                        MORTE_ADIATAMENTO_DOENCA_ESTAGIO_TERMINAL,
+                        PAGAMENTO_ANTECIPADO_ESPECIAL_DOENCA_PROFISSIONAL_PAED,
+                        PERDA_DA_AUTONOMIA_PESSOAL,
+                        PERDA_INVOLUNTARIA_EMPREGO,
+                        QUEIMADURA_GRAVE,
+                        REGRESSO_ANTECIPADO_SANITARIO,
+                        RENDA_INCAPACIDADE_TEMPORARIA,
+                        RESCISAO_CONTRATUAL_CASO_MORTE_RCM,
+                        RESCISAO_TRABALHISTA,
+                        SERVICO_AUXILIO_FUNERAL,
+                        SOBREVIVENCIA,
+                        TRANSPLANTE_ORGAOS,
+                        TRANSLADO,
+                        TRANSLADO_MEDICO,
+                        TRANSLADO_CORPO,
+                        VERBA_RESCISORIA,
+                        OUTRAS]
                 coverageOthers:
                   type: array
                   items:
@@ -248,95 +318,99 @@ components:
                   $ref: '#/components/schemas/PersonCoverageAttributes'
                 contractType:
                   type: string
-                  description: Regime Financeiro
-                  enum: [REPARTICAO_SIMPLES, REPARTICAO_CAPITAIS, CAPITALIZACAO ]
-          assistanceType:
+                  description: Regime Financeiro  
+                  example: CAPITALIZACAO
+                  enum: [REPARTICAO_SIMPLES, REPARTICAO_CAPITAIS, CAPITALIZACAO ] 
+          assistanceType:        
             type: array
-            description: Listagem dos serviços de assistências complementares disponíveis vinculados ao produto. Deve ser padronizada na proposta técnica submetida pela Estrutura Inicial de  Governança para observância comum por todas as sociedades participantes
-            items:
+            description: Listagem dos serviços de assistências complementares disponíveis vinculados ao produto. Deve ser padronizada na proposta técnica submetida pela Estrutura Inicial de  Governança para observância comum por todas as sociedades participantes 
+            items:  
               type: string
+              example: ARQUITETO_VIRTUAL
               enum: [ACOMPANHANTE_CASO_HOSPITALIZACAO_PROLONGADA,
-                     ARQUITETO_VIRTUAL,
-                     ASSESSORIA_FINANCEIRA,
-                     AUTOMOVEL,
-                     AUXILIO_NATALIDADE,
-                     AVALIACAO_CLINICA_PREVENTIVA,
-                     BOLSA_PROTEGIDA,
-                     CESTA_BASICA,
-                     CHECKUP_ODONTOLOGICO,
-                     CLUBE_VANTAGENS_BENEFICIOS,
-                     CONVALESCENCIA,
-                     DECESSO,
-                     DESCONTO_FARMACIAS_MEDICAMENTOS,
-                     DESPESAS_FARMACEUTICAS_VIAGEM,
-                     DIGITAL,
-                     EDUCACIONAL,
-                     EMPRESARIAL,
-                     ENCANADOR,
-                     ENTRETENIMENTO,
-                     EQUIPAMENTOS_MEDICOS,
-                     FIANCAS_DESPESAS_LEGAIS,
-                     FISIOTERAPIA,
-                     FUNERAL,
-                     HELP_LINE,
-                     HOSPEDAGEM_ACOMPANHANTE,
-                     INTERRUPCAO_VIAGEM,
-                     INVENTARIO,
-                     MAIS_EM_VIDA,
-                     MAMAE_BEBE,
-                     MEDICA_ACIDENTE_DOENCA,
-                     MOTOCICLETA,
-                     MULHER,
-                     NUTRICIONISTA,
-                     ODONTOLOGICA,
-                     ORIENTACAO_FITNESS,
-                     ORIENTACAO_JURIDICA,
-                     ORIENTACAO_NUTRICIONAL,
-                     PERSONAL_FITNESS,
-                     ORIENTACAO_PSICOSSOCIAL_FAMILIAR,
-                     PERDA_ROUBO_CARTAO,
-                     PET,
-                     PRORROGACAO_ESTADIA,
-                     PROTECAO_DADOS,
-                     RECOLOCACAO_PROFISSIONAL,
-                     REDE_DESCONTO_NUTRICIONAL,
-                     RESIDENCIAL,
-                     RETORNO_MENORES_SEGURADO,
-                     SAQUE_COACAO,
-                     SAUDE_BEM_ESTAR,
-                     SEGUNDA_OPINIAO_MEDICA,
-                     SENIOR,
-                     SUSTENTAVEL_DESCARTE_ECOLOGICO,
-                     TELEMEDICINA,
-                     VIAGEM,
-                     VITIMA,
-                     OUTROS]
+                ARQUITETO_VIRTUAL,
+                ASSESSORIA_FINANCEIRA,
+                AUTOMOVEL,
+                AUXILIO_NATALIDADE,
+                AVALIACAO_CLINICA_PREVENTIVA,
+                BOLSA_PROTEGIDA,
+                CESTA_BASICA,
+                CHECKUP_ODONTOLOGICO,
+                CLUBE_VANTAGENS_BENEFICIOS,
+                CONVALESCENCIA,
+                DECESSO,
+                DESCONTO_FARMACIAS_MEDICAMENTOS,
+                DESPESAS_FARMACEUTICAS_VIAGEM,
+                DIGITAL,
+                EDUCACIONAL,
+                EMPRESARIAL,
+                ENCANADOR,
+                ENTRETENIMENTO,
+                EQUIPAMENTOS_MEDICOS,
+                FIANCAS_DESPESAS_LEGAIS,
+                FISIOTERAPIA,
+                FUNERAL,
+                HELP_LINE,
+                HOSPEDAGEM_ACOMPANHANTE,
+                INTERRUPCAO_VIAGEM,
+                INVENTARIO,
+                MAIS_EM_VIDA,
+                MAMAE_BEBE,
+                MEDICA_ACIDENTE_DOENCA,
+                MOTOCICLETA,
+                MULHER,
+                NUTRICIONISTA,
+                ODONTOLOGICA,
+                ORIENTACAO_FITNESS,
+                ORIENTACAO_JURIDICA,
+                ORIENTACAO_NUTRICIONAL,
+                PERSONAL_FITNESS,
+                ORIENTACAO_PSICOSSOCIAL_FAMILIAR,
+                PERDA_ROUBO_CARTAO,
+                PET,
+                PRORROGACAO_ESTADIA,
+                PROTECAO_DADOS,
+                RECOLOCACAO_PROFISSIONAL,
+                REDE_DESCONTO_NUTRICIONAL,
+                RESIDENCIAL,
+                RETORNO_MENORES_SEGURADO,
+                SAQUE_COACAO,
+                SAUDE_BEM_ESTAR,
+                SEGUNDA_OPINIAO_MEDICA,
+                SENIOR,
+                SUSTENTAVEL_DESCARTE_ECOLOGICO,
+                TELEMEDICINA,
+                VIAGEM,
+                VITIMA,
+                OUTROS]  
           assistanceTypeOthers:
             type: array
             items:
               type: string
-              description: Campo a ser preenchido pelas participantes quando houver ‘Outros’ no campo ‘Tipo de Assistência’
+              description: Campo a ser preenchido pelas participantes quando houver ‘Outros’ no campo ‘Tipo de Assistência’   
           additional:
+            description: Adicionais
             type: array
             items:
               type: string
-              enum: [SORTEIO, SERVICOS_ASSISTENCIAS_COMPLEMENTARES_PAGO, SERVICOS_ASSISTENCIA_COMPLEMENTARES_GRATUITO, OUTROS, NAO_HA]
+              example: SORTEIO
+              enum: [SORTEIO, SERVICOS_ASSISTENCIAS_COMPLEMENTARES_PAGO, SERVICOS_ASSISTENCIA_COMPLEMENTARES_GRATUITO, OUTROS, NAO_HA] 
           additionalOthers:
             description: Descrição adicional quando for informada a opção OUTROS.
             type: string
+            maxLength: 100
             example: OUTROS
           termsAndConditions:
             type: array
             items:
-              $ref: '#/components/schemas/PersonTermsAndCondition'
+              $ref: '#/components/schemas/PersonTermsAndCondition' 
           globalCapital:
             type: boolean
             description: Seguro de pessoas com capital global modalidade de contratação coletiva da cobertura de risco, respeitados os critérios técnico-operacionais, forma e limites fixados pela SUSEP, segundo a qual o valor do capital segurado referente a cada componente sofrerá variações decorrentes de mudanças na composição do grupo segurado
           validity:
-            type: array
-            items:
-              type: string
-              enum: [VITALICIA, TEMPORARIA_PRAZO_FIXO, TEMPORARIA_INTERMITENTE]
+            type: string
+            example: VITALICIA
+            enum: [VITALICIA, TEMPORARIA_PRAZO_FIXO, TEMPORARIA_INTERMITENTE]  
           pmbacRemuneration:
             $ref: '#/components/schemas/PersonPmbacRemuneration'
           benefitRecalculation:
@@ -346,6 +420,7 @@ components:
           otherGuaranteedValues:
             type: string
             description: Outros valores garantidos (Somente informado se Regime Financeiro for igual a Capitalizacao)
+            example: SALDAMENTO
             enum: [SALDAMENTO, BENEFICIO_PROLONGADO, NAO_SE_APLICA]
           allowPortability:
             type: boolean
@@ -356,14 +431,17 @@ components:
             $ref: '#/components/schemas/PersonPremiumPayment'
           minimumRequirements:
             $ref: '#/components/schemas/PersonMinimumRequirements'
+          premiumRates:
+            $ref: '#/components/schemas/structurePremiumRates'
           targetAudience:
             type: string
+            example: PESSOA_NATURAL
             enum: [PESSOA_NATURAL, PESSOA_JURIDICA]
 
-    PersonTermsAndCondition:
+    PersonTermsAndCondition:     
       type: object
       required:
-        - susepProcessNumber
+        - susepProcessNumber    
         - definition
       properties:
         susepProcessNumber:
@@ -375,81 +453,106 @@ components:
 
     PersonCoverageAttributesDetailsUnit:
       type: object
+      description: Descrição da unidade monetaria. Condicional ao valor 'MONETARIO' em unitType.
       required:
         - code
         - description
       properties:
-        code:
+        code: 
           type: string
-          description: Tipo unidade de medida.
+          enum: [د.إ ,Af,L,Դ,Kz,$,ƒ,ман,КМ,৳,лв,ب.د,₣,Bs.,R$,P,Br,¥,₡,Kč,kr,د.ج,£,Nfk,N/A,€,ლ,₵,D,Q,Kn,G,Ft,Rp,₪,₹,ع.د,﷼,Sh,៛,₩,د.ك,〒,₭,ل.ل,Rs,ل.د,د.م.,ден,K,₮,UM,₨,ރ.,MK,RM,MTn,
+            ₦,C$,ر.ع.,B/.,S/.,₱,zł,₲,ر.ق,din,р.,ر.س,Le,Db,ل.س,฿,ЅМ,m,د.ت,T$,₤,₴,Bs_F,₫,Vt,T,R,ZK ]
           example: R$
-        description:
+        description: 
           type: string
-          description: Descrição da unidade de medida
-          example: description
+          enum: [AFN,AFA,ALL,ALK,DZD,USD,EUR,ADP,ESP,FRF,AOA,AOK,AON,AOR,XCD,ARS,ARA,ARP,ARY,AMD,RUR,AWG,AUD,ATS,AZN,AYM,AZM,BSD,BHD,BDT,BBD,BYN,BYB,BYR,BEC,BEF,BEL,BZD,XOF,BMD,
+            INR,BTN,BOP,BOB,BOV,BAM,BAD,BWP,NOK,BRL,BRB,BRC,BRE,BRN,BRR,BND,BGN,BGJ,BGK,BGL,BUK,BIF,CVE,KHR,XAF,CAD,KYD,CLP,CLF,CNY,COP,COU,KMF,CDF,NZD,CRC,HRK,HRD,CUP,CUC,ANG,
+            CYP,CZK,CSJ,CSK,DKK,DJF,DOP,ECS,ECV,EGP,SVC,GQE,ERN,EEK,SZL,ETB,XEU,FKP,FJD,FIM,XPF,GMD,GEL,GEK,DDM,DEM,GHS,GHC,GHP,GIP,GRD,GTQ,GBP,GNF,GNE,GNS,GWE,GWP,GYD,HTG,ITL,
+            HNL,HKD,HUF,ISK,ISJ,IDR,XDR,IRR,IQD,IEP,ILS,ILP,ILR,JMD,JPY,JOD,KZT,KES,KPW,KRW,KWD,KGS,LAJ,LAK,LVL,LVR,LBP,LSL,ZAR,LSM,ZAL,LRD,LYD,CHF,LTL,LTT,LUC,LUF,LUL,MOP,MGA,
+            MGF,MWK,MYR,MVR,MVQ,MLF,MTL,MTP,MRU,MRO,MUR,XUA,MXN,MXV,MXP,MDL,MNT,MAD,MZN,MZE,MZM,MMK,NAD,NPR,NLG,NIO,NIC,NGN,MKD,OMR,PKR,PAB,PGK,PYG,PEN,PEH,PEI,PES,PHP,PLN,PLZ,
+            PTE,QAR,RON,ROK,ROL,RUB,RWF,SHP,WST,STN,STD,SAR,RSD,CSD,SCR,SLL,SGD,XSU,SKK,SIT,SBD,SOS,SSP,SDG,RHD,ESA,ESB,LKR,SDD,SDP,SRD,SRG,SEK,CHE,CHW,CHC,SYP,TWD,TJS,TJR,TZS,
+            THB,TPE,TOP,TTD,TND,TRY,TRL,TMT,TMM,UGX,UGS,UGW,UAH,UAK,SUR,AED,USS,USN,UYU,UYI,UYW,UYN,UYP,UZS,VUV,VEB,VEF,VES,VND,VNC,YER,YDD,YUD,YUM,YUN,ZRN,ZRZ,ZMW,ZMK,ZWL,ZWC,
+            ZWD,ZWN,ZWR,XBA,XFO,XBB,XRE,XBC,XBD,XFU,XTS,XXX,XAU,XPD,XPT,XAG]
+          example: BRL
 
     PersonCoverageAttributesDetails:
       type: object
       required:
         - amount
-        - unit
+        - unitType
       properties:
         amount:
-          type: number
-          description: Valor.
-          example: 60
+          type: string
+          description: |
+              Valor.
+              Exemplos de preenchimento do campo:
+
+              PORCENTAGEM: 90.85
+                                
+              MONETARIO: 62500.67
+
+              OUTROS: 1000 (Exemplo de outro tipo: horas)
+          pattern: ^(^(100\.\00|\d{1,2}\.\d{2})$|^(\d{1,6})$|^(\d{1,15}\.\d{2})$)$
+        unitType:
+          type: string
+          description: Tipo da unidade
+          enum: [MONETARIO, PORCENTAGEM, OUTROS]
+        unitTypeOthers:
+          type: string
+          maxLength: 100
+          description: Campo para informar o tipo da Unidade, condicional ao valor 'OUTROS' em unitType
         unit:
           $ref: '#/components/schemas/PersonCoverageAttributesDetailsUnit'
 
     PersonGracePeriodUnit:
-      type: object
-      description: Período de carência
-      required:
-        - amount
-        - unit
-      properties:
-        details:
-          type: string
-          maxLength: 500
-          example: Descrições adicionais do período de carência
-        amount:
-          type: number
-          description: Prazo de Carência
-          example: 60
-        unit:
-          type: string
-          description: Unidade do prazo (dias ou meses).
-          example: DIAS
-          enum: [DIAS, MESES, NAO_SE_APLICA]
+        type: object
+        description: Período de carência
+        required:
+          - amount
+          - unit
+        properties:
+          details:
+            type: string
+            maxLength: 500
+            example: Descrições adicionais do período de carência
+          amount:
+            type: integer
+            description: Prazo de Carência
+            example: 60
+          unit:
+            type: string
+            description: Unidade do prazo (dias ou meses).
+            example: DIAS
+            enum: [DIAS, MESES, NAO_SE_APLICA]
 
     PersonGracePeriodPortabilityUnit:
-      type: object
-      description: Periodo de carencia (Somente informado se Regime Financeiro for igual a Capitalizacao)
-      required:
-        - amount
-        - unit
-      properties:
-        amount:
-          type: number
-          description: Prazo de carência. Prazo (de acordo com o dado “Portabilidade – Critério de prazo de carência”)
-          example: 60
-        unit:
-          type: string
-          description: Critério de Prazo de Carência. Informar a unidade de medida de tempo para fixação do prazo de carência
-          example: DIAS
-          enum: [DIAS, MESES]
+        type: object
+        description: Periodo de carencia (Somente informado se Regime Financeiro for igual a Capitalizacao)
+        required:
+          - amount
+          - unit
+        properties:
+          amount:
+            type: integer
+            description: Prazo de carência. Prazo (de acordo com o dado “Portabilidade – Critério de prazo de carência”)
+            example: 60
+          unit:
+            type: string
+            description: Critério de Prazo de Carência. Informar a unidade de medida de tempo para fixação do prazo de carência
+            example: DIAS
+            enum: [DIAS, MESES]
 
     PersonCoverageAttributes:
       type: object
       required:
-        - indemnityPaymentMethod
+        - indemnityPaymentMethod    
         - indemnityPaymentFrequency
         - minValue
         - maxValue
         - currency
-        - gracePeriod
-        - deductibleDays
-        - deductibleBRL
+        - gracePeriod  
+        - deductibleDays 
+        - deductibleBRL    
         - excludedRisks
         - excludedRisksURL
         - allowApartPurchase
@@ -457,36 +560,36 @@ components:
         - ageAdjustment
       properties:
         indemnityPaymentMethod:
-          type: array
-          description: Listagem da forma de pagamento da indenização para cada combinação de  modalidade/cobertura do produto
-          items:
+           type: array
+           description: Listagem da forma de pagamento da indenização para cada combinação de  modalidade/cobertura do produto
+           items:  
             type: string
             example: PAGAMENTO_CAPITAL_SEGURADO_VALOR_MONETARIO
             enum: [PAGAMENTO_CAPITAL_SEGURADO_VALOR_MONETARIO, REEMBOLSO_DESPESAS, PRESTACAO_SERVICOS]
         indemnityPaymentFrequency:
           type: array
-          description: Listagem de tipos de frequência de pagamento de indenização para cada combinação de modalidade/cobertura do produto
+          description: Listagem de tipos de frequência de pagamento de indenização para cada combinação de modalidade/cobertura do produto 
           items:
-            type: string
-            example: INDENIZACAO_UNICA
-            enum: [INDENIZACAO_UNICA, DIARIA_OU_PARCELA]
+           type: string
+           example: DIARIA
+           enum: [PAGAMENTO_UNICO_OU_RENDA, DIARIA, PARCELA]
         minValue:
           type: array
           description: Listagem do valor mínimo de cobertura (Capital Segurado), diária ou parcela aceito pela  sociedade para cada  combinação de modalidade/cobertura do produto. Em reais
           items:
-            $ref: '#/components/schemas/PersonCoverageAttributesDetails'
+           $ref: '#/components/schemas/PersonCoverageAttributesDetails'
         maxValue:
           type: array
           description: Listagem do valor máximo de cobertura (Capital Segurado), diária ou parcela aceito  pela sociedade para cada  combinação de modalidade/cobertura do produto. Em reais
           items:
-            $ref: '#/components/schemas/PersonCoverageAttributesDetails'
+           $ref: '#/components/schemas/PersonCoverageAttributesDetails'
         indemnifiablePeriod:
           type: array
           description: Listagem de período indenizável para cada combinação de modalidade/cobertura do produto. Deve ser preenchido somente se a frequência do pagamento de indenização for igual a DIARIA_OU_PARCELA
           items:
-            type: string
-            example: ATE_FIM_CICLO_DETERMINADO
-            enum: [QUANTIDADE_DETERMINADA_DE_PARCELAS, ATE_FIM_CICLO_DETERMINADO]
+           type: string
+           example: ATE_FIM_CICLO_DETERMINADO
+           enum: [QUANTIDADE_DETERMINADA_DE_PARCELAS, ATE_FIM_CICLO_DETERMINADO]
         maximumQtyIndemnifiableInstallments:
           type: integer
           description: Caso o período indenizável seja relacionado a parcelas, listagem de número máximo de  parcelas indenizáveis para cada combinação de modalidade/ cobertura do produto
@@ -505,53 +608,59 @@ components:
           maxLength: 500
         deductibleDays:
           type: integer
-          description: Listagem de franquia em dias para cada combinação de modalidade/cobertura do produto.
+          description: Listagem de franquia em dias para cada combinação de modalidade/cobertura do produto.         
         differentiatedDeductibleDays:
-          type: number
+          type: string
+          example: '10'
           description: Detalhamento da franquia em dias diferentes para cada cobertura que exista alguma especificidade. Caso a seguradora não tenha essa diferenciação, não retornará nada no campo.
         deductibleBRL:
-          type: number
+          type: string
+          example: '58.81'
           description: Listagem de franquia em reais para cada combinação de modalidade/cobertura do produto.
         differentiatedDeductibleBRL:
           type: string
+          example: '58.80'
           description: Detalhamento da franquia em reais diferentes para cada cobertura que exista alguma especificidade. Caso a seguradora não tenha essa diferenciação, não retornará nada no campo.
         excludedRisks:
           type: array
           description: Listagem dos tipos de riscos excluídos para cada combinação de modalidade/cobertura do produto. Deve ser padronizada na proposta técnica submetida pela Estrutura Inicial de Governança para observância comum por todas as sociedades participantes
           items:
-            type: string
-            enum: [ATO_RECONHECIMENTO_PERIGOSO, ATO_ILICITO_DOLOSO_PRATICADO_SEGURADO, OPERACOES_DE_GUERRA, FURACOES_CICLONES_TERREMOTOS, MATERIAL_NUCLEAR, DOENCAS_LESOES_PREEXISTENTES, EPIDEMIAS_PANDEMIAS, SUICIDIO, ATO_ILICITO_DOLOSO_PRATICADO_CONTROLADOR, OUTROS]
+           type: string
+           example: ATO_RECONHECIMENTO_PERIGOSO
+           enum: [ATO_RECONHECIMENTO_PERIGOSO, ATO_ILICITO_DOLOSO_PRATICADO_SEGURADO, OPERACOES_DE_GUERRA, FURACOES_CICLONES_TERREMOTOS, MATERIAL_NUCLEAR, DOENCAS_LESOES_PREEXISTENTES, EPIDEMIAS_PANDEMIAS, SUICIDIO, ATO_ILICITO_DOLOSO_PRATICADO_CONTROLADOR, OUTROS]
         excludedRisksURL:
           type: string
-          description: Campo aberto (possibilidade de incluir URL).
+          description: Campo aberto (possibilidade de incluir URL).        
         allowApartPurchase:
           type: boolean
           description: Indicar se a cobertura pode ser contratada isoladamente ou não.
           example: true
         indemnityPaymentMode:
           type: array
-          items:
+          items:  
             type: string
             description: Modalidade de pagamento da indenização
-            enum: [UNICO, SOB_FORMA_DE_RENDA]
+            example: SOB_FORMA_DE_RENDA
+            enum: [UNICO, SOB_FORMA_DE_RENDA]  
         indemnityPaymentIncome:
           type: array
           description: Tipo de Renda (caso modalidade de pagamento de indenização seja sob a forma de renda)
           items:
             type: string
+            example: CERTA
             enum: [CERTA,
-                   TEMPORARIA,
-                   TEMPORARIA_REVERSIVEL,
-                   TEMPORARIO_MINIMO_GARANTIDO,
-                   TEMPORARIA_REVERSIVEL_MINIMO_GARANTIDO,
-                   VITALICIA,
-                   VITALICIA_REVERSIVEL,
-                   VITALICIA_MINIMO_GARANTIDO,
-                   VITALICIA_REVERSIVEL_MINIMO_GARANTIDO
-            ]
+              TEMPORARIA,
+              TEMPORARIA_REVERSIVEL,
+              TEMPORARIO_MINIMO_GARANTIDO,
+              TEMPORARIA_REVERSIVEL_MINIMO_GARANTIDO,
+              VITALICIA,
+              VITALICIA_REVERSIVEL,
+              VITALICIA_MINIMO_GARANTIDO,
+              VITALICIA_REVERSIVEL_MINIMO_GARANTIDO
+              ]
         ageAdjustment:
           $ref: '#/components/schemas/PersonAgeAdjustment'
-
+  
     PersonPmbacRemuneration:
       type: object
       description: Somente informado se Regime Financeiro for igual a Capitalizacao
@@ -560,7 +669,7 @@ components:
         - pmbacUpdateIndex
       properties:
         interestRate:
-          type: number
+          type: string
           description: Taxa de juros para capitalização da PMBaC.
         pmbacUpdateIndex:
           type: string
@@ -570,7 +679,7 @@ components:
         pmbacIndexOthers:
           type: string
           description: Campo de livre preenchimento para quando a opção escolhida para o índice utilizado na atualização da PMBaC (campo anterior) for OUTROS.
-          maxLength: 100
+          maxLength: 100          
 
     PersonBenefitRecalculation:
       type: object
@@ -578,12 +687,13 @@ components:
         - benefitRecalculationCriteria
       properties:
         benefitRecalculationCriteria:
+          description: Critério utilizado na atualização do prêmio/contribuição e do capital segurado.
           type: string
           example: INDICE
           enum: [INDICE, VINCULADO_SALDO_DEVEDOR, VARIAVEL_ACORDO_CRITERIO_ESPECIFICO]
         benefitUpdateIndex:
           type: string
-          description: Índice utilizado na atualização do prêmio/contribuição e do capital segurado/ benefício,  caso critério de atualização por meio de índice
+          description: Índice utilizado na atualização do prêmio/contribuição e do capital segurado/ benefício,  caso critério de atualização por meio de índice  
           example: IPC-FGV
           enum: [IPC-FGV, IGP-DI-FGV, IPCA-IBGE, IGPM-FGV, INPC-IBGE, TR, OUTROS]
         benefitIndexOthers:
@@ -593,6 +703,7 @@ components:
 
     PersonAgeAdjustment:
       type: object
+      description: Reenquadramento etário
       required:
         - criterion
       properties:
@@ -622,8 +733,10 @@ components:
           description: Mês final do range
           example: 12
         percentage:
-          type: number
+          type: string
           description: Percentual da faixa de resgate
+          example: '10.45'
+          pattern: '^100\.0{1,9}$|^\d{1,2}\.\d{1,9}$'
 
     PersonReclaim:
       type: object
@@ -633,17 +746,18 @@ components:
         - gracePeriod
       properties:
         reclaimTable:
-          type: array
-          description: Listagem de percentuais de resgate da PMBaC para cada conjunto de prazo aplicável e para cada combinação de modalidade/cobertura estruturados em regime de capitalização
-          items:
-            $ref: '#/components/schemas/personReclaimTable'
+         type: array
+         description: Listagem de percentuais de resgate da PMBaC para cada conjunto de prazo aplicável e para cada combinação de modalidade/cobertura estruturados em regime de capitalização
+         items:
+          $ref: '#/components/schemas/personReclaimTable'
         differentiatedPercentage:
           type: string
-          description: Campo aberto (possibilidade de incluir URL).
+          description: Campo aberto para descrição (possibilidade de URL), caso o percentual de resgate não siga o padrão apenas no que se refere ao critério temporal padronizado no campo “Resgate-Percentual”."
         gracePeriod:
           $ref: '#/components/schemas/PersonGracePeriodUnit'
 
     PersonPremiumPayment:
+      description: Pagamento do prêmio
       type: object
       required:
         - paymentMethod
@@ -653,7 +767,7 @@ components:
           type: array
           items:
             type: string
-            description: Meio(s) de pagamento do Prêmio disponíveis
+            description: Meio(s) de pagamento do Prêmio disponíveis 
             example: CARTAO_CREDITO
             enum: [CARTAO_CREDITO, DEBITO_CONTA, DEBITO_CONTA_POUPANCA, BOLETO_BANCARIO, PIX, CARTAO_DEBITO, REGRA_PARCEIRO, CONSIGNACAO_FOLHA_PAGAMENTO, PONTOS_PROGRAMAS_BENEFICIO, TED_DOC, OUTROS]
         paymentDetail:
@@ -665,27 +779,26 @@ components:
           type: array
           items:
             type: string
-            description: Periodicidade de pagamento do prêmio
+            description: Periodicidade de pagamento do prêmio 
             example: DIARIA
             enum: [DIARIA  , MENSAL , UNICA, ANUAL, TRIMESTRAL , SEMESTRAL , FRACIONADO, OUTRA]
-        premiumTax:
-          type: string
-          description: Distribuição de frequência relativa aos valores referentes às taxas cobradas.
-
+          
     PersonMinimumRequirements:
+      description: Requisitos mínimos para contratação
       type: object
       required:
-        - contractingType
-        - contractingMinRequirement
+          - contractingType
+          - contractingMinRequirement
       properties:
         contractingType:
-          type: string
-          enum: [COLETIVO, INDIVIDUAL]
+            type: string
+            example: COLETIVO
+            enum: [COLETIVO, INDIVIDUAL]
         contractingMinRequirement:
           type: string
           description: Requisitos mínimos para contratação
 
-    Links:
+    Links: 
       type: object
       properties:
         self:
@@ -765,13 +878,13 @@ components:
                 description: 'Data e hora da consulta, conforme especificação RFC-3339, formato UTC.'
                 type: string
                 pattern: '[\w\W\s]*'
-                maxLength: 2048
+                maxLength: 2048  
                 format: date-time
                 example: '2021-08-20T08:30:00Z'
             additionalProperties: false
         meta:
           $ref: '#/components/schemas/Meta'
-      additionalProperties: false
+      additionalProperties: false    
 
   parameters:
     page:
@@ -802,7 +915,7 @@ components:
       in: header
       description: Controle de cache para evitar que informações confidenciais sejam armazenadas em cache.
       required: true
-      schema:
+      schema: 
         type: string
         pattern: '[\w\W\s]*'
     content-Security-Policy:
@@ -865,7 +978,7 @@ components:
       schema:
         type: string
       example: '2.0.0'
-
+  
   responses:
     UnprocessableEntity:
       description: 'O servidor entende o tipo de conteúdo da entidade da requisição, e a sintaxe da requisição esta correta, mas não foi possível processar as instruções presente.'
