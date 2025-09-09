@@ -1,35 +1,53 @@
 openapi: 3.0.0
 info:
-  version: 1.0.4
+  version: 1.0.5
   title: API de ingestão do funil de consentimentos
-  description: |
+  description: >
     API que recebe os eventos do funil de consentimentos.
 
+
     A API de eventos fornece operações que permitem a inclusão dos
+
     eventos do funil de consentimento na plataforma de Coleta de Métricas.
 
+
     A inclusão de eventos pode ser feita de maneira individual ou em
+
     lote.
 
+
     Os dados que são inseridos na API de eventos são sempre
+
     processados de maneira assíncrona, e sua persistência se utiliza
+
     de consistência posterior (eventual consistency), portanto, um
+
     registro tem um tempo de processamento em que ele não estará
+
     disponível para consulta até que ele seja persistido.
+
 
     ## Segurança
 
-    A autenticação das requisições se dará com base na assinatura do body das requisições.
+
+    A autenticação das requisições se dará com base na assinatura do body das
+    requisições.
+
 
     Requisitos:
 
       * Organização devidamente registrada no diretório
       * Certificado de assinatura devidamente cadastrado no diretório a nivel de organização
 
-    A validação da autenticidade será baseada no certificado de assinatura do body que
+    A validação da autenticidade será baseada no certificado de assinatura do
+    body que
+
     será validado no keystore do diretório.
 
-    Todas as requisições deveram ser enviadas com o Content-Type: application/jwt.<br />
+
+    Todas as requisições deveram ser enviadas com o Content-Type:
+    application/jwt.<br />
+
     Para assinar uma requisição a organização deverá:
       1) Identifique a chave privada e o certificado de assinatura correspondente a serem usados para assinar o payload
       2) Geração do JOSE Header
@@ -49,18 +67,20 @@ info:
 
           **JWS = Base64url(JOSEHeader) + "." + Base64url(payload JWT) + "." + Base64url(digital signature)**
 
-    A assinatura do body deve seguir o padrão JWS definido na [RFC7515](https://datatracker.ietf.org/doc/html/rfc7515).
-
+    A assinatura do body deve seguir o padrão JWS definido na
+    [RFC7515](https://datatracker.ietf.org/doc/html/rfc7515).
 servers:
-  - url: 'https://ingestion-api.opinbrasil.com.br'
+  - url: https://ingestion-api.opinbrasil.com.br
     description: Servidor de Producao
-  - url: 'https://ingestion-api-sandbox.opinbrasil.com.br'
+  - url: https://ingestion-api-sandbox.opinbrasil.com.br
     description: Servidor de Homologacao
 paths:
   /event-api/v1/server-event:
     post:
       summary: Inclusão unitária de evento pelo servidor
-      description: Inclusão de evento individual na plataforma por um participante no papel de transmissor.
+      description: >-
+        Inclusão de evento individual na plataforma por um participante no papel
+        de transmissor.
       operationId: eventServerEvent
       requestBody:
         content:
@@ -83,12 +103,22 @@ paths:
   /event-api/v1/server-batch:
     post:
       summary: Inclusão em massa de evento pelo transmissor
-      description: |
-        Inclusão de eventos em massa na plataforma. Ao enviar um lote de eventos,
-        a plataforma vai fazer o processo de validação de cada evento de maneira síncrona
-        e devolver o resultado dessa validação na resposta, sendo que o status HTTP de
-        retorno vai refletir esse resultado (vide documentação de cada status de retorno).
-        No entanto, o processamento de cada evento ocorrerá de maneira assíncrona.
+      description: >
+        Inclusão de eventos em massa na plataforma. Ao enviar um lote de
+        eventos,
+
+        a plataforma vai fazer o processo de validação de cada evento de maneira
+        síncrona
+
+        e devolver o resultado dessa validação na resposta, sendo que o status
+        HTTP de
+
+        retorno vai refletir esse resultado (vide documentação de cada status de
+        retorno).
+
+        No entanto, o processamento de cada evento ocorrerá de maneira
+        assíncrona.
+
 
         O limite de registros de cada lote é 5.000 registros.
       operationId: eventServerBatch
@@ -117,7 +147,9 @@ paths:
   /event-api/v1/client-event:
     post:
       summary: Inclusão unitária de evento pelo cliente
-      description: Inclusão de evento individual na plataforma por um participante no papel de receptor.
+      description: >-
+        Inclusão de evento individual na plataforma por um participante no papel
+        de receptor.
       operationId: eventClientEvent
       requestBody:
         content:
@@ -140,12 +172,21 @@ paths:
   /event-api/v1/client-batch:
     post:
       summary: Inclusão em massa de eventos pelo lado do cliente.
-      description: |
-        Inclusão de eventos em massa na plataforma. Ao enviar um lote de eventos, a plataforma
-        vai fazer o processo de validação de cada evento de maneira síncrona e devolver o resultado
-        dessa validação na resposta, sendo que o status HTTP de retorno vai refletir esse resultado
-        (vide documentação de cada status de retorno). No entanto, o processamento de cada evento
+      description: >
+        Inclusão de eventos em massa na plataforma. Ao enviar um lote de
+        eventos, a plataforma
+
+        vai fazer o processo de validação de cada evento de maneira síncrona e
+        devolver o resultado
+
+        dessa validação na resposta, sendo que o status HTTP de retorno vai
+        refletir esse resultado
+
+        (vide documentação de cada status de retorno). No entanto, o
+        processamento de cada evento
+
         ocorrerá de maneira assíncrona.
+
 
         O limite de registros de cada lote é de 5.000 registros.
       operationId: eventClientBatch
@@ -154,6 +195,280 @@ paths:
           application/jwt:
             schema:
               $ref: '#/components/schemas/batchBody'
+      responses:
+        '200':
+          $ref: '#/components/responses/eventBatchResponse200'
+        '207':
+          $ref: '#/components/responses/eventBatchResponse207'
+        '400':
+          $ref: '#/components/responses/eventBatchResponse400'
+        '401':
+          $ref: '#/components/responses/eventBatchResponse401'
+        '406':
+          $ref: '#/components/responses/eventBatchResponse406'
+        '413':
+          $ref: '#/components/responses/eventBatchResponse413'
+        '415':
+          $ref: '#/components/responses/eventBatchResponse415'
+        '500':
+          $ref: '#/components/responses/eventBatchResponse500'
+  /event-api/v2/server-event:
+    post:
+      summary: Inclusão unitária de evento pelo servidor
+      description: >-
+        Inclusão de evento individual na plataforma por um participante no papel
+        de transmissor.
+      operationId: eventServerEventV2
+      requestBody:
+        content:
+          application/jwt:
+            schema:
+              $ref: '#/components/schemas/eventBodyV2'
+      responses:
+        '200':
+          $ref: '#/components/responses/eventEventResponse200'
+        '400':
+          $ref: '#/components/responses/eventEventResponse400'
+        '401':
+          $ref: '#/components/responses/eventEventResponse401'
+        '406':
+          $ref: '#/components/responses/eventEventResponse406'
+        '415':
+          $ref: '#/components/responses/eventEventResponse415'
+        '500':
+          $ref: '#/components/responses/eventEventResponse500'
+  /event-api/v2/server-batch:
+    post:
+      summary: Inclusão em massa de evento pelo transmissor
+      description: >
+        Inclusão de eventos em massa na plataforma. Ao enviar um lote de
+        eventos,
+
+        a plataforma vai fazer o processo de validação de cada evento de maneira
+        síncrona
+
+        e devolver o resultado dessa validação na resposta, sendo que o status
+        HTTP de
+
+        retorno vai refletir esse resultado (vide documentação de cada status de
+        retorno).
+
+        No entanto, o processamento de cada evento ocorrerá de maneira
+        assíncrona.
+
+
+        O limite de registros de cada lote é 5.000 registros.
+      operationId: eventServerBatchV2
+      requestBody:
+        content:
+          application/jwt:
+            schema:
+              $ref: '#/components/schemas/batchBodyV2'
+      responses:
+        '200':
+          $ref: '#/components/responses/eventBatchResponse200'
+        '207':
+          $ref: '#/components/responses/eventBatchResponse207'
+        '400':
+          $ref: '#/components/responses/eventBatchResponse400'
+        '401':
+          $ref: '#/components/responses/eventBatchResponse401'
+        '406':
+          $ref: '#/components/responses/eventBatchResponse406'
+        '413':
+          $ref: '#/components/responses/eventBatchResponse413'
+        '415':
+          $ref: '#/components/responses/eventBatchResponse415'
+        '500':
+          $ref: '#/components/responses/eventBatchResponse500'
+  /event-api/v2/client-event:
+    post:
+      summary: Inclusão unitária de evento pelo cliente
+      description: >-
+        Inclusão de evento individual na plataforma por um participante no papel
+        de receptor.
+      operationId: eventClientEventV2
+      requestBody:
+        content:
+          application/jwt:
+            schema:
+              $ref: '#/components/schemas/eventBodyV2'
+      responses:
+        '200':
+          $ref: '#/components/responses/eventEventResponse200'
+        '400':
+          $ref: '#/components/responses/eventEventResponse400'
+        '401':
+          $ref: '#/components/responses/eventEventResponse401'
+        '406':
+          $ref: '#/components/responses/eventEventResponse406'
+        '415':
+          $ref: '#/components/responses/eventEventResponse415'
+        '500':
+          $ref: '#/components/responses/eventEventResponse500'
+  /event-api/v2/client-batch:
+    post:
+      summary: Inclusão em massa de eventos pelo lado do cliente.
+      description: >
+        Inclusão de eventos em massa na plataforma. Ao enviar um lote de
+        eventos, a plataforma
+
+        vai fazer o processo de validação de cada evento de maneira síncrona e
+        devolver o resultado
+
+        dessa validação na resposta, sendo que o status HTTP de retorno vai
+        refletir esse resultado
+
+        (vide documentação de cada status de retorno). No entanto, o
+        processamento de cada evento
+
+        ocorrerá de maneira assíncrona.
+
+
+        O limite de registros de cada lote é de 5.000 registros.
+      operationId: eventClientBatchV2
+      requestBody:
+        content:
+          application/jwt:
+            schema:
+              $ref: '#/components/schemas/batchBodyV2'
+      responses:
+        '200':
+          $ref: '#/components/responses/eventBatchResponse200'
+        '207':
+          $ref: '#/components/responses/eventBatchResponse207'
+        '400':
+          $ref: '#/components/responses/eventBatchResponse400'
+        '401':
+          $ref: '#/components/responses/eventBatchResponse401'
+        '406':
+          $ref: '#/components/responses/eventBatchResponse406'
+        '413':
+          $ref: '#/components/responses/eventBatchResponse413'
+        '415':
+          $ref: '#/components/responses/eventBatchResponse415'
+        '500':
+          $ref: '#/components/responses/eventBatchResponse500'
+  /event-api/v1/cotacao-contratacao/server-event:
+    post:
+      summary: Inclusão unitária de evento pelo servidor
+      description: >-
+        Inclusão de evento individual na plataforma por um participante no papel
+        de transmissor.
+      operationId: eventServerEventCotacaoContratacao
+      requestBody:
+        content:
+          application/jwt:
+            schema:
+              $ref: '#/components/schemas/eventBodyCotacaoContratacao'
+      responses:
+        '200':
+          $ref: '#/components/responses/eventEventResponse200'
+        '400':
+          $ref: '#/components/responses/eventEventResponse400'
+        '401':
+          $ref: '#/components/responses/eventEventResponse401'
+        '406':
+          $ref: '#/components/responses/eventEventResponse406'
+        '415':
+          $ref: '#/components/responses/eventEventResponse415'
+        '500':
+          $ref: '#/components/responses/eventEventResponse500'
+  /event-api/v1/cotacao-contratacao/server-batch:
+    post:
+      summary: Inclusão em massa de evento pelo transmissor
+      description: >
+        Inclusão de eventos em massa na plataforma. Ao enviar um lote de
+        eventos,
+
+        a plataforma vai fazer o processo de validação de cada evento de maneira
+        síncrona
+
+        e devolver o resultado dessa validação na resposta, sendo que o status
+        HTTP de
+
+        retorno vai refletir esse resultado (vide documentação de cada status de
+        retorno).
+
+        No entanto, o processamento de cada evento ocorrerá de maneira
+        assíncrona.
+
+
+        O limite de registros de cada lote é 5.000 registros.
+      operationId: batchBodyCotacaoContratacao
+      requestBody:
+        content:
+          application/jwt:
+            schema:
+              $ref: '#/components/schemas/batchBodyCotacaoContratacao'
+      responses:
+        '200':
+          $ref: '#/components/responses/eventBatchResponse200'
+        '207':
+          $ref: '#/components/responses/eventBatchResponse207'
+        '400':
+          $ref: '#/components/responses/eventBatchResponse400'
+        '401':
+          $ref: '#/components/responses/eventBatchResponse401'
+        '406':
+          $ref: '#/components/responses/eventBatchResponse406'
+        '413':
+          $ref: '#/components/responses/eventBatchResponse413'
+        '415':
+          $ref: '#/components/responses/eventBatchResponse415'
+        '500':
+          $ref: '#/components/responses/eventBatchResponse500'
+  /event-api/v1/cotacao-contratacao/client-event:
+    post:
+      summary: Inclusão unitária de evento pelo cliente
+      description: >-
+        Inclusão de evento individual na plataforma por um participante no papel
+        de receptor.
+      operationId: eventClientEventCotacaoContratacao
+      requestBody:
+        content:
+          application/jwt:
+            schema:
+              $ref: '#/components/schemas/eventBodyCotacaoContratacao'
+      responses:
+        '200':
+          $ref: '#/components/responses/eventEventResponse200'
+        '400':
+          $ref: '#/components/responses/eventEventResponse400'
+        '401':
+          $ref: '#/components/responses/eventEventResponse401'
+        '406':
+          $ref: '#/components/responses/eventEventResponse406'
+        '415':
+          $ref: '#/components/responses/eventEventResponse415'
+        '500':
+          $ref: '#/components/responses/eventEventResponse500'
+  /event-api/v1/cotacao-contratacao/client-batch:
+    post:
+      summary: Inclusão em massa de eventos pelo lado do cliente.
+      description: >
+        Inclusão de eventos em massa na plataforma. Ao enviar um lote de
+        eventos, a plataforma
+
+        vai fazer o processo de validação de cada evento de maneira síncrona e
+        devolver o resultado
+
+        dessa validação na resposta, sendo que o status HTTP de retorno vai
+        refletir esse resultado
+
+        (vide documentação de cada status de retorno). No entanto, o
+        processamento de cada evento
+
+        ocorrerá de maneira assíncrona.
+
+
+        O limite de registros de cada lote é de 5.000 registros.
+      operationId: eventClientBatchyCotacaoContratacao
+      requestBody:
+        content:
+          application/jwt:
+            schema:
+              $ref: '#/components/schemas/batchBodyCotacaoContratacao'
       responses:
         '200':
           $ref: '#/components/responses/eventBatchResponse200'
@@ -180,14 +495,14 @@ components:
       required: true
       schema:
         type: string
-      example: 'Bearer 9fu19ef0i12je0ifj12102ijf0i2je'
+      example: Bearer 9fu19ef0i12je0ifj12102ijf0i2je
   schemas:
     success:
       type: object
       properties:
-        eventId:
+        reportId:
           type: string
-          example: '7eb81ba1-9011-4c58-9d5b-1098550d2fca'
+          example: 7eb81ba1-9011-4c58-9d5b-1098550d2fca
         correlationId:
           type: string
           example: FWUCp4yOA1b87LUJpgn1Mf52wi9KEF11
@@ -195,7 +510,7 @@ components:
           type: string
           example: ACCEPTED
       required:
-        - eventId
+        - reportId
         - correlationId
         - status
       additionalProperties: false
@@ -210,7 +525,7 @@ components:
           example: DISCARDED
         message:
           type: string
-          example: 'Missing fields: fapiInteractionId, endpoint'
+          example: 'Missing fields: correlationId, timestamp.'
       required:
         - status
         - message
@@ -220,7 +535,7 @@ components:
       properties:
         message:
           type: string
-          example: 'Unauthorized'
+          example: Unauthorized
       required:
         - message
       additionalProperties: false
@@ -229,7 +544,7 @@ components:
       properties:
         message:
           type: string
-          example: 'Not Found'
+          example: Not Found
       required:
         - message
       additionalProperties: false
@@ -238,7 +553,7 @@ components:
       properties:
         message:
           type: string
-          example: 'Content-Type not accepted'
+          example: Content-Type not accepted
       required:
         - message
       additionalProperties: false
@@ -247,7 +562,7 @@ components:
       properties:
         message:
           type: string
-          example: 'Record limit exceeded'
+          example: Record limit exceeded
       required:
         - message
       additionalProperties: false
@@ -256,7 +571,7 @@ components:
       properties:
         message:
           type: string
-          example: 'Unsupported media type'
+          example: Unsupported media type
       required:
         - message
       additionalProperties: false
@@ -265,7 +580,7 @@ components:
       properties:
         message:
           type: string
-          example: 'Internal Server Error'
+          example: Internal Server Error
       required:
         - message
       additionalProperties: false
@@ -274,31 +589,45 @@ components:
       properties:
         organisationId:
           type: string
-          example: 'c1ddd896-1145-4177-9b58-8a6e310557e2'
+          example: c1ddd896-1145-4177-9b58-8a6e310557e2
         events:
           type: array
           items:
-            '$ref': '#/components/schemas/eventBody'
+            $ref: '#/components/schemas/eventBody'
       required:
-        - 'organisationId'
-        - 'events'
+        - organisationId
+        - events
     eventBody:
       type: object
       properties:
         consentId:
           type: string
-          pattern: '^urn:[a-zA-Z0-9][a-zA-Z0-9-]{0,31}:[a-zA-Z0-9()+,\-.:=@;$_!*''%\/?#]+$'
+          pattern: >-
+            ^urn:[a-zA-Z0-9][a-zA-Z0-9-]{0,31}:[a-zA-Z0-9()+,\-.:=@;$_!*'%\/?#]+$
           maxLength: 256
-          example: 'urn:bancoex:C1DD33123'
-          description: |-
-            O consentId é o identificador único do consentimento e deverá ser um URN - Uniform Resource Name.
-            Um URN, conforme definido na RFC8141 é um Uniform Resource Identifier - URI - que é atribuído sob o URI scheme "urn" e um namespace URN específico, com a intenção de que o URN seja um identificador de recurso persistente e independente da localização.
-            Considerando a string urn:bancoex:C1DD33123 como exemplo para consentId temos:
+          example: urn:bancoex:C1DD33123
+          description: >-
+            O consentId é o identificador único do consentimento e deverá ser um
+            URN - Uniform Resource Name.
+
+            Um URN, conforme definido na RFC8141 é um Uniform Resource
+            Identifier - URI - que é atribuído sob o URI scheme "urn" e um
+            namespace URN específico, com a intenção de que o URN seja um
+            identificador de recurso persistente e independente da localização.
+
+            Considerando a string urn:bancoex:C1DD33123 como exemplo para
+            consentId temos:
+
 
             o namespace(urn)
-            o identificador associado ao namespace da instituição transnmissora (bancoex)
+
+            o identificador associado ao namespace da instituição transnmissora
+            (bancoex)
+
             o identificador específico dentro do namespace (C1DD33123).
-            Informações mais detalhadas sobre a construção de namespaces devem ser consultadas na RFC8141.
+
+            Informações mais detalhadas sobre a construção de namespaces devem
+            ser consultadas na RFC8141.
         step:
           type: string
           description: |
@@ -312,6 +641,7 @@ components:
               * refresh-token-used
               * resource-accessed
               * consent-revoked
+              * consent-expired
 
             Etapas do Servidor:
               * consent-created
@@ -327,7 +657,7 @@ components:
               * resource-accessed
               * consent-revoked
               * consent-expired
-          example: 'consent-created'
+          example: consent-created
           enum:
             - consent-created
             - user-redirected
@@ -345,117 +675,129 @@ components:
             - consent-expired
         correlationId:
           type: string
-          example: '577869e5-4c63-4b19-9235-a18d22c80986'
+          example: 577869e5-4c63-4b19-9235-a18d22c80986
           minLength: 1
         additionalInfo:
           type: object
           properties:
             consent-user:
               type: string
-              description: |
+              description: >
                 Informa se é cliente ou não do Receptor de dados.
-                <br />[Restrição] deve ser enviado quando o step for consent-created.
-              example: 'invalid-credentials'
+
+                <br />[Restrição] deve ser enviado quando o step for
+                consent-created.
+              example: invalid-credentials
               enum:
                 - user
                 - non-user
             authentication-failure-reason:
               type: string
-              description: |
+              description: >
                 Informa razão da falha na autenticação.
-                <br />[Restrição] deve ser enviado quando o step for user-authentication-failed.
-              example: 'invalid-credentials'
+
+                <br />[Restrição] deve ser enviado quando o step for
+                user-authentication-failed.
+              example: invalid-credentials
               enum:
                 - invalid-credentials
                 - invalid-mfa
                 - other
             user-redirected-back-status:
               type: string
-              description: |
+              description: >
                 Informa o status do redirect.
-                <br />[Restrição] deve ser enviado quando o step for user-redirected-back.
-              example: 'success'
+
+                <br />[Restrição] deve ser enviado quando o step for
+                user-redirected-back.
+              example: success
               enum:
                 - success
                 - failure
             token-kind:
               type: string
-              description: |
+              description: >
                 Informa o tipo do token utilizado na autorização do recurso.
-                <br />[Restrição] deve ser enviado quando o step for resource-accessed.
-              example: 'consent-token'
+
+                <br />[Restrição] deve ser enviado quando o step for
+                resource-accessed.
+              example: consent-token
               enum:
                 - consent-token
                 - client-credential
             rejected-by:
               type: string
-              description: |
-                Responsável pela rejeição. O usuário rejeitou ou o sistema devido a problemas
-                técnicos, políticas de segurança aplicada pela instituição transmissora, etc.
-                <br />[Restrição] deve ser enviado quando o step for consent-rejected.
+              description: >
+                Responsável pela rejeição. O usuário rejeitou ou o sistema
+                devido a problemas
+
+                técnicos, políticas de segurança aplicada pela instituição
+                transmissora, etc.
+
+                <br />[Restrição] deve ser enviado quando o step for
+                consent-rejected.
               enum:
                 - user
                 - system
             revoked-by:
               type: string
-              description: |
-                Responsável pela revogação. O usuário solicitou a revogação ou o sistema
+              description: >
+                Responsável pela revogação. O usuário solicitou a revogação ou o
+                sistema
+
                 revogou por questões de segurança
-                <br />[Restrição] deve ser enviado quando o step for consent-revoked.
+
+                <br />[Restrição] deve ser enviado quando o step for
+                consent-revoked.
               enum:
                 - user
                 - system
             expired-by:
               type: string
-              description: |
-                Razão da expiração. Consentimento que ultrapassou o tempo limite para autorização
-                (authorization-timeout) ou consentimento que ultrapassou o tempo limite
+              description: >
+                Razão da expiração. Consentimento que ultrapassou o tempo limite
+                para autorização
+
+                (authorization-timeout) ou consentimento que ultrapassou o tempo
+                limite
+
                 de compartilhamento (max-date-reached).
-                <br />[Restrição] deve ser enviado quando o step for consent-expired.
+
+                <br />[Restrição] deve ser enviado quando o step for
+                consent-expired.
               enum:
                 - authorization-timeout
                 - max-date-reached
         timestamp:
           type: string
           example: '2022-11-07T17:26:32Z'
-          description: 'Data e hora aproximada da ocorrência do evento. Uma string com data e hora conforme especificação RFC-3339, sempre com a utilização de timezone UTC(UTC time format).'
+          description: >-
+            Data e hora aproximada da ocorrência do evento. Uma string com data
+            e hora conforme especificação RFC-3339, sempre com a utilização de
+            timezone UTC(UTC time format).
           maxLength: 20
           format: date-time
-          pattern: '^((?:(\d{4}-\d{2}-\d{2})T(\d{2}:\d{2}:\d{2}(?:\.\d+)?))(Z)?)$'
+          pattern: ^((?:(\d{4}-\d{2}-\d{2})T(\d{2}:\d{2}:\d{2}(?:\.\d+)?))(Z)?)$
         clientOrgId:
           type: string
-          example: '1fb79963-4bff-4204-9370-93aceb8a2f0d'
-          description: |
-            Id da organização do cliente
-            Os ids devem ser válidos e cadastrados no diretório, respeitando seus respectivos ambientes (sandbox e production).
-          pattern: '^\w{8}-\w{4}-\w{4}-\w{4}-\w{12}$'
+          example: 1fb79963-4bff-4204-9370-93aceb8a2f0d
+          description: Id da organização do cliente
+          pattern: ^\w{8}-\w{4}-\w{4}-\w{4}-\w{12}$
         clientSSId:
           type: string
-          example: '2a59c2a3-529f-41c6-97e3-77395e9951ca'
-          description: |
-            Id do Software Statement do cliente
-            * Não é permitido trocar dados entre uma mesma marca.
-            A validação é feita com base no nome cadastrado do Authorisation Server e Software Statement.
-            Caso os dois possuam um mesmo nome cadastrado, entende-se que é uma mesma marca e o reporte não será aceito.
-            * Os ids devem ser válidos e cadastrados no diretório, respeitando seus respectivos ambientes (sandbox e production).
-          pattern: '^\w{8}-\w{4}-\w{4}-\w{4}-\w{12}$'
+          example: 2a59c2a3-529f-41c6-97e3-77395e9951ca
+          description: Id do Software Statement do cliente
+          pattern: ^\w{8}-\w{4}-\w{4}-\w{4}-\w{12}$
         serverOrgId:
           type: string
-          example: 'ff66b95a-d817-4fbe-949a-c5912e240189'
-          description: |
-            Id da organização do servidor
-            * Não é permitido trocar dados entre uma mesma marca.
-            A validação é feita com base no nome cadastrado do Authorisation Server e Software Statement.
-            Caso os dois possuam um mesmo nome cadastrado, entende-se que é uma mesma marca e o reporte não será aceito.
-            * Os ids devem ser válidos e cadastrados no diretório, respeitando seus respectivos ambientes (sandbox e production).
-          pattern: '^\w{8}-\w{4}-\w{4}-\w{4}-\w{12}$'
+          example: ff66b95a-d817-4fbe-949a-c5912e240189
+          description: Id da organização do servidor
+          pattern: ^\w{8}-\w{4}-\w{4}-\w{4}-\w{12}$
         serverASId:
           type: string
-          example: 'f8cd7b48-197d-419b-8680-f42226111b6f'
-          description: |
-            Id do Authorization Server do servidor
-            Os ids devem ser válidos e cadastrados no diretório, respeitando seus respectivos ambientes (sandbox e production).
-          pattern: '^\w{8}-\w{4}-\w{4}-\w{4}-\w{12}$'
+          example: f8cd7b48-197d-419b-8680-f42226111b6f
+          description: Id do Authorization Server do servidor
+          pattern: ^\w{8}-\w{4}-\w{4}-\w{4}-\w{12}$
       required:
         - consentId
         - step
@@ -465,78 +807,863 @@ components:
         - clientSSId
         - serverOrgId
         - serverASId
+    batchBodyV2:
+      type: object
+      properties:
+        organisationId:
+          type: string
+          example: c1ddd896-1145-4177-9b58-8a6e310557e2
+        events:
+          type: array
+          items:
+            $ref: '#/components/schemas/eventBodyV2'
+      required:
+        - organisationId
+        - events
+    eventBodyV2:
+      type: object
+      properties:
+        consentId:
+          type: string
+          pattern: >-
+            ^urn:[a-zA-Z0-9][a-zA-Z0-9-]{0,31}:[a-zA-Z0-9()+,\-.:=@;$_!*'%\/?#]+$
+          maxLength: 256
+          example: urn:bancoex:C1DD33123
+          description: >-
+            O consentId é o identificador único do consentimento e deverá ser um
+            URN - Uniform Resource Name.
+
+            Um URN, conforme definido na RFC8141 é um Uniform Resource
+            Identifier - URI - que é atribuído sob o URI scheme "urn" e um
+            namespace URN específico, com a intenção de que o URN seja um
+            identificador de recurso persistente e independente da localização.
+
+            Considerando a string urn:bancoex:C1DD33123 como exemplo para
+            consentId temos:
+
+
+            o namespace(urn)
+
+            o identificador associado ao namespace da instituição transnmissora
+            (bancoex)
+
+            o identificador específico dentro do namespace (C1DD33123).
+
+            Informações mais detalhadas sobre a construção de namespaces devem
+            ser consultadas na RFC8141.
+        step:
+          type: string
+          description: |
+            Etapa do Funil de Dados Cadastrais e Transacionais.
+
+            Etapas do Cliente:
+              * consent-created
+              * user-redirected
+              * user-redirected-back
+              * consent-token-received
+              * refresh-token-used
+              * resource-accessed
+              * consent-revoked
+              * consent-expired
+
+            Etapas do Servidor:
+              * consent-created
+              * user-redirected
+              * user-authentication-failed
+              * user-authenticated
+              * consent-authorized
+              * consent-rejected
+              * authorization-code-created
+              * user-redirected-back
+              * consent-token-generated
+              * refresh-token-used
+              * resource-accessed
+              * consent-revoked
+              * consent-expired
+
+            Etapa do Funil de Iniciação Serviços Pós Venda.
+
+            Etapas do Cliente:
+              * consent-created
+              * user-redirected
+              * user-redirected-back
+              * consent-token-received
+              * service-initiated
+              * user-redirected-service
+              * consent-revoked
+
+            Etapas do Servidor:
+              * consent-created
+              * user-redirected
+              * user-authentication-failed
+             * user-authenticated
+              * consent-rejected
+             * consent-authorized
+              * authorization-code-created
+              * user-redirected-back
+              * consent-token-generated
+              * service-initiated
+              * user-redirected-service
+              * consent-revoked
+          example: consent-created
+          enum:
+            - consent-created
+            - user-redirected
+            - consent-token-received
+            - user-authentication-failed
+            - user-authenticated
+            - consent-authorized
+            - consent-rejected
+            - authorization-code-created
+            - user-redirected-back
+            - consent-token-generated
+            - refresh-token-used
+            - resource-accessed
+            - consent-revoked
+            - consent-expired
+            - service-initiated
+            - user-redirected-service
+        correlationId:
+          type: string
+          example: 577869e5-4c63-4b19-9235-a18d22c80986
+          minLength: 1
+        additionalInfo:
+          type: object
+          properties:
+            consent-user:
+              type: string
+              description: >
+                Informa se é cliente ou não do Receptor de dados.
+
+                <br />[Restrição] deve ser enviado quando o step for
+                consent-created.
+              example: invalid-credentials
+              enum:
+                - user
+                - non-user
+            authentication-failure-reason:
+              type: string
+              description: >
+                Informa razão da falha na autenticação.
+
+                <br />[Restrição] deve ser enviado quando o step for
+                user-authentication-failed.
+              example: invalid-credentials
+              enum:
+                - invalid-credentials
+                - invalid-mfa
+                - other
+            user-redirected-back-status:
+              type: string
+              description: >
+                Informa o status do redirect.
+
+                <br />[Restrição] deve ser enviado quando o step for
+                user-redirected-back.
+              example: success
+              enum:
+                - success
+                - failure
+            token-kind:
+              type: string
+              description: >
+                Informa o tipo do token utilizado na autorização do recurso.
+
+                <br />[Restrição] deve ser enviado quando o step for
+                resource-accessed.
+              example: consent-token
+              enum:
+                - consent-token
+                - client-credential
+            rejected-by:
+              type: string
+              description: >
+                Responsável pela rejeição. O usuário rejeitou ou o sistema
+                devido a problemas
+
+                técnicos, políticas de segurança aplicada pela instituição
+                transmissora, etc.
+
+                <br />[Restrição] deve ser enviado quando o step for
+                consent-rejected.
+              enum:
+                - user
+                - system
+            revoked-by:
+              type: string
+              description: >
+                Responsável pela revogação. O usuário solicitou a revogação ou o
+                sistema
+
+                revogou por questões de segurança
+
+                <br />[Restrição] deve ser enviado quando o step for
+                consent-revoked.
+              enum:
+                - user
+                - system
+            expired-by:
+              type: string
+              description: >
+                Razão da expiração. Consentimento que ultrapassou o tempo limite
+                para autorização
+
+                (authorization-timeout) ou consentimento que ultrapassou o tempo
+                limite
+
+                de compartilhamento (max-date-reached).
+
+                <br />[Restrição] deve ser enviado quando o step for
+                consent-expired.
+              enum:
+                - authorization-timeout
+                - max-date-reached
+        timestamp:
+          type: string
+          example: '2022-11-07T17:26:32Z'
+          description: >-
+            Data e hora aproximada da ocorrência do evento. Uma string com data
+            e hora conforme especificação RFC-3339, sempre com a utilização de
+            timezone UTC(UTC time format).
+          maxLength: 20
+          format: date-time
+          pattern: ^((?:(\d{4}-\d{2}-\d{2})T(\d{2}:\d{2}:\d{2}(?:\.\d+)?))(Z)?)$
+        clientOrgId:
+          type: string
+          example: 1fb79963-4bff-4204-9370-93aceb8a2f0d
+          description: Id da organização do cliente
+          pattern: ^\w{8}-\w{4}-\w{4}-\w{4}-\w{12}$
+        clientSSId:
+          type: string
+          example: 2a59c2a3-529f-41c6-97e3-77395e9951ca
+          description: Id do Software Statement do cliente
+          pattern: ^\w{8}-\w{4}-\w{4}-\w{4}-\w{12}$
+        serverOrgId:
+          type: string
+          example: ff66b95a-d817-4fbe-949a-c5912e240189
+          description: Id da organização do servidor
+          pattern: ^\w{8}-\w{4}-\w{4}-\w{4}-\w{12}$
+        serverASId:
+          type: string
+          example: f8cd7b48-197d-419b-8680-f42226111b6f
+          description: Id do Authorization Server do servidor
+          pattern: ^\w{8}-\w{4}-\w{4}-\w{4}-\w{12}$
+        permissions:
+          type: string
+          description: |
+            Informa as permissões do consentimento.
+
+            Permissions relacionadas ao Funil Dados Cadastrais e Transacionais:
+              - CUSTOMERS_PERSONAL_IDENTIFICATIONS_READ
+              - CUSTOMERS_PERSONAL_ADDITIONALINFO_READ
+              - CUSTOMERS_PERSONAL_QUALIFICATION_READ
+              - CUSTOMERS_BUSINESS_IDENTIFICATIONS_READ
+              - CUSTOMERS_BUSINESS_QUALIFICATION_READ
+              - CUSTOMERS_BUSINESS_ADDITIONALINFO_READ
+              - CAPITALIZATION_TITLE_READ
+              - CAPITALIZATION_TITLE_PLANINFO_READ
+              - CAPITALIZATION_TITLE_EVENTS_READ
+              - CAPITALIZATION_TITLE_SETTLEMENTS_READ
+              - PENSION_PLAN_READ
+              - PENSION_PLAN_CONTRACTINFO_READ
+              - PENSION_PLAN_MOVEMENTS_READ
+              - PENSION_PLAN_PORTABILITIES_READ
+              - PENSION_PLAN_WITHDRAWALS_READ
+              - PENSION_PLAN_CLAIM
+              - LIFE_PENSION_READ
+              - LIFE_PENSION_CONTRACTINFO_READ
+              - LIFE_PENSION_MOVEMENTS_READ
+              - LIFE_PENSION_PORTABILITIES_READ
+              - LIFE_PENSION_WITHDRAWALS_READ
+              - LIFE_PENSION_CLAIM
+              - FINANCIAL_ASSISTANCE_READ
+              - FINANCIAL_ASSISTANCE_CONTRACTINFO_READ
+              - FINANCIAL_ASSISTANCE_MOVEMENTS_READ
+              - DAMAGES_AND_PEOPLE_PATRIMONIAL_READ
+              - DAMAGES_AND_PEOPLE_PATRIMONIAL_POLICYINFO_READ
+              - DAMAGES_AND_PEOPLE_PATRIMONIAL_PREMIUM_READ
+              - DAMAGES_AND_PEOPLE_PATRIMONIAL_CLAIM_READ
+              - DAMAGES_AND_PEOPLE_RESPONSIBILITY_READ
+              - DAMAGES_AND_PEOPLE_RESPONSIBILITY_POLICYINFO_READ
+              - DAMAGES_AND_PEOPLE_RESPONSIBILITY_PREMIUM_READ
+              - DAMAGES_AND_PEOPLE_RESPONSIBILITY_CLAIM_READ
+              - DAMAGES_AND_PEOPLE_TRANSPORT_READ
+              - DAMAGES_AND_PEOPLE_TRANSPORT_POLICYINFO_READ
+              - DAMAGES_AND_PEOPLE_TRANSPORT_PREMIUM_READ
+              - DAMAGES_AND_PEOPLE_TRANSPORT_CLAIM_READ
+              - DAMAGES_AND_PEOPLE_FINANCIAL_RISKS_READ
+              - DAMAGES_AND_PEOPLE_FINANCIAL_RISKS_POLICYINFO_READ
+              - DAMAGES_AND_PEOPLE_FINANCIAL_RISKS_PREMIUM_READ
+              - DAMAGES_AND_PEOPLE_FINANCIAL_RISKS_CLAIM_READ
+              - DAMAGES_AND_PEOPLE_RURAL_READ
+              - DAMAGES_AND_PEOPLE_RURAL_POLICYINFO_READ
+              - DAMAGES_AND_PEOPLE_RURAL_PREMIUM_READ
+              - DAMAGES_AND_PEOPLE_RURAL_CLAIM_READ
+              - DAMAGES_AND_PEOPLE_AUTO_READ
+              - DAMAGES_AND_PEOPLE_AUTO_POLICYINFO_READ
+              - DAMAGES_AND_PEOPLE_AUTO_PREMIUM_READ
+              - DAMAGES_AND_PEOPLE_AUTO_CLAIM_READ
+              - DAMAGES_AND_PEOPLE_HOUSING_READ
+              - DAMAGES_AND_PEOPLE_HOUSING_POLICYINFO_READ
+              - DAMAGES_AND_PEOPLE_HOUSING_PREMIUM_READ
+              - DAMAGES_AND_PEOPLE_HOUSING_CLAIM_READ
+              - DAMAGES_AND_PEOPLE_ACCEPTANCE_AND_BRANCHES_ABROAD_READ
+              - DAMAGES_AND_PEOPLE_ACCEPTANCE_AND_BRANCHES_ABROAD_POLICYINFO_READ
+              - DAMAGES_AND_PEOPLE_ACCEPTANCE_AND_BRANCHES_ABROAD_PREMIUM_READ
+              - DAMAGES_AND_PEOPLE_ACCEPTANCE_AND_BRANCHES_ABROAD_CLAIM_READ
+              - DAMAGES_AND_PEOPLE_PERSON_READ
+              - DAMAGES_AND_PEOPLE_PERSON_POLICYINFO_READ
+              - DAMAGES_AND_PEOPLE_PERSON_PREMIUM_READ
+              - DAMAGES_AND_PEOPLE_PERSON_CLAIM_READ
+              - RESOURCES_READ
+
+            Permissions relacionadas ao Funil de pós venda:
+            * Endosso
+              - ENDORSEMENT_REQUEST_CREATE
+            * Sinistro
+              - CLAIM_NOTIFICATION_REQUEST_PERSON_CREATE
+              - CLAIM_NOTIFICATION_REQUEST_DAMAGE_CREATE
+            * Sorteio
+              - QUOTE_CAPITALIZATION_TITLE_RAFFLE_CREATE
+            * Resgate
+              - PENSION_WITHDRAWAL_CREATE
+              - PENSION_WITHDRAWAL_LEAD_CREATE
+              - CAPITALIZATION_TITLE_WITHDRAWAL_CREATE
+              - PERSON_WITHDRAWAL_CREATE
+          example: CUSTOMERS_PERSONAL_IDENTIFICATIONS_READ
+          enum:
+            - CUSTOMERS_PERSONAL_IDENTIFICATIONS_READ
+            - CUSTOMERS_PERSONAL_ADDITIONALINFO_READ
+            - CUSTOMERS_PERSONAL_QUALIFICATION_READ
+            - CUSTOMERS_BUSINESS_IDENTIFICATIONS_READ
+            - CUSTOMERS_BUSINESS_QUALIFICATION_READ
+            - CUSTOMERS_BUSINESS_ADDITIONALINFO_READ
+            - CAPITALIZATION_TITLE_READ
+            - CAPITALIZATION_TITLE_PLANINFO_READ
+            - CAPITALIZATION_TITLE_EVENTS_READ
+            - CAPITALIZATION_TITLE_SETTLEMENTS_READ
+            - PENSION_PLAN_READ
+            - PENSION_PLAN_CONTRACTINFO_READ
+            - PENSION_PLAN_MOVEMENTS_READ
+            - PENSION_PLAN_PORTABILITIES_READ
+            - PENSION_PLAN_WITHDRAWALS_READ
+            - PENSION_PLAN_CLAIM
+            - LIFE_PENSION_READ
+            - LIFE_PENSION_CONTRACTINFO_READ
+            - LIFE_PENSION_MOVEMENTS_READ
+            - LIFE_PENSION_PORTABILITIES_READ
+            - LIFE_PENSION_WITHDRAWALS_READ
+            - LIFE_PENSION_CLAIM
+            - FINANCIAL_ASSISTANCE_READ
+            - FINANCIAL_ASSISTANCE_CONTRACTINFO_READ
+            - FINANCIAL_ASSISTANCE_MOVEMENTS_READ
+            - DAMAGES_AND_PEOPLE_PATRIMONIAL_READ
+            - DAMAGES_AND_PEOPLE_PATRIMONIAL_POLICYINFO_READ
+            - DAMAGES_AND_PEOPLE_PATRIMONIAL_PREMIUM_READ
+            - DAMAGES_AND_PEOPLE_PATRIMONIAL_CLAIM_READ
+            - DAMAGES_AND_PEOPLE_RESPONSIBILITY_READ
+            - DAMAGES_AND_PEOPLE_RESPONSIBILITY_POLICYINFO_READ
+            - DAMAGES_AND_PEOPLE_RESPONSIBILITY_PREMIUM_READ
+            - DAMAGES_AND_PEOPLE_RESPONSIBILITY_CLAIM_READ
+            - DAMAGES_AND_PEOPLE_TRANSPORT_READ
+            - DAMAGES_AND_PEOPLE_TRANSPORT_POLICYINFO_READ
+            - DAMAGES_AND_PEOPLE_TRANSPORT_PREMIUM_READ
+            - DAMAGES_AND_PEOPLE_TRANSPORT_CLAIM_READ
+            - DAMAGES_AND_PEOPLE_FINANCIAL_RISKS_READ
+            - DAMAGES_AND_PEOPLE_FINANCIAL_RISKS_POLICYINFO_READ
+            - DAMAGES_AND_PEOPLE_FINANCIAL_RISKS_PREMIUM_READ
+            - DAMAGES_AND_PEOPLE_FINANCIAL_RISKS_CLAIM_READ
+            - DAMAGES_AND_PEOPLE_RURAL_READ
+            - DAMAGES_AND_PEOPLE_RURAL_POLICYINFO_READ
+            - DAMAGES_AND_PEOPLE_RURAL_PREMIUM_READ
+            - DAMAGES_AND_PEOPLE_RURAL_CLAIM_READ
+            - DAMAGES_AND_PEOPLE_AUTO_READ
+            - DAMAGES_AND_PEOPLE_AUTO_POLICYINFO_READ
+            - DAMAGES_AND_PEOPLE_AUTO_PREMIUM_READ
+            - DAMAGES_AND_PEOPLE_AUTO_CLAIM_READ
+            - DAMAGES_AND_PEOPLE_HOUSING_READ
+            - DAMAGES_AND_PEOPLE_HOUSING_POLICYINFO_READ
+            - DAMAGES_AND_PEOPLE_HOUSING_PREMIUM_READ
+            - DAMAGES_AND_PEOPLE_HOUSING_CLAIM_READ
+            - DAMAGES_AND_PEOPLE_ACCEPTANCE_AND_BRANCHES_ABROAD_READ
+            - DAMAGES_AND_PEOPLE_ACCEPTANCE_AND_BRANCHES_ABROAD_POLICYINFO_READ
+            - DAMAGES_AND_PEOPLE_ACCEPTANCE_AND_BRANCHES_ABROAD_PREMIUM_READ
+            - DAMAGES_AND_PEOPLE_ACCEPTANCE_AND_BRANCHES_ABROAD_CLAIM_READ
+            - DAMAGES_AND_PEOPLE_PERSON_READ
+            - DAMAGES_AND_PEOPLE_PERSON_POLICYINFO_READ
+            - DAMAGES_AND_PEOPLE_PERSON_PREMIUM_READ
+            - DAMAGES_AND_PEOPLE_PERSON_CLAIM_READ
+            - RESOURCES_READ
+            - ENDORSEMENT_REQUEST_CREATE
+            - CLAIM_NOTIFICATION_REQUEST_PERSON_CREATE
+            - CLAIM_NOTIFICATION_REQUEST_DAMAGE_CREATE
+            - QUOTE_CAPITALIZATION_TITLE_RAFFLE_CREATE
+            - PENSION_WITHDRAWAL_CREATE
+            - PENSION_WITHDRAWAL_LEAD_CREATE
+            - CAPITALIZATION_TITLE_WITHDRAWAL_CREATE
+            - PERSON_WITHDRAWAL_CREATE
+      required:
+        - consentId
+        - step
+        - correlationId
+        - timestamp
+        - clientOrgId
+        - clientSSId
+        - serverOrgId
+        - serverASId
+        - permissions
+    batchBodyCotacaoContratacao:
+      type: object
+      properties:
+        organisationId:
+          type: string
+          example: c1ddd896-1145-4177-9b58-8a6e310557e2
+        events:
+          type: array
+          items:
+            $ref: '#/components/schemas/eventBodyCotacaoContratacao'
+      required:
+        - organisationId
+        - events
+    eventBodyCotacaoContratacao:
+      type: object
+      properties:
+        consentId:
+          type: string
+          pattern: >-
+            ^urn:[a-zA-Z0-9][a-zA-Z0-9-]{0,31}:[a-zA-Z0-9()+,\-.:=@;$_!*'%\/?#]+$
+          maxLength: 256
+          example: urn:bancoex:C1DD33123
+          description: >-
+            O consentId é o identificador único do consentimento e deverá ser um
+            URN - Uniform Resource Name.
+
+            Um URN, conforme definido na RFC8141 é um Uniform Resource
+            Identifier - URI - que é atribuído sob o URI scheme "urn" e um
+            namespace URN específico, com a intenção de que o URN seja um
+            identificador de recurso persistente e independente da localização.
+
+            Considerando a string urn:bancoex:C1DD33123 como exemplo para
+            consentId temos:
+
+
+            o namespace(urn)
+
+            o identificador associado ao namespace da instituição transnmissora
+            (bancoex)
+
+            o identificador específico dentro do namespace (C1DD33123).
+
+            Informações mais detalhadas sobre a construção de namespaces devem
+            ser consultadas na RFC8141.
+        step:
+          type: string
+          description: |-
+            Etapa do Funil de Iniciação Serviços Cotação e Contratação.
+
+            Etapas do Cliente:
+              * quote-request-initiated
+              * quote-request-created
+              * quote-request-authorized
+              * quote-request-generated
+              * quote-status-received
+              * quote-info-received
+              * quote-accepted
+              * user-redirected-service
+              * consent-expired
+              * additional-info
+              * consent-revoked
+
+            Etapas do Servidor:
+              * quote-request-received
+              * quote-status-generated
+              * quote-info-generated
+              * quote-accepted
+              * user-redirected-service
+              * consent-expired              
+              * additional-info
+              * consent-revoked
+          example: quote-request-initiated
+          enum:
+            - quote-request-initiated
+            - quote-request-created
+            - quote-request-authorized
+            - quote-request-generated
+            - quote-request-received
+            - quote-status-received
+            - quote-status-generated
+            - quote-info-received
+            - quote-info-generated
+            - quote-accepted
+            - user-redirected-service
+            - consent-expired
+            - additional-info
+            - consent-revoked
+        correlationId:
+          type: string
+          example: 577869e5-4c63-4b19-9235-a18d22c80986
+          minLength: 1
+        additionalInfo:
+          type: object
+          properties:
+            consent-user:
+              type: string
+              description: >
+                Informa se é cliente ou não do Receptor de dados.
+
+                <br />[Restrição] deve ser enviado quando o step for
+                consent-created.
+              example: invalid-credentials
+              enum:
+                - user
+                - non-user
+            quoteID:
+              type: string
+              minLength: 1
+              description: >
+                [Restrição] deve ser enviado quando o step for
+                quote-request-create SERVER
+            status:
+              type: string
+              description: >
+                [Restrição] deve ser enviado quando o step for
+                quote-status-generated para CLIENT
+              example: ACPT
+              enum:
+                - ACPT
+                - RJCT
+            authentication-failure-reason:
+              type: string
+              description: >
+                Informa razão da falha na autenticação.
+
+                <br />[Restrição] deve ser enviado quando o step for
+                user-authentication-failed.
+              example: invalid-credentials
+              enum:
+                - invalid-credentials
+                - invalid-mfa
+                - other
+            user-redirected-back-status:
+              type: string
+              description: >
+                Informa o status do redirect.
+
+                <br />[Restrição] deve ser enviado quando o step for
+                user-redirected-back.
+              example: success
+              enum:
+                - success
+                - failure
+            token-kind:
+              type: string
+              description: >
+                Informa o tipo do token utilizado na autorização do recurso.
+
+                <br />[Restrição] deve ser enviado quando o step for
+                resource-accessed.
+              example: consent-token
+              enum:
+                - consent-token
+                - client-credential
+            rejected-by:
+              type: string
+              description: >
+                Responsável pela rejeição. O usuário rejeitou ou o sistema
+                devido a problemas
+
+                técnicos, políticas de segurança aplicada pela instituição
+                transmissora, etc.
+
+                <br />[Restrição] deve ser enviado quando o step for
+                consent-rejected.
+              enum:
+                - user
+                - system
+            revoked-by:
+              type: string
+              description: >
+                Responsável pela revogação. O usuário solicitou a revogação ou o
+                sistema
+
+                revogou por questões de segurança
+
+                <br />[Restrição] deve ser enviado quando o step for
+                consent-revoked.
+              enum:
+                - user
+                - system
+            expired-by:
+              type: string
+              description: >
+                Razão da expiração. Consentimento que ultrapassou o tempo limite
+                para autorização
+
+                (authorization-timeout) ou consentimento que ultrapassou o tempo
+                limite
+
+                de compartilhamento (max-date-reached).
+
+                <br />[Restrição] deve ser enviado quando o step for
+                consent-expired.
+              enum:
+                - authorization-timeout
+                - max-date-reached
+        timestamp:
+          type: string
+          example: '2022-11-07T17:26:32Z'
+          description: >-
+            Data e hora aproximada da ocorrência do evento. Uma string com data
+            e hora conforme especificação RFC-3339, sempre com a utilização de
+            timezone UTC(UTC time format).
+          maxLength: 20
+          format: date-time
+          pattern: ^((?:(\d{4}-\d{2}-\d{2})T(\d{2}:\d{2}:\d{2}(?:\.\d+)?))(Z)?)$
+        clientOrgId:
+          type: string
+          example: 1fb79963-4bff-4204-9370-93aceb8a2f0d
+          description: Id da organização do cliente
+          pattern: ^\w{8}-\w{4}-\w{4}-\w{4}-\w{12}$
+        clientSSId:
+          type: string
+          example: 2a59c2a3-529f-41c6-97e3-77395e9951ca
+          description: Id do Software Statement do cliente
+          pattern: ^\w{8}-\w{4}-\w{4}-\w{4}-\w{12}$
+        serverOrgId:
+          type: string
+          example: ff66b95a-d817-4fbe-949a-c5912e240189
+          description: Id da organização do servidor
+          pattern: ^\w{8}-\w{4}-\w{4}-\w{4}-\w{12}$
+        serverASId:
+          type: string
+          example: f8cd7b48-197d-419b-8680-f42226111b6f
+          description: Id do Authorization Server do servidor
+          pattern: ^\w{8}-\w{4}-\w{4}-\w{4}-\w{12}$
+        permissions:
+          type: string
+          description: |
+            Informa as permissões do consentimento.
+
+            Permissions relacionadas ao Funil Serv. Cotação/Contratação:
+            * LEAD
+              - QUOTE_PATRIMONIAL_LEAD_CREATE
+              - QUOTE_PATRIMONIAL_LEAD_UPDATE
+              - QUOTE_PATRIMONIAL_DIVERSE_RISKS_UPDATE
+              - QUOTE_ACCEPTANCE_AND_BRANCHES_ABROAD_LEAD_CREATE
+              - QUOTE_ACCEPTANCE_AND_BRANCHES_ABROAD_LEAD_UPDATE
+              - QUOTE_AUTO_LEAD_CREATE
+              - QUOTE_AUTO_LEAD_UPDATE
+              - QUOTE_FINANCIAL_RISK_LEAD_CREATE
+              - QUOTE_FINANCIAL_RISK_LEAD_UPDATE
+              - QUOTE_HOUSING_LEAD_CREATE
+              - QUOTE_HOUSING_LEAD_UPDATE
+              - QUOTE_RESPONSIBILITY_LEAD_CREATE
+              - QUOTE_RESPONSIBILITY_LEAD_UPDATE
+              - QUOTE_RURAL_LEAD_CREATE
+              - QUOTE_RURAL_LEAD_UPDATE
+              - QUOTE_TRANSPORT_LEAD_CREATE
+              - QUOTE_TRANSPORT_LEAD_UPDATE
+              - QUOTE_PERSON_LEAD_CREATE
+              - QUOTE_PERSON_LEAD_UPDATE
+              - QUOTE_CAPITALIZATION_TITLE_LEAD_CREATE
+              - QUOTE_CAPITALIZATION_TITLE_LEAD_UPDATE
+              - CONTRACT_LIFE_PENSION_LEAD_CREATE
+              - CONTRACT_LIFE_PENSION_LEAD_UPDATE
+              - CONTRACT_LIFE_PENSION_LEAD_PORTABILITY_CREATE
+              - CONTRACT_LIFE_PENSION_LEAD_PORTABILITY_UPDATE
+              - CONTRACT_PENSION_PLAN_LEAD_CREATE
+              - CONTRACT_PENSION_PLAN_LEAD_UPDATE
+              - CONTRACT_PENSION_PLAN_LEAD_PORTABILITY_CREATE
+              - CONTRACT_PENSION_PLAN_LEAD_PORTABILITY_UPDATE
+             
+             
+            * FIRME
+              - QUOTE_PATRIMONIAL_HOME_READ
+              - QUOTE_PATRIMONIAL_HOME_CREATE
+              - QUOTE_PATRIMONIAL_HOME_UPDATE
+              - QUOTE_PATRIMONIAL_CONDOMINIUM_READ
+              - QUOTE_PATRIMONIAL_CONDOMINIUM_CREATE
+              - QUOTE_PATRIMONIAL_CONDOMINIUM_UPDATE
+              - QUOTE_PATRIMONIAL_BUSINESS_READ
+              - QUOTE_PATRIMONIAL_BUSINESS_CREATE
+              - QUOTE_PATRIMONIAL_BUSINESS_UPDATE
+              - QUOTE_PATRIMONIAL_DIVERSE_RISKS_READ
+              - QUOTE_PATRIMONIAL_DIVERSE_RISKS_CREATE
+              - QUOTE_PATRIMONIAL_DIVERSE_RISKS_UPDATE
+              - QUOTE_AUTO_CREATE
+              - QUOTE_AUTO_UPDATE
+              - QUOTE_PERSON_LIFE_READ
+              - QUOTE_PERSON_LIFE_CREATE
+              - QUOTE_PERSON_LIFE_UPDATE
+              - QUOTE_PERSON_TRAVEL_READ
+              - QUOTE_PERSON_TRAVEL_CREATE
+              - QUOTE_PERSON_TRAVEL_UPDATE
+              - QUOTE_CAPITALIZATION_TITLE_READ
+              - QUOTE_CAPITALIZATION_TITLE_CREATE
+              - QUOTE_CAPITALIZATION_TITLE_UPDATE
+              - CONTRACT_LIFE_PENSION_CREATE
+              - CONTRACT_LIFE_PENSION_UPDATE
+              - CONTRACT_LIFE_PENSION_READ
+          example: CUSTOMERS_PERSONAL_IDENTIFICATIONS_READ
+          enum:
+            - QUOTE_PATRIMONIAL_LEAD_CREATE
+            - QUOTE_PATRIMONIAL_LEAD_UPDATE
+            - QUOTE_PATRIMONIAL_HOME_READ
+            - QUOTE_PATRIMONIAL_HOME_CREATE
+            - QUOTE_PATRIMONIAL_HOME_UPDATE
+            - QUOTE_PATRIMONIAL_CONDOMINIUM_READ
+            - QUOTE_PATRIMONIAL_CONDOMINIUM_CREATE
+            - QUOTE_PATRIMONIAL_CONDOMINIUM_UPDATE
+            - QUOTE_PATRIMONIAL_BUSINESS_READ
+            - QUOTE_PATRIMONIAL_BUSINESS_CREATE
+            - QUOTE_PATRIMONIAL_BUSINESS_UPDATE
+            - QUOTE_PATRIMONIAL_DIVERSE_RISKS_READ
+            - QUOTE_PATRIMONIAL_DIVERSE_RISKS_CREATE
+            - QUOTE_PATRIMONIAL_DIVERSE_RISKS_UPDATE
+            - QUOTE_ACCEPTANCE_AND_BRANCHES_ABROAD_LEAD_CREATE
+            - QUOTE_ACCEPTANCE_AND_BRANCHES_ABROAD_LEAD_UPDATE
+            - QUOTE_AUTO_LEAD_CREATE
+            - QUOTE_AUTO_LEAD_UPDATE
+            - QUOTE_AUTO_READ
+            - QUOTE_AUTO_CREATE
+            - QUOTE_AUTO_UPDATE
+            - QUOTE_FINANCIAL_RISK_LEAD_CREATE
+            - QUOTE_FINANCIAL_RISK_LEAD_UPDATE
+            - QUOTE_HOUSING_LEAD_CREATE
+            - QUOTE_HOUSING_LEAD_UPDATE
+            - QUOTE_RESPONSIBILITY_LEAD_CREATE
+            - QUOTE_RESPONSIBILITY_LEAD_UPDATE
+            - QUOTE_RURAL_LEAD_CREATE
+            - QUOTE_RURAL_LEAD_UPDATE
+            - QUOTE_TRANSPORT_LEAD_CREATE
+            - QUOTE_TRANSPORT_LEAD_UPDATE
+            - QUOTE_PERSON_LEAD_CREATE
+            - QUOTE_PERSON_LEAD_UPDATE
+            - QUOTE_PERSON_LIFE_READ
+            - QUOTE_PERSON_LIFE_CREATE
+            - QUOTE_PERSON_LIFE_UPDATE
+            - QUOTE_PERSON_TRAVEL_READ
+            - QUOTE_PERSON_TRAVEL_CREATE
+            - QUOTE_PERSON_TRAVEL_UPDATE
+            - QUOTE_CAPITALIZATION_TITLE_LEAD_CREATE
+            - QUOTE_CAPITALIZATION_TITLE_LEAD_UPDATE
+            - QUOTE_CAPITALIZATION_TITLE_READ
+            - QUOTE_CAPITALIZATION_TITLE_CREATE
+            - QUOTE_CAPITALIZATION_TITLE_UPDATE
+            - CONTRACT_LIFE_PENSION_CREATE
+            - CONTRACT_LIFE_PENSION_UPDATE
+            - CONTRACT_LIFE_PENSION_READ
+            - CONTRACT_LIFE_PENSION_LEAD_CREATE
+            - CONTRACT_LIFE_PENSION_LEAD_UPDATE
+            - CONTRACT_LIFE_PENSION_LEAD_PORTABILITY_CREATE
+            - CONTRACT_LIFE_PENSION_LEAD_PORTABILITY_UPDATE
+            - CONTRACT_PENSION_PLAN_LEAD_CREATE
+            - CONTRACT_PENSION_PLAN_LEAD_UPDATE
+            - CONTRACT_PENSION_PLAN_LEAD_PORTABILITY_CREATE
+            - CONTRACT_PENSION_PLAN_LEAD_PORTABILITY_UPDATE
+      required:
+        - consentId
+        - step
+        - correlationId
+        - timestamp
+        - clientOrgId
+        - clientSSId
+        - serverOrgId
+        - serverASId
+        - permissions
   responses:
     eventEventResponse200:
       description: Registro recebido com sucesso.
       content:
         application/json:
           schema:
-            '$ref': '#/components/schemas/success'
+            $ref: '#/components/schemas/success'
     eventEventResponse400:
       description: Ocorre quando uma requisição não envia os dados obrigatórios.
       content:
         application/json:
           schema:
-            '$ref': '#/components/schemas/response400'
+            $ref: '#/components/schemas/response400'
     eventEventResponse401:
       description: Ocorre quando uma requisição não é autorizada.
       content:
         application/json:
           schema:
-            '$ref': '#/components/schemas/response401'
+            $ref: '#/components/schemas/response401'
     eventEventResponse404:
       description: Ocorre quando o evento não é encontrado.
       content:
         application/json:
           schema:
-            '$ref': '#/components/schemas/response404'
+            $ref: '#/components/schemas/response404'
     eventEventResponse406:
-      description: Ocorre quando um cliente espera uma resposta diferente de application/json usando o header Accept.
+      description: >-
+        Ocorre quando um cliente espera uma resposta diferente de
+        application/json usando o header Accept.
       content:
         application/json:
           schema:
-            '$ref': '#/components/schemas/response406'
+            $ref: '#/components/schemas/response406'
     eventEventResponse415:
-      description: Ocorre quando uma requisição envia um Content-Type diferente de application/jwt.
+      description: >-
+        Ocorre quando uma requisição envia um Content-Type diferente de
+        application/jwt.
       content:
         application/json:
           schema:
-            '$ref': '#/components/schemas/response415'
+            $ref: '#/components/schemas/response415'
     eventEventResponse500:
       description: É devolvido quando ocorre um erro não identificado no servidor.
       content:
         application/json:
           schema:
-            '$ref': '#/components/schemas/response500'
+            $ref: '#/components/schemas/response500'
     eventBatchResponse200:
-      description: |
-        O status 200 representa a situação onde todos os registros enviados no lote foram validados
+      description: >
+        O status 200 representa a situação onde todos os registros enviados no
+        lote foram validados
+
         e serão direcionados para processamento.
 
-        A operação vai devolver um array com todos os resultados, e garantir que ele esteja na mesma
-        ordem do array de requisição.
-      content:
-        application/json:
-          schema:
-            type: array
-            items:
-              '$ref': '#/components/schemas/success'
-    eventBatchResponse207:
-      description: |
-        O status 207 (Multi-Status) informa ao solicitante que o formato da solicitação está
-        correto, mas que entradas do array da solicitação contém erro de validação, independente
-        da quantidade. Ou seja, se todos os elementos do array informado estiverem com falha
-        de validação, a operação vai devolver o status 207, e no corpo da resposta todos os
-        elementos do array estarão com o status DISCARDED e com suas respectivas mensagens.
 
-        A operação vai devolver um array com todos os resultados, e garantir que ele esteja na mesma
+        A operação vai devolver um array com todos os resultados, e garantir que
+        ele esteja na mesma
+
         ordem do array de requisição.
       content:
         application/json:
           schema:
             type: array
             items:
-              '$ref': '#/components/schemas/response400'
+              $ref: '#/components/schemas/success'
+    eventBatchResponse207:
+      description: >
+        O status 207 (Multi-Status) informa ao solicitante que o formato da
+        solicitação está
+
+        correto, mas que entradas do array da solicitação contém erro de
+        validação, independente
+
+        da quantidade. Ou seja, se todos os elementos do array informado
+        estiverem com falha
+
+        de validação, a operação vai devolver o status 207, e no corpo da
+        resposta todos os
+
+        elementos do array estarão com o status DISCARDED e com suas respectivas
+        mensagens.
+
+
+        A operação vai devolver um array com todos os resultados, e garantir que
+        ele esteja na mesma
+
+        ordem do array de requisição.
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/response400'
     eventBatchResponse400:
       description: O formato do corpo da requisição não é um array.
       content:
@@ -555,30 +1682,36 @@ components:
       content:
         application/json:
           schema:
-            '$ref': '#/components/schemas/response401'
+            $ref: '#/components/schemas/response401'
     eventBatchResponse406:
-      description: Ocorre quando um cliente espera uma resposta diferente de application/json usando o header Accept.
+      description: >-
+        Ocorre quando um cliente espera uma resposta diferente de
+        application/json usando o header Accept.
       content:
         application/json:
           schema:
-            '$ref': '#/components/schemas/response406'
+            $ref: '#/components/schemas/response406'
     eventBatchResponse413:
-      description: |
-        A quantidade de registros enviados excede o limite da operação, ou o tamanho do payload
+      description: >
+        A quantidade de registros enviados excede o limite da operação, ou o
+        tamanho do payload
+
         excede o limite configurado no servidor http.
       content:
         application/json:
           schema:
-            '$ref': '#/components/schemas/response413'
+            $ref: '#/components/schemas/response413'
     eventBatchResponse415:
-      description: Ocorre quando uma requisição envia um Content-Type diferente de application/jwt.
+      description: >-
+        Ocorre quando uma requisição envia um Content-Type diferente de
+        application/jwt.
       content:
         application/json:
           schema:
-            '$ref': '#/components/schemas/response415'
+            $ref: '#/components/schemas/response415'
     eventBatchResponse500:
       description: É devolvido quando ocorre um erro não identificado no servidor.
       content:
         application/json:
           schema:
-            '$ref': '#/components/schemas/response500'
+            $ref: '#/components/schemas/response500'
