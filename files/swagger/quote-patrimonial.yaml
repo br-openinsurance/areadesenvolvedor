@@ -11,7 +11,8 @@ info:
     A `Role` do diretório de participantes relacionada à presente API é a `ICS`.\
     Para todos os `endpoints` desta API é previsto o envio de um `token` através do header `Authorization`.\
     Os dados serão entregues pela iniciadora na seguradora desde que o `consentId` relacionado corresponda a um consentimento válido e com o status `AUTHORISED`.\
-    Relacionamos a seguir as `permissions` necessárias para o envio de dados em cada `endpoint` da presente API.
+    Relacionamos a seguir as `permissions` necessárias para o envio de dados em cada `endpoint` da presente API.\
+    A requisição PATCH deve ser rejeitada caso a origem da chamada seja um client_id que não gerou aquele consentId.
 
     ## Permissions necessárias para a API Quote Patrimonial
 
@@ -63,14 +64,14 @@ info:
       - 1 - `Idempotência:` Valida se há divergência entre chave de idempotência e informações enviadas (ERRO_IDEMPOTENCIA);
       - 2 - `Não Informado:` Valida itens não explicitamente informados pelo servidor - (NAO_INFORMADO).
   
-  version: 1.11.0
+  version: 2.0.0
   contact:
     name: Governança do Open Insurance Brasil
     url: 'https://www.gov.br/susep'
 servers:
-  - url: 'https://api.organizacao.com.br/open-insurance/quote-patrimonial/v1'
+  - url: 'https://api.organizacao.com.br/open-insurance/quote-patrimonial/v2'
     description: Servidor de Produção
-  - url: 'https://api.organizacao.com.br/open-insurance/quote-patrimonial/v1'
+  - url: 'https://api.organizacao.com.br/open-insurance/quote-patrimonial/v2'
     description: Servidor de Homologação
 tags:
   - name: PatrimonialLead
@@ -920,10 +921,6 @@ components:
         - identification
         - identificationType
         - name
-        - postCode
-        - city
-        - state
-        - country
         - address
       properties:
         identification:
@@ -950,50 +947,20 @@ components:
           type: string
           maxLength: 60
           example: Nome Sobrenome
-        postCode:
-          description: Código Postal do Tomador/Garantidor
-          type: string
-          maxLength: 60
-          example: "10000000"
         email:
           description: E-mail do Tomador/Garantidor (caso possua)
           type: string
           pattern: ^\S+@\S+\.\S+$
           maxLength: 256
-        city:
-          description: Cidade do Tomador/Garantidor (por extenso)
-          type: string
-          maxLength: 60
-        state:
-          description: Estado do Tomador/Garantidor (por extenso)
-          type: string
-          example: AC
-          enum: ['AC', 'AL', 'AP', 'AM', 'BA', 'CE', 'DF', 'ES', 'GO', 'MA', 'MT', 'MS', 'MG', 'PA', 'PB', 'PR', 'PE', 'PI', 'RJ', 'RN', 'RS', 'RO', 'RR', 'SC', 'SP', 'SE', 'TO', 'BR', 'XX']
-        country:
-          description: País do Tomador/Garantidor (de acordo com o código "alpha3" do ISO-3166)
-          type: string
-          enum: [AFG,ALA,ALB,DZA,ASM,AND,AGO,AIA,ATA,ATG,ARG,ARM,ABW,AUS,AUT,AZE,BHS,BHR,BGD,BRB,BLR,BEL,BLZ,BEN,BMU,BTN,BOL,BES,BIH,BWA,BVT,BRA,IOT,BRN,BGR,BFA,BDI,CPV,KHM,CMR,CAN,CYM,CAF,TCD,CHL,CHN,CXR,CCK,COL,COM,COG,COD,COK,CRI,CIV,HRV,CUB,CUW,CYP,CZE,DNK,DJI,DMA,DOM,ECU,EGY,SLV,GNQ,ERI,EST,SWZ,ETH,FLK,FRO,FJI,FIN,FRA,GUF,PYF,ATF,GAB,GMB,GEO,DEU,GHA,GIB,GRC,GRL,GRD,GLP,GUM,GTM,GGY,GIN,GNB,GUY,HTI,HMD,VAT,HND,HKG,HUN,ISL,IND,IDN,IRN,IRQ,IRL,IMN,ISR,ITA,JAM,JPN,JEY,JOR,KAZ,KEN,KIR,PRK,KOR,KWT,KGZ,LAO,LVA,LBN,LSO,LBR,LBY,LIE,LTU,LUX,MAC,MDG,MWI,MYS,MDV,MLI,MLT,MHL,MTQ,MRT,MUS,MYT,MEX,FSM,MDA,MCO,MNG,MNE,MSR,MAR,MOZ,MMR,NAM,NRU,NPL,NLD,NCL,NZL,NIC,NER,NGA,NIU,NFK,MKD,MNP,NOR,OMN,PAK,PLW,PSE,PAN,PNG,PRY,PER,PHL,PCN,POL,PRT,PRI,QAT,REU,ROU,RUS,RWA,BLM,SHN,KNA,LCA,MAF,SPM,VCT,WSM,SMR,STP,SAU,SEN,SRB,SYC,SLE,SGP,SXM,SVK,SVN,SLB,SOM,ZAF,SGS,SSD,ESP,LKA,SDN,SUR,SJM,SWE,CHE,SYR,TWN,TJK,TZA,THA,TLS,TGO,TKL,TON,TTO,TUN,TUR,TKM,TCA,TUV,UGA,UKR,ARE,GBR,USA,UMI,URY,UZB,VUT,VEN,VNM,VGB,VIR,WLF,ESH,YEM,ZMB,ZWE]
-          example: BRA 
         address:
-          description: Endereço do Tomador/Garantidor (restante do endereço, excluindo cidade, estado e país)
-          type: string
-          maxLength: 60
-        addressAdditionalInfo:
-          description: Complemento do endereço do Tomador/Garantidor.
-          type: string
-          maxLength: 30
-          example: Fundos
+          $ref: '#/components/schemas/Address'
+
     PersonalInfo:
       type: object
       required:
         - identification
         - identificationType
         - name
-        - postCode
-        - birthDate
-        - city
-        - state
-        - country
         - address
       properties:
         identification:
@@ -1021,43 +988,19 @@ components:
           maxLength: 60
           example: Nome Sobrenome
         birthDate:
-          description: Data de nascimento do segurado
+          description: Data de nascimento do segurado, condicional ao tipo de documento ser CPF ou OUTROS.
           type: string
           format: date
           pattern: '^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])$'
           example: '1999-06-12'
-        postCode:
-          description: Código Postal do Segurado
-          type: string
-          maxLength: 60
-          example: "10000000"
         email:
           description: E-mail da segurado (caso possua)
           type: string
           pattern: ^\S+@\S+\.\S+$
           maxLength: 256
-        city:
-          description: Cidade o segurado(por extenso)
-          type: string
-          maxLength: 60
-        state:
-          description: Estado do segurado 
-          type: string
-          example: AC
-          enum: ['AC', 'AL', 'AP', 'AM', 'BA', 'CE', 'DF', 'ES', 'GO', 'MA', 'MT', 'MS', 'MG', 'PA', 'PB', 'PR', 'PE', 'PI', 'RJ', 'RN', 'RS', 'RO', 'RR', 'SC', 'SP', 'SE', 'TO', 'BR', 'XX']
-        country:
-          description: País do segurado (de acordo com o código "alpha3" do ISO-3166)
-          type: string
-          example: BRA 
-          enum: [AFG,ALA,ALB,DZA,ASM,AND,AGO,AIA,ATA,ATG,ARG,ARM,ABW,AUS,AUT,AZE,BHS,BHR,BGD,BRB,BLR,BEL,BLZ,BEN,BMU,BTN,BOL,BES,BIH,BWA,BVT,BRA,IOT,BRN,BGR,BFA,BDI,CPV,KHM,CMR,CAN,CYM,CAF,TCD,CHL,CHN,CXR,CCK,COL,COM,COG,COD,COK,CRI,CIV,HRV,CUB,CUW,CYP,CZE,DNK,DJI,DMA,DOM,ECU,EGY,SLV,GNQ,ERI,EST,SWZ,ETH,FLK,FRO,FJI,FIN,FRA,GUF,PYF,ATF,GAB,GMB,GEO,DEU,GHA,GIB,GRC,GRL,GRD,GLP,GUM,GTM,GGY,GIN,GNB,GUY,HTI,HMD,VAT,HND,HKG,HUN,ISL,IND,IDN,IRN,IRQ,IRL,IMN,ISR,ITA,JAM,JPN,JEY,JOR,KAZ,KEN,KIR,PRK,KOR,KWT,KGZ,LAO,LVA,LBN,LSO,LBR,LBY,LIE,LTU,LUX,MAC,MDG,MWI,MYS,MDV,MLI,MLT,MHL,MTQ,MRT,MUS,MYT,MEX,FSM,MDA,MCO,MNG,MNE,MSR,MAR,MOZ,MMR,NAM,NRU,NPL,NLD,NCL,NZL,NIC,NER,NGA,NIU,NFK,MKD,MNP,NOR,OMN,PAK,PLW,PSE,PAN,PNG,PRY,PER,PHL,PCN,POL,PRT,PRI,QAT,REU,ROU,RUS,RWA,BLM,SHN,KNA,LCA,MAF,SPM,VCT,WSM,SMR,STP,SAU,SEN,SRB,SYC,SLE,SGP,SXM,SVK,SVN,SLB,SOM,ZAF,SGS,SSD,ESP,LKA,SDN,SUR,SJM,SWE,CHE,SYR,TWN,TJK,TZA,THA,TLS,TGO,TKL,TON,TTO,TUN,TUR,TKM,TCA,TUV,UGA,UKR,ARE,GBR,USA,UMI,URY,UZB,VUT,VEN,VNM,VGB,VIR,WLF,ESH,YEM,ZMB,ZWE]
         address:
-          description: Endereço da Pessoa (restante do endereço, excluindo cidade, estado e país)
-          type: string
-          maxLength: 60
-        addressAdditionalInfo:
-          type: string
-          maxLength: 100
-          description: Informações adicionais do endereço do segurado
+          $ref: '#/components/schemas/Address'
+
     PersonalQuoteCustomer:
       type: object
       description: Objeto de informações de pessoa física.  
@@ -1156,32 +1099,13 @@ components:
           maxLength: 100
           example: RNE
         name:
-          description: Nome ou Razão Social da Intermediador
+          description: Nome ou Razão Social do Intermediador
           type: string
           maxLength: 60
           example: Nome Sobrenome
-        postCode:
-          description: Código Postal da Intermediador (Caso Tipo de Intermediador for ESTIPULANTE) 
-          type: string
-          maxLength: 60
-          example: "10000000"
-        city:
-          description: Cidade da Intermediador (por extenso; Caso Tipo de Intermediador for ESTIPULANTE)
-          type: string
-          maxLength: 60
-        state:
-          description: Estado da Intermediador (por extenso; Caso Tipo de Intermediador for ESTIPULANTE)
-          type: string
-          maxLength: 60
-        country:
-          description: País da Intermediador (de acordo com o código "alpha3" do ISO-3166; Caso Tipo de Intermediador for ESTIPULANTE)
-          type: string
-          example: BRA 
-          enum: [AFG,ALA,ALB,DZA,ASM,AND,AGO,AIA,ATA,ATG,ARG,ARM,ABW,AUS,AUT,AZE,BHS,BHR,BGD,BRB,BLR,BEL,BLZ,BEN,BMU,BTN,BOL,BES,BIH,BWA,BVT,BRA,IOT,BRN,BGR,BFA,BDI,CPV,KHM,CMR,CAN,CYM,CAF,TCD,CHL,CHN,CXR,CCK,COL,COM,COG,COD,COK,CRI,CIV,HRV,CUB,CUW,CYP,CZE,DNK,DJI,DMA,DOM,ECU,EGY,SLV,GNQ,ERI,EST,SWZ,ETH,FLK,FRO,FJI,FIN,FRA,GUF,PYF,ATF,GAB,GMB,GEO,DEU,GHA,GIB,GRC,GRL,GRD,GLP,GUM,GTM,GGY,GIN,GNB,GUY,HTI,HMD,VAT,HND,HKG,HUN,ISL,IND,IDN,IRN,IRQ,IRL,IMN,ISR,ITA,JAM,JPN,JEY,JOR,KAZ,KEN,KIR,PRK,KOR,KWT,KGZ,LAO,LVA,LBN,LSO,LBR,LBY,LIE,LTU,LUX,MAC,MDG,MWI,MYS,MDV,MLI,MLT,MHL,MTQ,MRT,MUS,MYT,MEX,FSM,MDA,MCO,MNG,MNE,MSR,MAR,MOZ,MMR,NAM,NRU,NPL,NLD,NCL,NZL,NIC,NER,NGA,NIU,NFK,MKD,MNP,NOR,OMN,PAK,PLW,PSE,PAN,PNG,PRY,PER,PHL,PCN,POL,PRT,PRI,QAT,REU,ROU,RUS,RWA,BLM,SHN,KNA,LCA,MAF,SPM,VCT,WSM,SMR,STP,SAU,SEN,SRB,SYC,SLE,SGP,SXM,SVK,SVN,SLB,SOM,ZAF,SGS,SSD,ESP,LKA,SDN,SUR,SJM,SWE,CHE,SYR,TWN,TJK,TZA,THA,TLS,TGO,TKL,TON,TTO,TUN,TUR,TKM,TCA,TUV,UGA,UKR,ARE,GBR,USA,UMI,URY,UZB,VUT,VEN,VNM,VGB,VIR,WLF,ESH,YEM,ZMB,ZWE]
         address:
-          description: Endereço da Intermediador (restante do do endereço, excluindo cidade, estado e país; Caso Tipo de Intermediador for ESTIPULANTE)
-          type: string
-          maxLength: 60
+          $ref: '#/components/schemas/Address'
+
     InsurancePatrimonialInsuredObject:
       type: object
       required:
@@ -1429,14 +1353,13 @@ components:
         description:
           description: Descrição da Franquia
           type: string
-          maxLength: 60
+          maxLength: 500
           example: Franquia de exemplo
     POS:
       type: object
       description: Objeto que agrupa os dados de Participação Obrigatória do Segurado.
       required:
         - applicationType
-        - description
       properties:
         applicationType:
           description: Forma de Aplicação do POS
@@ -1450,7 +1373,7 @@ components:
         description:
           description: Descrição do POS
           type: string
-          maxLength: 60
+          maxLength: 500
           example: "Descrição de exemplo"
         minValue:
           $ref: '#/components/schemas/AmountDetails'
@@ -1693,7 +1616,7 @@ components:
         denialJustificationDescription:
           description: "Descrição da Justificativa da Negativa(Caso Justificativa da Negativa for 'OUTROS')"
           type: string
-          maxLength: 100  
+          maxLength: 500  
         coverages:
           type: array
           description: Lista que agrupa os dados de coberturas.
@@ -1775,6 +1698,7 @@ components:
         postCode:
           description: Código postal do imóvel, condomínio ou unidade empresarial/planta. Caso aplicável
           type: string
+          pattern: '^\d{8}$|^NA$'
           maxLength: 60
           example: "10000000"
         businessActivity:
@@ -2100,6 +2024,7 @@ components:
           description: Valor de Prêmio da Assistência
           allOf:
             - $ref: '#/components/schemas/AmountDetails'  
+
     QuoteResultPremium:
       type: object
       description: Objeto que agrupa dados de prêmio.
@@ -2137,7 +2062,11 @@ components:
           type: array
           description: Lista que agrupa os dados de coberturas.
           items:
-            $ref: '#/components/schemas/QuoteResultPremiumCoverage'
+            oneOf:
+              - $ref: '#/components/schemas/QuoteHomeResultPremiumCoverage'
+              - $ref: '#/components/schemas/QuoteBusinessResultPremiumCoverage'
+              - $ref: '#/components/schemas/QuoteDiverseRiskResultPremiumCoverage'
+              - $ref: '#/components/schemas/QuoteCondominiumResultPremiumCoverage'
         payments:
           type: array
           description: Lista que agrupa os dados de pagamentos.
@@ -2157,7 +2086,7 @@ components:
         claimDescription:
           description: Descrição do sinistro
           type: string
-          maxLength: 100
+          maxLength: 500
       additionalProperties: false 
 
     PolicyDataPatrimonialCondominium:
@@ -2170,6 +2099,13 @@ components:
         - mainActivity
         - isLegallyConstituted
         - condominiumType
+        - includesAssistanceServices
+        - maxLMG
+        - insuranceTermStartDate
+        - insuranceType
+        - insuredObject
+        - termEndDate
+        - termStartDate
       description: Objeto que agrupa dados específicos do ramo de cotação.
       properties:
         mainActivity:
@@ -2232,9 +2168,10 @@ components:
           type: string
           maxLength: 100
           example: "111111"
-        insurerId:  
-          description: Nome para identifcar a congênere de renovação
+        insurerName:  
+          description: Razão Social da congênere de renovação
           type: string
+          pattern: ^[\w\W\s]*$
           maxLength: 100
         currency:
           description: Moeda de emissão do contrato de acordo com ISO-4217.
@@ -2261,7 +2198,7 @@ components:
         claimDescription:
           description: Descrição do sinistro
           type: string
-          maxLength: 100
+          maxLength: 500
         insuredObject:
           $ref: '#/components/schemas/QuotePatrimonialCondominiumInsuredObject'     
         coverages:
@@ -2273,6 +2210,8 @@ components:
     QuotePatrimonialCondominiumInsuredObject:
       type: object
       description: Objeto que agrupa os dados de objeto segurado.
+      required:
+        - structuringType
       properties:
         identification:
           type: string
@@ -2367,29 +2306,8 @@ components:
         code:
             type: string
             description: Código da cobertura, conforme Anexo II do Manuel de Escopo de Dados
-            example: RESIDENCIAL_IMOVEL_BASICA
+            example: CONDOMINIAL_DESPESAS_COM_ALUGUEL
             enum: [
-              RESIDENCIAL_IMOVEL_BASICA,
-              RESIDENCIAL_IMOVEL_AMPLA,
-              RESIDENCIAL_INCENDIO,
-              RESIDENCIAL_QUEDA_DE_RAIO,
-              RESIDENCIAL_EXPLOSAO,
-              RESIDENCIAL_IMPACTO_DE_AERONAVES,
-              RESIDENCIAL_ALAGAMENTO,
-              RESIDENCIAL_DANOS_ELETRICOS,
-              RESIDENCIAL_DANOS_POR_AGUA,
-              RESIDENCIAL_RESPONSABILIDADE_CIVIL_FAMILIAR,
-              RESIDENCIAL_VENDAVAL,
-              RESIDENCIAL_DANOS_A_EQUIPAMENTOS_ELETRONICOS,
-              RESIDENCIAL_TERREMOTO,
-              RESIDENCIAL_PERDA_E_PAGAMENTO_DE_ALUGUEL,
-              RESIDENCIAL_ROUBO_E_SUBTRACAO_DE_BENS,
-              RESIDENCIAL_QUEBRA_DE_VIDROS,
-              RESIDENCIAL_IMPACTO_DE_VEICULOS,
-              RESIDENCIAL_DESMORONAMENTO,
-              RESIDENCIAL_TUMULTOS_GREVES_E_LOCKOUTS,
-              RESIDENCIAL_DESPESAS_EXTRAORDINARIAS,
-              RESIDENCIAL_JOIAS_E_OBRAS_DE_ARTE,
               CONDOMINIAL_COBERTURA_BASICA_SIMPLES,
               CONDOMINIAL_COBERTURA_BASICA_AMPLA,
               CONDOMINIAL_ANUNCIOS_LUMINOSOS,
@@ -2410,118 +2328,6 @@ components:
               CONDOMINIAL_VENDAVAL,
               CONDOMINIAL_ALAGAMENTO,
               CONDOMINIAL_TUMULTO,
-              EMPRESARIAL_INCENDIO_QUEDA_DE_RAIO_E_EXPLOSAO,
-              EMPRESARIAL_DANOS_ELETRICOS,
-              EMPRESARIAL_VENDAVAL_ATE_FUMACA,
-              EMPRESARIAL_DESMORONAMENTO,
-              EMPRESARIAL_ALAGAMENTO_E_INUNDACAO,
-              EMPRESARIAL_TUMULTOS_GREVES_LOCKOUT_E_ATOS_DOLOSOS,
-              EMPRESARIAL_ROUBO_E_FURTO_QUALIFICADO,
-              EMPRESARIAL_VALORES,
-              EMPRESARIAL_QUEBRA_DE_VIDROS_ESPELHOS_MARMORES_E_GRANITOS,
-              EMPRESARIAL_ANUNCIOS_LUMINOSOS,
-              EMPRESARIAL_FIDELIDADE_DE_EMPREGADOS,
-              EMPRESARIAL_RECOMPOSICAO_DE_REGISTROS_E_DOCUMENTOS,
-              EMPRESARIAL_DETERIORACAO_DE_MERCADORIAS_EM_AMBIENTES_FRIGORIFICADOS,
-              EMPRESARIAL_DERRAME,
-              EMPRESARIAL_VAZAMENTO,
-              EMPRESARIAL_EQUIPAMENTOS,
-              EMPRESARIAL_QUEBRA_DE_MAQUINAS,
-              EMPRESARIAL_RESPONSABILIDADE_CIVIL,
-              EMPRESARIAL_DESPESAS_EXTRAORDINARIAS,
-              EMPRESARIAL_LUCROS_CESSANTES_DESPESAS_FIXAS_LUCRO_LIQUIDO_LUCRO_BRUTO,
-              EMPRESARIAL_PERDA_OU_PAGAMENTO_DE_ALUGUEL,
-              EMPRESARIAL_PEQUENAS_OBRAS_DE_ENGENHARIA,
-              DIVERSOS_DANOS_DE_CAUSA_EXTERNA,
-              DIVERSOS_DANOS_DE_CAUSA_EXTERNA_E_ROUBO,
-              DIVERSOS_ROUBO,
-              SERVICOS_EMERGENCIAIS,
-              SERVICOS_DE_CONVENIENCIA,
-              GARANTIA_ESTENDIDA_ORIGINAL,
-              GARANTIA_ESTENDIDA_AMPLIADA,
-              GARANTIA_ESTENDIDA_REDUZIDA,
-              COMPLEMENTACAO_DE_GARANTIA,
-              CESSANTES_LUCRO_BRUTO_LUCRO_LIQUIDO_E_DESPESAS_FIXAS,
-              CESSANTES_LUCRO_LIQUIDO,
-              CESSANTES_DESPESAS_FIXAS,
-              CESSANTES_PERDA_DE_RECEITA_OU_INTERRUPCAO_DE_NEGOCIOS,
-              ENGENHARIA_OBRAS_CIVIS_CONSTRUCAO_E_INSTALACAO_E_MONTAGEM,
-              ENGENHARIA_AFRETAMENTOS_DE_AERONAVES,
-              ENGENHARIA_ARMAZENAGEM_FORA_DO_CANTEIRO_DE_OBRAS_OU_LOCAL_SEGURADO,
-              ENGENHARIA_DANOS_EM_CONSEQUENCIA_DE_ERRO_DE_PROJETO_RISCO_DO_FABRICANTE,
-              ENGENHARIA_DANOS_MORAIS,
-              ENGENHARIA_DESPESAS_COM_DESENTULHO_DO_LOCAL,
-              ENGENHARIA_DESPESAS_DE_SALVAMENTO_E_CONTENCAO_DE_SINISTROS,
-              ENGENHARIA_DESPESAS_EXTRAORDINARIAS,
-              ENGENHARIA_EQUIPAMENTOS_DE_ESCRITORIO_E_INFORMATICA,
-              ENGENHARIA_EQUIPAMENTOS_MOVEIS_OU_ESTACIONARIOS_UTILIZADOS_NA_OBRA,
-              ENGENHARIA_FERRAMENTAS_DE_PEQUENO_E_MEDIO_PORTE,
-              ENGENHARIA_HONORARIOS_DE_PERITO,
-              ENGENHARIA_INCENDIO_APOS_O_TERMINO_DE_OBRAS_ATE_TRINTA_DIAS_EXCETO_PARA_REFORMAS_OU_AMPLIACOES,
-              ENGENHARIA_LUCROS_CESSANTES,
-              ENGENHARIA_MANUTENCAO_AMPLA_ATE_VINTE_E_QUATRO_MESES,
-              ENGENHARIA_MANUTENCAO_SIMPLES_ATE_VINTE_E_QUATRO_MESES,
-              ENGENHARIA_OBRAS_CONCLUIDAS,
-              ENGENHARIA_OBRAS_TEMPORARIAS,
-              ENGENHARIA_OBRAS_INSTALACOES_CONTRATADAS_ACEITAS_E_OU_COLOCADAS_EM_OPERACAO,
-              ENGENHARIA_PROPRIEDADES_CIRCUNVIZINHAS,
-              ENGENHARIA_RECOMPOSICAO_DE_DOCUMENTOS,
-              ENGENHARIA_RESPONSABILIDADE_CIVIL_EMPREGADOR,
-              ENGENHARIA_FUNDACAO,
-              ENGENHARIA_STANDS_DE_VENDA,
-              ENGENHARIA_TRANSPORTE_TERRESTRE,
-              ENGENHARIA_TUMULTOS_GREVES_E_LOCKOUT,
-              BANCOS_DANOS_MATERIAIS_CAUSADOS_AO_COFRE_FORTE,
-              BANCOS_DANOS_MATERIAIS_CAUSADOS_AOS_CAIXAS_ELETRONICOS_ATM,
-              BANCOS_INFIDELIDADE_DE_FUNCIONARIOS,
-              BANCOS_VALORES_NO_INTERIOR_DO_ESTABELECIMENTO_DENTRO_E_OU_FORA_DE_COFRE_FORTE,
-              BANCOS_VALORES_NO_INTERIOR_DE_CAIXAS_ELETRONICOS_ATM,
-              BANCOS_VALORES_EM_MAOS_DE_PORTADORES_EM_TRANSITO,
-              RNO_ALAGAMENTO_INUNDACAO,
-              RNO_ALUGUEL_PERDA_OU_PAGAMENTO,
-              RNO_ANUNCIOS_LUMINOSOS,
-              RNO_BAGAGEM,
-              RNO_BASICA_INCENDIO_RAIO_EXPLOSAO,
-              RNO_BASICA_DANOS_MATERIAIS,
-              RNO_BASICA_DE_OBRAS_CIVIS_EM_CONSTRUCAO_E_INSTALACOES_E_MONTAGENS,
-              RNO_BENS_DE_TERCEIROS_EM_PODER_DO_SEGURADO,
-              RNO_CARGA_DESCARGA_ICAMENTO_E_DESCIDA,
-              RNO_DANOS_ELETRICOS,
-              RNO_DANOS_NA_FABRICACAO,
-              RNO_DERRAME_D_AGUA_OU_OUTRA_SUBSTANCIA_LIQUIDA_DE_INSTALACOES_DE_CHUVEIROS_AUTOMATICOS_SPRINKLERS,
-              RNO_DESMORONAMENTO,
-              RNO_DESPESAS_ADICIONAIS_OUTRAS_DESPESAS,
-              RNO_DESPESAS_EXTRAORDINARIAS,
-              RNO_DESPESAS_FIXA,
-              RNO_DETERIORACAO_DE_MERCADORIAS_EM_AMBIENTES_FRIGORIFICADOS,
-              RNO_EQUIPAMENTOS_ARRENDADOS,
-              RNO_EQUIPAMENTOS_CEDIDOS_A_TERCEIROS,
-              RNO_EQUIPAMENTOS_CINEMATOGRAFICOS_FOTOGRAFICOS_DE_AUDIO_E_VIDEO,
-              RNO_EQUIPAMENTOS_DIVERSOS_OUTRAS_MODALIDADES,
-              RNO_EQUIPAMENTOS_ELETRONICOS,
-              RNO_EQUIPAMENTOS_ESTACIONARIOS,
-              RNO_EQUIPAMENTOS_MOVEIS,
-              RNO_EQUIPAMENTOS_PORTATEIS,
-              RNO_FIDELIDADE_DE_EMPREGADOS,
-              RNO_HONORARIOS_DE_PERITOS,
-              RNO_IMPACTO_DE_VEICULOS_E_QUEDA_DE_AERONAVES,
-              RNO_IMPACTO_DE_VEICULOS_TERRESTRES,
-              RNO_LINHAS_DE_TRANSMISSAO_E_DISTRIBUICAO,
-              RNO_LUCROS_CESSANTES,
-              RNO_MOVIMENTACAO_INTERNA_DE_MERCADORIAS,
-              RNO_PATIOS,
-              RNO_QUEBRA_DE_MAQUINAS,
-              RNO_QUEBRA_DE_VIDROS_ESPELHOS_MARMORES_E_GRANITOS,
-              RNO_RECOMPOSICAO_DE_REGISTROS_E_DOCUMENTOS,
-              RNO_ROUBO_DE_BENS_DE_HOSPEDES,
-              RNO_ROUBO_DE_VALORES_EM_TRANSITO_EM_MAOS_DE_PORTADOR,
-              RNO_ROUBO_E_FURTO_MEDIANTE_ARROMBAMENTO,
-              RNO_ROUBO_E_OU_FURTO_QUALIFICADO_DE_VALORES_NO_INTERIOR_DO_ESTABELECIMENTO_DENTRO_E_OU_FORA_DE_COFRES_FORTES_OU_CAIXAS_FORTES,
-              RNO_TERRORISMO_E_SABOTAGEM,
-              RNO_TUMULTOS_GREVES_LOCKOUT_E_ATOS_DOLOSOS,
-              RNO_VAZAMENTO_DE_TUBULACOES_E_TANQUES,
-              RNO_VAZAMENTO_DE_TUBULACOES_HIDRAULICAS,
-              RNO_VENDAVAL_FURACAO_CICLONE_TORNADO_GRANIZO_QUEDA_DE_AERONAVES_OU_QUAISQUER_OUTROS_ENGENHOS_AEREOS_OU_ESPACIAIS_IMPACTO_DE_VEICULOS_TERRESTRES_E_FUMACA,
               OUTRAS
             ]
         description:
@@ -2599,8 +2405,9 @@ components:
         postCode:
           type: string
           maxLength: 8
+          pattern: '^\d{8}$|^NA$'
           description: CEP
-          example: "1310200"
+          example: "13102000"
 
     QuoteStatusPatrimonialCondominium:
       type: object
@@ -2702,30 +2509,9 @@ components:
           example: "0111"
         code:
             type: string
-            description: Código da cobertura, conforme Anexo II do Manuel de Escopo de Dados
-            example: RESIDENCIAL_IMOVEL_BASICA
+            description: Código da cobertura, conforme Anexo II do Manual de Escopo de Dados
+            example: CONDOMINIAL_COBERTURA_BASICA_SIMPLES
             enum: [
-              RESIDENCIAL_IMOVEL_BASICA,
-              RESIDENCIAL_IMOVEL_AMPLA,
-              RESIDENCIAL_INCENDIO,
-              RESIDENCIAL_QUEDA_DE_RAIO,
-              RESIDENCIAL_EXPLOSAO,
-              RESIDENCIAL_IMPACTO_DE_AERONAVES,
-              RESIDENCIAL_ALAGAMENTO,
-              RESIDENCIAL_DANOS_ELETRICOS,
-              RESIDENCIAL_DANOS_POR_AGUA,
-              RESIDENCIAL_RESPONSABILIDADE_CIVIL_FAMILIAR,
-              RESIDENCIAL_VENDAVAL,
-              RESIDENCIAL_DANOS_A_EQUIPAMENTOS_ELETRONICOS,
-              RESIDENCIAL_TERREMOTO,
-              RESIDENCIAL_PERDA_E_PAGAMENTO_DE_ALUGUEL,
-              RESIDENCIAL_ROUBO_E_SUBTRACAO_DE_BENS,
-              RESIDENCIAL_QUEBRA_DE_VIDROS,
-              RESIDENCIAL_IMPACTO_DE_VEICULOS,
-              RESIDENCIAL_DESMORONAMENTO,
-              RESIDENCIAL_TUMULTOS_GREVES_E_LOCKOUTS,
-              RESIDENCIAL_DESPESAS_EXTRAORDINARIAS,
-              RESIDENCIAL_JOIAS_E_OBRAS_DE_ARTE,
               CONDOMINIAL_COBERTURA_BASICA_SIMPLES,
               CONDOMINIAL_COBERTURA_BASICA_AMPLA,
               CONDOMINIAL_ANUNCIOS_LUMINOSOS,
@@ -2746,118 +2532,6 @@ components:
               CONDOMINIAL_VENDAVAL,
               CONDOMINIAL_ALAGAMENTO,
               CONDOMINIAL_TUMULTO,
-              EMPRESARIAL_INCENDIO_QUEDA_DE_RAIO_E_EXPLOSAO,
-              EMPRESARIAL_DANOS_ELETRICOS,
-              EMPRESARIAL_VENDAVAL_ATE_FUMACA,
-              EMPRESARIAL_DESMORONAMENTO,
-              EMPRESARIAL_ALAGAMENTO_E_INUNDACAO,
-              EMPRESARIAL_TUMULTOS_GREVES_LOCKOUT_E_ATOS_DOLOSOS,
-              EMPRESARIAL_ROUBO_E_FURTO_QUALIFICADO,
-              EMPRESARIAL_VALORES,
-              EMPRESARIAL_QUEBRA_DE_VIDROS_ESPELHOS_MARMORES_E_GRANITOS,
-              EMPRESARIAL_ANUNCIOS_LUMINOSOS,
-              EMPRESARIAL_FIDELIDADE_DE_EMPREGADOS,
-              EMPRESARIAL_RECOMPOSICAO_DE_REGISTROS_E_DOCUMENTOS,
-              EMPRESARIAL_DETERIORACAO_DE_MERCADORIAS_EM_AMBIENTES_FRIGORIFICADOS,
-              EMPRESARIAL_DERRAME,
-              EMPRESARIAL_VAZAMENTO,
-              EMPRESARIAL_EQUIPAMENTOS,
-              EMPRESARIAL_QUEBRA_DE_MAQUINAS,
-              EMPRESARIAL_RESPONSABILIDADE_CIVIL,
-              EMPRESARIAL_DESPESAS_EXTRAORDINARIAS,
-              EMPRESARIAL_LUCROS_CESSANTES_DESPESAS_FIXAS_LUCRO_LIQUIDO_LUCRO_BRUTO,
-              EMPRESARIAL_PERDA_OU_PAGAMENTO_DE_ALUGUEL,
-              EMPRESARIAL_PEQUENAS_OBRAS_DE_ENGENHARIA,
-              DIVERSOS_DANOS_DE_CAUSA_EXTERNA,
-              DIVERSOS_DANOS_DE_CAUSA_EXTERNA_E_ROUBO,
-              DIVERSOS_ROUBO,
-              SERVICOS_EMERGENCIAIS,
-              SERVICOS_DE_CONVENIENCIA,
-              GARANTIA_ESTENDIDA_ORIGINAL,
-              GARANTIA_ESTENDIDA_AMPLIADA,
-              GARANTIA_ESTENDIDA_REDUZIDA,
-              COMPLEMENTACAO_DE_GARANTIA,
-              CESSANTES_LUCRO_BRUTO_LUCRO_LIQUIDO_E_DESPESAS_FIXAS,
-              CESSANTES_LUCRO_LIQUIDO,
-              CESSANTES_DESPESAS_FIXAS,
-              CESSANTES_PERDA_DE_RECEITA_OU_INTERRUPCAO_DE_NEGOCIOS,
-              ENGENHARIA_OBRAS_CIVIS_CONSTRUCAO_E_INSTALACAO_E_MONTAGEM,
-              ENGENHARIA_AFRETAMENTOS_DE_AERONAVES,
-              ENGENHARIA_ARMAZENAGEM_FORA_DO_CANTEIRO_DE_OBRAS_OU_LOCAL_SEGURADO,
-              ENGENHARIA_DANOS_EM_CONSEQUENCIA_DE_ERRO_DE_PROJETO_RISCO_DO_FABRICANTE,
-              ENGENHARIA_DANOS_MORAIS,
-              ENGENHARIA_DESPESAS_COM_DESENTULHO_DO_LOCAL,
-              ENGENHARIA_DESPESAS_DE_SALVAMENTO_E_CONTENCAO_DE_SINISTROS,
-              ENGENHARIA_DESPESAS_EXTRAORDINARIAS,
-              ENGENHARIA_EQUIPAMENTOS_DE_ESCRITORIO_E_INFORMATICA,
-              ENGENHARIA_EQUIPAMENTOS_MOVEIS_OU_ESTACIONARIOS_UTILIZADOS_NA_OBRA,
-              ENGENHARIA_FERRAMENTAS_DE_PEQUENO_E_MEDIO_PORTE,
-              ENGENHARIA_HONORARIOS_DE_PERITO,
-              ENGENHARIA_INCENDIO_APOS_O_TERMINO_DE_OBRAS_ATE_TRINTA_DIAS_EXCETO_PARA_REFORMAS_OU_AMPLIACOES,
-              ENGENHARIA_LUCROS_CESSANTES,
-              ENGENHARIA_MANUTENCAO_AMPLA_ATE_VINTE_E_QUATRO_MESES,
-              ENGENHARIA_MANUTENCAO_SIMPLES_ATE_VINTE_E_QUATRO_MESES,
-              ENGENHARIA_OBRAS_CONCLUIDAS,
-              ENGENHARIA_OBRAS_TEMPORARIAS,
-              ENGENHARIA_OBRAS_INSTALACOES_CONTRATADAS_ACEITAS_E_OU_COLOCADAS_EM_OPERACAO,
-              ENGENHARIA_PROPRIEDADES_CIRCUNVIZINHAS,
-              ENGENHARIA_RECOMPOSICAO_DE_DOCUMENTOS,
-              ENGENHARIA_RESPONSABILIDADE_CIVIL_EMPREGADOR,
-              ENGENHARIA_FUNDACAO,
-              ENGENHARIA_STANDS_DE_VENDA,
-              ENGENHARIA_TRANSPORTE_TERRESTRE,
-              ENGENHARIA_TUMULTOS_GREVES_E_LOCKOUT,
-              BANCOS_DANOS_MATERIAIS_CAUSADOS_AO_COFRE_FORTE,
-              BANCOS_DANOS_MATERIAIS_CAUSADOS_AOS_CAIXAS_ELETRONICOS_ATM,
-              BANCOS_INFIDELIDADE_DE_FUNCIONARIOS,
-              BANCOS_VALORES_NO_INTERIOR_DO_ESTABELECIMENTO_DENTRO_E_OU_FORA_DE_COFRE_FORTE,
-              BANCOS_VALORES_NO_INTERIOR_DE_CAIXAS_ELETRONICOS_ATM,
-              BANCOS_VALORES_EM_MAOS_DE_PORTADORES_EM_TRANSITO,
-              RNO_ALAGAMENTO_INUNDACAO,
-              RNO_ALUGUEL_PERDA_OU_PAGAMENTO,
-              RNO_ANUNCIOS_LUMINOSOS,
-              RNO_BAGAGEM,
-              RNO_BASICA_INCENDIO_RAIO_EXPLOSAO,
-              RNO_BASICA_DANOS_MATERIAIS,
-              RNO_BASICA_DE_OBRAS_CIVIS_EM_CONSTRUCAO_E_INSTALACOES_E_MONTAGENS,
-              RNO_BENS_DE_TERCEIROS_EM_PODER_DO_SEGURADO,
-              RNO_CARGA_DESCARGA_ICAMENTO_E_DESCIDA,
-              RNO_DANOS_ELETRICOS,
-              RNO_DANOS_NA_FABRICACAO,
-              RNO_DERRAME_D_AGUA_OU_OUTRA_SUBSTANCIA_LIQUIDA_DE_INSTALACOES_DE_CHUVEIROS_AUTOMATICOS_SPRINKLERS,
-              RNO_DESMORONAMENTO,
-              RNO_DESPESAS_ADICIONAIS_OUTRAS_DESPESAS,
-              RNO_DESPESAS_EXTRAORDINARIAS,
-              RNO_DESPESAS_FIXA,
-              RNO_DETERIORACAO_DE_MERCADORIAS_EM_AMBIENTES_FRIGORIFICADOS,
-              RNO_EQUIPAMENTOS_ARRENDADOS,
-              RNO_EQUIPAMENTOS_CEDIDOS_A_TERCEIROS,
-              RNO_EQUIPAMENTOS_CINEMATOGRAFICOS_FOTOGRAFICOS_DE_AUDIO_E_VIDEO,
-              RNO_EQUIPAMENTOS_DIVERSOS_OUTRAS_MODALIDADES,
-              RNO_EQUIPAMENTOS_ELETRONICOS,
-              RNO_EQUIPAMENTOS_ESTACIONARIOS,
-              RNO_EQUIPAMENTOS_MOVEIS,
-              RNO_EQUIPAMENTOS_PORTATEIS,
-              RNO_FIDELIDADE_DE_EMPREGADOS,
-              RNO_HONORARIOS_DE_PERITOS,
-              RNO_IMPACTO_DE_VEICULOS_E_QUEDA_DE_AERONAVES,
-              RNO_IMPACTO_DE_VEICULOS_TERRESTRES,
-              RNO_LINHAS_DE_TRANSMISSAO_E_DISTRIBUICAO,
-              RNO_LUCROS_CESSANTES,
-              RNO_MOVIMENTACAO_INTERNA_DE_MERCADORIAS,
-              RNO_PATIOS,
-              RNO_QUEBRA_DE_MAQUINAS,
-              RNO_QUEBRA_DE_VIDROS_ESPELHOS_MARMORES_E_GRANITOS,
-              RNO_RECOMPOSICAO_DE_REGISTROS_E_DOCUMENTOS,
-              RNO_ROUBO_DE_BENS_DE_HOSPEDES,
-              RNO_ROUBO_DE_VALORES_EM_TRANSITO_EM_MAOS_DE_PORTADOR,
-              RNO_ROUBO_E_FURTO_MEDIANTE_ARROMBAMENTO,
-              RNO_ROUBO_E_OU_FURTO_QUALIFICADO_DE_VALORES_NO_INTERIOR_DO_ESTABELECIMENTO_DENTRO_E_OU_FORA_DE_COFRES_FORTES_OU_CAIXAS_FORTES,
-              RNO_TERRORISMO_E_SABOTAGEM,
-              RNO_TUMULTOS_GREVES_LOCKOUT_E_ATOS_DOLOSOS,
-              RNO_VAZAMENTO_DE_TUBULACOES_E_TANQUES,
-              RNO_VAZAMENTO_DE_TUBULACOES_HIDRAULICAS,
-              RNO_VENDAVAL_FURACAO_CICLONE_TORNADO_GRANIZO_QUEDA_DE_AERONAVES_OU_QUAISQUER_OUTROS_ENGENHOS_AEREOS_OU_ESPACIAIS_IMPACTO_DE_VEICULOS_TERRESTRES_E_FUMACA,
               OUTRAS
             ]
         description:
@@ -2923,6 +2597,13 @@ components:
         - mainActivity
         - isLegallyConstituted
         - condominiumType
+        - includesAssistanceServices
+        - termStartDate
+        - termEndDate
+        - maxLMG
+        - insuranceTermStartDate
+        - insuranceType
+        - insuredObject 
       properties:
         mainActivity:
           description: "Principal atividade do local de risco"
@@ -2984,8 +2665,9 @@ components:
           type: string
           maxLength: 100
           example: "111111"
-        insurerId:  
-          description: Nome para identifcar a congênere de renovação
+        insurerName:  
+          description: Razão Social da congênere de renovação
+          pattern: ^[\w\W\s]*$
           type: string
           maxLength: 100
         currency:
@@ -3013,7 +2695,7 @@ components:
         claimDescription:
           description: Descrição do sinistro
           type: string
-          maxLength: 100
+          maxLength: 500
         insuredObject:
           $ref: '#/components/schemas/QuotePatrimonialCondominiumResultInsuredObject'     
         coverages:
@@ -3027,6 +2709,7 @@ components:
       description: Objeto que agrupa os dados de objeto segurado.
       required:
         - identification
+        - structuringType
       properties:
         identification:
           type: string
@@ -3128,7 +2811,8 @@ components:
                 PIX,
                 DINHEIRO_EM_ESPECIE,
                 OUTROS]
-    QuoteResultPremiumCoverage:
+
+    QuoteCondominiumResultPremiumCoverage:
       type: object
       required:
         - branch
@@ -3142,7 +2826,148 @@ components:
           example: "0111"
         code:
             type: string
-            description: Código da cobertura, conforme Anexo II do Manuel de Escopo de Dados
+            description: Código da cobertura, conforme Anexo II do Manual de Escopo de Dados
+            example: CONDOMINIAL_COBERTURA_BASICA_SIMPLES
+            enum: [
+              CONDOMINIAL_COBERTURA_BASICA_SIMPLES,
+              CONDOMINIAL_COBERTURA_BASICA_AMPLA,
+              CONDOMINIAL_ANUNCIOS_LUMINOSOS,
+              CONDOMINIAL_DANOS_AO_JARDIM,
+              CONDOMINIAL_DANOS_ELETRICOS,
+              CONDOMINIAL_DESMORONAMENTO,
+              CONDOMINIAL_DESPESAS_COM_ALUGUEL,
+              CONDOMINIAL_EQUIPAMENTOS,
+              CONDOMINIAL_FIDELIDADE_DE_EMPREGADOS,
+              CONDOMINIAL_IMPACTO_DE_VEICULOS,
+              CONDOMINIAL_VIDA_E_ACIDENTES_PESSOAIS_EMPREGADOS,
+              CONDOMINIAL_LUCROS_CESSANTES,
+              CONDOMINIAL_QUEBRA_DE_VIDROS_ESPELHOS_MARMORES_E_GRANITOS,
+              CONDOMINIAL_RESPONSABILIDADE_CIVIL,
+              CONDOMINIAL_ROUBO,
+              CONDOMINIAL_VALORES,
+              CONDOMINIAL_VAZAMENTO,
+              CONDOMINIAL_VENDAVAL,
+              CONDOMINIAL_ALAGAMENTO,
+              CONDOMINIAL_TUMULTO,
+              OUTRAS
+            ]
+        description:
+          description: Descrição / Nome da Cobertura (Caso Código da Cobertura for "OUTRAS")
+          type: string
+          maxLength: 500
+        internalCode:
+          description: "Código interno da cobertura da seguradora"
+          type: string
+          maxLength: 500
+        premiumAmount:
+          description: Valor de Prêmio da Cobertura
+          allOf:
+            - $ref: '#/components/schemas/AmountDetails'
+
+    QuoteDiverseRiskResultPremiumCoverage:
+      type: object
+      required:
+        - branch
+        - code
+        - premiumAmount
+      properties:
+        branch:
+          description: Grupo e ramo da cobertura
+          type: string
+          maxLength: 4
+          example: "0111"
+        code:
+            type: string
+            description: Código da cobertura, conforme Anexo II do Manual de Escopo de Dados
+            example: DIVERSOS_DANOS_DE_CAUSA_EXTERNA
+            enum: [
+              DIVERSOS_DANOS_DE_CAUSA_EXTERNA,
+              DIVERSOS_DANOS_DE_CAUSA_EXTERNA_E_ROUBO,
+              DIVERSOS_ROUBO,
+              OUTRAS
+            ]
+        description:
+          description: Descrição / Nome da Cobertura (Caso Código da Cobertura for "OUTRAS")
+          type: string
+          maxLength: 500
+        internalCode:
+          description: "Código interno da cobertura da seguradora"
+          type: string
+          maxLength: 500
+        premiumAmount:
+          description: Valor de Prêmio da Cobertura
+          allOf:
+            - $ref: '#/components/schemas/AmountDetails'
+
+    QuoteBusinessResultPremiumCoverage:
+      type: object
+      required:
+        - branch
+        - code
+        - premiumAmount
+      properties:
+        branch:
+          description: Grupo e ramo da cobertura
+          type: string
+          maxLength: 4
+          example: "0111"
+        code:
+            type: string
+            description: Código da cobertura, conforme Anexo II do Manual de Escopo de Dados
+            example: EMPRESARIAL_INCENDIO_QUEDA_DE_RAIO_E_EXPLOSAO
+            enum: [
+              EMPRESARIAL_INCENDIO_QUEDA_DE_RAIO_E_EXPLOSAO,
+              EMPRESARIAL_DANOS_ELETRICOS,
+              EMPRESARIAL_VENDAVAL_ATE_FUMACA,
+              EMPRESARIAL_DESMORONAMENTO,
+              EMPRESARIAL_ALAGAMENTO_E_INUNDACAO,
+              EMPRESARIAL_TUMULTOS_GREVES_LOCKOUT_E_ATOS_DOLOSOS,
+              EMPRESARIAL_ROUBO_E_FURTO_QUALIFICADO,
+              EMPRESARIAL_VALORES,
+              EMPRESARIAL_QUEBRA_DE_VIDROS_ESPELHOS_MARMORES_E_GRANITOS,
+              EMPRESARIAL_ANUNCIOS_LUMINOSOS,
+              EMPRESARIAL_FIDELIDADE_DE_EMPREGADOS,
+              EMPRESARIAL_RECOMPOSICAO_DE_REGISTROS_E_DOCUMENTOS,
+              EMPRESARIAL_DETERIORACAO_DE_MERCADORIAS_EM_AMBIENTES_FRIGORIFICADOS,
+              EMPRESARIAL_DERRAME,
+              EMPRESARIAL_VAZAMENTO,
+              EMPRESARIAL_EQUIPAMENTOS,
+              EMPRESARIAL_QUEBRA_DE_MAQUINAS,
+              EMPRESARIAL_RESPONSABILIDADE_CIVIL,
+              EMPRESARIAL_DESPESAS_EXTRAORDINARIAS,
+              EMPRESARIAL_LUCROS_CESSANTES_DESPESAS_FIXAS_LUCRO_LIQUIDO_LUCRO_BRUTO,
+              EMPRESARIAL_PERDA_OU_PAGAMENTO_DE_ALUGUEL,
+              EMPRESARIAL_PEQUENAS_OBRAS_DE_ENGENHARIA,
+              OUTRAS
+            ]
+        description:
+          description: Descrição / Nome da Cobertura (Caso Código da Cobertura for "OUTRAS")
+          type: string
+          maxLength: 500
+        internalCode:
+          description: "Código interno da cobertura da seguradora"
+          type: string
+          maxLength: 500
+        premiumAmount:
+          description: Valor de Prêmio da Cobertura
+          allOf:
+            - $ref: '#/components/schemas/AmountDetails'
+
+    QuoteHomeResultPremiumCoverage:
+      type: object
+      required:
+        - branch
+        - code
+        - premiumAmount
+      properties:
+        branch:
+          description: Grupo e ramo da cobertura
+          type: string
+          maxLength: 4
+          example: "0111"
+        code:
+            type: string
+            description: Código da cobertura, conforme Anexo II do Manual de Escopo de Dados
             example: RESIDENCIAL_IMOVEL_BASICA
             enum: [
               RESIDENCIAL_IMOVEL_BASICA,
@@ -3166,138 +2991,6 @@ components:
               RESIDENCIAL_TUMULTOS_GREVES_E_LOCKOUTS,
               RESIDENCIAL_DESPESAS_EXTRAORDINARIAS,
               RESIDENCIAL_JOIAS_E_OBRAS_DE_ARTE,
-              CONDOMINIAL_COBERTURA_BASICA_SIMPLES,
-              CONDOMINIAL_COBERTURA_BASICA_AMPLA,
-              CONDOMINIAL_ANUNCIOS_LUMINOSOS,
-              CONDOMINIAL_DANOS_AO_JARDIM,
-              CONDOMINIAL_DANOS_ELETRICOS,
-              CONDOMINIAL_DESMORONAMENTO,
-              CONDOMINIAL_DESPESAS_COM_ALUGUEL,
-              CONDOMINIAL_EQUIPAMENTOS,
-              CONDOMINIAL_FIDELIDADE_DE_EMPREGADOS,
-              CONDOMINIAL_IMPACTO_DE_VEICULOS,
-              CONDOMINIAL_VIDA_E_ACIDENTES_PESSOAIS_EMPREGADOS,
-              CONDOMINIAL_LUCROS_CESSANTES,
-              CONDOMINIAL_QUEBRA_DE_VIDROS_ESPELHOS_MARMORES_E_GRANITOS,
-              CONDOMINIAL_RESPONSABILIDADE_CIVIL,
-              CONDOMINIAL_ROUBO,
-              CONDOMINIAL_VALORES,
-              CONDOMINIAL_VAZAMENTO,
-              CONDOMINIAL_VENDAVAL,
-              CONDOMINIAL_ALAGAMENTO,
-              CONDOMINIAL_TUMULTO,
-              EMPRESARIAL_INCENDIO_QUEDA_DE_RAIO_E_EXPLOSAO,
-              EMPRESARIAL_DANOS_ELETRICOS,
-              EMPRESARIAL_VENDAVAL_ATE_FUMACA,
-              EMPRESARIAL_DESMORONAMENTO,
-              EMPRESARIAL_ALAGAMENTO_E_INUNDACAO,
-              EMPRESARIAL_TUMULTOS_GREVES_LOCKOUT_E_ATOS_DOLOSOS,
-              EMPRESARIAL_ROUBO_E_FURTO_QUALIFICADO,
-              EMPRESARIAL_VALORES,
-              EMPRESARIAL_QUEBRA_DE_VIDROS_ESPELHOS_MARMORES_E_GRANITOS,
-              EMPRESARIAL_ANUNCIOS_LUMINOSOS,
-              EMPRESARIAL_FIDELIDADE_DE_EMPREGADOS,
-              EMPRESARIAL_RECOMPOSICAO_DE_REGISTROS_E_DOCUMENTOS,
-              EMPRESARIAL_DETERIORACAO_DE_MERCADORIAS_EM_AMBIENTES_FRIGORIFICADOS,
-              EMPRESARIAL_DERRAME,
-              EMPRESARIAL_VAZAMENTO,
-              EMPRESARIAL_EQUIPAMENTOS,
-              EMPRESARIAL_QUEBRA_DE_MAQUINAS,
-              EMPRESARIAL_RESPONSABILIDADE_CIVIL,
-              EMPRESARIAL_DESPESAS_EXTRAORDINARIAS,
-              EMPRESARIAL_LUCROS_CESSANTES_DESPESAS_FIXAS_LUCRO_LIQUIDO_LUCRO_BRUTO,
-              EMPRESARIAL_PERDA_OU_PAGAMENTO_DE_ALUGUEL,
-              EMPRESARIAL_PEQUENAS_OBRAS_DE_ENGENHARIA,
-              DIVERSOS_DANOS_DE_CAUSA_EXTERNA,
-              DIVERSOS_DANOS_DE_CAUSA_EXTERNA_E_ROUBO,
-              DIVERSOS_ROUBO,
-              SERVICOS_EMERGENCIAIS,
-              SERVICOS_DE_CONVENIENCIA,
-              GARANTIA_ESTENDIDA_ORIGINAL,
-              GARANTIA_ESTENDIDA_AMPLIADA,
-              GARANTIA_ESTENDIDA_REDUZIDA,
-              COMPLEMENTACAO_DE_GARANTIA,
-              CESSANTES_LUCRO_BRUTO_LUCRO_LIQUIDO_E_DESPESAS_FIXAS,
-              CESSANTES_LUCRO_LIQUIDO,
-              CESSANTES_DESPESAS_FIXAS,
-              CESSANTES_PERDA_DE_RECEITA_OU_INTERRUPCAO_DE_NEGOCIOS,
-              ENGENHARIA_OBRAS_CIVIS_CONSTRUCAO_E_INSTALACAO_E_MONTAGEM,
-              ENGENHARIA_AFRETAMENTOS_DE_AERONAVES,
-              ENGENHARIA_ARMAZENAGEM_FORA_DO_CANTEIRO_DE_OBRAS_OU_LOCAL_SEGURADO,
-              ENGENHARIA_DANOS_EM_CONSEQUENCIA_DE_ERRO_DE_PROJETO_RISCO_DO_FABRICANTE,
-              ENGENHARIA_DANOS_MORAIS,
-              ENGENHARIA_DESPESAS_COM_DESENTULHO_DO_LOCAL,
-              ENGENHARIA_DESPESAS_DE_SALVAMENTO_E_CONTENCAO_DE_SINISTROS,
-              ENGENHARIA_DESPESAS_EXTRAORDINARIAS,
-              ENGENHARIA_EQUIPAMENTOS_DE_ESCRITORIO_E_INFORMATICA,
-              ENGENHARIA_EQUIPAMENTOS_MOVEIS_OU_ESTACIONARIOS_UTILIZADOS_NA_OBRA,
-              ENGENHARIA_FERRAMENTAS_DE_PEQUENO_E_MEDIO_PORTE,
-              ENGENHARIA_HONORARIOS_DE_PERITO,
-              ENGENHARIA_INCENDIO_APOS_O_TERMINO_DE_OBRAS_ATE_TRINTA_DIAS_EXCETO_PARA_REFORMAS_OU_AMPLIACOES,
-              ENGENHARIA_LUCROS_CESSANTES,
-              ENGENHARIA_MANUTENCAO_AMPLA_ATE_VINTE_E_QUATRO_MESES,
-              ENGENHARIA_MANUTENCAO_SIMPLES_ATE_VINTE_E_QUATRO_MESES,
-              ENGENHARIA_OBRAS_CONCLUIDAS,
-              ENGENHARIA_OBRAS_TEMPORARIAS,
-              ENGENHARIA_OBRAS_INSTALACOES_CONTRATADAS_ACEITAS_E_OU_COLOCADAS_EM_OPERACAO,
-              ENGENHARIA_PROPRIEDADES_CIRCUNVIZINHAS,
-              ENGENHARIA_RECOMPOSICAO_DE_DOCUMENTOS,
-              ENGENHARIA_RESPONSABILIDADE_CIVIL_EMPREGADOR,
-              ENGENHARIA_FUNDACAO,
-              ENGENHARIA_STANDS_DE_VENDA,
-              ENGENHARIA_TRANSPORTE_TERRESTRE,
-              ENGENHARIA_TUMULTOS_GREVES_E_LOCKOUT,
-              BANCOS_DANOS_MATERIAIS_CAUSADOS_AO_COFRE_FORTE,
-              BANCOS_DANOS_MATERIAIS_CAUSADOS_AOS_CAIXAS_ELETRONICOS_ATM,
-              BANCOS_INFIDELIDADE_DE_FUNCIONARIOS,
-              BANCOS_VALORES_NO_INTERIOR_DO_ESTABELECIMENTO_DENTRO_E_OU_FORA_DE_COFRE_FORTE,
-              BANCOS_VALORES_NO_INTERIOR_DE_CAIXAS_ELETRONICOS_ATM,
-              BANCOS_VALORES_EM_MAOS_DE_PORTADORES_EM_TRANSITO,
-              RNO_ALAGAMENTO_INUNDACAO,
-              RNO_ALUGUEL_PERDA_OU_PAGAMENTO,
-              RNO_ANUNCIOS_LUMINOSOS,
-              RNO_BAGAGEM,
-              RNO_BASICA_INCENDIO_RAIO_EXPLOSAO,
-              RNO_BASICA_DANOS_MATERIAIS,
-              RNO_BASICA_DE_OBRAS_CIVIS_EM_CONSTRUCAO_E_INSTALACOES_E_MONTAGENS,
-              RNO_BENS_DE_TERCEIROS_EM_PODER_DO_SEGURADO,
-              RNO_CARGA_DESCARGA_ICAMENTO_E_DESCIDA,
-              RNO_DANOS_ELETRICOS,
-              RNO_DANOS_NA_FABRICACAO,
-              RNO_DERRAME_D_AGUA_OU_OUTRA_SUBSTANCIA_LIQUIDA_DE_INSTALACOES_DE_CHUVEIROS_AUTOMATICOS_SPRINKLERS,
-              RNO_DESMORONAMENTO,
-              RNO_DESPESAS_ADICIONAIS_OUTRAS_DESPESAS,
-              RNO_DESPESAS_EXTRAORDINARIAS,
-              RNO_DESPESAS_FIXA,
-              RNO_DETERIORACAO_DE_MERCADORIAS_EM_AMBIENTES_FRIGORIFICADOS,
-              RNO_EQUIPAMENTOS_ARRENDADOS,
-              RNO_EQUIPAMENTOS_CEDIDOS_A_TERCEIROS,
-              RNO_EQUIPAMENTOS_CINEMATOGRAFICOS_FOTOGRAFICOS_DE_AUDIO_E_VIDEO,
-              RNO_EQUIPAMENTOS_DIVERSOS_OUTRAS_MODALIDADES,
-              RNO_EQUIPAMENTOS_ELETRONICOS,
-              RNO_EQUIPAMENTOS_ESTACIONARIOS,
-              RNO_EQUIPAMENTOS_MOVEIS,
-              RNO_EQUIPAMENTOS_PORTATEIS,
-              RNO_FIDELIDADE_DE_EMPREGADOS,
-              RNO_HONORARIOS_DE_PERITOS,
-              RNO_IMPACTO_DE_VEICULOS_E_QUEDA_DE_AERONAVES,
-              RNO_IMPACTO_DE_VEICULOS_TERRESTRES,
-              RNO_LINHAS_DE_TRANSMISSAO_E_DISTRIBUICAO,
-              RNO_LUCROS_CESSANTES,
-              RNO_MOVIMENTACAO_INTERNA_DE_MERCADORIAS,
-              RNO_PATIOS,
-              RNO_QUEBRA_DE_MAQUINAS,
-              RNO_QUEBRA_DE_VIDROS_ESPELHOS_MARMORES_E_GRANITOS,
-              RNO_RECOMPOSICAO_DE_REGISTROS_E_DOCUMENTOS,
-              RNO_ROUBO_DE_BENS_DE_HOSPEDES,
-              RNO_ROUBO_DE_VALORES_EM_TRANSITO_EM_MAOS_DE_PORTADOR,
-              RNO_ROUBO_E_FURTO_MEDIANTE_ARROMBAMENTO,
-              RNO_ROUBO_E_OU_FURTO_QUALIFICADO_DE_VALORES_NO_INTERIOR_DO_ESTABELECIMENTO_DENTRO_E_OU_FORA_DE_COFRES_FORTES_OU_CAIXAS_FORTES,
-              RNO_TERRORISMO_E_SABOTAGEM,
-              RNO_TUMULTOS_GREVES_LOCKOUT_E_ATOS_DOLOSOS,
-              RNO_VAZAMENTO_DE_TUBULACOES_E_TANQUES,
-              RNO_VAZAMENTO_DE_TUBULACOES_HIDRAULICAS,
-              RNO_VENDAVAL_FURACAO_CICLONE_TORNADO_GRANIZO_QUEDA_DE_AERONAVES_OU_QUAISQUER_OUTROS_ENGENHOS_AEREOS_OU_ESPACIAIS_IMPACTO_DE_VEICULOS_TERRESTRES_E_FUMACA,
               OUTRAS
             ]
         description:
@@ -3324,6 +3017,12 @@ components:
         - hasCommercialActivity
         - isCollectiveStipulated
         - hasOneRiskLocation
+        - includesAssistanceServices
+        - insuranceType
+        - maxLMG
+        - insuredObject
+        - termStartDate
+        - termEndDate
       properties:
         hasCommercialActivity:
           description: "Existe algum objeto segurado que possui atividade comercial de produção, manufatura, atendimento presencial na Residência?"
@@ -3359,9 +3058,10 @@ components:
           type: string
           maxLength: 100
           example: "111111"
-        insurerId:  
-          description: Nome para identifcar a congênere de renovação
+        insurerName:  
+          description: Razão Social da congênere de renovação
           type: string
+          pattern: ^[\w\W\s]*$
           maxLength: 100
         currency:
           description: Moeda de emissão do contrato de acordo com ISO-4217.
@@ -3391,6 +3091,8 @@ components:
     QuotePatrimonialHomeInsuredObject:
       type: object
       description: Objeto que agrupa os dados de objeto segurado.
+      required:
+        - propertyType
       properties:
         identification:
           type: string
@@ -3495,138 +3197,6 @@ components:
               RESIDENCIAL_TUMULTOS_GREVES_E_LOCKOUTS,
               RESIDENCIAL_DESPESAS_EXTRAORDINARIAS,
               RESIDENCIAL_JOIAS_E_OBRAS_DE_ARTE,
-              CONDOMINIAL_COBERTURA_BASICA_SIMPLES,
-              CONDOMINIAL_COBERTURA_BASICA_AMPLA,
-              CONDOMINIAL_ANUNCIOS_LUMINOSOS,
-              CONDOMINIAL_DANOS_AO_JARDIM,
-              CONDOMINIAL_DANOS_ELETRICOS,
-              CONDOMINIAL_DESMORONAMENTO,
-              CONDOMINIAL_DESPESAS_COM_ALUGUEL,
-              CONDOMINIAL_EQUIPAMENTOS,
-              CONDOMINIAL_FIDELIDADE_DE_EMPREGADOS,
-              CONDOMINIAL_IMPACTO_DE_VEICULOS,
-              CONDOMINIAL_VIDA_E_ACIDENTES_PESSOAIS_EMPREGADOS,
-              CONDOMINIAL_LUCROS_CESSANTES,
-              CONDOMINIAL_QUEBRA_DE_VIDROS_ESPELHOS_MARMORES_E_GRANITOS,
-              CONDOMINIAL_RESPONSABILIDADE_CIVIL,
-              CONDOMINIAL_ROUBO,
-              CONDOMINIAL_VALORES,
-              CONDOMINIAL_VAZAMENTO,
-              CONDOMINIAL_VENDAVAL,
-              CONDOMINIAL_ALAGAMENTO,
-              CONDOMINIAL_TUMULTO,
-              EMPRESARIAL_INCENDIO_QUEDA_DE_RAIO_E_EXPLOSAO,
-              EMPRESARIAL_DANOS_ELETRICOS,
-              EMPRESARIAL_VENDAVAL_ATE_FUMACA,
-              EMPRESARIAL_DESMORONAMENTO,
-              EMPRESARIAL_ALAGAMENTO_E_INUNDACAO,
-              EMPRESARIAL_TUMULTOS_GREVES_LOCKOUT_E_ATOS_DOLOSOS,
-              EMPRESARIAL_ROUBO_E_FURTO_QUALIFICADO,
-              EMPRESARIAL_VALORES,
-              EMPRESARIAL_QUEBRA_DE_VIDROS_ESPELHOS_MARMORES_E_GRANITOS,
-              EMPRESARIAL_ANUNCIOS_LUMINOSOS,
-              EMPRESARIAL_FIDELIDADE_DE_EMPREGADOS,
-              EMPRESARIAL_RECOMPOSICAO_DE_REGISTROS_E_DOCUMENTOS,
-              EMPRESARIAL_DETERIORACAO_DE_MERCADORIAS_EM_AMBIENTES_FRIGORIFICADOS,
-              EMPRESARIAL_DERRAME,
-              EMPRESARIAL_VAZAMENTO,
-              EMPRESARIAL_EQUIPAMENTOS,
-              EMPRESARIAL_QUEBRA_DE_MAQUINAS,
-              EMPRESARIAL_RESPONSABILIDADE_CIVIL,
-              EMPRESARIAL_DESPESAS_EXTRAORDINARIAS,
-              EMPRESARIAL_LUCROS_CESSANTES_DESPESAS_FIXAS_LUCRO_LIQUIDO_LUCRO_BRUTO,
-              EMPRESARIAL_PERDA_OU_PAGAMENTO_DE_ALUGUEL,
-              EMPRESARIAL_PEQUENAS_OBRAS_DE_ENGENHARIA,
-              DIVERSOS_DANOS_DE_CAUSA_EXTERNA,
-              DIVERSOS_DANOS_DE_CAUSA_EXTERNA_E_ROUBO,
-              DIVERSOS_ROUBO,
-              SERVICOS_EMERGENCIAIS,
-              SERVICOS_DE_CONVENIENCIA,
-              GARANTIA_ESTENDIDA_ORIGINAL,
-              GARANTIA_ESTENDIDA_AMPLIADA,
-              GARANTIA_ESTENDIDA_REDUZIDA,
-              COMPLEMENTACAO_DE_GARANTIA,
-              CESSANTES_LUCRO_BRUTO_LUCRO_LIQUIDO_E_DESPESAS_FIXAS,
-              CESSANTES_LUCRO_LIQUIDO,
-              CESSANTES_DESPESAS_FIXAS,
-              CESSANTES_PERDA_DE_RECEITA_OU_INTERRUPCAO_DE_NEGOCIOS,
-              ENGENHARIA_OBRAS_CIVIS_CONSTRUCAO_E_INSTALACAO_E_MONTAGEM,
-              ENGENHARIA_AFRETAMENTOS_DE_AERONAVES,
-              ENGENHARIA_ARMAZENAGEM_FORA_DO_CANTEIRO_DE_OBRAS_OU_LOCAL_SEGURADO,
-              ENGENHARIA_DANOS_EM_CONSEQUENCIA_DE_ERRO_DE_PROJETO_RISCO_DO_FABRICANTE,
-              ENGENHARIA_DANOS_MORAIS,
-              ENGENHARIA_DESPESAS_COM_DESENTULHO_DO_LOCAL,
-              ENGENHARIA_DESPESAS_DE_SALVAMENTO_E_CONTENCAO_DE_SINISTROS,
-              ENGENHARIA_DESPESAS_EXTRAORDINARIAS,
-              ENGENHARIA_EQUIPAMENTOS_DE_ESCRITORIO_E_INFORMATICA,
-              ENGENHARIA_EQUIPAMENTOS_MOVEIS_OU_ESTACIONARIOS_UTILIZADOS_NA_OBRA,
-              ENGENHARIA_FERRAMENTAS_DE_PEQUENO_E_MEDIO_PORTE,
-              ENGENHARIA_HONORARIOS_DE_PERITO,
-              ENGENHARIA_INCENDIO_APOS_O_TERMINO_DE_OBRAS_ATE_TRINTA_DIAS_EXCETO_PARA_REFORMAS_OU_AMPLIACOES,
-              ENGENHARIA_LUCROS_CESSANTES,
-              ENGENHARIA_MANUTENCAO_AMPLA_ATE_VINTE_E_QUATRO_MESES,
-              ENGENHARIA_MANUTENCAO_SIMPLES_ATE_VINTE_E_QUATRO_MESES,
-              ENGENHARIA_OBRAS_CONCLUIDAS,
-              ENGENHARIA_OBRAS_TEMPORARIAS,
-              ENGENHARIA_OBRAS_INSTALACOES_CONTRATADAS_ACEITAS_E_OU_COLOCADAS_EM_OPERACAO,
-              ENGENHARIA_PROPRIEDADES_CIRCUNVIZINHAS,
-              ENGENHARIA_RECOMPOSICAO_DE_DOCUMENTOS,
-              ENGENHARIA_RESPONSABILIDADE_CIVIL_EMPREGADOR,
-              ENGENHARIA_FUNDACAO,
-              ENGENHARIA_STANDS_DE_VENDA,
-              ENGENHARIA_TRANSPORTE_TERRESTRE,
-              ENGENHARIA_TUMULTOS_GREVES_E_LOCKOUT,
-              BANCOS_DANOS_MATERIAIS_CAUSADOS_AO_COFRE_FORTE,
-              BANCOS_DANOS_MATERIAIS_CAUSADOS_AOS_CAIXAS_ELETRONICOS_ATM,
-              BANCOS_INFIDELIDADE_DE_FUNCIONARIOS,
-              BANCOS_VALORES_NO_INTERIOR_DO_ESTABELECIMENTO_DENTRO_E_OU_FORA_DE_COFRE_FORTE,
-              BANCOS_VALORES_NO_INTERIOR_DE_CAIXAS_ELETRONICOS_ATM,
-              BANCOS_VALORES_EM_MAOS_DE_PORTADORES_EM_TRANSITO,
-              RNO_ALAGAMENTO_INUNDACAO,
-              RNO_ALUGUEL_PERDA_OU_PAGAMENTO,
-              RNO_ANUNCIOS_LUMINOSOS,
-              RNO_BAGAGEM,
-              RNO_BASICA_INCENDIO_RAIO_EXPLOSAO,
-              RNO_BASICA_DANOS_MATERIAIS,
-              RNO_BASICA_DE_OBRAS_CIVIS_EM_CONSTRUCAO_E_INSTALACOES_E_MONTAGENS,
-              RNO_BENS_DE_TERCEIROS_EM_PODER_DO_SEGURADO,
-              RNO_CARGA_DESCARGA_ICAMENTO_E_DESCIDA,
-              RNO_DANOS_ELETRICOS,
-              RNO_DANOS_NA_FABRICACAO,
-              RNO_DERRAME_D_AGUA_OU_OUTRA_SUBSTANCIA_LIQUIDA_DE_INSTALACOES_DE_CHUVEIROS_AUTOMATICOS_SPRINKLERS,
-              RNO_DESMORONAMENTO,
-              RNO_DESPESAS_ADICIONAIS_OUTRAS_DESPESAS,
-              RNO_DESPESAS_EXTRAORDINARIAS,
-              RNO_DESPESAS_FIXA,
-              RNO_DETERIORACAO_DE_MERCADORIAS_EM_AMBIENTES_FRIGORIFICADOS,
-              RNO_EQUIPAMENTOS_ARRENDADOS,
-              RNO_EQUIPAMENTOS_CEDIDOS_A_TERCEIROS,
-              RNO_EQUIPAMENTOS_CINEMATOGRAFICOS_FOTOGRAFICOS_DE_AUDIO_E_VIDEO,
-              RNO_EQUIPAMENTOS_DIVERSOS_OUTRAS_MODALIDADES,
-              RNO_EQUIPAMENTOS_ELETRONICOS,
-              RNO_EQUIPAMENTOS_ESTACIONARIOS,
-              RNO_EQUIPAMENTOS_MOVEIS,
-              RNO_EQUIPAMENTOS_PORTATEIS,
-              RNO_FIDELIDADE_DE_EMPREGADOS,
-              RNO_HONORARIOS_DE_PERITOS,
-              RNO_IMPACTO_DE_VEICULOS_E_QUEDA_DE_AERONAVES,
-              RNO_IMPACTO_DE_VEICULOS_TERRESTRES,
-              RNO_LINHAS_DE_TRANSMISSAO_E_DISTRIBUICAO,
-              RNO_LUCROS_CESSANTES,
-              RNO_MOVIMENTACAO_INTERNA_DE_MERCADORIAS,
-              RNO_PATIOS,
-              RNO_QUEBRA_DE_MAQUINAS,
-              RNO_QUEBRA_DE_VIDROS_ESPELHOS_MARMORES_E_GRANITOS,
-              RNO_RECOMPOSICAO_DE_REGISTROS_E_DOCUMENTOS,
-              RNO_ROUBO_DE_BENS_DE_HOSPEDES,
-              RNO_ROUBO_DE_VALORES_EM_TRANSITO_EM_MAOS_DE_PORTADOR,
-              RNO_ROUBO_E_FURTO_MEDIANTE_ARROMBAMENTO,
-              RNO_ROUBO_E_OU_FURTO_QUALIFICADO_DE_VALORES_NO_INTERIOR_DO_ESTABELECIMENTO_DENTRO_E_OU_FORA_DE_COFRES_FORTES_OU_CAIXAS_FORTES,
-              RNO_TERRORISMO_E_SABOTAGEM,
-              RNO_TUMULTOS_GREVES_LOCKOUT_E_ATOS_DOLOSOS,
-              RNO_VAZAMENTO_DE_TUBULACOES_E_TANQUES,
-              RNO_VAZAMENTO_DE_TUBULACOES_HIDRAULICAS,
-              RNO_VENDAVAL_FURACAO_CICLONE_TORNADO_GRANIZO_QUEDA_DE_AERONAVES_OU_QUAISQUER_OUTROS_ENGENHOS_AEREOS_OU_ESPACIAIS_IMPACTO_DE_VEICULOS_TERRESTRES_E_FUMACA,
               OUTRAS
             ]
         description:
@@ -3706,8 +3276,9 @@ components:
         postCode:
           type: string
           maxLength: 8
+          pattern: '^\d{8}$|^NA$'
           description: CEP
-          example: "1310200"
+          example: "13102000"
         propertyUsageType:
           description: Tipo de moradia
           type: string 
@@ -3863,6 +3434,12 @@ components:
         - hasCommercialActivity
         - isCollectiveStipulated
         - hasOneRiskLocation 
+        - includesAssistanceServices
+        - insuranceType
+        - maxLMG
+        - insuredObject
+        - termStartDate
+        - termEndDate
       properties:
         hasCommercialActivity:
           description: "Existe algum objeto segurado que possui atividade comercial de produção, manufatura, atendimento presencial na Residência?"
@@ -3898,9 +3475,10 @@ components:
           type: string
           maxLength: 100
           example: "111111"
-        insurerId:  
-          description: Nome para identifcar a congênere de renovação
+        insurerName:  
+          description: Razão Social da congênere de renovação
           type: string
+          pattern: ^[\w\W\s]*$
           maxLength: 100
         currency:
           description: Moeda de emissão do contrato de acordo com ISO-4217.
@@ -3962,139 +3540,6 @@ components:
               RESIDENCIAL_DESMORONAMENTO,
               RESIDENCIAL_TUMULTOS_GREVES_E_LOCKOUTS,
               RESIDENCIAL_DESPESAS_EXTRAORDINARIAS,
-              RESIDENCIAL_JOIAS_E_OBRAS_DE_ARTE,
-              CONDOMINIAL_COBERTURA_BASICA_SIMPLES,
-              CONDOMINIAL_COBERTURA_BASICA_AMPLA,
-              CONDOMINIAL_ANUNCIOS_LUMINOSOS,
-              CONDOMINIAL_DANOS_AO_JARDIM,
-              CONDOMINIAL_DANOS_ELETRICOS,
-              CONDOMINIAL_DESMORONAMENTO,
-              CONDOMINIAL_DESPESAS_COM_ALUGUEL,
-              CONDOMINIAL_EQUIPAMENTOS,
-              CONDOMINIAL_FIDELIDADE_DE_EMPREGADOS,
-              CONDOMINIAL_IMPACTO_DE_VEICULOS,
-              CONDOMINIAL_VIDA_E_ACIDENTES_PESSOAIS_EMPREGADOS,
-              CONDOMINIAL_LUCROS_CESSANTES,
-              CONDOMINIAL_QUEBRA_DE_VIDROS_ESPELHOS_MARMORES_E_GRANITOS,
-              CONDOMINIAL_RESPONSABILIDADE_CIVIL,
-              CONDOMINIAL_ROUBO,
-              CONDOMINIAL_VALORES,
-              CONDOMINIAL_VAZAMENTO,
-              CONDOMINIAL_VENDAVAL,
-              CONDOMINIAL_ALAGAMENTO,
-              CONDOMINIAL_TUMULTO,
-              EMPRESARIAL_INCENDIO_QUEDA_DE_RAIO_E_EXPLOSAO,
-              EMPRESARIAL_DANOS_ELETRICOS,
-              EMPRESARIAL_VENDAVAL_ATE_FUMACA,
-              EMPRESARIAL_DESMORONAMENTO,
-              EMPRESARIAL_ALAGAMENTO_E_INUNDACAO,
-              EMPRESARIAL_TUMULTOS_GREVES_LOCKOUT_E_ATOS_DOLOSOS,
-              EMPRESARIAL_ROUBO_E_FURTO_QUALIFICADO,
-              EMPRESARIAL_VALORES,
-              EMPRESARIAL_QUEBRA_DE_VIDROS_ESPELHOS_MARMORES_E_GRANITOS,
-              EMPRESARIAL_ANUNCIOS_LUMINOSOS,
-              EMPRESARIAL_FIDELIDADE_DE_EMPREGADOS,
-              EMPRESARIAL_RECOMPOSICAO_DE_REGISTROS_E_DOCUMENTOS,
-              EMPRESARIAL_DETERIORACAO_DE_MERCADORIAS_EM_AMBIENTES_FRIGORIFICADOS,
-              EMPRESARIAL_DERRAME,
-              EMPRESARIAL_VAZAMENTO,
-              EMPRESARIAL_EQUIPAMENTOS,
-              EMPRESARIAL_QUEBRA_DE_MAQUINAS,
-              EMPRESARIAL_RESPONSABILIDADE_CIVIL,
-              EMPRESARIAL_DESPESAS_EXTRAORDINARIAS,
-              EMPRESARIAL_LUCROS_CESSANTES_DESPESAS_FIXAS_LUCRO_LIQUIDO_LUCRO_BRUTO,
-              EMPRESARIAL_PERDA_OU_PAGAMENTO_DE_ALUGUEL,
-              EMPRESARIAL_PEQUENAS_OBRAS_DE_ENGENHARIA,
-              DIVERSOS_DANOS_DE_CAUSA_EXTERNA,
-              DIVERSOS_DANOS_DE_CAUSA_EXTERNA_E_ROUBO,
-              DIVERSOS_ROUBO,
-              SERVICOS_EMERGENCIAIS,
-              SERVICOS_DE_CONVENIENCIA,
-              GARANTIA_ESTENDIDA_ORIGINAL,
-              GARANTIA_ESTENDIDA_AMPLIADA,
-              GARANTIA_ESTENDIDA_REDUZIDA,
-              COMPLEMENTACAO_DE_GARANTIA,
-              CESSANTES_LUCRO_BRUTO_LUCRO_LIQUIDO_E_DESPESAS_FIXAS,
-              CESSANTES_LUCRO_LIQUIDO,
-              CESSANTES_DESPESAS_FIXAS,
-              CESSANTES_PERDA_DE_RECEITA_OU_INTERRUPCAO_DE_NEGOCIOS,
-              ENGENHARIA_OBRAS_CIVIS_CONSTRUCAO_E_INSTALACAO_E_MONTAGEM,
-              ENGENHARIA_AFRETAMENTOS_DE_AERONAVES,
-              ENGENHARIA_ARMAZENAGEM_FORA_DO_CANTEIRO_DE_OBRAS_OU_LOCAL_SEGURADO,
-              ENGENHARIA_DANOS_EM_CONSEQUENCIA_DE_ERRO_DE_PROJETO_RISCO_DO_FABRICANTE,
-              ENGENHARIA_DANOS_MORAIS,
-              ENGENHARIA_DESPESAS_COM_DESENTULHO_DO_LOCAL,
-              ENGENHARIA_DESPESAS_DE_SALVAMENTO_E_CONTENCAO_DE_SINISTROS,
-              ENGENHARIA_DESPESAS_EXTRAORDINARIAS,
-              ENGENHARIA_EQUIPAMENTOS_DE_ESCRITORIO_E_INFORMATICA,
-              ENGENHARIA_EQUIPAMENTOS_MOVEIS_OU_ESTACIONARIOS_UTILIZADOS_NA_OBRA,
-              ENGENHARIA_FERRAMENTAS_DE_PEQUENO_E_MEDIO_PORTE,
-              ENGENHARIA_HONORARIOS_DE_PERITO,
-              ENGENHARIA_INCENDIO_APOS_O_TERMINO_DE_OBRAS_ATE_TRINTA_DIAS_EXCETO_PARA_REFORMAS_OU_AMPLIACOES,
-              ENGENHARIA_LUCROS_CESSANTES,
-              ENGENHARIA_MANUTENCAO_AMPLA_ATE_VINTE_E_QUATRO_MESES,
-              ENGENHARIA_MANUTENCAO_SIMPLES_ATE_VINTE_E_QUATRO_MESES,
-              ENGENHARIA_OBRAS_CONCLUIDAS,
-              ENGENHARIA_OBRAS_TEMPORARIAS,
-              ENGENHARIA_OBRAS_INSTALACOES_CONTRATADAS_ACEITAS_E_OU_COLOCADAS_EM_OPERACAO,
-              ENGENHARIA_PROPRIEDADES_CIRCUNVIZINHAS,
-              ENGENHARIA_RECOMPOSICAO_DE_DOCUMENTOS,
-              ENGENHARIA_RESPONSABILIDADE_CIVIL_EMPREGADOR,
-              ENGENHARIA_FUNDACAO,
-              ENGENHARIA_STANDS_DE_VENDA,
-              ENGENHARIA_TRANSPORTE_TERRESTRE,
-              ENGENHARIA_TUMULTOS_GREVES_E_LOCKOUT,
-              BANCOS_DANOS_MATERIAIS_CAUSADOS_AO_COFRE_FORTE,
-              BANCOS_DANOS_MATERIAIS_CAUSADOS_AOS_CAIXAS_ELETRONICOS_ATM,
-              BANCOS_INFIDELIDADE_DE_FUNCIONARIOS,
-              BANCOS_VALORES_NO_INTERIOR_DO_ESTABELECIMENTO_DENTRO_E_OU_FORA_DE_COFRE_FORTE,
-              BANCOS_VALORES_NO_INTERIOR_DE_CAIXAS_ELETRONICOS_ATM,
-              BANCOS_VALORES_EM_MAOS_DE_PORTADORES_EM_TRANSITO,
-              RNO_ALAGAMENTO_INUNDACAO,
-              RNO_ALUGUEL_PERDA_OU_PAGAMENTO,
-              RNO_ANUNCIOS_LUMINOSOS,
-              RNO_BAGAGEM,
-              RNO_BASICA_INCENDIO_RAIO_EXPLOSAO,
-              RNO_BASICA_DANOS_MATERIAIS,
-              RNO_BASICA_DE_OBRAS_CIVIS_EM_CONSTRUCAO_E_INSTALACOES_E_MONTAGENS,
-              RNO_BENS_DE_TERCEIROS_EM_PODER_DO_SEGURADO,
-              RNO_CARGA_DESCARGA_ICAMENTO_E_DESCIDA,
-              RNO_DANOS_ELETRICOS,
-              RNO_DANOS_NA_FABRICACAO,
-              RNO_DERRAME_D_AGUA_OU_OUTRA_SUBSTANCIA_LIQUIDA_DE_INSTALACOES_DE_CHUVEIROS_AUTOMATICOS_SPRINKLERS,
-              RNO_DESMORONAMENTO,
-              RNO_DESPESAS_ADICIONAIS_OUTRAS_DESPESAS,
-              RNO_DESPESAS_EXTRAORDINARIAS,
-              RNO_DESPESAS_FIXA,
-              RNO_DETERIORACAO_DE_MERCADORIAS_EM_AMBIENTES_FRIGORIFICADOS,
-              RNO_EQUIPAMENTOS_ARRENDADOS,
-              RNO_EQUIPAMENTOS_CEDIDOS_A_TERCEIROS,
-              RNO_EQUIPAMENTOS_CINEMATOGRAFICOS_FOTOGRAFICOS_DE_AUDIO_E_VIDEO,
-              RNO_EQUIPAMENTOS_DIVERSOS_OUTRAS_MODALIDADES,
-              RNO_EQUIPAMENTOS_ELETRONICOS,
-              RNO_EQUIPAMENTOS_ESTACIONARIOS,
-              RNO_EQUIPAMENTOS_MOVEIS,
-              RNO_EQUIPAMENTOS_PORTATEIS,
-              RNO_FIDELIDADE_DE_EMPREGADOS,
-              RNO_HONORARIOS_DE_PERITOS,
-              RNO_IMPACTO_DE_VEICULOS_E_QUEDA_DE_AERONAVES,
-              RNO_IMPACTO_DE_VEICULOS_TERRESTRES,
-              RNO_LINHAS_DE_TRANSMISSAO_E_DISTRIBUICAO,
-              RNO_LUCROS_CESSANTES,
-              RNO_MOVIMENTACAO_INTERNA_DE_MERCADORIAS,
-              RNO_PATIOS,
-              RNO_QUEBRA_DE_MAQUINAS,
-              RNO_QUEBRA_DE_VIDROS_ESPELHOS_MARMORES_E_GRANITOS,
-              RNO_RECOMPOSICAO_DE_REGISTROS_E_DOCUMENTOS,
-              RNO_ROUBO_DE_BENS_DE_HOSPEDES,
-              RNO_ROUBO_DE_VALORES_EM_TRANSITO_EM_MAOS_DE_PORTADOR,
-              RNO_ROUBO_E_FURTO_MEDIANTE_ARROMBAMENTO,
-              RNO_ROUBO_E_OU_FURTO_QUALIFICADO_DE_VALORES_NO_INTERIOR_DO_ESTABELECIMENTO_DENTRO_E_OU_FORA_DE_COFRES_FORTES_OU_CAIXAS_FORTES,
-              RNO_TERRORISMO_E_SABOTAGEM,
-              RNO_TUMULTOS_GREVES_LOCKOUT_E_ATOS_DOLOSOS,
-              RNO_VAZAMENTO_DE_TUBULACOES_E_TANQUES,
-              RNO_VAZAMENTO_DE_TUBULACOES_HIDRAULICAS,
-              RNO_VENDAVAL_FURACAO_CICLONE_TORNADO_GRANIZO_QUEDA_DE_AERONAVES_OU_QUAISQUER_OUTROS_ENGENHOS_AEREOS_OU_ESPACIAIS_IMPACTO_DE_VEICULOS_TERRESTRES_E_FUMACA,
               OUTRAS
             ]
         description:
@@ -4157,6 +3602,7 @@ components:
       description: Objeto que agrupa os dados de objeto segurado.
       required:
         - identification
+        - propertyType
       properties:
         identification:
           type: string
@@ -4232,6 +3678,13 @@ components:
         - coverages
         - isCollectiveStipulated
         - hasOneRiskLocation
+        - includesAssistanceServices
+        - insuranceType
+        - maxLMG
+        - insuredObject
+        - termStartDate
+        - termEndDate
+
       properties:
         isCollectiveStipulated:
           description: "Apólice é coletiva ou por estipulação?"
@@ -4264,9 +3717,10 @@ components:
           type: string
           maxLength: 100
           example: "111111"
-        insurerId:
-          description: Nome para identifcar a congênere de renovação
+        insurerName:
+          description: Razão Social da congênere de renovação
           type: string
+          pattern: ^[\w\W\s]*$
           maxLength: 100
         currency:
           description: Moeda de emissão do contrato de acordo com ISO-4217.
@@ -4353,7 +3807,7 @@ components:
         businessActivityDescription:
           description: Descrição do código CNAE da atividade principal
           type: string
-          maxLength: 100
+          maxLength: 500
         professionalRegisterOrganization:
           description: Conselho de registro da categoria (Para profissionais liberais que não possuam CNPJ)
           type: string
@@ -4510,49 +3964,8 @@ components:
         code:
             type: string
             description: Código da cobertura, conforme Anexo II do Manual de Escopo de Dados
-            example: RESIDENCIAL_IMOVEL_BASICA
+            example: EMPRESARIAL_INCENDIO_QUEDA_DE_RAIO_E_EXPLOSAO
             enum: [
-              RESIDENCIAL_IMOVEL_BASICA,
-              RESIDENCIAL_IMOVEL_AMPLA,
-              RESIDENCIAL_INCENDIO,
-              RESIDENCIAL_QUEDA_DE_RAIO,
-              RESIDENCIAL_EXPLOSAO,
-              RESIDENCIAL_IMPACTO_DE_AERONAVES,
-              RESIDENCIAL_ALAGAMENTO,
-              RESIDENCIAL_DANOS_ELETRICOS,
-              RESIDENCIAL_DANOS_POR_AGUA,
-              RESIDENCIAL_RESPONSABILIDADE_CIVIL_FAMILIAR,
-              RESIDENCIAL_VENDAVAL,
-              RESIDENCIAL_DANOS_A_EQUIPAMENTOS_ELETRONICOS,
-              RESIDENCIAL_TERREMOTO,
-              RESIDENCIAL_PERDA_E_PAGAMENTO_DE_ALUGUEL,
-              RESIDENCIAL_ROUBO_E_SUBTRACAO_DE_BENS,
-              RESIDENCIAL_QUEBRA_DE_VIDROS,
-              RESIDENCIAL_IMPACTO_DE_VEICULOS,
-              RESIDENCIAL_DESMORONAMENTO,
-              RESIDENCIAL_TUMULTOS_GREVES_E_LOCKOUTS,
-              RESIDENCIAL_DESPESAS_EXTRAORDINARIAS,
-              RESIDENCIAL_JOIAS_E_OBRAS_DE_ARTE,
-              CONDOMINIAL_COBERTURA_BASICA_SIMPLES,
-              CONDOMINIAL_COBERTURA_BASICA_AMPLA,
-              CONDOMINIAL_ANUNCIOS_LUMINOSOS,
-              CONDOMINIAL_DANOS_AO_JARDIM,
-              CONDOMINIAL_DANOS_ELETRICOS,
-              CONDOMINIAL_DESMORONAMENTO,
-              CONDOMINIAL_DESPESAS_COM_ALUGUEL,
-              CONDOMINIAL_EQUIPAMENTOS,
-              CONDOMINIAL_FIDELIDADE_DE_EMPREGADOS,
-              CONDOMINIAL_IMPACTO_DE_VEICULOS,
-              CONDOMINIAL_VIDA_E_ACIDENTES_PESSOAIS_EMPREGADOS,
-              CONDOMINIAL_LUCROS_CESSANTES,
-              CONDOMINIAL_QUEBRA_DE_VIDROS_ESPELHOS_MARMORES_E_GRANITOS,
-              CONDOMINIAL_RESPONSABILIDADE_CIVIL,
-              CONDOMINIAL_ROUBO,
-              CONDOMINIAL_VALORES,
-              CONDOMINIAL_VAZAMENTO,
-              CONDOMINIAL_VENDAVAL,
-              CONDOMINIAL_ALAGAMENTO,
-              CONDOMINIAL_TUMULTO,
               EMPRESARIAL_INCENDIO_QUEDA_DE_RAIO_E_EXPLOSAO,
               EMPRESARIAL_DANOS_ELETRICOS,
               EMPRESARIAL_VENDAVAL_ATE_FUMACA,
@@ -4575,96 +3988,6 @@ components:
               EMPRESARIAL_LUCROS_CESSANTES_DESPESAS_FIXAS_LUCRO_LIQUIDO_LUCRO_BRUTO,
               EMPRESARIAL_PERDA_OU_PAGAMENTO_DE_ALUGUEL,
               EMPRESARIAL_PEQUENAS_OBRAS_DE_ENGENHARIA,
-              DIVERSOS_DANOS_DE_CAUSA_EXTERNA,
-              DIVERSOS_DANOS_DE_CAUSA_EXTERNA_E_ROUBO,
-              DIVERSOS_ROUBO,
-              SERVICOS_EMERGENCIAIS,
-              SERVICOS_DE_CONVENIENCIA,
-              GARANTIA_ESTENDIDA_ORIGINAL,
-              GARANTIA_ESTENDIDA_AMPLIADA,
-              GARANTIA_ESTENDIDA_REDUZIDA,
-              COMPLEMENTACAO_DE_GARANTIA,
-              CESSANTES_LUCRO_BRUTO_LUCRO_LIQUIDO_E_DESPESAS_FIXAS,
-              CESSANTES_LUCRO_LIQUIDO,
-              CESSANTES_DESPESAS_FIXAS,
-              CESSANTES_PERDA_DE_RECEITA_OU_INTERRUPCAO_DE_NEGOCIOS,
-              ENGENHARIA_OBRAS_CIVIS_CONSTRUCAO_E_INSTALACAO_E_MONTAGEM,
-              ENGENHARIA_AFRETAMENTOS_DE_AERONAVES,
-              ENGENHARIA_ARMAZENAGEM_FORA_DO_CANTEIRO_DE_OBRAS_OU_LOCAL_SEGURADO,
-              ENGENHARIA_DANOS_EM_CONSEQUENCIA_DE_ERRO_DE_PROJETO_RISCO_DO_FABRICANTE,
-              ENGENHARIA_DANOS_MORAIS,
-              ENGENHARIA_DESPESAS_COM_DESENTULHO_DO_LOCAL,
-              ENGENHARIA_DESPESAS_DE_SALVAMENTO_E_CONTENCAO_DE_SINISTROS,
-              ENGENHARIA_DESPESAS_EXTRAORDINARIAS,
-              ENGENHARIA_EQUIPAMENTOS_DE_ESCRITORIO_E_INFORMATICA,
-              ENGENHARIA_EQUIPAMENTOS_MOVEIS_OU_ESTACIONARIOS_UTILIZADOS_NA_OBRA,
-              ENGENHARIA_FERRAMENTAS_DE_PEQUENO_E_MEDIO_PORTE,
-              ENGENHARIA_HONORARIOS_DE_PERITO,
-              ENGENHARIA_INCENDIO_APOS_O_TERMINO_DE_OBRAS_ATE_TRINTA_DIAS_EXCETO_PARA_REFORMAS_OU_AMPLIACOES,
-              ENGENHARIA_LUCROS_CESSANTES,
-              ENGENHARIA_MANUTENCAO_AMPLA_ATE_VINTE_E_QUATRO_MESES,
-              ENGENHARIA_MANUTENCAO_SIMPLES_ATE_VINTE_E_QUATRO_MESES,
-              ENGENHARIA_OBRAS_CONCLUIDAS,
-              ENGENHARIA_OBRAS_TEMPORARIAS,
-              ENGENHARIA_OBRAS_INSTALACOES_CONTRATADAS_ACEITAS_E_OU_COLOCADAS_EM_OPERACAO,
-              ENGENHARIA_PROPRIEDADES_CIRCUNVIZINHAS,
-              ENGENHARIA_RECOMPOSICAO_DE_DOCUMENTOS,
-              ENGENHARIA_RESPONSABILIDADE_CIVIL_EMPREGADOR,
-              ENGENHARIA_FUNDACAO,
-              ENGENHARIA_STANDS_DE_VENDA,
-              ENGENHARIA_TRANSPORTE_TERRESTRE,
-              ENGENHARIA_TUMULTOS_GREVES_E_LOCKOUT,
-              BANCOS_DANOS_MATERIAIS_CAUSADOS_AO_COFRE_FORTE,
-              BANCOS_DANOS_MATERIAIS_CAUSADOS_AOS_CAIXAS_ELETRONICOS_ATM,
-              BANCOS_INFIDELIDADE_DE_FUNCIONARIOS,
-              BANCOS_VALORES_NO_INTERIOR_DO_ESTABELECIMENTO_DENTRO_E_OU_FORA_DE_COFRE_FORTE,
-              BANCOS_VALORES_NO_INTERIOR_DE_CAIXAS_ELETRONICOS_ATM,
-              BANCOS_VALORES_EM_MAOS_DE_PORTADORES_EM_TRANSITO,
-              RNO_ALAGAMENTO_INUNDACAO,
-              RNO_ALUGUEL_PERDA_OU_PAGAMENTO,
-              RNO_ANUNCIOS_LUMINOSOS,
-              RNO_BAGAGEM,
-              RNO_BASICA_INCENDIO_RAIO_EXPLOSAO,
-              RNO_BASICA_DANOS_MATERIAIS,
-              RNO_BASICA_DE_OBRAS_CIVIS_EM_CONSTRUCAO_E_INSTALACOES_E_MONTAGENS,
-              RNO_BENS_DE_TERCEIROS_EM_PODER_DO_SEGURADO,
-              RNO_CARGA_DESCARGA_ICAMENTO_E_DESCIDA,
-              RNO_DANOS_ELETRICOS,
-              RNO_DANOS_NA_FABRICACAO,
-              RNO_DERRAME_D_AGUA_OU_OUTRA_SUBSTANCIA_LIQUIDA_DE_INSTALACOES_DE_CHUVEIROS_AUTOMATICOS_SPRINKLERS,
-              RNO_DESMORONAMENTO,
-              RNO_DESPESAS_ADICIONAIS_OUTRAS_DESPESAS,
-              RNO_DESPESAS_EXTRAORDINARIAS,
-              RNO_DESPESAS_FIXA,
-              RNO_DETERIORACAO_DE_MERCADORIAS_EM_AMBIENTES_FRIGORIFICADOS,
-              RNO_EQUIPAMENTOS_ARRENDADOS,
-              RNO_EQUIPAMENTOS_CEDIDOS_A_TERCEIROS,
-              RNO_EQUIPAMENTOS_CINEMATOGRAFICOS_FOTOGRAFICOS_DE_AUDIO_E_VIDEO,
-              RNO_EQUIPAMENTOS_DIVERSOS_OUTRAS_MODALIDADES,
-              RNO_EQUIPAMENTOS_ELETRONICOS,
-              RNO_EQUIPAMENTOS_ESTACIONARIOS,
-              RNO_EQUIPAMENTOS_MOVEIS,
-              RNO_EQUIPAMENTOS_PORTATEIS,
-              RNO_FIDELIDADE_DE_EMPREGADOS,
-              RNO_HONORARIOS_DE_PERITOS,
-              RNO_IMPACTO_DE_VEICULOS_E_QUEDA_DE_AERONAVES,
-              RNO_IMPACTO_DE_VEICULOS_TERRESTRES,
-              RNO_LINHAS_DE_TRANSMISSAO_E_DISTRIBUICAO,
-              RNO_LUCROS_CESSANTES,
-              RNO_MOVIMENTACAO_INTERNA_DE_MERCADORIAS,
-              RNO_PATIOS,
-              RNO_QUEBRA_DE_MAQUINAS,
-              RNO_QUEBRA_DE_VIDROS_ESPELHOS_MARMORES_E_GRANITOS,
-              RNO_RECOMPOSICAO_DE_REGISTROS_E_DOCUMENTOS,
-              RNO_ROUBO_DE_BENS_DE_HOSPEDES,
-              RNO_ROUBO_DE_VALORES_EM_TRANSITO_EM_MAOS_DE_PORTADOR,
-              RNO_ROUBO_E_FURTO_MEDIANTE_ARROMBAMENTO,
-              RNO_ROUBO_E_OU_FURTO_QUALIFICADO_DE_VALORES_NO_INTERIOR_DO_ESTABELECIMENTO_DENTRO_E_OU_FORA_DE_COFRES_FORTES_OU_CAIXAS_FORTES,
-              RNO_TERRORISMO_E_SABOTAGEM,
-              RNO_TUMULTOS_GREVES_LOCKOUT_E_ATOS_DOLOSOS,
-              RNO_VAZAMENTO_DE_TUBULACOES_E_TANQUES,
-              RNO_VAZAMENTO_DE_TUBULACOES_HIDRAULICAS,
-              RNO_VENDAVAL_FURACAO_CICLONE_TORNADO_GRANIZO_QUEDA_DE_AERONAVES_OU_QUAISQUER_OUTROS_ENGENHOS_AEREOS_OU_ESPACIAIS_IMPACTO_DE_VEICULOS_TERRESTRES_E_FUMACA,
               OUTRAS
             ]
         description:
@@ -4742,8 +4065,9 @@ components:
         postCode:
           type: string
           maxLength: 8
+          pattern: '^\d{8}$|^NA$'
           description: CEP do Local de Risco
-          example: "1310200"
+          example: "13102000"
         billingAddress:
           type: string
           maxLength: 100
@@ -4799,7 +4123,8 @@ components:
           type: string
           maxLength: 8
           description: CEP do Local de Cobrança
-          example: "1310200"
+          pattern: '^\d{8}$|^NA$'
+          example: "13102000"
         propertyUsageType:
           description: Tipo de moradia
           type: string
@@ -4978,50 +4303,9 @@ components:
           example: "0111"
         code:
             type: string
-            description: Código da cobertura, conforme Anexo II do Manuel de Escopo de Dados
-            example: RESIDENCIAL_IMOVEL_BASICA
+            description: Código da cobertura, conforme Anexo II do Manual de Escopo de Dados
+            example: EMPRESARIAL_INCENDIO_QUEDA_DE_RAIO_E_EXPLOSAO
             enum: [
-              RESIDENCIAL_IMOVEL_BASICA,
-              RESIDENCIAL_IMOVEL_AMPLA,
-              RESIDENCIAL_INCENDIO,
-              RESIDENCIAL_QUEDA_DE_RAIO,
-              RESIDENCIAL_EXPLOSAO,
-              RESIDENCIAL_IMPACTO_DE_AERONAVES,
-              RESIDENCIAL_ALAGAMENTO,
-              RESIDENCIAL_DANOS_ELETRICOS,
-              RESIDENCIAL_DANOS_POR_AGUA,
-              RESIDENCIAL_RESPONSABILIDADE_CIVIL_FAMILIAR,
-              RESIDENCIAL_VENDAVAL,
-              RESIDENCIAL_DANOS_A_EQUIPAMENTOS_ELETRONICOS,
-              RESIDENCIAL_TERREMOTO,
-              RESIDENCIAL_PERDA_E_PAGAMENTO_DE_ALUGUEL,
-              RESIDENCIAL_ROUBO_E_SUBTRACAO_DE_BENS,
-              RESIDENCIAL_QUEBRA_DE_VIDROS,
-              RESIDENCIAL_IMPACTO_DE_VEICULOS,
-              RESIDENCIAL_DESMORONAMENTO,
-              RESIDENCIAL_TUMULTOS_GREVES_E_LOCKOUTS,
-              RESIDENCIAL_DESPESAS_EXTRAORDINARIAS,
-              RESIDENCIAL_JOIAS_E_OBRAS_DE_ARTE,
-              CONDOMINIAL_COBERTURA_BASICA_SIMPLES,
-              CONDOMINIAL_COBERTURA_BASICA_AMPLA,
-              CONDOMINIAL_ANUNCIOS_LUMINOSOS,
-              CONDOMINIAL_DANOS_AO_JARDIM,
-              CONDOMINIAL_DANOS_ELETRICOS,
-              CONDOMINIAL_DESMORONAMENTO,
-              CONDOMINIAL_DESPESAS_COM_ALUGUEL,
-              CONDOMINIAL_EQUIPAMENTOS,
-              CONDOMINIAL_FIDELIDADE_DE_EMPREGADOS,
-              CONDOMINIAL_IMPACTO_DE_VEICULOS,
-              CONDOMINIAL_VIDA_E_ACIDENTES_PESSOAIS_EMPREGADOS,
-              CONDOMINIAL_LUCROS_CESSANTES,
-              CONDOMINIAL_QUEBRA_DE_VIDROS_ESPELHOS_MARMORES_E_GRANITOS,
-              CONDOMINIAL_RESPONSABILIDADE_CIVIL,
-              CONDOMINIAL_ROUBO,
-              CONDOMINIAL_VALORES,
-              CONDOMINIAL_VAZAMENTO,
-              CONDOMINIAL_VENDAVAL,
-              CONDOMINIAL_ALAGAMENTO,
-              CONDOMINIAL_TUMULTO,
               EMPRESARIAL_INCENDIO_QUEDA_DE_RAIO_E_EXPLOSAO,
               EMPRESARIAL_DANOS_ELETRICOS,
               EMPRESARIAL_VENDAVAL_ATE_FUMACA,
@@ -5044,96 +4328,6 @@ components:
               EMPRESARIAL_LUCROS_CESSANTES_DESPESAS_FIXAS_LUCRO_LIQUIDO_LUCRO_BRUTO,
               EMPRESARIAL_PERDA_OU_PAGAMENTO_DE_ALUGUEL,
               EMPRESARIAL_PEQUENAS_OBRAS_DE_ENGENHARIA,
-              DIVERSOS_DANOS_DE_CAUSA_EXTERNA,
-              DIVERSOS_DANOS_DE_CAUSA_EXTERNA_E_ROUBO,
-              DIVERSOS_ROUBO,
-              SERVICOS_EMERGENCIAIS,
-              SERVICOS_DE_CONVENIENCIA,
-              GARANTIA_ESTENDIDA_ORIGINAL,
-              GARANTIA_ESTENDIDA_AMPLIADA,
-              GARANTIA_ESTENDIDA_REDUZIDA,
-              COMPLEMENTACAO_DE_GARANTIA,
-              CESSANTES_LUCRO_BRUTO_LUCRO_LIQUIDO_E_DESPESAS_FIXAS,
-              CESSANTES_LUCRO_LIQUIDO,
-              CESSANTES_DESPESAS_FIXAS,
-              CESSANTES_PERDA_DE_RECEITA_OU_INTERRUPCAO_DE_NEGOCIOS,
-              ENGENHARIA_OBRAS_CIVIS_CONSTRUCAO_E_INSTALACAO_E_MONTAGEM,
-              ENGENHARIA_AFRETAMENTOS_DE_AERONAVES,
-              ENGENHARIA_ARMAZENAGEM_FORA_DO_CANTEIRO_DE_OBRAS_OU_LOCAL_SEGURADO,
-              ENGENHARIA_DANOS_EM_CONSEQUENCIA_DE_ERRO_DE_PROJETO_RISCO_DO_FABRICANTE,
-              ENGENHARIA_DANOS_MORAIS,
-              ENGENHARIA_DESPESAS_COM_DESENTULHO_DO_LOCAL,
-              ENGENHARIA_DESPESAS_DE_SALVAMENTO_E_CONTENCAO_DE_SINISTROS,
-              ENGENHARIA_DESPESAS_EXTRAORDINARIAS,
-              ENGENHARIA_EQUIPAMENTOS_DE_ESCRITORIO_E_INFORMATICA,
-              ENGENHARIA_EQUIPAMENTOS_MOVEIS_OU_ESTACIONARIOS_UTILIZADOS_NA_OBRA,
-              ENGENHARIA_FERRAMENTAS_DE_PEQUENO_E_MEDIO_PORTE,
-              ENGENHARIA_HONORARIOS_DE_PERITO,
-              ENGENHARIA_INCENDIO_APOS_O_TERMINO_DE_OBRAS_ATE_TRINTA_DIAS_EXCETO_PARA_REFORMAS_OU_AMPLIACOES,
-              ENGENHARIA_LUCROS_CESSANTES,
-              ENGENHARIA_MANUTENCAO_AMPLA_ATE_VINTE_E_QUATRO_MESES,
-              ENGENHARIA_MANUTENCAO_SIMPLES_ATE_VINTE_E_QUATRO_MESES,
-              ENGENHARIA_OBRAS_CONCLUIDAS,
-              ENGENHARIA_OBRAS_TEMPORARIAS,
-              ENGENHARIA_OBRAS_INSTALACOES_CONTRATADAS_ACEITAS_E_OU_COLOCADAS_EM_OPERACAO,
-              ENGENHARIA_PROPRIEDADES_CIRCUNVIZINHAS,
-              ENGENHARIA_RECOMPOSICAO_DE_DOCUMENTOS,
-              ENGENHARIA_RESPONSABILIDADE_CIVIL_EMPREGADOR,
-              ENGENHARIA_FUNDACAO,
-              ENGENHARIA_STANDS_DE_VENDA,
-              ENGENHARIA_TRANSPORTE_TERRESTRE,
-              ENGENHARIA_TUMULTOS_GREVES_E_LOCKOUT,
-              BANCOS_DANOS_MATERIAIS_CAUSADOS_AO_COFRE_FORTE,
-              BANCOS_DANOS_MATERIAIS_CAUSADOS_AOS_CAIXAS_ELETRONICOS_ATM,
-              BANCOS_INFIDELIDADE_DE_FUNCIONARIOS,
-              BANCOS_VALORES_NO_INTERIOR_DO_ESTABELECIMENTO_DENTRO_E_OU_FORA_DE_COFRE_FORTE,
-              BANCOS_VALORES_NO_INTERIOR_DE_CAIXAS_ELETRONICOS_ATM,
-              BANCOS_VALORES_EM_MAOS_DE_PORTADORES_EM_TRANSITO,
-              RNO_ALAGAMENTO_INUNDACAO,
-              RNO_ALUGUEL_PERDA_OU_PAGAMENTO,
-              RNO_ANUNCIOS_LUMINOSOS,
-              RNO_BAGAGEM,
-              RNO_BASICA_INCENDIO_RAIO_EXPLOSAO,
-              RNO_BASICA_DANOS_MATERIAIS,
-              RNO_BASICA_DE_OBRAS_CIVIS_EM_CONSTRUCAO_E_INSTALACOES_E_MONTAGENS,
-              RNO_BENS_DE_TERCEIROS_EM_PODER_DO_SEGURADO,
-              RNO_CARGA_DESCARGA_ICAMENTO_E_DESCIDA,
-              RNO_DANOS_ELETRICOS,
-              RNO_DANOS_NA_FABRICACAO,
-              RNO_DERRAME_D_AGUA_OU_OUTRA_SUBSTANCIA_LIQUIDA_DE_INSTALACOES_DE_CHUVEIROS_AUTOMATICOS_SPRINKLERS,
-              RNO_DESMORONAMENTO,
-              RNO_DESPESAS_ADICIONAIS_OUTRAS_DESPESAS,
-              RNO_DESPESAS_EXTRAORDINARIAS,
-              RNO_DESPESAS_FIXA,
-              RNO_DETERIORACAO_DE_MERCADORIAS_EM_AMBIENTES_FRIGORIFICADOS,
-              RNO_EQUIPAMENTOS_ARRENDADOS,
-              RNO_EQUIPAMENTOS_CEDIDOS_A_TERCEIROS,
-              RNO_EQUIPAMENTOS_CINEMATOGRAFICOS_FOTOGRAFICOS_DE_AUDIO_E_VIDEO,
-              RNO_EQUIPAMENTOS_DIVERSOS_OUTRAS_MODALIDADES,
-              RNO_EQUIPAMENTOS_ELETRONICOS,
-              RNO_EQUIPAMENTOS_ESTACIONARIOS,
-              RNO_EQUIPAMENTOS_MOVEIS,
-              RNO_EQUIPAMENTOS_PORTATEIS,
-              RNO_FIDELIDADE_DE_EMPREGADOS,
-              RNO_HONORARIOS_DE_PERITOS,
-              RNO_IMPACTO_DE_VEICULOS_E_QUEDA_DE_AERONAVES,
-              RNO_IMPACTO_DE_VEICULOS_TERRESTRES,
-              RNO_LINHAS_DE_TRANSMISSAO_E_DISTRIBUICAO,
-              RNO_LUCROS_CESSANTES,
-              RNO_MOVIMENTACAO_INTERNA_DE_MERCADORIAS,
-              RNO_PATIOS,
-              RNO_QUEBRA_DE_MAQUINAS,
-              RNO_QUEBRA_DE_VIDROS_ESPELHOS_MARMORES_E_GRANITOS,
-              RNO_RECOMPOSICAO_DE_REGISTROS_E_DOCUMENTOS,
-              RNO_ROUBO_DE_BENS_DE_HOSPEDES,
-              RNO_ROUBO_DE_VALORES_EM_TRANSITO_EM_MAOS_DE_PORTADOR,
-              RNO_ROUBO_E_FURTO_MEDIANTE_ARROMBAMENTO,
-              RNO_ROUBO_E_OU_FURTO_QUALIFICADO_DE_VALORES_NO_INTERIOR_DO_ESTABELECIMENTO_DENTRO_E_OU_FORA_DE_COFRES_FORTES_OU_CAIXAS_FORTES,
-              RNO_TERRORISMO_E_SABOTAGEM,
-              RNO_TUMULTOS_GREVES_LOCKOUT_E_ATOS_DOLOSOS,
-              RNO_VAZAMENTO_DE_TUBULACOES_E_TANQUES,
-              RNO_VAZAMENTO_DE_TUBULACOES_HIDRAULICAS,
-              RNO_VENDAVAL_FURACAO_CICLONE_TORNADO_GRANIZO_QUEDA_DE_AERONAVES_OU_QUAISQUER_OUTROS_ENGENHOS_AEREOS_OU_ESPACIAIS_IMPACTO_DE_VEICULOS_TERRESTRES_E_FUMACA,
               OUTRAS
             ]
         description:
@@ -5198,6 +4392,12 @@ components:
         - coverages
         - isCollectiveStipulated
         - hasOneRiskLocation
+        - insuredObject
+        - maxLMG
+        - termStartDate
+        - termEndDate
+        - includesAssistanceServices
+        - insuranceType
       properties:
         isCollectiveStipulated:
           description: "Apólice é coletiva ou por estipulação?"
@@ -5230,8 +4430,9 @@ components:
           type: string
           maxLength: 100
           example: "111111"
-        insurerId:
-          description: Nome para identifcar a congênere de renovação
+        insurerName:
+          description: Razão Social da congênere de renovação
+          pattern: ^[\w\W\s]*$
           type: string
           maxLength: 100
         currency:
@@ -5295,7 +4496,7 @@ components:
         businessActivityDescription:
           description: Descrição do código CNAE da atividade principal
           type: string
-          maxLength: 100
+          maxLength: 500
         professionalRegisterOrganization:
           description: Conselho de registro da categoria (Para profissionais liberais que não possuam CNPJ)
           type: string
@@ -5441,11 +4642,18 @@ components:
 
     QuoteDataPatrimonialDiverseRisks:  
       type: object
+      description: Objeto que agrupa dados específicos do ramo de cotação.
       required:
         - coverages
         - isCollectiveStipulated
         - productModalityType
-      description: Objeto que agrupa dados específicos do ramo de cotação.
+        - includesAssistanceServices
+        - maxLMG
+        - insuranceTermStartDate
+        - insuranceType
+        - insuredObject
+        - termEndDate
+        - termStartDate
       properties:              
         productModalityType:
           type: boolean
@@ -5488,9 +4696,10 @@ components:
           type: string
           maxLength: 100
           example: "111111"
-        insurerId:  
-          description: Nome para identifcar a congênere de renovação
+        insurerName:  
+          description: Razão Social da congênere de renovação
           type: string
+          pattern: ^[\w\W\s]*$
           maxLength: 100
         currency:
           description: Moeda de emissão do contrato de acordo com ISO-4217.
@@ -5498,18 +4707,18 @@ components:
           example: BRL
           enum: [AFN,AFA,ALL,ALK,DZD,USD,EUR,ADP,ESP,FRF,AOA,AOK,AON,AOR,XCD,ARS,ARA,ARP,ARY,AMD,RUR,AWG,AUD,ATS,AZN,AYM,AZM,BSD,BHD,BDT,BBD,BYN,BYB,BYR,BEC,BEF,BEL,BZD,XOF,BMD,INR,BTN,BOP,BOB,BOV,BAM,BAD,BWP,NOK,BRL,BRB,BRC,BRE,BRN,BRR,BND,BGN,BGJ,BGK,BGL,BUK,BIF,CVE,KHR,XAF,CAD,KYD,CLP,CLF,CNY,COP,COU,KMF,CDF,NZD,CRC,HRK,HRD,CUP,CUC,ANG,CYP,CZK,CSJ,CSK,DKK,DJF,DOP,ECS,ECV,EGP,SVC,GQE,ERN,EEK,SZL,ETB,XEU,FKP,FJD,FIM,XPF,GMD,GEL,GEK,DDM,DEM,GHS,GHC,GHP,GIP,GRD,GTQ,GBP,GNF,GNE,GNS,GWE,GWP,GYD,HTG,ITL,HNL,HKD,HUF,ISK,ISJ,IDR,XDR,IRR,IQD,IEP,ILS,ILP,ILR,JMD,JPY,JOD,KZT,KES,KPW,KRW,KWD,KGS,LAJ,LAK,LVL,LVR,LBP,LSL,ZAR,LSM,ZAL,LRD,LYD,CHF,LTL,LTT,LUC,LUF,LUL,MOP,MGA,MGF,MWK,MYR,MVR,MVQ,MLF,MTL,MTP,MRU,MRO,MUR,XUA,MXN,MXV,MXP,MDL,MNT,MAD,MZN,MZE,MZM,MMK,NAD,NPR,NLG,NIO,NIC,NGN,MKD,OMR,PKR,PAB,PGK,PYG,PEN,PEH,PEI,PES,PHP,PLN,PLZ,PTE,QAR,RON,ROK,ROL,RUB,RWF,SHP,WST,STN,STD,SAR,RSD,CSD,SCR,SLL,SGD,XSU,SKK,SIT,SBD,SOS,SSP,SDG,RHD,ESA,ESB,LKR,SDD,SDP,SRD,SRG,SEK,CHE,CHW,CHC,SYP,TWD,TJS,TJR,TZS,THB,TPE,TOP,TTD,TND,TRY,TRL,TMT,TMM,UGX,UGS,UGW,UAH,UAK,SUR,AED,USS,USN,UYU,UYI,UYW,UYN,UYP,UZS,VUV,VEB,VEF,VES,VND,VNC,YER,YDD,YUD,YUM,YUN,ZRN,ZRZ,ZMW,ZMK,ZWL,ZWC,ZWD,ZWN,ZWR,XBA,XFO,XBB,XRE,XBC,XBD,XFU,XTS,XXX,XAU,XPD,XPT,XAG]
         insuredObjectType:
-          description: Tipo e/ou modalidade de bem segurado
+          description: Tipo/modalidade de bem segurado
           type: string
           example: EQUIPAMENTO_MOVEL
           enum: ['EQUIPAMENTO_MOVEL',
                 'EQUIPAMENTO_ESTACIONARIO',
-                'EQUIPAMENTOS_PORTÁTEIS']
+                'EQUIPAMENTOS_PORTATEIS']
+        insuredObject:
+          $ref: '#/components/schemas/QuotePatrimonialDiverseRisksInsuredObject'  
         maxLMG:
           description: Valor Limite máximo de garantia (LMG)
           allOf:
-            - $ref: '#/components/schemas/AmountDetails'  
-        insuredObject:
-          $ref: '#/components/schemas/QuotePatrimonialDiverseRisksInsuredObject'     
+            - $ref: '#/components/schemas/AmountDetails'    
         beneficiaries:
           type: array
           description: Lista de dados de beneficiários.
@@ -5672,8 +4881,9 @@ components:
         postCode:
           type: string
           maxLength: 8
+          pattern: '^\d{8}$|^NA$'
           description: CEP
-          example: "1310200"
+          example: "13102000"
         billingAddress:
           type: string
           maxLength: 100
@@ -5729,7 +4939,8 @@ components:
           type: string
           maxLength: 8
           description: CEP do Local de Cobrança
-          example: "1310200"
+          pattern: '^\d{8}$|^NA$'
+          example: "13102000"
         securityProtection:  
           description: Quais itens de segurança dispõe?
           type: array
@@ -5775,161 +4986,11 @@ components:
         code:
             type: string
             description: Código da cobertura, conforme Anexo II do Manual de Escopo de Dados
-            example: RESIDENCIAL_IMOVEL_BASICA
+            example: DIVERSOS_DANOS_DE_CAUSA_EXTERNA
             enum: [
-              RESIDENCIAL_IMOVEL_BASICA,
-              RESIDENCIAL_IMOVEL_AMPLA,
-              RESIDENCIAL_INCENDIO,
-              RESIDENCIAL_QUEDA_DE_RAIO,
-              RESIDENCIAL_EXPLOSAO,
-              RESIDENCIAL_IMPACTO_DE_AERONAVES,
-              RESIDENCIAL_ALAGAMENTO,
-              RESIDENCIAL_DANOS_ELETRICOS,
-              RESIDENCIAL_DANOS_POR_AGUA,
-              RESIDENCIAL_RESPONSABILIDADE_CIVIL_FAMILIAR,
-              RESIDENCIAL_VENDAVAL,
-              RESIDENCIAL_DANOS_A_EQUIPAMENTOS_ELETRONICOS,
-              RESIDENCIAL_TERREMOTO,
-              RESIDENCIAL_PERDA_E_PAGAMENTO_DE_ALUGUEL,
-              RESIDENCIAL_ROUBO_E_SUBTRACAO_DE_BENS,
-              RESIDENCIAL_QUEBRA_DE_VIDROS,
-              RESIDENCIAL_IMPACTO_DE_VEICULOS,
-              RESIDENCIAL_DESMORONAMENTO,
-              RESIDENCIAL_TUMULTOS_GREVES_E_LOCKOUTS,
-              RESIDENCIAL_DESPESAS_EXTRAORDINARIAS,
-              RESIDENCIAL_JOIAS_E_OBRAS_DE_ARTE,
-              CONDOMINIAL_COBERTURA_BASICA_SIMPLES,
-              CONDOMINIAL_COBERTURA_BASICA_AMPLA,
-              CONDOMINIAL_ANUNCIOS_LUMINOSOS,
-              CONDOMINIAL_DANOS_AO_JARDIM,
-              CONDOMINIAL_DANOS_ELETRICOS,
-              CONDOMINIAL_DESMORONAMENTO,
-              CONDOMINIAL_DESPESAS_COM_ALUGUEL,
-              CONDOMINIAL_EQUIPAMENTOS,
-              CONDOMINIAL_FIDELIDADE_DE_EMPREGADOS,
-              CONDOMINIAL_IMPACTO_DE_VEICULOS,
-              CONDOMINIAL_VIDA_E_ACIDENTES_PESSOAIS_EMPREGADOS,
-              CONDOMINIAL_LUCROS_CESSANTES,
-              CONDOMINIAL_QUEBRA_DE_VIDROS_ESPELHOS_MARMORES_E_GRANITOS,
-              CONDOMINIAL_RESPONSABILIDADE_CIVIL,
-              CONDOMINIAL_ROUBO,
-              CONDOMINIAL_VALORES,
-              CONDOMINIAL_VAZAMENTO,
-              CONDOMINIAL_VENDAVAL,
-              CONDOMINIAL_ALAGAMENTO,
-              CONDOMINIAL_TUMULTO,
-              EMPRESARIAL_INCENDIO_QUEDA_DE_RAIO_E_EXPLOSAO,
-              EMPRESARIAL_DANOS_ELETRICOS,
-              EMPRESARIAL_VENDAVAL_ATE_FUMACA,
-              EMPRESARIAL_DESMORONAMENTO,
-              EMPRESARIAL_ALAGAMENTO_E_INUNDACAO,
-              EMPRESARIAL_TUMULTOS_GREVES_LOCKOUT_E_ATOS_DOLOSOS,
-              EMPRESARIAL_ROUBO_E_FURTO_QUALIFICADO,
-              EMPRESARIAL_VALORES,
-              EMPRESARIAL_QUEBRA_DE_VIDROS_ESPELHOS_MARMORES_E_GRANITOS,
-              EMPRESARIAL_ANUNCIOS_LUMINOSOS,
-              EMPRESARIAL_FIDELIDADE_DE_EMPREGADOS,
-              EMPRESARIAL_RECOMPOSICAO_DE_REGISTROS_E_DOCUMENTOS,
-              EMPRESARIAL_DETERIORACAO_DE_MERCADORIAS_EM_AMBIENTES_FRIGORIFICADOS,
-              EMPRESARIAL_DERRAME,
-              EMPRESARIAL_VAZAMENTO,
-              EMPRESARIAL_EQUIPAMENTOS,
-              EMPRESARIAL_QUEBRA_DE_MAQUINAS,
-              EMPRESARIAL_RESPONSABILIDADE_CIVIL,
-              EMPRESARIAL_DESPESAS_EXTRAORDINARIAS,
-              EMPRESARIAL_LUCROS_CESSANTES_DESPESAS_FIXAS_LUCRO_LIQUIDO_LUCRO_BRUTO,
-              EMPRESARIAL_PERDA_OU_PAGAMENTO_DE_ALUGUEL,
-              EMPRESARIAL_PEQUENAS_OBRAS_DE_ENGENHARIA,
               DIVERSOS_DANOS_DE_CAUSA_EXTERNA,
               DIVERSOS_DANOS_DE_CAUSA_EXTERNA_E_ROUBO,
               DIVERSOS_ROUBO,
-              SERVICOS_EMERGENCIAIS,
-              SERVICOS_DE_CONVENIENCIA,
-              GARANTIA_ESTENDIDA_ORIGINAL,
-              GARANTIA_ESTENDIDA_AMPLIADA,
-              GARANTIA_ESTENDIDA_REDUZIDA,
-              COMPLEMENTACAO_DE_GARANTIA,
-              CESSANTES_LUCRO_BRUTO_LUCRO_LIQUIDO_E_DESPESAS_FIXAS,
-              CESSANTES_LUCRO_LIQUIDO,
-              CESSANTES_DESPESAS_FIXAS,
-              CESSANTES_PERDA_DE_RECEITA_OU_INTERRUPCAO_DE_NEGOCIOS,
-              ENGENHARIA_OBRAS_CIVIS_CONSTRUCAO_E_INSTALACAO_E_MONTAGEM,
-              ENGENHARIA_AFRETAMENTOS_DE_AERONAVES,
-              ENGENHARIA_ARMAZENAGEM_FORA_DO_CANTEIRO_DE_OBRAS_OU_LOCAL_SEGURADO,
-              ENGENHARIA_DANOS_EM_CONSEQUENCIA_DE_ERRO_DE_PROJETO_RISCO_DO_FABRICANTE,
-              ENGENHARIA_DANOS_MORAIS,
-              ENGENHARIA_DESPESAS_COM_DESENTULHO_DO_LOCAL,
-              ENGENHARIA_DESPESAS_DE_SALVAMENTO_E_CONTENCAO_DE_SINISTROS,
-              ENGENHARIA_DESPESAS_EXTRAORDINARIAS,
-              ENGENHARIA_EQUIPAMENTOS_DE_ESCRITORIO_E_INFORMATICA,
-              ENGENHARIA_EQUIPAMENTOS_MOVEIS_OU_ESTACIONARIOS_UTILIZADOS_NA_OBRA,
-              ENGENHARIA_FERRAMENTAS_DE_PEQUENO_E_MEDIO_PORTE,
-              ENGENHARIA_HONORARIOS_DE_PERITO,
-              ENGENHARIA_INCENDIO_APOS_O_TERMINO_DE_OBRAS_ATE_TRINTA_DIAS_EXCETO_PARA_REFORMAS_OU_AMPLIACOES,
-              ENGENHARIA_LUCROS_CESSANTES,
-              ENGENHARIA_MANUTENCAO_AMPLA_ATE_VINTE_E_QUATRO_MESES,
-              ENGENHARIA_MANUTENCAO_SIMPLES_ATE_VINTE_E_QUATRO_MESES,
-              ENGENHARIA_OBRAS_CONCLUIDAS,
-              ENGENHARIA_OBRAS_TEMPORARIAS,
-              ENGENHARIA_OBRAS_INSTALACOES_CONTRATADAS_ACEITAS_E_OU_COLOCADAS_EM_OPERACAO,
-              ENGENHARIA_PROPRIEDADES_CIRCUNVIZINHAS,
-              ENGENHARIA_RECOMPOSICAO_DE_DOCUMENTOS,
-              ENGENHARIA_RESPONSABILIDADE_CIVIL_EMPREGADOR,
-              ENGENHARIA_FUNDACAO,
-              ENGENHARIA_STANDS_DE_VENDA,
-              ENGENHARIA_TRANSPORTE_TERRESTRE,
-              ENGENHARIA_TUMULTOS_GREVES_E_LOCKOUT,
-              BANCOS_DANOS_MATERIAIS_CAUSADOS_AO_COFRE_FORTE,
-              BANCOS_DANOS_MATERIAIS_CAUSADOS_AOS_CAIXAS_ELETRONICOS_ATM,
-              BANCOS_INFIDELIDADE_DE_FUNCIONARIOS,
-              BANCOS_VALORES_NO_INTERIOR_DO_ESTABELECIMENTO_DENTRO_E_OU_FORA_DE_COFRE_FORTE,
-              BANCOS_VALORES_NO_INTERIOR_DE_CAIXAS_ELETRONICOS_ATM,
-              BANCOS_VALORES_EM_MAOS_DE_PORTADORES_EM_TRANSITO,
-              RNO_ALAGAMENTO_INUNDACAO,
-              RNO_ALUGUEL_PERDA_OU_PAGAMENTO,
-              RNO_ANUNCIOS_LUMINOSOS,
-              RNO_BAGAGEM,
-              RNO_BASICA_INCENDIO_RAIO_EXPLOSAO,
-              RNO_BASICA_DANOS_MATERIAIS,
-              RNO_BASICA_DE_OBRAS_CIVIS_EM_CONSTRUCAO_E_INSTALACOES_E_MONTAGENS,
-              RNO_BENS_DE_TERCEIROS_EM_PODER_DO_SEGURADO,
-              RNO_CARGA_DESCARGA_ICAMENTO_E_DESCIDA,
-              RNO_DANOS_ELETRICOS,
-              RNO_DANOS_NA_FABRICACAO,
-              RNO_DERRAME_D_AGUA_OU_OUTRA_SUBSTANCIA_LIQUIDA_DE_INSTALACOES_DE_CHUVEIROS_AUTOMATICOS_SPRINKLERS,
-              RNO_DESMORONAMENTO,
-              RNO_DESPESAS_ADICIONAIS_OUTRAS_DESPESAS,
-              RNO_DESPESAS_EXTRAORDINARIAS,
-              RNO_DESPESAS_FIXA,
-              RNO_DETERIORACAO_DE_MERCADORIAS_EM_AMBIENTES_FRIGORIFICADOS,
-              RNO_EQUIPAMENTOS_ARRENDADOS,
-              RNO_EQUIPAMENTOS_CEDIDOS_A_TERCEIROS,
-              RNO_EQUIPAMENTOS_CINEMATOGRAFICOS_FOTOGRAFICOS_DE_AUDIO_E_VIDEO,
-              RNO_EQUIPAMENTOS_DIVERSOS_OUTRAS_MODALIDADES,
-              RNO_EQUIPAMENTOS_ELETRONICOS,
-              RNO_EQUIPAMENTOS_ESTACIONARIOS,
-              RNO_EQUIPAMENTOS_MOVEIS,
-              RNO_EQUIPAMENTOS_PORTATEIS,
-              RNO_FIDELIDADE_DE_EMPREGADOS,
-              RNO_HONORARIOS_DE_PERITOS,
-              RNO_IMPACTO_DE_VEICULOS_E_QUEDA_DE_AERONAVES,
-              RNO_IMPACTO_DE_VEICULOS_TERRESTRES,
-              RNO_LINHAS_DE_TRANSMISSAO_E_DISTRIBUICAO,
-              RNO_LUCROS_CESSANTES,
-              RNO_MOVIMENTACAO_INTERNA_DE_MERCADORIAS,
-              RNO_PATIOS,
-              RNO_QUEBRA_DE_MAQUINAS,
-              RNO_QUEBRA_DE_VIDROS_ESPELHOS_MARMORES_E_GRANITOS,
-              RNO_RECOMPOSICAO_DE_REGISTROS_E_DOCUMENTOS,
-              RNO_ROUBO_DE_BENS_DE_HOSPEDES,
-              RNO_ROUBO_DE_VALORES_EM_TRANSITO_EM_MAOS_DE_PORTADOR,
-              RNO_ROUBO_E_FURTO_MEDIANTE_ARROMBAMENTO,
-              RNO_ROUBO_E_OU_FURTO_QUALIFICADO_DE_VALORES_NO_INTERIOR_DO_ESTABELECIMENTO_DENTRO_E_OU_FORA_DE_COFRES_FORTES_OU_CAIXAS_FORTES,
-              RNO_TERRORISMO_E_SABOTAGEM,
-              RNO_TUMULTOS_GREVES_LOCKOUT_E_ATOS_DOLOSOS,
-              RNO_VAZAMENTO_DE_TUBULACOES_E_TANQUES,
-              RNO_VAZAMENTO_DE_TUBULACOES_HIDRAULICAS,
-              RNO_VENDAVAL_FURACAO_CICLONE_TORNADO_GRANIZO_QUEDA_DE_AERONAVES_OU_QUAISQUER_OUTROS_ENGENHOS_AEREOS_OU_ESPACIAIS_IMPACTO_DE_VEICULOS_TERRESTRES_E_FUMACA,
               OUTRAS
             ]
         description:
@@ -6048,161 +5109,11 @@ components:
         code:
             type: string
             description: Código da cobertura, conforme Anexo II do Manual de Escopo de Dados
-            example: RESIDENCIAL_IMOVEL_BASICA
+            example: DIVERSOS_DANOS_DE_CAUSA_EXTERNA
             enum: [
-              RESIDENCIAL_IMOVEL_BASICA,
-              RESIDENCIAL_IMOVEL_AMPLA,
-              RESIDENCIAL_INCENDIO,
-              RESIDENCIAL_QUEDA_DE_RAIO,
-              RESIDENCIAL_EXPLOSAO,
-              RESIDENCIAL_IMPACTO_DE_AERONAVES,
-              RESIDENCIAL_ALAGAMENTO,
-              RESIDENCIAL_DANOS_ELETRICOS,
-              RESIDENCIAL_DANOS_POR_AGUA,
-              RESIDENCIAL_RESPONSABILIDADE_CIVIL_FAMILIAR,
-              RESIDENCIAL_VENDAVAL,
-              RESIDENCIAL_DANOS_A_EQUIPAMENTOS_ELETRONICOS,
-              RESIDENCIAL_TERREMOTO,
-              RESIDENCIAL_PERDA_E_PAGAMENTO_DE_ALUGUEL,
-              RESIDENCIAL_ROUBO_E_SUBTRACAO_DE_BENS,
-              RESIDENCIAL_QUEBRA_DE_VIDROS,
-              RESIDENCIAL_IMPACTO_DE_VEICULOS,
-              RESIDENCIAL_DESMORONAMENTO,
-              RESIDENCIAL_TUMULTOS_GREVES_E_LOCKOUTS,
-              RESIDENCIAL_DESPESAS_EXTRAORDINARIAS,
-              RESIDENCIAL_JOIAS_E_OBRAS_DE_ARTE,
-              CONDOMINIAL_COBERTURA_BASICA_SIMPLES,
-              CONDOMINIAL_COBERTURA_BASICA_AMPLA,
-              CONDOMINIAL_ANUNCIOS_LUMINOSOS,
-              CONDOMINIAL_DANOS_AO_JARDIM,
-              CONDOMINIAL_DANOS_ELETRICOS,
-              CONDOMINIAL_DESMORONAMENTO,
-              CONDOMINIAL_DESPESAS_COM_ALUGUEL,
-              CONDOMINIAL_EQUIPAMENTOS,
-              CONDOMINIAL_FIDELIDADE_DE_EMPREGADOS,
-              CONDOMINIAL_IMPACTO_DE_VEICULOS,
-              CONDOMINIAL_VIDA_E_ACIDENTES_PESSOAIS_EMPREGADOS,
-              CONDOMINIAL_LUCROS_CESSANTES,
-              CONDOMINIAL_QUEBRA_DE_VIDROS_ESPELHOS_MARMORES_E_GRANITOS,
-              CONDOMINIAL_RESPONSABILIDADE_CIVIL,
-              CONDOMINIAL_ROUBO,
-              CONDOMINIAL_VALORES,
-              CONDOMINIAL_VAZAMENTO,
-              CONDOMINIAL_VENDAVAL,
-              CONDOMINIAL_ALAGAMENTO,
-              CONDOMINIAL_TUMULTO,
-              EMPRESARIAL_INCENDIO_QUEDA_DE_RAIO_E_EXPLOSAO,
-              EMPRESARIAL_DANOS_ELETRICOS,
-              EMPRESARIAL_VENDAVAL_ATE_FUMACA,
-              EMPRESARIAL_DESMORONAMENTO,
-              EMPRESARIAL_ALAGAMENTO_E_INUNDACAO,
-              EMPRESARIAL_TUMULTOS_GREVES_LOCKOUT_E_ATOS_DOLOSOS,
-              EMPRESARIAL_ROUBO_E_FURTO_QUALIFICADO,
-              EMPRESARIAL_VALORES,
-              EMPRESARIAL_QUEBRA_DE_VIDROS_ESPELHOS_MARMORES_E_GRANITOS,
-              EMPRESARIAL_ANUNCIOS_LUMINOSOS,
-              EMPRESARIAL_FIDELIDADE_DE_EMPREGADOS,
-              EMPRESARIAL_RECOMPOSICAO_DE_REGISTROS_E_DOCUMENTOS,
-              EMPRESARIAL_DETERIORACAO_DE_MERCADORIAS_EM_AMBIENTES_FRIGORIFICADOS,
-              EMPRESARIAL_DERRAME,
-              EMPRESARIAL_VAZAMENTO,
-              EMPRESARIAL_EQUIPAMENTOS,
-              EMPRESARIAL_QUEBRA_DE_MAQUINAS,
-              EMPRESARIAL_RESPONSABILIDADE_CIVIL,
-              EMPRESARIAL_DESPESAS_EXTRAORDINARIAS,
-              EMPRESARIAL_LUCROS_CESSANTES_DESPESAS_FIXAS_LUCRO_LIQUIDO_LUCRO_BRUTO,
-              EMPRESARIAL_PERDA_OU_PAGAMENTO_DE_ALUGUEL,
-              EMPRESARIAL_PEQUENAS_OBRAS_DE_ENGENHARIA,
               DIVERSOS_DANOS_DE_CAUSA_EXTERNA,
               DIVERSOS_DANOS_DE_CAUSA_EXTERNA_E_ROUBO,
               DIVERSOS_ROUBO,
-              SERVICOS_EMERGENCIAIS,
-              SERVICOS_DE_CONVENIENCIA,
-              GARANTIA_ESTENDIDA_ORIGINAL,
-              GARANTIA_ESTENDIDA_AMPLIADA,
-              GARANTIA_ESTENDIDA_REDUZIDA,
-              COMPLEMENTACAO_DE_GARANTIA,
-              CESSANTES_LUCRO_BRUTO_LUCRO_LIQUIDO_E_DESPESAS_FIXAS,
-              CESSANTES_LUCRO_LIQUIDO,
-              CESSANTES_DESPESAS_FIXAS,
-              CESSANTES_PERDA_DE_RECEITA_OU_INTERRUPCAO_DE_NEGOCIOS,
-              ENGENHARIA_OBRAS_CIVIS_CONSTRUCAO_E_INSTALACAO_E_MONTAGEM,
-              ENGENHARIA_AFRETAMENTOS_DE_AERONAVES,
-              ENGENHARIA_ARMAZENAGEM_FORA_DO_CANTEIRO_DE_OBRAS_OU_LOCAL_SEGURADO,
-              ENGENHARIA_DANOS_EM_CONSEQUENCIA_DE_ERRO_DE_PROJETO_RISCO_DO_FABRICANTE,
-              ENGENHARIA_DANOS_MORAIS,
-              ENGENHARIA_DESPESAS_COM_DESENTULHO_DO_LOCAL,
-              ENGENHARIA_DESPESAS_DE_SALVAMENTO_E_CONTENCAO_DE_SINISTROS,
-              ENGENHARIA_DESPESAS_EXTRAORDINARIAS,
-              ENGENHARIA_EQUIPAMENTOS_DE_ESCRITORIO_E_INFORMATICA,
-              ENGENHARIA_EQUIPAMENTOS_MOVEIS_OU_ESTACIONARIOS_UTILIZADOS_NA_OBRA,
-              ENGENHARIA_FERRAMENTAS_DE_PEQUENO_E_MEDIO_PORTE,
-              ENGENHARIA_HONORARIOS_DE_PERITO,
-              ENGENHARIA_INCENDIO_APOS_O_TERMINO_DE_OBRAS_ATE_TRINTA_DIAS_EXCETO_PARA_REFORMAS_OU_AMPLIACOES,
-              ENGENHARIA_LUCROS_CESSANTES,
-              ENGENHARIA_MANUTENCAO_AMPLA_ATE_VINTE_E_QUATRO_MESES,
-              ENGENHARIA_MANUTENCAO_SIMPLES_ATE_VINTE_E_QUATRO_MESES,
-              ENGENHARIA_OBRAS_CONCLUIDAS,
-              ENGENHARIA_OBRAS_TEMPORARIAS,
-              ENGENHARIA_OBRAS_INSTALACOES_CONTRATADAS_ACEITAS_E_OU_COLOCADAS_EM_OPERACAO,
-              ENGENHARIA_PROPRIEDADES_CIRCUNVIZINHAS,
-              ENGENHARIA_RECOMPOSICAO_DE_DOCUMENTOS,
-              ENGENHARIA_RESPONSABILIDADE_CIVIL_EMPREGADOR,
-              ENGENHARIA_FUNDACAO,
-              ENGENHARIA_STANDS_DE_VENDA,
-              ENGENHARIA_TRANSPORTE_TERRESTRE,
-              ENGENHARIA_TUMULTOS_GREVES_E_LOCKOUT,
-              BANCOS_DANOS_MATERIAIS_CAUSADOS_AO_COFRE_FORTE,
-              BANCOS_DANOS_MATERIAIS_CAUSADOS_AOS_CAIXAS_ELETRONICOS_ATM,
-              BANCOS_INFIDELIDADE_DE_FUNCIONARIOS,
-              BANCOS_VALORES_NO_INTERIOR_DO_ESTABELECIMENTO_DENTRO_E_OU_FORA_DE_COFRE_FORTE,
-              BANCOS_VALORES_NO_INTERIOR_DE_CAIXAS_ELETRONICOS_ATM,
-              BANCOS_VALORES_EM_MAOS_DE_PORTADORES_EM_TRANSITO,
-              RNO_ALAGAMENTO_INUNDACAO,
-              RNO_ALUGUEL_PERDA_OU_PAGAMENTO,
-              RNO_ANUNCIOS_LUMINOSOS,
-              RNO_BAGAGEM,
-              RNO_BASICA_INCENDIO_RAIO_EXPLOSAO,
-              RNO_BASICA_DANOS_MATERIAIS,
-              RNO_BASICA_DE_OBRAS_CIVIS_EM_CONSTRUCAO_E_INSTALACOES_E_MONTAGENS,
-              RNO_BENS_DE_TERCEIROS_EM_PODER_DO_SEGURADO,
-              RNO_CARGA_DESCARGA_ICAMENTO_E_DESCIDA,
-              RNO_DANOS_ELETRICOS,
-              RNO_DANOS_NA_FABRICACAO,
-              RNO_DERRAME_D_AGUA_OU_OUTRA_SUBSTANCIA_LIQUIDA_DE_INSTALACOES_DE_CHUVEIROS_AUTOMATICOS_SPRINKLERS,
-              RNO_DESMORONAMENTO,
-              RNO_DESPESAS_ADICIONAIS_OUTRAS_DESPESAS,
-              RNO_DESPESAS_EXTRAORDINARIAS,
-              RNO_DESPESAS_FIXA,
-              RNO_DETERIORACAO_DE_MERCADORIAS_EM_AMBIENTES_FRIGORIFICADOS,
-              RNO_EQUIPAMENTOS_ARRENDADOS,
-              RNO_EQUIPAMENTOS_CEDIDOS_A_TERCEIROS,
-              RNO_EQUIPAMENTOS_CINEMATOGRAFICOS_FOTOGRAFICOS_DE_AUDIO_E_VIDEO,
-              RNO_EQUIPAMENTOS_DIVERSOS_OUTRAS_MODALIDADES,
-              RNO_EQUIPAMENTOS_ELETRONICOS,
-              RNO_EQUIPAMENTOS_ESTACIONARIOS,
-              RNO_EQUIPAMENTOS_MOVEIS,
-              RNO_EQUIPAMENTOS_PORTATEIS,
-              RNO_FIDELIDADE_DE_EMPREGADOS,
-              RNO_HONORARIOS_DE_PERITOS,
-              RNO_IMPACTO_DE_VEICULOS_E_QUEDA_DE_AERONAVES,
-              RNO_IMPACTO_DE_VEICULOS_TERRESTRES,
-              RNO_LINHAS_DE_TRANSMISSAO_E_DISTRIBUICAO,
-              RNO_LUCROS_CESSANTES,
-              RNO_MOVIMENTACAO_INTERNA_DE_MERCADORIAS,
-              RNO_PATIOS,
-              RNO_QUEBRA_DE_MAQUINAS,
-              RNO_QUEBRA_DE_VIDROS_ESPELHOS_MARMORES_E_GRANITOS,
-              RNO_RECOMPOSICAO_DE_REGISTROS_E_DOCUMENTOS,
-              RNO_ROUBO_DE_BENS_DE_HOSPEDES,
-              RNO_ROUBO_DE_VALORES_EM_TRANSITO_EM_MAOS_DE_PORTADOR,
-              RNO_ROUBO_E_FURTO_MEDIANTE_ARROMBAMENTO,
-              RNO_ROUBO_E_OU_FURTO_QUALIFICADO_DE_VALORES_NO_INTERIOR_DO_ESTABELECIMENTO_DENTRO_E_OU_FORA_DE_COFRES_FORTES_OU_CAIXAS_FORTES,
-              RNO_TERRORISMO_E_SABOTAGEM,
-              RNO_TUMULTOS_GREVES_LOCKOUT_E_ATOS_DOLOSOS,
-              RNO_VAZAMENTO_DE_TUBULACOES_E_TANQUES,
-              RNO_VAZAMENTO_DE_TUBULACOES_HIDRAULICAS,
-              RNO_VENDAVAL_FURACAO_CICLONE_TORNADO_GRANIZO_QUEDA_DE_AERONAVES_OU_QUAISQUER_OUTROS_ENGENHOS_AEREOS_OU_ESPACIAIS_IMPACTO_DE_VEICULOS_TERRESTRES_E_FUMACA,
               OUTRAS
             ]
         description:
@@ -6266,6 +5177,13 @@ components:
         - coverages
         - isCollectiveStipulated
         - productModalityType
+        - includesAssistanceServices
+        - insuranceType
+        - maxLMG
+        - insuredObject
+        - termStartDate
+        - termEndDate
+        - insuranceTermStartDate
       properties:
         productModalityType:
           type: boolean
@@ -6308,9 +5226,10 @@ components:
           type: string
           maxLength: 100
           example: "111111"
-        insurerId:  
-          description: Nome para identifcar a congênere de renovação
+        insurerName:  
+          description: Razão Social da congênere de renovação
           type: string
+          pattern: ^[\w\W\s]*$
           maxLength: 100
         currency:
           description: Moeda de emissão do contrato de acordo com ISO-4217.
@@ -6323,7 +5242,7 @@ components:
           example: EQUIPAMENTO_MOVEL
           enum: ['EQUIPAMENTO_MOVEL',
                 'EQUIPAMENTO_ESTACIONARIO',
-                'EQUIPAMENTOS_PORTÁTEIS']
+                'EQUIPAMENTOS_PORTATEIS']
         maxLMG:
           description: Valor Limite máximo de garantia (LMG)
           allOf:
@@ -6363,7 +5282,6 @@ components:
             EQUIPAMENTOS_INDUSTRIAIS,
             EQUIPAMENTOS_DE_USO_COMERCIAL
           ]
-
         equipmentData:
           oneOf:
             - $ref: '#/components/schemas/FixedMachinery'
@@ -6407,7 +5325,6 @@ components:
         fixedMachinery:
           description: Equipamento é Estacionário?
           type: boolean
-
         mainBranch:
           type: string
           maxLength: 20
@@ -6427,29 +5344,23 @@ components:
         forAgriculturalOrMixedActivities:
           description: Equipamentos utilizados na Atividade Agrícola, aquícola, pecuária ou florestal ou atividade mista (Agrícola + Riscos Diversos)
           type: boolean
-
         equipmentDescription:
           description: Descrição do Equipamento
           type: string
-          maxLength: 200 
-
+          maxLength: 500 
         brand:
           description: Fabricante ou Marca
           type: string
           maxLength: 200 
-
         manufacturingYear:
           description: Ano de Fabricação 
           type: string
-
         serialNumber:
           description: Número de série ou chassi
           type: string
-
         brandNew:
           description: Equipamento Zero km?
           type: boolean
-
         invoiceIssuedDate:
           description: Data de Emissão da Nota Fiscal
           type: string
@@ -6457,27 +5368,21 @@ components:
           format: date
           pattern: '^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])$'
           example: '2022-10-02'
-
         invoiceNumber:
           description: Número da Nota Fiscal
           type: string
-
         isRented:
           description: Equipamento é alugado?
           type: boolean
-
         isBorrowed:
           description: Equipamento é locado/cedido a terceiros?
           type: boolean
-
         isFinanced:
           description: Equipamento é arrendado ou financiado?
           type: boolean
-
         ownOperation:
           description: A utilização/operação do equipamento é feita exclusivamente pelo proprietário e/ou seus funcionários?
           type: boolean
-
         operationLocation:
           description: Equipamento opera em local fechado ou ao ar-livre?
           type: string
@@ -6485,10 +5390,10 @@ components:
           enum: [
             LOCAL_FECHADO,
             AR-LIVRE]
-
         buildingSiteOperation:
           description: Equipamento está operando em canteiro de obra?
           type: boolean
+
     SelfPropelledMachinery:
       type: object
       description: Objeto que agrupa os dados de Equipamento Móvel.
@@ -6496,7 +5401,6 @@ components:
         selfPropelledMachinery:
           description: Equipamento é Móvel?
           type: boolean
-
         mainBranch:
           type: string
           maxLength: 20
@@ -6512,33 +5416,26 @@ components:
             HOSPITAL/CLINICA,
             RESIDENCIAL,
             ZONA_RURAL]
-
         forAgriculturalOrMixedActivities:
           description: Equipamentos utilizados na Atividade Agrícola, aquícola, pecuária ou florestal ou atividade mista (Agrícola + Riscos Diversos)
           type: boolean
-
         equipmentDescription:
           description: Descrição do Equipamento
           type: string
-          maxLength: 200 
-
+          maxLength: 500 
         brand:
           description: Fabricante ou Marca
           type: string
           maxLength: 200 
-
         manufacturingYear:
           description: Ano de Fabricação 
           type: string
-
         serialNumber:
           description: Número de série ou chassi
           type: string
-
         brandNew:
           description: Equipamento Zero km?
           type: boolean
-
         invoiceIssuedDate:
           description: Data de Emissão da Nota Fiscal
           type: string
@@ -6546,27 +5443,21 @@ components:
           format: date
           pattern: '^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])$'
           example: '2022-10-02'
-
         invoiceNumber:
           description: Número da Nota Fiscal
           type: string
-
         isRented:
           description: Equipamento é alugado?
           type: boolean
-
         isBorrowed:
           description: Equipamento é locado/cedido a terceiros?
           type: boolean
-
         isFinanced:
           description: Equipamento é arrendado ou financiado?
           type: boolean
-
         ownOperation:
           description: A utilização/operação do equipamento é feita exclusivamente pelo proprietário e/ou seus funcionários?
           type: boolean
-
         operationLocation:
           description: Equipamento opera em local fechado ou ao ar-livre?
           type: string
@@ -6574,31 +5465,25 @@ components:
           enum: [
             LOCAL_FECHADO,
             AR-LIVRE]
-
         buildingSiteOperation:
           description: Equipamento está operando em canteiro de obra?
           type: boolean
-
         closeToWaterOperation:
           description: Opera próximo a rio, mar ou lago?
           type: boolean
-
         onWaterOperation:
           description: Opera sobre a água?
           type: boolean
-
         hasTracker:
           description: Os equipamentos possuem GPS ou rastreador instalado?
           type: boolean
-
         undergroundWork:
           description: Equipamento é utilizado em Obras Subterrânes e/ou escavação de túneis?
           type: boolean
-
-        ###
         fixedOnVehicles:
           description: Equipamentos são acoplados, fixados ou instalados a veículos?
           type: boolean
+
     PortableEquipment:
       type: object
       description: Objeto que agrupa os dados de Equipamentos Portáteis.
@@ -6725,7 +5610,7 @@ components:
         cnpjCpfNumber:
           type: string
           maxLength: 14
-          pattern: '^\d{11}$|^\d{14}$'
+          pattern: '^([A-Z0-9]{12}\d{2}|\d{11})$'
           example: '73677831148'
           description: '(Caso Natureza dos poderes vigentes de representante for “Representante legal” ou “Procurador”) CPF ou CNPJ do representante'
         civilName:
@@ -6842,7 +5727,7 @@ components:
           properties:
               cnpjNumber:
                   type: string
-                  pattern: '\d{14}|^NA$'
+                  pattern: '^[A-Z0-9]{12}\d{2}$'
                   example: '01773247000563'
                   description: |
                     Número completo do CNPJ da instituição responsável pelo Cadastro - o CNPJ corresponde ao número de inscrição no Cadastro de Pessoa Jurídica. 
@@ -7077,7 +5962,7 @@ components:
           properties:
               cnpjNumber:
                   type: string
-                  pattern: '\d{14}|^NA$'
+                  pattern: '^[A-Z0-9]{12}\d{2}$'
                   maxLength: 14
                   example: '01773247000563'
                   description: |
@@ -7355,7 +6240,7 @@ components:
         businesscnpjNumber:
           type: string
           maxLength: 14
-          pattern: '\d{14}|^NA$'
+          pattern: '^[A-Z0-9]{12}\d{2}$'
           example: '50685362006773'
           description: |
             Número completo do CNPJ da Empresa consultada  - o CNPJ corresponde ao número de inscrição no Cadastro de Pessoa Jurídica. Deve-se ter apenas os números do CNPJ, sem máscara
@@ -7551,58 +6436,19 @@ components:
           description: Número do ramal. De preenchimento obrigatório se fizer parte da identificação do número do telefone informado
           example: '932'
       additionalProperties: false
+
     PersonalPostalAddress:
       type: object
       required:
         - address
-        - townName
-        - countrySubDivision
-        - postCode
-        - country
       properties:
         address:
-          type: string
-          maxLength: 200
-          pattern: '[\w\W\s]*'
-          example: 'Av Naburo Ykesaki, 1270'
-          description: Corresponde ao endereço residencial do cliente.
-        additionalInfo:
-          type: string
-          maxLength: 30
-          pattern: '[\w\W\s]*'
-          example: Fundos
-          description: Alguns logradouros ainda necessitam ser especificados por meio de complemento.
-        districtName:
-          type: string
-          maxLength: 50
-          pattern: '[\w\W\s]*'
-          example: Centro
-          description: Bairro é uma comunidade ou região localizada em uma cidade ou município de acordo com as suas subdivisões geográficas.
-        townName:
-          type: string
-          maxLength: 50
-          pattern: '^[A-Za-z\sáâãéêíïóôõúçÁÂÃÉÍÏÓÔÕÚÇ]+$'
-          example: Marília
-          description: |
-            Localidade: O nome da localidade corresponde à designação da cidade ou município no qual o endereço está localizado.
-        countrySubDivision:
-          $ref: '#/components/schemas/EnumCountrySubDivision'
-        postCode:
-          type: string
-          pattern: '\d{8}|^NA$'
-          maxLength: 8
-          example: '10000000'
-          description: |
-            Código de Endereçamento Postal: Composto por um conjunto numérico de oito dígitos, o objetivo principal do CEP é orientar e acelerar o encaminhamento, o tratamento e a entrega de objetos postados nos Correios, por meio da sua atribuição a localidades, logradouros, unidades dos Correios, serviços, órgãos públicos, empresas e edifícios. p.ex. '01311000'.
-        country:
-          description: País do segurado (de acordo com o código "alpha3" do ISO-3166)
-          type: string
-          enum: [AFG,ALA,ALB,DZA,ASM,AND,AGO,AIA,ATA,ATG,ARG,ARM,ABW,AUS,AUT,AZE,BHS,BHR,BGD,BRB,BLR,BEL,BLZ,BEN,BMU,BTN,BOL,BES,BIH,BWA,BVT,BRA,IOT,BRN,BGR,BFA,BDI,CPV,KHM,CMR,CAN,CYM,CAF,TCD,CHL,CHN,CXR,CCK,COL,COM,COG,COD,COK,CRI,CIV,HRV,CUB,CUW,CYP,CZE,DNK,DJI,DMA,DOM,ECU,EGY,SLV,GNQ,ERI,EST,SWZ,ETH,FLK,FRO,FJI,FIN,FRA,GUF,PYF,ATF,GAB,GMB,GEO,DEU,GHA,GIB,GRC,GRL,GRD,GLP,GUM,GTM,GGY,GIN,GNB,GUY,HTI,HMD,VAT,HND,HKG,HUN,ISL,IND,IDN,IRN,IRQ,IRL,IMN,ISR,ITA,JAM,JPN,JEY,JOR,KAZ,KEN,KIR,PRK,KOR,KWT,KGZ,LAO,LVA,LBN,LSO,LBR,LBY,LIE,LTU,LUX,MAC,MDG,MWI,MYS,MDV,MLI,MLT,MHL,MTQ,MRT,MUS,MYT,MEX,FSM,MDA,MCO,MNG,MNE,MSR,MAR,MOZ,MMR,NAM,NRU,NPL,NLD,NCL,NZL,NIC,NER,NGA,NIU,NFK,MKD,MNP,NOR,OMN,PAK,PLW,PSE,PAN,PNG,PRY,PER,PHL,PCN,POL,PRT,PRI,QAT,REU,ROU,RUS,RWA,BLM,SHN,KNA,LCA,MAF,SPM,VCT,WSM,SMR,STP,SAU,SEN,SRB,SYC,SLE,SGP,SXM,SVK,SVN,SLB,SOM,ZAF,SGS,SSD,ESP,LKA,SDN,SUR,SJM,SWE,CHE,SYR,TWN,TJK,TZA,THA,TLS,TGO,TKL,TON,TTO,TUN,TUR,TKM,TCA,TUV,UGA,UKR,ARE,GBR,USA,UMI,URY,UZB,VUT,VEN,VNM,VGB,VIR,WLF,ESH,YEM,ZMB,ZWE]
-          example: BRA
+          $ref: '#/components/schemas/Address'
       additionalProperties: false
+
     EnumCountrySubDivision:
       type: string
-      description: 'Enumeração referente a cada sigla da unidade da federação que identifica o estado ou o distrito federal, no qual o endereço está localizado. p.ex. ''AC''. São consideradas apenas as siglas para os estados brasileiros'
+      description: 'Enumeração referente a cada sigla da unidade da federação que identifica o estado ou o distrito federal, no qual o endereço está localizado. p.ex.:AC. São consideradas apenas as siglas para os estados brasileiros'
       enum:
         - AC
         - AL
@@ -7865,61 +6711,9 @@ components:
       type: object
       required:
         - address
-        - townName
-        - countrySubDivision
-        - postCode
-        - country
       properties:
         address:
-          type: string
-          maxLength: 200
-          pattern: '[\w\W\s]*'
-          example: 'Av Naburo Ykesaki, 1270'
-          description: Corresponde ao endereço residencial do cliente.
-        additionalInfo:
-          type: string
-          maxLength: 30
-          pattern: '[\w\W\s]*'
-          example: Fundos
-          description: Alguns logradouros ainda necessitam ser especificados por meio de complemento.
-        districtName:
-          type: string
-          maxLength: 50
-          pattern: '[\w\W\s]*'
-          example: Centro
-          description: Bairro é uma comunidade ou região localizada em uma cidade ou município de acordo com as suas subdivisões geográficas.
-        townName:
-          type: string
-          maxLength: 50
-          pattern: '^[A-Za-z\sáâãéêíïóôõúçÁÂÃÉÍÏÓÔÕÚÇ]+$'
-          example: Marília
-          description: |
-            Localidade: O nome da localidade corresponde à designação da cidade ou município no qual o endereço está localizado.
-        countrySubDivision:
-          $ref: '#/components/schemas/EnumCountrySubDivision'
-        postCode:
-          type: string
-          pattern: '\d{8}|^NA$'
-          maxLength: 8
-          example: '10000000'
-          description: |
-            Código de Endereçamento Postal: Composto por um conjunto numérico de oito dígitos, o objetivo principal do CEP é orientar e acelerar o encaminhamento, o tratamento e a entrega de objetos postados nos Correios, por meio da sua atribuição a localidades, logradouros, unidades dos Correios, serviços, órgãos públicos, empresas e edifícios. p.ex. '01311000'.
-        ibgeTownCode:
-          type: string
-          pattern: '\d{7}|^NA$'
-          maxLength: 7
-          example: '1750000'
-          description: |
-            Código IBGE do município
-        country:
-          type: string
-          maxLength: 60
-          example: Brasil
-        countryCode:
-          description: País do segurado (de acordo com o código "alpha3" do ISO-3166)
-          type: string
-          enum: [AFG,ALA,ALB,DZA,ASM,AND,AGO,AIA,ATA,ATG,ARG,ARM,ABW,AUS,AUT,AZE,BHS,BHR,BGD,BRB,BLR,BEL,BLZ,BEN,BMU,BTN,BOL,BES,BIH,BWA,BVT,BRA,IOT,BRN,BGR,BFA,BDI,CPV,KHM,CMR,CAN,CYM,CAF,TCD,CHL,CHN,CXR,CCK,COL,COM,COG,COD,COK,CRI,CIV,HRV,CUB,CUW,CYP,CZE,DNK,DJI,DMA,DOM,ECU,EGY,SLV,GNQ,ERI,EST,SWZ,ETH,FLK,FRO,FJI,FIN,FRA,GUF,PYF,ATF,GAB,GMB,GEO,DEU,GHA,GIB,GRC,GRL,GRD,GLP,GUM,GTM,GGY,GIN,GNB,GUY,HTI,HMD,VAT,HND,HKG,HUN,ISL,IND,IDN,IRN,IRQ,IRL,IMN,ISR,ITA,JAM,JPN,JEY,JOR,KAZ,KEN,KIR,PRK,KOR,KWT,KGZ,LAO,LVA,LBN,LSO,LBR,LBY,LIE,LTU,LUX,MAC,MDG,MWI,MYS,MDV,MLI,MLT,MHL,MTQ,MRT,MUS,MYT,MEX,FSM,MDA,MCO,MNG,MNE,MSR,MAR,MOZ,MMR,NAM,NRU,NPL,NLD,NCL,NZL,NIC,NER,NGA,NIU,NFK,MKD,MNP,NOR,OMN,PAK,PLW,PSE,PAN,PNG,PRY,PER,PHL,PCN,POL,PRT,PRI,QAT,REU,ROU,RUS,RWA,BLM,SHN,KNA,LCA,MAF,SPM,VCT,WSM,SMR,STP,SAU,SEN,SRB,SYC,SLE,SGP,SXM,SVK,SVN,SLB,SOM,ZAF,SGS,SSD,ESP,LKA,SDN,SUR,SJM,SWE,CHE,SYR,TWN,TJK,TZA,THA,TLS,TGO,TKL,TON,TTO,TUN,TUR,TKM,TCA,TUV,UGA,UKR,ARE,GBR,USA,UMI,URY,UZB,VUT,VEN,VNM,VGB,VIR,WLF,ESH,YEM,ZMB,ZWE]
-          example: BRA
+          $ref: '#/components/schemas/Address'
         geographicCoordinates:
           $ref: '#/components/schemas/GeographicCoordinates'
       additionalProperties: false
@@ -7967,7 +6761,7 @@ components:
                   type: string
                   description: Número de identificação (CPF ou CNPJ) do solicitante do cancelamento/revogação.
                   maxLength: 20
-                  pattern: '[\w\W\s]*'
+                  pattern: '^([A-Z0-9]{12}\d{2}|\d{11})$'
                   example: '73677831148'
     
     ResponseRevokePatch:
@@ -8023,7 +6817,7 @@ components:
                   type: string
                   description: Número de identificação (CPF ou CNPJ) do solicitante do cancelamento/revogação.
                   maxLength: 20
-                  pattern: '[\w\W\s]*'
+                  pattern: '^([A-Z0-9]{12}\d{2}|\d{11})$'
                   example: '73677831148'
 
     ResponsePatch:
@@ -8075,23 +6869,23 @@ components:
         self:
           type: string
           description: URL da página atualmente requisitada
-          example: 'https://api.organizacao.com.br/open-insurance/quote-patrimonial/v1'
+          example: 'https://api.organizacao.com.br/open-insurance/quote-patrimonial/v2'
         first:
           type: string
           description: URL da primeira página de registros
-          example: 'https://api.organizacao.com.br/open-insurance/quote-patrimonial/v1'
+          example: 'https://api.organizacao.com.br/open-insurance/quote-patrimonial/v2'
         prev:
           type: string
           description: URL da página anterior de registros
-          example: 'https://api.organizacao.com.br/open-insurance/quote-patrimonial/v1'
+          example: 'https://api.organizacao.com.br/open-insurance/quote-patrimonial/v2'
         next:
           type: string
           description: URL da próxima página de registros
-          example: 'https://api.organizacao.com.br/open-insurance/quote-patrimonial/v1'
+          example: 'https://api.organizacao.com.br/open-insurance/quote-patrimonial/v2'
         last:
           type: string
           description: URL da última página de registros
-          example: 'https://api.organizacao.com.br/open-insurance/quote-patrimonial/v1'
+          example: 'https://api.organizacao.com.br/open-insurance/quote-patrimonial/v2'
     Meta:
       type: object
       properties:
@@ -8121,6 +6915,7 @@ components:
               - code
               - title
               - detail
+              - requestDateTime
             properties:
               code:
                 description: Código de erro específico do endpoint
@@ -8146,45 +6941,59 @@ components:
         meta:
           $ref: '#/components/schemas/Meta'
       additionalProperties: false
+
     422ResponseErrorCreateQuote:
       type: object
       required:
         - errors
       properties:
         errors:
-          type: object
+          type: array
           minItems: 1
-          required:
-            - code
-            - title
-            - detail
-          properties:
-            code:
-              type: string
-              enum:
-                - ERRO_IDEMPOTENCIA
-                - NAO_INFORMADO
-              example: 'ERRO_IDEMPOTENCIA'
-              description: 'Código do erro 422 de Entidade não processada.'
-            title:
-              type: string
-              maxLength: 255
-              pattern: '[\w\W\s*]'
-              example: 'Tentativa de alteração de requisição já processada'
-              description: |
-                - ERRO_ IDEMPOTENCIA: Tentativa de alteração de requisição já processada
-                - NÃO_INFORMADO: Não informada pelo servidor
-            detail:
-              type: string
-              maxLength: 2048
-              pattern: '[\w\W\s*]'
-              example: 'Tentativa de alteração de requisição já processada'
-              description: |
-                - ERRO_ IDEMPOTENCIA: Tentativa de alteração de requisição já processada
-                - NÃO_INFORMADO: Não informada pelo servidor
+          items:
+            type: object
+            required:
+              - code
+              - title
+              - detail
+              - requestDateTime
+            properties:
+              code:
+                type: string
+                enum:
+                  - ERRO_IDEMPOTENCIA
+                  - NAO_INFORMADO
+                example: 'ERRO_IDEMPOTENCIA'
+                description: 'Código do erro 422 de Entidade não processada.'
+              title:
+                type: string
+                maxLength: 255
+                pattern: '[\w\W\s]*'
+                example: 'Tentativa de alteração de requisição já processada'
+                description: |
+                  - ERRO_IDEMPOTENCIA: Tentativa de alteração de requisição já processada
+                  - NAO_INFORMADO: Não informada pelo servidor
+              detail:
+                type: string
+                maxLength: 2048
+                pattern: '[\w\W\s]*'
+                example: 'Tentativa de alteração de requisição já processada'
+                description: |
+                  - ERRO_IDEMPOTENCIA: Tentativa de alteração de requisição já processada
+                  - NAO_INFORMADO: Não informada pelo servidor
+              requestDateTime:
+                description: 'Data e hora da consulta, conforme especificação RFC-3339, formato UTC.'
+                type: string
+                maxLength: 20
+                format: date-time
+                pattern: '^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])T(?:[01]\d|2[0123]):(?:[012345]\d):(?:[012345]\d)Z$'
+                example: '2021-08-20T08:30:00Z'  
+        meta:
+          $ref: '#/components/schemas/Meta'
+
     XFapiInteractionId:
       type: string
-      pattern: '^[a-zA-Z0-9][a-zA-Z0-9\-]{0,99}$'
+      pattern: '^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$'
       maxLength: 100
       description: 'Um UID [RFC4122](https://tools.ietf.org/html/rfc4122) usado como um ID de correlação. Se fornecido, o transmissor deve "reproduzir" esse valor no cabeçalho de resposta.'
     QuoteRequestPatrimonialLead:
@@ -8284,74 +7093,8 @@ components:
                       code:
                           type: string
                           description: Código da cobertura, conforme Anexo II do Manual de Escopo de Dados
-                          example: RESIDENCIAL_IMOVEL_BASICA
+                          example: SERVICOS_EMERGENCIAIS
                           enum: [
-                            RESIDENCIAL_IMOVEL_BASICA,
-                            RESIDENCIAL_IMOVEL_AMPLA,
-                            RESIDENCIAL_INCENDIO,
-                            RESIDENCIAL_QUEDA_DE_RAIO,
-                            RESIDENCIAL_EXPLOSAO,
-                            RESIDENCIAL_IMPACTO_DE_AERONAVES,
-                            RESIDENCIAL_ALAGAMENTO,
-                            RESIDENCIAL_DANOS_ELETRICOS,
-                            RESIDENCIAL_DANOS_POR_AGUA,
-                            RESIDENCIAL_RESPONSABILIDADE_CIVIL_FAMILIAR,
-                            RESIDENCIAL_VENDAVAL,
-                            RESIDENCIAL_DANOS_A_EQUIPAMENTOS_ELETRONICOS,
-                            RESIDENCIAL_TERREMOTO,
-                            RESIDENCIAL_PERDA_E_PAGAMENTO_DE_ALUGUEL,
-                            RESIDENCIAL_ROUBO_E_SUBTRACAO_DE_BENS,
-                            RESIDENCIAL_QUEBRA_DE_VIDROS,
-                            RESIDENCIAL_IMPACTO_DE_VEICULOS,
-                            RESIDENCIAL_DESMORONAMENTO,
-                            RESIDENCIAL_TUMULTOS_GREVES_E_LOCKOUTS,
-                            RESIDENCIAL_DESPESAS_EXTRAORDINARIAS,
-                            RESIDENCIAL_JOIAS_E_OBRAS_DE_ARTE,
-                            CONDOMINIAL_COBERTURA_BASICA_SIMPLES,
-                            CONDOMINIAL_COBERTURA_BASICA_AMPLA,
-                            CONDOMINIAL_ANUNCIOS_LUMINOSOS,
-                            CONDOMINIAL_DANOS_AO_JARDIM,
-                            CONDOMINIAL_DANOS_ELETRICOS,
-                            CONDOMINIAL_DESMORONAMENTO,
-                            CONDOMINIAL_DESPESAS_COM_ALUGUEL,
-                            CONDOMINIAL_EQUIPAMENTOS,
-                            CONDOMINIAL_FIDELIDADE_DE_EMPREGADOS,
-                            CONDOMINIAL_IMPACTO_DE_VEICULOS,
-                            CONDOMINIAL_VIDA_E_ACIDENTES_PESSOAIS_EMPREGADOS,
-                            CONDOMINIAL_LUCROS_CESSANTES,
-                            CONDOMINIAL_QUEBRA_DE_VIDROS_ESPELHOS_MARMORES_E_GRANITOS,
-                            CONDOMINIAL_RESPONSABILIDADE_CIVIL,
-                            CONDOMINIAL_ROUBO,
-                            CONDOMINIAL_VALORES,
-                            CONDOMINIAL_VAZAMENTO,
-                            CONDOMINIAL_VENDAVAL,
-                            CONDOMINIAL_ALAGAMENTO,
-                            CONDOMINIAL_TUMULTO,
-                            EMPRESARIAL_INCENDIO_QUEDA_DE_RAIO_E_EXPLOSAO,
-                            EMPRESARIAL_DANOS_ELETRICOS,
-                            EMPRESARIAL_VENDAVAL_ATE_FUMACA,
-                            EMPRESARIAL_DESMORONAMENTO,
-                            EMPRESARIAL_ALAGAMENTO_E_INUNDACAO,
-                            EMPRESARIAL_TUMULTOS_GREVES_LOCKOUT_E_ATOS_DOLOSOS,
-                            EMPRESARIAL_ROUBO_E_FURTO_QUALIFICADO,
-                            EMPRESARIAL_VALORES,
-                            EMPRESARIAL_QUEBRA_DE_VIDROS_ESPELHOS_MARMORES_E_GRANITOS,
-                            EMPRESARIAL_ANUNCIOS_LUMINOSOS,
-                            EMPRESARIAL_FIDELIDADE_DE_EMPREGADOS,
-                            EMPRESARIAL_RECOMPOSICAO_DE_REGISTROS_E_DOCUMENTOS,
-                            EMPRESARIAL_DETERIORACAO_DE_MERCADORIAS_EM_AMBIENTES_FRIGORIFICADOS,
-                            EMPRESARIAL_DERRAME,
-                            EMPRESARIAL_VAZAMENTO,
-                            EMPRESARIAL_EQUIPAMENTOS,
-                            EMPRESARIAL_QUEBRA_DE_MAQUINAS,
-                            EMPRESARIAL_RESPONSABILIDADE_CIVIL,
-                            EMPRESARIAL_DESPESAS_EXTRAORDINARIAS,
-                            EMPRESARIAL_LUCROS_CESSANTES_DESPESAS_FIXAS_LUCRO_LIQUIDO_LUCRO_BRUTO,
-                            EMPRESARIAL_PERDA_OU_PAGAMENTO_DE_ALUGUEL,
-                            EMPRESARIAL_PEQUENAS_OBRAS_DE_ENGENHARIA,
-                            DIVERSOS_DANOS_DE_CAUSA_EXTERNA,
-                            DIVERSOS_DANOS_DE_CAUSA_EXTERNA_E_ROUBO,
-                            DIVERSOS_ROUBO,
                             SERVICOS_EMERGENCIAIS,
                             SERVICOS_DE_CONVENIENCIA,
                             GARANTIA_ESTENDIDA_ORIGINAL,
@@ -8452,7 +7195,6 @@ components:
       type: object
       required:
         - data
-        - links
         - meta
       properties:
         data:
@@ -8587,7 +7329,6 @@ components:
       type: object
       required:
         - data
-        - links
         - meta
       properties:
         data:
@@ -8722,7 +7463,6 @@ components:
       type: object
       required:
         - data
-        - links
         - meta
       properties:
         data:
@@ -8858,7 +7598,6 @@ components:
       type: object
       required:
         - data
-        - links
         - meta
       properties:
         data:
@@ -8993,7 +7732,6 @@ components:
       type: object
       required:
         - data
-        - links
         - meta
       properties:
         data:
@@ -9003,6 +7741,390 @@ components:
         meta:
           $ref: '#/components/schemas/Meta'
 
+    Address:
+      type: object
+      description: 'dados do endereço'
+      required:
+        - flagPostCode
+        - address
+      properties:
+        flagPostCode:
+          type: string
+          description: Indica se o endereço será nacional ou internacional
+          enum:
+            - NACIONAL
+            - INTERNACIONAL
+        address:
+          description: endereço completo
+          oneOf:
+            - $ref: '#/components/schemas/NationalAddress'
+            - $ref: '#/components/schemas/InternationalAddress'
+
+    InternationalAddress:
+      type: object
+      required:
+        - type
+        - name
+        - number
+        - townName
+        - countrySubDivision
+        - postCode
+        - countryCode
+      properties:
+        type: 
+          type: string
+          description: 'Tipo do logradouro'
+          enum: [AEROPORTO, ALAMEDA, AREA, AVENIDA, CAMPO, CHACARA, COLONIA, CONDOMINIO, CONJUNTO, DISTRITO, ESPLANADA, ESTACAO, ESTRADA, FAZENDA, FEIRA, JARDIM, LADEIRA, LAGO, LAGOA, LARGO, LOTEAMENTO, NUCLEO, PARQUE, PASSARELA, PATIO, PRACA, QUADRA, RECANTO, RESIDENCIAL, RODOVIA, RUA, SETOR, SITIO, TRAVESSA, TRECHO, TREVO, VALE, VEREDA, VIA, VIADUTO, VIELA, VILA]
+        name: 
+          type: string
+          description: 'Nome do logradouro'
+        number:
+          type: string
+          description: 'Número do logradouro'
+          maxLength: 6
+          pattern: '^[0-9]{1,6}$'
+        addressComplementaryInfo:
+          type: string
+          maxLength: 30
+          example: Fundos
+          description: 'Alguns logradouros ainda necessitam ser especificados por meio de complemento.'
+        district:
+          type: string
+          maxLength: 50
+          example: 'Centro'
+          description: 'Bairro é uma comunidade ou região localizada em uma cidade ou município de acordo com as suas subdivisões geográficas'
+        townName:
+          type: string
+          maxLength: 50
+          pattern: '^[A-Za-z\sáâãéêíïóôõúçÁÂÃÉÍÏÓÔÕÚÇ]+$'
+          example: Marília
+          description: |
+                  Designação da cidade ou município no qual o endereço está localizado.
+        countrySubDivision:
+          type: string
+          maxLength: 50
+          pattern: '^[A-Za-z\sáâãéêíïóôõúçÁÂÃÉÍÏÓÔÕÚÇ]+$'
+          example: New York
+          description: |
+                  Designação do estado no qual o endereço está localizado.
+        postCode:
+          type: string
+          maxLength: 11
+          example: '17500001A'
+          description: |
+                  Código de Endereçamento Postal: Composto por um conjunto numérico ou alfanumérico.
+        countryCode:
+          $ref: '#/components/schemas/EnumCountryCode'
+  
+    NationalAddress:
+      type: object
+      required:
+        - type
+        - name
+        - number
+        - townName
+        - countrySubDivision
+        - postCode
+      properties:
+        type: 
+          type: string
+          description: 'Tipo do logradouro'
+          enum: [AEROPORTO, ALAMEDA, AREA, AVENIDA, CAMPO, CHACARA, COLONIA, CONDOMINIO, CONJUNTO, DISTRITO, ESPLANADA, ESTACAO, ESTRADA, FAZENDA, FEIRA, JARDIM, LADEIRA, LAGO, LAGOA, LARGO, LOTEAMENTO, NUCLEO, PARQUE, PASSARELA, PATIO, PRACA, QUADRA, RECANTO, RESIDENCIAL, RODOVIA, RUA, SETOR, SITIO, TRAVESSA, TRECHO, TREVO, VALE, VEREDA, VIA, VIADUTO, VIELA, VILA]
+        name: 
+          type: string
+          description: 'Nome do logradouro'
+        number:
+          type: string
+          description: 'Número do logradouro'
+          maxLength: 6
+          pattern: '^[0-9]{1,6}$'
+        addressComplementaryInfo:
+          type: string
+          maxLength: 30
+          example: Fundos
+          description: 'Alguns logradouros ainda necessitam ser especificados por meio de complemento.'
+        districtName:
+          type: string
+          maxLength: 50
+          example: 'Centro'
+          description: 'Bairro é uma comunidade ou região localizada em uma cidade ou município de acordo com as suas subdivisões geográficas'
+        townName:
+          type: string
+          maxLength: 50
+          pattern: '^[A-Za-z\sáâãéêíïóôõúçÁÂÃÉÍÏÓÔÕÚÇ]+$'
+          example: Marília
+          description: |
+                  Localidade: O nome da localidade corresponde à designação da cidade ou município no qual o endereço está localizado.
+        ibgeTownCode:
+          type: string
+          pattern: '^\d{7}$|^NA$'
+          maxLength: 7
+          example: "1750000"
+          description: |
+            Código IBGE do município
+        countrySubDivision:
+          $ref: '#/components/schemas/EnumCountrySubDivision'
+        postCode:
+          type: string
+          pattern: '^\d{8}$|^NA$'
+          maxLength: 8
+          example: '17500001'
+          description: |
+                  Código de Endereçamento Postal: Composto por um conjunto numérico de oito dígitos, o objetivo principal do CEP é orientar e acelerar o encaminhamento, o tratamento e a entrega de objetos postados nos Correios, por meio da sua atribuição a localidades, logradouros, unidades dos Correios, serviços, órgãos públicos, empresas e edifícios. p.ex. '01311000'. Condicional ao preenchimento do FlagPostCode ser igual a "Nacional".
+
+    EnumCountryCode:
+      type: string
+      description: Código do país de acordo com o código “alpha3” do ISO-3166
+      enum:
+        - AFG
+        - ALA
+        - ALB
+        - DZA
+        - ASM
+        - AND
+        - AGO
+        - AIA
+        - ATA
+        - ATG
+        - ARG
+        - ARM
+        - ABW
+        - AUS
+        - AUT
+        - AZE
+        - BHS
+        - BHR
+        - BGD
+        - BRB
+        - BLR
+        - BEL
+        - BLZ
+        - BEN
+        - BMU
+        - BTN
+        - BOL
+        - BES
+        - BIH
+        - BWA
+        - BVT
+        - BRA
+        - IOT
+        - BRN
+        - BGR
+        - BFA
+        - BDI
+        - CPV
+        - KHM
+        - CMR
+        - CAN
+        - CYM
+        - CAF
+        - TCD
+        - CHL
+        - CHN
+        - CXR
+        - CCK
+        - COL
+        - COM
+        - COG
+        - COD
+        - COK
+        - CRI
+        - CIV
+        - HRV
+        - CUB
+        - CUW
+        - CYP
+        - CZE
+        - DNK
+        - DJI
+        - DMA
+        - DOM
+        - ECU
+        - EGY
+        - SLV
+        - GNQ
+        - ERI
+        - EST
+        - SWZ
+        - ETH
+        - FLK
+        - FRO
+        - FJI
+        - FIN
+        - FRA
+        - GUF
+        - PYF
+        - ATF
+        - GAB
+        - GMB
+        - GEO
+        - DEU
+        - GHA
+        - GIB
+        - GRC
+        - GRL
+        - GRD
+        - GLP
+        - GUM
+        - GTM
+        - GGY
+        - GIN
+        - GNB
+        - GUY
+        - HTI
+        - HMD
+        - VAT
+        - HND
+        - HKG
+        - HUN
+        - ISL
+        - IND
+        - IDN
+        - IRN
+        - IRQ
+        - IRL
+        - IMN
+        - ISR
+        - ITA
+        - JAM
+        - JPN
+        - JEY
+        - JOR
+        - KAZ
+        - KEN
+        - KIR
+        - PRK
+        - KOR
+        - KWT
+        - KGZ
+        - LAO
+        - LVA
+        - LBN
+        - LSO
+        - LBR
+        - LBY
+        - LIE
+        - LTU
+        - LUX
+        - MAC
+        - MDG
+        - MWI
+        - MYS
+        - MDV
+        - MLI
+        - MLT
+        - MHL
+        - MTQ
+        - MRT
+        - MUS
+        - MYT
+        - MEX
+        - FSM
+        - MDA
+        - MCO
+        - MNG
+        - MNE
+        - MSR
+        - MAR
+        - MOZ
+        - MMR
+        - NAM
+        - NRU
+        - NPL
+        - NLD
+        - NCL
+        - NZL
+        - NIC
+        - NER
+        - NGA
+        - NIU
+        - NFK
+        - MKD
+        - MNP
+        - NOR
+        - OMN
+        - PAK
+        - PLW
+        - PSE
+        - PAN
+        - PNG
+        - PRY
+        - PER
+        - PHL
+        - PCN
+        - POL
+        - PRT
+        - PRI
+        - QAT
+        - REU
+        - ROU
+        - RUS
+        - RWA
+        - BLM
+        - SHN
+        - KNA
+        - LCA
+        - MAF
+        - SPM
+        - VCT
+        - WSM
+        - SMR
+        - STP
+        - SAU
+        - SEN
+        - SRB
+        - SYC
+        - SLE
+        - SGP
+        - SXM
+        - SVK
+        - SVN
+        - SLB
+        - SOM
+        - ZAF
+        - SGS
+        - SSD
+        - ESP
+        - LKA
+        - SDN
+        - SUR
+        - SJM
+        - SWE
+        - CHE
+        - SYR
+        - TWN
+        - TJK
+        - TZA
+        - THA
+        - TLS
+        - TGO
+        - TKL
+        - TON
+        - TTO
+        - TUN
+        - TUR
+        - TKM
+        - TCA
+        - TUV
+        - UGA
+        - UKR
+        - ARE
+        - GBR
+        - USA
+        - UMI
+        - URY
+        - UZB
+        - VUT
+        - VEN
+        - VNM
+        - VGB
+        - VIR
+        - WLF
+        - ESH
+        - YEM
+        - ZMB
+        - ZWE
 
   parameters:
     consentId:
@@ -9077,7 +8199,7 @@ components:
       required: true
       schema:
         type: string
-        pattern: '^[a-zA-Z0-9][a-zA-Z0-9\-]{0,99}$'
+        pattern: '^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$'
         minLength: 1
         maxLength: 100
     xIdempotencyKey:
