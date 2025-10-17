@@ -23,7 +23,7 @@ info:
       - 1 - `Idempotência:` Valida se há divergência entre chave de idempotência e informações enviadas (ERRO_IDEMPOTENCIA);
       - 2 - `Demais validações:` Valida itens não explicitamente informados pelo servidor - (NAO_INFORMADO).
       
-  version: 1.3.0
+  version: 2.0.0
   license:
     name: Apache 2.0
     url: https://www.apache.org/licenses/LICENSE-2.0
@@ -32,9 +32,9 @@ info:
     email: gt-interfaces@openbankingbr.org
     url: https://openinsurance-brasil.github.io/areadesenvolvedor/
 servers:
-  - url: https://api.seguradora.com.br/open-insurance/withdrawal/v1
+  - url: https://api.seguradora.com.br/open-insurance/withdrawal/v2
     description: Servidor de Produção
-  - url: https://apih.seguradora.com.br/open-insurance/withdrawal/v1
+  - url: https://apih.seguradora.com.br/open-insurance/withdrawal/v2
     description: Servidor de Homologação
 tags:
   - name: Withdrawal Lead
@@ -240,21 +240,21 @@ components:
           description: Tipo de resgate. Este valor será submetido a análise e estará sujeito as alterações (aplicação de impostos, variação de saldos, e condições contratuais).
           type: string
           enum:
-            - 1_TOTAL
-            - 2_PARCIAL
+            - TOTAL
+            - PARCIAL
         withdrawalReason:
           description: Motivo do resgate. Obrigatório para Previdência Sobrevivência.
           type: string
           enum:
-            - 1_EMERGENCIAS_DE_SAUDE
-            - 2_APLICACAO_EM_OUTROS_INVESTIMENTOS
-            - 3_INSATISFACAO_COM_A_ENTIDADE
-            - 4_INSATISFACAO_COM_A_RENTABILIDADE_DO_PRODUTO
-            - 5_INSATISFACAO_COM_O_PRODUTO
-            - 6_AQUISICAO_DE_BENS
-            - 7_LIQUIDEZ_FINANCEIRA
-            - 8_REALIZACAO_DO_OBJETIVO_DO_INVESTIMENTO
-            - 9_OUTROS
+            - EMERGENCIAS_DE_SAUDE
+            - APLICACAO_EM_OUTROS_INVESTIMENTOS
+            - INSATISFACAO_COM_A_ENTIDADE
+            - INSATISFACAO_COM_A_RENTABILIDADE_DO_PRODUTO
+            - INSATISFACAO_COM_O_PRODUTO
+            - AQUISICAO_DE_BENS
+            - LIQUIDEZ_FINANCEIRA
+            - REALIZACAO_DO_OBJETIVO_DO_INVESTIMENTO
+            - OUTROS
         withdrawalReasonOthers:
           description: Motivo do resgate para 'Outros'. Obrigatório, caso selecionado "outros" na pergunta " Motivo do resgate ".
           type: string
@@ -271,7 +271,6 @@ components:
       type: object
       required:
         - data
-        - links
         - meta
       properties:
         data:
@@ -317,7 +316,6 @@ components:
       type: object
       required:
         - data
-        - links
         - meta
       properties:
         data:
@@ -437,7 +435,6 @@ components:
       type: object
       required:
         - data
-        - links
       properties:
         data:
           type: object
@@ -971,23 +968,23 @@ components:
         self:
           type: string
           description: URL da página atualmente requisitada
-          example: https://api.organizacao.com.br/open-insurance/quote-auto/v1
+          example: https://api.organizacao.com.br/open-insurance/quote-auto/v2
         first:
           type: string
           description: URL da primeira página de registros
-          example: https://api.organizacao.com.br/open-insurance/quote-auto/v1
+          example: https://api.organizacao.com.br/open-insurance/quote-auto/v2
         prev:
           type: string
           description: URL da página anterior de registros
-          example: https://api.organizacao.com.br/open-insurance/quote-auto/v1
+          example: https://api.organizacao.com.br/open-insurance/quote-auto/v2
         next:
           type: string
           description: URL da próxima página de registros
-          example: https://api.organizacao.com.br/open-insurance/quote-auto/v1
+          example: https://api.organizacao.com.br/open-insurance/quote-auto/v2
         last:
           type: string
           description: URL da última página de registros
-          example: https://api.organizacao.com.br/open-insurance/quote-auto/v1
+          example: https://api.organizacao.com.br/open-insurance/quote-auto/v2
     ResponseError:
       type: object
       required:
@@ -1003,6 +1000,7 @@ components:
               - code
               - title
               - detail
+              - requestDateTime
             properties:
               code:
                 description: Código de erro específico do endpoint
@@ -1019,6 +1017,12 @@ components:
                 type: string
                 pattern: '[\w\W\s]*'
                 maxLength: 2048
+              requestDateTime:
+                description: Data e hora da consulta, conforme especificação RFC-3339, formato UTC.
+                type: string
+                format: date-time
+                pattern: ^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])T(?:[01]\d|2[0123]):(?:[012345]\d):(?:[012345]\d)Z$
+                example: '2021-05-21T08:30:00Z'  
             additionalProperties: false
         meta:
           $ref: '#/components/schemas/Meta'
@@ -1028,42 +1032,51 @@ components:
         - errors
       properties:
         errors:
-          type: object
+          type: array
           minItems: 1
-          required:
-            - code
-            - title
-            - detail
-          properties:
-            code:
-              type: string
-              enum:
-                - ERRO_IDEMPOTENCIA
-                - NAO_INFORMADO
-              example: ERRO_IDEMPOTENCIA
-              description: Código do erro 422 de Entidade não processada.
-            title:
-              type: string
-              maxLength: 255
-              pattern: '[\w\W\s]*'
-              example: Tentativa de alteração de requisição já processada
-              description: |
-                - ERRO_ IDEMPOTENCIA: Tentativa de alteração de requisição já processada
-                - NÃO_INFORMADO: Não informada pelo servidor
-            detail:
-              type: string
-              maxLength: 2048
-              pattern: '[\w\W\s]*'
-              example: Tentativa de alteração de requisição já processada
-              description: |
-                - ERRO_ IDEMPOTENCIA: Tentativa de alteração de requisição já processada
-                - NÃO_INFORMADO: Não informada pelo servidor 
+          items:
+            type: object
+            required:
+              - code
+              - title
+              - detail
+              - requestDateTime
+            properties:
+              code:
+                type: string
+                enum:
+                  - ERRO_IDEMPOTENCIA
+                  - NAO_INFORMADO
+                example: ERRO_IDEMPOTENCIA
+                description: Código do erro 422 de Entidade não processada.
+              title:
+                type: string
+                maxLength: 255
+                pattern: '[\w\W\s]*'
+                example: Tentativa de alteração de requisição já processada
+                description: |
+                  - ERRO_IDEMPOTENCIA: Tentativa de alteração de requisição já processada
+                  - NAO_INFORMADO: Não informada pelo servidor
+              detail:
+                type: string
+                maxLength: 2048
+                pattern: '[\w\W\s]*'
+                example: Tentativa de alteração de requisição já processada
+                description: |
+                  - ERRO_IDEMPOTENCIA: Tentativa de alteração de requisição já processada
+                  - NAO_INFORMADO: Não informada pelo servidor
+              requestDateTime:
+                description: Data e hora da consulta, conforme especificação RFC-3339, formato UTC.
+                type: string
+                format: date-time
+                pattern: ^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])T(?:[01]\d|2[0123]):(?:[012345]\d):(?:[012345]\d)Z$
+                example: '2021-05-21T08:30:00Z'  
         meta:
           $ref: '#/components/schemas/Meta'
       additionalProperties: false
     XFapiInteractionId:
       type: string
-      pattern: ^[a-zA-Z0-9][a-zA-Z0-9\-]{0,99}$
+      pattern: ^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}
       maxLength: 100
       description: Um UID [RFC4122](https://tools.ietf.org/html/rfc4122) usado como um ID de correlação. Se fornecido, o transmissor deve reproduzir" esse valor no cabeçalho de resposta.'
     LinkInfo:
@@ -1076,7 +1089,6 @@ components:
       required:
         - totalRecords
         - totalPages
-        - requestDateTime
       properties:
         totalRecords:
           type: integer
@@ -1088,12 +1100,6 @@ components:
           format: int32
           description: Número total de páginas no resultado
           example: 1
-        requestDateTime:
-          description: Data e hora da consulta, conforme especificação RFC-3339, formato UTC.
-          type: string
-          format: date-time
-          pattern: ^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])T(?:[01]\d|2[0123]):(?:[012345]\d):(?:[012345]\d)Z$
-          example: '2021-05-21T08:30:00Z'
       additionalProperties: false
   parameters:
     Authorization:
@@ -1152,7 +1158,7 @@ components:
       required: true
       schema:
         type: string
-        pattern: ^[a-zA-Z0-9][a-zA-Z0-9\-]{0,99}$
+        pattern: ^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}
         minLength: 1
         maxLength: 100
   securitySchemes:
