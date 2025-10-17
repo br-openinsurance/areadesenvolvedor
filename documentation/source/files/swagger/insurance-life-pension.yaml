@@ -4,7 +4,7 @@ info:
   description: |
     API de Planos de Previdência e Seguros de Pessoas ambos com cobertura por sobrevivência do Open Insurance Brasil - Fase 2.\
     Traz informações de contrato, contribuições e benefício, portabilidade, resgate e sinistro mantidas nas instituições transmissoras por seus clientes.\
-    Não possui segregação entre pessoa natural e pessoa jurídica.\
+    Nessa API são transitados somente dados relacionados a pessoa natural.\
     Requer consentimento do cliente para todos os `endpoints`.
 
     # Orientações
@@ -38,15 +38,15 @@ info:
         - GET: **LIFE_PENSION_WITHDRAWALS_READ**
     ### `/{certificateId}/claim`
       - permissions:
-        - GET: **LIFE_PENSION_CLAIM**
-  version: 1.5.0
+        - GET: **LIFE_PENSION_CLAIM_READ**
+  version: 2.0.0
   contact:
     name: Governança do Open Insurance Brasil
     url: "https://www.gov.br/susep"
 servers:
-  - url: "https://api.organizacao.com.br/open-insurance/insurance-life-pension/v1"
+  - url: "https://api.organizacao.com.br/open-insurance/insurance-life-pension/v2"
     description: Servidor de Produção
-  - url: "https://api.organizacao.com.br/open-insurance/insurance-life-pension/v1"
+  - url: "https://api.organizacao.com.br/open-insurance/insurance-life-pension/v2"
     description: Servidor de Homologação
 tags:
   - name: InsuranceLifePension
@@ -364,7 +364,7 @@ components:
                         cnpjNumber:
                           description: CNPJ da sociedade pertencente à marca
                           type: string
-                          pattern: '^\d{14}$'
+                          pattern: '^[A-Z0-9]{12}\d{2}$'
                           example: "12345678901234"
                         contracts:
                           type: array
@@ -521,10 +521,6 @@ components:
         - name
         - birthDate
         - gender
-        - postCode
-        - townName
-        - countrySubDivision
-        - countryCode
         - address
       properties:
         documentType:
@@ -535,6 +531,7 @@ components:
         documentTypeOthers:
           description: Descrição do Tipo de Documento quando for informada a opção OUTROS
           type: string
+          maxLength: 100
           example: OUTROS
         documentNumber:
           description: Documento do Segurado/Participante
@@ -557,59 +554,14 @@ components:
           description: Sexo do Segurado / Participante, Obrigatório, se houver
           type: string
           enum: [MASCULINO, FEMININO, NAO_INFORMADO]
-        postCode:
-          description: |
-            Código de Endereçamento Postal: Composto por um conjunto numérico de oito dígitos, o objetivo principal do CEP é orientar e acelerar o encaminhamento, o tratamento e a entrega de objetos postados nos Correios, por meio da sua atribuição a localidades, logradouros, unidades dos Correios, serviços, órgãos públicos, empresas e edifícios. p.ex. '01311000'.
-            Código Postal do Segurado / Participante, Obrigatório, se houver
-          type: string
-          pattern: '\d{8}|^NA$'
-          maxLength: 8
-          example: "17500001"
         email:
           description: Endereço de email, Obrigatório, se houver
           type: string
           maxLength: 320
           pattern: '^\S+@\S+\.\S+$'
           example: nome@br.net
-        townName:
-          type: string
-          maxLength: 50
-          pattern:  '^[A-Za-z\sáâãéêíïóôõúçÁÂÃÉÍÏÓÔÕÚÇ]+$'
-          example: Rio de Janeiro
-          description: |
-            Localidade: O nome da localidade corresponde à designação da cidade ou município no qual o endereço está localizado.
-            Cidade do Segurado / Participante
-        countrySubDivision:
-          description: Estado do Segurado / Participante
-          allOf:
-            - $ref: "#/components/schemas/EnumCountrySubDivision"
-        countryCode:
-          description: |
-            Código do pais de acordo com o código “alpha3” do ISO-3166.
-            País do Segurado / Participante
-          type: string
-          enum: [AFG,ALA,ALB,DZA,ASM,AND,AGO,AIA,ATA,ATG,ARG,ARM,ABW,AUS,AUT,AZE,BHS,BHR,BGD,BRB,BLR,BEL,BLZ,BEN,BMU,BTN,BOL,BES,BIH,BWA,BVT,
-                BRA,IOT,BRN,BGR,BFA,BDI,CPV,KHM,CMR,CAN,CYM,CAF,TCD,CHL,CHN,CXR,CCK,COL,COM,COG,COD,COK,CRI,CIV,HRV,CUB,CUW,CYP,CZE,DNK,DJI,DMA,
-                DOM,ECU,EGY,SLV,GNQ,ERI,EST,SWZ,ETH,FLK,FRO,FJI,FIN,FRA,GUF,PYF,ATF,GAB,GMB,GEO,DEU,GHA,GIB,GRC,GRL,GRD,GLP,GUM,GTM,GGY,GIN,GNB,
-                GUY,HTI,HMD,VAT,HND,HKG,HUN,ISL,IND,IDN,IRN,IRQ,IRL,IMN,ISR,ITA,JAM,JPN,JEY,JOR,KAZ,KEN,KIR,PRK,KOR,KWT,KGZ,LAO,LVA,LBN,LSO,LBR,
-                LBY,LIE,LTU,LUX,MAC,MDG,MWI,MYS,MDV,MLI,MLT,MHL,MTQ,MRT,MUS,MYT,MEX,FSM,MDA,MCO,MNG,MNE,MSR,MAR,MOZ,MMR,NAM,NRU,NPL,NLD,NCL,NZL,
-                NIC,NER,NGA,NIU,NFK,MKD,MNP,NOR,OMN,PAK,PLW,PSE,PAN,PNG,PRY,PER,PHL,PCN,POL,PRT,PRI,QAT,REU,ROU,RUS,RWA,BLM,SHN,KNA,LCA,MAF,SPM,
-                VCT,WSM,SMR,STP,SAU,SEN,SRB,SYC,SLE,SGP,SXM,SVK,SVN,SLB,SOM,ZAF,SGS,SSD,ESP,LKA,SDN,SUR,SJM,SWE,CHE,SYR,TWN,TJK,TZA,THA,TLS,TGO,
-                TKL,TON,TTO,TUN,TUR,TKM,TCA,TUV,UGA,UKR,ARE,GBR,USA,UMI,URY,UZB,VUT,VEN,VNM,VGB,VIR,WLF,ESH,YEM,ZMB,ZWE]
-          example: BRA
         address:
-          description: |
-            Endereço do Segurado / Participante
-          type: string
-          maxLength: 200
-          pattern: '[\w\W\s]*'
-          example: "Av Naburo Ykesaki, 1270"
-        addressAdditionalInfo:
-          type: string
-          maxLength: 30
-          pattern: '[\w\W\s]*'
-          example: Fundos
-          description: Alguns logradouros ainda necessitam ser especificados por meio de complemento.
+          $ref: '#/components/schemas/Address'
     InsuranceLifePensionDocumentsBeneficiary:
       description: Informações do beneficiário/pessoa associada, obrigatório se houver.
       type: object
@@ -631,6 +583,7 @@ components:
         documentTypeOthers:
           description: Descrição do Tipo de Documento quando for informada a opção OUTROS
           type: string
+          maxLength: 100
           example: OUTROS
         name:
           description: Nome beneficiário
@@ -698,60 +651,16 @@ components:
         documentTypeOthers:
           description: Descrição do Tipo de Documento quando for informada a opção OUTROS
           type: string
+          maxLength: 100
           example: OUTROS
         name:
           description: Nome ou Razão Social do Intermediador, Campo obrigatório, caso Tipo de Intermediador for estipulante /averbador/ instituidor)
           type: string
           maxLength: 80
           example: Empresa A
-        postCode:
-          description: |
-            Código de Endereçamento Postal: Composto por um conjunto numérico de oito dígitos, o objetivo principal do CEP é orientar e acelerar o encaminhamento, o tratamento e a entrega de objetos postados nos Correios, por meio da sua atribuição a localidades, logradouros, unidades dos Correios, serviços, órgãos públicos, empresas e edifícios. p.ex. '01311000'.
-            Código Postal do Intermediador, Campo obrigatório, caso Tipo de Intermediador for estipulante /averbador/ instituidor)
-          type: string
-          pattern: '\d{8}|^NA$'
-          maxLength: 8
-          example: "17500001"
-        townName:
-          type: string
-          maxLength: 50
-          pattern: '^[A-Za-z\sáâãéêíïóôõúçÁÂÃÉÍÏÓÔÕÚÇ]+$'
-          example: Rio de Janeiro
-          description: |
-            Localidade: O nome da localidade corresponde à designação da cidade ou município no qual o endereço está localizado.
-            Cidade da Pessoa Intermediador, Campo obrigatório, caso Tipo de Intermediador for estipulante /averbador/ instituidor)
-        countrySubDivision:
-          description: |
-            Estado da Pessoa Intermediador, Campo obrigatório, caso Tipo de Intermediador for estipulante /averbador/ instituidor)
-          allOf:
-            - $ref: "#/components/schemas/EnumCountrySubDivision"
-        countryCode:
-          description: |
-            Código do pais de acordo com o código “alpha3” do ISO-3166.
-            País da Pessoa Intermediador, Campo obrigatório, caso Tipo de Intermediador for estipulante /averbador/ instituidor)
-          type: string
-          enum: [AFG,ALA,ALB,DZA,ASM,AND,AGO,AIA,ATA,ATG,ARG,ARM,ABW,AUS,AUT,AZE,BHS,BHR,BGD,BRB,BLR,BEL,BLZ,BEN,BMU,BTN,BOL,BES,BIH,BWA,BVT,
-                BRA,IOT,BRN,BGR,BFA,BDI,CPV,KHM,CMR,CAN,CYM,CAF,TCD,CHL,CHN,CXR,CCK,COL,COM,COG,COD,COK,CRI,CIV,HRV,CUB,CUW,CYP,CZE,DNK,DJI,DMA,
-                DOM,ECU,EGY,SLV,GNQ,ERI,EST,SWZ,ETH,FLK,FRO,FJI,FIN,FRA,GUF,PYF,ATF,GAB,GMB,GEO,DEU,GHA,GIB,GRC,GRL,GRD,GLP,GUM,GTM,GGY,GIN,GNB,
-                GUY,HTI,HMD,VAT,HND,HKG,HUN,ISL,IND,IDN,IRN,IRQ,IRL,IMN,ISR,ITA,JAM,JPN,JEY,JOR,KAZ,KEN,KIR,PRK,KOR,KWT,KGZ,LAO,LVA,LBN,LSO,LBR,
-                LBY,LIE,LTU,LUX,MAC,MDG,MWI,MYS,MDV,MLI,MLT,MHL,MTQ,MRT,MUS,MYT,MEX,FSM,MDA,MCO,MNG,MNE,MSR,MAR,MOZ,MMR,NAM,NRU,NPL,NLD,NCL,NZL,
-                NIC,NER,NGA,NIU,NFK,MKD,MNP,NOR,OMN,PAK,PLW,PSE,PAN,PNG,PRY,PER,PHL,PCN,POL,PRT,PRI,QAT,REU,ROU,RUS,RWA,BLM,SHN,KNA,LCA,MAF,SPM,
-                VCT,WSM,SMR,STP,SAU,SEN,SRB,SYC,SLE,SGP,SXM,SVK,SVN,SLB,SOM,ZAF,SGS,SSD,ESP,LKA,SDN,SUR,SJM,SWE,CHE,SYR,TWN,TJK,TZA,THA,TLS,TGO,
-                TKL,TON,TTO,TUN,TUR,TKM,TCA,TUV,UGA,UKR,ARE,GBR,USA,UMI,URY,UZB,VUT,VEN,VNM,VGB,VIR,WLF,ESH,YEM,ZMB,ZWE]
-          example: BRA
         address:
-          description: |
-            Corresponde ao Endereço do Intermediador, Campo obrigatório, caso Tipo de Intermediador for estipulante /averbador/ instituidor)
-          type: string
-          maxLength: 200
-          pattern: '[\w\W\s]*'
-          example: "Av Naburo Ykesaki, 1270"
-        additionalInfo:
-          type: string
-          maxLength: 30
-          pattern: '[\w\W\s]*'
-          example: Fundos
-          description: Alguns logradouros ainda necessitam ser especificados por meio de complemento.   
+          $ref: '#/components/schemas/Address'
+        
     InsuranceLifePensionSuseps:
       type: object
       required:
@@ -764,7 +673,6 @@ components:
         - benefitPaymentMethod
         - financialResultReversal
         - calculationBasis
-        - FIE
       properties:
         coverageCode:
           type: string
@@ -797,7 +705,7 @@ components:
         type:
           description: Tipo de plano
           type: string
-          enum: [PGBL, PRGP, PAGP, PRSA, PRI, PDR, VGBL, VRGP, VAGP, VRSA, VRI, VDR, TRADICIONAL, OUTROS]
+          enum: [PGBL, PRGP, PAGP, PRSA, PRI/PRID, PDR, VGBL, VRGP, VAGP, VRSA, VRI/VRID, VDR, TRADICIONAL, OUTROS]
           example: PGBL
         typeDetails:
           description: Descrição do Tipo de Plano, Campo obrigatório quando o domínio do campo 'Tipo de Plano' for OUTROS
@@ -871,6 +779,7 @@ components:
           enum: [MENSAL, ANUAL]
         FIE:
           type: array
+          description: Fundo de Investimento Especialmente Constituído (FIE). Obrigatório o preenchimento caso o tipo de plano informado em "Type" (Tipo de plano) ou "TypeDetail" (descrição do tipo de plano) possua um FIE atrelado.
           items:
             type: object
             required:
@@ -883,7 +792,7 @@ components:
               FIECNPJ:
                 description: CNPJ do FIE
                 type: string
-                pattern: '^\d{14}$'
+                pattern: '^[A-Z0-9]{12}\d{2}$'
                 example: "12345678901234"
               FIEName:
                 description: Razão social do FIE
@@ -1134,7 +1043,7 @@ components:
                       description: CNPJ do FIE
                       type: string
                       maxLength: 14
-                      pattern: '^\d{14}$'
+                      pattern: '^[A-Z0-9]{12}\d{2}$'
                       example: "12345678901234"
                     FIEName:
                       description: Razão social do FIE
@@ -1174,66 +1083,72 @@ components:
           type: boolean
           description: Indica se houve resgate
           example: true
-        type:
-          description: Tipo de resgate, Obrigatório, se houver
-          type: string
-          enum: [TOTAL, PARCIAL]
-          example: PARCIAL
-        requestDate:
-          description: Declara a data da solicitação do resgate, Obrigatório, se houver
-          type: string
-          format: date-time
-          example: "2022-05-20T08:30:00Z"
-          maxLength: 20
-          pattern: ^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])T(?:[01]\d|2[0123]):(?:[012345]\d):(?:[012345]\d)Z$
-        amount:
-          description: Declara o valor bruto resgatado, Obrigatório, se houver
-          allOf:
-            - $ref: "#/components/schemas/AmountDetails"
-        liquidationDate:
-          description: Declara a data da efetiva liquidação do valor resgatado, Obrigatório, se houver
-          type: string
-          format: date-time
-          example: "2022-05-20T08:30:00Z"
-          maxLength: 20
-          pattern: ^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])T(?:[01]\d|2[0123]):(?:[012345]\d):(?:[012345]\d)Z$
-        postedChargedAmount:
-          description: Valor do carregamento cobrado de forma postecipada, Obrigatório, se houver
-          allOf:
-            - $ref: "#/components/schemas/AmountDetails"
-        nature:
-          description: Natureza do resgate, Obrigatório, se houver
-          type: string
-          enum:
-            [
-              RESGATE_REGULAR,
-              MORTE,
-              INVALIDEZ,
-              PAGAMENTO_FINANCEIRO_PROGRAMADO,
-              CUSTEIO_DE_COBERTURA_DE_RISCO_EM_PLANOS_CONJUGADOS,
-              ASSISTENCIA_FINANCEIRA
-            ]
-          example: RESGATE_REGULAR
-        FIE:
+        withdrawalInfo:
           type: array
-          description: Informações do FIE do Valor Resgatado (Caso Ocorrência do resgate for Sim)
           items:
             type: object
+            description: Objeto obrigatório caso withdrawalOccurence seja true.
             properties:
-              FIECNPJ:
-                description: CNPJ do FIE
+              type:
+                description: Tipo de resgate, Obrigatório, se houver
                 type: string
-                maxLength: 14
-                pattern: '^\d{14}$'
-                example: "12345678901234"
-              FIEName:
-                description: Razão social do FIE
+                enum: [TOTAL, PARCIAL]
+                example: PARCIAL
+              requestDate:
+                description: Declara a data da solicitação do resgate, Obrigatório, se houver
                 type: string
-                example: RAZÃO SOCIAL
-              FIETradeName:
-                description: Nome fantasia do FIE
+                format: date-time
+                example: "2022-05-20T08:30:00Z"
+                maxLength: 20
+                pattern: ^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])T(?:[01]\d|2[0123]):(?:[012345]\d):(?:[012345]\d)Z$
+              amount:
+                description: Declara o valor bruto resgatado, Obrigatório, se houver
+                allOf:
+                  - $ref: "#/components/schemas/AmountDetails"
+              liquidationDate:
+                description: Declara a data da efetiva liquidação do valor resgatado, Obrigatório, se houver
                 type: string
-                example: NOME FANTASIA        
+                format: date-time
+                example: "2022-05-20T08:30:00Z"
+                maxLength: 20
+                pattern: ^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])T(?:[01]\d|2[0123]):(?:[012345]\d):(?:[012345]\d)Z$
+              postedChargedAmount:
+                description: Valor do carregamento cobrado de forma postecipada, Obrigatório, se houver
+                allOf:
+                  - $ref: "#/components/schemas/AmountDetails"
+              nature:
+                description: Natureza do resgate, Obrigatório, se houver
+                type: string
+                enum:
+                  [
+                    RESGATE_REGULAR,
+                    MORTE,
+                    INVALIDEZ,
+                    PAGAMENTO_FINANCEIRO_PROGRAMADO,
+                    CUSTEIO_DE_COBERTURA_DE_RISCO_EM_PLANOS_CONJUGADOS,
+                    ASSISTENCIA_FINANCEIRA
+                  ]
+                example: RESGATE_REGULAR
+              FIE:
+                type: array
+                description: Informações do FIE do Valor Resgatado (Caso Ocorrência do resgate for Sim)
+                items:
+                  type: object
+                  properties:
+                    FIECNPJ:
+                      description: CNPJ do FIE
+                      type: string
+                      maxLength: 14
+                      pattern: '^[A-Z0-9]{12}\d{2}$'
+                      example: "12345678901234"
+                    FIEName:
+                      description: Razão social do FIE
+                      type: string
+                      example: RAZÃO SOCIAL
+                    FIETradeName:
+                      description: Nome fantasia do FIE
+                      type: string
+                      example: NOME FANTASIA        
 
     ResponseInsuranceLifePensionClaim:
       type: object
@@ -1329,7 +1244,7 @@ components:
             beneficiaryCategory:
               description: Classificação do Beneficiário
               type: string
-              enum: [SEGURADO, CÔNJUGE, FILHO_MENOR_DE_IDADE, BENEFICIÁRIO_INDICADO]
+              enum: [SEGURADO, CONJUGE, FILHO_MENOR_DE_IDADE, BENEFICIARIO_INDICADO]
               example: "SEGURADO"
             beneficiaryBirthDate:
               description: Data de nascimento do beneficiário da renda concedida
@@ -1500,27 +1415,27 @@ components:
           type: string
           description: URL da página atualmente requisitada
           pattern: ^(https:\/\/)(.*?)(\/open-insurance\/insurance-life-pension\/v\d+)(\/insurance-life-pension.*)?$
-          example: "https://api.organizacao.com.br/open-insurance/insurance-life-pension/v1/insurance-life-pension"
+          example: "https://api.organizacao.com.br/open-insurance/insurance-life-pension/v2/insurance-life-pension"
         first:
           type: string
           description: URL da primeira página de registros
           pattern: ^(https:\/\/)(.*?)(\/open-insurance\/insurance-life-pension\/v\d+)(\/insurance-life-pension.*)?$
-          example: "https://api.organizacao.com.br/open-insurance/insurance-life-pension/v1/insurance-life-pension"
+          example: "https://api.organizacao.com.br/open-insurance/insurance-life-pension/v2/insurance-life-pension"
         prev:
           type: string
           description: URL da página anterior de registros
           pattern: ^(https:\/\/)(.*?)(\/open-insurance\/insurance-life-pension\/v\d+)(\/insurance-life-pension.*)?$
-          example: "https://api.organizacao.com.br/open-insurance/insurance-life-pension/v1/insurance-life-pension"
+          example: "https://api.organizacao.com.br/open-insurance/insurance-life-pension/v2/insurance-life-pension"
         next:
           type: string
           description: URL da próxima página de registros
           pattern: ^(https:\/\/)(.*?)(\/open-insurance\/insurance-life-pension\/v\d+)(\/insurance-life-pension.*)?$
-          example: "https://api.organizacao.com.br/open-insurance/insurance-life-pension/v1/insurance-life-pension"
+          example: "https://api.organizacao.com.br/open-insurance/insurance-life-pension/v2/insurance-life-pension"
         last:
           type: string
           description: URL da última página de registros
           pattern: ^(https:\/\/)(.*?)(\/open-insurance\/insurance-life-pension\/v\d+)(\/insurance-life-pension.*)?$
-          example: "https://api.organizacao.com.br/open-insurance/insurance-life-pension/v1/insurance-life-pension"
+          example: "https://api.organizacao.com.br/open-insurance/insurance-life-pension/v2/insurance-life-pension"
     Meta:
       type: object
       properties:
@@ -1550,6 +1465,7 @@ components:
               - code
               - title
               - detail
+              - requestDateTime
             properties:
               code:
                 description: Código de erro específico do endpoint
@@ -1577,7 +1493,7 @@ components:
       additionalProperties: false
     XFapiInteractionId:
       type: string
-      pattern: '^[a-zA-Z0-9][a-zA-Z0-9\-]{0,99}$'
+      pattern: '^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$'
       maxLength: 100
       description: 'Um UID [RFC4122](https://tools.ietf.org/html/rfc4122) usado como um ID de correlação. Se fornecido, o transmissor deve "reproduzir" esse valor no cabeçalho de resposta.'
     XV:
@@ -1587,7 +1503,140 @@ components:
         responder com a versão mais alta suportada entre x-min-v e x-v. Se o valor de 
         x-min-v for igual ou maior que o valor de x-v, o cabeçalho x-min-v deve ser 
         tratado como ausente. Se todas as versões solicitadas não forem suportadas, 
-        o titular dos dados deve responder com o código de status 406 Not Acceptable.
+        o titular dos dados deve responder com o código de status 406 Not Acceptable.          
+    Address:
+      type: object
+      description: 'dados do endereço'
+      required:
+        - flagPostCode
+        - address
+      properties:
+        flagPostCode:
+          type: string
+          description: Indica se o endereço será nacional ou internacional
+          enum:
+            - NACIONAL
+            - INTERNACIONAL
+        address:
+          description: endereço completo
+          oneOf:
+            - $ref: '#/components/schemas/NationalAddress'
+            - $ref: '#/components/schemas/InternationalAddress'
+    InternationalAddress:
+      type: object
+      required:
+        - type
+        - name
+        - number
+        - townName
+        - countrySubDivision
+        - postCode
+        - countryCode
+      properties:
+        type: 
+          type: string
+          description: 'Tipo do logradouro'
+          enum: [AEROPORTO, ALAMEDA, AREA, AVENIDA, CAMPO, CHACARA, COLONIA, CONDOMINIO, CONJUNTO, DISTRITO, ESPLANADA, ESTACAO, ESTRADA, FAZENDA, FEIRA, JARDIM, LADEIRA, LAGO, LAGOA, LARGO, LOTEAMENTO, NUCLEO, PARQUE, PASSARELA, PATIO, PRACA, QUADRA, RECANTO, RESIDENCIAL, RODOVIA, RUA, SETOR, SITIO, TRAVESSA, TRECHO, TREVO, VALE, VEREDA, VIA, VIADUTO, VIELA, VILA]
+        name: 
+          type: string
+          description: 'Nome do logradouro'
+        number:
+          type: string
+          description: 'Número do logradouro'
+          maxLength: 6
+          pattern: '^[0-9]{1,6}$'
+        addressComplementaryInfo:
+          type: string
+          maxLength: 30
+          example: Fundos
+          description: 'Alguns logradouros ainda necessitam ser especificados por meio de complemento.'
+        district:
+          type: string
+          maxLength: 50
+          example: 'Centro'
+          description: 'Bairro é uma comunidade ou região localizada em uma cidade ou município de acordo com as suas subdivisões geográficas'
+        townName:
+          type: string
+          maxLength: 50
+          pattern: '^[A-Za-z\sáâãéêíïóôõúçÁÂÃÉÍÏÓÔÕÚÇ]+$'
+          example: Marília
+          description: |
+                  Designação da cidade ou município no qual o endereço está localizado.
+        countrySubDivision:
+          type: string
+          maxLength: 50
+          pattern: '^[A-Za-z\sáâãéêíïóôõúçÁÂÃÉÍÏÓÔÕÚÇ]+$'
+          example: New York
+          description: |
+                  Designação do estado no qual o endereço está localizado.
+        postCode:
+          type: string
+          maxLength: 11
+          example: '17500001A'
+          description: |
+                  Código de Endereçamento Postal: Composto por um conjunto numérico ou alfanumérico.
+        countryCode:
+          $ref: '#/components/schemas/EnumCountryCode'  
+    NationalAddress:
+      type: object
+      required:
+        - type
+        - name
+        - number
+        - townName
+        - countrySubDivision
+        - postCode
+      properties:
+        type: 
+          type: string
+          description: 'Tipo do logradouro'
+          enum: [AEROPORTO, ALAMEDA, AREA, AVENIDA, CAMPO, CHACARA, COLONIA, CONDOMINIO, CONJUNTO, DISTRITO, ESPLANADA, ESTACAO, ESTRADA, FAZENDA, FEIRA, JARDIM, LADEIRA, LAGO, LAGOA, LARGO, LOTEAMENTO, NUCLEO, PARQUE, PASSARELA, PATIO, PRACA, QUADRA, RECANTO, RESIDENCIAL, RODOVIA, RUA, SETOR, SITIO, TRAVESSA, TRECHO, TREVO, VALE, VEREDA, VIA, VIADUTO, VIELA, VILA]
+        name: 
+          type: string
+          description: 'Nome do logradouro'
+        number:
+          type: string
+          description: 'Número do logradouro'
+          maxLength: 6
+          pattern: '^[0-9]{1,6}$'
+        addressComplementaryInfo:
+          type: string
+          maxLength: 30
+          example: Fundos
+          description: 'Alguns logradouros ainda necessitam ser especificados por meio de complemento.'
+        districtName:
+          type: string
+          maxLength: 50
+          example: 'Centro'
+          description: 'Bairro é uma comunidade ou região localizada em uma cidade ou município de acordo com as suas subdivisões geográficas'
+        townName:
+          type: string
+          maxLength: 50
+          pattern: '^[A-Za-z\sáâãéêíïóôõúçÁÂÃÉÍÏÓÔÕÚÇ]+$'
+          example: Marília
+          description: |
+                  Localidade: O nome da localidade corresponde à designação da cidade ou município no qual o endereço está localizado.
+        ibgeTownCode:
+          type: string
+          pattern: '^\d{7}$|^NA$'
+          maxLength: 7
+          example: "1750000"
+          description: |
+            Código IBGE do município
+        countrySubDivision:
+          $ref: '#/components/schemas/EnumCountrySubDivision'
+        postCode:
+          type: string
+          pattern: '^\d{8}$|^NA$'
+          maxLength: 8
+          example: '17500001'
+          description: |
+                  Código de Endereçamento Postal: Composto por um conjunto numérico de oito dígitos, o objetivo principal do CEP é orientar e acelerar o encaminhamento, o tratamento e a entrega de objetos postados nos Correios, por meio da sua atribuição a localidades, logradouros, unidades dos Correios, serviços, órgãos públicos, empresas e edifícios. p.ex. '01311000'. Condicional ao preenchimento do FlagPostCode ser igual a "Nacional".    
+    EnumCountryCode:
+      description: Nome do país (de acordo com o código "alpha3" do ISO-3166)
+      type: string
+      enum: [AFG,ALA,ALB,DZA,ASM,AND,AGO,AIA,ATA,ATG,ARG,ARM,ABW,AUS,AUT,AZE,BHS,BHR,BGD,BRB,BLR,BEL,BLZ,BEN,BMU,BTN,BOL,BES,BIH,BWA,BVT,BRA,IOT,BRN,BGR,BFA,BDI,CPV,KHM,CMR,CAN,CYM,CAF,TCD,CHL,CHN,CXR,CCK,COL,COM,COG,COD,COK,CRI,CIV,HRV,CUB,CUW,CYP,CZE,DNK,DJI,DMA,DOM,ECU,EGY,SLV,GNQ,ERI,EST,SWZ,ETH,FLK,FRO,FJI,FIN,FRA,GUF,PYF,ATF,GAB,GMB,GEO,DEU,GHA,GIB,GRC,GRL,GRD,GLP,GUM,GTM,GGY,GIN,GNB,GUY,HTI,HMD,VAT,HND,HKG,HUN,ISL,IND,IDN,IRN,IRQ,IRL,IMN,ISR,ITA,JAM,JPN,JEY,JOR,KAZ,KEN,KIR,PRK,KOR,KWT,KGZ,LAO,LVA,LBN,LSO,LBR,LBY,LIE,LTU, LUX,MAC,MDG,MWI,MYS,MDV,MLI,MLT,MHL,MTQ,MRT,MUS,MYT,MEX,FSM,MDA,MCO,MNG,MNE,MSR,MAR,MOZ,MMR,NAM,NRU,NPL,NLD,NCL,NZL,NIC,NER,NGA,NIU,NFK,MKD,MNP,NOR,OMN,PAK,PLW,PSE,PAN,PNG,PRY,PER,PHL,PCN,POL,PRT,PRI,QAT,REU,ROU,RUS,RWA,BLM,SHN,KNA,LCA,MAF,SPM,VCT,WSM,SMR,STP,SAU,SEN,SRB,SYC,SLE,SGP,SXM,SVK,SVN,SLB,SOM,ZAF,SGS,SSD,ESP,LKA,SDN,SUR,SJM,SWE,CHE,SYR,TWN,TJK,TZA,THA,TLS,TGO,TKL,TON,TTO,TUN,TUR,TKM,TCA,TUV,UGA,UKR,ARE,GBR,USA,UMI,URY,UZB,VUT,VEN,VNM,VGB,VIR,WLF,ESH,YEM,ZMB,ZWE]
+      example: BRA
   parameters:
     certificateId:
       name: certificateId
@@ -1662,7 +1711,7 @@ components:
       required: true
       schema:
         type: string
-        pattern: '^[a-zA-Z0-9][a-zA-Z0-9\-]{0,99}$'
+        pattern: '^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$'
         minLength: 1
         maxLength: 100
     x-v:
