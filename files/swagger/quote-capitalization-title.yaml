@@ -790,7 +790,7 @@ components:
             $ref: '#/components/schemas/CapitalizationTitleSettlement'
     QuoteDataCapitalizationTitle:
       type: object
-      description: Objeto que agrupa dados específicos da cotação.
+      description: Objeto que agrupa dados específicos da cotação Firme.
       required:
         - modality
         - paymentType
@@ -799,8 +799,35 @@ components:
           type: string
           enum:
             - TRADICIONAL
-            - COMPRA_PROGRAMADA_LEAD
-            - INSTRUMENTO_DE_GARANTIA_LEAD
+            - POPULAR
+            - FILANTROPIA_PREMIAVEL
+          description: Modalidade
+        paymentType:
+          type: string
+          enum:
+            [UNICO,MENSAL, PERIODICO]
+          description: Tipo de Pagamento
+        singlePayment:
+          description: Pagamento único. Condicional obrigatório, caso selecionada a opção de "Único" em "Tipo de Pagamento"
+          allOf:
+            - $ref: '#/components/schemas/AmountDetails'
+        monthlyPayment:
+          description: Pagamento por mês. Condicional obrigatório, caso selecionada a opção de "Mensal" em "Tipo de Pagamento"
+          allOf:
+            - $ref: '#/components/schemas/AmountDetails'
+    QuoteDataCapitalizationTitleLead:
+      type: object
+      description: Objeto que agrupa dados específicos da cotação Lead.
+      required:
+        - modality
+        - paymentType
+      properties:
+        modality:
+          type: string
+          enum:
+            - TRADICIONAL
+            - COMPRA_PROGRAMADA
+            - INSTRUMENTO_DE_GARANTIA
             - POPULAR
             - FILANTROPIA_PREMIAVEL
           description: Modalidade
@@ -2867,6 +2894,7 @@ components:
             - consentId
             - expirationDateTime
             - quoteCustomer
+            - quoteData
           properties:
             consentId:
               description: |
@@ -2906,6 +2934,8 @@ components:
                   oneOf:
                     - $ref: '#/components/schemas/PersonalComplimentaryInformationData'
                     - $ref: '#/components/schemas/BusinessComplimentaryInformationData'
+            quoteData:
+              $ref: '#/components/schemas/QuoteDataCapitalizationTitleLead'
             historicalData:
               type: object
               description: Objeto que agrupa todos dados históricos do cliente.
