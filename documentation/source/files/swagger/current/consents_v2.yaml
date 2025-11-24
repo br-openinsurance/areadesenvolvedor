@@ -1,0 +1,1739 @@
+openapi: 3.0.0
+info:
+  title: API Consents - Open Insurance Brasil
+  description: |
+    API que trata da criação, consulta e revogação de consentimentos para o Open Insurance Brasil - Fase 2 e 3.
+    Não possui segregação entre pessoa natural e pessoa jurídica.
+
+    # Orientações importantes
+    A API Consents trata dos consentimentos para a fase 2 e 3 do Open Insurance Brasil.
+    - As informações da instituição receptora não trafegam na API Consents – a autenticação da receptora se dá através do [DCR](https://br-openinsurance.github.io/areadesenvolvedor/#dynamic-client-registration-dcr).
+    - Na chamada para a criação do consentimento deve-se utilizar um token gerado via `client_credentials`.
+    - Após o `POST` de criação do consentimento, o `STATUS` devolvido na resposta deverá ser `AWAITING_AUTHORISATION`.
+    - O `STATUS` será alterado para `AUTHORISED` somente após autenticação e confirmação por parte do usuário na instituição transmissora dos dados.
+    - O `STATUS` será alterado para 'CONSUMED' após ocorrer o processamento da iniciação, seja ele com sucesso (HTTP 201) ou ainda em casos de insucesso (HTTP 422) retornados pela Transmissora. Para os demais códigos HTTP não há mudança de status do consentimento, o mesmo permanecerá AUTHORISED, respeitando o tempo máximo de expiração do consentimento.
+    - Todas as datas trafegadas nesta API seguem o padrão da [RFC3339](https://tools.ietf.org/html/rfc3339) e formato "zulu".
+    - A descrição do fluxo de consentimento encontra-se disponível no [Portal do desenvolvedor](https://br-openinsurance.github.io/areadesenvolvedor/).
+    - O arquivo com o mapeamento completo entre `Roles`, `scopes` e `permissions` está disponibilizado no Portal do desenvolvedor, no mesmo item acima - descrição do fluxo de consentimento.
+    - A receptora deve enviar, no pedido de criação de consentimento, todas as permissions dos agrupamentos obrigatórios das
+      categorias de dados as quais ela deseja consentimento, conforme tabela abaixo:
+      (Para a fase 2, RESOURCES_READ é a única permissão obrigatória. Para a fase 3, todas as permissões de uma categoria de dados são obrigatórias)
+     
+     ## Válidações Semanticas - Entidade não processável - 422
+      - 1 - `Idempotência:` Valida se há divergência entre chave de idempotência e informações enviadas (ERRO_IDEMPOTENCIA);
+      - 2 - `Não Informado:` Valida itens não explicitamente informados pelo servidor - (NAO_INFORMADO).     
+     
+     
+      ```
+      |-----------------------------------------------------------------------------------------------------------------------------|
+      | Fase 2:                                                                                                                     |
+      |----------------------|----------------------------------|-------------------------------------------------------------------|
+      | CATEGORIA DE DADOS   | AGRUPAMENTO                      | PERMISSIONS                                                       |
+      |----------------------|----------------------------------|-------------------------------------------------------------------|
+      | Cadastro             | Pessoa Física                    | RESOURCES_READ                                                    |
+      | Pessoa Física        | (Obrigatório)                    |                                                                   |
+      |                      |----------------------------------|-------------------------------------------------------------------|
+      |                      | Pessoa Física                    | CUSTOMERS_PERSONAL_IDENTIFICATIONS_READ                           |
+      |                      | (Opcional)                       | CUSTOMERS_PERSONAL_QUALIFICATION_READ                             |
+      |                      |                                  | CUSTOMERS_PERSONAL_ADDITIONALINFO_READ                            |
+      |----------------------|----------------------------------|-------------------------------------------------------------------|
+      | Cadastro             | Pessoa Jurídica                  | RESOURCES_READ                                                    |
+      | Pessoa Jurídica      | (Obrigatório)                    |                                                                   |
+      |                      |----------------------------------|-------------------------------------------------------------------|
+      |                      | Pessoa Jurídica                  | CUSTOMERS_BUSINESS_IDENTIFICATIONS_READ                           |
+      |                      | (Opcional)                       | CUSTOMERS_BUSINESS_QUALIFICATION_READ                             |
+      |                      |                                  | CUSTOMERS_BUSINESS_ADDITIONALINFO_READ                            |
+      |----------------------|----------------------------------|-------------------------------------------------------------------|
+      | Títulos de Cap.      | Produtos de Títulos de Cap.      | RESOURCES_READ                                                    |
+      |                      | (Obrigatório)                    |                                                                   |
+      |                      |----------------------------------|-------------------------------------------------------------------|
+      |                      | Produtos de Títulos de Cap.      | CAPITALIZATION_TITLE_READ                                         |
+      |                      | (Opcional)                       | CAPITALIZATION_TITLE_PLANINFO_READ                                |
+      |                      |                                  | CAPITALIZATION_TITLE_EVENTS_READ                                  |
+      |                      |                                  | CAPITALIZATION_TITLE_SETTLEMENTS_READ                             |
+      |----------------------|----------------------------------|-------------------------------------------------------------------|
+      | Previdência          | Produtos de Previdência Risco    | RESOURCES_READ                                                    |
+      | Risco                | (Obrigatório)                    |                                                                   |
+      |                      |----------------------------------|-------------------------------------------------------------------|
+      |                      | Produtos de Previdência Risco    | PENSION_PLAN_READ                                                 |
+      |                      | (Opcional)                       | PENSION_PLAN_CONTRACTINFO_READ                                    |
+      |                      |                                  | PENSION_PLAN_MOVEMENTS_READ                                       |
+      |                      |                                  | PENSION_PLAN_PORTABILITIES_READ                                   |
+      |                      |                                  | PENSION_PLAN_WITHDRAWALS_READ                                     |
+      |                      |                                  | PENSION_PLAN_CLAIM                                                |
+      |----------------------|----------------------------------|-------------------------------------------------------------------|
+      | Previdência e        | Produtos de Previdência e Pessoas| RESOURCES_READ                                                    |
+      | Pessoas              | Sobrevivência (Obrigatório)      |                                                                   |
+      | Sobrevivência        |----------------------------------|-------------------------------------------------------------------|
+      |                      | Produtos de Previdência e Pessoas| LIFE_PENSION_READ                                                 |
+      |                      | Sobrevivência (Opcional)         | LIFE_PENSION_CONTRACTINFO_READ                                    |
+      |                      |                                  | LIFE_PENSION_MOVEMENTS_READ                                       |
+      |                      |                                  | LIFE_PENSION_PORTABILITIES_READ                                   |
+      |                      |                                  | LIFE_PENSION_WITHDRAWALS_READ                                     |
+      |                      |                                  | LIFE_PENSION_CLAIM                                                |
+      |----------------------|----------------------------------|-------------------------------------------------------------------|
+      | Assistência          | Assist. Financeira (Obrigatório) | RESOURCES_READ                                                    |
+      | Financeira           |----------------------------------|-------------------------------------------------------------------|
+      |                      | Assist. Financeira (Opcional)    | FINANCIAL_ASSISTANCE_READ                                         |
+      |                      |                                  | FINANCIAL_ASSISTANCE_CONTRACTINFO_READ                            |
+      |                      |                                  | FINANCIAL_ASSISTANCE_MOVEMENTS_READ                               |
+      |----------------------|----------------------------------|-------------------------------------------------------------------|
+      | Danos e Pessoas      | Patrimonial (Obrigatório)        | RESOURCES_READ                                                    |
+      | Patrimonial          |----------------------------------|-------------------------------------------------------------------|
+      |                      | Patrimonial (Opcional)           | DAMAGES_AND_PEOPLE_PATRIMONIAL_READ                               |
+      |                      |                                  | DAMAGES_AND_PEOPLE_PATRIMONIAL_POLICYINFO_READ                    |
+      |                      |                                  | DAMAGES_AND_PEOPLE_PATRIMONIAL_PREMIUM_READ                       |
+      |                      |                                  | DAMAGES_AND_PEOPLE_PATRIMONIAL_CLAIM_READ                         |
+      |----------------------|----------------------------------|-------------------------------------------------------------------|
+      | Danos e Pessoas      | Responsabilidade (Obrigatório)   | RESOURCES_READ                                                    |
+      | Responsabilidade     |----------------------------------|-------------------------------------------------------------------|
+      |                      | Responsabilidade (Opcional)      | DAMAGES_AND_PEOPLE_RESPONSIBILITY_READ                            |
+      |                      |                                  | DAMAGES_AND_PEOPLE_RESPONSIBILITY_POLICYINFO_READ                 |
+      |                      |                                  | DAMAGES_AND_PEOPLE_RESPONSIBILITY_PREMIUM_READ                    |
+      |                      |                                  | DAMAGES_AND_PEOPLE_RESPONSIBILITY_CLAIM_READ                      |
+      |----------------------|----------------------------------|-------------------------------------------------------------------|
+      | Danos e Pessoas      | Transportes (Obrigatório)        | RESOURCES_READ                                                    |
+      | Transportes          |----------------------------------|-------------------------------------------------------------------|
+      |                      | Transportes (Opcional)           | DAMAGES_AND_PEOPLE_TRANSPORT_READ                                 |
+      |                      |                                  | DAMAGES_AND_PEOPLE_TRANSPORT_POLICYINFO_READ                      |
+      |                      |                                  | DAMAGES_AND_PEOPLE_TRANSPORT_PREMIUM_READ                         |
+      |                      |                                  | DAMAGES_AND_PEOPLE_TRANSPORT_CLAIM_READ                           |
+      |----------------------|----------------------------------|-------------------------------------------------------------------|
+      | Danos e Pessoas      | Riscos Financeiros (Obrigatório) | RESOURCES_READ                                                    |
+      | Riscos Financeiros   |----------------------------------|-------------------------------------------------------------------|
+      |                      | Riscos Financeiros (Opcional)    | DAMAGES_AND_PEOPLE_FINANCIAL_RISKS_READ                           |
+      |                      |                                  | DAMAGES_AND_PEOPLE_FINANCIAL_RISKS_POLICYINFO_READ                |
+      |                      |                                  | DAMAGES_AND_PEOPLE_FINANCIAL_RISKS_PREMIUM_READ                   |
+      |                      |                                  | DAMAGES_AND_PEOPLE_FINANCIAL_RISKS_CLAIM_READ                     |
+      |----------------------|----------------------------------|-------------------------------------------------------------------|
+      | Danos e Pessoas      | Rural (Obrigatório)              | RESOURCES_READ                                                    |
+      | Rural                |----------------------------------|-------------------------------------------------------------------|
+      |                      | Rural (Opcional)                 | DAMAGES_AND_PEOPLE_RURAL_READ                                     |
+      |                      |                                  | DAMAGES_AND_PEOPLE_RURAL_POLICYINFO_READ                          |
+      |                      |                                  | DAMAGES_AND_PEOPLE_RURAL_PREMIUM_READ                             |
+      |                      |                                  | DAMAGES_AND_PEOPLE_RURAL_CLAIM_READ                               |
+      |----------------------|----------------------------------|-------------------------------------------------------------------|
+      | Danos e Pessoas      | Automóveis (Obrigatório)         | RESOURCES_READ                                                    |
+      | Automóveis           |----------------------------------|-------------------------------------------------------------------|
+      |                      | Automóveis (Opcional)            | DAMAGES_AND_PEOPLE_AUTO_READ                                      |
+      |                      |                                  | DAMAGES_AND_PEOPLE_AUTO_POLICYINFO_READ                           |
+      |                      |                                  | DAMAGES_AND_PEOPLE_AUTO_PREMIUM_READ                              |
+      |                      |                                  | DAMAGES_AND_PEOPLE_AUTO_CLAIM_READ                                |
+      |----------------------|----------------------------------|-------------------------------------------------------------------|
+      | Danos e Pessoas      | Habitacional (Obrigatório)       | RESOURCES_READ                                                    |
+      | Habitacional         |----------------------------------|-------------------------------------------------------------------|
+      |                      | Habitacional (Opcional)          | DAMAGES_AND_PEOPLE_HOUSING_READ                                   |
+      |                      |                                  | DAMAGES_AND_PEOPLE_HOUSING_POLICYINFO_READ                        |
+      |                      |                                  | DAMAGES_AND_PEOPLE_HOUSING_PREMIUM_READ                           |
+      |                      |                                  | DAMAGES_AND_PEOPLE_HOUSING_CLAIM_READ                             |
+      |----------------------|----------------------------------|-------------------------------------------------------------------|
+      | Danos e Pessoas      | Aceitação e Sucursal no exterior | RESOURCES_READ                                                    |
+      | Aceitação e Sucursal | (Obrigatório)                    |                                                                   |
+      | no exterior          |----------------------------------|-------------------------------------------------------------------|
+      |                      | Aceitação e Sucursal no exterior | DAMAGES_AND_PEOPLE_ACCEPTANCE_AND_BRANCHES_ABROAD_READ            |
+      |                      | (Opcional)                       | DAMAGES_AND_PEOPLE_ACCEPTANCE_AND_BRANCHES_ABROAD_POLICYINFO_READ |
+      |                      |                                  | DAMAGES_AND_PEOPLE_ACCEPTANCE_AND_BRANCHES_ABROAD_PREMIUM_READ    |
+      |                      |                                  | DAMAGES_AND_PEOPLE_ACCEPTANCE_AND_BRANCHES_ABROAD_CLAIM_READ      |
+      |----------------------|----------------------------------|-------------------------------------------------------------------|
+      | Danos e Pessoas      | Pessoas (Obrigatório)            | RESOURCES_READ                                                    |
+      | Pessoas              |----------------------------------|-------------------------------------------------------------------|
+      |                      | Pessoas (Opcional)               | DAMAGES_AND_PEOPLE_PERSON_READ                                    |
+      |                      |                                  | DAMAGES_AND_PEOPLE_PERSON_POLICYINFO_READ                         |
+      |                      |                                  | DAMAGES_AND_PEOPLE_PERSON_PREMIUM_READ                            |
+      |                      |                                  | DAMAGES_AND_PEOPLE_PERSON_CLAIM_READ                              |
+      |----------------------|----------------------------------|-------------------------------------------------------------------|
+
+      |-----------------------------------------------------------------------------------------------------------------------------|
+      | Fase 3:                                                                                                                     |
+      |----------------------|----------------------------------|-------------------------------------------------------------------|
+      | CATEGORIA DE DADOS   | AGRUPAMENTO                      | PERMISSIONS                                                       |
+      |----------------------|----------------------------------|-------------------------------------------------------------------|
+      | Aviso de Sinistro    | Danos (Obrigatório)              | CLAIM_NOTIFICATION_REQUEST_DAMAGE_CREATE                          |
+      | Danos                |                                  |                                                                   |
+      |----------------------|----------------------------------|-------------------------------------------------------------------|
+      | Aviso de Sinistro    | Pessoas (Obrigatório)            | CLAIM_NOTIFICATION_REQUEST_PERSON_CREATE                          |
+      | Pessoas              |                                  |                                                                   |
+      |----------------------|----------------------------------|-------------------------------------------------------------------|
+      | Endosso              | Endosso (Obrigatório)            | ENDORSEMENT_REQUEST_CREATE                                        |
+      |----------------------|----------------------------------|-------------------------------------------------------------------|
+      | Cotação Patrimonial  | Patrimonial Lead                 | QUOTE_PATRIMONIAL_LEAD_CREATE                                     |
+      | Lead                 | (Obrigatório)                    | QUOTE_PATRIMONIAL_LEAD_UPDATE                                     |
+      |----------------------|----------------------------------|-------------------------------------------------------------------|
+      | Cotação Patrimonial  | Patrimonial Home                 | QUOTE_PATRIMONIAL_HOME_READ                                       |
+      | Home                 | (Obrigatório)                    | QUOTE_PATRIMONIAL_HOME_CREATE                                     |
+      |                      |                                  | QUOTE_PATRIMONIAL_HOME_UPDATE                                     |
+      |----------------------|----------------------------------|-------------------------------------------------------------------|
+      | Cotação Patrimonial  | Patrimonial Condominium          | QUOTE_PATRIMONIAL_CONDOMINIUM_READ                                |
+      | Condominium          | (Obrigatório)                    | QUOTE_PATRIMONIAL_CONDOMINIUM_CREATE                              |
+      |                      |                                  | QUOTE_PATRIMONIAL_CONDOMINIUM_UPDATE                              |
+      |----------------------|----------------------------------|-------------------------------------------------------------------|
+      | Cotação Patrimonial  | Patrimonial Business             | QUOTE_PATRIMONIAL_BUSINESS_READ                                   |
+      |                      | (Obrigatório)                    | QUOTE_PATRIMONIAL_BUSINESS_CREATE                                 |
+      |                      |                                  | QUOTE_PATRIMONIAL_BUSINESS_UPDATE                                 |
+      |----------------------|----------------------------------|-------------------------------------------------------------------|
+      | Cotação Patrimonial  | Patrimonial Diverse Risks        | QUOTE_PATRIMONIAL_DIVERSE_RISKS_READ                              |
+      | Diverse Risks        | (Obrigatório)                    | QUOTE_PATRIMONIAL_DIVERSE_RISKS_CREATE                            |
+      |                      |                                  | QUOTE_PATRIMONIAL_DIVERSE_RISKS_UPDATE                            |
+      |----------------------|----------------------------------|-------------------------------------------------------------------|
+      | Cotação Aceitação e  | Aceitação e Sucursal no exterior | QUOTE_ACCEPTANCE_AND_BRANCHES_ABROAD_LEAD_CREATE                  |
+      | Sucursal no exterior | (Obrigatório)                    | QUOTE_ACCEPTANCE_AND_BRANCHES_ABROAD_LEAD_UPDATE                  |
+      |----------------------|----------------------------------|-------------------------------------------------------------------|
+      | Cotação Auto Lead    | Auto Lead (Obrigatório)          | QUOTE_AUTO_LEAD_CREATE                                            |
+      |                      |                                  | QUOTE_AUTO_LEAD_UPDATE                                            |
+      |----------------------|----------------------------------|-------------------------------------------------------------------|
+      | Cotação Auto         | Auto (Obrigatório)               | QUOTE_AUTO_READ                                                   |
+      |                      |                                  | QUOTE_AUTO_CREATE                                                 |
+      |                      |                                  | QUOTE_AUTO_UPDATE                                                 |
+      |----------------------|----------------------------------|-------------------------------------------------------------------|
+      | Cotação              | Riscos Financeiros Lead          | QUOTE_FINANCIAL_RISK_LEAD_CREATE                                  |
+      | Riscos Financeiros   | (Obrigatório)                    | QUOTE_FINANCIAL_RISK_LEAD_UPDATE                                  |
+      |----------------------|----------------------------------|-------------------------------------------------------------------|
+      | Cotação              | Habitacional Lead                | QUOTE_HOUSING_LEAD_CREATE                                         |
+      | Habitacional         | (Obrigatório)                    | QUOTE_HOUSING_LEAD_UPDATE                                         |
+      |----------------------|----------------------------------|-------------------------------------------------------------------|
+      | Cotação              | Responsabilidade Lead            | QUOTE_RESPONSIBILITY_LEAD_CREATE                                  |
+      | Responsabilidade     | (Obrigatório)                    | QUOTE_RESPONSIBILITY_LEAD_UPDATE                                  |
+      |----------------------|----------------------------------|-------------------------------------------------------------------|
+      | Cotação              | Rural Lead (Obrigatório)         | QUOTE_RURAL_LEAD_CREATE                                           |
+      | Rural                |                                  | QUOTE_RURAL_LEAD_UPDATE                                           |
+      |----------------------|----------------------------------|-------------------------------------------------------------------|
+      | Cotação              | Transportes Lead (Obrigatório)   | QUOTE_TRANSPORT_LEAD_CREATE                                       |
+      | Transportes          |                                  | QUOTE_TRANSPORT_LEAD_UPDATE                                       |
+      |----------------------|----------------------------------|-------------------------------------------------------------------|
+      | Cotação Pessoas      | Pessoas Lead (Obrigatório)       | QUOTE_PERSON_LEAD_CREATE                                          |
+      | Lead                 |                                  | QUOTE_PERSON_LEAD_UPDATE                                          |
+      |----------------------|----------------------------------|-------------------------------------------------------------------|
+      | Cotação Pessoas      | Pessoas Life (Obrigatório)       | QUOTE_PERSON_LIFE_READ                                            |
+      | Life                 |                                  | QUOTE_PERSON_LIFE_CREATE                                          |
+      |                      |                                  | QUOTE_PERSON_LIFE_UPDATE                                          |
+      |----------------------|----------------------------------|-------------------------------------------------------------------|
+      | Cotação Pessoas      | Pessoas Travel (Obrigatório)     | QUOTE_PERSON_TRAVEL_READ                                          |
+      | Travel               |                                  | QUOTE_PERSON_TRAVEL_CREATE                                        |
+      |                      |                                  | QUOTE_PERSON_TRAVEL_UPDATE                                        |
+      |----------------------|----------------------------------|-------------------------------------------------------------------|
+      | Cotação Títulos de   | Títulos de Capitalização         | QUOTE_CAPITALIZATION_TITLE_LEAD_CREATE                            |
+      | Capitalização Lead   | Lead (Obrigatório)               | QUOTE_CAPITALIZATION_TITLE_LEAD_UPDATE                            |
+      |----------------------|----------------------------------|-------------------------------------------------------------------|
+      | Cotação Títulos de   | Títulos de Capitalização         | QUOTE_CAPITALIZATION_TITLE_READ                                   |
+      | Capitalização        | (Obrigatório)                    | QUOTE_CAPITALIZATION_TITLE_CREATE                                 |
+      |                      |                                  | QUOTE_CAPITALIZATION_TITLE_UPDATE                                 |
+      |----------------------|----------------------------------|-------------------------------------------------------------------|
+      | Sorteio Títulos de   | Títulos de Capitalização         | QUOTE_CAPITALIZATION_TITLE_RAFFLE_CREATE                          |
+      | Capitalização        | Sorteio (Obrigatório)            |                                                                   |
+      |----------------------|----------------------------------|-------------------------------------------------------------------|
+      | Contratação          | Previdência Risco Lead           | CONTRACT_PENSION_PLAN_LEAD_CREATE                                 |
+      | Previdência Risco    | (Obrigatório)                    | CONTRACT_PENSION_PLAN_LEAD_UPDATE                                 |
+      |----------------------|----------------------------------|-------------------------------------------------------------------|
+      | Portabilidade        | Previdência Risco Portabilidade  | CONTRACT_PENSION_PLAN_LEAD_PORTABILITY_CREATE                     |
+      | Previdência Risco    | (Obrigatório)                    | CONTRACT_PENSION_PLAN_LEAD_PORTABILITY_UPDATE                     |
+      |----------------------|----------------------------------|-------------------------------------------------------------------|
+      | Contratação Prev     | Previdência Sobrevivência Lead   | CONTRACT_LIFE_PENSION_LEAD_CREATE                                 |
+      | Sobrevivência Lead   | (Obrigatório)                    | CONTRACT_LIFE_PENSION_LEAD_UPDATE                                 |
+      |----------------------|----------------------------------|-------------------------------------------------------------------|
+      | Contratação Prev     | Previdência Sobrevivência        | CONTRACT_LIFE_PENSION_CREATE                                      |
+      | Sobrevivência        | (Obrigatório)                    | CONTRACT_LIFE_PENSION_UPDATE                                      |  
+      |                      |                                  | CONTRACT_LIFE_PENSION_READ                                        |
+      |----------------------|----------------------------------|-------------------------------------------------------------------|
+      | Portabilidade        | Previdência Sobrevivência Porta. | CONTRACT_LIFE_PENSION_LEAD_PORTABILITY_CREATE                     |
+      | Previ. Sobrevivência | (Obrigatório)                    | CONTRACT_LIFE_PENSION_LEAD_PORTABILITY_UPDATE                     |
+      |----------------------|----------------------------------|-------------------------------------------------------------------|
+      | Resgate Previdência  | Previdência (Obrigatório)        | PENSION_WITHDRAWAL_CREATE                                         |
+      |----------------------|----------------------------------|-------------------------------------------------------------------|
+      | Resgate Previdência  | Previdência Lead(Obrigatório)    | PENSION_WITHDRAWAL_LEAD_CREATE                                    |
+      | Lead                 |                                  |                                                                   |
+      |---------------------------------------------------------|-------------------------------------------------------------------|
+      | Resgate Cap.         | Capitalização (Obrigatório)      | CAPITALIZATION_TITLE_WITHDRAWAL_CREATE                            |
+      |----------------------|----------------------------------|-------------------------------------------------------------------|
+      | Resgate Pessoas      | Pessoas (Obrigatório)            | PERSON_WITHDRAWAL_CREATE                                          |
+      |----------------------|----------------------------------|-------------------------------------------------------------------|
+      ```
+    - A instituição transmissora deve validar o preenchimento correto dos agrupamentos submetidos pela receptora no momento da geração do consentimento.
+    - Caso a instituição receptora envie permissões sem o acompanhamento de todas as permissões obrigatórias de uma categoria, a transmissora deve rejeitar o pedido da receptora
+      dando retorno HTTP Status Code 400. Exemplos: "DAMAGES_AND_PEOPLE_TRANSPORT_PREMIUM_READ" sem a permissão "RESOURCES_READ". "QUOTE_AUTO_LEAD_UPDATE" sem a permissão "QUOTE_AUTO_LEAD_CREATE".
+    - Caso a instituição receptora envie somente a permissão "RESOURCES_READ" sem nenhuma outra permissão de fase 2, a transmissora deve rejeitar o pedido da receptora dando retorno HTTP Status Code 400.
+    - Caso a instituição receptora envie permissões de fase 2 (compartilhamento de dados) e 3 (iniciação de serviços) em uma única solicitação, a transmissora deve rejeitar o pedido da receptora dando retorno HTTP Status Code 422.
+    - Caso a instituição receptora envie permissões de fase 3 (iniciação de serviços) de diferentes agrupamentos em uma única solicitação, a transmissora deve rejeitar o pedido da receptora dando retorno HTTP Status Code 422.
+    - A transmissora deve retornar, da lista de permissions requisitadas, apenas o subconjunto de permissions por ela suportada, removendo da lista as permissions de produtos não suportados e retornando HTTP Status Code 201. Caso não restem permissões funcionais, a instituição transmissora deve retornar o erro HTTP Code "422 Unprocessable Entity".
+    - Durante o fluxo de cotação e contratação, a SPOC pode utilizar a API de Consents para gerar o consentimento de Fase 3 para ela mesma, entretanto não pode criar esse consentimento junto a uma transmissora. A transmissora deve rejeitar o pedido da receptora dando retorno HTTP Status Code 422 caso esse cenário ocorra.
+  
+  version: 2.7.0
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0
+  contact:
+    name: Governança do Open Insurance Brasil - Especificações
+    url: https://www.gov.br/susep/
+servers:
+  - url: https://api.seguro.com.br/open-insurance/consents/v2
+    description: Servidor de Produção
+  - url: https://apih.seguro.com.br/open-insurance/consents/v2
+    description: Servidor de Homologação
+tags:
+  - name: Consents
+    description: Operações para criação, consulta e revogação do consentimento dado pelo cliente.
+paths:
+  /consents:
+    post:
+      tags:
+        - Consents
+      summary: Criar novo pedido de consentimento.
+      operationId: consentsPostConsents
+      description: Método para a criação de um novo consentimento.
+      parameters:
+        - $ref: '#/components/parameters/Authorization'
+        - $ref: '#/components/parameters/xFapiAuthDate'
+        - $ref: '#/components/parameters/xFapiCustomerIpAddress'
+        - $ref: '#/components/parameters/xFapiInteractionId'
+        - $ref: '#/components/parameters/xCustomerUserAgent'
+        - $ref: "#/components/parameters/x-v"
+        - $ref: "#/components/parameters/x-min-v"
+        - $ref: "#/components/parameters/xIdempotencyKey"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateConsent'
+        description: Payload para criação do consentimento.
+        required: true
+      responses:
+        '201':
+          $ref: '#/components/responses/201ConsentsCreated'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '405':
+          $ref: '#/components/responses/MethodNotAllowed'
+        '406':
+          $ref: '#/components/responses/NotAcceptable'
+        '422':
+          $ref: '#/components/responses/UnprocessableEntityConsents'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+        default:
+          $ref: '#/components/responses/Default'
+      security:
+        - OAuth2Security:
+            - consents
+  /consents/{consentId}:
+    get:
+      tags:
+        - Consents
+      summary: Obter detalhes do consentimento identificado por consentId.
+      operationId: consentsGetConsentsConsentId
+      description: Método para obter detalhes do consentimento identificado por consentId.
+      parameters:
+        - $ref: '#/components/parameters/consentId'
+        - $ref: '#/components/parameters/Authorization'
+        - $ref: '#/components/parameters/xFapiAuthDate'
+        - $ref: '#/components/parameters/xFapiCustomerIpAddress'
+        - $ref: '#/components/parameters/xFapiInteractionId'
+        - $ref: '#/components/parameters/xCustomerUserAgent'
+        - $ref: "#/components/parameters/x-v"
+        - $ref: "#/components/parameters/x-min-v"
+      responses:
+        '200':
+          $ref: '#/components/responses/200ConsentsConsentIdRead'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '405':
+          $ref: '#/components/responses/MethodNotAllowed'
+        '406':
+          $ref: '#/components/responses/NotAcceptable'
+        '422':
+          $ref: '#/components/responses/UnprocessableEntity'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+        default:
+          $ref: '#/components/responses/Default'
+      security:
+        - OAuth2Security:
+            - consents
+    delete:
+      tags:
+        - Consents
+      summary: Deletar / Revogar o consentimento identificado por consentId.
+      operationId: consentsDeleteConsentsConsentId
+      description: Método para deletar / revogar o consentimento identificado por consentId.
+      parameters:
+        - $ref: '#/components/parameters/consentId'
+        - $ref: '#/components/parameters/Authorization'
+        - $ref: '#/components/parameters/xFapiAuthDate'
+        - $ref: '#/components/parameters/xFapiCustomerIpAddress'
+        - $ref: '#/components/parameters/xFapiInteractionId'
+        - $ref: '#/components/parameters/xCustomerUserAgent'
+        - $ref: "#/components/parameters/x-v"
+        - $ref: "#/components/parameters/x-min-v"
+      responses:
+        '204':
+          $ref: '#/components/responses/204ConsentsConsentIdDeleted'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '405':
+          $ref: '#/components/responses/MethodNotAllowed'
+        '406':
+          $ref: '#/components/responses/NotAcceptable'
+        '422':
+          $ref: '#/components/responses/UnprocessableEntity'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+        default:
+          $ref: '#/components/responses/Default'
+      security:
+        - OAuth2Security:
+            - consents
+components:
+  schemas:
+    Links:
+      type: object
+      description: Referências para outros recusos da API requisitada.
+      required:
+        - self
+      properties:
+        self:
+          type: string
+          format: uri
+          maxLength: 2000
+          description: URI completo que gerou a resposta atual.
+          pattern: ^(https:\/\/)(.*?)(\/open-insurance\/consents\/v\d+)(\/.*)?$
+          example: https://api.organizacao.com.br/open-insurance/consents/v2/consents
+        first:
+          type: string
+          format: uri
+          maxLength: 2000
+          description: URI da primeira página que originou essa lista de resultados. Restrição - Obrigatório quando não for a primeira página da resposta
+          pattern: ^(https:\/\/)(.*?)(\/open-insurance\/consents\/v\d+)(\/.*)?$
+          example: https://api.organizacao.com.br/open-insurance/consents/v2/consents
+        prev:
+          type: string
+          format: uri
+          maxLength: 2000
+          description: "URI da página anterior dessa lista de resultados. Restrição - \tObrigatório quando não for a primeira página da resposta"
+          pattern: ^(https:\/\/)(.*?)(\/open-insurance\/consents\/v\d+)(\/.*)?$
+          example: https://api.organizacao.com.br/open-insurance/consents/v2/consents
+        next:
+          type: string
+          format: uri
+          maxLength: 2000
+          description: URI da próxima página dessa lista de resultados. Restrição - Obrigatório quando não for a última página da resposta
+          pattern: ^(https:\/\/)(.*?)(\/open-insurance\/consents\/v\d+)(\/.*)?$
+          example: https://api.organizacao.com.br/open-insurance/consents/v2/consents
+        last:
+          type: string
+          format: uri
+          maxLength: 2000
+          description: URI da última página dessa lista de resultados. Restrição - Obrigatório quando não for a última página da resposta
+          pattern: ^(https:\/\/)(.*?)(\/open-insurance\/consents\/v\d+)(\/.*)?$
+          example: https://api.organizacao.com.br/open-insurance/consents/v2/consents
+      additionalProperties: false
+    Meta:
+      type: object
+      description: Meta informações referente à API requisitada.
+      required:
+        - totalRecords
+        - totalPages
+      properties:
+        totalRecords:
+          type: integer
+          format: int32
+          description: Número total de registros no resultado
+          example: 1
+        totalPages:
+          type: integer
+          format: int32
+          description: Número total de páginas no resultado
+          example: 1
+      additionalProperties: false
+    CreateConsent:
+      type: object
+      required:
+        - data
+      properties:
+        data:
+          type: object
+          required:
+            - permissions
+            - loggedUser
+            - expirationDateTime
+          properties:
+            loggedUser:
+              $ref: '#/components/schemas/LoggedUser'
+            businessEntity:
+              $ref: '#/components/schemas/BusinessEntity'
+            permissions:
+              type: array
+              items:
+                description: Especifica os tipos de permissões de acesso às APIs no escopo do Open Insurance Brasil - Fase 2 e 3, de acordo com os blocos de consentimento fornecidos pelo usuário e necessários ao acesso a cada endpoint das APIs.
+                type: string
+                enum:
+                  - CUSTOMERS_PERSONAL_IDENTIFICATIONS_READ
+                  - CUSTOMERS_PERSONAL_ADDITIONALINFO_READ
+                  - CUSTOMERS_PERSONAL_QUALIFICATION_READ
+                  - CUSTOMERS_BUSINESS_IDENTIFICATIONS_READ
+                  - CUSTOMERS_BUSINESS_QUALIFICATION_READ
+                  - CUSTOMERS_BUSINESS_ADDITIONALINFO_READ
+                  - CAPITALIZATION_TITLE_READ
+                  - CAPITALIZATION_TITLE_PLANINFO_READ
+                  - CAPITALIZATION_TITLE_EVENTS_READ
+                  - CAPITALIZATION_TITLE_SETTLEMENTS_READ
+                  - PENSION_PLAN_READ
+                  - PENSION_PLAN_CONTRACTINFO_READ
+                  - PENSION_PLAN_MOVEMENTS_READ
+                  - PENSION_PLAN_PORTABILITIES_READ
+                  - PENSION_PLAN_WITHDRAWALS_READ
+                  - PENSION_PLAN_CLAIM
+                  - LIFE_PENSION_READ
+                  - LIFE_PENSION_CONTRACTINFO_READ
+                  - LIFE_PENSION_MOVEMENTS_READ
+                  - LIFE_PENSION_PORTABILITIES_READ
+                  - LIFE_PENSION_WITHDRAWALS_READ
+                  - LIFE_PENSION_CLAIM
+                  - FINANCIAL_ASSISTANCE_READ
+                  - FINANCIAL_ASSISTANCE_CONTRACTINFO_READ
+                  - FINANCIAL_ASSISTANCE_MOVEMENTS_READ
+                  - DAMAGES_AND_PEOPLE_PATRIMONIAL_READ
+                  - DAMAGES_AND_PEOPLE_PATRIMONIAL_POLICYINFO_READ
+                  - DAMAGES_AND_PEOPLE_PATRIMONIAL_PREMIUM_READ
+                  - DAMAGES_AND_PEOPLE_PATRIMONIAL_CLAIM_READ
+                  - DAMAGES_AND_PEOPLE_RESPONSIBILITY_READ
+                  - DAMAGES_AND_PEOPLE_RESPONSIBILITY_POLICYINFO_READ
+                  - DAMAGES_AND_PEOPLE_RESPONSIBILITY_PREMIUM_READ
+                  - DAMAGES_AND_PEOPLE_RESPONSIBILITY_CLAIM_READ
+                  - DAMAGES_AND_PEOPLE_TRANSPORT_READ
+                  - DAMAGES_AND_PEOPLE_TRANSPORT_POLICYINFO_READ
+                  - DAMAGES_AND_PEOPLE_TRANSPORT_PREMIUM_READ
+                  - DAMAGES_AND_PEOPLE_TRANSPORT_CLAIM_READ
+                  - DAMAGES_AND_PEOPLE_FINANCIAL_RISKS_READ
+                  - DAMAGES_AND_PEOPLE_FINANCIAL_RISKS_POLICYINFO_READ
+                  - DAMAGES_AND_PEOPLE_FINANCIAL_RISKS_PREMIUM_READ
+                  - DAMAGES_AND_PEOPLE_FINANCIAL_RISKS_CLAIM_READ
+                  - DAMAGES_AND_PEOPLE_RURAL_READ
+                  - DAMAGES_AND_PEOPLE_RURAL_POLICYINFO_READ
+                  - DAMAGES_AND_PEOPLE_RURAL_PREMIUM_READ
+                  - DAMAGES_AND_PEOPLE_RURAL_CLAIM_READ
+                  - DAMAGES_AND_PEOPLE_AUTO_READ
+                  - DAMAGES_AND_PEOPLE_AUTO_POLICYINFO_READ
+                  - DAMAGES_AND_PEOPLE_AUTO_PREMIUM_READ
+                  - DAMAGES_AND_PEOPLE_AUTO_CLAIM_READ
+                  - DAMAGES_AND_PEOPLE_HOUSING_READ
+                  - DAMAGES_AND_PEOPLE_HOUSING_POLICYINFO_READ
+                  - DAMAGES_AND_PEOPLE_HOUSING_PREMIUM_READ
+                  - DAMAGES_AND_PEOPLE_HOUSING_CLAIM_READ
+                  - DAMAGES_AND_PEOPLE_ACCEPTANCE_AND_BRANCHES_ABROAD_READ
+                  - DAMAGES_AND_PEOPLE_ACCEPTANCE_AND_BRANCHES_ABROAD_POLICYINFO_READ
+                  - DAMAGES_AND_PEOPLE_ACCEPTANCE_AND_BRANCHES_ABROAD_PREMIUM_READ
+                  - DAMAGES_AND_PEOPLE_ACCEPTANCE_AND_BRANCHES_ABROAD_CLAIM_READ
+                  - DAMAGES_AND_PEOPLE_PERSON_READ
+                  - DAMAGES_AND_PEOPLE_PERSON_POLICYINFO_READ
+                  - DAMAGES_AND_PEOPLE_PERSON_PREMIUM_READ
+                  - DAMAGES_AND_PEOPLE_PERSON_CLAIM_READ
+                  - ENDORSEMENT_REQUEST_CREATE
+                  - CLAIM_NOTIFICATION_REQUEST_DAMAGE_CREATE
+                  - CLAIM_NOTIFICATION_REQUEST_PERSON_CREATE
+                  - QUOTE_PATRIMONIAL_LEAD_CREATE
+                  - QUOTE_PATRIMONIAL_LEAD_UPDATE
+                  - QUOTE_PATRIMONIAL_HOME_READ
+                  - QUOTE_PATRIMONIAL_HOME_CREATE
+                  - QUOTE_PATRIMONIAL_HOME_UPDATE
+                  - QUOTE_PATRIMONIAL_CONDOMINIUM_READ
+                  - QUOTE_PATRIMONIAL_CONDOMINIUM_CREATE
+                  - QUOTE_PATRIMONIAL_CONDOMINIUM_UPDATE
+                  - QUOTE_PATRIMONIAL_BUSINESS_READ
+                  - QUOTE_PATRIMONIAL_BUSINESS_CREATE
+                  - QUOTE_PATRIMONIAL_BUSINESS_UPDATE
+                  - QUOTE_PATRIMONIAL_DIVERSE_RISKS_READ
+                  - QUOTE_PATRIMONIAL_DIVERSE_RISKS_CREATE
+                  - QUOTE_PATRIMONIAL_DIVERSE_RISKS_UPDATE
+                  - QUOTE_ACCEPTANCE_AND_BRANCHES_ABROAD_LEAD_CREATE
+                  - QUOTE_ACCEPTANCE_AND_BRANCHES_ABROAD_LEAD_UPDATE
+                  - QUOTE_AUTO_LEAD_CREATE
+                  - QUOTE_AUTO_LEAD_UPDATE
+                  - QUOTE_AUTO_READ
+                  - QUOTE_AUTO_CREATE
+                  - QUOTE_AUTO_UPDATE
+                  - QUOTE_FINANCIAL_RISK_LEAD_CREATE
+                  - QUOTE_FINANCIAL_RISK_LEAD_UPDATE
+                  - QUOTE_HOUSING_LEAD_CREATE
+                  - QUOTE_HOUSING_LEAD_UPDATE
+                  - QUOTE_RESPONSIBILITY_LEAD_CREATE
+                  - QUOTE_RESPONSIBILITY_LEAD_UPDATE
+                  - QUOTE_RURAL_LEAD_CREATE
+                  - QUOTE_RURAL_LEAD_UPDATE
+                  - QUOTE_TRANSPORT_LEAD_CREATE
+                  - QUOTE_TRANSPORT_LEAD_UPDATE
+                  - QUOTE_PERSON_LEAD_CREATE
+                  - QUOTE_PERSON_LEAD_UPDATE
+                  - QUOTE_PERSON_LIFE_READ
+                  - QUOTE_PERSON_LIFE_CREATE
+                  - QUOTE_PERSON_LIFE_UPDATE
+                  - QUOTE_PERSON_TRAVEL_READ
+                  - QUOTE_PERSON_TRAVEL_CREATE
+                  - QUOTE_PERSON_TRAVEL_UPDATE
+                  - QUOTE_CAPITALIZATION_TITLE_LEAD_CREATE
+                  - QUOTE_CAPITALIZATION_TITLE_LEAD_UPDATE
+                  - QUOTE_CAPITALIZATION_TITLE_READ
+                  - QUOTE_CAPITALIZATION_TITLE_CREATE
+                  - QUOTE_CAPITALIZATION_TITLE_UPDATE
+                  - QUOTE_CAPITALIZATION_TITLE_RAFFLE_CREATE
+                  - CONTRACT_LIFE_PENSION_CREATE
+                  - CONTRACT_LIFE_PENSION_UPDATE
+                  - CONTRACT_LIFE_PENSION_READ
+                  - CONTRACT_LIFE_PENSION_LEAD_CREATE
+                  - CONTRACT_LIFE_PENSION_LEAD_UPDATE
+                  - CONTRACT_LIFE_PENSION_LEAD_PORTABILITY_CREATE
+                  - CONTRACT_LIFE_PENSION_LEAD_PORTABILITY_UPDATE
+                  - CONTRACT_PENSION_PLAN_LEAD_CREATE
+                  - CONTRACT_PENSION_PLAN_LEAD_UPDATE
+                  - CONTRACT_PENSION_PLAN_LEAD_PORTABILITY_CREATE
+                  - CONTRACT_PENSION_PLAN_LEAD_PORTABILITY_UPDATE
+                  - PENSION_WITHDRAWAL_CREATE
+                  - PENSION_WITHDRAWAL_LEAD_CREATE
+                  - CAPITALIZATION_TITLE_WITHDRAWAL_CREATE
+                  - RESOURCES_READ
+                  - PERSON_WITHDRAWAL_CREATE 
+              minItems: 1
+              example:
+                - CAPITALIZATION_TITLE_READ
+                - RESOURCES_READ
+            expirationDateTime:
+              description: Data e hora de expiração da permissão. De preenchimento obrigatório, reflete a data limite de validade do consentimento. Uma string com data e hora conforme especificação RFC-3339, sempre com a utilização de timezone UTC(UTC time format).
+              type: string
+              maxLength: 20
+              format: date-time
+              example: '2021-05-21T08:30:00Z'
+            endorsementInformation:
+              description: Objeto contendo dados do endosso. Obrigatório para a permissão ENDORSEMENT_REQUEST_CREATE
+              type: object
+              required:
+                - policyId
+                - insuredObjectId
+                - endorsementType
+                - requestDescription
+              properties:
+                policyId:
+                  description: Número da apólice, conforme regulamentação vigente
+                  type: string
+                  maxLength: 60
+                  example: '111111'
+                insuredObjectId:
+                  description: lista de Identificador do Objeto Segurado (Caso aplicável)
+                  type: array
+                  items:  
+                    type: string
+                    maxLength: 100
+                    example: "216731531723"
+                proposalId:
+                  description: Identificador da proposta ou certificado. Obrigatório caso endosso do produto de Pessoas.
+                  type: string
+                  maxLength: 60
+                  example: "987"
+                endorsementType:
+                  description: Tipo de endosso
+                  type: string
+                  enum:
+                    - ALTERACAO
+                    - CANCELAMENTO
+                    - INCLUSAO
+                    - EXCLUSAO
+                requestDescription:
+                  description: Descrição adicional do endosso
+                  type: string
+                  maxLength: 1024
+                  example: Descrição adicional do endosso.
+            claimNotificationInformation:
+              description: Objeto contendo dados do aviso de sinistro. Obrigatório para as permissões CLAIM_NOTIFICATION_REQUEST_DAMAGE_CREATE e CLAIM_NOTIFICATION_REQUEST_PERSON_CREATE
+              type: object
+              required:
+                - documentType
+                - policyId
+                - occurrenceDate
+                - occurrenceDescription
+                - insuredObjectId
+              properties:
+                documentType:
+                  description: Tipo de Documento Emitido.
+                  type: string
+                  enum:
+                    - APOLICE_INDIVIDUAL
+                    - BILHETE
+                    - CERTIFICADO
+                    - APOLICE_INDIVIDUAL_AUTOMOVEL
+                    - APOLICE_FROTA_AUTOMOVEL
+                    - CERTIFICADO_AUTOMOVEL
+                policyId:
+                  description: Número da apólice, conforme regulamentação vigente
+                  type: string
+                  maxLength: 60
+                  example: '111111'
+                groupCertificateId:
+                  description: Identificador do Certificado(Caso Tipo de Documento Emitido for certificado)
+                  type: string
+                  maxLength: 60
+                insuredObjectId:
+                  description: lista de Identificador do Objeto Segurado 
+                  type: array
+                  items:  
+                    type: string
+                    maxLength: 100
+                    example: "216731531723"
+                proposalId:
+                  description: Identificador da proposta ou certificado. Obrigatório caso sinsitro do produto de Pessoas.
+                  type: string
+                  maxLength: 60
+                  example: "987"
+                occurrenceDate:
+                  description: Data de Ocorrência do Sinistro
+                  type: string
+                  format: date
+                  maxLength: 10
+                  example: '2022-01-01'
+                occurrenceTime:
+                  description: Horário de ocorrência do sinistro
+                  type: string
+                  pattern: ([0-1][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]
+                  example: '22:18:54'
+                occurrenceDescription:
+                  description: Descrição da Ocorrência/Relato da ocorrência
+                  type: string
+                  maxLength: 10000
+            withdrawalCaptalizationInformation:
+              type: object
+              description: Objeto contendo dados de Informações do Produto. Obrigatório para a permission "CAPITALIZATION_TITLE_WITHDRAWAL_CREATE"
+              required:
+                - capitalizationTitleName
+                - planId
+                - titleId
+                - seriesId
+                - termEndDate
+                - withdrawalReason
+                - withdrawalTotalAmount
+              properties:
+                capitalizationTitleName:
+                  type: string
+                  description: Nome comercial do produto, pelo qual é identificado 
+                                nos canais de distribuição e atendimento da sociedade.
+                  maxLength: 100
+                planId:
+                  description: Identificação do plano
+                  type: string
+                  maxLength: 60
+                titleId: 
+                  description: Identificação do título de capitalização
+                  type: string
+                  maxLength: 60
+                seriesId: 
+                  description: Identificação da série
+                  type: string
+                  maxLength: 60
+                termEndDate: 
+                  description: Data de fim de vigência do título
+                  type: string
+                  format: date
+                  maxLength: 10
+                  pattern: '^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])$'
+                  example: '2022-10-27'
+                withdrawalReason:
+                  description:  Motivo do resgate. 
+                  type: string
+                  enum: [IMPOSSIBILIDADE_DE_PAGAMENTO_DAS_PARCELAS,
+                        COMPROMISSOS_PESSOAIS_EMERGENCIAIS,
+                        INSATISFACAO_COM_CARACTERISTICAS_DO_PRODUTO,
+                        INSATISFACAO_NO_RELACIONAMENTO_COM_SOCIEDADE_CAPITALIZACAO,
+                        AQUISICAO_DE_OUTROS_BENS_OU_PRODUTOS,
+                        PERDA_DE_INTERESSE,
+                        PREFIRO_NAO_RESPONDER,
+                        OUTROS]
+                withdrawalReasonOthers:
+                  description:  Motivo do resgate para 'Outros'. 
+                  type: string
+                  maxLength: 500
+                withdrawalTotalAmount:
+                  description: Valor bruto a resgatar. O pedido de resgate será analisado e o valor será submetido a análise e estará sujeito as alterações (aplicação de impostos, variação de saldos, viabilidade do pedido de resgate, entre outros). Ocorrendo o resgate do título, este será automaticamente cancelado.
+                  allOf:
+                    - $ref: '#/components/schemas/AmountDetails'
+            withdrawalLifePensionInformation:
+              type: object
+              description: Objeto contendo dados de Informações do Produto. Obrigatório para a permission "PENSION_WITHDRAWAL_CREATE" ou "PENSION_WITHDRAWAL_LEAD_CREATE".
+              required:
+                - certificateId
+                - productName
+                - withdrawalType
+                - withdrawalReason
+                - pmbacAmount
+              properties:
+                certificateId:
+                  description: Identificador do Certificado
+                  type: string
+                  maxLength: 60
+                productName:
+                  description: Nome comercial do produto, pelo qual é identificado nos canais de distribuição e atendimento da sociedade
+                  type: string
+                  maxLength: 100
+                  example: Produto A Previdência
+                withdrawalType:
+                  description: Tipo de resgate. Este valor será submetido a análise e estará 
+                                sujeito as alterações (aplicação de impostos, variação de saldos, 
+                                e condições contratuais).
+                  type: string
+                  enum: [1_TOTAL,
+                        2_PARCIAL]
+                withdrawalReason:
+                  description:  Motivo do resgate. Obrigatório para Previdência Sobrevivência.
+                  type: string
+                  enum: [ 1_EMERGENCIAS_DE_SAUDE,
+                          2_APLICACAO_EM_OUTROS_INVESTIMENTOS,
+                          3_INSATISFACAO_COM_A_ENTIDADE,
+                          4_INSATISFACAO_COM_A_RENTABILIDADE_DO_PRODUTO,
+                          5_INSATISFACAO_COM_O_PRODUTO,
+                          6_AQUISICAO_DE_BENS,
+                          7_LIQUIDEZ_FINANCEIRA,
+                          8_REALIZACAO_DO_OBJETIVO_DO_INVESTIMENTO,
+                          9_OUTROS]
+                withdrawalReasonOthers:
+                  description:  Motivo do resgate para 'Outros'. Obrigatório, caso selecionado "outros"
+                              na pergunta " Motivo do resgate ".
+                  type: string
+                  maxLength: 100
+                desiredTotalAmount:
+                  description: 'Valor bruto desejado do resgate. Este valor será submetido a 
+                                análise e estará sujeito as alterações (aplicação de impostos, 
+                                variação de saldos, e condições contratuais). Este campo não 
+                                deverá permitir a inclusão de valores maiores que o saldo atual 
+                                dele. Condicional, caso a opção "2. Parcial" seja selecionada no 
+                                campo "Tipo de resgate".'
+                  allOf:
+                    - $ref: '#/components/schemas/AmountDetails'
+
+                pmbacAmount:
+                  description: Valor PMBaC (fim do mês). O valor exibido refere-se ao mês anterior, podendo estar sujeito a variações
+                  allOf:
+                    - $ref: '#/components/schemas/AmountDetails'
+            raffleCaptalizationTitleInformation:
+              type: object
+              description: Objeto contendo dados de Informações do Produto. Obrigatório para a permission "QUOTE_CAPITALIZATION_TITLE_RAFFLE_CREATE"
+              required: 
+                - contactType
+              properties: 
+                contactType:
+                  type: string
+                  description: Forma de recebimento do contato informado pelo cliente.
+                  enum: 
+                    - EMAIL
+                    - TELEFONE
+                email:
+                  type: string
+                  description: Email informado pelo cliente. Obrigatorio no caso da seleção do valor "EMAIL" no campo contactType.
+                  pattern: ^\S+@\S+\.\S+$
+                phone:
+                  type: string
+                  description: Telefone informado pelo cliente. Obrigatorio no caso da seleção do valor "TELEFONE" no campo contactType.
+
+          additionalProperties: false
+      additionalProperties: false
+    ResponseConsent:
+      type: object
+      required:
+        - data
+      properties:
+        data:
+          type: object
+          required:
+            - consentId
+            - creationDateTime
+            - status
+            - statusUpdateDateTime
+            - permissions
+            - expirationDateTime
+          properties:
+            consentId:
+              description: |
+                O consentId é o identificador único do consentimento e deverá ser um URN - Uniform Resource Name.
+                Um URN, conforme definido na [RFC8141](https://tools.ietf.org/html/rfc8141) é um Uniform Resource
+                Identifier - URI - que é atribuído sob o URI scheme "urn" e um namespace URN específico, com a intenção de que o URN
+                seja um identificador de recurso persistente e independente da localização.
+                Considerando a string urn:prudential:C1DD93123 como exemplo para consentId temos:
+                - o namespace(urn)
+                - o identificador associado ao namespace da instituição transnmissora (prudential)
+                - o identificador específico dentro do namespace (C1DD93123).
+                Informações mais detalhadas sobre a construção de namespaces devem ser consultadas na [RFC8141](https://tools.ietf.org/html/rfc8141).
+              type: string
+              pattern: ^urn:[a-zA-Z0-9][a-zA-Z0-9-]{0,31}:[a-zA-Z0-9()+,\-.:=@;$_!*'%\/?#]+$
+              maxLength: 256
+              example: urn:prudential:C1DD93123
+            creationDateTime:
+              description: Data e hora em que o recurso foi criado. Uma string com data e hora conforme especificação RFC-3339, sempre com a utilização de timezone UTC(UTC time format).
+              type: string
+              format: date-time
+              example: '2021-05-21T08:30:00Z'
+              maxLength: 20
+            status:
+              description: Estado atual do consentimento cadastrado.
+              type: string
+              enum:
+                - AUTHORISED
+                - AWAITING_AUTHORISATION
+                - REJECTED
+                - CONSUMED
+              example: AWAITING_AUTHORISATION
+            statusUpdateDateTime:
+              description: Data e hora em que o recurso foi atualizado. Uma string com data e hora conforme especificação RFC-3339, sempre com a utilização de timezone UTC(UTC time format).
+              type: string
+              format: date-time
+              example: '2021-05-21T08:30:00Z'
+              maxLength: 20
+            permissions:
+              type: array
+              minItems: 1
+              description: Especifica os tipos de permissões de acesso às APIs no escopo do Open Insurance Brasil - Fase 2 e 3, de acordo com os blocos de consentimento fornecidos pelo usuário e necessários ao acesso a cada endpoint das APIs.
+              items:
+                type: string
+                enum:
+                  - CUSTOMERS_PERSONAL_IDENTIFICATIONS_READ
+                  - CUSTOMERS_PERSONAL_ADDITIONALINFO_READ
+                  - CUSTOMERS_PERSONAL_QUALIFICATION_READ
+                  - CUSTOMERS_BUSINESS_IDENTIFICATIONS_READ
+                  - CUSTOMERS_BUSINESS_QUALIFICATION_READ
+                  - CUSTOMERS_BUSINESS_ADDITIONALINFO_READ
+                  - CAPITALIZATION_TITLE_READ
+                  - CAPITALIZATION_TITLE_PLANINFO_READ
+                  - CAPITALIZATION_TITLE_EVENTS_READ
+                  - CAPITALIZATION_TITLE_SETTLEMENTS_READ
+                  - PENSION_PLAN_READ
+                  - PENSION_PLAN_CONTRACTINFO_READ
+                  - PENSION_PLAN_MOVEMENTS_READ
+                  - PENSION_PLAN_PORTABILITIES_READ
+                  - PENSION_PLAN_WITHDRAWALS_READ
+                  - PENSION_PLAN_CLAIM
+                  - LIFE_PENSION_READ
+                  - LIFE_PENSION_CONTRACTINFO_READ
+                  - LIFE_PENSION_MOVEMENTS_READ
+                  - LIFE_PENSION_PORTABILITIES_READ
+                  - LIFE_PENSION_WITHDRAWALS_READ
+                  - LIFE_PENSION_CLAIM
+                  - FINANCIAL_ASSISTANCE_READ
+                  - FINANCIAL_ASSISTANCE_CONTRACTINFO_READ
+                  - FINANCIAL_ASSISTANCE_MOVEMENTS_READ
+                  - DAMAGES_AND_PEOPLE_PATRIMONIAL_READ
+                  - DAMAGES_AND_PEOPLE_PATRIMONIAL_POLICYINFO_READ
+                  - DAMAGES_AND_PEOPLE_PATRIMONIAL_PREMIUM_READ
+                  - DAMAGES_AND_PEOPLE_PATRIMONIAL_CLAIM_READ
+                  - DAMAGES_AND_PEOPLE_RESPONSIBILITY_READ
+                  - DAMAGES_AND_PEOPLE_RESPONSIBILITY_POLICYINFO_READ
+                  - DAMAGES_AND_PEOPLE_RESPONSIBILITY_PREMIUM_READ
+                  - DAMAGES_AND_PEOPLE_RESPONSIBILITY_CLAIM_READ
+                  - DAMAGES_AND_PEOPLE_TRANSPORT_READ
+                  - DAMAGES_AND_PEOPLE_TRANSPORT_POLICYINFO_READ
+                  - DAMAGES_AND_PEOPLE_TRANSPORT_PREMIUM_READ
+                  - DAMAGES_AND_PEOPLE_TRANSPORT_CLAIM_READ
+                  - DAMAGES_AND_PEOPLE_FINANCIAL_RISKS_READ
+                  - DAMAGES_AND_PEOPLE_FINANCIAL_RISKS_POLICYINFO_READ
+                  - DAMAGES_AND_PEOPLE_FINANCIAL_RISKS_PREMIUM_READ
+                  - DAMAGES_AND_PEOPLE_FINANCIAL_RISKS_CLAIM_READ
+                  - DAMAGES_AND_PEOPLE_RURAL_READ
+                  - DAMAGES_AND_PEOPLE_RURAL_POLICYINFO_READ
+                  - DAMAGES_AND_PEOPLE_RURAL_PREMIUM_READ
+                  - DAMAGES_AND_PEOPLE_RURAL_CLAIM_READ
+                  - DAMAGES_AND_PEOPLE_AUTO_READ
+                  - DAMAGES_AND_PEOPLE_AUTO_POLICYINFO_READ
+                  - DAMAGES_AND_PEOPLE_AUTO_PREMIUM_READ
+                  - DAMAGES_AND_PEOPLE_AUTO_CLAIM_READ
+                  - DAMAGES_AND_PEOPLE_HOUSING_READ
+                  - DAMAGES_AND_PEOPLE_HOUSING_POLICYINFO_READ
+                  - DAMAGES_AND_PEOPLE_HOUSING_PREMIUM_READ
+                  - DAMAGES_AND_PEOPLE_HOUSING_CLAIM_READ
+                  - DAMAGES_AND_PEOPLE_ACCEPTANCE_AND_BRANCHES_ABROAD_READ
+                  - DAMAGES_AND_PEOPLE_ACCEPTANCE_AND_BRANCHES_ABROAD_POLICYINFO_READ
+                  - DAMAGES_AND_PEOPLE_ACCEPTANCE_AND_BRANCHES_ABROAD_PREMIUM_READ
+                  - DAMAGES_AND_PEOPLE_ACCEPTANCE_AND_BRANCHES_ABROAD_CLAIM_READ
+                  - DAMAGES_AND_PEOPLE_PERSON_READ
+                  - DAMAGES_AND_PEOPLE_PERSON_POLICYINFO_READ
+                  - DAMAGES_AND_PEOPLE_PERSON_PREMIUM_READ
+                  - DAMAGES_AND_PEOPLE_PERSON_CLAIM_READ
+                  - ENDORSEMENT_REQUEST_CREATE
+                  - CLAIM_NOTIFICATION_REQUEST_DAMAGE_CREATE
+                  - CLAIM_NOTIFICATION_REQUEST_PERSON_CREATE
+                  - QUOTE_PATRIMONIAL_LEAD_CREATE
+                  - QUOTE_PATRIMONIAL_LEAD_UPDATE
+                  - QUOTE_PATRIMONIAL_HOME_READ
+                  - QUOTE_PATRIMONIAL_HOME_CREATE
+                  - QUOTE_PATRIMONIAL_HOME_UPDATE
+                  - QUOTE_PATRIMONIAL_CONDOMINIUM_READ
+                  - QUOTE_PATRIMONIAL_CONDOMINIUM_CREATE
+                  - QUOTE_PATRIMONIAL_CONDOMINIUM_UPDATE
+                  - QUOTE_PATRIMONIAL_BUSINESS_READ
+                  - QUOTE_PATRIMONIAL_BUSINESS_CREATE
+                  - QUOTE_PATRIMONIAL_BUSINESS_UPDATE
+                  - QUOTE_PATRIMONIAL_DIVERSE_RISKS_READ
+                  - QUOTE_PATRIMONIAL_DIVERSE_RISKS_CREATE
+                  - QUOTE_PATRIMONIAL_DIVERSE_RISKS_UPDATE
+                  - QUOTE_ACCEPTANCE_AND_BRANCHES_ABROAD_LEAD_CREATE
+                  - QUOTE_ACCEPTANCE_AND_BRANCHES_ABROAD_LEAD_UPDATE
+                  - QUOTE_AUTO_LEAD_CREATE
+                  - QUOTE_AUTO_LEAD_UPDATE
+                  - QUOTE_AUTO_READ
+                  - QUOTE_AUTO_CREATE
+                  - QUOTE_AUTO_UPDATE
+                  - QUOTE_FINANCIAL_RISK_LEAD_CREATE
+                  - QUOTE_FINANCIAL_RISK_LEAD_UPDATE
+                  - QUOTE_HOUSING_LEAD_CREATE
+                  - QUOTE_HOUSING_LEAD_UPDATE
+                  - QUOTE_RESPONSIBILITY_LEAD_CREATE
+                  - QUOTE_RESPONSIBILITY_LEAD_UPDATE
+                  - QUOTE_RURAL_LEAD_CREATE
+                  - QUOTE_RURAL_LEAD_UPDATE
+                  - QUOTE_TRANSPORT_LEAD_CREATE
+                  - QUOTE_TRANSPORT_LEAD_UPDATE
+                  - QUOTE_PERSON_LEAD_CREATE
+                  - QUOTE_PERSON_LEAD_UPDATE
+                  - QUOTE_PERSON_LIFE_READ
+                  - QUOTE_PERSON_LIFE_CREATE
+                  - QUOTE_PERSON_LIFE_UPDATE
+                  - QUOTE_PERSON_TRAVEL_READ
+                  - QUOTE_PERSON_TRAVEL_CREATE
+                  - QUOTE_PERSON_TRAVEL_UPDATE
+                  - QUOTE_CAPITALIZATION_TITLE_LEAD_CREATE
+                  - QUOTE_CAPITALIZATION_TITLE_LEAD_UPDATE
+                  - QUOTE_CAPITALIZATION_TITLE_READ
+                  - QUOTE_CAPITALIZATION_TITLE_CREATE
+                  - QUOTE_CAPITALIZATION_TITLE_UPDATE
+                  - QUOTE_CAPITALIZATION_TITLE_RAFFLE_CREATE
+                  - CONTRACT_LIFE_PENSION_CREATE
+                  - CONTRACT_LIFE_PENSION_UPDATE
+                  - CONTRACT_LIFE_PENSION_READ
+                  - CONTRACT_LIFE_PENSION_LEAD_CREATE
+                  - CONTRACT_LIFE_PENSION_LEAD_UPDATE
+                  - CONTRACT_LIFE_PENSION_LEAD_PORTABILITY_CREATE
+                  - CONTRACT_LIFE_PENSION_LEAD_PORTABILITY_UPDATE
+                  - CONTRACT_PENSION_PLAN_LEAD_CREATE
+                  - CONTRACT_PENSION_PLAN_LEAD_UPDATE
+                  - CONTRACT_PENSION_PLAN_LEAD_PORTABILITY_CREATE
+                  - CONTRACT_PENSION_PLAN_LEAD_PORTABILITY_UPDATE
+                  - PENSION_WITHDRAWAL_CREATE
+                  - PENSION_WITHDRAWAL_LEAD_CREATE
+                  - CAPITALIZATION_TITLE_WITHDRAWAL_CREATE
+                  - RESOURCES_READ
+                  - PERSON_WITHDRAWAL_CREATE
+              example:
+                - CAPITALIZATION_TITLE_READ
+                - RESOURCES_READ
+            expirationDateTime:
+              description: Data e hora de expiração da permissão. De preenchimento obrigatório, reflete a data limite de validade do consentimento. Uma string com data e hora conforme especificação RFC-3339, sempre com a utilização de timezone UTC(UTC time format).
+              type: string
+              format: date-time
+              example: '2021-05-21T08:30:00Z'
+              maxLength: 20
+            endorsementInformation:
+              description: Objeto contendo dados do endosso. Obrigatório para a permissão ENDORSEMENT_REQUEST_CREATE
+              type: object
+              required:
+                - policyId
+                - endorsementType
+                - insuredObjectId
+                - requestDescription
+              properties:
+                policyId:
+                  description: Número da apólice, conforme regulamentação vigente
+                  type: string
+                  maxLength: 60
+                  example: '111111'
+                insuredObjectId:
+                  description: lista de Identificador do Objeto Segurado 
+                  type: array
+                  items:  
+                    type: string
+                    maxLength: 100
+                    example: "216731531723"
+                proposalId:
+                  description: Identificador da proposta ou certificado. Obrigatório caso endosso do produto de Pessoas.
+                  type: string
+                  maxLength: 60
+                  example: "987"
+                endorsementType:
+                  description: Tipo de endosso
+                  type: string
+                  enum:
+                    - ALTERACAO
+                    - CANCELAMENTO
+                    - INCLUSAO
+                    - EXCLUSAO
+                requestDescription:
+                  description: Descrição adicional do endosso
+                  type: string
+                  maxLength: 1024
+                  example: Descrição adicional do endosso.
+            claimNotificationInformation:
+              description: Objeto contendo dados do aviso de sinistro. Obrigatório para as permissões CLAIM_NOTIFICATION_REQUEST_DAMAGE_CREATE e CLAIM_NOTIFICATION_REQUEST_PERSON_CREATE
+              type: object
+              required:
+                - documentType
+                - policyId
+                - insuredObjectId
+                - occurrenceDate
+                - occurrenceDescription
+              properties:
+                documentType:
+                  description: Tipo de Documento Emitido.
+                  type: string
+                  enum:
+                    - APOLICE_INDIVIDUAL
+                    - BILHETE
+                    - CERTIFICADO
+                    - APOLICE_INDIVIDUAL_AUTOMOVEL
+                    - APOLICE_FROTA_AUTOMOVEL
+                    - CERTIFICADO_AUTOMOVEL
+                policyId:
+                  description: Número da apólice, conforme regulamentação vigente
+                  type: string
+                  maxLength: 60
+                  example: '111111'
+                groupCertificateId:
+                  description: Identificador do Certificado(Caso Tipo de Documento Emitido for certificado)
+                  type: string
+                  maxLength: 60
+                insuredObjectId:
+                  description: lista de Identificador do Objeto Segurado 
+                  type: array
+                  items:  
+                    type: string
+                    maxLength: 100
+                    example: "216731531723"
+                proposalId:
+                  description: Identificador da proposta ou certificado. Obrigatório caso sinsitro do produto de Pessoas.
+                  type: string
+                  maxLength: 60
+                  example: "987"
+                occurrenceDate:
+                  description: Data de Ocorrência do Sinistro
+                  type: string
+                  format: date
+                  maxLength: 10
+                  example: '2022-01-01'
+                occurrenceTime:
+                  description: Horário de ocorrência do sinistro
+                  type: string
+                  pattern: ([0-1][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]
+                  example: '22:18:54'
+                occurrenceDescription:
+                  description: Descrição da Ocorrência/Relato da ocorrência
+                  type: string
+                  maxLength: 10000
+            withdrawalCaptalizationInformation:
+              type: object
+              description: Objeto contendo dados de Informações do Produto. Obrigatório para a permission "CAPITALIZATION_TITLE_WITHDRAWAL_CREATE"
+              required:
+                - capitalizationTitleName
+                - planId
+                - titleId
+                - seriesId
+                - termEndDate
+                - withdrawalReason
+                - withdrawalTotalAmount
+              properties:
+                capitalizationTitleName:
+                  type: string
+                  description: Nome comercial do produto, pelo qual é identificado 
+                                nos canais de distribuição e atendimento da sociedade.
+                  maxLength: 100
+                planId:
+                  description: Identificação do plano
+                  type: string
+                  maxLength: 60
+                titleId: 
+                  description: Identificação do título de capitalização
+                  type: string
+                  maxLength: 60
+                seriesId: 
+                  description: Identificação da série
+                  type: string
+                  maxLength: 60
+                termEndDate: 
+                  description: Data de fim de vigência do título
+                  type: string
+                  format: date
+                  maxLength: 10
+                  pattern: '^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])$'
+                  example: '2022-10-27'
+                withdrawalReason:
+                  description:  Motivo do resgate. 
+                  type: string
+                  enum: [IMPOSSIBILIDADE_DE_PAGAMENTO_DAS_PARCELAS,
+                        COMPROMISSOS_PESSOAIS_EMERGENCIAIS,
+                        INSATISFACAO_COM_CARACTERISTICAS_DO_PRODUTO,
+                        INSATISFACAO_NO_RELACIONAMENTO_COM_SOCIEDADE_CAPITALIZACAO,
+                        AQUISICAO_DE_OUTROS_BENS_OU_PRODUTOS,
+                        PERDA_DE_INTERESSE,
+                        PREFIRO_NAO_RESPONDER,
+                        OUTROS]
+                withdrawalReasonOthers:
+                  description:  Motivo do resgate para 'Outros'. 
+                  type: string
+                  maxLength: 500
+                withdrawalTotalAmount:
+                  description: Valor bruto a resgatar. O pedido de resgate será analisado e o valor será submetido a análise e estará sujeito as alterações (aplicação de impostos, variação de saldos, viabilidade do pedido de resgate, entre outros). Ocorrendo o resgate do título, este será automaticamente cancelado.
+                  allOf:
+                    - $ref: '#/components/schemas/AmountDetails'
+            withdrawalLifePensionInformation:
+              type: object
+              description: Objeto contendo dados de Informações do Produto. Obrigatório para a permission "PENSION_WITHDRAWAL_CREATE" ou "PENSION_WITHDRAWAL_LEAD_CREATE".
+              required:
+                - certificateId
+                - productName
+                - withdrawalType
+                - withdrawalReason
+                - pmbacAmount
+              properties:
+                certificateId:
+                  description: Identificador do Certificado
+                  type: string
+                  maxLength: 60
+                productName:
+                  description: Nome comercial do produto, pelo qual é identificado nos canais de distribuição e atendimento da sociedade
+                  type: string
+                  maxLength: 100
+                  example: Produto A Previdência
+                withdrawalType:
+                  description: Tipo de resgate. Este valor será submetido a análise e estará 
+                                sujeito as alterações (aplicação de impostos, variação de saldos, 
+                                e condições contratuais).
+                  type: string
+                  enum: [1_TOTAL,
+                        2_PARCIAL]
+                withdrawalReason:
+                  description:  Motivo do resgate. Obrigatório para Previdência Sobrevivência.
+                  type: string
+                  enum: [ 1_EMERGENCIAS_DE_SAUDE,
+                          2_APLICACAO_EM_OUTROS_INVESTIMENTOS,
+                          3_INSATISFACAO_COM_A_ENTIDADE,
+                          4_INSATISFACAO_COM_A_RENTABILIDADE_DO_PRODUTO,
+                          5_INSATISFACAO_COM_O_PRODUTO,
+                          6_AQUISICAO_DE_BENS,
+                          7_LIQUIDEZ_FINANCEIRA,
+                          8_REALIZACAO_DO_OBJETIVO_DO_INVESTIMENTO,
+                          9_OUTROS]
+                withdrawalReasonOthers:
+                  description:  Motivo do resgate para 'Outros'. Obrigatório, caso selecionado "outros"
+                              na pergunta " Motivo do resgate ".
+                  type: string
+                  maxLength: 100
+                desiredTotalAmount:
+                  description: 'Valor bruto desejado do resgate. Este valor será submetido a 
+                                análise e estará sujeito as alterações (aplicação de impostos, 
+                                variação de saldos, e condições contratuais). Este campo não 
+                                deverá permitir a inclusão de valores maiores que o saldo atual 
+                                dele. Condicional, caso a opção "2. Parcial" seja selecionada no 
+                                campo "Tipo de resgate".'
+                  allOf:
+                    - $ref: '#/components/schemas/AmountDetails'
+
+                pmbacAmount:
+                  description: Valor PMBaC (fim do mês). O valor exibido refere-se ao mês anterior, podendo estar sujeito a variações
+                  allOf:
+                    - $ref: '#/components/schemas/AmountDetails'
+
+            raffleCaptalizationTitleInformation:
+              type: object
+              description: Objeto contendo dados de Informações do Produto. Obrigatório para a permission "QUOTE_CAPITALIZATION_TITLE_RAFFLE_CREATE"
+              required: 
+                - contactType
+              properties: 
+                contactType:
+                  type: string
+                  description: Forma de recebimento do contato informado pelo cliente.
+                  enum: 
+                    - EMAIL
+                    - TELEFONE
+                email:
+                  type: string
+                  description: Email informado pelo cliente. Obrigatorio no caso da seleção do valor "EMAIL" no campo contactType.
+                  pattern: ^\S+@\S+\.\S+$
+                phone:
+                  type: string
+                  description: Telefone informado pelo cliente. Obrigatorio no caso da seleção do valor "TELEFONE" no campo contactType.
+            rejection:
+              type: object
+              description: Objeto a ser retornado caso o consentimento seja rejeitado.
+              required:
+                - rejectedBy
+                - reason
+              properties:
+                rejectedBy:
+                  $ref: '#/components/schemas/EnumRejectedBy'
+                reason:
+                  $ref: '#/components/schemas/RejectedReason'
+          additionalProperties: false
+        links:
+          $ref: '#/components/schemas/Links'
+        meta:
+          $ref: '#/components/schemas/Meta'
+      additionalProperties: false
+    EnumRejectedBy:
+      type: string
+      description: |
+        Informar usuário responsável pela rejeição.
+        1. USER usuário
+        2. ASPSP instituição transmissora
+        3. TPP instituição receptora
+      enum:
+        - USER
+        - ASPSP
+        - TPP
+      example: USER
+    AmountDetails:
+        type: object
+        description: Detalhes de valores/limites
+        required:
+          - amount
+          - unit
+        properties:
+          amount:
+            type: string
+            pattern: '^-?\d{1,15}\.\d{2}$'
+            example: '2000.00'
+          unit:
+            type: object
+            required:
+              - code
+              - description
+            properties:
+              code:
+                type: string
+                example: R$
+                enum: [ د.إ, Af, L, Դ, Kz, $, ƒ, ман, КМ, ৳, лв, ب.د, ₣, Bs., R$, P, Br, ¥, ₡, Kč, kr, د.ج, £, Nfk, N/A, €, ლ, ₵, D, Q, Kn, G, Ft, Rp, ₪, ₹, ع.د, ﷼, Sh, ៛, ₩, د.ك, 〒, ₭, ل.ل, Rs, ل.د, د.م., ден, K, ₮, UM, ₨, ރ., MK, RM, MTn, ₦, C$, ر.ع., B/., S/., ₱, zł, ₲, ر.ق, din, р., ر.س, Le, Db, ل.س, ฿, ЅМ, m, د.ت, T$, ₤, ₴, Bs F, ₫, Vt, T, R, ZK ]
+              description:
+                type: string
+                description: Moeda da Parcela, de acordo com ISO-4217.
+                example: BRL
+                enum: [AFN,AFA,ALL,ALK,DZD,USD,EUR,ADP,ESP,FRF,AOA,AOK,AON,AOR,XCD,ARS,ARA,ARP,ARY,AMD,RUR,AWG,AUD,ATS,AZN,AYM,AZM,BSD,BHD,BDT,BBD,BYN,BYB,BYR,BEC,BEF,BEL,BZD,XOF,BMD,INR,BTN,BOP,BOB,BOV,BAM,BAD,BWP,NOK,BRL,BRB,BRC
+                        ,BRE,BRN,BRR,BND,BGN,BGJ,BGK,BGL,BUK,BIF,CVE,KHR,XAF,CAD,KYD,CLP,CLF,CNY,COP,COU,KMF,CDF,NZD,CRC,HRK,HRD,CUP,CUC,ANG,CYP,CZK,CSJ,CSK,DKK,DJF,DOP,ECS,ECV,EGP,SVC,GQE,ERN,EEK,SZL,ETB,XEU,FKP,FJD,FIM,XPF,GMD,GEL,GEK,DDM,DEM,GHS,
+                        GHC,GHP,GIP,GRD,GTQ,GBP,GNF,GNE,GNS,GWE,GWP,GYD,HTG,ITL,HNL,HKD,HUF,ISK,ISJ,IDR,XDR,IRR,IQD,IEP,ILS,ILP,ILR,JMD,JPY,JOD,KZT,KES,KPW,KRW,KWD,KGS,LAJ,LAK,LVL,LVR,LBP,LSL,ZAR,LSM,ZAL,LRD,LYD,CHF,LTL,LTT,LUC,LUF,LUL,MOP,MGA,MGF,MWK,MYR
+                        ,MVR,MVQ,MLF,MTL,MTP,MRU,MRO,MUR,XUA,MXN,MXV,MXP,MDL,MNT,MAD,MZN,MZE,MZM,MMK,NAD,NPR,NLG,NIO,NIC,NGN,MKD,OMR,PKR,PAB,PGK,PYG,PEN,PEH,PEI,PES,PHP,PLN,PLZ,PTE,QAR,RON,ROK,ROL,RUB,RWF,SHP,WST,STN,STD,SAR,RSD,CSD,SCR,SLL,SGD,
+                        XSU,SKK,SIT,SBD,SOS,SSP,SDG,RHD,ESA,ESB,LKR,SDD,SDP,SRD,SRG,SEK,CHE,CHW,CHC,SYP,TWD,TJS,TJR,TZS,THB,TPE,TOP,TTD,TND,TRY,TRL,TMT,TMM,UGX,UGS,UGW,UAH,UAK,SUR,AED,USS,USN,UYU,UYI,UYW,UYN,UYP,UZS,VUV,VEB,VEF,VES,VND,VNC,YER,YDD,YUD,
+                        YUM,YUN,ZRN,ZRZ,ZMW,ZMK,ZWL,ZWC,ZWD,ZWN,ZWR,XBA,XFO,XBB,XRE,XBC,XBD,XFU,XTS,XXX,XAU,XPD,XPT,XAG]
+    EnumReasonCode:
+      type: string
+      description: |
+        Define o código da razão pela qual o consentimento foi rejeitado.
+        - CONSENT_EXPIRED – consentimento que ultrapassou o tempo limite para autorização.
+        - CUSTOMER_MANUALLY_REJECTED – cliente efetuou a rejeição do consentimento manualmente através de interação nas instituições participantes.
+        - CUSTOMER_MANUALLY_REVOKED – cliente efetuou a revogação após a autorização do consentimento.
+        - CONSENT_MAX_DATE_REACHED – consentimento que ultrapassou o tempo limite de compartilhamento.
+        - CONSENT_TECHNICAL_ISSUE – consentimento que foi rejeitado devido a um problema técnico que impossibilita seu uso pela instituição receptora, por exemplo: 
+            falha associada a troca do AuthCode pelo AccessToken, durante o processo de Hybid Flow.
+        - INTERNAL_SECURITY_REASON – consentimento que foi rejeitado devido as políticas de segurança aplicada pela instituição transmissora.
+      enum:
+        - CONSENT_EXPIRED
+        - CUSTOMER_MANUALLY_REJECTED
+        - CUSTOMER_MANUALLY_REVOKED
+        - CONSENT_MAX_DATE_REACHED
+        - CONSENT_TECHNICAL_ISSUE
+        - INTERNAL_SECURITY_REASON
+      example: CONSENT_EXPIRED
+
+    RejectedReason:
+      type: object
+      description: Define a razão pela qual o consentimento foi rejeitado.
+      required:
+        - code
+      properties:
+        code:
+          $ref: '#/components/schemas/EnumReasonCode'
+        additionalInformation:
+          type: string
+          description: Contém informações adicionais a critério da transmissora.
+          maxLength: 140
+          pattern: '[\w\W\s]*'
+          example: Tempo de confirmação da múltipla alçada excedido.
+    ResponseError:
+      type: object
+      required:
+        - errors
+      properties:
+        errors:
+          type: array
+          minItems: 1
+          maxItems: 13
+          items:
+            type: object
+            required:
+              - code
+              - title
+              - detail
+              - requestDateTime
+            properties:
+              code:
+                description: Código de erro específico do endpoint
+                type: string
+                pattern: '[\w\W\s]*'
+                maxLength: 255
+              title:
+                description: Título legível por humanos deste erro específico
+                type: string
+                pattern: '[\w\W\s]*'
+                maxLength: 255
+              detail:
+                description: Descrição legível por humanos deste erro específico
+                type: string
+                pattern: '[\w\W\s]*'
+                maxLength: 2048
+              requestDateTime:
+                description: Data e hora da consulta, conforme especificação RFC-3339, formato UTC.
+                type: string
+                maxLength: 20
+                format: date-time
+                example: '2021-05-21T08:30:00Z'
+            additionalProperties: false
+        meta:
+          $ref: '#/components/schemas/Meta'
+      additionalProperties: false
+    422ResponseErrorCreateConsents:
+      type: object
+      required:
+        - errors
+      properties:
+        errors:
+          type: object
+          minItems: 1
+          required:
+            - code
+            - title
+            - detail
+          properties:
+            code:
+              type: string
+              enum:
+                - ERRO_IDEMPOTENCIA
+                - NAO_INFORMADO
+              example: ERRO_IDEMPOTENCIA
+              description: Código do erro 422 de Entidade não processada.
+            title:
+              type: string
+              maxLength: 255
+              pattern: '[\w\W\s]*'
+              example: Tentativa de alteração de requisição já processada
+              description: |
+                - ERRO_ IDEMPOTENCIA: Tentativa de alteração de requisição já processada
+                - NÃO_INFORMADO: Não informada pelo servidor
+            detail:
+              type: string
+              maxLength: 2048
+              pattern: '[\w\W\s]*'
+              example: Tentativa de alteração de requisição já processada
+              description: |
+                - ERRO_ IDEMPOTENCIA: Tentativa de alteração de requisição já processada
+                - NÃO_INFORMADO: Não informada pelo servidor 
+    LoggedUser:
+      type: object
+      description: Usuário (pessoa natural) que encontra-se logado na instituição receptora e que iniciará o processo de consentimento para compartilhamento de dados.
+      additionalProperties: false
+      required:
+        - document
+      properties:
+        document:
+          type: object
+          additionalProperties: false
+          required:
+            - identification
+            - rel
+          properties:
+            identification:
+              type: string
+              maxLength: 11
+              description: Número do documento de identificação oficial do usuário.
+              example: '11111111111'
+              pattern: ^\d{11}$
+            rel:
+              type: string
+              maxLength: 3
+              description: Tipo do documento de identificação oficial do usuário.
+              example: CPF
+              pattern: ^[A-Z]{3}$
+    BusinessEntity:
+      type: object
+      description: Titular, pessoa jurídica a quem se referem os dados que são objeto de compartilhamento.
+      additionalProperties: false
+      required:
+        - document
+      properties:
+        document:
+          type: object
+          additionalProperties: false
+          required:
+            - identification
+            - rel
+          properties:
+            identification:
+              type: string
+              maxLength: 14
+              description: Número do documento de identificação oficial do titular pessoa jurídica.
+              example: '11111111111111'
+              pattern: ^\d{14}$
+            rel:
+              type: string
+              maxLength: 4
+              description: Tipo do documento de identificação oficial do titular pessoa jurídica.
+              example: CNPJ
+              pattern: '^[A-Z]{4}$'
+    XV:
+        type: string
+        description: |
+          Versão do endpoint da API requisitado pelo cliente. O titular dos dados deve 
+          responder com a versão mais alta suportada entre x-min-v e x-v. Se o valor de 
+          x-min-v for igual ou maior que o valor de x-v, o cabeçalho x-min-v deve ser 
+          tratado como ausente. Se todas as versões solicitadas não forem suportadas, 
+          o titular dos dados deve responder com o código de status 406 Not Acceptable.
+  
+  parameters:
+    consentId:
+      name: consentId
+      in: path
+      description: |
+        O consentId é o identificador único do consentimento a ser revogado e deverá ser um URN - Uniform Resource Name.
+      required: true
+      schema:
+        type: string
+        pattern: ^urn:[a-zA-Z0-9][a-zA-Z0-9-]{0,31}:[a-zA-Z0-9()+,\-.:=@;$_!*'%\/?#]+$
+        maxLength: 256
+    Authorization:
+      name: Authorization
+      in: header
+      description: Cabeçalho HTTP padrão. Permite que as credenciais sejam fornecidas dependendo do tipo de recurso solicitado
+      required: true
+      schema:
+        type: string
+        pattern: '[\w\W\s]*'
+        maxLength: 2048
+    xCustomerUserAgent:
+      name: x-customer-user-agent
+      in: header
+      description: Indica o user-agent que o usuário utiliza.
+      required: false
+      schema:
+        type: string
+        pattern: '[\w\W\s]*'
+        minLength: 1
+        maxLength: 100
+    xFapiAuthDate:
+      name: x-fapi-auth-date
+      in: header
+      description: 'Data em que o usuário logou pela última vez com o receptor. Representada de acordo com a [RFC7231](https://tools.ietf.org/html/rfc7231).Exemplo: Sun, 10 Sep 2017 19:43:31 UTC'
+      required: false
+      schema:
+        type: string
+        pattern: ^(Mon|Tue|Wed|Thu|Fri|Sat|Sun), \d{2} (Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec) \d{4} \d{2}:\d{2}:\d{2} (GMT|UTC)$
+        minLength: 29
+        maxLength: 29
+    xFapiCustomerIpAddress:
+      name: x-fapi-customer-ip-address
+      in: header
+      description: O endereço IP do usuário se estiver atualmente logado com o receptor.
+      required: false
+      schema:
+        type: string
+        pattern: '[\w\W\s]*'
+        minLength: 1
+        maxLength: 100
+    xFapiInteractionId:
+      name: x-fapi-interaction-id
+      in: header
+      description: 'Um UID [RFC4122](https://tools.ietf.org/html/rfc4122) usado como um ID de correlação. Se fornecido, o transmissor deve "reproduzir" esse valor no cabeçalho de resposta.'
+      required: true
+      schema:
+        type: string
+        pattern: ^[a-zA-Z0-9][a-zA-Z0-9\-]{0,99}$
+        minLength: 1
+        maxLength: 100
+    x-v:
+      name: x-v
+      in: header
+      description: |
+        Versão do endpoint da API requisitado pelo cliente. O titular dos dados deve 
+        responder com a versão mais alta suportada entre x-min-v e x-v. Se o valor de 
+        x-min-v for igual ou maior que o valor de x-v, o cabeçalho x-min-v deve ser 
+        tratado como ausente. Se todas as versões solicitadas não forem suportadas, 
+        o titular dos dados deve responder com o código de status 406 Not Acceptable.
+      required: false
+      schema:
+        type: string
+      example: '2.1.3'
+    x-min-v:
+      name: x-min-v
+      in: header
+      description: |
+        Versão mínima do endpoint da API requisitado pelo cliente. O detentor dos dados 
+        deve responder com a versão mais alta suportada entre x-min-v e x-v. Se todas as 
+        versões solicitadas não forem suportadas, o titular dos dados deve responder com 
+        um código de status 406 Not Acceptable.
+      required: false
+      schema:
+        type: string
+      example: '2.0.0'
+    xIdempotencyKey:
+      name: x-idempotency-key
+      in: header
+      description: | 
+        Cabeçalho HTTP personalizado. Identificador de solicitação 
+        exclusivo para suportar a idempotência.
+      required: true
+      schema:
+        type: string
+        minLength: 1
+        maxLength: 40
+        pattern: ^(?!\s)(.*)(\S)$
+  securitySchemes: 
+    OAuth2Security:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: https://authserver.example/token
+          scopes:
+            consents: Criação do consentimento.
+  responses:
+    UnprocessableEntityConsents:
+      description: Seguir as orientações presentes na descrição deste endpoint
+      content:
+        application/json; charset=utf-8:
+          schema:
+            $ref: '#/components/schemas/422ResponseErrorCreateConsents'
+    UnprocessableEntity:
+      description: O servidor entende o tipo de conteúdo da entidade da requisição, e a sintaxe da requisição esta correta, mas não foi possível processar as instruções presentes
+      content:
+        application/json; charset=utf-8:
+          schema:
+            $ref: '#/components/schemas/ResponseError'
+    
+    BadRequest:
+      description: A requisição foi malformada, omitindo atributos obrigatórios, seja no payload ou através de atributos na URL.
+      content:
+        application/json; charset=utf-8:
+          schema:
+            $ref: '#/components/schemas/ResponseError'
+    Forbidden:
+      description: O token tem escopo incorreto ou uma política de segurança foi violada
+      content:
+        application/json; charset=utf-8:
+          schema:
+            $ref: '#/components/schemas/ResponseError'
+    InternalServerError:
+      description: Ocorreu um erro no gateway da API ou no microsserviço
+      content:
+        application/json; charset=utf-8:
+          schema:
+            $ref: '#/components/schemas/ResponseError'
+    Default:
+      description: Erro inesperado.
+      headers:  
+        x-v: 
+          schema:
+            $ref: '#/components/schemas/XV'
+      content:
+        application/json; charset=utf-8:
+          schema:
+            $ref: '#/components/schemas/ResponseError'
+    MethodNotAllowed:
+      description: O consumidor tentou acessar o recurso com um método não suportado
+      content:
+        application/json; charset=utf-8:
+          schema:
+            $ref: '#/components/schemas/ResponseError'
+    NotAcceptable:
+      description: A solicitação continha um cabeçalho Accept diferente dos tipos de mídia permitidos ou um conjunto de caracteres diferente de UTF-8
+      content:
+        application/json; charset=utf-8:
+          schema:
+            $ref: '#/components/schemas/ResponseError'
+    NotFound:
+      description: O recurso solicitado não existe ou não foi implementado
+      content:
+        application/json; charset=utf-8:
+          schema:
+            $ref: '#/components/schemas/ResponseError'
+    TooManyRequests:
+      description: A operação foi recusada, pois muitas solicitações foram feitas dentro de um determinado período ou o limite global de requisições concorrentes foi atingido
+      content:
+        application/json; charset=utf-8:
+          schema:
+            $ref: '#/components/schemas/ResponseError'
+    Unauthorized:
+      description: Cabeçalho de autenticação ausente/inválido ou token inválido
+      content:
+        application/json; charset=utf-8:
+          schema:
+            $ref: '#/components/schemas/ResponseError'
+    201ConsentsCreated:
+      description: Consentimento criado com sucesso.
+      headers:
+        x-fapi-interaction-id:
+          description: |
+            Um UID [RFC4122](https://tools.ietf.org/html/rfc4122) usado como um ID de correlação.
+            Se fornecido, o transmissor deve "reproduzir" esse valor no cabeçalho de resposta.
+          schema:
+            type: string
+            pattern: ^[a-zA-Z0-9][a-zA-Z0-9\-]{0,99}$
+            minLength: 1
+            maxLength: 100
+            example: 73cac523-d3ae-2289-b106-330a6218710d
+        x-v: 
+          schema:
+            $ref: '#/components/schemas/XV'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ResponseConsent'
+    200ConsentsConsentIdRead:
+      description: Consentimento consultado com sucesso.
+      headers:
+        x-fapi-interaction-id:
+          description: |
+            Um UID [RFC4122](https://tools.ietf.org/html/rfc4122) usado como um ID de correlação.
+            Se fornecido, o transmissor deve "reproduzir" esse valor no cabeçalho de resposta.
+          schema:
+            type: string
+            pattern: ^[a-zA-Z0-9][a-zA-Z0-9\-]{0,99}$
+            minLength: 1
+            maxLength: 100
+            example: 92cac523-d3ae-2289-b106-330a6218710d
+        x-v: 
+          schema:
+            $ref: '#/components/schemas/XV'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ResponseConsent'
+    204ConsentsConsentIdDeleted:
+      description: Consentimento revogado com sucesso.
+      headers:
+        x-fapi-interaction-id:
+          description: |
+            Um UID [RFC4122](https://tools.ietf.org/html/rfc4122) usado como um ID de correlação.
+            Se fornecido, o transmissor deve "reproduzir" esse valor no cabeçalho de resposta.
+          schema:
+            type: string
+            pattern: ^[a-zA-Z0-9][a-zA-Z0-9\-]{0,99}$
+            minLength: 1
+            maxLength: 100
+            example: 85bac523-d3ae-2289-b106-330a6218710d
+        x-v: 
+          schema:
+            $ref: '#/components/schemas/XV'      
