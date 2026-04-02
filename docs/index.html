@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>API Documentation</title>
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/swagger-ui-dist@5/swagger-ui.css"
+    />
+    <style>
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+        height: 100%;
+        color-scheme: light;
+      }
+      #swagger-ui {
+        min-height: 100vh;
+        background: #ffffff;
+      }
+      #swagger-ui > section,
+      #swagger-ui > section > div:nth-child(2),
+      .swagger-ui .scheme-container,
+      .swagger-ui .wrapper .servers {
+        background: #ffffff !important;
+      }
+      .swagger-ui .topbar {
+        display: none;
+      }
+      .swagger-ui .dark-mode-toggle {
+        display: none !important;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="swagger-ui"></div>
+    <script src="https://unpkg.com/swagger-ui-dist@5/swagger-ui-bundle.js"></script>
+    <script src="https://unpkg.com/swagger-ui-dist@5/swagger-ui-standalone-preset.js"></script>
+    <script>
+      function getSpecUrlFromQuery() {
+        const params = new URLSearchParams(window.location.search);
+        const url = params.get("url");
+        return url && url.trim() ? url.trim() : null;
+      }
+
+      function forceLightMode() {
+        document.documentElement.classList.remove("dark-mode");
+        document.documentElement.classList.add("light-mode");
+      }
+
+      window.onload = function () {
+        const directUrl = getSpecUrlFromQuery();
+        const config = {
+          dom_id: "#swagger-ui",
+          deepLinking: true,
+          filter: true,
+          docExpansion: "none",
+          persistAuthorization: true,
+          presets: [SwaggerUIBundle.presets.apis, SwaggerUIStandalonePreset],
+          plugins: [SwaggerUIBundle.plugins.DownloadUrl],
+          layout: "StandaloneLayout",
+        };
+
+        if (directUrl) {
+          config.url = directUrl;
+        } else {
+          config.configUrl = "./config/apis.json";
+        }
+
+        window.ui = SwaggerUIBundle(config);
+
+        forceLightMode();
+        setTimeout(forceLightMode, 50);
+        setTimeout(forceLightMode, 300);
+      };
+    </script>
+  </body>
+</html>

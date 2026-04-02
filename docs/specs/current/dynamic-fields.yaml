@@ -1,0 +1,693 @@
+openapi: 3.0.0
+info:
+  title: API Dynamic Fields - Open Insurance Brasil
+  description: |
+    API que trata da consulta de Campos dinâmicos para o Open Insurance Brasil - Fase 3.
+    Não possui segregação entre pessoa natural e pessoa jurídica.
+
+    # Orientações importantes
+    - O endPoint callBack deve ser utilizado em caso de sucesso ou falha no processo de manutenção de campos dinâmicos com o devido status.
+    - O acesso a API dynamic-fields se da somente caso a entidade consumidora esteja presente com a role de `ICS` no diretório.
+    - Ao entrar no ecossistema, a `TCS` deve atualizar todas as `ICS`s e receber confirmação via webhook
+    - Ao atualizar seus dados, a `TCS` deve atualizar todas as `ICS`s e receber confirmação via webhook
+    - Ao entrar no ecossistema, a `ICS` deve consumir as APIs de todas as `TCS`s para garantir a atualização dos dados
+  version: 1.5.0
+  contact:
+    name: Governança do Open Insurance Brasil
+    url: https://www.gov.br/susep
+servers:
+  - url: https://api.organizacao.com.br/open-insurance/dynamic-fields/v1
+    description: Servidor de Produção
+  - url: https://api.organizacao.com.br/open-insurance/dynamic-fields/v1
+    description: Servidor de Homologação
+tags:
+  - name: Dynamic Fields
+  - name: Callback
+paths:
+  /damage-and-person:
+    get:
+      tags:
+        - Dynamic Fields
+      summary: Obtém a lista de Campos dinâmicos de Danos e Pessoas.
+      operationId: getDynamicFieldsDamageAndPerson
+      description: Método para obter a lista de Campos dinâmicos mantidos pela instituição transmissora.
+      parameters:
+        - $ref: '#/components/parameters/Authorization'
+        - $ref: '#/components/parameters/xFapiAuthDate'
+        - $ref: '#/components/parameters/xFapiCustomerIpAddress'
+        - $ref: '#/components/parameters/xFapiInteractionId'
+        - $ref: '#/components/parameters/xCustomerUserAgent'
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/pageSize'
+      responses:
+        '200':
+          $ref: '#/components/responses/OKResponseDynamicFieldsList'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '405':
+          $ref: '#/components/responses/MethodNotAllowed'
+        '406':
+          $ref: '#/components/responses/NotAcceptable'
+        '422':
+          $ref: '#/components/responses/UnprocessableEntity'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+        default:
+          $ref: '#/components/responses/OKResponseDynamicFieldsList'
+      security:
+        - OAuth2Security:
+            - dynamic-fields
+  /capitalization-title:
+    get:
+      tags:
+        - Dynamic Fields
+      summary: Obtém a lista de Campos dinâmicos de Títulos de Capitalização.
+      operationId: getDynamicFieldsCapitalizationTitle
+      description: Método para obter a lista de Campos dinâmicos mantidos pela instituição transmissora.
+      parameters:
+        - $ref: '#/components/parameters/Authorization'
+        - $ref: '#/components/parameters/xFapiAuthDate'
+        - $ref: '#/components/parameters/xFapiCustomerIpAddress'
+        - $ref: '#/components/parameters/xFapiInteractionId'
+        - $ref: '#/components/parameters/xCustomerUserAgent'
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/pageSize'
+      responses:
+        '200':
+          $ref: '#/components/responses/OKResponseDynamicFieldsCapitalizationList'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '405':
+          $ref: '#/components/responses/MethodNotAllowed'
+        '406':
+          $ref: '#/components/responses/NotAcceptable'
+        '422':
+          $ref: '#/components/responses/UnprocessableEntity'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+        default:
+          $ref: '#/components/responses/OKResponseDynamicFieldsCapitalizationList'
+      security:
+        - OAuth2Security:
+            - dynamic-fields
+  /callback/damage-and-person:
+    post:
+      tags:
+        - Callback
+      summary: Informa via callback a consulta e a atualização dos campos dinâmicos.
+      operationId: postCallbackDamageAndPerson
+      description: Método para informar via callback a consulta e a atualização dos campos dinâmicos.
+      parameters:
+        - $ref: '#/components/parameters/xCallbackInteractionId'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RequestBodyCallback'
+        description: Payload com as informações de callback para consulta e atualização de campos dinâmicos.
+        required: true
+      responses:
+        '202':
+          $ref: '#/components/responses/202Callback'
+      security:
+        - OAuth2Security:
+            - dynamic-fields
+  /callback/capitalization-title:
+    post:
+      tags:
+        - Callback
+      summary: Informa via callback a consulta e a atualização dos campos dinâmicos.
+      operationId: postCallbackCapitalizationTitle
+      description: Método para informar via callback a consulta e a atualização dos campos dinâmicos.
+      parameters:
+        - $ref: '#/components/parameters/xCallbackInteractionId'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RequestBodyCallback'
+        description: Payload com as informações de callback para consulta e atualização de campos dinâmicos.
+        required: true
+      responses:
+        '202':
+          $ref: '#/components/responses/202Callback'
+      security:
+        - OAuth2Security:
+            - dynamic-fields
+components:
+  schemas:
+    DynamicFieldList:
+      type: object
+      required:
+        - data
+        - links
+        - meta
+      properties:
+        data:
+          type: array
+          minItems: 0
+          items:
+            type: object
+            required:
+              - api
+              - branch
+            properties:
+              api:
+                description: API de referência dos campos dinâmicos.
+                type: string
+                enum:
+                  - QUOTE_PATRIMONIAL
+                  - QUOTE_AUTO
+                  - QUOTE_CAPITALIZATION_TITLE
+                  - QUOTE_CAPITALIZATION_TITLE_RAFFLE
+                  - QUOTE_PERSON_LIFE
+                  - QUOTE_PERSON_TRAVEL
+                  - QUOTE_PERSON_LEAD
+                  - QUOTE_PERSON_LEAD_PORTABILITY
+                  - ENDORSEMENT
+                  - CLAIM_NOTIFICATION_DAMAGE
+                  - CLAIM_NOTIFICATION_PERSON
+                  - PENSION_WITHDRAWAL
+                  - CAPITALIZATION_TITLE_WITHDRAWAL
+                  - PERSON_WITHDRAWAL
+                  - CONTRACT_LIFE_PENSION
+                  - CONTRACT_LIFE_PENSION_LEAD
+                example: ENDORSEMENT
+              branch:
+                description: Ramo relacionado
+                type: array
+                items:
+                  type: object
+                  required:
+                    - code
+                    - fields
+                  properties:
+                    code:
+                      description: Código do grupo e ramo de referência dos campos dinâmicos.
+                      type: string
+                      maxLength: 4
+                      example: '0111'
+                    fields:
+                      type: array
+                      items:
+                        $ref: '#/components/schemas/Fields'
+                    quoteRequiredFields:
+                      description: |
+                                   Nesta lista, informe apenas os campos opcionais do formulário de cotação que a seguradora necessita para precificação do risco. 
+                                   Importante: esta lista NÃO se refere a campos adicionais. Apenas campos presentes em 'QuoteData' devem ser incluídos.
+                      type: array
+                      items:  
+                        type: string
+                        pattern: "^[a-zA-Z0-9_]+$"
+                        example: "issuanceDate"
+        links:
+          $ref: '#/components/schemas/Links'
+        meta:
+          $ref: '#/components/schemas/Meta'
+    DynamicFieldsCapitalizationList:
+      type: object
+      required:
+        - data
+        - links
+        - meta
+      properties:
+        data:
+          type: array
+          minItems: 0
+          items:
+            type: object
+            required:
+              - modality
+              - fields
+            properties:
+              modality:
+                type: string
+                description: Modalidade
+                enum:
+                  - TRADICIONAL
+                  - INSTRUMENTO_GARANTIA
+                  - COMPRA_PROGRAMADA
+                  - POPULAR
+                  - INCENTIVO
+                  - FILANTROPIA_PREMIAVEL
+              fields:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Fields'
+              quoteRequiredFields:
+                      description: |
+                                   Nessa lista devem ser informados os campos opcionais do formulário de cotação, 
+                                   que a seguradora necessita para precificar o risco atrelado a cotação. Essa lista NÃO é referente a campos adicionais.
+                      type: array
+                      items:  
+                        type: string
+                        pattern: "^[a-zA-Z0-9_]+$"
+                        example: "issuanceDate"
+        links:
+          $ref: '#/components/schemas/Links'
+        meta:
+          $ref: '#/components/schemas/Meta'
+    Fields:
+      type: object
+      required:
+        - fieldId
+        - name
+        - type
+        - category
+      properties:
+        fieldId:
+          type: string
+          description: Identificador único do campo
+          pattern: ^[a-zA-Z0-9][a-zA-Z0-9\-]{0,99}$
+          minLength: 1
+          maxLength: 100
+        name:
+          description: Nome do campo, referente ao nome apresentado em tela ao usuário durante sua jornada de cotação.
+          type: string
+          maxLength: 100
+          example: Tem portão eletrico?
+        type:
+          description: Tipo do campo.
+          type: string
+          enum:
+            - BOOLEAN
+            - STRING
+            - NUMBER
+            - INTEGER
+            - ARRAY
+        category:
+          description: Categoria do campo
+          type: string
+          enum:
+            - customerIdentification
+            - customerQualification
+            - customerComplimentaryInfo
+            - businessIdentification
+            - businessQualification
+            - businessComplimentaryInfo
+            - generalQuoteInfo
+            - riskLocationInfo
+            - insuredObjects
+            - beneficiaries
+            - coverages
+            - generalClaimInfo
+            - customerRelationship
+            - portabilityData
+            - complementaryIdentification
+            - productData
+            - generalRiskProfileData
+            - relationshipInfo
+            - productInfo
+            - withdrawalInfo
+            - generalInfo
+            - generalSeriesInfo
+          example: customerIdentification
+        format:
+          description: Formato do campo referente ao seu tipo.
+          type: string
+          example: NONE
+          enum:
+            - FLOAT
+            - DOUBLE
+            - INT32
+            - INT64
+            - DATE
+            - DATE-TIME
+            - NONE
+        example:
+          description: Exemplo do campo que pode ser apresentado ao usuário.
+          type: string
+          maxLength: 100
+          example: 'true'
+        maxLength:
+          description: Tamanho máximo da resposta do usuário.
+          type: integer
+          maxLength: 3
+          example: 0
+        items:
+          description: Campo para abertura do campo em caso de ser um array.
+          type: array
+          items:
+            $ref: '#/components/schemas/FieldsArray'
+    FieldsArray:
+      type: object
+      required:
+        - fieldId
+        - name
+        - type
+      properties:
+        fieldId:
+          type: string
+          description: Identificador único do campo
+          pattern: ^[a-zA-Z0-9][a-zA-Z0-9\-]{0,99}$
+          minLength: 1
+          maxLength: 100
+        name:
+          description: Nome do campo, referente ao nome apresentado em tela ao usuário durante sua jornada de cotação.
+          type: string
+          maxLength: 100
+          example: Tem portão eletrico?
+        type:
+          description: Tipo do campo.
+          type: string
+          enum:
+            - BOOLEAN
+            - STRING
+            - NUMBER
+            - INTEGER
+        format:
+          description: Formato do campo referente ao seu tipo.
+          type: string
+          example: NONE
+          enum:
+            - FLOAT
+            - DOUBLE
+            - INT32
+            - INT64
+            - DATE
+            - DATE-TIME
+            - NONE
+        example:
+          description: Exemplo do campo que pode ser apresentado ao usuário.
+          type: string
+          maxLength: 100
+          example: 'true'
+        maxLength:
+          description: Tamanho máximo da resposta do usuário.
+          type: integer
+          maxLength: 3
+          example: 0
+    Links:
+      type: object
+      properties:
+        self:
+          type: string
+          description: URL da página atualmente requisitada
+          example: https://api.organizacao.com.br/open-insurance/dynamic-fields/v1
+        first:
+          type: string
+          description: URL da primeira página de registros
+          example: https://api.organizacao.com.br/open-insurance/dynamic-fields/v1
+        prev:
+          type: string
+          description: URL da página anterior de registros
+          example: https://api.organizacao.com.br/open-insurance/dynamic-fields/v1
+        next:
+          type: string
+          description: URL da próxima página de registros
+          example: https://api.organizacao.com.br/open-insurance/dynamic-fields/v1
+        last:
+          type: string
+          description: URL da última página de registros
+          example: https://api.organizacao.com.br/open-insurance/dynamic-fields/v1
+    Meta:
+      type: object
+      properties:
+        totalRecords:
+          type: integer
+          description: Total de registros encontrados
+          example: 10
+        totalPages:
+          type: integer
+          description: Total de páginas para os registros encontrados
+          example: 1
+      required:
+        - totalRecords
+        - totalPages
+    ResponseError:
+      type: object
+      required:
+        - errors
+      properties:
+        errors:
+          type: array
+          minItems: 1
+          maxItems: 13
+          items:
+            type: object
+            required:
+              - code
+              - title
+              - detail
+            properties:
+              code:
+                description: Código de erro específico do endpoint
+                type: string
+                pattern: '[\w\W\s]*'
+                maxLength: 255
+              title:
+                description: Título legível por humanos deste erro específico
+                type: string
+                maxLength: 255
+              detail:
+                description: Descrição legível por humanos deste erro específico
+                type: string
+                maxLength: 2048
+              requestDateTime:
+                description: Data e hora da consulta, conforme especificação RFC-3339, formato UTC.
+                type: string
+                maxLength: 20
+                format: date-time
+                pattern: ^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])T(?:[01]\d|2[0123]):(?:[012345]\d):(?:[012345]\d)Z$
+                example: '2021-08-20T08:30:00Z'
+            additionalProperties: false
+        meta:
+          $ref: '#/components/schemas/Meta'
+      additionalProperties: false
+    RequestBodyCallback:
+      type: object
+      required:
+        - data
+      properties:
+        data:
+          type: object
+          description: Informações referentes à chamada realizada.
+          required:
+            - timestamp
+            - status
+          properties:
+            timestamp:
+              type: string
+              format: date-time
+              description: Data e hora em que ocorreu o evento responsável pelo disparo da notificação via callback, conforme especificação RFC-3339, sempre com a utilização de timezone UTC(UTC time format).
+              maxLength: 20
+              pattern: ^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])T(?:[01]\d|2[0123]):(?:[012345]\d):(?:[012345]\d)Z$
+              example: '2021-05-21T08:30:00Z'
+            status:
+              type: string
+              description: |
+                Status referente ao sucesso ou falha do processo de manutenção de campos dinâmicos.
+                  - UPDATED: Campos atualizados com sucesso.
+                  - FAILED: Campos não atualizados devido a problemas com o consumo do recurso de campos dinâmicos.
+              enum:
+                - UPDATED
+                - FAILED
+            description:
+              type: string
+              description: Descrição do erro e ou problema encontrado com o consumo do recurso de campos dinâmicos. Só deve ser implementado em caso do status ser FAILED.
+              maxLength: 300
+              example: Descrição do erro.
+    xCallbackInteractionId:
+      type: string
+      pattern: ^[a-zA-Z0-9][a-zA-Z0-9\-]{0,99}$
+      maxLength: 100
+      description: Identificador único para cada tentativa de notificação realizada. O identificador deverá seguir o padrão UID [RFC4122](https://tools.ietf.org/html/rfc4122).
+  parameters:
+    Authorization:
+      name: Authorization
+      in: header
+      description: Cabeçalho HTTP padrão. Permite que as credenciais sejam fornecidas dependendo do tipo de recurso solicitado.
+      required: true
+      schema:
+        type: string
+        pattern: '[\w\W\s]*'
+        maxLength: 2048
+    page:
+      name: page
+      in: query
+      description: Número da página que está sendo requisitada (o valor da primeira página é 1).
+      schema:
+        type: integer
+        default: 1
+        minimum: 1
+        format: int32
+    pageSize:
+      name: page-size
+      in: query
+      description: Quantidade total de registros por páginas.
+      schema:
+        type: integer
+        default: 25
+        minimum: 1
+        format: int32
+        maximum: 1000
+    xCustomerUserAgent:
+      name: x-customer-user-agent
+      in: header
+      description: Indica o user-agent que o usuário utiliza.
+      required: false
+      schema:
+        type: string
+        pattern: '[\w\W\s]*'
+        minLength: 1
+        maxLength: 100
+    xFapiAuthDate:
+      name: x-fapi-auth-date
+      in: header
+      description: 'Data em que o usuário logou pela última vez com o receptor. Representada de acordo com a [RFC7231](https://tools.ietf.org/html/rfc7231). Exemplo: Sun, 10 Sep 2017 19:43:31 UTC'
+      required: false
+      schema:
+        type: string
+        pattern: ^(Mon|Tue|Wed|Thu|Fri|Sat|Sun), \d{2} (Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec) \d{4} \d{2}:\d{2}:\d{2} (GMT|UTC)$
+        minLength: 29
+        maxLength: 29
+    xFapiCustomerIpAddress:
+      name: x-fapi-customer-ip-address
+      in: header
+      description: O endereço IP do usuário se estiver atualmente logado com o receptor.
+      required: false
+      schema:
+        type: string
+        pattern: '[\w\W\s]*'
+        minLength: 1
+        maxLength: 100
+    xFapiInteractionId:
+      name: x-fapi-interaction-id
+      in: header
+      description: Um UID [RFC4122](https://tools.ietf.org/html/rfc4122) usado como um ID de correlação. Se fornecido, o transmissor deve "reproduzir" esse valor no cabeçalho de resposta.
+      required: true
+      schema:
+        type: string
+        pattern: ^[a-zA-Z0-9][a-zA-Z0-9\-]{0,99}$
+        minLength: 1
+        maxLength: 100
+    xCallbackInteractionId:
+      name: x-callback-interaction-id
+      in: header
+      description: Identificador único para cada tentativa de notificação realizada. O identificador deverá seguir o padrão UID [RFC4122](https://tools.ietf.org/html/rfc4122).
+      required: true
+      schema:
+        type: string
+        pattern: ^[a-zA-Z0-9][a-zA-Z0-9\-]{0,99}$
+        minLength: 1
+        maxLength: 100
+  securitySchemes:
+    OAuth2Security:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: https://authserver.example/token
+          scopes:
+            dynamic-fields: Escopo necessário para acesso à API Dyncamic Fields.
+  responses:
+    OKResponseDynamicFieldsList:
+      description: Consulta de dynamic fields list feita com sucesso
+      headers:
+        x-fapi-interaction-id:
+          description: |
+            Um UID [RFC4122](https://tools.ietf.org/html/rfc4122) usado como um ID de correlação.
+            Se fornecido, o transmissor deve "reproduzir" esse valor no cabeçalho de resposta.
+          schema:
+            type: string
+            pattern: ^[a-zA-Z0-9][a-zA-Z0-9\-]{0,99}$
+            minLength: 1
+            maxLength: 100
+            example: 73cac523-d3ae-2289-b106-330a6218710d
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/DynamicFieldList'
+    OKResponseDynamicFieldsCapitalizationList:
+      description: Consulta de dynamic fields list feita com sucesso
+      headers:
+        x-fapi-interaction-id:
+          description: |
+            Um UID [RFC4122](https://tools.ietf.org/html/rfc4122) usado como um ID de correlação.
+            Se fornecido, o transmissor deve "reproduzir" esse valor no cabeçalho de resposta.
+          schema:
+            type: string
+            pattern: ^[a-zA-Z0-9][a-zA-Z0-9\-]{0,99}$
+            minLength: 1
+            maxLength: 100
+            example: 73cac523-d3ae-2289-b106-330a6218710d
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/DynamicFieldsCapitalizationList'
+    BadRequest:
+      description: A requisição foi malformada, omitindo atributos obrigatórios, seja no payload ou através de atributos na URL
+      content:
+        application/json; charset=utf-8:
+          schema:
+            $ref: '#/components/schemas/ResponseError'
+    Forbidden:
+      description: O token tem escopo incorreto ou uma política de segurança foi violada
+      content:
+        application/json; charset=utf-8:
+          schema:
+            $ref: '#/components/schemas/ResponseError'
+    InternalServerError:
+      description: Ocorreu um erro no gateway da API ou no microsserviço
+      content:
+        application/json; charset=utf-8:
+          schema:
+            $ref: '#/components/schemas/ResponseError'
+    MethodNotAllowed:
+      description: O consumidor tentou acessar o recurso com um método não suportado
+      content:
+        application/json; charset=utf-8:
+          schema:
+            $ref: '#/components/schemas/ResponseError'
+    NotAcceptable:
+      description: A solicitação continha um cabeçalho Accept diferente dos tipos de mídia permitidos ou um conjunto de caracteres diferente de UTF-8
+      content:
+        application/json; charset=utf-8:
+          schema:
+            $ref: '#/components/schemas/ResponseError'
+    NotFound:
+      description: O recurso solicitado não existe ou não foi implementado
+      content:
+        application/json; charset=utf-8:
+          schema:
+            $ref: '#/components/schemas/ResponseError'
+    TooManyRequests:
+      description: A operação foi recusada, pois muitas solicitações foram feitas dentro de um determinado período ou o limite global de requisições concorrentes foi atingido
+      content:
+        application/json; charset=utf-8:
+          schema:
+            $ref: '#/components/schemas/ResponseError'
+    Unauthorized:
+      description: Cabeçalho de autenticação ausente/inválido ou token inválido
+      content:
+        application/json; charset=utf-8:
+          schema:
+            $ref: '#/components/schemas/ResponseError'
+    UnprocessableEntity:
+      description: O servidor entende o tipo de conteúdo da entidade da requisição, e a sintaxe da requisição esta correta, mas não foi possível processar as instruções presentes
+      content:
+        application/json; charset=utf-8:
+          schema:
+            $ref: '#/components/schemas/ResponseError'
+    202Callback:
+      description: Requisição aceita para processamento posterior.
+      headers:
+        x-callback-interaction-id:
+          description: Identificador único para cada tentativa de notificação realizada. O identificador deverá seguir o padrão UID [RFC4122](https://tools.ietf.org/html/rfc4122).
+          schema:
+            $ref: '#/components/schemas/xCallbackInteractionId'

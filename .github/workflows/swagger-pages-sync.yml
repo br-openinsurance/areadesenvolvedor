@@ -1,0 +1,46 @@
+name: Sync Swagger Pages
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+      - master
+    paths:
+      - "documentation/source/files/swagger/**"
+      - "scripts/build_swagger_pages.py"
+      - "docs/index.html"
+      - ".github/workflows/swagger-pages-sync.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  build-swagger-pages:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+
+      - name: Build Swagger docs files
+        run: python scripts/build_swagger_pages.py
+
+      - name: Commit generated docs
+        run: |
+          if [ -n "$(git status --porcelain docs scripts/build_swagger_pages.py)" ]; then
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add docs scripts/build_swagger_pages.py
+            git commit -m "chore(swagger): regenerate docs specs and apis config [skip ci]"
+            git push
+          else
+            echo "No generated changes to commit."
+          fi
