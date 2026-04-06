@@ -30,14 +30,14 @@ info:
       - 1 - `Idempotência:` Valida se há divergência entre chave de idempotência e informações enviadas (ERRO_IDEMPOTENCIA);
       - 2 - `Demais validações:` Valida itens não explicitamente informados pelo servidor - (NAO_INFORMADO).  
       
-  version: 1.3.0
+  version: 2.0.0
   contact:
     name: Governança do Open Insurance Brasil
     url: 'https://www.gov.br/susep'
 servers:
-  - url: 'https://api.organizacao.com.br/open-insurance/endorsement/v1'
+  - url: 'https://api.organizacao.com.br/open-insurance/endorsement/v2'
     description: Servidor de Produção
-  - url: 'https://api.organizacao.com.br/open-insurance/endorsement/v1'
+  - url: 'https://api.organizacao.com.br/open-insurance/endorsement/v2'
     description: Servidor de Homologação
 tags:
   - name: Endorsement
@@ -199,7 +199,6 @@ components:
       type: object
       required:
         - data
-        - links
       properties:
         data:
           type: object
@@ -338,6 +337,9 @@ components:
           example: 'https://www.abcseguros.com/endorsement?id=000123'
     Meta:
       type: object
+      required:
+        - totalRecords
+        - totalPages
       properties:
         totalRecords:
           type: integer
@@ -347,9 +349,6 @@ components:
           type: integer
           description: Total de páginas para os registros encontrados
           example: 1
-      required:
-        - totalRecords
-        - totalPages
     ResponseError:
       type: object
       required:
@@ -365,6 +364,7 @@ components:
               - code
               - title
               - detail
+              - requestDateTime
             properties:
               code:
                 description: Código de erro específico do endpoint
@@ -375,10 +375,12 @@ components:
                 description: Título legível por humanos deste erro específico
                 type: string
                 maxLength: 255
+                pattern: '[\w\W\s]*'
               detail:
                 description: Descrição legível por humanos deste erro específico
                 type: string
                 maxLength: 2048
+                pattern: '[\w\W\s]*'
               requestDateTime:
                 description: Data e hora da consulta, conforme especificação RFC-3339, formato UTC.
                 type: string
@@ -389,47 +391,56 @@ components:
         meta:
           $ref: '#/components/schemas/Meta'
       additionalProperties: false
-    422ResponseErrorCreateEndosement:
+    422ResponseErrorCreateEndorsement:
       type: object
       required:
         - errors
       properties:
         errors:
-          type: object
+          type: array
           minItems: 1
-          required:
-            - code
-            - title
-            - detail
-          properties:
-            code:
-              type: string
-              enum:
-                - ERRO_IDEMPOTENCIA
-                - NAO_INFORMADO
-              example: 'ERRO_IDEMPOTENCIA'
-              description: 'Código do erro 422 de Entidade não processada.' 
-            title:
-              type: string
-              maxLength: 255
-              pattern: '[\w\W\s*]'
-              example: 'Tentativa de alteração de requisição já processada'
-              description: |
-                - ERRO_ IDEMPOTENCIA: Tentativa de alteração de requisição já processada
-                - NÃO_INFORMADO: Não informada pelo servidor
-            detail:
-              type: string
-              maxLength: 2048
-              pattern: '[\w\W\s*]'
-              example: 'Tentativa de alteração de requisição já processada'
-              description: |
-                - ERRO_ IDEMPOTENCIA: Tentativa de alteração de requisição já processada
-                - NÃO_INFORMADO: Não informada pelo servidor 
+          items:
+            type: object
+            required:
+              - code
+              - title
+              - detail
+              - requestDateTime
+            properties:
+              code:
+                type: string
+                enum:
+                  - ERRO_IDEMPOTENCIA
+                  - NAO_INFORMADO
+                example: 'ERRO_IDEMPOTENCIA'
+                description: 'Código do erro 422 de Entidade não processada.' 
+              title:
+                type: string
+                maxLength: 255
+                pattern: '[\w\W\s]*'
+                example: 'Tentativa de alteração de requisição já processada'
+                description: |
+                  - ERRO_IDEMPOTENCIA: Tentativa de alteração de requisição já processada
+                  - NAO_INFORMADO: Não informada pelo servidor
+              detail:
+                type: string
+                maxLength: 2048
+                pattern: '[\w\W\s]*'
+                example: 'Tentativa de alteração de requisição já processada'
+                description: |
+                  - ERRO_IDEMPOTENCIA: Tentativa de alteração de requisição já processada
+                  - NAO_INFORMADO: Não informada pelo servidor 
+              requestDateTime:
+                description: Data e hora da consulta, conforme especificação RFC-3339, formato UTC.
+                type: string
+                maxLength: 20
+                format: date-time
+                example: '2021-08-20T08:30:00Z'
         meta:
           $ref: '#/components/schemas/Meta'
     XFapiInteractionId:
       type: string
-      pattern: '^[a-zA-Z0-9][a-zA-Z0-9\-]{0,99}$'
+      pattern: '^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$'
       maxLength: 100
       description: 'Um UID [RFC4122](https://tools.ietf.org/html/rfc4122) usado como um ID de correlação. Se fornecido, o transmissor deve "reproduzir" esse valor no cabeçalho de resposta.'
   parameters:
@@ -503,7 +514,7 @@ components:
       required: true
       schema:
         type: string
-        pattern: '^[a-zA-Z0-9][a-zA-Z0-9\-]{0,99}$'
+        pattern: '^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$'
         minLength: 1
         maxLength: 100
   securitySchemes:
@@ -583,4 +594,4 @@ components:
       content:
         application/json; charset=utf-8:
           schema:
-            $ref: '#/components/schemas/422ResponseErrorCreateEndosement'
+            $ref: '#/components/schemas/422ResponseErrorCreateEndorsement'
