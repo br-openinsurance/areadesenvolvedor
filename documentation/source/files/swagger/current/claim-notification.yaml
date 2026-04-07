@@ -33,7 +33,7 @@ info:
       - 1 - `Idempotência:` Valida se há divergência entre chave de idempotência e informações enviadas (ERRO_IDEMPOTENCIA);
       - 2 - `Não Informado:` Valida itens não explicitamente informados pelo servidor - (NAO_INFORMADO).  
       
-  version: 1.4.0
+  version: 2.0.0
   license:
     name: Apache 2.0
     url: 'http://www.apache.org/licenses/LICENSE-2.0'
@@ -41,9 +41,9 @@ info:
     name: Governança do Open Insurance Brasil - Especificações
     url: 'https://www.gov.br/susep'
 servers:
-  - url: 'https://api.seguro.com.br/open-insurance/claim-notification/v1'
+  - url: 'https://api.seguro.com.br/open-insurance/claim-notification/v2'
     description: Servidor de Produção
-  - url: 'https://apih.seguro.com.br/open-insurance/claim-notification/v1'
+  - url: 'https://apih.seguro.com.br/open-insurance/claim-notification/v2'
     description: Servidor de Homologação
 tags:
   - name: Claim Notification Damage
@@ -107,7 +107,7 @@ paths:
       tags:
         - Claim Notification Person
       summary: Enviar dados de solicitação de Aviso de Sinistro Pessoas
-      operationId: getClaimNotificationPerson
+      operationId: postClaimNotificationPerson
       description: Método para a criação de solicitação Aviso de Sinistro Pessoas
       parameters:
         - $ref: '#/components/parameters/consentId'
@@ -435,7 +435,6 @@ components:
       type: object
       required:
         - data
-        - links
       properties:
         data:
           type: object
@@ -555,7 +554,6 @@ components:
       type: object
       required:
         - data
-        - links
       properties:
         data:
           type: object
@@ -866,6 +864,7 @@ components:
               - code
               - title
               - detail
+              - requestDateTime
             properties:
               code:
                 description: Código de erro específico do endpoint
@@ -882,6 +881,12 @@ components:
                 type: string
                 pattern: '[\w\W\s]*'
                 maxLength: 2048
+              requestDateTime:
+                description: Data e hora da consulta, conforme especificação RFC-3339, formato UTC.
+                type: string
+                format: date-time
+                pattern: ^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])T(?:[01]\d|2[0123]):(?:[012345]\d):(?:[012345]\d)Z$
+                example: '2021-05-21T08:30:00Z'  
             additionalProperties: false
         meta:
           $ref: '#/components/schemas/Meta' 
@@ -892,42 +897,51 @@ components:
         - errors
       properties:
         errors:
-          type: object
+          type: array
           minItems: 1
-          required:
-            - code
-            - title
-            - detail
-          properties:
-            code:
-              type: string
-              enum:
-                - ERRO_IDEMPOTENCIA
-                - NAO_INFORMADO
-              example: 'ERRO_IDEMPOTENCIA'
-              description: 'Código do erro 422 de Entidade não processada.'
-            title:
-              type: string
-              maxLength: 255
-              pattern: '[\w\W\s*]'
-              example: 'Tentativa de alteração de requisição já processada'
-              description: |
-                - ERRO_ IDEMPOTENCIA: Tentativa de alteração de requisição já processada
-                - NÃO_INFORMADO: Não informada pelo servidor
-            detail:
-              type: string
-              maxLength: 2048
-              pattern: '[\w\W\s*]'
-              example: 'Tentativa de alteração de requisição já processada'
-              description: |
-                - ERRO_ IDEMPOTENCIA: Tentativa de alteração de requisição já processada
-                - NÃO_INFORMADO: Não informada pelo servidor 
+          items:
+            type: object
+            required:
+              - code
+              - title
+              - detail
+              - requestDateTime
+            properties:
+              code:
+                type: string
+                enum:
+                  - ERRO_IDEMPOTENCIA
+                  - NAO_INFORMADO
+                example: 'ERRO_IDEMPOTENCIA'
+                description: 'Código do erro 422 de Entidade não processada.'
+              title:
+                type: string
+                maxLength: 255
+                pattern: '[\w\W\s*]'
+                example: 'Tentativa de alteração de requisição já processada'
+                description: |
+                  - ERRO_IDEMPOTENCIA: Tentativa de alteração de requisição já processada
+                  - NAO_INFORMADO: Não informada pelo servidor
+              detail:
+                type: string
+                maxLength: 2048
+                pattern: '[\w\W\s*]'
+                example: 'Tentativa de alteração de requisição já processada'
+                description: |
+                  - ERRO_IDEMPOTENCIA: Tentativa de alteração de requisição já processada
+                  - NAO_INFORMADO: Não informada pelo servidor 
+              requestDateTime:
+                description: Data e hora da consulta, conforme especificação RFC-3339, formato UTC.
+                type: string
+                format: date-time
+                pattern: ^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])T(?:[01]\d|2[0123]):(?:[012345]\d):(?:[012345]\d)Z$
+                example: '2021-05-21T08:30:00Z'  
           
         meta:
           $ref: '#/components/schemas/Meta'
     XFapiInteractionId:
       type: string
-      pattern: '^[a-zA-Z0-9][a-zA-Z0-9\-]{0,99}$'
+      pattern: '^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}'
       maxLength: 100
       description: Um UID [RFC4122](https://tools.ietf.org/html/rfc4122) usado como um ID de correlação. Se fornecido, o transmissor deve reproduzir" esse valor no cabeçalho de resposta.'
     Links:
@@ -945,7 +959,6 @@ components:
       required:
         - totalRecords
         - totalPages
-        - requestDateTime
       properties:
         totalRecords:
           type: integer
@@ -957,12 +970,6 @@ components:
           format: int32
           description: Número total de páginas no resultado
           example: 1
-        requestDateTime:
-          description: Data e hora da consulta, conforme especificação RFC-3339, formato UTC.
-          type: string
-          maxLength: 20
-          format: date-time
-          example: '2021-05-21T08:30:00Z'
       additionalProperties: false
   parameters:
     consentId:
@@ -1043,7 +1050,7 @@ components:
       required: true
       schema:
         type: string
-        pattern: '^[a-zA-Z0-9][a-zA-Z0-9\-]{0,99}$'
+        pattern: '^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}'
         minLength: 1
         maxLength: 100
     xIdempotencyKey:
