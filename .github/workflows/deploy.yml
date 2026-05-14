@@ -3,9 +3,19 @@ name: Deploy
 on:
   push:
     branches: [ 'main' ]
+    paths-ignore:
+      - 'documentation/source/files/swagger/**'
+  workflow_run:
+    workflows: [ 'Sync Swagger Pages' ]
+    types: [ completed ]
+
+concurrency:
+  group: deploy-pages-${{ github.event.workflow_run.head_branch || github.ref_name || github.ref }}
+  cancel-in-progress: true
 
 jobs:
   deploy:
+    if: github.event_name != 'workflow_run' || (github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.head_branch == 'main')
     permissions:
       contents: write
 
@@ -20,6 +30,8 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
+      with:
+        ref: ${{ github.event.workflow_run.head_branch || github.ref_name }}
     - name: Set up Ruby
       uses: ruby/setup-ruby@v1
       with:
