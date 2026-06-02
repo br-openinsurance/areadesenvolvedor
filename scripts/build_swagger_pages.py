@@ -138,6 +138,12 @@ def resolve_unique_publish_paths(candidates: List[CandidateSpec]) -> Dict[str, C
 
     return selected
 
+def api_group_key(publish_relative: str) -> str:
+    parts = Path(publish_relative).parts
+    if parts and parts[0].lower() == "current":
+        parts = parts[1:]
+    return Path(*parts).as_posix().lower()
+
 
 def write_output(
     root: Path, selected: Dict[str, CandidateSpec]
@@ -164,7 +170,7 @@ def write_output(
             candidate.version,
             candidate.source_group,
         )
-        api_urls.append({"url": relative_url, "name": name})
+        api_urls.append({"url": relative_url, "name": name, "group": api_group_key(candidate.publish_relative)})
         copied_files.append((candidate.publish_relative, candidate.source, candidate.source_group))
 
     apis_json_path = config_dir / "apis.json"

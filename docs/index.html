@@ -4,11 +4,21 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>API Documentation</title>
+
     <link
       rel="stylesheet"
       href="https://unpkg.com/swagger-ui-dist@5/swagger-ui.css"
     />
+
     <style>
+      :root {
+        --topbar-bg: #197f93;
+        --topbar-text: #ffffff;
+        --page-bg: #ffffff;
+        --select-bg: #ffffff;
+        --select-border: #b8b8b8;
+      }
+
       html,
       body {
         margin: 0;
@@ -16,37 +26,168 @@
         height: 100%;
         color-scheme: light;
       }
-      #swagger-ui {
+
+      .app-shell {
         min-height: 100vh;
+      }
+
+      .custom-topbar {
+        height: 56px;
+        background: var(--topbar-bg);
+        color: var(--topbar-text);
+        display: flex;
+        align-items: center;
+        padding: 0 20px;
+        box-sizing: border-box;
+      }
+
+      .custom-topbar-inner {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+      }
+
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-weight: 700;
+        font-size: 18px;
+        line-height: 1;
+        white-space: nowrap;
+      }
+
+      .brand img {
+        display: block;
+        height: 28px;
+      }
+
+      .version-switcher {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        white-space: nowrap;
+        font-size: 14px;
+        font-weight: 600;
+      }
+
+      .version-switcher label {
+        margin: 0;
+      }
+
+      .version-switcher select {
+        min-width: 420px;
+        max-width: 60vw;
+        height: 34px;
+        border: 1px solid var(--select-border);
+        border-radius: 4px;
+        padding: 0 12px;
+        background: var(--select-bg);
+        color: #222;
+        box-sizing: border-box;
+        outline: none;
+      }
+
+      .version-switcher select:disabled {
+        opacity: 0.65;
+        cursor: wait;
+      }
+
+      #swagger-ui {
+        min-height: calc(100vh - 56px);
         background: #ffffff;
       }
+
       #swagger-ui > section,
       #swagger-ui > section > div:nth-child(2),
       .swagger-ui .scheme-container,
       .swagger-ui .wrapper .servers {
         background: #ffffff !important;
       }
+
       .swagger-ui .topbar {
         display: none;
       }
+
       .swagger-ui .download-url-wrapper,
       .swagger-ui .info .url {
         display: none !important;
       }
+
       .swagger-ui .dark-mode-toggle {
         display: none !important;
       }
+
+      @media (max-width: 768px) {
+        .custom-topbar {
+          height: auto;
+          padding: 12px 16px;
+        }
+
+        .custom-topbar-inner {
+          flex-direction: column;
+          align-items: flex-start;
+        }
+
+        .version-switcher {
+          width: 100%;
+          flex-direction: column;
+          align-items: flex-start;
+          gap: 6px;
+        }
+
+        .version-switcher select {
+          width: 100%;
+          min-width: 0;
+          max-width: none;
+        }
+      }
     </style>
   </head>
+
   <body>
-    <div id="swagger-ui"></div>
+    <div class="app-shell">
+      <div class="custom-topbar">
+        <div class="custom-topbar-inner">
+          <div class="brand">
+            <img src="*" alt="OpenInsurence" />
+            <span>openinsurence</span>
+          </div>
+
+          <div class="version-switcher">
+            <label for="spec-select">Select a definition</label>
+            <select id="spec-select" disabled></select>
+          </div>
+        </div>
+      </div>
+
+      <div id="swagger-ui"></div>
+    </div>
+
     <script src="https://unpkg.com/swagger-ui-dist@5/swagger-ui-bundle.js"></script>
     <script src="https://unpkg.com/swagger-ui-dist@5/swagger-ui-standalone-preset.js"></script>
+
     <script>
-      function getSpecUrlFromQuery() {
+      let ui = null;
+      let specs = [];
+      const selectEl = document.getElementById("spec-select");
+
+      function getQueryParam(name) {
         const params = new URLSearchParams(window.location.search);
-        const url = params.get("url");
-        return url && url.trim() ? url.trim() : null;
+        const value = params.get(name);
+        return value && value.trim() ? value.trim() : null;
+      }
+
+      function setQueryParam(name, value) {
+        const url = new URL(window.location.href);
+        if (value) {
+          url.searchParams.set(name, value);
+        } else {
+          url.searchParams.delete(name);
+        }
+        window.history.replaceState({}, "", url.toString());
       }
 
       function forceLightMode() {
@@ -54,10 +195,20 @@
         document.documentElement.classList.add("light-mode");
       }
 
-      window.onload = function () {
-        const directUrl = getSpecUrlFromQuery();
-        const config = {
+      function destroyCurrentUi() {
+        const container = document.getElementById("swagger-ui");
+        container.innerHTML = "";
+        ui = null;
+      }
+
+      function loadSwaggerSpec(specUrl) {
+        if (!specUrl) return;
+
+        destroyCurrentUi();
+
+        ui = SwaggerUIBundle({
           dom_id: "#swagger-ui",
+          url: specUrl,
           deepLinking: true,
           filter: false,
           docExpansion: "list",
@@ -66,16 +217,99 @@
           onComplete: forceLightMode,
           presets: [SwaggerUIBundle.presets.apis, SwaggerUIStandalonePreset],
           layout: "StandaloneLayout",
-        };
+        });
+      }
 
-        if (directUrl) {
-          config.url = directUrl;
-        } else {
-          config.configUrl = "./config/apis.json";
+      function fillSelector(urls) {
+        selectEl.innerHTML = "";
+
+        urls.forEach((spec, index) => {
+          const option = document.createElement("option");
+          option.value = spec.url;
+          option.textContent = spec.name;
+          option.dataset.index = String(index);
+          selectEl.appendChild(option);
+        });
+
+        selectEl.disabled = urls.length === 0;
+      }
+
+      function getInitialSpecUrl(urls) {
+        const directUrl = getQueryParam("url");
+        if (directUrl) return directUrl;
+
+        const primaryName = getQueryParam("primaryName");
+        if (primaryName) {
+          const found = urls.find((spec) => spec.name === primaryName);
+          if (found) return found.url;
         }
 
-        window.ui = SwaggerUIBundle(config);
-      };
+        return urls.length ? urls[0].url : null;
+      }
+
+      function selectOptionByUrl(url) {
+        const options = Array.from(selectEl.options);
+        const match = options.find((opt) => opt.value === url);
+        if (match) {
+          selectEl.value = url;
+        }
+      }
+
+      function apiGroupKey(specUrl){
+        const clean = specUrl
+        .replace(/^\.\/specs\//, "")
+        .replace(/^specs\//, "");
+
+        return clean.replace(/^current\//, "").toLowerCase();
+      }
+
+      selectEl.addEventListener("change", function (e) {
+        const selectedUrl = e.target.value;
+        setQueryParam("url", selectedUrl);
+        loadSwaggerSpec(selectedUrl);
+      });
+
+
+      async function init() {
+        const loadingEl = document.createElement("div");
+        loadingEl.className = "loading-state";
+        loadingEl.textContent = "Loading API definitions...";
+        document.getElementById("swagger-ui").appendChild(loadingEl);
+
+        try {
+          const response = await fetch("./config/apis.json", {
+            cache: "no-store",
+          });
+
+          if (!response.ok) {
+            throw new Error(`Failed to load apis.json: ${response.status}`);
+          }
+
+          const data = await response.json();
+
+          const specs = Array.isArray(data.urls) ? data.urls : [];
+
+          const initialUrl = getInitialSpecUrl(specs);
+          
+          const currentGroup = apiGroupKey(initialUrl);
+          const visibleSpecs = specs.filter((spec) => spec.group === currentGroup);
+
+          fillSelector(visibleSpecs);
+          selectOptionByUrl(initialUrl);
+          setQueryParam("url", initialUrl);
+          loadSwaggerSpec(initialUrl);
+        } catch (error) {
+          document.getElementById("swagger-ui").innerHTML = `
+            <div class="loading-state">
+              Error loading API documentation: ${error.message}
+            </div>
+          `;
+          selectEl.disabled = true;
+          console.error(error);
+        }
+      }
+
+      window.addEventListener("load", init);
     </script>
   </body>
 </html>
