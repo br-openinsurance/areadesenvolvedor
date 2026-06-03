@@ -11,8 +11,8 @@
     />
 
     <style>
-      :root {
-        --topbar-bg: #197f93;
+     :root {
+        --topbar-bg: rgb(15, 87, 13);
         --topbar-text: #ffffff;
         --page-bg: #ffffff;
         --select-bg: #ffffff;
@@ -25,10 +25,13 @@
         padding: 0;
         height: 100%;
         color-scheme: light;
+        background: var(--page-bg);
+        font-family: Arial, Helvetica, sans-serif;
       }
 
       .app-shell {
         min-height: 100vh;
+        background: var(--page-bg);
       }
 
       .custom-topbar {
@@ -108,7 +111,7 @@
       }
 
       .swagger-ui .topbar {
-        display: none;
+        display: none !important;
       }
 
       .swagger-ui .download-url-wrapper,
@@ -118,6 +121,12 @@
 
       .swagger-ui .dark-mode-toggle {
         display: none !important;
+      }
+
+      .loading-state {
+        padding: 16px 20px;
+        color: #555;
+        font-size: 14px;
       }
 
       @media (max-width: 768px) {
@@ -152,12 +161,11 @@
       <div class="custom-topbar">
         <div class="custom-topbar-inner">
           <div class="brand">
-            <img src="*" alt="OpenInsurence" />
-            <span>openinsurence</span>
+            <img src="./logo.png"/>
           </div>
 
           <div class="version-switcher">
-            <label for="spec-select">Select a definition</label>
+            <label for="spec-select">Selecione a versão:</label>
             <select id="spec-select" disabled></select>
           </div>
         </div>
@@ -178,6 +186,16 @@
         const params = new URLSearchParams(window.location.search);
         const value = params.get(name);
         return value && value.trim() ? value.trim() : null;
+      }
+
+      function normalizeSpecUrl(url) {
+        if (!url) return url;
+
+        if (url.startsWith("/specs/")) {
+          return `.${url}`;
+        }
+
+        return url;
       }
 
       function setQueryParam(name, value) {
@@ -235,40 +253,39 @@
       }
 
       function getInitialSpecUrl(urls) {
-        const directUrl = getQueryParam("url");
+        const directUrl = normalizeSpecUrl(getQueryParam("url"));
         if (directUrl) return directUrl;
 
         const primaryName = getQueryParam("primaryName");
         if (primaryName) {
           const found = urls.find((spec) => spec.name === primaryName);
-          if (found) return found.url;
+          if (found) return normalizeSpecUrl(found.url);
         }
 
-        return urls.length ? urls[0].url : null;
+        return urls.length ? normalizeSpecUrl(urls[0].url) : null;
       }
 
       function selectOptionByUrl(url) {
+        const normalized = normalizeSpecUrl(url);
         const options = Array.from(selectEl.options);
-        const match = options.find((opt) => opt.value === url);
+        const match = options.find((opt) => opt.value === normalized);
         if (match) {
-          selectEl.value = url;
+          selectEl.value = normalized;
         }
       }
 
-      function apiGroupKey(specUrl){
-        const clean = specUrl
-        .replace(/^\.\/specs\//, "")
-        .replace(/^specs\//, "");
-
-        return clean.replace(/^current\//, "").toLowerCase();
+      function specKey(specUrl) {
+        return normalizeSpecUrl(specUrl)
+          .replace(/^\.\/specs\//, "")
+          .replace(/^current\//, "")
+          .toLowerCase();
       }
 
       selectEl.addEventListener("change", function (e) {
-        const selectedUrl = e.target.value;
+        const selectedUrl = normalizeSpecUrl(e.target.value);
         setQueryParam("url", selectedUrl);
         loadSwaggerSpec(selectedUrl);
       });
-
 
       async function init() {
         const loadingEl = document.createElement("div");
@@ -286,13 +303,17 @@
           }
 
           const data = await response.json();
-
-          const specs = Array.isArray(data.urls) ? data.urls : [];
+          specs = Array.isArray(data.urls) ? data.urls : [];
 
           const initialUrl = getInitialSpecUrl(specs);
-          
-          const currentGroup = apiGroupKey(initialUrl);
-          const visibleSpecs = specs.filter((spec) => spec.group === currentGroup);
+          if (!initialUrl) {
+            throw new Error("Could not determine initial spec URL");
+          }
+
+          const currentKey = specKey(initialUrl);
+          const visibleSpecs = specs.filter(
+            (spec) => specKey(spec.url) === currentKey,
+          );
 
           fillSelector(visibleSpecs);
           selectOptionByUrl(initialUrl);
@@ -300,10 +321,10 @@
           loadSwaggerSpec(initialUrl);
         } catch (error) {
           document.getElementById("swagger-ui").innerHTML = `
-            <div class="loading-state">
-              Error loading API documentation: ${error.message}
-            </div>
-          `;
+        <div class="loading-state">
+          Error loading API documentation: ${error.message}
+        </div>
+      `;
           selectEl.disabled = true;
           console.error(error);
         }
