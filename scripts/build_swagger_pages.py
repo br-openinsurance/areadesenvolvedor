@@ -6,9 +6,26 @@ Scans:
 - documentation/source/files/swagger/current
 
 Publishes:
-- docs/specs/*
-- docs/config/apis.json
+- docs/swagger/specs/*
+- docs/swagger/config/apis.json
 - docs/.nojekyll
+
+Important:
+The Swagger UI URL remains unchanged:
+
+https://br-openinsurance.github.io/areadesenvolvedor/swagger/?url=./specs/current/ingestion.yaml
+
+Because the Swagger UI is served from /swagger/, the relative URL:
+
+./specs/current/ingestion.yaml
+
+resolves to:
+
+/swagger/specs/current/ingestion.yaml
+
+Therefore the generated files must be under:
+
+docs/swagger/specs/*
 """
 
 from __future__ import annotations
@@ -22,6 +39,7 @@ from typing import Dict, List, Optional, Tuple
 
 
 VALID_EXTENSIONS = {".yaml", ".yml", ".json"}
+
 OPENAPI_REGEX = re.compile(r"(?m)^\s*(openapi|swagger)\s*:")
 TITLE_REGEX = re.compile(r'(?m)^[ \t]{0,12}title\s*:\s*["\']?([^"\n\'#]+)')
 VERSION_REGEX = re.compile(r'(?m)^[ \t]{0,12}version\s*:\s*["\']?([^"\n\'#]+)')
@@ -35,6 +53,14 @@ class CandidateSpec:
     source_group: str
     title: Optional[str]
     version: Optional[str]
+
+
+def clean_value(value: Optional[str]) -> Optional[str]:
+    if value is None:
+        return None
+
+    normalized = str(value).strip().strip('"').strip("'").strip()
+    return normalized or None
 
 
 def is_openapi_spec(file_path: Path) -> Tuple[bool, Optional[str], Optional[str]]:
@@ -68,13 +94,6 @@ def is_openapi_spec(file_path: Path) -> Tuple[bool, Optional[str], Optional[str]
     return True, title, version
 
 
-def clean_value(value: Optional[str]) -> Optional[str]:
-    if value is None:
-        return None
-    normalized = str(value).strip().strip('"').strip("'").strip()
-    return normalized or None
-
-
 def readable_name(
     publish_relative: str, title: Optional[str], version: Optional[str], source_group: str
 ) -> str:
@@ -106,8 +125,7 @@ def collect_candidates(swagger_root: Path) -> Tuple[List[CandidateSpec], List[Pa
             continue
 
         relative = file_path.relative_to(swagger_root).as_posix()
-        from_current = relative.startswith("current/")
-        source_group = "current" if from_current else "base"
+        source_group = "current" if relative.startswith("current/") else "base"
         publish_relative = relative
 
         valid, title, version = is_openapi_spec(file_path)
@@ -143,8 +161,17 @@ def write_output(
     root: Path, selected: Dict[str, CandidateSpec]
 ) -> Tuple[List[dict], List[Tuple[str, Path, str]]]:
     docs_dir = root / "docs"
-    specs_dir = docs_dir / "specs"
-    config_dir = docs_dir / "config"
+
+    swagger_dir = docs_dir / "swagger"
+    specs_dir = swagger_dir / "specs"
+    config_dir = swagger_dir / "config"
+
+    # Remove generated artifacts to avoid stale files in GitHub Pages.
+    if specs_dir.exists():
+        shutil.rmtree(specs_dir)
+
+    if config_dir.exists():
+        shutil.rmtree(config_dir)
 
     specs_dir.mkdir(parents=True, exist_ok=True)
     config_dir.mkdir(parents=True, exist_ok=True)
@@ -164,8 +191,21 @@ def write_output(
             candidate.version,
             candidate.source_group,
         )
-        api_urls.append({"url": relative_url, "name": name})
-        copied_files.append((candidate.publish_relative, candidate.source, candidate.source_group))
+
+        api_urls.append(
+            {
+                "url": relative_url,
+                "name": name,
+            }
+        )
+
+        copied_files.append(
+            (
+                candidate.publish_relative,
+                candidate.source,
+                candidate.source_group,
+            )
+        )
 
     apis_json_path = config_dir / "apis.json"
     apis_json_path.write_text(
@@ -199,7 +239,9 @@ def main() -> int:
     print(f"- Valid specs found: {len(candidates)}")
     print(f"- Invalid/ignored files: {len(invalid)}")
     print(f"- Published specs: {len(copied_files)}")
-    print("- Source separation: enabled (base and current are both published)")
+    print("- Output directory: docs/swagger/specs")
+    print("- Swagger UI relative URL remains: ./specs/current/ingestion.yaml")
+    print("- Source separation: enabled, base and current are both published")
 
     if invalid:
         print("- Ignored files that are not valid OpenAPI/Swagger:")
