@@ -1,0 +1,808 @@
+openapi: 3.0.0
+info:
+  title: API Assistência Financeira - Open Insurance Brasil
+  description: |
+    API de Assistência Financeira do Open Insurance Brasil - Fase 2.\
+    Traz informações de contrato e movimentações financeiras mantidas nas instituições transmissoras por seus clientes.\
+    Não possui segregação entre pessoa natural e pessoa jurídica.\
+    Requer consentimento do cliente para todos os `endpoints`.
+
+    # Orientações
+    A `Role` do diretório de participantes relacionada à presente API é a `DADOS`.\
+    Para todos os `endpoints` desta API é previsto o envio de um `token` através do header `Authorization`.\
+    Este `token` deverá estar relacionado ao consentimento (identificado pelo `consentId`) mantido na instituição transmissora dos dados, o qual permitirá a pesquisa e retorno, na API em questão, dos 
+    dados relacionados ao `consentId` específico.\
+    Os dados serão devolvidos na consulta desde que o `consentId` relacionado corresponda a um consentimento válido e com o status `AUTHORISED`.\
+    É também necessário que o recurso em questão (conta, contrato, etc.) esteja disponível na instituição transmissora (ou seja, sem boqueios de qualquer natureza e com todas as autorizações/consentimentos já autorizados).\
+    Além disso, as `permissions` necessárias deverão ter sido solicitadas quando da criação do consentimento relacionado.\
+    Relacionamos a seguir as `permissions` necessárias para a consulta de dados em cada `endpoint` da presente API.
+
+    ## Permissions necessárias para a API InsuranceFinancialAssistance
+
+    Para cada um dos `paths` desta API, além dos escopos (`scopes`) indicados existem `permissions` que deverão ser observadas:
+
+    ### `/contracts`
+      - permissions:
+        - GET: **FINANCIAL_ASSISTANCE_READ**
+    ### `/{contractId}/contract-info`
+      - permissions:
+        - GET: **FINANCIAL_ASSISTANCE_CONTRACTINFO_READ**
+    ### `/{contractId}/movements`
+      - permissions:
+        - GET: **FINANCIAL_ASSISTANCE_MOVEMENTS_READ**
+
+  version: 1.3.0
+  contact:
+    name: Governança do Open Insurance Brasil
+    url: "https://www.gov.br/susep"
+servers:
+  - url: "https://api.organizacao.com.br/open-insurance/insurance-financial-assistance/v1"
+    description: Servidor de Produção
+  - url: "https://apih.organizacao.com.br/open-insurance/insurance-financial-assistance/v1"
+    description: Servidor de Homologação
+tags:
+  - name: InsuranceFinancialAssistance
+    description: Dados transacionais de Assistência Financeira
+paths:
+  /insurance-financial-assistance/contracts:
+    get:
+      tags:
+        - InsuranceFinancialAssistance
+      summary: Obtem a lista de identificação de InsuranceFinancialAssistance
+      description: "Método para obter a lista de identificação de InsuranceFinancialAssistance"
+      operationId: "getInsuranceFinancialAssistance"
+      parameters:
+        - $ref: "#/components/parameters/Authorization"
+        - $ref: "#/components/parameters/xFapiAuthDate"
+        - $ref: "#/components/parameters/xFapiCustomerIpAddress"
+        - $ref: "#/components/parameters/xFapiInteractionId"
+        - $ref: "#/components/parameters/xCustomerUserAgent"
+        - $ref: "#/components/parameters/x-v"
+        - $ref: "#/components/parameters/x-min-v"
+        - $ref: "#/components/parameters/page"
+        - $ref: "#/components/parameters/pageSize"
+      responses:
+        "200":
+          $ref: "#/components/responses/OKResponseInsuranceFinancialAssistance"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "405":
+          $ref: "#/components/responses/MethodNotAllowed"
+        "406":
+          $ref: "#/components/responses/NotAcceptable"
+        "422":
+          $ref: "#/components/responses/UnprocessableEntity"
+        "429":
+          $ref: "#/components/responses/TooManyRequests"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+      security:
+        - OpenId:
+            - openid
+          OAuth2Security:
+            - "consent:consentId"
+            - insurance-financial-assistance
+  /insurance-financial-assistance/{contractId}/contract-info:
+    get:
+      tags:
+        - InsuranceFinancialAssistance
+      summary: Obtém as informações gerais do contrato identificado por {contractId}
+      description: "Método para obter as informações gerais do contrato"
+      operationId: "getInsuranceFinancialAssistanceContractInfo"
+      parameters:
+        - $ref: "#/components/parameters/Authorization"
+        - $ref: "#/components/parameters/xFapiAuthDate"
+        - $ref: "#/components/parameters/xFapiCustomerIpAddress"
+        - $ref: "#/components/parameters/xFapiInteractionId"
+        - $ref: "#/components/parameters/xCustomerUserAgent"
+        - $ref: "#/components/parameters/x-v"
+        - $ref: "#/components/parameters/x-min-v"
+        - $ref: "#/components/parameters/contractId"
+      responses:
+        "200":
+          $ref: "#/components/responses/OKResponseInsuranceFinancialAssistanceContractInfo"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "405":
+          $ref: "#/components/responses/MethodNotAllowed"
+        "406":
+          $ref: "#/components/responses/NotAcceptable"
+        "422":
+          $ref: "#/components/responses/UnprocessableEntity"
+        "429":
+          $ref: "#/components/responses/TooManyRequests"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+      security:
+        - OpenId:
+            - openid
+          OAuth2Security:
+            - "consent:consentId"
+            - insurance-financial-assistance
+  /insurance-financial-assistance/{contractId}/movements:
+    get:
+      tags:
+        - InsuranceFinancialAssistance
+      summary: Obtém os dados de movimentação do contrato identificado por {contractId}
+      description: "Método para obter os dados de movimentação do contrato."
+      operationId: "getInsuranceFinancialAssistanceMovements"
+      parameters:
+        - $ref: "#/components/parameters/Authorization"
+        - $ref: "#/components/parameters/xFapiAuthDate"
+        - $ref: "#/components/parameters/xFapiCustomerIpAddress"
+        - $ref: "#/components/parameters/xFapiInteractionId"
+        - $ref: "#/components/parameters/xCustomerUserAgent"
+        - $ref: "#/components/parameters/contractId"
+        - $ref: "#/components/parameters/x-v"
+        - $ref: "#/components/parameters/x-min-v"
+        - $ref: "#/components/parameters/page"
+        - $ref: "#/components/parameters/pageSize"
+      responses:
+        "200":
+          $ref: "#/components/responses/OKResponseInsuranceFinancialAssistanceMovements"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "405":
+          $ref: "#/components/responses/MethodNotAllowed"
+        "406":
+          $ref: "#/components/responses/NotAcceptable"
+        "422":
+          $ref: "#/components/responses/UnprocessableEntity"
+        "429":
+          $ref: "#/components/responses/TooManyRequests"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+      security:
+        - OpenId:
+            - openid
+          OAuth2Security:
+            - "consent:consentId"
+            - insurance-financial-assistance
+components:
+  schemas:
+    ResponseInsuranceFinancialAssistance:
+      type: object
+      required:
+        - data
+        - links
+        - meta
+      properties:
+        data:
+          type: array
+          items:
+            type: object
+            required:
+              - brand
+            properties:
+              brand:
+                type: object
+                description: Marca reportada pelo participante do Open Insurance. O conceito a que se refere a marca é em essência uma promessa das sociedades sob ela em fornecer uma série específica de atributos, benefícios e serviços uniformes aos clientes.
+                required:
+                  - name
+                  - companies
+                properties:
+                  name:
+                    type: string
+                    description: Marca reportada pelo participante do Open Insurance. O conceito a que se refere a marca é em essência uma promessa das sociedades sob ela em fornecer uma série específica de atributos, benefícios e serviços uniformes aos clientes.
+                    maxLength: 500
+                    example: EMPRESA A SEGUROS
+                  companies:
+                    type: array
+                    items:
+                      type: object
+                      required:
+                        - companyName
+                        - cnpjNumber
+                      properties:
+                        companyName:
+                          description: Nome da sociedade pertencente à marca
+                          type: string
+                          maxLength: 80
+                          example: Empresa da Organização A
+                        cnpjNumber:
+                          description: CNPJ da sociedade pertencente à marca
+                          type: string
+                          pattern: '^\d{14}$'
+                          example: "12345678901234"
+                        contracts:
+                          type: array
+                          items:
+                            type: object
+                            required:
+                              - contractId
+                            properties:
+                              contractId:
+                                description: Identificador do contrato de assistência financeira
+                                type: string
+                                maxLength: 60
+                                example: "42"
+        links:
+          $ref: "#/components/schemas/Links"
+        meta:
+          $ref: "#/components/schemas/Meta"
+    ResponseInsuranceFinancialAssistanceContractInfo:
+      type: object
+      required:
+        - data
+        - links
+        - meta
+      properties:
+        data:
+          $ref: "#/components/schemas/InsuranceFinancialAssistanceContractInfo"
+        links:
+          $ref: "#/components/schemas/Links"
+        meta:
+          $ref: "#/components/schemas/Meta"
+    InsuranceFinancialAssistanceContractInfo:
+      type: object
+      required:
+        - contractId
+        - certificateId
+        - susepProcessNumber
+        - insureds
+        - conceivedCreditValue
+        - creditedLiquidValue
+        - counterInstallments
+        - interestRate
+        - effectiveCostRate
+        - amortizationPeriod
+        - taxesValue
+        - administrativeFeesValue
+        - interestValue
+      properties:
+        contractId:
+          description: Identificador do contrato de assistência financeira
+          type: string
+          maxLength: 60
+          example: "42"
+        certificateId:
+          description: Identificação do certificado de participante ou certificado individual ou apólice individual
+          type: string
+          maxLength: 60
+          example: "42"
+        groupContractId:
+          description: Identificação do contrato ou apólice (Quando contratação coletiva)
+          type: string
+          maxLength: 60
+          example: "42"
+        susepProcessNumber:
+          description: Identificação do processo Susep referente ao plano que está vinculado o contrato de assistência financeira
+          type: string
+          maxLength: 60
+          example: "12345"
+        insureds:
+          type: array
+          items:
+            $ref: "#/components/schemas/InsuranceFinancialAssistanceInsured"
+        conceivedCreditValue:
+          description: Valor do Crédito concedido
+          allOf:
+            - $ref: "#/components/schemas/AmountDetails"
+        creditedLiquidValue:
+          description: Valor Líquido Creditado
+          allOf:
+            - $ref: "#/components/schemas/AmountDetails"
+        counterInstallments:
+          $ref: "#/components/schemas/InsuranceFinancialAssistanceCounterInstallments"
+        interestRate:
+          description: Taxa de juros contratada
+          allOf:
+            - $ref: "#/components/schemas/AmountDetails"
+        effectiveCostRate:
+          description: Taxa do custo efetivo total
+          allOf:
+            - $ref: "#/components/schemas/AmountDetails"
+        amortizationPeriod:
+          description: Prazo de Amortização do Saldo Devedor em meses
+          type: integer
+          maxLength: 3
+          example: 4
+        acquittanceValue:
+          description: Valor Quitação Antecipada (quando houver) - Valor Bruto
+          allOf:
+            - $ref: "#/components/schemas/AmountDetails"
+        acquittanceDate:
+          description: Data da Quitação Antecipada (quando houver)
+          type: string
+          format: date
+          example: "2021-09-21"
+          pattern: '^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])$' 
+        taxesValue:
+          description: Valor de Tributos - Valor total de Tributos incidentes sobre a operação
+          allOf:
+            - $ref: "#/components/schemas/AmountDetails"
+        expensesValue:
+          description: Valor de Despesas e Encargos (quando houver) - Valor de Despesas e Encargos de juros (moratórios)
+          allOf:
+            - $ref: "#/components/schemas/AmountDetails"
+        finesValue:
+          description: Valor de Multa (quando houver)
+          allOf:
+            - $ref: "#/components/schemas/AmountDetails"
+        monetaryUpdatesValue:
+          description: Valor de Atualização Monetária (quando houver) - Valor de Atualização Monetária referentes a cada prestação, se houver
+          allOf:
+            - $ref: "#/components/schemas/AmountDetails"
+        administrativeFeesValue:
+          description: Valor da tarifa administrativa
+          allOf:
+            - $ref: "#/components/schemas/AmountDetails"
+        interestValue:
+          description: Valor de juros - Os juros informados neste campo são remuneratórios
+          allOf:
+            - $ref: "#/components/schemas/AmountDetails"
+    InsuranceFinancialAssistanceInsured:
+      description: Informações do segurado/participante
+      type: object
+      required:
+        - documentType
+        - documentNumber
+        - name
+      properties:
+        documentType:
+          type: string
+          description: Tipo de Documento do Segurado / Participante
+          enum: [CPF, CNPJ, PASSAPORTE, OUTROS]
+          example: CPF
+        documentTypeOthers:
+          type: string
+          description: Informar o documento quando for do tipo Outros
+        documentNumber:
+          description: Documento de identificação do Segurado / Participante associado à apólice
+          type: string
+          maxLength: 60
+          example: "12345678910"
+        name:
+          description: Nome ou Razão Social do Segurado / Participante
+          type: string
+          maxLength: 80
+          example: Juan Kaique Cláudio Fernandes
+    InsuranceFinancialAssistanceCounterInstallments:
+      description: Informações das contraprestações do contrato
+      type: object
+      required:
+        - value
+        - periodicity
+        - quantity
+        - firstDate
+        - lastDate
+      properties:
+        value:
+          $ref: "#/components/schemas/AmountDetails"
+        periodicity:
+          type: string
+          description: Periodicidade das contraprestações
+          enum: [MENSAL, BIMESTRAL, TRIMESTRAL, QUADRIMESTRAL, SEMESTRAL, ANUAL]
+          example: MENSAL
+        quantity:
+          description: Quantidade das contraprestações
+          type: integer
+          maxLength: 3
+          example: 4
+        firstDate:
+          description: Data de vencimento da primeira contraprestação
+          type: string
+          format: date
+          example: "2021-05-21"
+          pattern: '^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])$'
+        lastDate:
+          description: Data de vencimento da última contraprestação
+          type: string
+          format: date
+          example: "2021-09-21"
+          pattern: '^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])$'
+    ResponseInsuranceFinancialAssistanceMovements:
+      type: object
+      required:
+        - data
+        - links
+        - meta
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/InsuranceFinancialAssistanceMovements"
+        links:
+          $ref: "#/components/schemas/Links"
+        meta:
+          $ref: "#/components/schemas/Meta"
+    InsuranceFinancialAssistanceMovements:
+      type: object
+      required:
+        - updatedDebitAmount
+        - remainingCounterInstallmentsQuantity
+        - remainingUnpaidCounterInstallmentsQuantity
+      properties:
+        updatedDebitAmount:
+          description: Saldo Devedor Atualizado - Saldo devedor na data do movimento
+          allOf:
+            - $ref: "#/components/schemas/AmountDetails"
+        remainingCounterInstallmentsQuantity:
+          description: Quantidade de contraprestações a vencer
+          type: integer
+          maxLength: 3
+          example: 4
+        remainingUnpaidCounterInstallmentsQuantity:
+          description: Quantidade de Contraprestações vencidas e não pagas integralmente. Considerar valor "0" quando não houver contraprestações vencidas
+          type: integer
+          maxLength: 3
+          example: 4
+        lifePensionPmBacAmount:
+          description: Saldo individual da PMBaC sobrevivência (quando houver - Obrigatório se o produto for de Sobrevivência) - Declara o Saldo individual da PMBaC sobrevivência ao final do mês.
+          allOf:
+            - $ref: "#/components/schemas/AmountDetails"
+        pensionPlanPmBacAmount:
+          description: Saldo individual da PMBaC risco (quando houver - Obrigatório se o produto for de Risco estruturado no regime de Capitalização) - Declara o Saldo individual da PMBaC de risco ao final do mês
+          allOf:
+            - $ref: "#/components/schemas/AmountDetails"
+    AmountDetails:
+        type: object
+        description: Detalhes de valores/limites
+        required:
+          - amount
+          - unitType
+        properties:
+          amount:
+            type: string
+            pattern: '^(^(100\.\00|\d{1,2}\.\d{2})$|^(\d{1,6})$|^(\d{1,15}\.\d{2})$)$'
+            description: |
+              Valor.
+              Exemplos de preenchimento do campo:
+
+              PORCENTAGEM: 90.85
+                              
+              MONETARIO: 62500.67
+
+              OUTROS: 1000 (Exemplo de outro tipo: horas)
+          unitType:
+            description: "Tipo da unidade referente ao valor inserido no campo Amount"
+            type: string
+            enum: [PORCENTAGEM, MONETARIO, OUTROS]
+          unitTypeOthers:
+            description: Caso o tipo do valor informado for "Outros", esse campo deve ser preenchido com o tipo do valor, obrigatoriamente.
+            type: string
+            example: Horas
+          unit:
+            description: Preenchimento obrigatório em caso de valor "MONETARIO" ser informado no campo "unitType"
+            type: object
+            required:
+              - code
+              - description
+            properties:
+              code:
+                type: string
+                enum: [ د.إ , Af, L,  Դ,  Kz, $,  ƒ,  ман,  КМ, ৳,  лв, ب.د,  ₣,  Bs.,  R$, P,  Br, ¥,  ₡,  Kč, kr, د.ج,  £,  
+                        Nfk,  N/A,  €,  ლ,  ₵,  D,  Q,  Kn, G,  Ft, Rp, ₪,  ₹,  ع.د,  ﷼,  Sh, ៛,  ₩,  د.ك,  〒,  ₭,  ل.ل,  Rs,
+                        ل.د,  د.م., ден,  K,  ₮,  UM, ₨,  ރ., MK, RM, MTn,  ₦,  C$, ر.ع., B/.,  S/.,  ₱,  zł, ₲,  ر.ق,  din,  
+                        р., ر.س,  Le, Db, ل.س,  ฿,  ЅМ, m,  د.ت,  T$, ₤,  ₴,  Bs F, ₫,  Vt, T,  R,  ZK ]
+                example: R$
+              description:
+                type: string
+                description: Moeda da Parcela, de acordo com ISO-4217.
+                example: BRL
+                enum: [ AFN,AFA,ALL,ALK,DZD,USD,EUR,ADP,ESP,FRF,AOA,AOK,AON,AOR,XCD,ARS,ARA,ARP,ARY,AMD,RUR,AWG,AUD,ATS,AZN,AYM,AZM,BSD,BHD,BDT,BBD,BYN,BYB,BYR,BEC,BEF,BEL,BZD,XOF,BMD,INR,BTN,BOP,BOB,BOV,BAM,BAD,BWP,NOK,BRL,BRB,BRC,BRE,BRN,BRR,BND,BGN,BGJ,BGK,BGL,BUK,BIF,CVE,KHR,XAF,CAD,KYD,CLP,CLF,CNY,COP,COU,KMF,CDF,NZD,CRC,HRK,HRD,CUP,CUC,ANG,CYP,CZK,CSJ,CSK,DKK,DJF,DOP,ECS,ECV,EGP,SVC,GQE,ERN,EEK,SZL,ETB,XEU,FKP,FJD,FIM,XPF,GMD,GEL,GEK,DDM,DEM,GHS,GHC,GHP,GIP,GRD,GTQ,GBP,GNF,GNE,GNS,GWE,GWP,GYD,HTG,ITL,HNL,HKD,HUF,ISK,ISJ,IDR,XDR,IRR,IQD,IEP,ILS,ILP,ILR,JMD,JPY,JOD,KZT,KES,KPW,KRW,KWD,KGS,LAJ,LAK,LVL,LVR,LBP,LSL,ZAR,LSM,ZAL,LRD,LYD,CHF,LTL,LTT,LUC,LUF,LUL,MOP,MGA,MGF,MWK,MYR,MVR,MVQ,MLF,MTL,MTP,MRU,MRO,MUR,XUA,MXN,MXV,MXP,MDL,MNT,MAD,MZN,MZE,MZM,MMK,NAD,NPR,NLG,NIO,NIC,NGN,MKD,OMR,PKR,PAB,PGK,PYG,PEN,PEH,PEI,PES,PHP,PLN,PLZ,PTE,QAR,RON,ROK,ROL,RUB,RWF,SHP,WST,STN,STD,SAR,RSD,CSD,SCR,SLL,SGD,XSU,SKK,SIT,SBD,SOS,SSP,SDG,RHD,ESA,ESB,LKR,SDD,SDP,SRD,SRG,SEK,CHE,CHW,CHC,SYP,TWD,TJS,TJR,TZS,THB,TPE,TOP,TTD,TND,TRY,TRL,TMT,TMM,UGX,UGS,UGW,UAH,UAK,SUR,AED,USS,USN,UYU,UYI,UYW,UYN,UYP,UZS,VUV,VEB,VEF,VES,VND,VNC,YER,YDD,YUD,YUM,YUN,ZRN,ZRZ,ZMW,ZMK,ZWL,ZWC,ZWD,ZWN,ZWR,XBA,XFO,XBB,XRE,XBC,XBD,XFU,XTS,XXX,XAU,XPD,XPT,XAG ]
+
+    Links:
+      type: object
+      properties:
+        self:
+          type: string
+          description: URL da página atualmente requisitada
+          pattern: ^(https:\/\/)(.*?)(\/open-insurance\/insurance-financial-assistance\/v\d+)(\/insurance-financial-assistance.*)?$
+          example: "https://api.organizacao.com.br/open-insurance/insurance-financial-assistance/v1/insurance-financial-assistance"
+        first:
+          type: string
+          description: URL da primeira página de registros
+          pattern: ^(https:\/\/)(.*?)(\/open-insurance\/insurance-financial-assistance\/v\d+)(\/insurance-financial-assistance.*)?$
+          example: "https://api.organizacao.com.br/open-insurance/insurance-financial-assistance/v1/insurance-financial-assistance"
+        prev:
+          type: string
+          description: URL da página anterior de registros
+          pattern: ^(https:\/\/)(.*?)(\/open-insurance\/insurance-financial-assistance\/v\d+)(\/insurance-financial-assistance.*)?$
+          example: "https://api.organizacao.com.br/open-insurance/insurance-financial-assistance/v1/insurance-financial-assistance"
+        next:
+          type: string
+          description: URL da próxima página de registros
+          pattern: ^(https:\/\/)(.*?)(\/open-insurance\/insurance-financial-assistance\/v\d+)(\/insurance-financial-assistance.*)?$
+          example: "https://api.organizacao.com.br/open-insurance/insurance-financial-assistance/v1/insurance-financial-assistance"
+        last:
+          type: string
+          description: URL da última página de registros
+          pattern: ^(https:\/\/)(.*?)(\/open-insurance\/insurance-financial-assistance\/v\d+)(\/insurance-financial-assistance.*)?$
+          example: "https://api.organizacao.com.br/open-insurance/insurance-financial-assistance/v1/insurance-financial-assistance"
+    Meta:
+      type: object
+      properties:
+        totalRecords:
+          type: integer
+          description: Total de registros encontrados
+          example: 10
+        totalPages:
+          type: integer
+          description: Total de páginas para os registros encontrados
+          example: 1
+      required:
+        - totalRecords
+        - totalPages
+    ResponseError:
+      type: object
+      required:
+        - errors
+      properties:
+        errors:
+          type: array
+          minItems: 1
+          maxItems: 13
+          items:
+            type: object
+            required:
+              - code
+              - title
+              - detail
+            properties:
+              code:
+                description: Código de erro específico do endpoint
+                type: string
+                pattern: '[\w\W\s]*'
+                maxLength: 255
+              title:
+                description: Título legível por humanos deste erro específico
+                type: string
+                maxLength: 255
+              detail:
+                description: Descrição legível por humanos deste erro específico
+                type: string
+                maxLength: 2048
+              requestDateTime:
+                description: "Data e hora da consulta, conforme especificação RFC-3339, formato UTC."
+                type: string
+                format: date-time
+                example: "2021-08-20T08:30:00Z"
+                pattern: ^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])T(?:[01]\d|2[0123]):(?:[012345]\d):(?:[012345]\d)Z$
+            additionalProperties: false
+        meta:
+          $ref: "#/components/schemas/Meta"
+      additionalProperties: false
+    XFapiInteractionId:
+      type: string
+      pattern: '^[a-zA-Z0-9][a-zA-Z0-9\-]{0,99}$'
+      maxLength: 100
+      description: 'Um UID [RFC4122](https://tools.ietf.org/html/rfc4122) usado como um ID de correlação. Se fornecido, o transmissor deve "reproduzir" esse valor no cabeçalho de resposta.'
+
+    XV:
+      type: string
+      description: |
+        Versão do endpoint da API requisitado pelo cliente. O titular dos dados deve 
+        responder com a versão mais alta suportada entre x-min-v e x-v. Se o valor de 
+        x-min-v for igual ou maior que o valor de x-v, o cabeçalho x-min-v deve ser 
+        tratado como ausente. Se todas as versões solicitadas não forem suportadas, 
+        o titular dos dados deve responder com o código de status 406 Not Acceptable.
+ 
+  parameters:
+    contractId:
+      name: contractId
+      description: Identificador do contrato de assistência financeira
+      in: path
+      required: true
+      schema:
+        type: string
+        maxLength: 60
+    Authorization:
+      name: Authorization
+      in: header
+      description: Cabeçalho HTTP padrão. Permite que as credenciais sejam fornecidas dependendo do tipo de recurso solicitado.
+      required: true
+      schema:
+        type: string
+        pattern: '[\w\W\s]*'
+        maxLength: 2048
+    page:
+      name: page
+      in: query
+      description: Número da página que está sendo requisitada (o valor da primeira página é 1).
+      schema:
+        type: integer
+        default: 1
+        minimum: 1
+        format: int32
+    pageSize:
+      name: page-size
+      in: query
+      description: Quantidade total de registros por páginas.
+      schema:
+        type: integer
+        default: 25
+        minimum: 1
+        format: int32
+        maximum: 1000
+    xCustomerUserAgent:
+      name: x-customer-user-agent
+      in: header
+      description: Indica o user-agent que o usuário utiliza.
+      required: false
+      schema:
+        type: string
+        pattern: '[\w\W\s]*'
+        minLength: 1
+        maxLength: 100
+    xFapiAuthDate:
+      name: x-fapi-auth-date
+      in: header
+      description: "Data em que o usuário logou pela última vez com o receptor. Representada de acordo com a [RFC7231](https://tools.ietf.org/html/rfc7231). Exemplo: Sun, 10 Sep 2017 19:43:31 UTC"
+      required: false
+      schema:
+        type: string
+        pattern: '^(Mon|Tue|Wed|Thu|Fri|Sat|Sun), \d{2} (Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec) \d{4} \d{2}:\d{2}:\d{2} (GMT|UTC)$'
+        minLength: 29
+        maxLength: 29
+    xFapiCustomerIpAddress:
+      name: x-fapi-customer-ip-address
+      in: header
+      description: O endereço IP do usuário se estiver atualmente logado com o receptor.
+      required: false
+      schema:
+        type: string
+        pattern: '[\w\W\s]*'
+        minLength: 1
+        maxLength: 100
+    xFapiInteractionId:
+      name: x-fapi-interaction-id
+      in: header
+      description: 'Um UID [RFC4122](https://tools.ietf.org/html/rfc4122) usado como um ID de correlação. Se fornecido, o transmissor deve "reproduzir" esse valor no cabeçalho de resposta.'
+      required: true
+      schema:
+        type: string
+        pattern: '^[a-zA-Z0-9][a-zA-Z0-9\-]{0,99}$'
+        minLength: 1
+        maxLength: 100
+    x-v:
+      name: x-v
+      in: header
+      description: |
+        Versão do endpoint da API requisitado pelo cliente. O titular dos dados deve 
+        responder com a versão mais alta suportada entre x-min-v e x-v. Se o valor de 
+        x-min-v for igual ou maior que o valor de x-v, o cabeçalho x-min-v deve ser 
+        tratado como ausente. Se todas as versões solicitadas não forem suportadas, 
+        o titular dos dados deve responder com o código de status 406 Not Acceptable.
+      required: false
+      schema:
+        type: string
+      example: '2.1.3'
+    x-min-v:
+      name: x-min-v
+      in: header
+      description: |
+        Versão mínima do endpoint da API requisitado pelo cliente. O detentor dos dados 
+        deve responder com a versão mais alta suportada entre x-min-v e x-v. Se todas as 
+        versões solicitadas não forem suportadas, o titular dos dados deve responder com 
+        um código de status 406 Not Acceptable.
+      required: false
+      schema:
+        type: string
+      example: '2.0.0'
+    
+  securitySchemes:
+    OpenId:
+      type: openIdConnect
+      openIdConnectUrl: "https://auth.mockbank.poc.raidiam.io/.well-known/openid-configuration"
+    OAuth2Security:
+      type: oauth2
+      description: Fluxo OAuth necessário para que a receptora tenha acesso aos dados na instituição transmissora. Inclui o processo de redirecionamento e autenticação do usuário a que se referem os dados.
+      flows:
+        authorizationCode:
+          authorizationUrl: "https://authserver.example/authorization"
+          tokenUrl: "https://authserver.example/token"
+          scopes:
+            insurance-financial-assistance: Escopo necessário para acesso à API. O controle dos endpoints específicos é feito via permissions.
+  responses:
+    OKResponseInsuranceFinancialAssistance:
+      description: Dados de ResponseInsuranceFinancialAssistance obtidos com sucesso
+      headers:
+        x-fapi-interaction-id:
+          schema:
+            $ref: "#/components/schemas/XFapiInteractionId"
+        x-v: 
+          schema:
+            $ref: '#/components/schemas/XV'
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ResponseInsuranceFinancialAssistance"
+    OKResponseInsuranceFinancialAssistanceContractInfo:
+      description: Dados de ResponseInsuranceFinancialAssistanceContractInfo obtidos com sucesso
+      headers:
+        x-fapi-interaction-id:
+          schema:
+            $ref: "#/components/schemas/XFapiInteractionId"
+        x-v: 
+          schema:
+            $ref: '#/components/schemas/XV'
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ResponseInsuranceFinancialAssistanceContractInfo"
+    OKResponseInsuranceFinancialAssistanceMovements:
+      description: Dados de ResponseInsuranceFinancialAssistanceMovements obtidos com sucesso
+      headers:
+        x-fapi-interaction-id:
+          schema:
+            $ref: "#/components/schemas/XFapiInteractionId"
+        x-v: 
+          schema:
+            $ref: '#/components/schemas/XV'
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ResponseInsuranceFinancialAssistanceMovements"
+    BadRequest:
+      description: "A requisição foi malformada, omitindo atributos obrigatórios, seja no payload ou através de atributos na URL"
+      content:
+        application/json; charset=utf-8:
+          schema:
+            $ref: "#/components/schemas/ResponseError"
+    Forbidden:
+      description: O token tem escopo incorreto ou uma política de segurança foi violada
+      content:
+        application/json; charset=utf-8:
+          schema:
+            $ref: "#/components/schemas/ResponseError"
+    InternalServerError:
+      description: Ocorreu um erro no gateway da API ou no microsserviço
+      content:
+        application/json; charset=utf-8:
+          schema:
+            $ref: "#/components/schemas/ResponseError"
+    MethodNotAllowed:
+      description: O consumidor tentou acessar o recurso com um método não suportado
+      content:
+        application/json; charset=utf-8:
+          schema:
+            $ref: "#/components/schemas/ResponseError"
+    NotAcceptable:
+      description: A solicitação continha um cabeçalho Accept diferente dos tipos de mídia permitidos ou um conjunto de caracteres diferente de UTF-8
+      content:
+        application/json; charset=utf-8:
+          schema:
+            $ref: "#/components/schemas/ResponseError"
+    NotFound:
+      description: O recurso solicitado não existe ou não foi implementado
+      content:
+        application/json; charset=utf-8:
+          schema:
+            $ref: "#/components/schemas/ResponseError"
+    TooManyRequests:
+      description: "A operação foi recusada, pois muitas solicitações foram feitas dentro de um determinado período ou o limite global de requisições concorrentes foi atingido"
+      content:
+        application/json; charset=utf-8:
+          schema:
+            $ref: "#/components/schemas/ResponseError"
+    Unauthorized:
+      description: Cabeçalho de autenticação ausente/inválido ou token inválido
+      content:
+        application/json; charset=utf-8:
+          schema:
+            $ref: "#/components/schemas/ResponseError"
+    UnprocessableEntity:
+      description: O servidor entende o tipo de conteúdo da entidade da requisição, e a sintaxe da requisição esta correta, mas não foi possível processar as instruções presentes
+      content:
+        application/json; charset=utf-8:
+          schema:
+            $ref: "#/components/schemas/ResponseError"

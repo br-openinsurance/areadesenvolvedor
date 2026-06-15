@@ -11,7 +11,7 @@
     />
 
     <style>
-     :root {
+      :root {
         --topbar-bg: rgb(15, 87, 13);
         --topbar-text: #ffffff;
         --page-bg: #ffffff;
@@ -161,7 +161,7 @@
       <div class="custom-topbar">
         <div class="custom-topbar-inner">
           <div class="brand">
-            <img src="./logo.png"/>
+            <img src="./logo.png" />
           </div>
 
           <div class="version-switcher">
@@ -180,11 +180,13 @@
     <script>
       let ui = null;
       let specs = [];
+
       const selectEl = document.getElementById("spec-select");
 
       function getQueryParam(name) {
         const params = new URLSearchParams(window.location.search);
         const value = params.get(name);
+
         return value && value.trim() ? value.trim() : null;
       }
 
@@ -200,11 +202,13 @@
 
       function setQueryParam(name, value) {
         const url = new URL(window.location.href);
+
         if (value) {
           url.searchParams.set(name, value);
         } else {
           url.searchParams.delete(name);
         }
+
         window.history.replaceState({}, "", url.toString());
       }
 
@@ -243,9 +247,15 @@
 
         urls.forEach((spec, index) => {
           const option = document.createElement("option");
-          option.value = spec.url;
-          option.textContent = spec.name;
+
+          option.value = normalizeSpecUrl(spec.url);
+
+          const version = spec.version ? `v${spec.version}` : "unknown version";
+          const stage = spec.stage ? spec.stage : "unknown";
+
+          option.textContent = `${version} (${stage})`;
           option.dataset.index = String(index);
+
           selectEl.appendChild(option);
         });
 
@@ -268,21 +278,72 @@
       function selectOptionByUrl(url) {
         const normalized = normalizeSpecUrl(url);
         const options = Array.from(selectEl.options);
-        const match = options.find((opt) => opt.value === normalized);
+
+        const match = options.find(
+          (opt) => normalizeSpecUrl(opt.value) === normalized,
+        );
+
         if (match) {
-          selectEl.value = normalized;
+          selectEl.value = match.value;
         }
       }
 
       function specKey(specUrl) {
         return normalizeSpecUrl(specUrl)
           .replace(/^\.\/specs\//, "")
-          .replace(/^current\//, "")
+          .split("/")[0]
           .toLowerCase();
+      }
+
+      function findSpecByUrl(urls, url) {
+        const normalized = normalizeSpecUrl(url);
+
+        return (
+          urls.find((spec) => normalizeSpecUrl(spec.url) === normalized) || null
+        );
+      }
+
+      function getSpecGroup(spec) {
+        if (spec && spec.group) {
+          return String(spec.group).toLowerCase();
+        }
+
+        if (spec && spec.url) {
+          return specKey(spec.url);
+        }
+
+        return null;
+      }
+
+      function sortSpecsForSelector(items) {
+        const stageOrder = {
+          certifying: 1,
+          current: 2,
+          retired: 3,
+        };
+
+        return [...items].sort((a, b) => {
+          const stageA = stageOrder[a.stage] || 99;
+          const stageB = stageOrder[b.stage] || 99;
+
+          if (stageA !== stageB) {
+            return stageA - stageB;
+          }
+
+          return String(b.version || "").localeCompare(
+            String(a.version || ""),
+            undefined,
+            {
+              numeric: true,
+              sensitivity: "base",
+            },
+          );
+        });
       }
 
       selectEl.addEventListener("change", function (e) {
         const selectedUrl = normalizeSpecUrl(e.target.value);
+
         setQueryParam("url", selectedUrl);
         loadSwaggerSpec(selectedUrl);
       });
@@ -310,9 +371,11 @@
             throw new Error("Could not determine initial spec URL");
           }
 
-          const currentKey = specKey(initialUrl);
-          const visibleSpecs = specs.filter(
-            (spec) => specKey(spec.url) === currentKey,
+          const initialSpec = findSpecByUrl(specs, initialUrl);
+          const currentGroup = getSpecGroup(initialSpec) || specKey(initialUrl);
+
+          const visibleSpecs = sortSpecsForSelector(
+            specs.filter((spec) => getSpecGroup(spec) === currentGroup),
           );
 
           fillSelector(visibleSpecs);
@@ -321,10 +384,11 @@
           loadSwaggerSpec(initialUrl);
         } catch (error) {
           document.getElementById("swagger-ui").innerHTML = `
-        <div class="loading-state">
-          Error loading API documentation: ${error.message}
-        </div>
-      `;
+            <div class="loading-state">
+              Error loading API documentation: ${error.message}
+            </div>
+          `;
+
           selectEl.disabled = true;
           console.error(error);
         }
