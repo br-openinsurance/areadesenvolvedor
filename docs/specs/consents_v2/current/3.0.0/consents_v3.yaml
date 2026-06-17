@@ -60,7 +60,7 @@ info:
       |                      |                                  | PENSION_PLAN_MOVEMENTS_READ                                       |
       |                      |                                  | PENSION_PLAN_PORTABILITIES_READ                                   |
       |                      |                                  | PENSION_PLAN_WITHDRAWALS_READ                                     |
-      |                      |                                  | PENSION_PLAN_CLAIM                                                |
+      |                      |                                  | PENSION_PLAN_CLAIM_READ                                                |
       |----------------------|----------------------------------|-------------------------------------------------------------------|
       | Previdência e        | Produtos de Previdência e Pessoas| RESOURCES_READ                                                    |
       | Pessoas              | Sobrevivência (Obrigatório)      |                                                                   |
@@ -70,7 +70,7 @@ info:
       |                      |                                  | LIFE_PENSION_MOVEMENTS_READ                                       |
       |                      |                                  | LIFE_PENSION_PORTABILITIES_READ                                   |
       |                      |                                  | LIFE_PENSION_WITHDRAWALS_READ                                     |
-      |                      |                                  | LIFE_PENSION_CLAIM                                                |
+      |                      |                                  | LIFE_PENSION_CLAIM_READ                                                |
       |----------------------|----------------------------------|-------------------------------------------------------------------|
       | Assistência          | Assist. Financeira (Obrigatório) | RESOURCES_READ                                                    |
       | Financeira           |----------------------------------|-------------------------------------------------------------------|
@@ -218,7 +218,7 @@ info:
       | Capitalização        | (Obrigatório)                    | QUOTE_CAPITALIZATION_TITLE_CREATE                                 |
       |                      |                                  | QUOTE_CAPITALIZATION_TITLE_UPDATE                                 |
       |----------------------|----------------------------------|-------------------------------------------------------------------|
-      | Sorteio Títulos de   | Títulos de Capitalização         | QUOTE_CAPITALIZATION_TITLE_RAFFLE_CREATE                          |
+      | Sorteio Títulos de   | Títulos de Capitalização         | CAPITALIZATION_TITLE_RAFFLE_CREATE                          |
       | Capitalização        | Sorteio (Obrigatório)            |                                                                   |
       |----------------------|----------------------------------|-------------------------------------------------------------------|
       | Contratação          | Previdência Risco Lead           | CONTRACT_PENSION_PLAN_LEAD_CREATE                                 |
@@ -255,8 +255,9 @@ info:
     - Caso a instituição receptora envie permissões de fase 3 (iniciação de serviços) de diferentes agrupamentos em uma única solicitação, a transmissora deve rejeitar o pedido da receptora dando retorno HTTP Status Code 422.
     - A transmissora deve retornar, da lista de permissions requisitadas, apenas o subconjunto de permissions por ela suportada, removendo da lista as permissions de produtos não suportados e retornando HTTP Status Code 201. Caso não restem permissões funcionais, a instituição transmissora deve retornar o erro HTTP Code "422 Unprocessable Entity".
     - Durante o fluxo de cotação e contratação, a SPOC pode utilizar a API de Consents para gerar o consentimento de Fase 3 para ela mesma, entretanto não pode criar esse consentimento junto a uma transmissora. A transmissora deve rejeitar o pedido da receptora dando retorno HTTP Status Code 422 caso esse cenário ocorra.
+    - Caso a instituição receptora envie permissões (fase 2) de um grupo/ramo o qual o cliente não possui apólice e a transmissora possua a API transacional do referido grupo/ramo, essas permissões deverão ser mantidas no consentimento.
   
-  version: 2.7.0
+  version: 3.0.0
   license:
     name: Apache 2.0
     url: http://www.apache.org/licenses/LICENSE-2.0
@@ -264,9 +265,9 @@ info:
     name: Governança do Open Insurance Brasil - Especificações
     url: https://www.gov.br/susep/
 servers:
-  - url: https://api.seguro.com.br/open-insurance/consents/v2
+  - url: https://api.seguro.com.br/open-insurance/consents/v3
     description: Servidor de Produção
-  - url: https://apih.seguro.com.br/open-insurance/consents/v2
+  - url: https://apih.seguro.com.br/open-insurance/consents/v3
     description: Servidor de Homologação
 tags:
   - name: Consents
@@ -418,35 +419,35 @@ components:
           maxLength: 2000
           description: URI completo que gerou a resposta atual.
           pattern: ^(https:\/\/)(.*?)(\/open-insurance\/consents\/v\d+)(\/.*)?$
-          example: https://api.organizacao.com.br/open-insurance/consents/v2/consents
+          example: https://api.organizacao.com.br/open-insurance/consents/v3/consents
         first:
           type: string
           format: uri
           maxLength: 2000
           description: URI da primeira página que originou essa lista de resultados. Restrição - Obrigatório quando não for a primeira página da resposta
           pattern: ^(https:\/\/)(.*?)(\/open-insurance\/consents\/v\d+)(\/.*)?$
-          example: https://api.organizacao.com.br/open-insurance/consents/v2/consents
+          example: https://api.organizacao.com.br/open-insurance/consents/v3/consents
         prev:
           type: string
           format: uri
           maxLength: 2000
           description: "URI da página anterior dessa lista de resultados. Restrição - \tObrigatório quando não for a primeira página da resposta"
           pattern: ^(https:\/\/)(.*?)(\/open-insurance\/consents\/v\d+)(\/.*)?$
-          example: https://api.organizacao.com.br/open-insurance/consents/v2/consents
+          example: https://api.organizacao.com.br/open-insurance/consents/v3/consents
         next:
           type: string
           format: uri
           maxLength: 2000
           description: URI da próxima página dessa lista de resultados. Restrição - Obrigatório quando não for a última página da resposta
           pattern: ^(https:\/\/)(.*?)(\/open-insurance\/consents\/v\d+)(\/.*)?$
-          example: https://api.organizacao.com.br/open-insurance/consents/v2/consents
+          example: https://api.organizacao.com.br/open-insurance/consents/v3/consents
         last:
           type: string
           format: uri
           maxLength: 2000
           description: URI da última página dessa lista de resultados. Restrição - Obrigatório quando não for a última página da resposta
           pattern: ^(https:\/\/)(.*?)(\/open-insurance\/consents\/v\d+)(\/.*)?$
-          example: https://api.organizacao.com.br/open-insurance/consents/v2/consents
+          example: https://api.organizacao.com.br/open-insurance/consents/v3/consents
       additionalProperties: false
     Meta:
       type: object
@@ -503,13 +504,13 @@ components:
                   - PENSION_PLAN_MOVEMENTS_READ
                   - PENSION_PLAN_PORTABILITIES_READ
                   - PENSION_PLAN_WITHDRAWALS_READ
-                  - PENSION_PLAN_CLAIM
+                  - PENSION_PLAN_CLAIM_READ
                   - LIFE_PENSION_READ
                   - LIFE_PENSION_CONTRACTINFO_READ
                   - LIFE_PENSION_MOVEMENTS_READ
                   - LIFE_PENSION_PORTABILITIES_READ
                   - LIFE_PENSION_WITHDRAWALS_READ
-                  - LIFE_PENSION_CLAIM
+                  - LIFE_PENSION_CLAIM_READ
                   - FINANCIAL_ASSISTANCE_READ
                   - FINANCIAL_ASSISTANCE_CONTRACTINFO_READ
                   - FINANCIAL_ASSISTANCE_MOVEMENTS_READ
@@ -596,7 +597,7 @@ components:
                   - QUOTE_CAPITALIZATION_TITLE_READ
                   - QUOTE_CAPITALIZATION_TITLE_CREATE
                   - QUOTE_CAPITALIZATION_TITLE_UPDATE
-                  - QUOTE_CAPITALIZATION_TITLE_RAFFLE_CREATE
+                  - CAPITALIZATION_TITLE_RAFFLE_CREATE
                   - CONTRACT_LIFE_PENSION_CREATE
                   - CONTRACT_LIFE_PENSION_UPDATE
                   - CONTRACT_LIFE_PENSION_READ
@@ -718,7 +719,7 @@ components:
                   description: Descrição da Ocorrência/Relato da ocorrência
                   type: string
                   maxLength: 10000
-            withdrawalCaptalizationInformation:
+            withdrawalCapitalizationInformation:
               type: object
               description: Objeto contendo dados de Informações do Produto. Obrigatório para a permission "CAPITALIZATION_TITLE_WITHDRAWAL_CREATE"
               required:
@@ -797,20 +798,20 @@ components:
                                 sujeito as alterações (aplicação de impostos, variação de saldos, 
                                 e condições contratuais).
                   type: string
-                  enum: [1_TOTAL,
-                        2_PARCIAL]
+                  enum: [TOTAL,
+                        PARCIAL]
                 withdrawalReason:
                   description:  Motivo do resgate. Obrigatório para Previdência Sobrevivência.
                   type: string
-                  enum: [ 1_EMERGENCIAS_DE_SAUDE,
-                          2_APLICACAO_EM_OUTROS_INVESTIMENTOS,
-                          3_INSATISFACAO_COM_A_ENTIDADE,
-                          4_INSATISFACAO_COM_A_RENTABILIDADE_DO_PRODUTO,
-                          5_INSATISFACAO_COM_O_PRODUTO,
-                          6_AQUISICAO_DE_BENS,
-                          7_LIQUIDEZ_FINANCEIRA,
-                          8_REALIZACAO_DO_OBJETIVO_DO_INVESTIMENTO,
-                          9_OUTROS]
+                  enum: [ EMERGENCIAS_DE_SAUDE,
+                          APLICACAO_EM_OUTROS_INVESTIMENTOS,
+                          INSATISFACAO_COM_A_ENTIDADE,
+                          INSATISFACAO_COM_A_RENTABILIDADE_DO_PRODUTO,
+                          INSATISFACAO_COM_O_PRODUTO,
+                          AQUISICAO_DE_BENS,
+                          LIQUIDEZ_FINANCEIRA,
+                          REALIZACAO_DO_OBJETIVO_DO_INVESTIMENTO,
+                          OUTROS]
                 withdrawalReasonOthers:
                   description:  Motivo do resgate para 'Outros'. Obrigatório, caso selecionado "outros"
                               na pergunta " Motivo do resgate ".
@@ -830,9 +831,9 @@ components:
                   description: Valor PMBaC (fim do mês). O valor exibido refere-se ao mês anterior, podendo estar sujeito a variações
                   allOf:
                     - $ref: '#/components/schemas/AmountDetails'
-            raffleCaptalizationTitleInformation:
+            raffleCapitalizationTitleInformation:
               type: object
-              description: Objeto contendo dados de Informações do Produto. Obrigatório para a permission "QUOTE_CAPITALIZATION_TITLE_RAFFLE_CREATE"
+              description: Objeto contendo dados de Informações do Produto. Obrigatório para a permission "CAPITALIZATION_TITLE_RAFFLE_CREATE"
               required: 
                 - contactType
               properties: 
@@ -925,13 +926,13 @@ components:
                   - PENSION_PLAN_MOVEMENTS_READ
                   - PENSION_PLAN_PORTABILITIES_READ
                   - PENSION_PLAN_WITHDRAWALS_READ
-                  - PENSION_PLAN_CLAIM
+                  - PENSION_PLAN_CLAIM_READ
                   - LIFE_PENSION_READ
                   - LIFE_PENSION_CONTRACTINFO_READ
                   - LIFE_PENSION_MOVEMENTS_READ
                   - LIFE_PENSION_PORTABILITIES_READ
                   - LIFE_PENSION_WITHDRAWALS_READ
-                  - LIFE_PENSION_CLAIM
+                  - LIFE_PENSION_CLAIM_READ
                   - FINANCIAL_ASSISTANCE_READ
                   - FINANCIAL_ASSISTANCE_CONTRACTINFO_READ
                   - FINANCIAL_ASSISTANCE_MOVEMENTS_READ
@@ -1018,7 +1019,7 @@ components:
                   - QUOTE_CAPITALIZATION_TITLE_READ
                   - QUOTE_CAPITALIZATION_TITLE_CREATE
                   - QUOTE_CAPITALIZATION_TITLE_UPDATE
-                  - QUOTE_CAPITALIZATION_TITLE_RAFFLE_CREATE
+                  - CAPITALIZATION_TITLE_RAFFLE_CREATE
                   - CONTRACT_LIFE_PENSION_CREATE
                   - CONTRACT_LIFE_PENSION_UPDATE
                   - CONTRACT_LIFE_PENSION_READ
@@ -1139,7 +1140,7 @@ components:
                   description: Descrição da Ocorrência/Relato da ocorrência
                   type: string
                   maxLength: 10000
-            withdrawalCaptalizationInformation:
+            withdrawalCapitalizationInformation:
               type: object
               description: Objeto contendo dados de Informações do Produto. Obrigatório para a permission "CAPITALIZATION_TITLE_WITHDRAWAL_CREATE"
               required:
@@ -1218,20 +1219,20 @@ components:
                                 sujeito as alterações (aplicação de impostos, variação de saldos, 
                                 e condições contratuais).
                   type: string
-                  enum: [1_TOTAL,
-                        2_PARCIAL]
+                  enum: [TOTAL,
+                        PARCIAL]
                 withdrawalReason:
                   description:  Motivo do resgate. Obrigatório para Previdência Sobrevivência.
                   type: string
-                  enum: [ 1_EMERGENCIAS_DE_SAUDE,
-                          2_APLICACAO_EM_OUTROS_INVESTIMENTOS,
-                          3_INSATISFACAO_COM_A_ENTIDADE,
-                          4_INSATISFACAO_COM_A_RENTABILIDADE_DO_PRODUTO,
-                          5_INSATISFACAO_COM_O_PRODUTO,
-                          6_AQUISICAO_DE_BENS,
-                          7_LIQUIDEZ_FINANCEIRA,
-                          8_REALIZACAO_DO_OBJETIVO_DO_INVESTIMENTO,
-                          9_OUTROS]
+                  enum: [ EMERGENCIAS_DE_SAUDE,
+                          APLICACAO_EM_OUTROS_INVESTIMENTOS,
+                          INSATISFACAO_COM_A_ENTIDADE,
+                          INSATISFACAO_COM_A_RENTABILIDADE_DO_PRODUTO,
+                          INSATISFACAO_COM_O_PRODUTO,
+                          AQUISICAO_DE_BENS,
+                          LIQUIDEZ_FINANCEIRA,
+                          REALIZACAO_DO_OBJETIVO_DO_INVESTIMENTO,
+                          OUTROS]
                 withdrawalReasonOthers:
                   description:  Motivo do resgate para 'Outros'. Obrigatório, caso selecionado "outros"
                               na pergunta " Motivo do resgate ".
@@ -1252,9 +1253,9 @@ components:
                   allOf:
                     - $ref: '#/components/schemas/AmountDetails'
 
-            raffleCaptalizationTitleInformation:
+            raffleCapitalizationTitleInformation:
               type: object
-              description: Objeto contendo dados de Informações do Produto. Obrigatório para a permission "QUOTE_CAPITALIZATION_TITLE_RAFFLE_CREATE"
+              description: Objeto contendo dados de Informações do Produto. Obrigatório para a permission "CAPITALIZATION_TITLE_RAFFLE_CREATE"
               required: 
                 - contactType
               properties: 
@@ -1342,6 +1343,11 @@ components:
         - CONSENT_TECHNICAL_ISSUE – consentimento que foi rejeitado devido a um problema técnico que impossibilita seu uso pela instituição receptora, por exemplo: 
             falha associada a troca do AuthCode pelo AccessToken, durante o processo de Hybid Flow.
         - INTERNAL_SECURITY_REASON – consentimento que foi rejeitado devido as políticas de segurança aplicada pela instituição transmissora.
+        - WITHDRAWAL_BLOCKED – Autorização do consentimento que foi impedido pela transmissora, devido o resgate do plano estar bloqueado. Condicional a permission “PENSION_WITHDRAWAL_CREATE” ter sido informada no fluxo.
+        - WITHDRAWAL_GRACE_PERIOD – Autorização do consentimento que foi impedido pela transmissora, devido ao período de carência do resgate do plano não ter sido completado. Condicional a permission “PENSION_WITHDRAWAL_CREATE” ter sido informada no fluxo.
+        - WITHDRAWAL_RESERVE_AMOUNT – Autorização do consentimento que foi impedido pela transmissora, devido ao resgate parcial não deixar saldo suficiente para a Reserva. Condicional a permission “PENSION_WITHDRAWAL_CREATE” ter sido informada no fluxo.
+        - WITHDRAWAL_UNDERAGE_REQUESTER – Autorização do consentimento que foi impedido pela transmissora, devido ao solicitante não ser o responsável legal em um plano para menores de idade. Condicional a permission “PENSION_WITHDRAWAL_CREATE” ter sido informada no fluxo.
+        - WITHDRAWAL_PROCURATOR_REQUESTER – Autorização do consentimento que foi impedido pela transmissora, devido a solicitação ocorrer mediante a procuração/tutela/curatela. Condicional a permission “PENSION_WITHDRAWAL_CREATE” ter sido informada no fluxo.
       enum:
         - CONSENT_EXPIRED
         - CUSTOMER_MANUALLY_REJECTED
@@ -1349,6 +1355,12 @@ components:
         - CONSENT_MAX_DATE_REACHED
         - CONSENT_TECHNICAL_ISSUE
         - INTERNAL_SECURITY_REASON
+        - WITHDRAWAL_BLOCKED
+        - WITHDRAWAL_GRACE_PERIOD
+        - WITHDRAWAL_RESERVE_AMOUNT
+        - WITHDRAWAL_UNDERAGE_REQUESTER
+        - WITHDRAWAL_PROCURATOR_REQUESTER
+
       example: CONSENT_EXPIRED
 
     RejectedReason:
@@ -1413,36 +1425,50 @@ components:
         - errors
       properties:
         errors:
-          type: object
+          type: array
           minItems: 1
-          required:
-            - code
-            - title
-            - detail
-          properties:
-            code:
-              type: string
-              enum:
-                - ERRO_IDEMPOTENCIA
-                - NAO_INFORMADO
-              example: ERRO_IDEMPOTENCIA
-              description: Código do erro 422 de Entidade não processada.
-            title:
-              type: string
-              maxLength: 255
-              pattern: '[\w\W\s]*'
-              example: Tentativa de alteração de requisição já processada
-              description: |
-                - ERRO_ IDEMPOTENCIA: Tentativa de alteração de requisição já processada
-                - NÃO_INFORMADO: Não informada pelo servidor
-            detail:
-              type: string
-              maxLength: 2048
-              pattern: '[\w\W\s]*'
-              example: Tentativa de alteração de requisição já processada
-              description: |
-                - ERRO_ IDEMPOTENCIA: Tentativa de alteração de requisição já processada
-                - NÃO_INFORMADO: Não informada pelo servidor 
+          items:
+            type: object
+            required:
+              - code
+              - title
+              - detail
+              - requestDateTime
+            properties:
+              code:
+                type: string
+                enum:
+                  - ERRO_IDEMPOTENCIA
+                  - NAO_INFORMADO
+                example: ERRO_IDEMPOTENCIA
+                description: Código do erro 422 de Entidade não processada.
+              title:
+                type: string
+                maxLength: 255
+                pattern: '[\w\W\s]*'
+                example: Tentativa de alteração de requisição já processada
+                description: |
+                  - ERRO_IDEMPOTENCIA: Tentativa de alteração de requisição já processada
+                  - NAO_INFORMADO: Não informada pelo servidor
+              detail:
+                type: string
+                maxLength: 2048
+                pattern: '[\w\W\s]*'
+                example: Tentativa de alteração de requisição já processada
+                description: |
+                  - ERRO_IDEMPOTENCIA: Tentativa de alteração de requisição já processada
+                  - NAO_INFORMADO: Não informada pelo servidor
+              requestDateTime:
+                  description: 'Data e hora da consulta, conforme especificação RFC-3339, formato UTC.'
+                  type: string
+                  maxLength: 20
+                  format: date-time
+                  pattern: '^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])T(?:[01]\d|2[0123]):(?:[012345]\d):(?:[012345]\d)Z$'
+                  example: '2021-08-20T08:30:00Z'
+              
+        meta:
+          $ref: '#/components/schemas/Meta' 
+      additionalProperties: false  
     LoggedUser:
       type: object
       description: Usuário (pessoa natural) que encontra-se logado na instituição receptora e que iniciará o processo de consentimento para compartilhamento de dados.
@@ -1488,7 +1514,7 @@ components:
               maxLength: 14
               description: Número do documento de identificação oficial do titular pessoa jurídica.
               example: '11111111111111'
-              pattern: ^\d{14}$
+              pattern: '^[A-Z0-9]{12}\d{2}$'
             rel:
               type: string
               maxLength: 4
@@ -1561,7 +1587,7 @@ components:
       required: true
       schema:
         type: string
-        pattern: ^[a-zA-Z0-9][a-zA-Z0-9\-]{0,99}$
+        pattern: ^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$
         minLength: 1
         maxLength: 100
     x-v:
@@ -1690,7 +1716,7 @@ components:
             Se fornecido, o transmissor deve "reproduzir" esse valor no cabeçalho de resposta.
           schema:
             type: string
-            pattern: ^[a-zA-Z0-9][a-zA-Z0-9\-]{0,99}$
+            pattern: '^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$'
             minLength: 1
             maxLength: 100
             example: 73cac523-d3ae-2289-b106-330a6218710d
@@ -1710,7 +1736,7 @@ components:
             Se fornecido, o transmissor deve "reproduzir" esse valor no cabeçalho de resposta.
           schema:
             type: string
-            pattern: ^[a-zA-Z0-9][a-zA-Z0-9\-]{0,99}$
+            pattern: '^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$'
             minLength: 1
             maxLength: 100
             example: 92cac523-d3ae-2289-b106-330a6218710d
@@ -1730,7 +1756,7 @@ components:
             Se fornecido, o transmissor deve "reproduzir" esse valor no cabeçalho de resposta.
           schema:
             type: string
-            pattern: ^[a-zA-Z0-9][a-zA-Z0-9\-]{0,99}$
+            pattern: '^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$'
             minLength: 1
             maxLength: 100
             example: 85bac523-d3ae-2289-b106-330a6218710d
