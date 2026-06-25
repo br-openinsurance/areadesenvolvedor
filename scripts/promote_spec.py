@@ -1,25 +1,29 @@
 #!/usr/bin/env python3
 """Atualiza o estágio de uma versão de API no stage_overrides.json e sincroniza o apis.json.
- 
+
 Nenhum arquivo de spec é movido. A URL física permanece a mesma; apenas o campo
 `stage` no apis.json (e no select do Swagger UI) é atualizado.
- 
-Estágios válidos: certifying → current → deprecated → retired
- 
+
+Specs organizadas em docs/specs/fase-1, fase-2, fase-3/<group>/<version>/.
+Por padrão a versão mais alta de cada grupo recebe estágio "current"; as demais "retired".
+Use os overrides abaixo para atribuir estágios diferentes.
+
+Estágios válidos: certifying, current, deprecated, retired
+
 Uso:
   # Promover uma versão específica
-  python scripts/promote_spec.py auto-insurance 2.0.0 current
- 
+  python scripts/promote_spec.py auto-insurance 2.0.0 certifying
+
   # Promover várias versões de uma vez
-  python scripts/promote_spec.py auto-insurance 1.4.0 deprecated auto-insurance 2.0.0 current
- 
+  python scripts/promote_spec.py auto-insurance 1.4.0 retired auto-insurance 2.0.0 certifying
+
   # Listar overrides ativos
   python scripts/promote_spec.py --list
- 
-  # Ver todos os grupos/versões disponíveis nas specs
+
+  # Ver todos os grupos/versões disponíveis nas specs (fase-1/2/3)
   python scripts/promote_spec.py --list-specs
- 
-  # Remover um override (volta a usar o estágio da pasta)
+
+  # Remover um override (volta ao estágio auto-detectado)
   python scripts/promote_spec.py --remove auto-insurance 2.0.0
 """
  
@@ -33,6 +37,19 @@ from pathlib import Path
  
 VALID_STAGES = ("certifying", "current", "deprecated", "retired")
 STAGE_ORDER = {s: i for i, s in enumerate(VALID_STAGES)}
+PHASES = {"fase-1", "fase-2", "fase-3"}
+
+
+def version_sort_key(version: str) -> tuple:
+    import re
+    parts = re.split(r"[.-]", version)
+    normalized = []
+    for part in parts:
+        if part.isdigit():
+            normalized.append(int(part))
+        else:
+            normalized.append(part.lower())
+    return tuple(normalized)
  
  
 def repo_root() -> Path:
@@ -122,34 +139,48 @@ def cmd_list_specs() -> None:
     root = specs_dir()
     if not root.exists():
         raise SystemExit(f"Diretório não encontrado: {root}")
- 
+
     data = load_overrides()
     active_overrides = data.get("overrides", {})
- 
-    rows: list[tuple[str, str, str, str]] = []
-    for stage in VALID_STAGES:
-        for group_dir in sorted(root.iterdir()):
+
+    # Find highest version per (fase, group) for auto-stage detection
+    latest: dict[tuple[str, str], str] = {}
+    for fase_dir in sorted(root.iterdir()):
+        if not fase_dir.is_dir() or fase_dir.name not in PHASES:
+            continue
+        for group_dir in sorted(fase_dir.iterdir()):
             if not group_dir.is_dir():
                 continue
-            version_parent = group_dir / stage
-            if not version_parent.is_dir():
+            ver_names = [v.name for v in group_dir.iterdir() if v.is_dir()]
+            if ver_names:
+                latest[(fase_dir.name, group_dir.name)] = max(ver_names, key=version_sort_key)
+
+    rows: list[tuple[str, str, str, str, str]] = []
+    for fase_dir in sorted(root.iterdir()):
+        if not fase_dir.is_dir() or fase_dir.name not in PHASES:
+            continue
+        for group_dir in sorted(fase_dir.iterdir()):
+            if not group_dir.is_dir():
                 continue
-            for ver_dir in sorted(version_parent.iterdir()):
-                if ver_dir.is_dir():
-                    effective = active_overrides.get(group_dir.name, {}).get(ver_dir.name, stage)
-                    rows.append((group_dir.name, ver_dir.name, stage, effective))
- 
+            for ver_dir in sorted(group_dir.iterdir(), key=lambda d: version_sort_key(d.name)):
+                if not ver_dir.is_dir():
+                    continue
+                k = (fase_dir.name, group_dir.name)
+                auto_stage = "current" if ver_dir.name == latest.get(k) else "retired"
+                effective = active_overrides.get(group_dir.name, {}).get(ver_dir.name, auto_stage)
+                rows.append((fase_dir.name, group_dir.name, ver_dir.name, auto_stage, effective))
+
     if not rows:
-        print("Nenhuma spec encontrada em docs/specs/.")
+        print("Nenhuma spec encontrada em docs/specs/fase-1, fase-2 ou fase-3.")
         return
- 
-    print(f"\n{'Grupo':<45} {'Versão':<12} {'Pasta':<15} {'Efetivo'}")
-    print("-" * 85)
-    for group, version, folder_stage, effective_stage in rows:
-        marker = " *" if effective_stage != folder_stage else ""
-        print(f"  {group:<43} {version:<12} {folder_stage:<15} {effective_stage}{marker}")
- 
-    if any(r[2] != r[3] for r in rows):
+
+    print(f"\n{'Fase':<10} {'Grupo':<45} {'Versão':<12} {'Auto':<15} {'Efetivo'}")
+    print("-" * 95)
+    for fase, group, version, auto_stage, effective_stage in rows:
+        marker = " *" if effective_stage != auto_stage else ""
+        print(f"  {fase:<8} {group:<43} {version:<12} {auto_stage:<15} {effective_stage}{marker}")
+
+    if any(r[3] != r[4] for r in rows):
         print("\n  * = estágio sobrescrito pelo override")
     print()
  
