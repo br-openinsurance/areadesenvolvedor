@@ -137,8 +137,8 @@ def main() -> int:
     overrides = load_stage_overrides(overrides_path)
     overrides_applied: list[str] = []
 
-    # Pass 1: scan fase-1/2/3 and collect raw data.
-    # Expected path relative to specs_dir: <fase>/<group>/<version>/<filename> (4 parts)
+    # Escaneia fase-1/2/3 e realiza coleta dos dados.
+    # Caminho  esperado em relação ao specs_dir: <fase>/<group>/<version>/<filename> (4 parts)
     raw_entries: list[dict] = []
     invalid: list[str] = []
 
@@ -151,15 +151,18 @@ def main() -> int:
         rel = file_path.relative_to(specs_dir)
         parts = rel.parts
 
-        if len(parts) != 4:
+        if len(parts) == 4:
+            fase, group, version_folder, _ = parts
+        elif len(parts) == 5:
+            # fase-X/<category>/<group>/<version>/<filename>  (e.g. fase-1/monitoring/admin_metrics/1.3.0/file.yaml)
+            fase, _, group, version_folder, _ = parts
+        else:
             continue
-
-        fase, group, version_folder, filename = parts
 
         if fase not in PHASES:
             continue
 
-        relative_url = f"./specs/{fase}/{group}/{version_folder}/{filename}"
+        relative_url = "./specs/" + "/".join(parts)
 
         title, version = read_spec_meta(file_path)
         if title is None and version is None:
@@ -174,7 +177,7 @@ def main() -> int:
             "version": version or version_folder,
         })
 
-    # Pass 2: find the highest version per (fase, group) to auto-assign "current".
+    # Encontra a versão maior por (fase, group) para atribuir automaticamente "current".
     latest_key: dict[tuple[str, str], tuple] = {}
     for e in raw_entries:
         k = (e["fase"], e["group"])
@@ -182,7 +185,7 @@ def main() -> int:
         if k not in latest_key or sk > latest_key[k]:
             latest_key[k] = sk
 
-    # Pass 3: assign stages and build final entries.
+    # Atribui os stages e build as entradas finais.
     entries: list[dict] = []
     for e in raw_entries:
         group = e["group"]
