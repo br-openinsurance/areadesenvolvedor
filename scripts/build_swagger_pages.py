@@ -2,13 +2,12 @@
 """Build static Swagger UI pages for GitHub Pages.
 
 Scans:
-- documentation/source/files/swagger
-- documentation/source/files/swagger/current
-- documentation/source/files/swagger/certifying
-- documentation/source/files/swagger/retired
+- documentation/source/files/swagger/<fase>/<group>/<version>/<file>
+- documentation/source/files/swagger/<fase>/<category>/<group>/<version>/<file>
+  (e.g. fase-1/monitoring/admin_metrics/1.3.0/admin_metrics.yaml)
 
 Publishes:
-- docs/specs/<api-name>/<stage>/<version>/<file>
+- docs/specs/<fase>/<group>/<version>/<file>   (mirrors source structure)
 - docs/config/apis.json
 - docs/.nojekyll
 """
@@ -24,20 +23,23 @@ from typing import Dict, List, Optional, Tuple
 
 
 VALID_EXTENSIONS = {".yaml", ".yml", ".json"}
-KNOWN_SOURCE_FOLDERS = {"current", "certifying", "retired"}
+PHASES = {"fase-1", "fase-2", "fase-3"}
+FASE_ORDER = {"fase-1": 0, "fase-2": 1, "fase-3": 2}
 
 OPENAPI_REGEX = re.compile(r"(?m)^\s*(openapi|swagger)\s*:")
 TITLE_REGEX = re.compile(r'(?m)^[ \t]{0,12}title\s*:\s*["\']?([^"\n\'#]+)')
 VERSION_REGEX = re.compile(r'(?m)^[ \t]{0,12}version\s*:\s*["\']?([^"\n\'#]+)')
 
+STAGE_ORDER = {"certifying": 0, "current": 1, "deprecated": 2, "retired": 3}
+
 
 @dataclass
 class CandidateSpec:
     source: Path
-    relative_from_swagger: str
-    publish_relative: str
-    source_group: str
-    api_key: str
+    publish_relative: str   # fase/group/version/filename  (mirrors source)
+    fase: str
+    group: str
+    version_folder: str
     title: Optional[str]
     version: Optional[str]
 
@@ -45,16 +47,8 @@ class CandidateSpec:
 def clean_value(value: Optional[str]) -> Optional[str]:
     if value is None:
         return None
-
     normalized = str(value).strip().strip('"').strip("'").strip()
     return normalized or None
-
-
-def safe_path_value(value: Optional[str], fallback: str) -> str:
-    raw = clean_value(value) or fallback
-    safe = re.sub(r"[^a-zA-Z0-9._-]+", "-", raw.strip())
-    safe = re.sub(r"-+", "-", safe).strip("-")
-    return safe or fallback
 
 
 def is_openapi_spec(file_path: Path) -> Tuple[bool, Optional[str], Optional[str]]:
@@ -83,112 +77,107 @@ def is_openapi_spec(file_path: Path) -> Tuple[bool, Optional[str], Optional[str]
 
     title_match = TITLE_REGEX.search(text)
     version_match = VERSION_REGEX.search(text)
-
     title = clean_value(title_match.group(1) if title_match else None)
     version = clean_value(version_match.group(1) if version_match else None)
-
     return True, title, version
 
 
-def split_source_group(relative: str) -> Tuple[str, Path]:
-    path = Path(relative)
-    parts = path.parts
-
-    if parts and parts[0].lower() == "current":
-        # Mantém compatibilidade com o layout antigo:
-        # documentation/source/files/swagger/current/*.yaml
-        # agora será publicado como certifying.
-        return "current", Path(*parts[1:])
-
-    if parts and parts[0].lower() in {"certifying", "retired"}:
-        return parts[0].lower(), Path(*parts[1:])
-
-    # Arquivos diretamente em documentation/source/files/swagger/*.yaml
-    # são considerados versão em certificação.
-    return "certifying", path
-
-
-def api_key_from_relative(relative_without_group: Path) -> str:
-    return safe_path_value(relative_without_group.stem, "api").lower()
-
-
-def build_publish_relative(
-    relative_without_group: Path,
-    source_group: str,
-    version: Optional[str],
-) -> str:
-    api_key = api_key_from_relative(relative_without_group)
-    version_folder = safe_path_value(version, "unknown-version")
-
-    return (
-        Path(api_key)
-        / source_group
-        / version_folder
-        / relative_without_group.name
-    ).as_posix()
-
-
 def readable_name(
-    api_key: str,
+    group: str,
     title: Optional[str],
     version: Optional[str],
-    source_group: str,
+    stage: str,
 ) -> str:
     if title:
         base_name = title
     else:
-        base_name = re.sub(r"[-_]+", " ", api_key).strip().title()
+        base_name = re.sub(r"[-_]+", " ", group).strip().title()
 
     if version and version.lower() not in base_name.lower():
         base_name = f"{base_name} - v{version}"
 
-    return f"{base_name} ({source_group})"
+    return f"{base_name} ({stage})"
+
+
+def version_sort_key(version: Optional[str]) -> Tuple:
+    if not version:
+        return (0,)
+
+    parts = re.split(r"[.-]", version)
+    normalized = []
+    for part in parts:
+        if part.isdigit():
+            normalized.append(int(part))
+        else:
+            normalized.append(part.lower())
+    return tuple(normalized)
 
 
 def collect_candidates(swagger_root: Path) -> Tuple[List[CandidateSpec], List[Path]]:
+    """Scan swagger_root for spec files using the new fase-based structure."""
     candidates: List[CandidateSpec] = []
     invalid: List[Path] = []
 
     for file_path in sorted(swagger_root.rglob("*")):
         if not file_path.is_file():
             continue
-
         if file_path.suffix.lower() not in VALID_EXTENSIONS:
             continue
 
-        relative = file_path.relative_to(swagger_root).as_posix()
+        rel = file_path.relative_to(swagger_root)
+        parts = rel.parts
+
+        if len(parts) == 4:
+            fase, group, version_folder, _ = parts
+        elif len(parts) == 5:
+            fase, _, group, version_folder, _ = parts
+        else:
+            continue
+
+        if fase not in PHASES:
+            continue
 
         valid, title, version = is_openapi_spec(file_path)
         if not valid:
             invalid.append(file_path)
             continue
 
-        source_group, relative_without_group = split_source_group(relative)
-
-        if not relative_without_group.name:
-            invalid.append(file_path)
-            continue
-
-        api_key = api_key_from_relative(relative_without_group)
-        publish_relative = build_publish_relative(
-            relative_without_group=relative_without_group,
-            source_group=source_group,
-            version=version,
-        )
-
         candidates.append(
             CandidateSpec(
                 source=file_path,
-                relative_from_swagger=relative,
-                publish_relative=publish_relative,
-                source_group=source_group,
-                api_key=api_key,
+                publish_relative="/".join(parts),
+                fase=fase,
+                group=group,
+                version_folder=version_folder,
                 title=title,
                 version=version,
             )
         )
 
     return candidates, invalid
+
+
+def assign_stages(candidates: List[CandidateSpec]) -> Dict[str, str]:
+    """Return {publish_relative: stage} — latest version per (fase, group) = current."""
+    latest_key: Dict[Tuple[str, str], Tuple] = {}
+    latest_pub: Dict[Tuple[str, str], str] = {}
+
+    for c in candidates:
+        k = (c.fase, c.group)
+        resolved = c.version or c.version_folder
+        sk = version_sort_key(resolved)
+        if k not in latest_key or sk > latest_key[k]:
+            latest_key[k] = sk
+            latest_pub[k] = c.publish_relative
+
+    return {
+        c.publish_relative: (
+            "current"
+            if version_sort_key(c.version or c.version_folder) == latest_key[(c.fase, c.group)]
+            else "retired"
+        )
+        for c in candidates
+    }
 
 
 def resolve_unique_publish_paths(candidates: List[CandidateSpec]) -> Dict[str, CandidateSpec]:
@@ -208,25 +197,10 @@ def resolve_unique_publish_paths(candidates: List[CandidateSpec]) -> Dict[str, C
     return selected
 
 
-def version_sort_key(version: Optional[str]) -> Tuple:
-    if not version:
-        return (0,)
-
-    parts = re.split(r"[.-]", version)
-    normalized = []
-
-    for part in parts:
-        if part.isdigit():
-            normalized.append(int(part))
-        else:
-            normalized.append(part.lower())
-
-    return tuple(normalized)
-
-
 def write_output(
     root: Path,
     selected: Dict[str, CandidateSpec],
+    stages: Dict[str, str],
 ) -> Tuple[List[dict], List[Tuple[str, Path, str]]]:
     docs_dir = root / "docs"
     specs_dir = docs_dir / "specs"
@@ -241,12 +215,12 @@ def write_output(
     ordered_candidates = sorted(
         selected.values(),
         key=lambda item: (
-            item.api_key,
-            item.source_group,
-            version_sort_key(item.version),
+            FASE_ORDER.get(item.fase, 99),
+            item.group,
+            STAGE_ORDER.get(stages.get(item.publish_relative, "retired"), 99),
+            version_sort_key(item.version or item.version_folder),
             item.publish_relative.lower(),
         ),
-        reverse=False,
     )
 
     for candidate in ordered_candidates:
@@ -254,21 +228,19 @@ def write_output(
         destination.parent.mkdir(parents=True, exist_ok=True)
         shutil.copy2(candidate.source, destination)
 
-        relative_url = f"./specs/{Path(candidate.publish_relative).as_posix()}"
-        name = readable_name(
-            candidate.api_key,
-            candidate.title,
-            candidate.version,
-            candidate.source_group,
-        )
+        stage = stages.get(candidate.publish_relative, "retired")
+        resolved_version = candidate.version or candidate.version_folder
+        relative_url = f"./specs/{candidate.publish_relative}"
+        name = readable_name(candidate.group, candidate.title, resolved_version, stage)
 
         api_urls.append(
             {
                 "url": relative_url,
                 "name": name,
-                "group": candidate.api_key,
-                "stage": candidate.source_group,
-                "version": candidate.version,
+                "group": candidate.group,
+                "fase": candidate.fase,
+                "stage": stage,
+                "version": resolved_version,
             }
         )
 
@@ -276,7 +248,7 @@ def write_output(
             (
                 candidate.publish_relative,
                 candidate.source,
-                candidate.source_group,
+                stage,
             )
         )
 
@@ -301,17 +273,18 @@ def main() -> int:
         raise SystemExit(f"Swagger directory not found: {swagger_root}")
 
     candidates, invalid = collect_candidates(swagger_root)
+    stages = assign_stages(candidates)
     selected = resolve_unique_publish_paths(candidates)
-    api_urls, copied_files = write_output(repo_root, selected)
+    api_urls, copied_files = write_output(repo_root, selected, stages)
 
     print("Swagger pages build complete")
-    print(f"- Valid specs found: {len(candidates)}")
-    print(f"- Invalid/ignored files: {len(invalid)}")
-    print(f"- Published specs: {len(copied_files)}")
-    print("- Source separation: enabled by API name, stage and version")
+    print(f"- Valid specs found   : {len(candidates)}")
+    print(f"- Invalid/ignored     : {len(invalid)}")
+    print(f"- Published specs     : {len(copied_files)}")
+    print(f"- Source separation   : by fase, group and version")
 
     if invalid:
-        print("- Ignored files that are not valid OpenAPI/Swagger:")
+        print("- Ignored files (not valid OpenAPI/Swagger):")
         for path in invalid:
             print(f"  * {path.relative_to(repo_root).as_posix()}")
 

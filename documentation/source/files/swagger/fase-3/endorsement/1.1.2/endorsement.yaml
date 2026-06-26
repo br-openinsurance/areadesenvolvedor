@@ -1,0 +1,495 @@
+openapi: 3.0.0
+info:
+  title: API Endorsement - Open Insurance Brasil
+  description: |
+    API de solicitação de endosso do Open Insurance Brasil - Fase 3.\
+    Envia informações da solicitação do endosso manualmente escritas nas instituições transmissoras por seus clientes.\
+    Possui segregação entre pessoa natural e pessoa jurídica somente para os endPoints de dados customizáveis de cadastro.\
+    Requer consentimento do cliente para todos os 'endpoints'.
+    
+    # Orientações
+    A `Role` do diretório de participantes relacionada à presente API é a `ICS`.\
+    Para todos os `endpoints` desta API é previsto o envio de um `token` através do header `Authorization`.\
+    Este `token` deverá estar relacionado ao consentimento (identificado pelo `consentId`) mantido na instituição transmissora dos dados, o qual permitirá a pesquisa e retorno, na API em questão, dos 
+    dados relacionados ao `consentId` específico.\
+    Os dados serão devolvidos na consulta desde que o `consentId` relacionado corresponda a um consentimento válido e com o status `AUTHORISED`.\
+    É também necessário que o recurso em questão (endosso, etc.) esteja disponível na instituição transmissora (ou seja, sem boqueios de qualquer natureza e com todas as autorizações/consentimentos já autorizados).\
+    Além disso, as `permissions` necessárias deverão ter sido solicitadas quando da criação do consentimento relacionado.\
+    Relacionamos a seguir as `permissions` necessárias para a consulta de dados em cada `endpoint` da presente API.
+
+    ## Permissions necessárias para a API Endorsement
+
+    Para cada um dos `paths` desta API, além dos escopos (`scopes`) indicados existem `permissions` que deverão ser observadas:
+
+    ### `/request/{consentId}`
+      - permissions:
+        - POST: **ENDORSEMENT_REQUEST_CREATE**
+  version: 1.1.2
+  contact:
+    name: Governança do Open Insurance Brasil
+    url: 'https://www.gov.br/susep'
+servers:
+  - url: 'https://api.organizacao.com.br/open-insurance/endorsement/v1'
+    description: Servidor de Produção
+  - url: 'https://api.organizacao.com.br/open-insurance/endorsement/v1'
+    description: Servidor de Homologação
+tags:
+  - name: Endorsement
+    description: Serviços de endosso
+paths:
+  /request/{consentId}:
+    post:
+      tags:
+       - Endorsement
+      summary: Envia os dados inseridos manualmente para a solicitação de endosso
+      description: "Método para a criação da solicitação de endosso."
+      operationId: "postEndorsementRequest"
+      parameters:
+        - $ref: '#/components/parameters/consentId'      
+        - $ref: '#/components/parameters/Authorization'
+        - $ref: '#/components/parameters/xFapiAuthDate'
+        - $ref: '#/components/parameters/xFapiCustomerIpAddress'
+        - $ref: '#/components/parameters/xFapiInteractionId'
+        - $ref: '#/components/parameters/xCustomerUserAgent'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateEndorsement'
+        description: Payload para criação da notificação.
+        required: true
+      responses:
+        '201':
+          $ref: '#/components/responses/201EndorsementCreated'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '405':
+          $ref: '#/components/responses/MethodNotAllowed'
+        '406':
+          $ref: '#/components/responses/NotAcceptable'
+        '422':
+          $ref: '#/components/responses/UnprocessableEntity'
+        '429':
+          $ref: '#/components/responses/TooManyRequests'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+      security:
+        - OpenId:
+            - openid
+          OAuth2Security:
+            - 'consent:consentId'
+            - endorsement
+components:
+  schemas:
+    CreateEndorsement:
+      type: object
+      required:
+        - data
+      properties:
+        data:
+          type: object
+          required:
+            - policyNumber
+            - endorsementType
+            - requestDescription
+            - requestDate
+          properties:
+            policyNumber:
+              description: Número da apólice, conforme regulamentação vigente
+              type: string
+              maxLength: 60
+              example: "111111"
+            endorsementType:
+              description: Tipo de endosso
+              type: string
+              enum: 
+                [ALTERACAO,
+                CANCELAMENTO,
+                INCLUSAO,
+                EXCLUSAO]
+            requestDescription:
+              description: Descrição adicional do endosso
+              type: string
+              maxLength: 1024
+              example:  Descrição adicional do endosso.
+            requestDate:
+              description: Data de Solicitação do Endosso
+              type: string
+              format: date
+              maxLength: 10
+              example: 2022-11-01
+            customData:
+              type: object
+              properties:
+                customerIdentification:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/CustomInfoData'
+                customerQualification:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/CustomInfoData'
+                customerComplimentaryInfo:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/CustomInfoData'
+                businessIdentification:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/CustomInfoData'
+                businessQualification:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/CustomInfoData'
+                businessComplimentaryInfo:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/CustomInfoData'
+                generalQuoteInfo:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/CustomInfoData'
+                riskLocationInfo:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/CustomInfoData'
+                insuredObjects:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/CustomInfoData'
+                beneficiaries:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/CustomInfoData'
+                coverages:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/CustomInfoData'
+          additionalProperties: false
+    ResponseEndorsement:
+      type: object
+      required:
+        - data
+        - links
+      properties:
+        data:
+          type: object
+          required:
+            - policyNumber
+            - endorsementType
+            - requestDescription
+            - requestDate
+            - protocolNumber
+            - protocolDateTime
+          properties:
+            protocolNumber:
+              description: Identificador da Solicitação do Endosso, conforme protocolo interno da seguradora avisada.
+              type: string
+              maxLength: 60
+            protocolDateTime:
+                description: Data e hora do protocolamento do endosso, conforme especificação RFC-3339, formato UTC.
+                type: string
+                maxLength: 2048
+                format: date-time
+                example: '2021-08-20T08:30:00Z'
+            policyNumber:
+              description: Número da apólice, conforme regulamentação vigente
+              type: string
+              maxLength: 60
+              example: "111111"
+            endorsementType:
+              description: Tipo de endosso
+              type: string
+              enum: 
+                [ALTERACAO,
+                CANCELAMENTO,
+                INCLUSAO,
+                EXCLUSAO]
+            requestDescription:
+              description: Descrição adicional do endosso
+              type: string
+              maxLength: 1024
+              example:  Descrição adicional do endosso.
+            requestDate:
+              description: Data de Solicitação do Endosso
+              type: string
+              format: date
+              maxLength: 10
+              example: 2022-11-01
+            customData:
+              type: object
+              properties:
+                customerIdentification:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/CustomInfoData'
+                customerQualification:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/CustomInfoData'
+                customerComplimentaryInfo:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/CustomInfoData'
+                businessIdentification:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/CustomInfoData'
+                businessQualification:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/CustomInfoData'
+                businessComplimentaryInfo:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/CustomInfoData'
+                generalQuoteInfo:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/CustomInfoData'
+                riskLocationInfo:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/CustomInfoData'
+                insuredObjects:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/CustomInfoData'
+                beneficiaries:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/CustomInfoData'
+                coverages:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/CustomInfoData'
+        links:
+            $ref: '#/components/schemas/Links'
+      additionalProperties: false
+    CustomInfoData:
+      type: object
+      description: Estrutura para identificação e transmissão de dados customizáveis.
+      required:
+        - fieldId
+        - value
+      properties:
+        fieldId:
+          type: string
+          pattern: '^[a-zA-Z0-9][a-zA-Z0-9\-]{0,99}$'
+          maxLength: 100
+          description: Um identificador único usado para identificar o valor transmitido.
+          example: 578-psd-71md6971kjh-2d414
+        value:
+          description: Valor do campo identificado acima, esse campo pode ser implementado como qualquer tipo de dado (objeto, texto, número, booleano, etc.)
+      additionalProperties: false
+    Links:
+      type: object
+      required:
+        - redirect
+      properties:
+        redirect:
+          description: Campo destinado a disponibilização de links de acesso a outros materiais.
+          type: string
+          example: 'https://www.abcseguros.com/endorsement?id=000123'
+    Meta:
+      type: object
+      properties:
+        totalRecords:
+          type: integer
+          description: Total de registros encontrados
+          example: 10
+        totalPages:
+          type: integer
+          description: Total de páginas para os registros encontrados
+          example: 1
+      required:
+        - totalRecords
+        - totalPages
+    ResponseError:
+      type: object
+      required:
+        - errors
+      properties:
+        errors:
+          type: array
+          minItems: 1
+          maxItems: 13
+          items:
+            type: object
+            required:
+              - code
+              - title
+              - detail
+            properties:
+              code:
+                description: Código de erro específico do endpoint
+                type: string
+                pattern: '[\w\W\s]*'
+                maxLength: 255
+              title:
+                description: Título legível por humanos deste erro específico
+                type: string
+                maxLength: 255
+              detail:
+                description: Descrição legível por humanos deste erro específico
+                type: string
+                maxLength: 2048
+              requestDateTime:
+                description: Data e hora da consulta, conforme especificação RFC-3339, formato UTC.
+                type: string
+                maxLength: 2048
+                format: date-time
+                example: '2021-08-20T08:30:00Z'
+            additionalProperties: false
+        meta:
+          $ref: '#/components/schemas/Meta'
+      additionalProperties: false
+    XFapiInteractionId:
+      type: string
+      pattern: '^[a-zA-Z0-9][a-zA-Z0-9\-]{0,99}$'
+      maxLength: 100
+      description: 'Um UID [RFC4122](https://tools.ietf.org/html/rfc4122) usado como um ID de correlação. Se fornecido, o transmissor deve "reproduzir" esse valor no cabeçalho de resposta.'
+  parameters:
+    consentId:
+      name: consentId
+      in: path
+      description: |
+        O consentId é o identificador único do consentimento a ser revogado e deverá ser um URN - Uniform Resource Name.
+      required: true
+      schema:
+        type: string
+        pattern: '^urn:[a-zA-Z0-9][a-zA-Z0-9-]{0,31}:[a-zA-Z0-9()+,\-.:=@;$_!*''%\/?#]+$'
+        maxLength: 256
+    Authorization:
+      name: Authorization
+      in: header
+      description: Cabeçalho HTTP padrão. Permite que as credenciais sejam fornecidas dependendo do tipo de recurso solicitado.
+      required: true
+      schema:
+        type: string
+        pattern: '[\w\W\s]*'
+        maxLength: 2048
+    xCustomerUserAgent:
+      name: x-customer-user-agent
+      in: header
+      description: Indica o user-agent que o usuário utiliza.
+      required: false
+      schema:
+        type: string
+        pattern: '[\w\W\s]*'
+        minLength: 1
+        maxLength: 100
+    xFapiAuthDate:
+      name: x-fapi-auth-date
+      in: header
+      description: "Data em que o usuário logou pela última vez com o receptor. Representada de acordo com a [RFC7231](https://tools.ietf.org/html/rfc7231). Exemplo: Sun, 10 Sep 2017 19:43:31 UTC"
+      required: false
+      schema:
+        type: string
+        pattern: '^(Mon|Tue|Wed|Thu|Fri|Sat|Sun), \d{2} (Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec) \d{4} \d{2}:\d{2}:\d{2} (GMT|UTC)$'
+        minLength: 29
+        maxLength: 29
+    xFapiCustomerIpAddress:
+      name: x-fapi-customer-ip-address
+      in: header
+      description: O endereço IP do usuário se estiver atualmente logado com o receptor.
+      required: false
+      schema:
+        type: string
+        pattern: '[\w\W\s]*'
+        minLength: 1
+        maxLength: 100
+    xFapiInteractionId:
+      name: x-fapi-interaction-id
+      in: header
+      description: 'Um UID [RFC4122](https://tools.ietf.org/html/rfc4122) usado como um ID de correlação. Se fornecido, o transmissor deve "reproduzir" esse valor no cabeçalho de resposta.'
+      required: false
+      schema:
+        type: string
+        pattern: '^[a-zA-Z0-9][a-zA-Z0-9\-]{0,99}$'
+        minLength: 1
+        maxLength: 100
+  securitySchemes:
+    OpenId:
+      type: openIdConnect
+      openIdConnectUrl: 'https://auth.mockbank.poc.raidiam.io/.well-known/openid-configuration'
+    OAuth2Security:
+      type: oauth2
+      description: Fluxo OAuth necessário para que a receptora tenha acesso aos dados na instituição transmissora. Inclui o processo de redirecionamento e autenticação do usuário a que se referem os dados.
+      flows:
+        authorizationCode:
+          authorizationUrl: 'https://authserver.example/authorization'
+          tokenUrl: 'https://authserver.example/token'
+          scopes:
+            endorsement: Escopo necessário para acesso à API. O controle dos endpoints específicos é feito via permissions.
+  responses:
+    201EndorsementCreated:
+      description: Solicitação de endosso enviada com sucesso.
+      headers:
+        x-fapi-interaction-id:
+          schema:
+            $ref: '#/components/schemas/XFapiInteractionId'
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ResponseEndorsement"
+    BadRequest:
+      description: A requisição foi malformada, omitindo atributos obrigatórios, seja no payload ou através de atributos na URL
+      content:
+        application/json; charset=utf-8:
+          schema:
+            $ref: '#/components/schemas/ResponseError'
+    Forbidden:
+      description: O token tem escopo incorreto ou uma política de segurança foi violada
+      content:
+        application/json; charset=utf-8:
+          schema:
+            $ref: '#/components/schemas/ResponseError'
+    InternalServerError:
+      description: Ocorreu um erro no gateway da API ou no microsserviço
+      content:
+        application/json; charset=utf-8:
+          schema:
+            $ref: '#/components/schemas/ResponseError'
+    MethodNotAllowed:
+      description: O consumidor tentou acessar o recurso com um método não suportado
+      content:
+        application/json; charset=utf-8:
+          schema:
+            $ref: '#/components/schemas/ResponseError'
+    NotAcceptable:
+      description: A solicitação continha um cabeçalho Accept diferente dos tipos de mídia permitidos ou um conjunto de caracteres diferente de UTF-8
+      content:
+        application/json; charset=utf-8:
+          schema:
+            $ref: '#/components/schemas/ResponseError'
+    NotFound:
+      description: O recurso solicitado não existe ou não foi implementado
+      content:
+        application/json; charset=utf-8:
+          schema:
+            $ref: '#/components/schemas/ResponseError'
+    TooManyRequests:
+      description: A operação foi recusada, pois muitas solicitações foram feitas dentro de um determinado período ou o limite global de requisições concorrentes foi atingido
+      content:
+        application/json; charset=utf-8:
+          schema:
+            $ref: '#/components/schemas/ResponseError'
+    Unauthorized:
+      description: Cabeçalho de autenticação ausente/inválido ou token inválido
+      content:
+        application/json; charset=utf-8:
+          schema:
+            $ref: '#/components/schemas/ResponseError'
+    UnprocessableEntity:
+      description: O servidor entende o tipo de conteúdo da entidade da requisição, e a sintaxe da requisição está correta, mas não foi possível processar as instruções presentes
+      content:
+        application/json; charset=utf-8:
+          schema:
+            $ref: '#/components/schemas/ResponseError'
