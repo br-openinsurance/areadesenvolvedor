@@ -3,13 +3,13 @@ info:
   title: APIs Open Data do Open Insurance Brasil
   description: 
     API de informações de Plano de Previdência com cobertura de risco. Os recursos que podem ser consumidos pelos participantes conforme a regra 3.1.2 do manual de escopo de dados.
-  version: 1.5.0
+  version: 2.0.0
   contact:
     url: 'https://www.gov.br/susep/'
 servers:
-  - url: 'https://api.organizacao.com.br/open-insurance/products-services/v1'
+  - url: 'https://api.organizacao.com.br/open-insurance/products-services/v2'
     description: Servidor de Produção
-  - url: 'https://api.organizacao.com.br/open-insurance/products-services/v1'
+  - url: 'https://api.organizacao.com.br/open-insurance/products-services/v2'
     description: Servidor de Homologação  
 tags:
 - name: "pension-plan"
@@ -150,7 +150,7 @@ components:
           cnpjNumber:
             type: string
             description: CNPJ da sociedade pertencente à marca.
-            pattern: ^\d{14}$
+            pattern: '^[A-Z0-9]{12}\d{2}$'
             example: '12345678901234'
           products:          
             $ref: '#/components/schemas/PensionPlanProduct'
@@ -653,27 +653,27 @@ components:
           type: string
           description: URI completo que gerou a resposta atual.
           pattern: ^(https:\/\/)(.*?)(\/open-insurance\/products-services\/v\d+)(\/pension-plan.*)?$
-          example: 'https://api.organizacao.com.br/open-insurance/products-services/v1/pension-plan'
+          example: 'https://api.organizacao.com.br/open-insurance/products-services/v2/pension-plan'
         first:
           type: string
           description: URI da primeira página que originou essa lista de resultados. Restrição - Obrigatório quando não for a primeira página da resposta
           pattern: ^(https:\/\/)(.*?)(\/open-insurance\/products-services\/v\d+)(\/pension-plan.*)?$
-          example: 'https://api.organizacao.com.br/open-insurance/products-services/v1/pension-plan'
+          example: 'https://api.organizacao.com.br/open-insurance/products-services/v2/pension-plan'
         prev:
           type: string
           description: URI da página anterior dessa lista de resultados. Restrição - Obrigatório quando não for a primeira página da resposta
           pattern: ^(https:\/\/)(.*?)(\/open-insurance\/products-services\/v\d+)(\/pension-plan.*)?$
-          example: 'https://api.organizacao.com.br/open-insurance/products-services/v1/pension-plan'
+          example: 'https://api.organizacao.com.br/open-insurance/products-services/v2/pension-plan'
         next:
           type: string
           description: URI da próxima página dessa lista de resultados. Restrição - Obrigatório quando não for a última página da resposta
           pattern: ^(https:\/\/)(.*?)(\/open-insurance\/products-services\/v\d+)(\/pension-plan.*)?$
-          example: 'https://api.organizacao.com.br/open-insurance/products-services/v1/pension-plan'
+          example: 'https://api.organizacao.com.br/open-insurance/products-services/v2/pension-plan'
         last:
           type: string
           description: URI da última página dessa lista de resultados. Restrição - Obrigatório quando não for a última página da resposta
           pattern: ^(https:\/\/)(.*?)(\/open-insurance\/products-services\/v\d+)(\/pension-plan.*)?$
-          example: 'https://api.organizacao.com.br/open-insurance/products-services/v1/pension-plan'
+          example: 'https://api.organizacao.com.br/open-insurance/products-services/v2/pension-plan'
 
     Meta:
       type: object
@@ -758,6 +758,7 @@ components:
       required: true
       schema:
         type: string
+        pattern: '^[A-Z0-9]{12}\d{2}$'
     cache-Control:
       name: cache-control
       in: header
