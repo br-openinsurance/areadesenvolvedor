@@ -16,7 +16,7 @@ from typing import Optional, Tuple
 
 
 VALID_EXTENSIONS = {".yaml", ".yml", ".json"}
-PHASES = {"fase-1", "fase-2", "fase-3"}
+PHASES = {"fase-1", "fase-2", "fase-3", "monitoring", "pcm"}
 
 OPENAPI_REGEX = re.compile(r"(?m)^\s*(openapi|swagger)\s*:")
 TITLE_REGEX = re.compile(r'(?m)^[ \t]{0,12}title\s*:\s*["\']?([^"\n\'#]+)')
@@ -38,7 +38,6 @@ def extract_version_from_stem(stem: str) -> Optional[str]:
 
 
 def read_spec_meta(file_path: Path) -> Tuple[Optional[str], Optional[str]]:
-    """Return (title, version) from an OpenAPI spec file, or (None, None) if invalid."""
     suffix = file_path.suffix.lower()
     try:
         text = file_path.read_text(encoding="utf-8", errors="ignore")
@@ -97,7 +96,7 @@ def version_sort_key(version: Optional[str]) -> tuple:
 
 STAGE_ORDER = {"certifying": 0, "current": 1, "deprecated": 2, "retired": 3}
 VALID_STAGES = set(STAGE_ORDER)
-FASE_ORDER = {"fase-1": 0, "fase-2": 1, "fase-3": 2}
+FASE_ORDER = {"fase-1": 0, "fase-2": 1, "fase-3": 2, "monitoring": 3, "pcm": 4}
 
 
 def load_stage_overrides(overrides_path: Path) -> dict[str, dict[str, str]]:
