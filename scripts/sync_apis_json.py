@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Sync docs/config/apis.json with spec files found in docs/specs/fase-1, fase-2 and fase-3.
 
-Scans docs/specs/<fase>/<group>/<version>/<file> and rebuilds apis.json from scratch.
+Scans docs/specs/<fase>/<group>/<filename>-v<version>.<ext> and rebuilds apis.json from scratch.
 Within each (fase, group) pair the highest semantic version is assigned stage "current";
 all older versions are assigned "retired". Entries in stage_overrides.json take
 precedence over the auto-detected stage.
@@ -21,6 +21,7 @@ PHASES = {"fase-1", "fase-2", "fase-3"}
 OPENAPI_REGEX = re.compile(r"(?m)^\s*(openapi|swagger)\s*:")
 TITLE_REGEX = re.compile(r'(?m)^[ \t]{0,12}title\s*:\s*["\']?([^"\n\'#]+)')
 VERSION_REGEX = re.compile(r'(?m)^[ \t]{0,12}version\s*:\s*["\']?([^"\n\'#]+)')
+VERSION_FROM_STEM_RE = re.compile(r"^.+-v([\d]+(?:\.[\d]+)*)$")
 
 
 def clean_value(value: Optional[str]) -> Optional[str]:
@@ -28,6 +29,12 @@ def clean_value(value: Optional[str]) -> Optional[str]:
         return None
     normalized = str(value).strip().strip('"').strip("'").strip()
     return normalized or None
+
+
+def extract_version_from_stem(stem: str) -> Optional[str]:
+    """Extrai a versão do stem de um filename como 'api-name-v1.2.3'."""
+    m = VERSION_FROM_STEM_RE.match(stem)
+    return m.group(1) if m else None
 
 
 def read_spec_meta(file_path: Path) -> Tuple[Optional[str], Optional[str]]:
@@ -137,8 +144,10 @@ def main() -> int:
     overrides = load_stage_overrides(overrides_path)
     overrides_applied: list[str] = []
 
-    # Escaneia fase-1/2/3 e realiza coleta dos dados.
-    # Caminho  esperado em relação ao specs_dir: <fase>/<group>/<version>/<filename> (4 parts)
+    # Escaneia fase-1/2/3 na estrutura plana e realiza coleta dos dados.
+    # Caminho esperado relativo ao specs_dir:
+    #   <fase>/<group>/<filename>-v<version>.<ext>            (3 partes)
+    #   <fase>/<category>/<group>/<filename>-v<version>.<ext>  (4 partes)
     raw_entries: list[dict] = []
     invalid: list[str] = []
 
@@ -151,11 +160,10 @@ def main() -> int:
         rel = file_path.relative_to(specs_dir)
         parts = rel.parts
 
-        if len(parts) == 4:
-            fase, group, version_folder, _ = parts
-        elif len(parts) == 5:
-            # fase-X/<category>/<group>/<version>/<filename>  (e.g. fase-1/monitoring/admin_metrics/1.3.0/file.yaml)
-            fase, _, group, version_folder, _ = parts
+        if len(parts) == 3:
+            fase, group, filename = parts
+        elif len(parts) == 4:
+            fase, _, group, filename = parts
         else:
             continue
 
@@ -164,17 +172,20 @@ def main() -> int:
 
         relative_url = "./specs/" + "/".join(parts)
 
-        title, version = read_spec_meta(file_path)
-        if title is None and version is None:
+        title, version_from_spec = read_spec_meta(file_path)
+        if title is None and version_from_spec is None:
             invalid.append(relative_url)
             continue
+
+        version_from_name = extract_version_from_stem(Path(filename).stem)
+        version = version_from_spec or version_from_name
 
         raw_entries.append({
             "url": relative_url,
             "title": title,
             "group": group,
             "fase": fase,
-            "version": version or version_folder,
+            "version": version,
         })
 
     # Encontra a versão maior por (fase, group) para atribuir automaticamente "current".
