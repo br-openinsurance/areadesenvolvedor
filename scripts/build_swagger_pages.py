@@ -2,12 +2,12 @@
 """Build static Swagger UI pages for GitHub Pages.
 
 Scans:
-- documentation/source/files/swagger/<fase>/<group>/<version>/<file>
-- documentation/source/files/swagger/<fase>/<category>/<group>/<version>/<file>
-  (e.g. fase-1/monitoring/admin_metrics/1.3.0/admin_metrics.yaml)
+- documentation/source/files/swagger/<fase>/<group>/<filename>-v<version>.<ext>
+- documentation/source/files/swagger/<fase>/<category>/<group>/<filename>-v<version>.<ext>
+  (e.g. fase-1/monitoring/admin_metrics/admin_metrics-v1.3.0.yaml)
 
 Publishes:
-- docs/specs/<fase>/<group>/<version>/<file>   (mirrors source structure)
+- docs/specs/<fase>/<group>/<filename>-v<version>.<ext>   (mirrors source structure)
 - docs/config/apis.json
 - docs/.nojekyll
 """
@@ -23,12 +23,13 @@ from typing import Dict, List, Optional, Tuple
 
 
 VALID_EXTENSIONS = {".yaml", ".yml", ".json"}
-PHASES = {"fase-1", "fase-2", "fase-3"}
-FASE_ORDER = {"fase-1": 0, "fase-2": 1, "fase-3": 2}
+PHASES = {"fase-1", "fase-2", "fase-3", "monitoring", "pcm"}
+FASE_ORDER = {"fase-1": 0, "fase-2": 1, "fase-3": 2, "monitoring": 3, "pcm": 4}
 
 OPENAPI_REGEX = re.compile(r"(?m)^\s*(openapi|swagger)\s*:")
 TITLE_REGEX = re.compile(r'(?m)^[ \t]{0,12}title\s*:\s*["\']?([^"\n\'#]+)')
 VERSION_REGEX = re.compile(r'(?m)^[ \t]{0,12}version\s*:\s*["\']?([^"\n\'#]+)')
+VERSION_FROM_STEM_RE = re.compile(r"^.+-v([\d]+(?:\.[\d]+)*)$")
 
 STAGE_ORDER = {"certifying": 0, "current": 1, "deprecated": 2, "retired": 3}
 
@@ -36,12 +37,11 @@ STAGE_ORDER = {"certifying": 0, "current": 1, "deprecated": 2, "retired": 3}
 @dataclass
 class CandidateSpec:
     source: Path
-    publish_relative: str   # fase/group/version/filename  (mirrors source)
+    publish_relative: str   # fase/group/<filename>-v<version>.<ext>  (mirrors source)
     fase: str
     group: str
-    version_folder: str
     title: Optional[str]
-    version: Optional[str]
+    version: Optional[str]  # from spec content or filename
 
 
 def clean_value(value: Optional[str]) -> Optional[str]:
@@ -49,6 +49,12 @@ def clean_value(value: Optional[str]) -> Optional[str]:
         return None
     normalized = str(value).strip().strip('"').strip("'").strip()
     return normalized or None
+
+
+def extract_version_from_stem(stem: str) -> Optional[str]:
+    """Extrai a versão do stem de um filename como 'api-name-v1.2.3'."""
+    m = VERSION_FROM_STEM_RE.match(stem)
+    return m.group(1) if m else None
 
 
 def is_openapi_spec(file_path: Path) -> Tuple[bool, Optional[str], Optional[str]]:
@@ -114,7 +120,12 @@ def version_sort_key(version: Optional[str]) -> Tuple:
 
 
 def collect_candidates(swagger_root: Path) -> Tuple[List[CandidateSpec], List[Path]]:
-    """Scan swagger_root for spec files using the new fase-based structure."""
+    """Scan swagger_root for spec files using the flat fase-based structure.
+
+    Expected paths (relative to swagger_root):
+      <fase>/<group>/<filename>-v<version>.<ext>            (3 parts)
+      <fase>/<category>/<group>/<filename>-v<version>.<ext>  (4 parts)
+    """
     candidates: List[CandidateSpec] = []
     invalid: List[Path] = []
 
@@ -127,20 +138,23 @@ def collect_candidates(swagger_root: Path) -> Tuple[List[CandidateSpec], List[Pa
         rel = file_path.relative_to(swagger_root)
         parts = rel.parts
 
-        if len(parts) == 4:
-            fase, group, version_folder, _ = parts
-        elif len(parts) == 5:
-            fase, _, group, version_folder, _ = parts
+        if len(parts) == 3:
+            fase, group, filename = parts
+        elif len(parts) == 4:
+            fase, _, group, filename = parts
         else:
             continue
 
         if fase not in PHASES:
             continue
 
-        valid, title, version = is_openapi_spec(file_path)
+        valid, title, version_from_spec = is_openapi_spec(file_path)
         if not valid:
             invalid.append(file_path)
             continue
+
+        version_from_name = extract_version_from_stem(Path(filename).stem)
+        version = version_from_spec or version_from_name
 
         candidates.append(
             CandidateSpec(
@@ -148,7 +162,6 @@ def collect_candidates(swagger_root: Path) -> Tuple[List[CandidateSpec], List[Pa
                 publish_relative="/".join(parts),
                 fase=fase,
                 group=group,
-                version_folder=version_folder,
                 title=title,
                 version=version,
             )
@@ -160,20 +173,17 @@ def collect_candidates(swagger_root: Path) -> Tuple[List[CandidateSpec], List[Pa
 def assign_stages(candidates: List[CandidateSpec]) -> Dict[str, str]:
     """Return {publish_relative: stage} — latest version per (fase, group) = current."""
     latest_key: Dict[Tuple[str, str], Tuple] = {}
-    latest_pub: Dict[Tuple[str, str], str] = {}
 
     for c in candidates:
         k = (c.fase, c.group)
-        resolved = c.version or c.version_folder
-        sk = version_sort_key(resolved)
+        sk = version_sort_key(c.version)
         if k not in latest_key or sk > latest_key[k]:
             latest_key[k] = sk
-            latest_pub[k] = c.publish_relative
 
     return {
         c.publish_relative: (
             "current"
-            if version_sort_key(c.version or c.version_folder) == latest_key[(c.fase, c.group)]
+            if version_sort_key(c.version) == latest_key[(c.fase, c.group)]
             else "retired"
         )
         for c in candidates
@@ -218,7 +228,7 @@ def write_output(
             FASE_ORDER.get(item.fase, 99),
             item.group,
             STAGE_ORDER.get(stages.get(item.publish_relative, "retired"), 99),
-            version_sort_key(item.version or item.version_folder),
+            version_sort_key(item.version),
             item.publish_relative.lower(),
         ),
     )
@@ -229,9 +239,8 @@ def write_output(
         shutil.copy2(candidate.source, destination)
 
         stage = stages.get(candidate.publish_relative, "retired")
-        resolved_version = candidate.version or candidate.version_folder
         relative_url = f"./specs/{candidate.publish_relative}"
-        name = readable_name(candidate.group, candidate.title, resolved_version, stage)
+        name = readable_name(candidate.group, candidate.title, candidate.version, stage)
 
         api_urls.append(
             {
@@ -240,7 +249,7 @@ def write_output(
                 "group": candidate.group,
                 "fase": candidate.fase,
                 "stage": stage,
-                "version": resolved_version,
+                "version": candidate.version,
             }
         )
 
@@ -281,7 +290,7 @@ def main() -> int:
     print(f"- Valid specs found   : {len(candidates)}")
     print(f"- Invalid/ignored     : {len(invalid)}")
     print(f"- Published specs     : {len(copied_files)}")
-    print(f"- Source separation   : by fase, group and version")
+    print(f"- Source separation   : by fase and group")
 
     if invalid:
         print("- Ignored files (not valid OpenAPI/Swagger):")
