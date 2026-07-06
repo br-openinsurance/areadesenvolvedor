@@ -31,7 +31,12 @@ TITLE_REGEX = re.compile(r'(?m)^[ \t]{0,12}title\s*:\s*["\']?([^"\n\'#]+)')
 VERSION_REGEX = re.compile(r'(?m)^[ \t]{0,12}version\s*:\s*["\']?([^"\n\'#]+)')
 VERSION_FROM_STEM_RE = re.compile(r"^.+-v([\d]+(?:\.[\d]+)*)$")
 
-STAGE_ORDER = {"certifying": 0, "current": 1, "deprecated": 2, "retired": 3}
+STAGE_ORDER = {"current": 0,
+    "certifying": 1,
+    "release-candidate": 2,
+    "developing": 3,
+    "deprecated": 4,
+    "retired": 5,}
 
 
 @dataclass
