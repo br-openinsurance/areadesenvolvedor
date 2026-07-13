@@ -2,15 +2,15 @@ openapi: 3.0.0
 info:
   title: APIs Open Data do Open Insurance Brasil
   description:
-    API de informações de dados do produto Garantia Estendida. Os recursos que podem ser consumidos pelos participantes conforme a regra 3.1.2 do manual de escopo de dados..
-  version: 1.4.0
+    API de informações de dados do produto Garantia Estendida. Os recursos que podem ser consumidos pelos participantes conforme a regra 3.1.2 do manual de escopo de dados.
+  version: 3.0.0
   contact:
     url: 'https://www.gov.br/susep/'
 servers:
-  - url: 'https://api.organizacao.com.br/open-insurance/products-services/v1'
-    description: Servidor de Producao
-  - url: 'https://api.organizacao.com.br/open-insurance/products-services/v1'
-    description: Servidor de Homologacao 
+  - url: 'https://api.organizacao.com.br/open-insurance/products-services/v2'
+    description: Servidor de Produção
+  - url: 'https://api.organizacao.com.br/open-insurance/products-services/v2'
+    description: Servidor de Homologação 
 tags:
   - name: "Garantia Estendida"
   - name: "ExtendedWarranty"
@@ -20,8 +20,8 @@ paths:
     get:
       tags:
         - ExtendedWarranty
-      summary: Obtem a lista dos produtos do tipo Garantia Estendida
-      description: "Obtem a lista dos produtos do tipo Garantia Estendida"
+      summary: Obtém a lista dos produtos do tipo Garantia Estendida
+      description: "Obtém a lista dos produtos do tipo Garantia Estendida"
       operationId: "getExtendedWarranty"
       parameters:
         - $ref: "#/components/parameters/cache-Control"
@@ -89,7 +89,7 @@ components:
 
     ExtendedWarrantyBrand:
       type: object
-      description: Organizacao controladora do grupo.
+      description: Organização controladora do grupo.
       required:
         - name
         - companies
@@ -105,7 +105,7 @@ components:
     ExtendedWarrantyCompany:
       type: array
       items:
-          description: Informações referente a sociedade a qual a marca pertence.
+          description: Informações referentes à sociedade à qual a marca pertence
           type: object
           required:
           - name
@@ -120,7 +120,7 @@ components:
             cnpjNumber:
                 type: string
                 description: CNPJ da sociedade pertencente à marca.
-                pattern: ^\d{14}$
+                pattern: '^[A-Z0-9]{12}\d{2}$'
                 example: '12345678901234'
             products:
                 $ref: '#/components/schemas/ExtendedWarrantyProduct'
@@ -193,8 +193,8 @@ components:
                     NOTEBOOK,
                     TABLET,
                     EQUIPAMENTOS_PORTATEIS,
-                    ELETRODOMESTICOS_–_LINHA_BRANCA,
-                    ELETRODOMESTICOS_–_LINHA_MARROM,
+                    ELETRODOMESTICOS_LINHA_BRANCA,
+                    ELETRODOMESTICOS_LINHA_MARROM,
                     AUTOMOVEL,
                     BICICLETA,
                     BICICLETA_ELETRICA,
@@ -203,6 +203,7 @@ components:
                     OUTROS]
           securityTypeOthers:
             type: string
+            maxLength: 500
             description: Campo livre para descrição, caso o valor do campo "Tipo de bem segurado" seja 7. Outros
           assistanceServices:
             $ref: '#/components/schemas/ExtendedWarrantyAssistanceServices'
@@ -343,7 +344,7 @@ components:
           termOthers:
             type: string
             description: Campo livre para descrição por cada participante ao selecionar o domínio “Outros” no campo Prazo (acima).
-            maxLength: 100
+            maxLength: 500
     
     ExtendedWarrantyPremiumPayment:
       type: array
@@ -354,7 +355,7 @@ components:
           - paymentType
         properties:
           paymentMethod:
-            description: Metodo de pagamento
+            description: Método de pagamento
             type: string
             example: CARTAO_DE_CREDITO
             enum: [CARTAO_DE_CREDITO,
@@ -448,6 +449,10 @@ components:
           description: Indexador. Condicional, vinculado ao preenchimento do campo Tipo com Percentual
           example: LMG
           enum: [LMG, FINANCEIRO_COBERTURA, OUTRO]
+        indexOthers:
+          type: string
+          maxLength: 500
+          description: Campo para informar o tipo do Indexador, condicional ao valor 'OUTRO' em index.
         maxIndexAmount:
           $ref: '#/components/schemas/ExtendedWarrantyCoverageAttributesDetails'
 
@@ -511,27 +516,27 @@ components:
           type: string
           description: URL da página atualmente requisitada
           pattern: ^(https:\/\/)(.*?)(\/open-insurance\/products-services\/v\d+)(\/extended-warranty.*)?$
-          example: 'https://api.organizacao.com.br/open-insurance/products-services/v1/extended-warranty'
+          example: 'https://api.organizacao.com.br/open-insurance/products-services/v2/extended-warranty'
         first:
           type: string
           description: URL da primeira página de registros
           pattern: ^(https:\/\/)(.*?)(\/open-insurance\/products-services\/v\d+)(\/extended-warranty.*)?$
-          example: 'https://api.organizacao.com.br/open-insurance/products-services/v1/extended-warranty'
+          example: 'https://api.organizacao.com.br/open-insurance/products-services/v2/extended-warranty'
         prev:
           type: string
           description: URL da página anterior de registros
           pattern: ^(https:\/\/)(.*?)(\/open-insurance\/products-services\/v\d+)(\/extended-warranty.*)?$
-          example: 'https://api.organizacao.com.br/open-insurance/products-services/v1/extended-warranty'
+          example: 'https://api.organizacao.com.br/open-insurance/products-services/v2/extended-warranty'
         next:
           type: string
           description: URL da próxima página de registros
           pattern: ^(https:\/\/)(.*?)(\/open-insurance\/products-services\/v\d+)(\/extended-warranty.*)?$
-          example: 'https://api.organizacao.com.br/open-insurance/products-services/v1/extended-warranty'
+          example: 'https://api.organizacao.com.br/open-insurance/products-services/v2/extended-warranty'
         last:
           type: string
           description: URL da última página de registros
           pattern: ^(https:\/\/)(.*?)(\/open-insurance\/products-services\/v\d+)(\/extended-warranty.*)?$
-          example: 'https://api.organizacao.com.br/open-insurance/products-services/v1/extended-warranty'
+          example: 'https://api.organizacao.com.br/open-insurance/products-services/v2/extended-warranty'
     
     Meta:
       type: object
@@ -573,15 +578,18 @@ components:
               title:
                 description: Título legível por humanos deste erro específico
                 type: string
+                pattern: '[\w\W\s]*'
                 maxLength: 255
               detail:
                 description: Descrição legível por humanos deste erro específico
                 type: string
+                pattern: '[\w\W\s]*'
                 maxLength: 2048
               requestDateTime:
                 description: 'Data e hora da consulta, conforme especificação RFC-3339, formato UTC.'
                 type: string
-                maxLength: 2048
+                maxLength: 20
+                pattern: '^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])T(?:[01]\d|2[0123]):(?:[012345]\d):(?:[012345]\d)Z$'
                 format: date-time
                 example: '2021-08-20T08:30:00Z'
             additionalProperties: false
@@ -652,7 +660,7 @@ components:
      
   responses:
     UnprocessableEntity:
-      description: 'O servidor entende o tipo de conteúdo da entidade da requisição, e a sintaxe da requisição esta correta, mas não foi possível processar as instruções presente.'
+      description: 'O servidor entende o tipo de conteúdo da entidade da requisição, e a sintaxe da requisição está correta, mas não foi possível processar as instruções presentes.'
       content:
         application/json; charset=utf-8:
           schema:

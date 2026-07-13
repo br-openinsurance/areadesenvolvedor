@@ -2,14 +2,14 @@ openapi: 3.0.0
 info:
   title: APIs Open Data do Open Insurance Brasil
   description: As APIs descritas neste documento são referentes as APIs da fase Open Data do Open Insurance Brasil.
-  version: 1.5.0
+  version: 3.0.0
   contact:
     url: 'https://www.gov.br/susep/'
 tags:
   - name: "Channels"
     description: "Operações para listagem de canais de atendimentos"
 servers:
-  - url: http://api.organizacao.com.br/open-insurance/channels/v1
+  - url: http://api.organizacao.com.br/open-insurance/channels/v2
 paths:
   /branches:
     get:
@@ -197,7 +197,7 @@ components:
           description: |
             Número completo do CNPJ da instituição responsável pela dependência - o CNPJ corresponde ao número de inscrição no Cadastro de Pessoa Jurídica.
             Deve-se ter apenas os números do CNPJ, sem máscara
-          pattern: ^\d{14}$
+          pattern: '^[A-Z0-9]{12}\d{2}$'
           example: '12345678901234'
         branches:
           type: array
@@ -207,7 +207,7 @@ components:
           description: Lista de Dependências de uma Instituição
 
     ResponseElectronicChannelsList:
-      description: Listagem de canais telefônicos de atendimento obtida com sucesso.
+      description: Listagem de canais eletrônicos de atendimento obtida com sucesso.
       type: object
       required:
         - data
@@ -261,7 +261,7 @@ components:
         cnpjNumber:
           type: string
           description: CNPJ da sociedade responsável pelo canal eletrônico.
-          pattern: ^\d{14}$
+          pattern: '^[A-Z0-9]{12}\d{2}$'
           example: '12345678901234'
         electronicChannels:
           type: array
@@ -269,7 +269,7 @@ components:
             $ref: '#/components/schemas/ElectronicChannels'
           minItems: 1
           maxItems: 99
-          description: Lista  de canais de atendimento eltrônico
+          description: Lista  de canais de atendimento eletrônico
 
     Branch:
       type: object
@@ -294,7 +294,7 @@ components:
           description: Listagem de telefones da Dependência própria
         services:
           type: array
-          description: Traz a relação de serviços disponbilizados pelo Canal de Atendimento
+          description: Traz a relação de serviços disponibilizados pelo Canal de Atendimento
           items:
             $ref: '#/components/schemas/BranchService'
           minItems: 1
@@ -304,60 +304,184 @@ components:
       type: object
       required:
         - address
-        - districtName
+      properties:
+        address:
+          $ref: '#/components/schemas/Address'
+        geographicCoordinates:
+          $ref: '#/components/schemas/BranchesGeographicCoordinates'       
+    Address:
+      type: object
+      description: 'dados do endereço'
+      required:
+        - flagPostCode
+        - address
+      properties:
+        flagPostCode:
+          type: string
+          description: Indica se o endereço será nacional ou internacional
+          enum:
+            - NACIONAL
+            - INTERNACIONAL
+        address:
+          description: endereço completo
+          oneOf:
+            - $ref: '#/components/schemas/NationalAddress'
+            - $ref: '#/components/schemas/InternationalAddress'
+    InternationalAddress:
+      type: object
+      required:
+        - type
+        - name
+        - number
         - townName
         - countrySubDivision
         - postCode
-        - ibgeCode
+        - countryCode
       properties:
-        address:
+        type: 
           type: string
-          description: Deverá trazer toda a informação referente ao endereço da dependência informada. Tipo de logradouro + Nome do logradouro + Número do Logradouro (se não existir usar ' s/n') + complemento (se houver).
-          maxLength: 200
-          example: Av Naburo Ykesaki 1270, bloco 35, fundos
-        additionalInfo:
+          description: 'Tipo do logradouro'
+          enum: [AEROPORTO, ALAMEDA, AREA, AVENIDA, CAMPO, CHACARA, COLONIA, CONDOMINIO, CONJUNTO, DISTRITO, ESPLANADA, ESTACAO, ESTRADA, FAZENDA, FEIRA, JARDIM, LADEIRA, LAGO, LAGOA, LARGO, LOTEAMENTO, NUCLEO, PARQUE, PASSARELA, PATIO, PRACA, QUADRA, RECANTO, RESIDENCIAL, RODOVIA, RUA, SETOR, SITIO, TRAVESSA, TRECHO, TREVO, VALE, VEREDA, VIA, VIADUTO, VIELA, VILA, OUTROS]
+        typeOthers: 
           type: string
-          description: Alguns logradouros ainda necessitam ser especificados por meio de complemento, conforme o exemplo a seguir.
+          description: Descrição do tipo do logradouro. Condicional ao preenchimento do campo "type" com valor OUTROS
           maxLength: 30
-          example: Loja B
+        name: 
+          type: string
+          description: 'Nome do logradouro'
+          maxLength: 100
+        number:
+          type: string
+          description: 'Número do logradouro'
+          pattern: '^[0-9A-Za-zÀ-ÿ\s\/\-\.,ºª]{1,40}$'
+        addressComplementaryInfo:
+          type: string
+          maxLength: 50
+          example: Fundos
+          description: 'Alguns logradouros ainda necessitam ser especificados por meio de complemento.'
         districtName:
           type: string
-          description: Bairro é uma comunidade ou região localizada em uma cidade ou município de acordo com as suas subdivisões geográficas.
-          maxLength: 50
-          example: Centro
+          maxLength: 70
+          example: 'Centro'
+          description: 'Bairro é uma comunidade ou região localizada em uma cidade ou município de acordo com as suas subdivisões geográficas'
         townName:
           type: string
-          description: O nome da localidade corresponde à designação da cidade ou município no qual o endereço está localizado.
           maxLength: 50
-          example: São Paulo
-        ibgeCode:
-          type: string
-          description: Código IBGE de Município. A Tabela de Códigos de Municípios do IBGE apresenta a lista dos municípios brasileiros associados a um código composto de 7 dígitos, sendo os dois primeiros referentes ao código da Unidade da Federação.
-          maxLength: 7
-          example: '3550308'
+          pattern: '^[0-9A-Za-zÀ-ÿ\s\/\-\.,ºª]+$'
+          example: Marília
+          description: |
+                  Designação da cidade ou município no qual o endereço está localizado.
         countrySubDivision:
           type: string
-          description: Enumeração referente a cada sigla da unidade da federação que identifica o estado ou o distrito federal, no qual o endereço está localizado. São consideradas apenas as siglas para os estados brasileiros.
-          maxLength: 2
-          example: SP
+          maxLength: 50
+          pattern: '^[0-9A-Za-zÀ-ÿ\s\/\-\.,ºª]+$'
+          example: New York
+          description: |
+                  Designação do estado, província, região ou cantão no qual o endereço está localizado.
         postCode:
           type: string
-          description: Código de Endereçamento Postal. Composto por um conjunto numérico de oito dígitos, o objetivo principal do CEP é orientar e acelerar o encaminhamento, o tratamento e a entrega de objetos postados nos Correios, por meio da sua atribuição a localidades, logradouros, unidades dos Correios, serviços, órgãos públicos, empresas e edifícios.
-          maxLength: 9
-          example: '17500-001'
-        country:
-          type: string
-          description: Nome do país.
-          maxLength: 80
-          example: Brasil
+          maxLength: 11
+          example: '17500001A'
+          description: |
+                  Código de Endereçamento Postal: Composto por um conjunto numérico ou alfanumérico.
         countryCode:
+          $ref: '#/components/schemas/EnumCountryCode'  
+    NationalAddress:
+      type: object
+      required:
+        - type
+        - name
+        - number
+        - townName
+        - countrySubDivision
+        - postCode
+      properties:
+        type: 
           type: string
-          description: Código do país de acordo com o código “alpha3” do ISO-3166.
-          maxLength: 3
-          example: BRA
-        geographicCoordinates:
-          $ref: '#/components/schemas/BranchesGeographicCoordinates'       
-
+          description: 'Tipo do logradouro'
+          enum: [AEROPORTO, ALAMEDA, AREA, AVENIDA, CAMPO, CHACARA, COLONIA, CONDOMINIO, CONJUNTO, DISTRITO, ESPLANADA, ESTACAO, ESTRADA, FAZENDA, FEIRA, JARDIM, LADEIRA, LAGO, LAGOA, LARGO, LOTEAMENTO, NUCLEO, PARQUE, PASSARELA, PATIO, PRACA, QUADRA, RECANTO, RESIDENCIAL, RODOVIA, RUA, SETOR, SITIO, TRAVESSA, TRECHO, TREVO, VALE, VEREDA, VIA, VIADUTO, VIELA, VILA, OUTROS]
+        typeOthers: 
+          type: string
+          description: Descrição do tipo do logradouro. Condicional ao preenchimento do campo "type" com valor OUTROS
+          maxLength: 30
+        name: 
+          type: string
+          maxLength: 100
+          description: 'Nome do logradouro'
+        number:
+          type: string
+          description: 'Número do logradouro'
+          pattern: '^[0-9A-Za-zÀ-ÿ\s\/\-\.,ºª]{1,40}$'
+        addressComplementaryInfo:
+          type: string
+          maxLength: 50
+          example: Fundos
+          description: 'Alguns logradouros ainda necessitam ser especificados por meio de complemento.'
+        districtName:
+          type: string
+          maxLength: 70
+          example: 'Centro'
+          description: 'Bairro é uma comunidade ou região localizada em uma cidade ou município de acordo com as suas subdivisões geográficas'
+        townName:
+          type: string
+          maxLength: 50
+          pattern: '^[0-9A-Za-zÀ-ÿ\s\/\-\.,ºª]+$'
+          example: Marília
+          description: |
+                  Localidade: O nome da localidade corresponde à designação da cidade ou município no qual o endereço está localizado.
+        ibgeTownCode:
+          type: string
+          pattern: '^\d{7}$|^NA$'
+          maxLength: 7
+          example: "1750000"
+          description: |
+            Código IBGE do município
+        countrySubDivision:
+          $ref: '#/components/schemas/EnumCountrySubDivision'
+        postCode:
+          type: string
+          pattern: '^\d{8}$|^NA$'
+          maxLength: 8
+          example: '17500001'
+          description: |
+                  Código de Endereçamento Postal: Composto por um conjunto numérico de oito dígitos, o objetivo principal do CEP é orientar e acelerar o encaminhamento, o tratamento e a entrega de objetos postados nos Correios, por meio da sua atribuição a localidades, logradouros, unidades dos Correios, serviços, órgãos públicos, empresas e edifícios. p.ex. '01311000'. Condicional ao preenchimento do FlagPostCode ser igual a "Nacional".
+    EnumCountrySubDivision:
+      type: string
+      description: "Enumeração referente a cada sigla da unidade da federação que identifica o estado ou o distrito federal, no qual o endereço está localizado. p.ex. 'AC'. São consideradas apenas as siglas para os estados brasileiros"
+      enum:
+        - AC
+        - AL
+        - AP
+        - AM
+        - BA
+        - CE
+        - DF
+        - ES
+        - GO
+        - MA
+        - MT
+        - MS
+        - MG
+        - PA
+        - PB
+        - PR
+        - PE
+        - PI
+        - RJ
+        - RN
+        - RS
+        - RO
+        - RR
+        - SC
+        - SP
+        - SE
+        - TO
+      example: RJ
+    EnumCountryCode:
+      description: Nome do país (de acordo com o código "alpha3" do ISO-3166)
+      type: string
+      enum: [AFG,ALA,ALB,DZA,ASM,AND,AGO,AIA,ATA,ATG,ARG,ARM,ABW,AUS,AUT,AZE,BHS,BHR,BGD,BRB,BLR,BEL,BLZ,BEN,BMU,BTN,BOL,BES,BIH,BWA,BVT,BRA,IOT,BRN,BGR,BFA,BDI,CPV,KHM,CMR,CAN,CYM,CAF,TCD,CHL,CHN,CXR,CCK,COL,COM,COG,COD,COK,CRI,CIV,HRV,CUB,CUW,CYP,CZE,DNK,DJI,DMA,DOM,ECU,EGY,SLV,GNQ,ERI,EST,SWZ,ETH,FLK,FRO,FJI,FIN,FRA,GUF,PYF,ATF,GAB,GMB,GEO,DEU,GHA,GIB,GRC,GRL,GRD,GLP,GUM,GTM,GGY,GIN,GNB,GUY,HTI,HMD,VAT,HND,HKG,HUN,ISL,IND,IDN,IRN,IRQ,IRL,IMN,ISR,ITA,JAM,JPN,JEY,JOR,KAZ,KEN,KIR,PRK,KOR,KWT,KGZ,LAO,LVA,LBN,LSO,LBR,LBY,LIE,LTU, LUX,MAC,MDG,MWI,MYS,MDV,MLI,MLT,MHL,MTQ,MRT,MUS,MYT,MEX,FSM,MDA,MCO,MNG,MNE,MSR,MAR,MOZ,MMR,NAM,NRU,NPL,NLD,NCL,NZL,NIC,NER,NGA,NIU,NFK,MKD,MNP,NOR,OMN,PAK,PLW,PSE,PAN,PNG,PRY,PER,PHL,PCN,POL,PRT,PRI,QAT,REU,ROU,RUS,RWA,BLM,SHN,KNA,LCA,MAF,SPM,VCT,WSM,SMR,STP,SAU,SEN,SRB,SYC,SLE,SGP,SXM,SVK,SVN,SLB,SOM,ZAF,SGS,SSD,ESP,LKA,SDN,SUR,SJM,SWE,CHE,SYR,TWN,TJK,TZA,THA,TLS,TGO,TKL,TON,TTO,TUN,TUR,TKM,TCA,TUV,UGA,UKR,ARE,GBR,USA,UMI,URY,UZB,VUT,VEN,VNM,VGB,VIR,WLF,ESH,YEM,ZMB,ZWE]
+      example: BRA
     BranchIdentification:
       type: object
       properties:
@@ -369,13 +493,13 @@ components:
         code:
           type: string
           maxLength: 4
-          pattern: ^\d{4}$|^NA$
+          pattern: '^\d{4}$'
           description: Código identificador da dependência
           example: '0001'
         checkDigit:
           type: string
           maxLength: 1
-          pattern: \w*\W*
+          pattern: '\d'
           description: Dígito verificador do código da dependência
           example: '9'
         name:
@@ -392,6 +516,7 @@ components:
           type: array
           description: Lista disponibilidade padrão da depêndencia próprias por dias da semana
           items:
+            type: object
             properties:
               weekday:
                 type: string
@@ -428,13 +553,14 @@ components:
       required:
         - standards
 
-    EletronicChannelsAvailability:
+    ElectronicChannelsAvailability:
       type: object
       properties:
         standards:
           type: array
           description: Lista disponibilidade padrão da depêndencia próprias por dias da semana
           items:
+            type: object
             properties:
               weekday:
                 type: string
@@ -474,6 +600,7 @@ components:
           type: array
           description: Lista disponibilidade padrão da depêndencia próprias por dias da semana
           items:
+            type: object
             properties:
               weekday:
                 type: string
@@ -508,6 +635,9 @@ components:
 
     BranchService:
       type: object
+      required:
+      - code
+      - name
       properties:
         name:
           type: string
@@ -523,9 +653,9 @@ components:
             - INFORMACOES_SOBRE_SERVICOS_ASSISTENCIAS
             - INFORMACOES_SOBRE_SORTEIOS
             - OUVIDORIA_RECEPCAO_SUGESTOES_ELOGIOS
-            - OUVIDORIA_SOLUCAO_EVENTUAIS_DIVERGENCIAS_SOBRE_CONTRATO_SEGURO_CAPITALIZAÇÃO_PREVIDÊNCIA_APOS_ESGOTADOS_CANAIS_REGULARES_ATENDIMENTO_AQUELAS_ORIUNDAS_ORGAOS_REGULADORES_OU_INTEGRANTES_SISTEMA_NACIONAL_DEFESA_CONSUMIDOR
+            - OUVIDORIA_SOLUCAO_EVENTUAIS_DIVERGENCIAS_SOBRE_CONTRATO_SEGURO_CAPITALIZACAO_PREVIDENCIA_APOS_ESGOTADOS_CANAIS_REGULARES_ATENDIMENTO_AQUELAS_ORIUNDAS_ORGAOS_REGULADORES_OU_INTEGRANTES_SISTEMA_NACIONAL_DEFESA_CONSUMIDOR
             - OUVIDORIA_TRATAMENTO_INSATISFACAO_CONSUMIDOR_RELACAO_ATENDIMENTO_RECEBIDO_CANAIS_REGULARES_ATENDIMENTO
-            - OUVIDORIA_TRATAMENTO_RECLAMACOES_SOBRE_IRREGULARDADES_CONDUTA_COMPANHIA
+            - OUVIDORIA_TRATAMENTO_RECLAMACOES_SOBRE_IRREGULARIDADES_CONDUTA_COMPANHIA
             - PORTABILIDADE
             - RECLAMACAO
             - RESGATE
@@ -557,9 +687,6 @@ components:
             - "19"
           description: Código dos Serviços efetivamente prestados pelo Canal de Atendimento
           example: "05"
-      required:
-      - code
-      - name
 
     ElectronicChannels:
       type: object
@@ -578,7 +705,7 @@ components:
           maxItems: 20
           description: "Traz a relação de serviços disponbilizados pelo Canal de Atendimento"
         availability:
-          $ref: '#/components/schemas/EletronicChannelsAvailability'
+          $ref: '#/components/schemas/ElectronicChannelsAvailability'
 
     ElectronicChannelsIdentification:
       type: object
@@ -602,6 +729,10 @@ components:
           type: string
           description: Tipo de acesso
           enum: [EMAIL, INTERNET, APP, CHAT, WHATSAPP, CONSUMIDOR_GOV_BR, OUTROS]
+        accessTypeOthers:
+          type: string
+          maxLength: 500
+          description: Campo para descrever o tipo de acesso, condicional ao valor 'OUTROS' em accessType.
         urls:
           type: array
           items:
@@ -634,9 +765,9 @@ components:
             - INFORMACOES_SOBRE_SERVICOS_ASSISTENCIAS
             - INFORMACOES_SOBRE_SORTEIOS
             - OUVIDORIA_RECEPCAO_SUGESTOES_ELOGIOS
-            - OUVIDORIA_SOLUCAO_EVENTUAIS_DIVERGENCIAS_SOBRE_CONTRATO_SEGURO_CAPITALIZAÇÃO_PREVIDÊNCIA_APOS_ESGOTADOS_CANAIS_REGULARES_ATENDIMENTO_AQUELAS_ORIUNDAS_ORGAOS_REGULADORES_OU_INTEGRANTES_SISTEMA_NACIONAL_DEFESA_CONSUMIDOR
+            - OUVIDORIA_SOLUCAO_EVENTUAIS_DIVERGENCIAS_SOBRE_CONTRATO_SEGURO_CAPITALIZACAO_PREVIDENCIA_APOS_ESGOTADOS_CANAIS_REGULARES_ATENDIMENTO_AQUELAS_ORIUNDAS_ORGAOS_REGULADORES_OU_INTEGRANTES_SISTEMA_NACIONAL_DEFESA_CONSUMIDOR
             - OUVIDORIA_TRATAMENTO_INSATISFACAO_CONSUMIDOR_RELACAO_ATENDIMENTO_RECEBIDO_CANAIS_REGULARES_ATENDIMENTO
-            - OUVIDORIA_TRATAMENTO_RECLAMACOES_SOBRE_IRREGULARDADES_CONDUTA_COMPANHIA
+            - OUVIDORIA_TRATAMENTO_RECLAMACOES_SOBRE_IRREGULARIDADES_CONDUTA_COMPANHIA
             - PORTABILIDADE
             - RECLAMACAO
             - RESGATE
@@ -693,10 +824,24 @@ components:
           description: "Número de DDD (Discagem Direta à Distância) do telefone da dependência - se houver. p.ex. '19'"
         number:
           type: string
-          maxLength: 11
-          pattern: '^([0-9]{8,11})$'
-          example: "35721199"
-          description: "Número de telefone da dependência - se houver"
+          pattern: '^(0[0-9]{3}([\s\-]?[0-9]{4}[\s\-]?[0-9]{4}|[0-9]{8})|(\(([1-9][1-9][0-9])\)|([1-9][1-9][0-9]))[\s\-]?(9[0-9]{4}|[2-8][0-9]{3})[\s\-]?[0-9]{4})$'
+          description: "Número de telefone da dependência (se houver). Segue abaixo exemplos de preenchimento possíveis:
+          
+                        - 0800 1234-5678
+
+                        - 080012345678
+                        
+                        - (11) 99999-9999
+
+                        - 11 99999-9999
+
+                        - 11999999999
+                        
+                        - (11) 3333-3333
+
+                        - 11 3333-3333
+                        
+                        - 1133333333"
 
     ####################
     ## Phone ElectronicChannels ##
@@ -759,9 +904,9 @@ components:
         cnpjNumber:
           type: string
           description: |
-            Número completo do CNPJ da instituição responsável pela dependência - o CNPJ corresponde ao número de inscrição no Cadastro de Pessoa Jurídica.
+            Número completo do CNPJ da instituição responsável pelo canal telefônico - o CNPJ corresponde ao número de inscrição no Cadastro de Pessoa Jurídica.
             Deve-se ter apenas os números do CNPJ, sem máscara
-          pattern: ^\d{14}$
+          pattern: '^[A-Z0-9]{12}\d{2}$'
           example: '12345678901234'
         phoneChannels:
           type: array
@@ -838,10 +983,25 @@ components:
           description: "Número de DDD (Discagem Direta à Distância) para telefone de acesso ao Canal - se houver."
         number:
           type: string
-          maxLength: 13
-          pattern: ^([0-9]{8,11})$|^NA$
-          example: "08007787788"
-          description: "Número de telefone de acesso ao canal."      
+          pattern: '^(0[0-9]{3}([\s\-]?[0-9]{4}[\s\-]?[0-9]{4}|[0-9]{8})|(\(([1-9][1-9][0-9])\)|([1-9][1-9][0-9]))[\s\-]?(9[0-9]{4}|[2-8][0-9]{3})[\s\-]?[0-9]{4})$'
+          description: "Número de telefone de acesso ao canal. Segue abaixo exemplos de preenchimento possíveis:
+          
+                        - 0800 1234-5678
+
+                        - 080012345678
+                        
+                        - (11) 99999-9999
+
+                        - 11 99999-9999
+
+                        - 11999999999
+                        
+                        - (11) 3333-3333
+
+                        - 11 3333-3333
+                        
+                        - 1133333333"
+   
 
     #### PhoneChannelsServices ####
     PhoneChannelsServices:
@@ -864,9 +1024,9 @@ components:
             - INFORMACOES_SOBRE_SERVICOS_ASSISTENCIAS
             - INFORMACOES_SOBRE_SORTEIOS
             - OUVIDORIA_RECEPCAO_SUGESTOES_ELOGIOS
-            - OUVIDORIA_SOLUCAO_EVENTUAIS_DIVERGENCIAS_SOBRE_CONTRATO_SEGURO_CAPITALIZAÇÃO_PREVIDÊNCIA_APOS_ESGOTADOS_CANAIS_REGULARES_ATENDIMENTO_AQUELAS_ORIUNDAS_ORGAOS_REGULADORES_OU_INTEGRANTES_SISTEMA_NACIONAL_DEFESA_CONSUMIDOR
+            - OUVIDORIA_SOLUCAO_EVENTUAIS_DIVERGENCIAS_SOBRE_CONTRATO_SEGURO_CAPITALIZACAO_PREVIDENCIA_APOS_ESGOTADOS_CANAIS_REGULARES_ATENDIMENTO_AQUELAS_ORIUNDAS_ORGAOS_REGULADORES_OU_INTEGRANTES_SISTEMA_NACIONAL_DEFESA_CONSUMIDOR
             - OUVIDORIA_TRATAMENTO_INSATISFACAO_CONSUMIDOR_RELACAO_ATENDIMENTO_RECEBIDO_CANAIS_REGULARES_ATENDIMENTO
-            - OUVIDORIA_TRATAMENTO_RECLAMACOES_SOBRE_IRREGULARDADES_CONDUTA_COMPANHIA
+            - OUVIDORIA_TRATAMENTO_RECLAMACOES_SOBRE_IRREGULARIDADES_CONDUTA_COMPANHIA
             - PORTABILIDADE
             - RECLAMACAO
             - RESGATE
@@ -906,12 +1066,12 @@ components:
         latitude:
           description: Informação da latitude referente a geolocalização informada. Entre -90 e 90. Formato númerico 2 casas antes da vírgula, 11 posições.
           type: string
-          pattern: ^-?\d{1,3}\.\d{1,10}$
+          pattern: '^-?(90\.0{1,9}|[0-8][0-9]\.\d{1,9})$'
           example: '-89.8365180'
         longitude:
           description: Informação da longitude referente a geolocalização informada. Formato númerico 3 casas antes da vírgula, 11 posições.
           type: string
-          pattern: ^-?\d{1,3}\.\d{1,10}$
+          pattern: '-?(180\.0{1,9}|1[0-7]\d{1}\.\d{1,9}|\d{1,2}\.\d{1,9})$'
           example: '-175.836519'
 
     Links:
@@ -921,27 +1081,27 @@ components:
           type: string
           description: URL da página atualmente requisitada
           pattern: ^(https:\/\/)(.*?)(\/open-insurance\/channels\/v\d+)(\/(branches|electronic-channels|phone-channels).*)?$
-          example: 'https://api.organizacao.com.br/open-insurance/channels/v1/branches'
+          example: 'https://api.organizacao.com.br/open-insurance/channels/v2/branches'
         first:
           type: string
           description: URL da primeira página de registros
           pattern: ^(https:\/\/)(.*?)(\/open-insurance\/channels\/v\d+)(\/(branches|electronic-channels|phone-channels).*)?$
-          example: 'https://api.organizacao.com.br/open-insurance/channels/v1/branches'
+          example: 'https://api.organizacao.com.br/open-insurance/channels/v2/branches'
         prev:
           type: string
           description: URL da página anterior de registros
           pattern: ^(https:\/\/)(.*?)(\/open-insurance\/channels\/v\d+)(\/(branches|electronic-channels|phone-channels).*)?$
-          example: 'https://api.organizacao.com.br/open-insurance/channels/v1/branches'
+          example: 'https://api.organizacao.com.br/open-insurance/channels/v2/branches'
         next:
           type: string
           description: URL da próxima página de registros
           pattern: ^(https:\/\/)(.*?)(\/open-insurance\/channels\/v\d+)(\/(branches|electronic-channels|phone-channels).*)?$
-          example: 'https://api.organizacao.com.br/open-insurance/channels/v1/branches'
+          example: 'https://api.organizacao.com.br/open-insurance/channels/v2/branches'
         last:
           type: string
           description: URL da última página de registros
           pattern: ^(https:\/\/)(.*?)(\/open-insurance\/channels\/v\d+)(\/(branches|electronic-channels|phone-channels).*)?$
-          example: 'https://api.organizacao.com.br/open-insurance/channels/v1/branches'
+          example: 'https://api.organizacao.com.br/open-insurance/channels/v2/branches'
 
     Meta:
       type: object
@@ -993,8 +1153,8 @@ components:
               requestDateTime:
                 description: 'Data e hora da consulta, conforme especificação RFC-3339, formato UTC.'
                 type: string
-                pattern: '[\w\W\s]*'
-                maxLength: 2048  
+                pattern: '^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])T(?:[01]\d|2[0123]):(?:[012345]\d):(?:[012345]\d)Z$'
+                maxLength: 20
                 format: date-time
                 example: '2021-08-20T08:30:00Z'
             additionalProperties: false
@@ -1021,7 +1181,7 @@ components:
         minimum: 1
   responses:
     UnprocessableEntity:
-      description: 'O servidor entende o tipo de conteúdo da entidade da requisição, e a sintaxe da requisição esta correta, mas não foi possível processar as instruções presente.'
+      description: 'O servidor entende o tipo de conteúdo da entidade da requisição, e a sintaxe da requisição está correta, mas não foi possível processar as instruções presentes.'
       content:
         application/json; charset=utf-8:
           schema:

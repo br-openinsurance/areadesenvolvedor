@@ -2,14 +2,14 @@ openapi: 3.0.0
 info:
   title: APIs Open Data do Open Insurance Brasil
   description:
-    API de informações de Título de Capitaliazação.
-  version: 1.5.0
+    API de informações de Título de Capitalização.
+  version: 3.0.0
   contact:
     url: 'https://www.gov.br/susep/'
 servers:
-  - url: 'https://api.organizacao.com.br/open-insurance/products-services/v1'
+  - url: 'https://api.organizacao.com.br/open-insurance/products-services/v2'
     description: Servidor de Produção
-  - url: 'https://api.organizacao.com.br/open-insurance/products-services/v1'
+  - url: 'https://api.organizacao.com.br/open-insurance/products-services/v2'
     description: Servidor de Homologação
 tags:
 - name: "capitalization-title"
@@ -132,7 +132,7 @@ components:
       type: array
       items:
         type: object
-        description: Informações referente a sociedade a qual a marca pertence.
+        description: Informações referentes à sociedade à qual a marca pertence
         required:
           - name
           - cnpjNumber
@@ -146,7 +146,7 @@ components:
           cnpjNumber:
             type: string
             description: CNPJ da sociedade pertencente à marca.
-            pattern: ^\d{14}$
+            pattern: '^[A-Z0-9]{12}\d{2}$'
             example: '12345678901234'
           products:
             $ref: '#/components/schemas/CapitalizationTitleProduct'
@@ -222,7 +222,26 @@ components:
             type: string
             example: PESSOA_NATURAL
             enum: [PESSOA_NATURAL, PESSOA_JURIDICA]
-
+          endorsementDisclaimer:
+            type: string
+            pattern: '[\w\W\s]*'
+            maxLength: 500
+            description: Disclaimer ao cliente referente às características do produto. Deve ser utilizado no serviço de Fase 3.
+          claimNotificationDisclaimer:
+            type: string
+            pattern: '[\w\W\s]*'
+            maxLength: 500
+            description: Disclaimer ao cliente referente às características do produto. Deve ser utilizado no serviço de Fase 3.
+          portabilityDisclaimer:
+              type: string
+              pattern: '[\w\W\s]*'
+              maxLength: 500
+              description: Disclaimer ao cliente referente às características do produto. Deve ser utilizado no serviço de Fase 3.
+          withdrawalDisclaimer:
+              type: string
+              pattern: '[\w\W\s]*'
+              maxLength: 500
+              description: Disclaimer ao cliente referente às características do produto. Deve ser utilizado no serviço de Fase 3.
     CapitalizationTitleTerms:
       type: object
       description: Informações dos termos e condições conforme número do processo SUSEP.
@@ -266,7 +285,7 @@ components:
               example: '0.000002'
             chargingQuota:
               type: string
-              description: Percentual da contribuição destinado aos custos de despesas com corretagem, colocação e administração do título de capitalização, emissão, divulgação, lucro da sociedade de capitalização e eventuais despesas relavas ao custeio da contemplação obrigatória e da distribuição de bônus.
+              description: Percentual da contribuição destinado aos custos de despesas com corretagem, colocação e administração do título de capitalização, emissão, divulgação, lucro da sociedade de capitalização e eventuais despesas relativas ao custeio da contemplação obrigatória e da distribuição de bônus.
               pattern: ^1\.0{1,9}$|^0\.\d{1,9}$
               example: '0.000002'
 
@@ -330,11 +349,11 @@ components:
                 percentage:
                   type: string
                   description: Percentual da quota
-                  pattern: ^1\.0{1,9}$|^0\.\d{1,9}$
+                  pattern: '^\d{1}\.\d{1,9}$'
           redemptionPercentageEndTerm:
             description: Percentual mínimo da soma das contribuições efetuadas que poderá ser resgatado ao final da vigência, tendo como condição os pagamentos das parcelas nos respectivos vencimentos.
             type: string
-            pattern: ^1\.0{1,9}$|^0\.\d{1,9}$
+            pattern: '^\d{1}\.\d{1,9}$'
             example: '0.000002'
           gracePeriodRedemption:
             description: Intervalo de tempo mínimo entre contratação e resgate do direito, em meses.
@@ -361,7 +380,8 @@ components:
         value:
           type: string
           description: valor
-          example: "1000"
+          pattern: '^\d{1,16}\.\d{2}$'
+          example: "1000.50"
 
     CapitalizationTitleLatePayment:
         type: object
@@ -392,12 +412,12 @@ components:
           type: array
           items:
             type: string
-            example: CARTAO_CREDITO
-            enum: [CARTAO_CREDITO, CARTAO_DEBITO, DEBITO_CONTA_CORRENTE, DEBITO_CONTA_POUPANCA, BOLETO_BANCARIO, PIX, CONSIGNACAO_FOLHA_PAGAMENTO, PAGAMENTO_COM_PONTOS, OUTROS]
+            example: CARTAO_DE_CREDITO
+            enum: [CARTAO_DE_CREDITO, CARTAO_DE_DEBITO, DEBITO_CONTA_CORRENTE, DEBITO_CONTA_POUPANCA, BOLETO_BANCARIO, PIX, CONSIGNACAO_FOLHA_PAGAMENTO, PAGAMENTO_COM_PONTOS, OUTROS]
         paymentDetail:
           description: Descrição do Meio de Pagamento utilizados para pagamento da contribuição quando for informada a opção OUTROS
           type: string
-          maxLength: 100
+          maxLength: 500
           example: OUTROS
         updateIndex:
           description: Índice utilizado na atualização dos pagamentos mensais (para títulos com mais de 12 meses de vigência)
@@ -420,7 +440,7 @@ components:
           redemption:
             description: Valor percentual (%) de resgate final permitido. Exemplo 1.000000 igual a 100 por cento
             type: string
-            pattern: ^\d{1}\.\d{6}$
+            pattern: '^1\.0{1,9}$|^0\.\d{1,6}$'
             example: '0.000002'
 
     CapitalizationTitleRaffle:
@@ -450,7 +470,7 @@ components:
           timeIntervalOthers:
             description: Descrição do Intervalo de tempo regular previsto entre os sorteios quando for informada a opção OUTROS.
             type: string
-            maxLength: 100
+            maxLength: 500
             example: OUTROS
           raffleValue:
             type: string
@@ -468,12 +488,12 @@ components:
             type: string
             description: |
               Campo aberto para descrição a ser feita por cada participante das regras dos sorteios do produto que deverá conter minimamente a periodicidade dos sorteios e se os sorteios são efetuados pela loteria federal ou por meios próprios.
-            maxLength: 200
+            maxLength: 500
             example: Sorteio às quartas-feiras
           minimumContemplationProbability:
             type: string
             description: Número representativo da probabilidade mínima de contemplação nos sorteios, em porcentagem (%). Exemplo 1.000000 igual a 100 por cento
-            pattern: ^\d{1}\.\d{6}$
+            pattern: '^1\.0{1,9}$|^0\.\d{1,6}$'
             example: '0.000002'
 
     CapitalizationTitleAdditionals:
@@ -484,7 +504,7 @@ components:
         additionalDetails:
           type: string
           description: |
-            Listagem de adicionais vinculado ao produto. Deve ser padronizada na proposta técnica submetida pela estrutura Inicial de Governança para observância comum por todas as sociedades participantes.
+            Listagem de adicionais vinculados ao produto. Deve ser padronizada na proposta técnica submetida pela estrutura Inicial de Governança para observância comum por todas as sociedades participantes.
           maxLength: 1024
           example: https://example.com/openinsurance
 
@@ -507,27 +527,27 @@ components:
           type: string
           description: URL da página atualmente requisitada
           pattern: ^(https:\/\/)(.*?)(\/open-insurance\/products-services\/v\d+)(\/capitalization-title.*)?$
-          example: 'https://api.organizacao.com.br/open-insurance/products-services/v1/capitalization-title'
+          example: 'https://api.organizacao.com.br/open-insurance/products-services/v2/capitalization-title'
         first:
           type: string
           description: URL da primeira página de registros
           pattern: ^(https:\/\/)(.*?)(\/open-insurance\/products-services\/v\d+)(\/capitalization-title.*)?$
-          example: 'https://api.organizacao.com.br/open-insurance/products-services/v1/capitalization-title'
+          example: 'https://api.organizacao.com.br/open-insurance/products-services/v2/capitalization-title'
         prev:
           type: string
           description: URL da página anterior de registros
           pattern: ^(https:\/\/)(.*?)(\/open-insurance\/products-services\/v\d+)(\/capitalization-title.*)?$
-          example: 'https://api.organizacao.com.br/open-insurance/products-services/v1/capitalization-title'
+          example: 'https://api.organizacao.com.br/open-insurance/products-services/v2/capitalization-title'
         next:
           type: string
           description: URL da próxima página de registros
           pattern: ^(https:\/\/)(.*?)(\/open-insurance\/products-services\/v\d+)(\/capitalization-title.*)?$
-          example: 'https://api.organizacao.com.br/open-insurance/products-services/v1/capitalization-title'
+          example: 'https://api.organizacao.com.br/open-insurance/products-services/v2/capitalization-title'
         last:
           type: string
           description: URL da última página de registros
           pattern: ^(https:\/\/)(.*?)(\/open-insurance\/products-services\/v\d+)(\/capitalization-title.*)?$
-          example: 'https://api.organizacao.com.br/open-insurance/products-services/v1/capitalization-title'
+          example: 'https://api.organizacao.com.br/open-insurance/products-services/v2/capitalization-title'
 
     Meta:
       type: object
@@ -579,8 +599,8 @@ components:
               requestDateTime:
                 description: 'Data e hora da consulta, conforme especificação RFC-3339, formato UTC.'
                 type: string
-                pattern: '[\w\W\s]*'
-                maxLength: 2048
+                pattern: '^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])T(?:[01]\d|2[0123]):(?:[012345]\d):(?:[012345]\d)Z$'
+                maxLength: 20
                 format: date-time
                 example: '2021-08-20T08:30:00Z'
             additionalProperties: false
@@ -612,7 +632,7 @@ components:
       required: true
       schema:
         type: string
-        pattern: ^\d{14}$
+        pattern: '^[A-Z0-9]{12}\d{2}$'
     cache-Control:
       name: cache-control
       in: header
@@ -684,7 +704,7 @@ components:
 
   responses:
     UnprocessableEntity:
-      description: 'O servidor entende o tipo de conteúdo da entidade da requisição, e a sintaxe da requisição esta correta, mas não foi possível processar as instruções presente.'
+      description: 'O servidor entende o tipo de conteúdo da entidade da requisição, e a sintaxe da requisição está correta, mas não foi possível processar as instruções presentes.'
       content:
         application/json; charset=utf-8:
           schema:
