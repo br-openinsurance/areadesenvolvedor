@@ -3,13 +3,13 @@ info:
   title: APIs Open Data do Open Insurance Brasil
   description: 
     API de informações de Seguro de Automóveis. Os recursos que podem ser consumidos pelos participantes conforme a regra 3.2.2 do manual de escopo de dados.
-  version: 1.6.0
+  version: 3.0.0
   contact:
     url: 'https://www.gov.br/susep/'
 servers:
-  - url: 'https://api.organizacao.com.br/open-insurance/products-services/v1'
+  - url: 'https://api.organizacao.com.br/open-insurance/products-services/v2'
     description: Servidor de Produção
-  - url: 'https://api.organizacao.com.br/open-insurance/products-services/v1'
+  - url: 'https://api.organizacao.com.br/open-insurance/products-services/v2'
     description: Servidor de Homologação  
 tags:
 - name: "auto-insurance"
@@ -103,7 +103,7 @@ components:
       type: array
       items:
         type: object
-        description: Informações referente a sociedade a qual a marca pertence.
+        description: Informações referentes à sociedade à qual a marca pertence
         required:
           - name
           - cnpjNumber
@@ -115,7 +115,7 @@ components:
           cnpjNumber:
             type: string
             description: CNPJ da sociedade pertencente à marca.
-            pattern: ^\d{14}$
+            pattern: '^[A-Z0-9]{12}\d{2}$'
             example: '12345678901234'
           products:
             $ref: '#/components/schemas/AutoInsuranceProduct'
@@ -162,7 +162,7 @@ components:
           additionalOthers:
             type: string
             description: Campo aberto para descrição de cada participante ao selecionar o domínio ‘Outros’ no campo acima ‘Adicionais’
-            maxLength: 100
+            maxLength: 500
           assistanceServices:
             type: array
             items:
@@ -178,7 +178,7 @@ components:
             description: Descrição do Prazo quando for informada a opção OUTROS.
             type: string
             example: OUTROS
-            maxLength: 100
+            maxLength: 500
           customerServices:
             type: string 
             description: Rede de atendimento do seguro contratado.
@@ -333,6 +333,10 @@ components:
           description: Indexador. Condicional, vinculado ao preenchimento do campo Tipo com Percentual
           enum: [LMG, FINANCEIRO_COBERTURA, OUTRO]
           example: LMG
+        indexOthers:
+          type: string
+          maxLength: 500
+          description: Campo para informar o tipo do Indexador, condicional ao valor 'OUTRO' em index.
         maxIndexAmount:
           $ref: '#/components/schemas/AutoInsuranceCoverageAttributesDetails'
 
@@ -448,12 +452,10 @@ components:
         fullIndemnityPercentage:
           $ref: '#/components/schemas/AutoInsuranceCoverageAttributesDetails'
         deductibleType:
-          type: array
+          type: string
           description: Listagem de tipo de franquia para cada tipo de cobertura do produto.
-          items:
-            type: string
-            example: NORMAL
-            enum: [NORMAL, REDUZIDA, ISENTA, MAJORADA, FLEXIVEL]
+          example: NORMAL
+          enum: [NORMAL, REDUZIDA, ISENTA, MAJORADA, FLEXIVEL]
         fullIndemnityDeductible:
           type: boolean
           description: Franquia para Indenização Integral.
@@ -469,16 +471,14 @@ components:
           maxLength: 300
           example: '80.00'
         geographicScopeCoverage:
-          type: array
+          type: string
           description: Listagem de abrangência geográfica do produto para fins de cada cobertura.
-          items:
-            type: string
-            example: NACIONAL
-            enum: [NACIONAL, REGIONAL, INTERNACIONAL, OUTROS_PAISES]
+          example: NACIONAL
+          enum: [NACIONAL, REGIONAL, INTERNACIONAL, OUTROS_PAISES]
         geographicScopeCoverageOthers:
           type: string
           maxLength: 100
-          description: Âmbito geográfico da cobertura - Outros
+          description: Âmbito geográfico da cobertura - OUTROS_PAISES (listar países)
 
     AutoInsuranceMinimumRequirements:
       type: object
@@ -530,13 +530,13 @@ components:
             description: Meio de pagamento escolhido pelo segurado.
             items:
               type: string
-              example: CARTAO_CREDITO
-              enum: [CARTAO_CREDITO, CARTAO_DEBITO, DEBITO_CONTA_CORRENTE , DEBITO_CONTA_POUPANCA , BOLETO_BANCARIO , PIX, CONSIGINACAO_FOLHA_PAGAMENTO, PONTOS_PROGRAMA_BENEFICIO, OUTROS]
+              example: CARTAO_DE_CREDITO
+              enum: [CARTAO_DE_CREDITO, CARTAO_DE_DEBITO, DEBITO_CONTA_CORRENTE , DEBITO_CONTA_POUPANCA , BOLETO_BANCARIO , PIX, CONSIGNACAO_FOLHA_PAGAMENTO, PONTOS_PROGRAMA_BENEFICIO, OUTROS]
         paymentType:
             type: string
             description: Forma de pagamento.
             example: PARCELADO
-            enum: [A_VISTA , PARCELADO, AMBOS]
+            enum: [A_VISTA , PARCELADO]
         paymentDetail:
           type: string
           description: Campo aberto para detalhamento do campo ‘Outros’ por cada participante.
@@ -608,6 +608,7 @@ components:
             year:
               type: string
               description: Ano de fabricação.
+              pattern: '^\d{4}$'
               example: '2018'
             zeroKM:
               type: boolean
@@ -624,27 +625,27 @@ components:
           type: string
           description: URL da página atualmente requisitada
           pattern: ^(https:\/\/)(.*?)(\/open-insurance\/products-services\/v\d+)(\/auto-insurance.*)?$
-          example: 'https://api.organizacao.com.br/open-insurance/products-services/v1/auto-insurance'
+          example: 'https://api.organizacao.com.br/open-insurance/products-services/v2/auto-insurance'
         first:
           type: string
           description: URL da primeira página de registros
           pattern: ^(https:\/\/)(.*?)(\/open-insurance\/products-services\/v\d+)(\/auto-insurance.*)?$
-          example: 'https://api.organizacao.com.br/open-insurance/products-services/v1/auto-insurance'
+          example: 'https://api.organizacao.com.br/open-insurance/products-services/v2/auto-insurance'
         prev:
           type: string
           description: URL da página anterior de registros
           pattern: ^(https:\/\/)(.*?)(\/open-insurance\/products-services\/v\d+)(\/auto-insurance.*)?$
-          example: 'https://api.organizacao.com.br/open-insurance/products-services/v1/auto-insurance'
+          example: 'https://api.organizacao.com.br/open-insurance/products-services/v2/auto-insurance'
         next:
           type: string
           description: URL da próxima página de registros
           pattern: ^(https:\/\/)(.*?)(\/open-insurance\/products-services\/v\d+)(\/auto-insurance.*)?$
-          example: 'https://api.organizacao.com.br/open-insurance/products-services/v1/auto-insurance'
+          example: 'https://api.organizacao.com.br/open-insurance/products-services/v2/auto-insurance'
         last:
           type: string
           description: URL da última página de registros
           pattern: ^(https:\/\/)(.*?)(\/open-insurance\/products-services\/v\d+)(\/auto-insurance.*)?$
-          example: 'https://api.organizacao.com.br/open-insurance/products-services/v1/auto-insurance'
+          example: 'https://api.organizacao.com.br/open-insurance/products-services/v2/auto-insurance'
 
     Meta:
       type: object
@@ -696,8 +697,8 @@ components:
               requestDateTime:
                 description: 'Data e hora da consulta, conforme especificação RFC-3339, formato UTC.'
                 type: string
-                pattern: '[\w\W\s]*'
-                maxLength: 2048  
+                pattern: '^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])T(?:[01]\d|2[0123]):(?:[012345]\d):(?:[012345]\d)Z$'
+                maxLength: 20 
                 format: date-time
                 example: '2021-08-20T08:30:00Z'
             additionalProperties: false
@@ -789,7 +790,7 @@ components:
 
   responses:
     UnprocessableEntity:
-      description: 'O servidor entende o tipo de conteúdo da entidade da requisição, e a sintaxe da requisição esta correta, mas não foi possível processar as instruções presente.'
+      description: 'O servidor entende o tipo de conteúdo da entidade da requisição, e a sintaxe da requisição está correta, mas não foi possível processar as instruções presentes.'
       content:
         application/json; charset=utf-8:
           schema:

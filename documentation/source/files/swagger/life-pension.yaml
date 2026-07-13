@@ -3,13 +3,13 @@ info:
   title: APIs Open Data do Open Insurance Brasil
   description:
     API de informações de Planos de Previdência e Seguros de Pessoas ambos com cobertura por sobrevivência (excluindo seguros Dotais). Os recursos que podem ser consumidos pelos participantes conforme a regra 3.1.1 do manual de escopo de dados.
-  version: 1.6.0
+  version: 3.0.0
   contact:
     url: 'https://www.gov.br/susep/'
 servers:
-  - url: 'https://api.organizacao.com.br/open-insurance/products-services/v1'
+  - url: 'https://api.organizacao.com.br/open-insurance/products-services/v2'
     description: Servidor de Produção
-  - url: 'https://api.organizacao.com.br/open-insurance/products-services/v1'
+  - url: 'https://api.organizacao.com.br/open-insurance/products-services/v2'
     description: Servidor de Homologação
 tags:
 - name: "life-pension"
@@ -109,7 +109,7 @@ components:
       type: array
       items:
         type: object
-        description: Informações referente a sociedade a qual a marca pertence.
+        description: Informações referentes à sociedade à qual a marca pertence
         required:
           - name
           - cnpjNumber
@@ -122,7 +122,7 @@ components:
           cnpjNumber:
             type: string
             description: CNPJ da sociedade pertencente à marca.
-            pattern: ^\d{14}$
+            pattern: '^[A-Z0-9]{12}\d{2}$'
             example: '12345678901234'
           products:          
             $ref: '#/components/schemas/LifePensionProduct'
@@ -160,7 +160,7 @@ components:
                 type: string
                 description: Tipo do produto contratado.
                 example: PGBL
-                enum: [PGBL , PRGP , PAGP, PRSA, PRI, PDR, VGBL, VRGP, VAGP, VRSA, VRI, VDR, DEMAIS_PRODUTOS_PREVIDENCIA]
+                enum: [PGBL , PRGP , PAGP, PRSA, PRI/PRID, PDR, VGBL, VRGP, VAGP, VRSA, VRI/VRID, VDR, DEMAIS_PRODUTOS_PREVIDENCIA]
             modality:
               type: string
               description: Modalidade do produto contratado.
@@ -179,6 +179,26 @@ components:
               description: Público-alvo.
               example: PESSOA_NATURAL
               enum: [PESSOA_NATURAL, PESSOA_JURIDICA]
+            endorsementDisclaimer:
+              type: string
+              pattern: '[\w\W\s]*'
+              maxLength: 500
+              description: Disclaimer ao cliente  referente às características do produto. Deve ser utilizado no serviço de Fase 3.
+            claimNotificationDisclaimer:
+              type: string
+              pattern: '[\w\W\s]*'
+              maxLength: 500
+              description: Disclaimer ao cliente  referente às características do produto. Pode ser utilizado nas jornadas de Fase 3.
+            portabilityDisclaimer:
+              type: string
+              pattern: '[\w\W\s]*'
+              maxLength: 500
+              description: Disclaimer ao cliente  referente às características do produto. Pode ser utilizado nas jornadas de Fase 3.
+            withdrawalDisclaimer:
+              type: string
+              pattern: '[\w\W\s]*'
+              maxLength: 500
+              description: Disclaimer ao cliente  referente às características do produto. Pode ser utilizado nas jornadas de Fase 3.
 
     LifePensionProductDetails:
       type: array
@@ -187,7 +207,7 @@ components:
         required:
           - susepProcessNumber
           - contractTermsConditions
-          - defferalPeriod
+          - deferralPeriod
           - grantPeriodBenefit
           - costs
         properties:
@@ -201,14 +221,14 @@ components:
               description: Campo aberto (possibilidade de incluir URL).
               example: https://www.seguradora.com.br/produto/pdf/condicoes_gerais.pdf
               maxLength: 1024
-            defferalPeriod:
-              $ref: '#/components/schemas/LifePensionDefferalPeriod'
+            deferralPeriod:
+              $ref: '#/components/schemas/LifePensionDeferralPeriod'
             grantPeriodBenefit:
               $ref: '#/components/schemas/LifePensionPeriodGrantBenefit'
             costs:
               $ref: '#/components/schemas/LifePensionCosts'
 
-    LifePensionDefferalPeriod:
+    LifePensionDeferralPeriod:
       type: object
       required:
         - interestRate
@@ -249,7 +269,7 @@ components:
           description: |
             Para produtos do tipo PDR e VDR, indicação do percentual do índice de ampla
             divulgação utilizados como garantia mínima de desempenho. Exemplo 1.000000 igual a 100 por cento
-          pattern: ^1\.0{1,9}$|^0\.\d{1,9}$
+          pattern: '^1\.0{1,9}$|^0\.\d{1,9}$'
           example: '1.000000'
         reversalFinancialResults:
           type: string
@@ -273,7 +293,7 @@ components:
               minimumPremiumAmountDescription:
                 type: string
                 description: Descrição Período.
-                maxLength: 15
+                maxLength: 500
                 example: VALOR MENSAL
         premiumPaymentMethod:
           type: array
@@ -285,7 +305,7 @@ components:
         paymentDetail:
           description: Descrição de Meio(s) de pagamento do Prêmio disponíveis quando for informada a opção OUTROS.
           type: string
-          maxLength: 100
+          maxLength: 500
           example: OUTROS
         permissionExtraordinaryContributions:
           type: boolean
@@ -343,7 +363,7 @@ components:
                 cnpjNumber:
                   type: string
                   description: Número de CNPJ.
-                  pattern: ^\d{14}$
+                  pattern: '^[A-Z0-9]{12}\d{2}$'
                   example: '12345678901234'
                 companyName:
                   type: string
@@ -354,14 +374,12 @@ components:
                   type: string
                   description:  Taxa Máxima de Administração – em %.
                   example: '5.123'
-                  maxLength: 5
+                  pattern: '^100\.0{1,9}$|^\d{1,2}\.\d{1,9}$'
                 typePerformanceFee:
-                  type: array
-                  items:
-                    type: string
-                    description: Tipo de Taxa de Performance
-                    example: DIRETAMENTE
-                    enum: [DIRETAMENTE, INDIRETAMENTE, NAO_APLICA]
+                  type: string
+                  description: Tipo de Taxa de Performance
+                  example: DIRETAMENTE
+                  enum: [DIRETAMENTE, INDIRETAMENTE, NAO_APLICA]
                 maximumPerformanceFee:
                   type: string
                   description:  Taxa Máxima de Performance. Caso o Tipo de Taxa de Performance seja ‘Diretamente’.
@@ -375,17 +393,17 @@ components:
                   type: string
                   description: Valor Mínimo de Contribuição. Regra de Elegibilidade. Caso a Regra de Elegibilidade SIM.
                   example: '150000.45'
-                  maxLength: 15
+                  pattern: '^\d{1,16}\.\d{2}$'
                 minimumContributionValue:
                   type: string
                   description: Valor Mínimo de Aporte de Portabilidade. Caso a Regra de Elegibilidade SIM.
                   example: '150000.45'
-                  maxLength: 15
+                  pattern: '^\d{1,16}\.\d{2}$'
                 minimumMathematicalProvisionAmount:
                   type: string
                   description: Valor Mínimo Provisão Matemática. Caso a Regra de Elegibilidade SIM.
-                  maxLength: 5
-                  example: '150'
+                  pattern: '^\d{1,16}\.\d{2}$'
+                  example: '150.00'
 
     LifePensionPeriodGrantBenefit:
       type: object
@@ -401,7 +419,7 @@ components:
             type: string
             description: Modalidades de renda disponíveis para contratação. A considerar os seguintes domínios
             example: RENDA_VITALICIA
-            enum: [PAGAMENTO_UNICO, RENDA_PRAZO_CERTO, RENDA_TEMPORARIA, RENDA_TEMPORARIA_REVERSIVEL, RENDA_TEMPORARIA_MINIMO_GARANTIDO, RENDA_TEMPORARIA_REVERSIVEL_MININO_GARANTIDO, RENDA_VITALICIA, RENDA_VITALICIA_REVERSIVEL_BENEFICIARIO_INDICADO, RENDA_VITALICIA_CONJUGE_CONTINUIDADE_MENORES, RENDA_VITALICIA_MINIMO_GARANTIDO, RENDA_VITALICIA_PRAZO_MINIMO_GRANTIDO]
+            enum: [PAGAMENTO_UNICO, RENDA_PRAZO_CERTO, RENDA_TEMPORARIA, RENDA_TEMPORARIA_REVERSIVEL, RENDA_TEMPORARIA_MINIMO_GARANTIDO, RENDA_TEMPORARIA_REVERSIVEL_MINIMO_GARANTIDO, RENDA_VITALICIA, RENDA_VITALICIA_REVERSIVEL_BENEFICIARIO_INDICADO, RENDA_VITALICIA_CONJUGE_CONTINUIDADE_MENORES, RENDA_VITALICIA_MINIMO_GARANTIDO, RENDA_VITALICIA_PRAZO_MINIMO_GARANTIDO]
         biometricTable:
           type: array
           items:
@@ -413,7 +431,7 @@ components:
           type: string
           description: Taxa de juros garantida utilizada para conversão em renda. Em %.
           example: '3.225'
-          maxLength: 6
+          pattern: '^\d{1,3}\.\d{1,9}$'
         updateIndex:
           type: string
           description: É o índice contratado para atualização monetária dos valores relativos ao plano, na forma estabelecida por este regulamento.
@@ -423,7 +441,7 @@ components:
           type: string
           description: Percentual de reversão de excedente financeiro na concessão. Em %.
           example: '13.252'
-          maxLength: 8
+          pattern: '^100\.0{1,9}$|^\d{1,2}\.\d{1,9}$'
         investmentFunds:
           $ref: '#/components/schemas/LifePensionInvestmentFunds'
 
@@ -452,12 +470,12 @@ components:
           type: string
           description: Valor mínimo em %.
           example: '4.122'
-          maxLength: 7
+          pattern: '^100\.0{1,9}$|^\d{1,2}\.\d{1,9}$'
         maxValue:
           type: string
-          description: alor máximo em %.
+          description: Valor máximo em %.
           example: '90.225'
-          maxLength: 8
+          pattern: '^100\.0{1,9}$|^\d{1,2}\.\d{1,9}$'
 
     LifePensionMinimumRequirements:
       type: object
@@ -467,12 +485,10 @@ components:
         - minRequirementsContract
       properties:
         contractType:
-          type: array
+          type: string
           description: Os tipos de serviços contratados.
-          items:
-            type: string
-            example: INDIVIDUAL
-            enum: [COLETIVO_AVERBADO, COLETIVO_INSTITUIDO, INDIVIDUAL]
+          example: INDIVIDUAL
+          enum: [COLETIVO_AVERBADO, COLETIVO_INSTITUIDO, INDIVIDUAL]
         participantQualified:
           type: boolean
           description: Indicação se o plano é destinado para participante qualificado.
@@ -489,27 +505,27 @@ components:
           type: string
           description: URL da página atualmente requisitada
           pattern: ^(https:\/\/)(.*?)(\/open-insurance\/products-services\/v\d+)(\/life-pension.*)?$
-          example: 'https://api.organizacao.com.br/open-insurance/products-services/v1/life-pension'
+          example: 'https://api.organizacao.com.br/open-insurance/products-services/v2/life-pension'
         first:
           type: string
           description: URL da primeira página de registros
           pattern: ^(https:\/\/)(.*?)(\/open-insurance\/products-services\/v\d+)(\/life-pension.*)?$
-          example: 'https://api.organizacao.com.br/open-insurance/products-services/v1/life-pension'
+          example: 'https://api.organizacao.com.br/open-insurance/products-services/v2/life-pension'
         prev:
           type: string
           description: URL da página anterior de registros
           pattern: ^(https:\/\/)(.*?)(\/open-insurance\/products-services\/v\d+)(\/life-pension.*)?$
-          example: 'https://api.organizacao.com.br/open-insurance/products-services/v1/life-pension'
+          example: 'https://api.organizacao.com.br/open-insurance/products-services/v2/life-pension'
         next:
           type: string
           description: URL da próxima página de registros
           pattern: ^(https:\/\/)(.*?)(\/open-insurance\/products-services\/v\d+)(\/life-pension.*)?$
-          example: 'https://api.organizacao.com.br/open-insurance/products-services/v1/life-pension'
+          example: 'https://api.organizacao.com.br/open-insurance/products-services/v2/life-pension'
         last:
           type: string
           description: URL da última página de registros
           pattern: ^(https:\/\/)(.*?)(\/open-insurance\/products-services\/v\d+)(\/life-pension.*)?$
-          example: 'https://api.organizacao.com.br/open-insurance/products-services/v1/life-pension'
+          example: 'https://api.organizacao.com.br/open-insurance/products-services/v2/life-pension'
 
     Meta:
       type: object
@@ -561,8 +577,8 @@ components:
               requestDateTime:
                 description: 'Data e hora da consulta, conforme especificação RFC-3339, formato UTC.'
                 type: string
-                pattern: '[\w\W\s]*'
-                maxLength: 2048
+                maxLength: 20
+                pattern: '^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])T(?:[01]\d|2[0123]):(?:[012345]\d):(?:[012345]\d)Z$'
                 format: date-time
                 example: '2021-08-20T08:30:00Z'
             additionalProperties: false
@@ -594,6 +610,7 @@ components:
       required: true
       schema:
         type: string
+        pattern: '^[A-Z0-9]{12}\d{2}$'
     cache-Control:
       name: cache-control
       in: header
@@ -640,7 +657,7 @@ components:
   
   responses:
     UnprocessableEntity:
-      description: 'O servidor entende o tipo de conteúdo da entidade da requisição, e a sintaxe da requisição esta correta, mas não foi possível processar as instruções presente.'
+      description: 'O servidor entende o tipo de conteúdo da entidade da requisição, e a sintaxe da requisição está correta, mas não foi possível processar as instruções presentes.'
       content:
         application/json; charset=utf-8:
           schema:

@@ -2,15 +2,15 @@ openapi: 3.0.0
 info:
   title: APIs Open Data do Open Insurance Brasil
   description:
-    API de informações de dados do produto RD E&O. Os recursos que podem ser consumidos pelos participantes conforme a regra 3.1.2 do manual de escopo de dados..
-  version: 1.4.0
+    API de informações de dados do produto RD E&O. Os recursos que podem ser consumidos pelos participantes conforme a regra 3.1.2 do manual de escopo de dados.
+  version: 3.0.0
   contact:
     url: 'https://www.gov.br/susep/'
 servers:
-  - url: 'https://api.organizacao.com.br/open-insurance/products-services/v1'
-    description: Servidor de Producao
-  - url: 'https://api.organizacao.com.br/open-insurance/products-services/v1'
-    description: Servidor de Homologacao
+  - url: 'https://api.organizacao.com.br/open-insurance/products-services/v2'
+    description: Servidor de Produção
+  - url: 'https://api.organizacao.com.br/open-insurance/products-services/v2'
+    description: Servidor de Homologação
 tags:
   - name: "RD E&O"
   - name: "ErrorsOmissionsLiability"
@@ -20,8 +20,8 @@ paths:
     get:
       tags:
         - ErrorsOmissionsLiability
-      summary: Obtem a lista dos produtos do tipo ErrorsOmissionsLiability
-      description: "Obtem a lista dos produtos do tipo ErrorsOmissionsLiability"
+      summary: Obtém a lista dos produtos do tipo ErrorsOmissionsLiability
+      description: "Obtém a lista dos produtos do tipo ErrorsOmissionsLiability"
       operationId: "getErrorsOmissionsLiability"
       parameters:
         - $ref: "#/components/parameters/cache-Control"
@@ -89,7 +89,7 @@ components:
 
     ErrorsOmissionsLiabilityBrand:
       type: object
-      description: Organizacao controladora do grupo.
+      description: Organização controladora do grupo.
       required:
         - name
         - companies
@@ -106,7 +106,7 @@ components:
       type: array
       items:
           type: object
-          description: Informações referente a sociedade a qual a marca pertence.
+          description: Informações referentes à sociedade à qual a marca pertence
           required:
           - name
           - cnpjNumber
@@ -120,7 +120,7 @@ components:
             cnpjNumber:
                 type: string
                 description: CNPJ da sociedade pertencente à marca.
-                pattern: ^\d{14}$
+                pattern: '^[A-Z0-9]{12}\d{2}$'
                 example: '12345678901234'
             products:
                 $ref: '#/components/schemas/ErrorsOmissionsLiabilityProduct'
@@ -176,7 +176,7 @@ components:
                   OUTROS]
           professionalClassOthers: 
             type: string
-            maxLength: 100
+            maxLength: 500
             description: Campo aberto para descrição de cada participante ao selecionar o domínio ‘Outros’ no campo acima ‘Classe profissional’
           coverages:
             type: array
@@ -258,7 +258,7 @@ components:
             maxLength: 1000
           chargeTypeSignaling:
             type: string
-            description: Indicação se o pacote de assistência é gratuito ou contratado/pago..
+            description: Indicação se o pacote de assistência é gratuito ou contratado/pago.
             example: GRATUITO
             enum: [GRATUITO, PAGO]
     
@@ -271,7 +271,7 @@ components:
           - paymentType
         properties:
           paymentMethod:
-            description: Metodo de pagamento
+            description: Método de pagamento
             type: string
             example: CARTAO_DE_CREDITO
             enum: [CARTAO_DE_CREDITO,
@@ -285,7 +285,7 @@ components:
               OUTROS]
           paymentDetail:
             type: string
-            maxLength: 100
+            maxLength: 500
             description: Campo livre para descrição por cada participante ao selecionar o domínio “Outros” no campo Meio de pagamento (acima)
           paymentType:
             type: string
@@ -374,7 +374,7 @@ components:
           termOthers:
             type: string
             description: Campo livre para descrição por cada participante ao selecionar o domínio “Outros” no campo Prazo (acima).
-            maxLength: 100
+            maxLength: 500
   
     ErrorsOmissionsLiabilityTerms:
       type: object
@@ -422,12 +422,15 @@ components:
         maxLMI:
           $ref: '#/components/schemas/ErrorsOmissionsLiabilityLimit'
         maxLA:
-          $ref: '#/components/schemas/ErrorsOmissionsLiabilityCoverageAttributesDetails'   
+          description: Lista com valor máximo de LA aceito pela sociedade para cada cobertura.
+          type: array
+          items:
+            $ref: '#/components/schemas/ErrorsOmissionsLiabilityCoverageAttributesDetails'   
         insuredParticipation:
           type: string
           description: Lista com indicativo do tipo de participação do segurado para cada cobertura.
           example: FRANQUIA  
-          enum: [FRANQUIA, POS, NAO_SE_APLICA, FRANQUIA_POS]
+          enum: [FRANQUIA, POS, NAO_SE_APLICA, FRANQUIA_E_POS]
         insuredParticipationDescription:
           type: string
           maxLength: 1024
@@ -460,6 +463,10 @@ components:
           description: Indexador. Condicional, vinculado ao preenchimento do campo Tipo com Percentual
           enum: [LMG, FINANCEIRO_COBERTURA, OUTRO]
           example: LMG
+        indexOthers:
+          type: string
+          maxLength: 500
+          description: Campo para informar o tipo do Indexador, condicional ao valor 'OUTRO' em index.
         maxIndexAmount:
           $ref: '#/components/schemas/ErrorsOmissionsLiabilityCoverageAttributesDetails'
 
@@ -481,6 +488,10 @@ components:
           description: Indexador. Condicional, vinculado ao preenchimento do campo Tipo com Percentual
           enum: [FINANCEIRO_COBERTURA, OUTRO]
           example: FINANCEIRO_COBERTURA
+        indexOthers:
+          type: string
+          maxLength: 500
+          description: Campo para informar o tipo do Indexador, condicional ao valor 'OUTRO' em index.
         maxIndexAmount:
           $ref: '#/components/schemas/ErrorsOmissionsLiabilityCoverageAttributesDetails'
 
@@ -544,27 +555,27 @@ components:
           type: string
           description: URL da página atualmente requisitada
           pattern: ^(https:\/\/)(.*?)(\/open-insurance\/products-services\/v\d+)(\/errors-omissions-liability.*)?$
-          example: 'https://api.organizacao.com.br/open-insurance/products-services/v1/errors-omissions-liability'
+          example: 'https://api.organizacao.com.br/open-insurance/products-services/v2/errors-omissions-liability'
         first:
           type: string
           description: URL da primeira página de registros
           pattern: ^(https:\/\/)(.*?)(\/open-insurance\/products-services\/v\d+)(\/errors-omissions-liability.*)?$
-          example: 'https://api.organizacao.com.br/open-insurance/products-services/v1/errors-omissions-liability'
+          example: 'https://api.organizacao.com.br/open-insurance/products-services/v2/errors-omissions-liability'
         prev:
           type: string
           description: URL da página anterior de registros
           pattern: ^(https:\/\/)(.*?)(\/open-insurance\/products-services\/v\d+)(\/errors-omissions-liability.*)?$
-          example: 'https://api.organizacao.com.br/open-insurance/products-services/v1/errors-omissions-liability'
+          example: 'https://api.organizacao.com.br/open-insurance/products-services/v2/errors-omissions-liability'
         next:
           type: string
           description: URL da próxima página de registros
           pattern: ^(https:\/\/)(.*?)(\/open-insurance\/products-services\/v\d+)(\/errors-omissions-liability.*)?$
-          example: 'https://api.organizacao.com.br/open-insurance/products-services/v1/errors-omissions-liability'
+          example: 'https://api.organizacao.com.br/open-insurance/products-services/v2/errors-omissions-liability'
         last:
           type: string
           description: URL da última página de registros
           pattern: ^(https:\/\/)(.*?)(\/open-insurance\/products-services\/v\d+)(\/errors-omissions-liability.*)?$
-          example: 'https://api.organizacao.com.br/open-insurance/products-services/v1/errors-omissions-liability'
+          example: 'https://api.organizacao.com.br/open-insurance/products-services/v2/errors-omissions-liability'
     
     Meta:
       type: object
@@ -606,15 +617,18 @@ components:
               title:
                 description: Título legível por humanos deste erro específico
                 type: string
+                pattern: '[\w\W\s]*'
                 maxLength: 255
               detail:
                 description: Descrição legível por humanos deste erro específico
                 type: string
+                pattern: '[\w\W\s]*'
                 maxLength: 2048
               requestDateTime:
                 description: 'Data e hora da consulta, conforme especificação RFC-3339, formato UTC.'
                 type: string
-                maxLength: 2048
+                maxLength: 20
+                pattern: '^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])T(?:[01]\d|2[0123]):(?:[012345]\d):(?:[012345]\d)Z$'
                 format: date-time
                 example: '2021-08-20T08:30:00Z'
             additionalProperties: false
@@ -685,7 +699,7 @@ components:
     
   responses:
     UnprocessableEntity:
-      description: 'O servidor entende o tipo de conteúdo da entidade da requisição, e a sintaxe da requisição esta correta, mas não foi possível processar as instruções presente.'
+      description: 'O servidor entende o tipo de conteúdo da entidade da requisição, e a sintaxe da requisição está correta, mas não foi possível processar as instruções presentes.'
       content:
         application/json; charset=utf-8:
           schema:
