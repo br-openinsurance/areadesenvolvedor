@@ -3,13 +3,13 @@ info:
   title: APIs Open Data do Open Insurance Brasil
   description: 
     API de informações de Seguro Residencial. Os recursos que podem ser consumidos pelos participantes conforme a regra 3.2.2 do manual de escopo de dados.
-  version: 1.5.0
+  version: 3.0.0
   contact:
     url: 'https://www.gov.br/susep/'
 servers:
-  - url: 'https://api.organizacao.com.br/open-insurance/products-services/v1'
+  - url: 'https://api.organizacao.com.br/open-insurance/products-services/v2'
     description: Servidor de Produção
-  - url: 'https://api.organizacao.com.br/open-insurance/products-services/v1'
+  - url: 'https://api.organizacao.com.br/open-insurance/products-services/v2'
     description: Servidor de Homologação  
 tags:
 - name: "home-insurance"
@@ -19,7 +19,7 @@ paths:
       tags:
         - home-insurance
       summary: Obtém informações de seguros residenciais
-      description: "Obtém informações de seguros redidenciais"
+      description: "Obtém informações de seguros residenciais"
       operationId: "getResidentialInsurance"
       parameters:
         - $ref: "#/components/parameters/cache-Control"
@@ -103,7 +103,7 @@ components:
       type: array
       items:
         type: object
-        description: Informações referente a sociedade a qual a marca pertence.
+        description: Informações referentes à sociedade à qual a marca pertence
         required:
           - name
           - cnpjNumber
@@ -116,7 +116,7 @@ components:
           cnpjNumber:
             type: string
             description: CNPJ da sociedade pertencente à marca.
-            pattern: ^\d{14}$
+            pattern: '^[A-Z0-9]{12}\d{2}$'
             example: '12345678901234'
           products:
             $ref: '#/components/schemas/HomeInsuranceProduct'
@@ -243,7 +243,7 @@ components:
           additionalOthers:
             type: string
             description: Campo aberto para descrição de cada participante ao selecionar o domínio ‘Outros’ no campo acima ‘Adicionais’.
-            maxLength: 100
+            maxLength: 500
           assistanceServices:
             $ref: '#/components/schemas/HomeInsuranceAssistanceServices'
           microInsurance:
@@ -258,7 +258,7 @@ components:
             description: Rede de atendimento
             type: string
             example: LIVRE_ESCOLHA
-            enum: [REDE_REFERENCIADA , LIVRE_ESCOLHA , REDE_REFERENCIADA__LIVRE_ESCOLHA]
+            enum: [REDE_REFERENCIADA, LIVRE_ESCOLHA, REDE_REFERENCIADA_E_LIVRE_ESCOLHA]
           premiumRates:
             $ref: '#/components/schemas/structurePremiumRates'      
           premiumPayments:
@@ -329,6 +329,10 @@ components:
           description: Indexador. Condicional, vinculado ao preenchimento do campo Tipo com Percentual
           enum: [LMG, FINANCEIRO_COBERTURA, OUTRO]
           example: LMG
+        indexOthers:
+          type: string
+          maxLength: 500
+          description: Campo para informar o tipo do Indexador, condicional ao valor 'OUTRO' em index.
         maxIndexAmount:
           $ref: '#/components/schemas/HomeInsuranceCoverageAttributesDetails'
 
@@ -421,7 +425,7 @@ components:
               termOthers:
                 type: string
                 description: Campo livre para descrição por cada participante ao selecionar o domínio “Outros” no campo Prazo (acima).
-                maxLength: 100
+                maxLength: 500
 
     HomeInsurancePremiumPayment:
         type: array 
@@ -435,8 +439,8 @@ components:
             paymentMethod:
               type: string
               description: Meio de pagamento escolhido pelo segurado.
-              example: CARTAO_CREDITO
-              enum: [CARTAO_CREDITO , CARTAO_DEBITO , DEBITO_CONTA_CORRENTE , DEBITO_CONTA_POUPANCA , BOLETO_BANCARIO , PIX , CONSIGINACAO_FOLHA_PAGAMENTO , PONTOS_PROGRAMAS_BENEFICIO, OUTROS]
+              example: CARTAO_DE_CREDITO
+              enum: [CARTAO_DE_CREDITO , CARTAO_DE_DEBITO , DEBITO_CONTA_CORRENTE , DEBITO_CONTA_POUPANCA , BOLETO_BANCARIO , PIX , CONSIGNACAO_FOLHA_PAGAMENTO , PONTOS_PROGRAMAS_BENEFICIO, OUTROS]
             paymentMethodDetail:
               type: string
               description: Campo aberto para detalhamento do campo ‘Outros’ por cada participante.
@@ -540,27 +544,27 @@ components:
           type: string
           description: URL da página atualmente requisitada
           pattern: ^(https:\/\/)(.*?)(\/open-insurance\/products-services\/v\d+)(\/home-insurance.*)?$
-          example: 'https://api.organizacao.com.br/open-insurance/products-services/v1/home-insurance/commercializationArea'
+          example: 'https://api.organizacao.com.br/open-insurance/products-services/v2/home-insurance/commercializationArea'
         first:
           type: string
           description: URL da primeira página de registros
           pattern: ^(https:\/\/)(.*?)(\/open-insurance\/products-services\/v\d+)(\/home-insurance.*)?$
-          example: 'https://api.organizacao.com.br/open-insurance/products-services/v1/home-insurance/commercializationArea'
+          example: 'https://api.organizacao.com.br/open-insurance/products-services/v2/home-insurance/commercializationArea'
         prev:
           type: string
           description: URL da página anterior de registros
           pattern: ^(https:\/\/)(.*?)(\/open-insurance\/products-services\/v\d+)(\/home-insurance.*)?$
-          example: 'https://api.organizacao.com.br/open-insurance/products-services/v1/home-insurance/commercializationArea'
+          example: 'https://api.organizacao.com.br/open-insurance/products-services/v2/home-insurance/commercializationArea'
         next:
           type: string
           description: URL da próxima página de registros
           pattern: ^(https:\/\/)(.*?)(\/open-insurance\/products-services\/v\d+)(\/home-insurance.*)?$
-          example: 'https://api.organizacao.com.br/open-insurance/products-services/v1/home-insurance/commercializationArea'
+          example: 'https://api.organizacao.com.br/open-insurance/products-services/v2/home-insurance/commercializationArea'
         last:
           type: string
           description: URL da última página de registros
           pattern: ^(https:\/\/)(.*?)(\/open-insurance\/products-services\/v\d+)(\/home-insurance.*)?$
-          example: 'https://api.organizacao.com.br/open-insurance/products-services/v1/home-insurance/commercializationArea'
+          example: 'https://api.organizacao.com.br/open-insurance/products-services/v2/home-insurance/commercializationArea'
 
     Meta:
       type: object
@@ -612,8 +616,8 @@ components:
               requestDateTime:
                 description: 'Data e hora da consulta, conforme especificação RFC-3339, formato UTC.'
                 type: string
-                pattern: '[\w\W\s]*'
-                maxLength: 2048  
+                maxLength: 20
+                pattern: '^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])T(?:[01]\d|2[0123]):(?:[012345]\d):(?:[012345]\d)Z$'
                 format: date-time
                 example: '2021-08-20T08:30:00Z'
             additionalProperties: false
@@ -691,7 +695,7 @@ components:
     
   responses:
     UnprocessableEntity:
-      description: 'O servidor entende o tipo de conteúdo da entidade da requisição, e a sintaxe da requisição esta correta, mas não foi possível processar as instruções presente.'
+      description: 'O servidor entende o tipo de conteúdo da entidade da requisição, e a sintaxe da requisição está correta, mas não foi possível processar as instruções presentes.'
       content:
         application/json; charset=utf-8:
           schema:
