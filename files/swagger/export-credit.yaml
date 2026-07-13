@@ -2,17 +2,17 @@ openapi: 3.0.0
 info:
   title: APIs Open Data do Open Insurance Brasil
   description:
-    API de informações de dados do produto Credito à Exportação. Os recursos que podem ser consumidos pelos participantes conforme a regra 3.1.2 do manual de escopo de dados..
-  version: 1.4.0
+    API de informações de dados do produto Credito à Exportação. Os recursos que podem ser consumidos pelos participantes conforme a regra 3.1.2 do manual de escopo de dados.
+  version: 3.0.0
   contact:
     url: 'https://www.gov.br/susep/'
 servers:
-  - url: 'https://api.organizacao.com.br/open-insurance/products-services/v1'
-    description: Servidor de Producao
-  - url: 'https://api.organizacao.com.br/open-insurance/products-services/v1'
-    description: Servidor de Homologacao
+  - url: 'https://api.organizacao.com.br/open-insurance/products-services/v2'
+    description: Servidor de Produção
+  - url: 'https://api.organizacao.com.br/open-insurance/products-services/v2'
+    description: Servidor de Homologação
 tags:
-  - name: "Credito à Exportação"
+  - name: "Crédito à Exportação"
   - name: "export-credit"
 
 paths:
@@ -20,8 +20,8 @@ paths:
     get:
       tags:
         - export-credit
-      summary: Obtem a lista dos produtos do tipo Credito à Exportação
-      description: "Obtem a lista dos produtos do tipo Credito à Exportação"
+      summary: Obtém a lista dos produtos do tipo Crédito à Exportação
+      description: "Obtém a lista dos produtos do tipo Crédito à Exportação"
       operationId: "getExportCredit"
       parameters:
         - $ref: "#/components/parameters/cache-Control"
@@ -34,7 +34,7 @@ paths:
         - $ref: "#/components/parameters/pageSize"
       responses:
         '200':
-          description: Dados dos produtos de Credito à Exportação
+          description: Dados dos produtos de Crédito à Exportação
           content:
             application/json:
               schema:
@@ -60,7 +60,7 @@ paths:
         '500':
           $ref: '#/components/responses/InternalServerError'
         default:
-          description: Dados dos produtos de API de informações de dados do produto Credito à Exportação. Os recursos que podem ser consumidos pelos participantes conforme a regra 3.1.2 do manual de escopo de dados.
+          description: Dados dos produtos de API de informações de dados do produto Crédito à Exportação. Os recursos que podem ser consumidos pelos participantes conforme a regra 3.1.2 do manual de escopo de dados.
           content:
             application/json:
               schema:
@@ -106,7 +106,7 @@ components:
       type: array
       items:
         type: object
-        description: Informações referente a sociedade a qual a marca pertence.
+        description: Informações referentes à sociedade à qual a marca pertence
         required:
         - name
         - cnpjNumber
@@ -120,7 +120,7 @@ components:
           cnpjNumber:
               type: string
               description: CNPJ da sociedade pertencente à marca.
-              pattern: ^\d{14}$
+              pattern: '^[A-Z0-9]{12}\d{2}$'
               example: '12345678901234'
           products:
               $ref: '#/components/schemas/ExportCreditProduct'
@@ -274,7 +274,7 @@ components:
           termOthers:
             type: string
             description: Campo livre para descrição por cada participante ao selecionar o domínio “Outros” no campo Prazo (acima).
-            maxLength: 100
+            maxLength: 500
     
     ExportCreditTerms:
       type: object
@@ -324,7 +324,7 @@ components:
         indexOthers:
             type: string
             description: Campo livre para descrição por cada participante ao selecionar o domínio “Outros” no campo Index (acima).
-            maxLength: 100
+            maxLength: 500
         maxIndexAmount:
           $ref: '#/components/schemas/ExportCreditCoverageAttributesDetails'
 
@@ -388,27 +388,27 @@ components:
           type: string
           description: URL da página atualmente requisitada
           pattern: ^(https:\/\/)(.*?)(\/open-insurance\/products-services\/v\d+)(\/export-credit.*)?$
-          example: 'https://api.organizacao.com.br/open-insurance/products-services/v1/export-credit'
+          example: 'https://api.organizacao.com.br/open-insurance/products-services/v2/export-credit'
         first:
           type: string
           description: URL da primeira página de registros
           pattern: ^(https:\/\/)(.*?)(\/open-insurance\/products-services\/v\d+)(\/export-credit.*)?$
-          example: 'https://api.organizacao.com.br/open-insurance/products-services/v1/export-credit'
+          example: 'https://api.organizacao.com.br/open-insurance/products-services/v2/export-credit'
         prev:
           type: string
           description: URL da página anterior de registros
           pattern: ^(https:\/\/)(.*?)(\/open-insurance\/products-services\/v\d+)(\/export-credit.*)?$
-          example: 'https://api.organizacao.com.br/open-insurance/products-services/v1/export-credit'
+          example: 'https://api.organizacao.com.br/open-insurance/products-services/v2/export-credit'
         next:
           type: string
           description: URL da próxima página de registros
           pattern: ^(https:\/\/)(.*?)(\/open-insurance\/products-services\/v\d+)(\/export-credit.*)?$
-          example: 'https://api.organizacao.com.br/open-insurance/products-services/v1/export-credit'
+          example: 'https://api.organizacao.com.br/open-insurance/products-services/v2/export-credit'
         last:
           type: string
           description: URL da última página de registros
           pattern: ^(https:\/\/)(.*?)(\/open-insurance\/products-services\/v\d+)(\/export-credit.*)?$
-          example: 'https://api.organizacao.com.br/open-insurance/products-services/v1/export-credit'
+          example: 'https://api.organizacao.com.br/open-insurance/products-services/v2/export-credit'
     
     Meta:
       type: object
@@ -450,15 +450,18 @@ components:
               title:
                 description: Título legível por humanos deste erro específico
                 type: string
+                pattern: '[\w\W\s]*'
                 maxLength: 255
               detail:
                 description: Descrição legível por humanos deste erro específico
                 type: string
+                pattern: '[\w\W\s]*'
                 maxLength: 2048
               requestDateTime:
                 description: 'Data e hora da consulta, conforme especificação RFC-3339, formato UTC.'
                 type: string
-                maxLength: 2048
+                maxLength: 20
+                pattern: '^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])T(?:[01]\d|2[0123]):(?:[012345]\d):(?:[012345]\d)Z$'
                 format: date-time
                 example: '2021-08-20T08:30:00Z'
             additionalProperties: false
@@ -529,7 +532,7 @@ components:
     
   responses:
     UnprocessableEntity:
-      description: 'O servidor entende o tipo de conteúdo da entidade da requisição, e a sintaxe da requisição esta correta, mas não foi possível processar as instruções presente.'
+      description: 'O servidor entende o tipo de conteúdo da entidade da requisição, e a sintaxe da requisição está correta, mas não foi possível processar as instruções presentes.'
       content:
         application/json; charset=utf-8:
           schema:
