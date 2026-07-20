@@ -2,27 +2,27 @@ openapi: 3.0.0
 info:
   title: APIs Open Data do Open Insurance Brasil
   description:
-    API de informações de dados do produto Bens em geral. Os recursos que podem ser consumidos pelos participantes conforme a regra 3.1.2 do manual de escopo de dados..
-  version: 1.2.0
+    API de informações de dados do produto Risco Financeiro. Os recursos que podem ser consumidos pelos participantes conforme a regra 3.1.2 do manual de escopo de dados..
+  version: 2.0.0
   contact:
     url: 'https://www.gov.br/susep/'
 servers:
-  - url: 'https://api.organizacao.com.br/open-insurance/products-services/v1'
+  - url: 'https://api.organizacao.com.br/open-insurance/products-services/v2'
     description: Servidor de Producao
-  - url: 'https://api.organizacao.com.br/open-insurance/products-services/v1'
+  - url: 'https://api.organizacao.com.br/open-insurance/products-services/v2'
     description: Servidor de Homologacao
 tags:
-- name: "Bens em geral" 
-- name: "AssistanceGeneralAssets"
+  - name: "Risco Financeiro"
+  - name: "FinancialRisk"
 
 paths:
-  /assistance-general-assets:
+  /financial-risk:
     get:
       tags:
-        - AssistanceGeneralAssets
-      summary: Obtem a lista dos produtos do tipo Bens em geral
-      description: "Obtem a lista dos produtos do tipo Bens em geral"
-      operationId: "getAssistanceGeneralAssets"
+        - FinancialRisk
+      summary: Obtem a lista dos produtos do tipo Risco Financeiro
+      description: "Obtem a lista dos produtos do tipo Risco Financeiro"
+      operationId: "getFinancialRisk"
       parameters:
         - $ref: "#/components/parameters/cache-Control"
         - $ref: "#/components/parameters/content-Security-Policy"
@@ -34,11 +34,11 @@ paths:
         - $ref: "#/components/parameters/pageSize"
       responses:
         '200':
-          description: Dados dos produtos de Bens em geral
+          description: Dados dos produtos de Risco Financeiro
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ResponseAssistanceGeneralAssetsList'
+                $ref: '#/components/schemas/ResponseFinancialRiskList'
         '204':
           $ref: '#/components/responses/NoContent'
         '400':
@@ -60,15 +60,15 @@ paths:
         '500':
           $ref: '#/components/responses/InternalServerError'
         default:
-          description: Dados dos produtos de API de informações de dados do produto Bens em geral. Os recursos que podem ser consumidos pelos participantes conforme a regra 3.1.2 do manual de escopo de dados.
+          description: Dados dos produtos de API de informações de dados do produto Risco Financeiro. Os recursos que podem ser consumidos pelos participantes conforme a regra 3.1.2 do manual de escopo de dados.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ResponseAssistanceGeneralAssetsList' 
+                $ref: '#/components/schemas/ResponseFinancialRiskList' 
 
 components:
   schemas:
-    ResponseAssistanceGeneralAssetsList:
+    ResponseFinancialRiskList:
       type: object
       required:
         - data
@@ -81,13 +81,13 @@ components:
             - brand
           properties:
               brand:
-                $ref: '#/components/schemas/AssistanceGeneralAssetsBrand'
+                $ref: '#/components/schemas/FinancialRiskBrand'
         links:
             $ref: '#/components/schemas/Links'
         meta:
             $ref: '#/components/schemas/Meta'
 
-    AssistanceGeneralAssetsBrand:
+    FinancialRiskBrand:
       type: object
       description: Organizacao controladora do grupo.
       required:
@@ -100,47 +100,42 @@ components:
           maxLength: 80
           example: ACME Group Seguros
         companies:
-          $ref: '#/components/schemas/AssistanceGeneralAssetsCompany'
+          $ref: '#/components/schemas/FinancialRiskCompany'
 
-    AssistanceGeneralAssetsCompany:
+    FinancialRiskCompany:
       type: array
       items:
-          description: Informações referente a sociedade a qual a marca pertence.
-          required:
-          - name
-          - cnpjNumber
-          - products
-          properties:
-            name:
-                type: string
-                description: Nome da sociedade pertencente à marca.
-                maxLength: 80
-                example: ACME Seguros
-            cnpjNumber:
-                type: string
-                description: CNPJ da sociedade pertencente à marca.
-                pattern: ^\d{14}$
-                example: '12345678901234'
-            products:
-                $ref: '#/components/schemas/AssistanceGeneralAssetsProduct'
+        type: object
+        description: Informações referente a sociedade a qual a marca pertence.
+        required:
+        - name
+        - cnpjNumber
+        - products
+        properties:
+          name:
+              type: string
+              description: Nome da sociedade pertencente à marca.
+              maxLength: 80
+              example: ACME Seguros
+          cnpjNumber:
+              type: string
+              description: CNPJ da sociedade pertencente à marca.
+              pattern: '^[A-Z0-9]{12}\d{2}$'
+              example: '12345678901234'
+          products:
+              $ref: '#/components/schemas/FinancialRiskProduct'
 
-    AssistanceGeneralAssetsProduct:
+    FinancialRiskProduct:
       type: array
       description: Lista de produtos de uma empresa.
       items:
         type: object
         required:
-          - name
           - code
-          - securityType
           - coverages
-          - assistanceServices
           - traits
-          - microInsurance
           - validity
-          - premiumPayment
           - termsAndConditions
-          - minimumRequirements
           - targetAudiences
         properties:
           name:
@@ -153,27 +148,6 @@ components:
             description: Código único a ser definido pela sociedade.
             maxLength: 100
             example: "01234589-0"
-          securityType:
-            type: array
-            description: Listagem de tipo de bem segurado
-            items:  
-              type: string
-              enum: [SMARTPHONE,
-                NOTEBOOK,
-                TABLET,
-                EQUIPAMENTOS_PORTATEIS,
-                ELETRODOMESTICOS_LINHA_BRANCA,
-                ELETRODOMESTICOS_LINHA_MARROM,
-                AUTOMOVEL,
-                BICICLETA,
-                BICICLETA_ELETRICA,
-                EMPRESA,
-                RESIDENCIA,
-                OUTROS]
-          securityTypeOthers:
-            type: string
-            maxLength: 3000
-            description: Campo livre para descrição, caso o valor do campo "Tipo de bem segurado" seja 12. Outros   
           coverages:
             type: array
             items:
@@ -185,83 +159,110 @@ components:
                 - allowApartPurchase
               properties:
                 coverage:
-                  description: Listagem de coberturas incluídas no produto que deve observar a relação discriminada de coberturas.
                   type: string
-                  enum: [SERVICOS_EMERGENCIAIS,
-                        SERVICOS_DE_CONVENIENCIA,
-                        OUTRAS] 
+                  description: Listagem de coberturas incluídas no produto que deve observar a relação discriminada de coberturas
+                  example: PROTECAO_DE_BENS
+                  enum: [PROTECAO_DE_BENS,
+                      PROTECAO_DE_DADOS_ONLINE,
+                      SAQUE_COMPRA_SOB_COACAO,
+                      GAP_TOTAL,
+                      GAP_SALDO_DEVEDOR,
+                      GAP_DESPESAS_ACESSORIAS,
+                      OUTRAS]
                 coverageDescription:
                   type: string
                   maxLength: 3000
                   description: Campo aberto para detalhamento de cada uma das coberturas possíveis dos produtos
                 coverageAttributes:
-                      $ref: '#/components/schemas/AssistanceGeneralAssetsCoverageAttributes'
+                      $ref: '#/components/schemas/FinancialRiskCoverageAttributes'
                 allowApartPurchase:
                   type: boolean
                   description: Indicação se a cobertura permite contratação separada (por cobertura selecionada).
-                  example: true
-          assistanceServices:
-            $ref: '#/components/schemas/AssistanceGeneralAssetsAssistanceServices'
           traits:
             type: boolean
             description: Indicação se o produto é classificado como destinado para cobertura de grandes riscos, sendo tal classificação de acordo com regulamentação específica
             example: true
-          microInsurance:
-            type: boolean
-            description: Indicação se o produto é classificado como microsseguro.
-            example: true
           validity:
-            $ref: '#/components/schemas/AssistanceGeneralAssetsValidity'
-          customerServices:
-            type: array
-            items:
-              type: string
-              enum: [REDE_REFERENCIADA,
-                    LIVRE_ESCOLHA]
-          premiumPayment:
-            $ref: '#/components/schemas/AssistanceGeneralAssetsPremiumPayment'            
+            $ref: '#/components/schemas/FinancialRiskValidity'
+          premiumRates:
+             $ref: '#/components/schemas/structurePremiumRates'
           termsAndConditions:
-            $ref: '#/components/schemas/AssistanceGeneralAssetsTerms'
-          minimumRequirements:
-            $ref: '#/components/schemas/AssistanceGeneralAssetsMinimumRequirements'
+            $ref: '#/components/schemas/FinancialRiskTerms'
           targetAudiences:
-            type: array
-            items:
-              type: string
-              example: PESSOA_NATURAL
-              enum: [PESSOA_NATURAL, PESSOA_JURIDICA]
+            description: Público Alvo
+            type: string
+            example: PESSOA_NATURAL
+            enum: [PESSOA_NATURAL, PESSOA_JURIDICA]
 
-    AssistanceGeneralAssetsAssistanceServices:
-      type: array
-      description: Agrupamento dos serviços de assistências disponíveis vinculado ao produto.
-      items:
-        type: object
-        required:
-          - assistanceServices
-        properties:
-          assistanceServices:
-            type: boolean
-            description: Indicação se o produto possui serviços de assistências complementares.
-            example: true
-          assistanceServicesPackage:
-            type: array
-            items:
-              type: string
-              description: Para efeitos de comparabilidade considerar agrupamentos de serviços em 4 categorias, conforme os domínios
-              example: ATE_10_SERVICOS
-              enum: [ATE_10_SERVICOS, ATE_20_SERVICOS , ACIMA_20_SERVICOS, CUSTOMIZAVEL]
-          complementaryAssistanceServicesDetail:
-            type: string
-            description: Campo livre para descrição dos serviços ofertados por cada sociedade participante, contendo minimamente cada um dos serviços assistenciais complementares oferecidos e se o pacote se trata de uma cobertura de assistência securitária ou se serviços de assistência
-            maxLength: 1000
-            example: reboque pane seca
-          chargeTypeSignaling:
-            type: string
-            description: Indicação se o pacote de Assistência é gratuita ou contratada/paga.
-            example: GRATUITO
-            enum: [GRATUITO, PAGO]
+    structurePremiumRates:
+      type: object
+      description: |
+        - O campo “Taxa de Prêmio” ou “Taxa de Contribuição” é apenas para referência sobre o valor praticado no mercado para
+        determinado produto e faixas de risco, servindo apenas como estimativa, e não representa o valor que será aplicado na cotação
+        do caso específico do cliente. O preço do seguro leva em consideração diversos fatores e variáveis, e o valor ofertado na
+        cotação/proposta da Seguradora/EAPC é a que prevalecerá. Desse modo, este valor NÃO substitui uma cotação e NÃO
+        garante a aceitação do risco do cliente.
+
+        - Para os produtos cujo LMI, LMG ou Capital Segurado transpassem da faixa máxima apresentada é necessário contatar
+        diretamente o seu intermediador (corretor) ou a sua seguradora para que seja realizada uma cotação adequada e uma estimativa
+        de valor correta seja transmitida.
+        - Esta informação não está sendo reportada para produtos que não são comercializados de forma individual, ou seja, não são
+        disponibilizadas as informações de seguros coletivos (Exceto Habitacional e Transportes) ou de produtos acessórios. Para
+        maiores detalhes de cotação é necessário entrar em contato comsua seguradora ou seu intermediador (corretor).
+        
+        - A metodologia utilizada para o levantamento destas informações é a que consta no Manual de Escopo de Dados e Serviços do
+        Open Insurance.
+
+        - Pode haver alterações entre produtos do mesmo ramo dependendo da seguradora, isso porque cada empresa possui
+        um grupo focal de clientes e um estilo operacional. Para mais detalhes entre em contato com a seguradora ou o intermediador
+        (corretor).
+
+        - As informações de Taxa de prêmio e Taxa de Contribuição são destinadas exclusivamente para o consumo do usuário final para
+        que ele tenha uma noção de quanto custa um seguro, não devem ser utilizadas para fins estatísticos.
+
+        - Os valores reportados no campo Taxa Prêmio e Taxa de Contribuição são valores que refletem um conjunto de
+        características de um seguro específico de cada companhia, logo,devem ser analisados em conjunto com as demais informações
+        dispostas na Fase I, não sendo factível comparar somente este campo entre Seguradoras.
+
+        - Para os produtos e modalidades que não estão com as estimativas de valores preenchidas neste campo, é necessário
+        que o cliente entre em contato com a seguradora ou intermediário para realizar a cotação e saber o valor de seu seguro.
+
+      required:
+        - range_1
+        - range_2
+        - range_3
+        - range_4
+      properties:
+        range_1:
+          $ref: '#/components/schemas/rangePremiumRates'
+        range_2:
+          $ref: '#/components/schemas/rangePremiumRates'
+        range_3:
+          $ref: '#/components/schemas/rangePremiumRates'
+        range_4:
+          $ref: '#/components/schemas/rangePremiumRates'
+          
+    rangePremiumRates:
+      type: object
+      required: 
+        - minimum
+        - maximum
+        - median
+      properties: 
+        minimum:
+          $ref: '#/components/schemas/amountRangePremiumRates'
+        maximum:
+          $ref: '#/components/schemas/amountRangePremiumRates'
+        median:
+          $ref: '#/components/schemas/amountRangePremiumRates'
+
+    amountRangePremiumRates: 
+      type: string
+      pattern: ^\d{1,16}\.\d{2}$
+      example: '10000.00'
     
-    AssistanceGeneralAssetsValidity:
+    
+    FinancialRiskValidity:
       type: array
       items:
         type: object
@@ -269,49 +270,20 @@ components:
           - term
         properties:
           term:
-            type: array
-            items:
-              type: string
-              example: ANUAL
-              enum: [ANUAL, ANUAL_INTERMITENTE, PLURIANUAL, PLURIANUAL_INTERMITENTE, MENSAL, MENSAL_INTERMITENTE, DIARIO, DIARIO_INTERMITENTE, OUTROS]
+            type: string
+            description: Prazo
+            example: ANUAL
+            enum: [ANUAL , ANUAL_INTERMITENTE , PLURIANUAL , PLURIANUAL_INTERMITENTE , MENSAL, MENSAL_INTERMITENTE , DIARIO , DIARIO_INTERMITENTE, OUTROS]
           termOthers:
             type: string
             description: Campo livre para descrição por cada participante ao selecionar o domínio “Outros” no campo Prazo (acima).
             maxLength: 100
     
-    AssistanceGeneralAssetsPremiumPayment:
-      type: array 
-      items:
-        type: object
-        required:
-          - paymentMethod
-          - paymentType
-        properties:
-          paymentMethod:      
-            type: string
-            description: Metodo de pagamento
-            enum: [CARTAO_DE_CREDITO, CARTAO_DE_DEBITO, DEBITO_EM_CONTA_CORRENTE, DEBITO_EM_CONTA_POUPANCA, BOLETO_BANCARIO ,PIX, CONSIGNACAO_EM_FOLHA_DE_PAGAMENTO, PONTOS_DE_PROGRAMA_DE_BENEFICIO, OUTROS]
-          paymentDetail:
-            type: string 
-            maxLength: 1024 
-            description: Campo livre para descrição por cada participante ao selecionar o domínio “Outros” no campo Meio de pagamento (acima) 
-          paymentType:
-            type: array
-            description: tipo de pagamento  
-            items:
-              type: string
-              example: A_VISTA
-              enum: [A_VISTA, PARCELADO]
-          premiumRates:
-            description: Distribuição de frequência relativa aos valores referentes às taxas cobradas, nos termos do Anexo III
-            type: string 
-            maxLength: 1024
-            
-    AssistanceGeneralAssetsTerms:
+    FinancialRiskTerms:
       type: object
       description: Informações dos termos e condições conforme número do processo SUSEP.
       required:
-       - definition
+        - definition
       properties:
         susepProcessNumber:
           type: string
@@ -323,47 +295,17 @@ components:
           description: Campo aberto (possibilidade de incluir uma url).
           maxLength: 1024
           example: https://www.seguradora.com.br/produto/tradicional/pdf/condicoes_gerais.pdf
-
-    AssistanceGeneralAssetsMinimumRequirements:
-      type: object
-      description: Requisitos mínimos.
-      required:
-        - contractType
-        - minimumRequirementDetails
-      properties:
-        contractType:
-          type: array
-          items:
-            type: string
-            example: COLETIVO
-            enum: [COLETIVO, INDIVIDUAL]
-        minimumRequirementDetails:
-          type: string
-          maxLength: 1024
-          description: Campo aberto contendo todos os requisitos mínimos para contratação (possibilidade de incluir URL).     
     
-    AssistanceGeneralAssetsCoverageAttributes:
+    FinancialRiskCoverageAttributes:
       type: object
       description: Informações de cobertura do Seguro.
       required:
-        - insuredParticipation
         - maxLMI
       properties:
         maxLMI:
-          $ref: '#/components/schemas/AssistanceGeneralAssetsLimit'
-        insuredParticipation:
-          type: array
-          description: Lista com indicativo do tipo de participação do segurado para cada cobertura
-          items:
-            type: string
-            example: FRANQUIA
-            enum: [FRANQUIA, POS, NAO_SE_APLICA]
-        insuredParticipationDescription:
-          type: string
-          maxLength: 1024
-          description: Lista com descrição referente ao campo “Participação do Segurado” para cada cobertura.
-  
-    AssistanceGeneralAssetsLimit:
+          $ref: '#/components/schemas/FinancialRiskLimit'
+      
+    FinancialRiskLimit:
       type: object
       description: Lista com valor de LMI aceito pela sociedade para cada cobertura.
       required:
@@ -372,41 +314,70 @@ components:
       properties:
         type:
           type: string
+          example: FINANCEIRO
           enum: [FINANCEIRO, PERCENTUAL]
         amount:
-          $ref: '#/components/schemas/AssistanceGeneralAssetsCoverageAttributesDetails'
+          $ref: '#/components/schemas/FinancialRiskCoverageAttributesDetails'
         index:
           type: string
           description: Indexador. Condicional, vinculado ao preenchimento do campo Tipo com Percentual
+          example: LMG
           enum: [LMG, FINANCEIRO_COBERTURA, OUTRO]
         maxIndexAmount:
-          $ref: '#/components/schemas/AssistanceGeneralAssetsCoverageAttributesDetails'
-    
-    AssistanceGeneralAssetsCoverageAttributesDetails:
+          $ref: '#/components/schemas/FinancialRiskCoverageAttributesDetails'
+
+    FinancialRiskCoverageAttributesDetails:
         type: object
         required:
           - amount
-          - unit
+          - unitType
         properties:
           amount:
-            type: number
+            type: string
+            description: |
+                Valor.
+                Exemplos de preenchimento do campo:
+
+                PORCENTAGEM: 90.85
+                                  
+                MONETARIO: 62500.67
+
+                OUTROS: 1000 (Exemplo de outro tipo: horas)
+            pattern: ^(^(100\.\00|\d{1,2}\.\d{2})$|^(\d{1,6})$|^(\d{1,15}\.\d{2})$)$
+          unitType:
+            type: string
+            description: Tipo da unidade
+            enum: [MONETARIO, PORCENTAGEM, OUTROS]
+          unitTypeOthers:
+            type: string
+            maxLength: 100
+            description: Campo para informar o tipo da Unidade, condicional ao valor 'OUTROS' em unitType
           unit:
-            $ref: '#/components/schemas/AssistanceGeneralAssetsCoverageAttributesDetailsUnit'
+            $ref: '#/components/schemas/FinancialRiskCoverageAttributesDetailsUnit'
     
-    AssistanceGeneralAssetsCoverageAttributesDetailsUnit:
+    FinancialRiskCoverageAttributesDetailsUnit:
       type: object
+      description: Descrição da unidade monetaria. Condicional ao valor 'MONETARIO' em unitType.
       required:
         - code
         - description
       properties:
-        code:
+        code: 
           type: string
-          maxLength: 2
+          enum: [د.إ ,Af,L,Դ,Kz,$,ƒ,ман,КМ,৳,лв,ب.د,₣,Bs.,R$,P,Br,¥,₡,Kč,kr,د.ج,£,Nfk,N/A,€,ლ,₵,D,Q,Kn,G,Ft,Rp,₪,₹,ع.د,﷼,Sh,៛,₩,د.ك,〒,₭,ل.ل,Rs,ل.د,د.م.,ден,K,₮,UM,₨,ރ.,MK,RM,MTn,
+            ₦,C$,ر.ع.,B/.,S/.,₱,zł,₲,ر.ق,din,р.,ر.س,Le,Db,ل.س,฿,ЅМ,m,د.ت,T$,₤,₴,Bs_F,₫,Vt,T,R,ZK ]
           example: R$
-        description:
+        description: 
           type: string
-          maxLength: 5
-          example: REAL
+          enum: [AFN,AFA,ALL,ALK,DZD,USD,EUR,ADP,ESP,FRF,AOA,AOK,AON,AOR,XCD,ARS,ARA,ARP,ARY,AMD,RUR,AWG,AUD,ATS,AZN,AYM,AZM,BSD,BHD,BDT,BBD,BYN,BYB,BYR,BEC,BEF,BEL,BZD,XOF,BMD,
+            INR,BTN,BOP,BOB,BOV,BAM,BAD,BWP,NOK,BRL,BRB,BRC,BRE,BRN,BRR,BND,BGN,BGJ,BGK,BGL,BUK,BIF,CVE,KHR,XAF,CAD,KYD,CLP,CLF,CNY,COP,COU,KMF,CDF,NZD,CRC,HRK,HRD,CUP,CUC,ANG,
+            CYP,CZK,CSJ,CSK,DKK,DJF,DOP,ECS,ECV,EGP,SVC,GQE,ERN,EEK,SZL,ETB,XEU,FKP,FJD,FIM,XPF,GMD,GEL,GEK,DDM,DEM,GHS,GHC,GHP,GIP,GRD,GTQ,GBP,GNF,GNE,GNS,GWE,GWP,GYD,HTG,ITL,
+            HNL,HKD,HUF,ISK,ISJ,IDR,XDR,IRR,IQD,IEP,ILS,ILP,ILR,JMD,JPY,JOD,KZT,KES,KPW,KRW,KWD,KGS,LAJ,LAK,LVL,LVR,LBP,LSL,ZAR,LSM,ZAL,LRD,LYD,CHF,LTL,LTT,LUC,LUF,LUL,MOP,MGA,
+            MGF,MWK,MYR,MVR,MVQ,MLF,MTL,MTP,MRU,MRO,MUR,XUA,MXN,MXV,MXP,MDL,MNT,MAD,MZN,MZE,MZM,MMK,NAD,NPR,NLG,NIO,NIC,NGN,MKD,OMR,PKR,PAB,PGK,PYG,PEN,PEH,PEI,PES,PHP,PLN,PLZ,
+            PTE,QAR,RON,ROK,ROL,RUB,RWF,SHP,WST,STN,STD,SAR,RSD,CSD,SCR,SLL,SGD,XSU,SKK,SIT,SBD,SOS,SSP,SDG,RHD,ESA,ESB,LKR,SDD,SDP,SRD,SRG,SEK,CHE,CHW,CHC,SYP,TWD,TJS,TJR,TZS,
+            THB,TPE,TOP,TTD,TND,TRY,TRL,TMT,TMM,UGX,UGS,UGW,UAH,UAK,SUR,AED,USS,USN,UYU,UYI,UYW,UYN,UYP,UZS,VUV,VEB,VEF,VES,VND,VNC,YER,YDD,YUD,YUM,YUN,ZRN,ZRZ,ZMW,ZMK,ZWL,ZWC,
+            ZWD,ZWN,ZWR,XBA,XFO,XBB,XRE,XBC,XBD,XFU,XTS,XXX,XAU,XPD,XPT,XAG]
+          example: BRL
 
     Links:
       type: object
@@ -414,28 +385,28 @@ components:
         self:
           type: string
           description: URL da página atualmente requisitada
-          pattern: ^(https:\/\/)(.*?)(\/open-insurance\/products-services\/v\d+)(\/assistance-general-assets.*)?$
-          example: 'https://api.organizacao.com.br/open-insurance/products-services/v1/assistance-general-assets'
+          pattern: ^(https:\/\/)(.*?)(\/open-insurance\/products-services\/v\d+)(\/financial-risk.*)?$
+          example: 'https://api.organizacao.com.br/open-insurance/products-services/v2/financial-risk'
         first:
           type: string
           description: URL da primeira página de registros
-          pattern: ^(https:\/\/)(.*?)(\/open-insurance\/products-services\/v\d+)(\/assistance-general-assets.*)?$
-          example: 'https://api.organizacao.com.br/open-insurance/products-services/v1/assistance-general-assets'
+          pattern: ^(https:\/\/)(.*?)(\/open-insurance\/products-services\/v\d+)(\/financial-risk.*)?$
+          example: 'https://api.organizacao.com.br/open-insurance/products-services/v2/financial-risk'
         prev:
           type: string
           description: URL da página anterior de registros
-          pattern: ^(https:\/\/)(.*?)(\/open-insurance\/products-services\/v\d+)(\/assistance-general-assets.*)?$
-          example: 'https://api.organizacao.com.br/open-insurance/products-services/v1/assistance-general-assets'
+          pattern: ^(https:\/\/)(.*?)(\/open-insurance\/products-services\/v\d+)(\/financial-risk.*)?$
+          example: 'https://api.organizacao.com.br/open-insurance/products-services/v2/financial-risk'
         next:
           type: string
           description: URL da próxima página de registros
-          pattern: ^(https:\/\/)(.*?)(\/open-insurance\/products-services\/v\d+)(\/assistance-general-assets.*)?$
-          example: 'https://api.organizacao.com.br/open-insurance/products-services/v1/assistance-general-assets'
+          pattern: ^(https:\/\/)(.*?)(\/open-insurance\/products-services\/v\d+)(\/financial-risk.*)?$
+          example: 'https://api.organizacao.com.br/open-insurance/products-services/v2/financial-risk'
         last:
           type: string
           description: URL da última página de registros
-          pattern: ^(https:\/\/)(.*?)(\/open-insurance\/products-services\/v\d+)(\/assistance-general-assets.*)?$
-          example: 'https://api.organizacao.com.br/open-insurance/products-services/v1/assistance-general-assets'
+          pattern: ^(https:\/\/)(.*?)(\/open-insurance\/products-services\/v\d+)(\/financial-risk.*)?$
+          example: 'https://api.organizacao.com.br/open-insurance/products-services/v2/financial-risk'
     
     Meta:
       type: object
@@ -553,7 +524,7 @@ components:
         schema:
             type: string
             pattern: '[\w\W\s]*'
-
+    
   responses:
     UnprocessableEntity:
       description: 'O servidor entende o tipo de conteúdo da entidade da requisição, e a sintaxe da requisição esta correta, mas não foi possível processar as instruções presente.'

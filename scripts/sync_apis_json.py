@@ -1,10 +1,14 @@
 #!/usr/bin/env python3
-"""Sincroniza docs/config/apis.json com os specs em documentation/source/files/swagger.
+"""Sincroniza docs/config/apis_fases.json com os specs em documentation/source/files/swagger.
 
-Fonte da verdade: documentation/source/files/swagger/
-Saida:            docs/config/apis.json
+Fonte da verdade: documentation/source/files/swagger/<fase>/... (nova arquitetura)
+Saida:            docs/config/apis_fases.json
 
-As URLs geradas no apis.json continuam apontando para ./specs/ (onde o
+Nao mexe em docs/config/apis.json -- esse arquivo e gerado pelo build_swagger_pages.py
+a partir da estrutura legada (arquivos soltos e current/) e consumido diretamente pelo
+docs/index.html (configUrl do swagger-ui-dist).
+
+As URLs geradas no apis_fases.json continuam apontando para ./specs/ (onde o
 build_swagger_pages.py publica os arquivos para o GitHub Pages).
 
 Comportamento:
@@ -239,7 +243,7 @@ def validate_unique_stages(entries: list[dict]) -> list[str]:
 def main() -> int:
     repo_root = Path(__file__).resolve().parents[1]
     swagger_root = repo_root / "documentation" / "source" / "files" / "swagger"
-    apis_json_path = repo_root / "docs" / "config" / "apis.json"
+    apis_json_path = repo_root / "docs" / "config" / "apis_fases.json"
     overrides_path = repo_root / "docs" / "config" / "stage_overrides.json"
 
     if not swagger_root.exists():

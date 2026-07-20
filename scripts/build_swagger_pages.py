@@ -1,15 +1,25 @@
 #!/usr/bin/env python3
 """Build static Swagger UI pages for GitHub Pages.
 
-Scans:
-- documentation/source/files/swagger/<fase>/<group>/<filename>-v<version>.<ext>
-- documentation/source/files/swagger/<fase>/<category>/<group>/<filename>-v<version>.<ext>
-  (e.g. fase-1/monitoring/admin_metrics/admin_metrics-v1.3.0.yaml)
+Duas estruturas de origem sao publicadas em paralelo, de forma independente,
+enquanto a arquitetura antiga nao e removida:
 
-Publishes:
-- docs/specs/<fase>/<group>/<filename>-v<version>.<ext>   (mirrors source structure)
-- docs/config/apis.json
-- docs/.nojekyll
+1) Nova arquitetura (por fase):
+   documentation/source/files/swagger/<fase>/<group>/<filename>-v<version>.<ext>
+   documentation/source/files/swagger/<fase>/<category>/<group>/<filename>-v<version>.<ext>
+     (e.g. fase-1/monitoring/admin_metrics/admin_metrics-v1.3.0.yaml)
+   -> docs/specs/<fase>/<group>/<filename>-v<version>.<ext>  (mirrors source structure)
+   -> docs/config/apis_fases.json  (formato rico: url, name, group, fase, stage, version)
+
+2) Estrutura legada (arquivos soltos, pre-fase):
+   documentation/source/files/swagger/<filename>.<ext>          (stage "base")
+   documentation/source/files/swagger/current/<filename>.<ext>  (stage "current")
+   -> docs/specs/<filename>.<ext>
+   -> docs/specs/current/<filename>.<ext>
+   -> docs/config/apis.json  (formato simples: url, name -- consumido diretamente
+      pelo configUrl do swagger-ui-dist em docs/index.html)
+
+docs/.nojekyll tambem e criado se ainda nao existir.
 """
 
 from __future__ import annotations
@@ -47,6 +57,15 @@ class CandidateSpec:
     group: str
     title: Optional[str]
     version: Optional[str]  # from spec content or filename
+
+
+@dataclass
+class LegacyCandidateSpec:
+    source: Path
+    publish_relative: str   # <filename>.<ext>  ou  current/<filename>.<ext>
+    stage: str               # "base" | "current"
+    title: Optional[str]
+    version: Optional[str]
 
 
 def clean_value(value: Optional[str]) -> Optional[str]:
@@ -175,6 +194,46 @@ def collect_candidates(swagger_root: Path) -> Tuple[List[CandidateSpec], List[Pa
     return candidates, invalid
 
 
+def collect_legacy_candidates(swagger_root: Path) -> Tuple[List[LegacyCandidateSpec], List[Path]]:
+    """Scan a estrutura legada (arquivos soltos, pre-fase):
+
+      <filename>.<ext>          -> stage "base"
+      current/<filename>.<ext>  -> stage "current"
+    """
+    candidates: List[LegacyCandidateSpec] = []
+    invalid: List[Path] = []
+
+    def scan(directory: Path, stage: str, publish_prefix: str) -> None:
+        if not directory.exists():
+            return
+
+        for file_path in sorted(directory.glob("*")):
+            if not file_path.is_file():
+                continue
+            if file_path.suffix.lower() not in VALID_EXTENSIONS:
+                continue
+
+            valid, title, version = is_openapi_spec(file_path)
+            if not valid:
+                invalid.append(file_path)
+                continue
+
+            candidates.append(
+                LegacyCandidateSpec(
+                    source=file_path,
+                    publish_relative=f"{publish_prefix}{file_path.name}",
+                    stage=stage,
+                    title=title,
+                    version=version,
+                )
+            )
+
+    scan(swagger_root, "base", "")
+    scan(swagger_root / "current", "current", "current/")
+
+    return candidates, invalid
+
+
 def assign_stages(candidates: List[CandidateSpec]) -> Dict[str, str]:
     """Return {publish_relative: stage} — latest version per (fase, group) = current."""
     latest_key: Dict[Tuple[str, str], Tuple] = {}
@@ -266,7 +325,7 @@ def write_output(
             )
         )
 
-    apis_json_path = config_dir / "apis.json"
+    apis_json_path = config_dir / "apis_fases.json"
     apis_json_path.write_text(
         json.dumps({"urls": api_urls}, indent=2, ensure_ascii=False) + "\n",
         encoding="utf-8",
@@ -275,6 +334,45 @@ def write_output(
     nojekyll_path = docs_dir / ".nojekyll"
     if not nojekyll_path.exists():
         nojekyll_path.write_text("", encoding="utf-8")
+
+    return api_urls, copied_files
+
+
+def write_legacy_output(
+    root: Path,
+    candidates: List[LegacyCandidateSpec],
+) -> Tuple[List[dict], List[Path]]:
+    """Publica a estrutura legada, preservando o formato original do apis.json
+    ({"url", "name"}), consumido diretamente pelo configUrl do swagger-ui-dist.
+    """
+    docs_dir = root / "docs"
+    specs_dir = docs_dir / "specs"
+    config_dir = docs_dir / "config"
+
+    specs_dir.mkdir(parents=True, exist_ok=True)
+    config_dir.mkdir(parents=True, exist_ok=True)
+
+    copied_files: List[Path] = []
+    api_urls: List[dict] = []
+
+    for candidate in candidates:
+        destination = specs_dir / Path(candidate.publish_relative)
+        destination.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copy2(candidate.source, destination)
+        copied_files.append(candidate.source)
+
+        stem = Path(candidate.publish_relative).stem
+        name = readable_name(stem, candidate.title, candidate.version, candidate.stage)
+
+        api_urls.append({"url": f"./specs/{candidate.publish_relative}", "name": name})
+
+    api_urls.sort(key=lambda entry: entry["url"])
+
+    apis_json_path = config_dir / "apis.json"
+    apis_json_path.write_text(
+        json.dumps({"urls": api_urls}, indent=2, ensure_ascii=False) + "\n",
+        encoding="utf-8",
+    )
 
     return api_urls, copied_files
 
@@ -291,7 +389,12 @@ def main() -> int:
     selected = resolve_unique_publish_paths(candidates)
     api_urls, copied_files = write_output(repo_root, selected, stages)
 
+    legacy_candidates, legacy_invalid = collect_legacy_candidates(swagger_root)
+    legacy_urls, legacy_copied = write_legacy_output(repo_root, legacy_candidates)
+
     print("Swagger pages build complete")
+
+    print("\n[Nova arquitetura -> docs/config/apis_fases.json]")
     print(f"- Valid specs found   : {len(candidates)}")
     print(f"- Invalid/ignored     : {len(invalid)}")
     print(f"- Published specs     : {len(copied_files)}")
@@ -304,6 +407,20 @@ def main() -> int:
 
     print("- Generated config entries:")
     for entry in api_urls:
+        print(f"  * {entry['name']} -> {entry['url']}")
+
+    print("\n[Estrutura legada -> docs/config/apis.json]")
+    print(f"- Valid specs found   : {len(legacy_candidates)}")
+    print(f"- Invalid/ignored     : {len(legacy_invalid)}")
+    print(f"- Published specs     : {len(legacy_copied)}")
+
+    if legacy_invalid:
+        print("- Ignored files (not valid OpenAPI/Swagger):")
+        for path in legacy_invalid:
+            print(f"  * {path.relative_to(repo_root).as_posix()}")
+
+    print("- Generated config entries:")
+    for entry in legacy_urls:
         print(f"  * {entry['name']} -> {entry['url']}")
 
     return 0

@@ -2,7 +2,7 @@ openapi: 3.0.0
 info:
   title: APIs Open Data do Open Insurance Brasil
   description:
-    API de informações de dados do produto Garantia Privada. Os recursos que podem ser consumidos pelos participantes conforme a regra 3.1.2 do manual de escopo de dados..
+    API de informações de dados do produto Garantia Pública. Os recursos que podem ser consumidos pelos participantes conforme a regra 3.1.2 do manual de escopo de dados..
   version: 1.4.0
   contact:
     url: 'https://www.gov.br/susep/'
@@ -12,17 +12,17 @@ servers:
   - url: 'https://api.organizacao.com.br/open-insurance/products-services/v1'
     description: Servidor de Homologacao
 tags:
-  - name: "Garantia Privada"
-  - name: "PrivateGuarantee"
+  - name: "Garantia Pública"
+  - name: "PublicGuarantee"
 
 paths:
-  /private-guarantee:
+  /public-guarantee:
     get:
       tags:
-        - PrivateGuarantee
-      summary: Obtem a lista dos produtos do tipo Garantia Privada
-      description: "Obtem a lista dos produtos do tipo Garantia Privada"
-      operationId: "getPrivateGuarantee"
+        - PublicGuarantee
+      summary: Obtem a lista dos produtos do tipo Garantia Pública
+      description: "Obtem a lista dos produtos do tipo Garantia Pública"
+      operationId: "getPublicGuarantee"
       parameters:
         - $ref: "#/components/parameters/cache-Control"
         - $ref: "#/components/parameters/content-Security-Policy"
@@ -34,11 +34,11 @@ paths:
         - $ref: "#/components/parameters/pageSize"
       responses:
         '200':
-          description: Dados dos produtos de Garantia Privada
+          description: Dados dos produtos de Garantia Pública
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ResponsePrivateGuaranteeList'
+                $ref: '#/components/schemas/ResponsePublicGuaranteeList'
         '204':
           $ref: '#/components/responses/NoContent'
         '400':
@@ -60,15 +60,15 @@ paths:
         '500':
           $ref: '#/components/responses/InternalServerError'
         default:
-          description: Dados dos produtos de API de informações de dados do produto Garantia Privada. Os recursos que podem ser consumidos pelos participantes conforme a regra 3.1.2 do manual de escopo de dados.
+          description: Dados dos produtos de API de informações de dados do produto Garantia Pública. Os recursos que podem ser consumidos pelos participantes conforme a regra 3.1.2 do manual de escopo de dados.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ResponsePrivateGuaranteeList' 
+                $ref: '#/components/schemas/ResponsePublicGuaranteeList' 
 
 components:
   schemas:
-    ResponsePrivateGuaranteeList:
+    ResponsePublicGuaranteeList:
       type: object
       required:
         - data
@@ -81,13 +81,13 @@ components:
             - brand
           properties:
               brand:
-                $ref: '#/components/schemas/PrivateGuaranteeBrand'
+                $ref: '#/components/schemas/PublicGuaranteeBrand'
         links:
             $ref: '#/components/schemas/Links'
         meta:
             $ref: '#/components/schemas/Meta'
 
-    PrivateGuaranteeBrand:
+    PublicGuaranteeBrand:
       type: object
       description: Organizacao controladora do grupo.
       required:
@@ -100,9 +100,9 @@ components:
           maxLength: 80
           example: ACME Group Seguros
         companies:
-          $ref: '#/components/schemas/PrivateGuaranteeCompany'
+          $ref: '#/components/schemas/PublicGuaranteeCompany'
 
-    PrivateGuaranteeCompany:
+    PublicGuaranteeCompany:
       type: array
       items:
           type: object
@@ -123,9 +123,9 @@ components:
                 pattern: ^\d{14}$
                 example: '12345678901234'
             products:
-                $ref: '#/components/schemas/PrivateGuaranteeProduct'
+                $ref: '#/components/schemas/PublicGuaranteeProduct'
 
-    PrivateGuaranteeProduct:
+    PublicGuaranteeProduct:
       type: array
       description: Lista de produtos de uma empresa.
       items:
@@ -164,64 +164,71 @@ components:
                  coverage:
                    type: string
                    description: Listagem de coberturas incluídas no produto que deve observar a relação discriminada de coberturas
-                   enum: [CONSTRUCAO_OBRAS,        
+                   enum: [LICITANTE,
+                      CONSTRUCAO_OBRAS,
                       FORNECIMENTO,
-                      PRESTACAO_DE_SERVICOS,     
-                      RETENCAO_DE_PAGAMENTOS,    
+                      PRESTACAO_DE_SERVICOS,
+                      RETENCAO_DE_PAGAMENTOS,
                       ADIANTAMENTO_DE_PAGAMENTOS,
-                      MANUTENCAO_CORRETIVA,      
-                      IMOBILIARIO,
-                      FINANCEIRA,
+                      MANUTENCAO_CORRETIVA,
+                      JUDICIAL,
+                      JUDICIAL_CIVIL,
+                      JUDICIAL_TRABALHISTA,
+                      JUDICIAL_TRIBUTARIO,
+                      JUDICIAL_DEPOSITO_RECURSAL,
+                      JUDICIAL_PARA_EXECUCAO_FISCAL,
+                      PARCELAMENTO_ADMINISTRATIVO,
+                      ADUANEIRO,
+                      ADMINISTRATIVO_DE_CREDITOS_TRIBUTARIOS,
                       ACOES_TRABALHISTAS_E_PREVIDENCIARIAS,
                       OUTRAS]
-                   example: CONSTRUCAO_OBRAS
+                   example: LICITANTE
                  coverageDescription:
                    type: string
                    maxLength: 3000
-                   description: Campo aberto para detalhamento de cada uma das coberturas possíveis dos produtos
+                   description: Campo aberto para detalhamento de cada uma das coberturas possiveis dos produtos
                  coverageAttributes:
-                   $ref: '#/components/schemas/PrivateGuaranteeCoverageAttributes'
+                   $ref: '#/components/schemas/PublicGuaranteeCoverageAttributes'
                  allowApartPurchase:
                    type: boolean
-                   description: Permissão para Contratação Separada  
+                   description: Permissão para Contratação Separada
           traits:
             type: boolean
             description: Indicação se o produto é classificado como destinado para cobertura de grandes riscos, sendo tal classificação de acordo com regulamentação específica
           validity:
-            $ref: '#/components/schemas/PrivateGuaranteeValidity'
+            $ref: '#/components/schemas/PublicGuaranteeValidity'
           premiumPayment:
-            $ref: '#/components/schemas/PrivateGuaranteePremiumPayment'
+            $ref: '#/components/schemas/PublicGuaranteePremiumPayment'
           termsAndConditions:
-            $ref: '#/components/schemas/PrivateGuaranteeTerms'
+            $ref: '#/components/schemas/PublicGuaranteeTerms'
           minimumRequirements:
-            $ref: '#/components/schemas/PrivateGuaranteeMinimumRequirements'
+            $ref: '#/components/schemas/PublicGuaranteeMinimumRequirements'
           targetAudiences:
             description: Público Alvo
             type: string
             example: PESSOA_NATURAL
             enum: [PESSOA_NATURAL, PESSOA_JURIDICA]
     
-    PrivateGuaranteeCoverageAttributes:
+    PublicGuaranteeCoverageAttributes:
       type: object
       description: Informações de cobertura do Seguro.
       required:
-        - maxLMI
         - insuredParticipation
+        - maxLMI
       properties:
         maxLMI:
-          $ref: '#/components/schemas/PrivateGuaranteeLimit'
+          $ref: '#/components/schemas/PublicGuaranteeLimit'
         insuredParticipation:
-          description: Lista com indicativo do tipo de participação do segurado para cada cobertura.
           type: string
+          description: Lista com indicativo do tipo de participação do segurado para cada cobertura.
           example: FRANQUIA
-          enum: [FRANQUIA, POS, FRANQUIA_E_POS,NAO_SE_APLICA]
+          enum: [FRANQUIA, POS, FRANQUIA_E_POS, NAO_SE_APLICA]
         insuredParticipationDescription:
           type: string
           maxLength: 1024
           description: Lista com descrição referente ao campo “Participação do Segurado” para cada cobertura.
         
-
-    PrivateGuaranteeLimit:
+    PublicGuaranteeLimit:
       type: object
       description: Lista com valor de LMI aceito pela sociedade para cada cobertura.
       required:
@@ -233,16 +240,16 @@ components:
           enum: [FINANCEIRO, PERCENTUAL]
           example: FINANCEIRO
         amount:
-          $ref: '#/components/schemas/PrivateGuaranteeCoverageAttributesDetails'
+          $ref: '#/components/schemas/PublicGuaranteeCoverageAttributesDetails'
         index:
           type: string
           description: Indexador. Condicional, vinculado ao preenchimento do campo Tipo com Percentual
           enum: [LMG, FINANCEIRO_COBERTURA, OUTRO]
           example: LMG
         maxIndexAmount:
-          $ref: '#/components/schemas/PrivateGuaranteeCoverageAttributesDetails'
+          $ref: '#/components/schemas/PublicGuaranteeCoverageAttributesDetails'
 
-    PrivateGuaranteeCoverageAttributesDetails:
+    PublicGuaranteeCoverageAttributesDetails:
         type: object
         required:
           - amount
@@ -269,9 +276,9 @@ components:
             maxLength: 100
             description: Campo para informar o tipo da Unidade, condicional ao valor 'OUTROS' em unitType
           unit:
-            $ref: '#/components/schemas/PrivateGuaranteeCoverageAttributesDetailsUnit'
+            $ref: '#/components/schemas/PublicGuaranteeCoverageAttributesDetailsUnit'
     
-    PrivateGuaranteeCoverageAttributesDetailsUnit:
+    PublicGuaranteeCoverageAttributesDetailsUnit:
       type: object
       description: Descrição da unidade monetaria. Condicional ao valor 'MONETARIO' em unitType.
       required:
@@ -295,7 +302,7 @@ components:
             ZWD,ZWN,ZWR,XBA,XFO,XBB,XRE,XBC,XBD,XFU,XTS,XXX,XAU,XPD,XPT,XAG]
           example: BRL
     
-    PrivateGuaranteeValidity:
+    PublicGuaranteeValidity:
       type: array
       items:
         type: object
@@ -312,7 +319,7 @@ components:
             description: Campo livre para descrição por cada participante ao selecionar o domínio “Outros” no campo Prazo (acima).
             maxLength: 100
     
-    PrivateGuaranteePremiumPayment:
+    PublicGuaranteePremiumPayment:
       type: array
       items:
         type: object
@@ -323,19 +330,26 @@ components:
           paymentMethod:
             type: string
             description: Metodo de pagamento
-            enum: [CARTAO_DE_CREDITO, CARTAO_DE_DEBITO, DEBITO_EM_CONTA_CORRENTE, DEBITO_EM_CONTA_POUPANCA, BOLETO_BANCARIO, PIX, CONSIGNACAO_EM_FOLHA_DE_PAGAMENTO, PONTOS_DE_PROGRAMA_DE_BENEFICIO, OUTROS]
+            enum: [CARTAO_DE_CREDITO,
+              CARTAO_DE_DEBITO, DEBITO_EM_CONTA_CORRENTE,
+              DEBITO_EM_CONTA_POUPANCA,
+              BOLETO_BANCARIO,
+              PIX,
+              CONSIGNACAO_EM_FOLHA_DE_PAGAMENTO,
+              PONTOS_DE_PROGRAMA_DE_BENEFICIO,
+              OUTROS]
             example: CARTAO_DE_CREDITO
           paymentDetail:
             type: string  
             maxLength: 1024
             description: Campo livre para descrição por cada participante ao selecionar o domínio “Outros” no campo Meio de pagamento (acima) 
           paymentType:
-            description: tipo de pagamento 
+            description: Forma de pagamento
             type: string
             example: A_VISTA
             enum: [A_VISTA, PARCELADO]
-              
-    PrivateGuaranteeTerms:
+
+    PublicGuaranteeTerms:
       type: object
       description: Informações dos termos e condições conforme número do processo SUSEP.
       required:
@@ -343,7 +357,7 @@ components:
       properties:
         susepProcessNumber:
           type: string
-          description: Número do processo Susep, se houver. 
+          description: Número do processo SUSEP, se houver.
           maxLength: 20
           example: '15414622222222222'
         definition:
@@ -352,7 +366,7 @@ components:
           maxLength: 1024
           example: https://www.seguradora.com.br/produto/tradicional/pdf/condicoes_gerais.pdf
 
-    PrivateGuaranteeMinimumRequirements:
+    PublicGuaranteeMinimumRequirements:
       type: object
       description: Requisitos mínimos.
       required:
@@ -361,7 +375,7 @@ components:
       properties:
         contractType:
           type: string
-          enum: [COLETIVO, INDIVIDUAL]
+          enum: [COLETIVO, INDIVIDUAL] 
         minimumRequirementDetails:
           type: string
           description: Campo aberto contendo todos os requisitos mínimos para contratação (possibilidade de incluir URL).
@@ -374,28 +388,28 @@ components:
         self:
           type: string
           description: URL da página atualmente requisitada
-          pattern: ^(https:\/\/)(.*?)(\/open-insurance\/products-services\/v\d+)(\/private-guarantee.*)?$
-          example: 'https://api.organizacao.com.br/open-insurance/products-services/v1/private-guarantee'
+          pattern: ^(https:\/\/)(.*?)(\/open-insurance\/products-services\/v\d+)(\/public-guarantee.*)?$
+          example: 'https://api.organizacao.com.br/open-insurance/products-services/v1/public-guarantee'
         first:
           type: string
           description: URL da primeira página de registros
-          pattern: ^(https:\/\/)(.*?)(\/open-insurance\/products-services\/v\d+)(\/private-guarantee.*)?$
-          example: 'https://api.organizacao.com.br/open-insurance/products-services/v1/private-guarantee'
+          pattern: ^(https:\/\/)(.*?)(\/open-insurance\/products-services\/v\d+)(\/public-guarantee.*)?$
+          example: 'https://api.organizacao.com.br/open-insurance/products-services/v1/public-guarantee'
         prev:
           type: string
           description: URL da página anterior de registros
-          pattern: ^(https:\/\/)(.*?)(\/open-insurance\/products-services\/v\d+)(\/private-guarantee.*)?$
-          example: 'https://api.organizacao.com.br/open-insurance/products-services/v1/private-guarantee'
+          pattern: ^(https:\/\/)(.*?)(\/open-insurance\/products-services\/v\d+)(\/public-guarantee.*)?$
+          example: 'https://api.organizacao.com.br/open-insurance/products-services/v1/public-guarantee'
         next:
           type: string
           description: URL da próxima página de registros
-          pattern: ^(https:\/\/)(.*?)(\/open-insurance\/products-services\/v\d+)(\/private-guarantee.*)?$
-          example: 'https://api.organizacao.com.br/open-insurance/products-services/v1/private-guarantee'
+          pattern: ^(https:\/\/)(.*?)(\/open-insurance\/products-services\/v\d+)(\/public-guarantee.*)?$
+          example: 'https://api.organizacao.com.br/open-insurance/products-services/v1/public-guarantee'
         last:
           type: string
           description: URL da última página de registros
-          pattern: ^(https:\/\/)(.*?)(\/open-insurance\/products-services\/v\d+)(\/private-guarantee.*)?$
-          example: 'https://api.organizacao.com.br/open-insurance/products-services/v1/private-guarantee'
+          pattern: ^(https:\/\/)(.*?)(\/open-insurance\/products-services\/v\d+)(\/public-guarantee.*)?$
+          example: 'https://api.organizacao.com.br/open-insurance/products-services/v1/public-guarantee'
     
     Meta:
       type: object
@@ -513,7 +527,7 @@ components:
         schema:
             type: string
             pattern: '[\w\W\s]*'
-
+    
   responses:
     UnprocessableEntity:
       description: 'O servidor entende o tipo de conteúdo da entidade da requisição, e a sintaxe da requisição esta correta, mas não foi possível processar as instruções presente.'

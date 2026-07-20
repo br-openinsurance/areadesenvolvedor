@@ -157,6 +157,13 @@
   </head>
 
   <body>
+    <!-- Nova arquitetura (fase-based) - temporariamente desativada.
+         Consumia docs/config/apis.json no formato rico (group/fase/stage/version).
+         Esses dados agora sao gerados em docs/config/apis_fases.json pelo
+         build_swagger_pages.py. Para reativar: descomente o bloco abaixo, remova
+         o bloco "Estrutura legada" logo em seguida, e troque o fetch para
+         "./config/apis_fases.json".
+
     <div class="app-shell">
       <div class="custom-topbar">
         <div class="custom-topbar-inner">
@@ -356,12 +363,12 @@
         document.getElementById("swagger-ui").appendChild(loadingEl);
 
         try {
-          const response = await fetch("./config/apis.json", {
+          const response = await fetch("./config/apis_fases.json", {
             cache: "no-store",
           });
 
           if (!response.ok) {
-            throw new Error(`Failed to load apis.json: ${response.status}`);
+            throw new Error(`Failed to load apis_fases.json: ${response.status}`);
           }
 
           const data = await response.json();
@@ -396,6 +403,49 @@
       }
 
       window.addEventListener("load", init);
+    </script>
+    -->
+
+    <!-- Estrutura legada (ativa) - aponta para docs/config/apis.json,
+         gerado por build_swagger_pages.py a partir dos arquivos soltos e de
+         current/ em documentation/source/files/swagger. -->
+    <div id="swagger-ui"></div>
+    <script src="https://unpkg.com/swagger-ui-dist@5/swagger-ui-bundle.js"></script>
+    <script src="https://unpkg.com/swagger-ui-dist@5/swagger-ui-standalone-preset.js"></script>
+    <script>
+      function getSpecUrlFromQuery() {
+        const params = new URLSearchParams(window.location.search);
+        const url = params.get("url");
+        return url && url.trim() ? url.trim() : null;
+      }
+
+      function forceLightMode() {
+        document.documentElement.classList.remove("dark-mode");
+        document.documentElement.classList.add("light-mode");
+      }
+
+      window.onload = function () {
+        const directUrl = getSpecUrlFromQuery();
+        const config = {
+          dom_id: "#swagger-ui",
+          deepLinking: true,
+          filter: false,
+          docExpansion: "list",
+          persistAuthorization: true,
+          validatorUrl: null,
+          onComplete: forceLightMode,
+          presets: [SwaggerUIBundle.presets.apis, SwaggerUIStandalonePreset],
+          layout: "StandaloneLayout",
+        };
+
+        if (directUrl) {
+          config.url = directUrl;
+        } else {
+          config.configUrl = "./config/apis.json";
+        }
+
+        window.ui = SwaggerUIBundle(config);
+      };
     </script>
   </body>
 </html>
