@@ -8,7 +8,7 @@ Specs organizadas em docs/specs/fase-1, fase-2, fase-3/<group>/<filename>-v<vers
 Por padrão a versão mais alta de cada grupo recebe estágio "current"; as demais "retired".
 Use os overrides abaixo para atribuir estágios diferentes.
 
-Estágios válidos: certifying, current, deprecated, retired
+Estágios válidos: certifying, current, release-candidate, developing, deprecated, retired
 
 Uso:
   # Promover uma versão específica
@@ -37,10 +37,10 @@ import sys
 from collections import defaultdict
 from pathlib import Path
 
-VALID_STAGES = ("certifying", "current", "deprecated", "retired")
+VALID_STAGES = ("certifying", "current", "release-candidate", "developing", "deprecated", "retired")
 STAGE_ORDER = {s: i for i, s in enumerate(VALID_STAGES)}
-PHASES = {"fase-1", "fase-2", "fase-3"}
-FASE_ORDER = {"fase-1": 0, "fase-2": 1, "fase-3": 2}
+PHASES = {"fase-1", "fase-2", "fase-3", "monitoring", "pcm"}
+FASE_ORDER = {"fase-1": 0, "fase-2": 1, "fase-3": 2, "monitoring": 3, "pcm": 4}
 VALID_EXTENSIONS = {".yaml", ".yml", ".json"}
 
 VERSION_FROM_STEM_RE = re.compile(r"^.+-v([\d]+(?:\.[\d]+)*)$")
