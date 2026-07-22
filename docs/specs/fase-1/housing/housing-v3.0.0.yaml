@@ -2,7 +2,7 @@ openapi: 3.0.0
 info:
   title: APIs Open Data do Open Insurance Brasil
   description:
-    API de informações de dados do produto Garantia Privada. Os recursos que podem ser consumidos pelos participantes conforme a regra 3.1.2 do manual de escopo de dados.
+    API de informações de dados do produto Habitacional. Os recursos que podem ser consumidos pelos participantes conforme a regra 3.1.2 do manual de escopo de dados.
   version: 3.0.0
   contact:
     url: 'https://www.gov.br/susep/'
@@ -12,17 +12,17 @@ servers:
   - url: 'https://api.organizacao.com.br/open-insurance/products-services/v3'
     description: Servidor de Homologação
 tags:
-  - name: "Garantia Privada"
-  - name: "PrivateGuarantee"
+  - name: "Habitacional"
+  - name: "Housing"
 
 paths:
-  /private-guarantee:
+  /housing:
     get:
       tags:
-        - PrivateGuarantee
-      summary: Obtém a lista dos produtos do tipo Garantia Privada
-      description: "Obtém a lista dos produtos do tipo Garantia Privada"
-      operationId: "getPrivateGuarantee"
+        - Housing
+      summary: Obtém a lista dos produtos do tipo Habitacional
+      description: "Obtém a lista dos produtos do tipo Habitacional"
+      operationId: "getHousing"
       parameters:
         - $ref: "#/components/parameters/cache-Control"
         - $ref: "#/components/parameters/content-Security-Policy"
@@ -34,11 +34,11 @@ paths:
         - $ref: "#/components/parameters/pageSize"
       responses:
         '200':
-          description: Dados dos produtos de Garantia Privada
+          description: Dados dos produtos de Seguro Habitacional em Apólices de Mercado – Demais Coberturas e Seguro Habitacional em Apólices de Mercado – Prestamista
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ResponsePrivateGuaranteeList'
+                $ref: '#/components/schemas/ResponseHousingList'
         '204':
           $ref: '#/components/responses/NoContent'
         '400':
@@ -60,15 +60,15 @@ paths:
         '500':
           $ref: '#/components/responses/InternalServerError'
         default:
-          description: Dados dos produtos de API de informações de dados do produto Garantia Privada. Os recursos que podem ser consumidos pelos participantes conforme a regra 3.1.2 do manual de escopo de dados.
+          description: Dados dos produtos de Seguro Habitacional em Apólices de Mercado – Demais Coberturas e Seguro Habitacional em Apólices de Mercado – Prestamista
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ResponsePrivateGuaranteeList' 
+                $ref: '#/components/schemas/ResponseHousingList' 
 
 components:
   schemas:
-    ResponsePrivateGuaranteeList:
+    ResponseHousingList:
       type: object
       required:
         - data
@@ -81,13 +81,13 @@ components:
             - brand
           properties:
               brand:
-                $ref: '#/components/schemas/PrivateGuaranteeBrand'
+                $ref: '#/components/schemas/HousingBrand'
         links:
             $ref: '#/components/schemas/Links'
         meta:
             $ref: '#/components/schemas/Meta'
 
-    PrivateGuaranteeBrand:
+    HousingBrand:
       type: object
       description: Organização controladora do grupo.
       required:
@@ -96,13 +96,13 @@ components:
       properties:
         name:
           type: string
-          description: Nome da Marca reportada pelo participante do Open Insurance. O conceito a que se refere a 'marca' é em essência uma promessa da empresa em fornecer uma série específica de atributos, benefícios e serviços uniformes aos clientes.
+          description: Nome da Marca reportada pelo participante do Open Insurance. O conceito a que se refere a 'marca' é em essência uma promessa da empresa em fornecer uma série específica de atributos, benefícios e serviços uniformes aos clientes
           maxLength: 80
           example: ACME Group Seguros
         companies:
-          $ref: '#/components/schemas/PrivateGuaranteeCompany'
+          $ref: '#/components/schemas/HousingCompany'
 
-    PrivateGuaranteeCompany:
+    HousingCompany:
       type: array
       items:
           type: object
@@ -114,18 +114,18 @@ components:
           properties:
             name:
                 type: string
-                description: Nome da sociedade pertencente à marca.
+                description: Nome da Instituição, pertencente à Marca.
                 maxLength: 80
-                example: ACME Seguros
+                example: Empresa da Organização A
             cnpjNumber:
                 type: string
                 description: CNPJ da sociedade pertencente à marca.
                 pattern: '^[A-Z0-9]{12}\d{2}$'
                 example: '12345678901234'
             products:
-                $ref: '#/components/schemas/PrivateGuaranteeProduct'
+                $ref: '#/components/schemas/HousingProduct'
 
-    PrivateGuaranteeProduct:
+    HousingProduct:
       type: array
       description: Lista de produtos de uma empresa.
       items:
@@ -134,9 +134,7 @@ components:
           - name
           - code
           - coverages
-          - traits
-          - validity
-          - premiumPayment
+          - additional
           - termsAndConditions
           - minimumRequirements
           - targetAudiences
@@ -149,79 +147,150 @@ components:
           code:
             type: string
             description: Código único a ser definido pela sociedade.
-            maxLength: 100
-            example: "01234589-0"
+            maxLength: 80
+            example: "01234589-0"     
           coverages:
-             type: array
-             items:
-               type: object
-               required:
-                 - coverage
-                 - coverageDescription
-                 - coverageAttributes
-                 - allowApartPurchase
-               properties:
-                 coverage:
-                   type: string
-                   description: Listagem de coberturas incluídas no produto que deve observar a relação discriminada de coberturas
-                   enum: [CONSTRUCAO_OBRAS,        
-                      FORNECIMENTO,
-                      PRESTACAO_DE_SERVICOS,     
-                      RETENCAO_DE_PAGAMENTOS,    
-                      ADIANTAMENTO_DE_PAGAMENTOS,
-                      MANUTENCAO_CORRETIVA,      
-                      IMOBILIARIO,
-                      FINANCEIRA,
-                      ACOES_TRABALHISTAS_E_PREVIDENCIARIAS,
-                      OUTRAS]
-                   example: CONSTRUCAO_OBRAS
-                 coverageDescription:
-                   type: string
-                   maxLength: 3000
-                   description: Campo aberto para detalhamento de cada uma das coberturas possíveis dos produtos
-                 coverageAttributes:
-                   $ref: '#/components/schemas/PrivateGuaranteeCoverageAttributes'
-                 allowApartPurchase:
-                   type: boolean
-                   description: Permissão para Contratação Separada  
-          traits:
-            type: boolean
-            description: Indicação se o produto é classificado como destinado para cobertura de grandes riscos, sendo tal classificação de acordo com regulamentação específica
-          validity:
-            $ref: '#/components/schemas/PrivateGuaranteeValidity'
-          premiumPayment:
-            $ref: '#/components/schemas/PrivateGuaranteePremiumPayment'
-          termsAndConditions:
-            $ref: '#/components/schemas/PrivateGuaranteeTerms'
-          minimumRequirements:
-            $ref: '#/components/schemas/PrivateGuaranteeMinimumRequirements'
-          targetAudiences:
-            description: Público Alvo
+            type: array
+            items:
+              type: object
+              required:
+                - coverage
+                - coverageDescription
+                - allowApartPurchase
+                - coverageAttributes
+              properties:
+                coverage:
+                  type: string
+                  description: "Listagem de coberturas incluídas no produto que deve observar a relação discriminada de coberturas"
+                  enum: [DANOS_ELETRICOS,
+                    DANOS_FISICOS_AO_CONTEUDO,
+                    DANOS_FISICOS_AO_IMOVEL,
+                    MORTE_OU_INVALIDEZ_TOTAL_PERMANENTE,
+                    PAGAMENTO_DE_ALUGUEL,
+                    RESPONSABILIDADE_CIVIL_DO_CONSTRUTOR_RCC,
+                    ROUBO_E_FURTO_AO_CONTEUDO,
+                    OUTRAS]
+                  example: DANOS_ELETRICOS
+                coverageDescription:
+                  type: string
+                  maxLength: 3000
+                  description: Campo aberto para detalhamento de cada uma das coberturas possíveis dos produtos a ser feito por cada participante
+                allowApartPurchase:
+                  type: boolean
+                  description: Permissão para Contratação Separada
+                coverageAttributes:
+                      $ref: '#/components/schemas/HousingCoverageAttributes'
+          additional:
+            type: array
+            items:
+              type: string
+              enum: [SORTEIO_GRATUITO, CLUBE_DE_BENEFICIOS, CASHBACK, DESCONTOS, OUTROS]
+              example: SORTEIO_GRATUITO
+          additionalOthers:
             type: string
-            example: PESSOA_NATURAL
-            enum: [PESSOA_NATURAL, PESSOA_JURIDICA]
+            maxLength: 500
+            description: "Campo livre para descrição por cada participante ao selecionar o domínio “Outros” no campo Prazo (acima)
+              OBS: Condicional a seleção de OUTROS no campo acima"
+          premiumRates:
+            $ref: '#/components/schemas/structurePremiumRates'
+              
+          termsAndConditions:
+            $ref: '#/components/schemas/HousingTerms'
+          minimumRequirements:
+            $ref: '#/components/schemas/HousingMinimumRequirements'
+          targetAudiences:
+            type: string
+            example: PESSOA_FISICA
+            enum: [PESSOA_FISICA, PESSOA_JURIDICA]
     
-    PrivateGuaranteeCoverageAttributes:
+    structurePremiumRates:
+      type: object
+      description: |
+          - O campo “Taxa de Prêmio” ou “Taxa de Contribuição” é apenas para referência sobre o valor praticado no mercado para
+          determinado produto e faixas de risco, servindo apenas como estimativa, e não representa o valor que será aplicado na cotação
+          do caso específico do cliente. O preço do seguro leva em consideração diversos fatores e variáveis, e o valor ofertado na
+          cotação/proposta da Seguradora/EAPC é a que prevalecerá. Desse modo, este valor NÃO substitui uma cotação e NÃO
+          garante a aceitação do risco do cliente.
+ 
+          - Para os produtos cujo LMI, LMG ou Capital Segurado transpassem da faixa máxima apresentada é necessário contatar
+          diretamente o seu intermediador (corretor) ou a sua seguradora para que seja realizada uma cotação adequada e uma estimativa
+          de valor correta seja transmitida.
+          - Esta informação não está sendo reportada para produtos que não são comercializados de forma individual, ou seja, não são
+          disponibilizadas as informações de seguros coletivos (Exceto Habitacional e Transportes) ou de produtos acessórios. Para
+          maiores detalhes de cotação é necessário entrar em contato com sua seguradora ou seu intermediador (corretor).
+         
+          - A metodologia utilizada para o levantamento destas informações é a que consta no Manual de Escopo de Dados e Serviços do
+          Open Insurance.
+ 
+          - Pode haver alterações entre produtos do mesmo ramo dependendo da seguradora, isso porque cada empresa possui
+          um grupo focal de clientes e um estilo operacional. Para mais detalhes entre em contato com a seguradora ou o intermediador
+          (corretor).
+ 
+          - As informações de Taxa de prêmio e Taxa de Contribuição são destinadas exclusivamente para o consumo do usuário final para
+          que ele tenha uma noção de quanto custa um seguro, não devem ser utilizadas para fins estatísticos.
+ 
+          - Os valores reportados no campo Taxa Prêmio e Taxa de Contribuição são valores que refletem um conjunto de
+          características de um seguro específico de cada companhia, logo,devem ser analisados em conjunto com as demais informações
+          dispostas na Fase I, não sendo factível comparar somente este campo entre Seguradoras.
+ 
+          - Para os produtos e modalidades que não estão com as estimativas de valores preenchidas neste campo, é necessário
+          que o cliente entre em contato com a seguradora ou intermediário para realizar a cotação e saber o valor de seu seguro.
+ 
+      required:
+        - range_1
+        - range_2
+        - range_3
+        - range_4
+      properties:
+        range_1:
+          $ref: '#/components/schemas/rangePremiumRates'
+        range_2:
+          $ref: '#/components/schemas/rangePremiumRates'
+        range_3:
+          $ref: '#/components/schemas/rangePremiumRates'
+        range_4:
+          $ref: '#/components/schemas/rangePremiumRates'
+         
+    rangePremiumRates:
+      type: object
+      required:
+        - minimum
+        - maximum
+        - median
+      properties:
+        minimum:
+          $ref: '#/components/schemas/amountRangePremiumRates'
+        maximum:
+          $ref: '#/components/schemas/amountRangePremiumRates'
+        median:
+          $ref: '#/components/schemas/amountRangePremiumRates'
+ 
+    amountRangePremiumRates:
+      type: string
+      pattern: ^\d{1,16}\.\d{2}$
+      example: '10000.00'
+
+    HousingCoverageAttributes:
       type: object
       description: Informações de cobertura do Seguro.
       required:
-        - maxLMI
         - insuredParticipation
+        - maxLMI
       properties:
         maxLMI:
-          $ref: '#/components/schemas/PrivateGuaranteeLimit'
+          $ref: '#/components/schemas/HousingLimit'
         insuredParticipation:
-          description: Lista com indicativo do tipo de participação do segurado para cada cobertura.
+          description: Lista com indicativo do tipo de participação do segurado para cada cobertura
           type: string
           example: FRANQUIA
-          enum: [FRANQUIA, POS, FRANQUIA_E_POS,NAO_SE_APLICA]
+          enum: [FRANQUIA, POS, FRANQUIA_E_POS, NAO_SE_APLICA]
         insuredParticipationDescription:
           type: string
           maxLength: 1024
-          description: Lista com descrição referente ao campo “Participação do Segurado” para cada cobertura.
-        
+          description: "Lista com descrição referente ao campo 'Participação do Segurado' para cada cobertura."
+       
 
-    PrivateGuaranteeLimit:
+    HousingLimit:
       type: object
       description: Lista com valor de LMI aceito pela sociedade para cada cobertura.
       required:
@@ -233,7 +302,7 @@ components:
           enum: [FINANCEIRO, PERCENTUAL]
           example: FINANCEIRO
         amount:
-          $ref: '#/components/schemas/PrivateGuaranteeCoverageAttributesDetails'
+          $ref: '#/components/schemas/HousingCoverageAttributesDetails'
         index:
           type: string
           description: Indexador. Condicional, vinculado ao preenchimento do campo Tipo com Percentual
@@ -242,11 +311,11 @@ components:
         indexOthers:
           type: string
           maxLength: 500
-          description: Campo para informar o tipo do Indexador, condicional ao valor 'OUTROS' em index
+          description: Campo para informar o tipo do Indexador, condicional ao valor 'OUTRO' em index.
         maxIndexAmount:
-          $ref: '#/components/schemas/PrivateGuaranteeCoverageAttributesDetails'
-
-    PrivateGuaranteeCoverageAttributesDetails:
+          $ref: '#/components/schemas/HousingCoverageAttributesDetails'
+    
+    HousingCoverageAttributesDetails:
         type: object
         required:
           - amount
@@ -272,10 +341,11 @@ components:
             type: string
             maxLength: 100
             description: Campo para informar o tipo da Unidade, condicional ao valor 'OUTROS' em unitType
+
           unit:
-            $ref: '#/components/schemas/PrivateGuaranteeCoverageAttributesDetailsUnit'
+            $ref: '#/components/schemas/HousingCoverageAttributesDetailsUnit'
     
-    PrivateGuaranteeCoverageAttributesDetailsUnit:
+    HousingCoverageAttributesDetailsUnit:
       type: object
       description: Descrição da unidade monetária. Condicional ao valor 'MONETARIO' em unitType.
       required:
@@ -299,55 +369,16 @@ components:
             ZWD,ZWN,ZWR,XBA,XFO,XBB,XRE,XBC,XBD,XFU,XTS,XXX,XAU,XPD,XPT,XAG]
           example: BRL
     
-    PrivateGuaranteeValidity:
-      type: array
-      items:
-        type: object
-        required:
-          - term
-        properties:
-          term:
-            type: string
-            description: Prazo
-            example: ANUAL
-            enum: [ANUAL , ANUAL_INTERMITENTE , PLURIANUAL , PLURIANUAL_INTERMITENTE , MENSAL, MENSAL_INTERMITENTE , DIARIO , DIARIO_INTERMITENTE, OUTROS]
-          termOthers:
-            type: string
-            description: Campo livre para descrição por cada participante ao selecionar o domínio “Outros” no campo Prazo (acima).
-            maxLength: 500
-    
-    PrivateGuaranteePremiumPayment:
-      type: array
-      items:
-        type: object
-        required:
-          - paymentMethod
-          - paymentType
-        properties:
-          paymentMethod:
-            type: string
-            description: Método de pagamento
-            enum: [CARTAO_DE_CREDITO, CARTAO_DE_DEBITO, DEBITO_EM_CONTA_CORRENTE, DEBITO_EM_CONTA_POUPANCA, BOLETO_BANCARIO, PIX, CONSIGNACAO_EM_FOLHA_DE_PAGAMENTO, PONTOS_DE_PROGRAMA_DE_BENEFICIO, OUTROS]
-            example: CARTAO_DE_CREDITO
-          paymentDetail:
-            type: string  
-            maxLength: 1024
-            description: Campo livre para descrição por cada participante ao selecionar o domínio “Outros” no campo Meio de pagamento (acima) 
-          paymentType:
-            description: tipo de pagamento 
-            type: string
-            example: A_VISTA
-            enum: [A_VISTA, PARCELADO]
-              
-    PrivateGuaranteeTerms:
+    HousingTerms:
       type: object
       description: Informações dos termos e condições conforme número do processo SUSEP.
       required:
+        - susepProcessNumber
         - definition
       properties:
         susepProcessNumber:
           type: string
-          description: Número do processo Susep, se houver. 
+          description: Número do processo SUSEP.
           maxLength: 20
           example: '15414622222222222'
         definition:
@@ -355,22 +386,17 @@ components:
           description: Campo aberto (possibilidade de incluir uma url).
           maxLength: 1024
           example: https://www.seguradora.com.br/produto/tradicional/pdf/condicoes_gerais.pdf
-
-    PrivateGuaranteeMinimumRequirements:
+    
+    HousingMinimumRequirements:
       type: object
       description: Requisitos mínimos.
       required:
-        - contractType
         - minimumRequirementDetails
       properties:
-        contractType:
-          type: string
-          enum: [COLETIVO, INDIVIDUAL]
         minimumRequirementDetails:
           type: string
-          description: Campo aberto contendo todos os requisitos mínimos para contratação (possibilidade de incluir URL).
           maxLength: 1024
-          example: https://www.seguradora.com.br/produto/requisitos.pdf
+          description: Campo aberto contendo todos os requisitos mínimos para contratação (possibilidade de incluir URL).
     
     Links:
       type: object
@@ -378,28 +404,28 @@ components:
         self:
           type: string
           description: URL da página atualmente requisitada
-          pattern: ^(https:\/\/)(.*?)(\/open-insurance\/products-services\/v\d+)(\/private-guarantee.*)?$
-          example: 'https://api.organizacao.com.br/open-insurance/products-services/v3/private-guarantee'
+          pattern: ^(https:\/\/)(.*?)(\/open-insurance\/products-services\/v\d+)(\/housing.*)?$
+          example: 'https://api.organizacao.com.br/open-insurance/products-services/v3/housing'
         first:
           type: string
           description: URL da primeira página de registros
-          pattern: ^(https:\/\/)(.*?)(\/open-insurance\/products-services\/v\d+)(\/private-guarantee.*)?$
-          example: 'https://api.organizacao.com.br/open-insurance/products-services/v3/private-guarantee'
+          pattern: ^(https:\/\/)(.*?)(\/open-insurance\/products-services\/v\d+)(\/housing.*)?$
+          example: 'https://api.organizacao.com.br/open-insurance/products-services/v3/housing'
         prev:
           type: string
           description: URL da página anterior de registros
-          pattern: ^(https:\/\/)(.*?)(\/open-insurance\/products-services\/v\d+)(\/private-guarantee.*)?$
-          example: 'https://api.organizacao.com.br/open-insurance/products-services/v3/private-guarantee'
+          pattern: ^(https:\/\/)(.*?)(\/open-insurance\/products-services\/v\d+)(\/housing.*)?$
+          example: 'https://api.organizacao.com.br/open-insurance/products-services/v3/housing'
         next:
           type: string
           description: URL da próxima página de registros
-          pattern: ^(https:\/\/)(.*?)(\/open-insurance\/products-services\/v\d+)(\/private-guarantee.*)?$
-          example: 'https://api.organizacao.com.br/open-insurance/products-services/v3/private-guarantee'
+          pattern: ^(https:\/\/)(.*?)(\/open-insurance\/products-services\/v\d+)(\/housing.*)?$
+          example: 'https://api.organizacao.com.br/open-insurance/products-services/v3/housing'
         last:
           type: string
           description: URL da última página de registros
-          pattern: ^(https:\/\/)(.*?)(\/open-insurance\/products-services\/v\d+)(\/private-guarantee.*)?$
-          example: 'https://api.organizacao.com.br/open-insurance/products-services/v3/private-guarantee'
+          pattern: ^(https:\/\/)(.*?)(\/open-insurance\/products-services\/v\d+)(\/housing.*)?$
+          example: 'https://api.organizacao.com.br/open-insurance/products-services/v3/housing'
     
     Meta:
       type: object
@@ -520,7 +546,7 @@ components:
         schema:
             type: string
             pattern: '[\w\W\s]*'
-
+    
   responses:
     UnprocessableEntity:
       description: 'O servidor entende o tipo de conteúdo da entidade da requisição, e a sintaxe da requisição está correta, mas não foi possível processar as instruções presentes.'

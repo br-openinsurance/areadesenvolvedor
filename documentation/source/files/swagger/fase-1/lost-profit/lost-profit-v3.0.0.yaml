@@ -2,7 +2,7 @@ openapi: 3.0.0
 info:
   title: APIs Open Data do Open Insurance Brasil
   description:
-    API de informações de dados do produto Garantia Privada. Os recursos que podem ser consumidos pelos participantes conforme a regra 3.1.2 do manual de escopo de dados.
+    API de informações de dados do produto Lucros Cessantes . Os recursos que podem ser consumidos pelos participantes conforme a regra 3.1.2 do manual de escopo de dados.
   version: 3.0.0
   contact:
     url: 'https://www.gov.br/susep/'
@@ -10,19 +10,19 @@ servers:
   - url: 'https://api.organizacao.com.br/open-insurance/products-services/v3'
     description: Servidor de Produção
   - url: 'https://api.organizacao.com.br/open-insurance/products-services/v3'
-    description: Servidor de Homologação
+    description: Servidor de Homologação 
 tags:
-  - name: "Garantia Privada"
-  - name: "PrivateGuarantee"
+  - name: "Lucros Cessantes"
+  - name: "LostProfit"
 
 paths:
-  /private-guarantee:
+  /lost-profit:
     get:
       tags:
-        - PrivateGuarantee
-      summary: Obtém a lista dos produtos do tipo Garantia Privada
-      description: "Obtém a lista dos produtos do tipo Garantia Privada"
-      operationId: "getPrivateGuarantee"
+        - LostProfit
+      summary: Obtém a lista dos produtos do tipo LostProfit
+      description: "Obtém a lista dos produtos do tipo LostProfit"
+      operationId: "getLostProfit"
       parameters:
         - $ref: "#/components/parameters/cache-Control"
         - $ref: "#/components/parameters/content-Security-Policy"
@@ -34,11 +34,11 @@ paths:
         - $ref: "#/components/parameters/pageSize"
       responses:
         '200':
-          description: Dados dos produtos de Garantia Privada
+          description: Dados dos produtos de LostProfit
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ResponsePrivateGuaranteeList'
+                $ref: '#/components/schemas/ResponseLostProfitList'
         '204':
           $ref: '#/components/responses/NoContent'
         '400':
@@ -60,15 +60,15 @@ paths:
         '500':
           $ref: '#/components/responses/InternalServerError'
         default:
-          description: Dados dos produtos de API de informações de dados do produto Garantia Privada. Os recursos que podem ser consumidos pelos participantes conforme a regra 3.1.2 do manual de escopo de dados.
+          description: Dados dos produtos de API de informações de dados do produto Lucros Cessantes . Os recursos que podem ser consumidos pelos participantes conforme a regra 3.1.2 do manual de escopo de dados. 
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ResponsePrivateGuaranteeList' 
+                $ref: '#/components/schemas/ResponseLostProfitList' 
 
 components:
   schemas:
-    ResponsePrivateGuaranteeList:
+    ResponseLostProfitList:
       type: object
       required:
         - data
@@ -81,13 +81,13 @@ components:
             - brand
           properties:
               brand:
-                $ref: '#/components/schemas/PrivateGuaranteeBrand'
+                $ref: '#/components/schemas/LostProfitBrand'
         links:
             $ref: '#/components/schemas/Links'
         meta:
             $ref: '#/components/schemas/Meta'
 
-    PrivateGuaranteeBrand:
+    LostProfitBrand:
       type: object
       description: Organização controladora do grupo.
       required:
@@ -100,13 +100,13 @@ components:
           maxLength: 80
           example: ACME Group Seguros
         companies:
-          $ref: '#/components/schemas/PrivateGuaranteeCompany'
+          $ref: '#/components/schemas/LostProfitCompany'
 
-    PrivateGuaranteeCompany:
+    LostProfitCompany:
       type: array
       items:
-          type: object
           description: Informações referentes à sociedade à qual a marca pertence
+          type: object
           required:
           - name
           - cnpjNumber
@@ -123,22 +123,20 @@ components:
                 pattern: '^[A-Z0-9]{12}\d{2}$'
                 example: '12345678901234'
             products:
-                $ref: '#/components/schemas/PrivateGuaranteeProduct'
+                $ref: '#/components/schemas/LostProfitProduct'
 
-    PrivateGuaranteeProduct:
+    LostProfitProduct:
       type: array
       description: Lista de produtos de uma empresa.
       items:
         type: object
         required:
-          - name
           - code
           - coverages
           - traits
+          - microinsurance
           - validity
-          - premiumPayment
           - termsAndConditions
-          - minimumRequirements
           - targetAudiences
         properties:
           name:
@@ -152,76 +150,161 @@ components:
             maxLength: 100
             example: "01234589-0"
           coverages:
-             type: array
-             items:
-               type: object
-               required:
-                 - coverage
-                 - coverageDescription
-                 - coverageAttributes
-                 - allowApartPurchase
-               properties:
-                 coverage:
-                   type: string
-                   description: Listagem de coberturas incluídas no produto que deve observar a relação discriminada de coberturas
-                   enum: [CONSTRUCAO_OBRAS,        
-                      FORNECIMENTO,
-                      PRESTACAO_DE_SERVICOS,     
-                      RETENCAO_DE_PAGAMENTOS,    
-                      ADIANTAMENTO_DE_PAGAMENTOS,
-                      MANUTENCAO_CORRETIVA,      
-                      IMOBILIARIO,
-                      FINANCEIRA,
-                      ACOES_TRABALHISTAS_E_PREVIDENCIARIAS,
-                      OUTRAS]
-                   example: CONSTRUCAO_OBRAS
-                 coverageDescription:
-                   type: string
-                   maxLength: 3000
-                   description: Campo aberto para detalhamento de cada uma das coberturas possíveis dos produtos
-                 coverageAttributes:
-                   $ref: '#/components/schemas/PrivateGuaranteeCoverageAttributes'
-                 allowApartPurchase:
-                   type: boolean
-                   description: Permissão para Contratação Separada  
+            type: array
+            items:
+              type: object
+              required:
+                - coverage
+                - coverageDescription
+                - coverageAttributes
+                - allowApartPurchase
+              properties:
+                coverage:
+                  description: Listagem de coberturas incluídas no produto que deve observar a relação discriminada de coberturas
+                  type: string
+                  example: PERDA_DE_RECEITA_OU_INTERRUPCAO_DE_NEGOCIOS
+                  enum: [LUCRO_BRUTO_LUCRO_LIQUIDO_E_DESPESAS_FIXAS,
+                    LUCRO_LIQUIDO,
+                    DESPESAS_FIXAS,
+                    PERDA_DE_RECEITA_OU_INTERRUPCAO_DE_NEGOCIOS,
+                    OUTRAS]
+                coverageDescription:
+                  type: string
+                  maxLength: 3000
+                  description: Campo aberto para detalhamento de cada uma das coberturas possíveis dos produtos
+                  example: descrição cobertura
+                coverageAttributes:
+                   $ref: '#/components/schemas/LostProfitCoverageAttributes'
+                allowApartPurchase:
+                  type: boolean
+                  description: Indicação se a cobertura permite contratação separada (por cobertura selecionada).
           traits:
             type: boolean
             description: Indicação se o produto é classificado como destinado para cobertura de grandes riscos, sendo tal classificação de acordo com regulamentação específica
+          microinsurance:
+            type: boolean
+            description: Indicação se o produto é classificado como microsseguro
           validity:
-            $ref: '#/components/schemas/PrivateGuaranteeValidity'
-          premiumPayment:
-            $ref: '#/components/schemas/PrivateGuaranteePremiumPayment'
+            $ref: '#/components/schemas/LostProfitValidity'
+          premiumRates:
+            $ref: '#/components/schemas/structurePremiumRates'
           termsAndConditions:
-            $ref: '#/components/schemas/PrivateGuaranteeTerms'
-          minimumRequirements:
-            $ref: '#/components/schemas/PrivateGuaranteeMinimumRequirements'
+            $ref: '#/components/schemas/LostProfitTerms'
           targetAudiences:
-            description: Público Alvo
             type: string
             example: PESSOA_NATURAL
             enum: [PESSOA_NATURAL, PESSOA_JURIDICA]
-    
-    PrivateGuaranteeCoverageAttributes:
+  
+    structurePremiumRates:
       type: object
-      description: Informações de cobertura do Seguro.
+      description: |
+          - O campo “Taxa de Prêmio” ou “Taxa de Contribuição” é apenas para referência sobre o valor praticado no mercado para
+          determinado produto e faixas de risco, servindo apenas como estimativa, e não representa o valor que será aplicado na cotação
+          do caso específico do cliente. O preço do seguro leva em consideração diversos fatores e variáveis, e o valor ofertado na
+          cotação/proposta da Seguradora/EAPC é a que prevalecerá. Desse modo, este valor NÃO substitui uma cotação e NÃO
+          garante a aceitação do risco do cliente.
+
+          - Para os produtos cujo LMI, LMG ou Capital Segurado transpassem da faixa máxima apresentada é necessário contatar
+          diretamente o seu intermediador (corretor) ou a sua seguradora para que seja realizada uma cotação adequada e uma estimativa
+          de valor correta seja transmitida.
+          - Esta informação não está sendo reportada para produtos que não são comercializados de forma individual, ou seja, não são
+          disponibilizadas as informações de seguros coletivos (Exceto Habitacional e Transportes) ou de produtos acessórios. Para
+          maiores detalhes de cotação é necessário entrar em contato com sua seguradora ou seu intermediador (corretor).
+          
+          - A metodologia utilizada para o levantamento destas informações é a que consta no Manual de Escopo de Dados e Serviços do
+          Open Insurance.
+
+          - Pode haver alterações entre produtos do mesmo ramo dependendo da seguradora, isso porque cada empresa possui
+          um grupo focal de clientes e um estilo operacional. Para mais detalhes entre em contato com a seguradora ou o intermediador
+          (corretor).
+
+          - As informações de Taxa de prêmio e Taxa de Contribuição são destinadas exclusivamente para o consumo do usuário final para
+          que ele tenha uma noção de quanto custa um seguro, não devem ser utilizadas para fins estatísticos.
+
+          - Os valores reportados no campo Taxa Prêmio e Taxa de Contribuição são valores que refletem um conjunto de
+          características de um seguro específico de cada companhia, logo,devem ser analisados em conjunto com as demais informações
+          dispostas na Fase I, não sendo factível comparar somente este campo entre Seguradoras.
+
+          - Para os produtos e modalidades que não estão com as estimativas de valores preenchidas neste campo, é necessário
+          que o cliente entre em contato com a seguradora ou intermediário para realizar a cotação e saber o valor de seu seguro.
+
       required:
-        - maxLMI
-        - insuredParticipation
+        - range_1
+        - range_2
+        - range_3
+        - range_4
+      properties:
+        range_1:
+          $ref: '#/components/schemas/rangePremiumRates'
+        range_2:
+          $ref: '#/components/schemas/rangePremiumRates'
+        range_3:
+          $ref: '#/components/schemas/rangePremiumRates'
+        range_4:
+          $ref: '#/components/schemas/rangePremiumRates'
+          
+    rangePremiumRates:
+      type: object
+      required: 
+        - minimum
+        - maximum
+        - median
+      properties: 
+        minimum:
+          $ref: '#/components/schemas/amountRangePremiumRates'
+        maximum:
+          $ref: '#/components/schemas/amountRangePremiumRates'
+        median:
+          $ref: '#/components/schemas/amountRangePremiumRates'
+
+    amountRangePremiumRates: 
+      type: string
+      pattern: ^\d{1,16}\.\d{2}$
+      example: '10000.00'
+    
+    LostProfitValidity:
+      type: array
+      items:
+        type: object
+        required:
+          - term
+        properties:
+          term:
+            type: string
+            example: ANUAL
+            enum: [ANUAL , ANUAL_INTERMITENTE , PLURIANUAL , PLURIANUAL_INTERMITENTE , MENSAL, MENSAL_INTERMITENTE , DIARIO , DIARIO_INTERMITENTE, OUTROS]
+          termOthers:
+            type: string
+            description: Campo livre para descrição por cada participante ao selecionar o domínio “Outros” no campo Prazo (acima).
+            maxLength: 500
+        
+    LostProfitTerms:
+      type: object
+      description: Informações dos termos e condições conforme número do processo SUSEP.
+      required:
+        - definition
+      properties:
+        susepProcessNumber:
+          type: string
+          description: Número do processo SUSEP.
+          maxLength: 20
+          example: '15414622222222222'
+        definition:
+          type: string
+          description: Campo aberto (possibilidade de incluir uma url).
+          maxLength: 1024
+          example: https://www.seguradora.com.br/produto/tradicional/pdf/condicoes_gerais.pdf   
+
+    LostProfitCoverageAttributes:
+      type: object
+      description: Informações de cobertura do Seguro Residencial.
+      required:
+       - maxLMI
       properties:
         maxLMI:
-          $ref: '#/components/schemas/PrivateGuaranteeLimit'
-        insuredParticipation:
-          description: Lista com indicativo do tipo de participação do segurado para cada cobertura.
-          type: string
-          example: FRANQUIA
-          enum: [FRANQUIA, POS, FRANQUIA_E_POS,NAO_SE_APLICA]
-        insuredParticipationDescription:
-          type: string
-          maxLength: 1024
-          description: Lista com descrição referente ao campo “Participação do Segurado” para cada cobertura.
+          $ref: '#/components/schemas/LostProfitLimit'
         
-
-    PrivateGuaranteeLimit:
+    LostProfitLimit:
       type: object
       description: Lista com valor de LMI aceito pela sociedade para cada cobertura.
       required:
@@ -231,22 +314,21 @@ components:
         type:
           type: string
           enum: [FINANCEIRO, PERCENTUAL]
-          example: FINANCEIRO
         amount:
-          $ref: '#/components/schemas/PrivateGuaranteeCoverageAttributesDetails'
+          $ref: '#/components/schemas/LostProfitCoverageAttributesDetails'
         index:
           type: string
           description: Indexador. Condicional, vinculado ao preenchimento do campo Tipo com Percentual
           enum: [LMG, FINANCEIRO_COBERTURA, OUTRO]
-          example: LMG
         indexOthers:
           type: string
           maxLength: 500
-          description: Campo para informar o tipo do Indexador, condicional ao valor 'OUTROS' em index
+          description: Campo para informar o tipo do Indexador, condicional ao valor 'OUTRO' em index.
         maxIndexAmount:
-          $ref: '#/components/schemas/PrivateGuaranteeCoverageAttributesDetails'
+          $ref: '#/components/schemas/LostProfitCoverageAttributesDetails'
 
-    PrivateGuaranteeCoverageAttributesDetails:
+    LostProfitCoverageAttributesDetails:
+        description: Valor de LMI aceito pela sociedade para cada cobertura.
         type: object
         required:
           - amount
@@ -273,9 +355,9 @@ components:
             maxLength: 100
             description: Campo para informar o tipo da Unidade, condicional ao valor 'OUTROS' em unitType
           unit:
-            $ref: '#/components/schemas/PrivateGuaranteeCoverageAttributesDetailsUnit'
+            $ref: '#/components/schemas/LostProfitCoverageAttributesDetailsUnit'
     
-    PrivateGuaranteeCoverageAttributesDetailsUnit:
+    LostProfitCoverageAttributesDetailsUnit:
       type: object
       description: Descrição da unidade monetária. Condicional ao valor 'MONETARIO' em unitType.
       required:
@@ -299,107 +381,34 @@ components:
             ZWD,ZWN,ZWR,XBA,XFO,XBB,XRE,XBC,XBD,XFU,XTS,XXX,XAU,XPD,XPT,XAG]
           example: BRL
     
-    PrivateGuaranteeValidity:
-      type: array
-      items:
-        type: object
-        required:
-          - term
-        properties:
-          term:
-            type: string
-            description: Prazo
-            example: ANUAL
-            enum: [ANUAL , ANUAL_INTERMITENTE , PLURIANUAL , PLURIANUAL_INTERMITENTE , MENSAL, MENSAL_INTERMITENTE , DIARIO , DIARIO_INTERMITENTE, OUTROS]
-          termOthers:
-            type: string
-            description: Campo livre para descrição por cada participante ao selecionar o domínio “Outros” no campo Prazo (acima).
-            maxLength: 500
-    
-    PrivateGuaranteePremiumPayment:
-      type: array
-      items:
-        type: object
-        required:
-          - paymentMethod
-          - paymentType
-        properties:
-          paymentMethod:
-            type: string
-            description: Método de pagamento
-            enum: [CARTAO_DE_CREDITO, CARTAO_DE_DEBITO, DEBITO_EM_CONTA_CORRENTE, DEBITO_EM_CONTA_POUPANCA, BOLETO_BANCARIO, PIX, CONSIGNACAO_EM_FOLHA_DE_PAGAMENTO, PONTOS_DE_PROGRAMA_DE_BENEFICIO, OUTROS]
-            example: CARTAO_DE_CREDITO
-          paymentDetail:
-            type: string  
-            maxLength: 1024
-            description: Campo livre para descrição por cada participante ao selecionar o domínio “Outros” no campo Meio de pagamento (acima) 
-          paymentType:
-            description: tipo de pagamento 
-            type: string
-            example: A_VISTA
-            enum: [A_VISTA, PARCELADO]
-              
-    PrivateGuaranteeTerms:
-      type: object
-      description: Informações dos termos e condições conforme número do processo SUSEP.
-      required:
-        - definition
-      properties:
-        susepProcessNumber:
-          type: string
-          description: Número do processo Susep, se houver. 
-          maxLength: 20
-          example: '15414622222222222'
-        definition:
-          type: string
-          description: Campo aberto (possibilidade de incluir uma url).
-          maxLength: 1024
-          example: https://www.seguradora.com.br/produto/tradicional/pdf/condicoes_gerais.pdf
-
-    PrivateGuaranteeMinimumRequirements:
-      type: object
-      description: Requisitos mínimos.
-      required:
-        - contractType
-        - minimumRequirementDetails
-      properties:
-        contractType:
-          type: string
-          enum: [COLETIVO, INDIVIDUAL]
-        minimumRequirementDetails:
-          type: string
-          description: Campo aberto contendo todos os requisitos mínimos para contratação (possibilidade de incluir URL).
-          maxLength: 1024
-          example: https://www.seguradora.com.br/produto/requisitos.pdf
-    
     Links:
       type: object
       properties:
         self:
           type: string
           description: URL da página atualmente requisitada
-          pattern: ^(https:\/\/)(.*?)(\/open-insurance\/products-services\/v\d+)(\/private-guarantee.*)?$
-          example: 'https://api.organizacao.com.br/open-insurance/products-services/v3/private-guarantee'
+          pattern: ^(https:\/\/)(.*?)(\/open-insurance\/products-services\/v\d+)(\/lost-profit.*)?$
+          example: 'https://api.organizacao.com.br/open-insurance/products-services/v3/lost-profit'
         first:
           type: string
           description: URL da primeira página de registros
-          pattern: ^(https:\/\/)(.*?)(\/open-insurance\/products-services\/v\d+)(\/private-guarantee.*)?$
-          example: 'https://api.organizacao.com.br/open-insurance/products-services/v3/private-guarantee'
+          pattern: ^(https:\/\/)(.*?)(\/open-insurance\/products-services\/v\d+)(\/lost-profit.*)?$
+          example: 'https://api.organizacao.com.br/open-insurance/products-services/v3/lost-profit'
         prev:
           type: string
           description: URL da página anterior de registros
-          pattern: ^(https:\/\/)(.*?)(\/open-insurance\/products-services\/v\d+)(\/private-guarantee.*)?$
-          example: 'https://api.organizacao.com.br/open-insurance/products-services/v3/private-guarantee'
+          pattern: ^(https:\/\/)(.*?)(\/open-insurance\/products-services\/v\d+)(\/lost-profit.*)?$
+          example: 'https://api.organizacao.com.br/open-insurance/products-services/v3/lost-profit'
         next:
           type: string
           description: URL da próxima página de registros
-          pattern: ^(https:\/\/)(.*?)(\/open-insurance\/products-services\/v\d+)(\/private-guarantee.*)?$
-          example: 'https://api.organizacao.com.br/open-insurance/products-services/v3/private-guarantee'
+          pattern: ^(https:\/\/)(.*?)(\/open-insurance\/products-services\/v\d+)(\/lost-profit.*)?$
+          example: 'https://api.organizacao.com.br/open-insurance/products-services/v3/lost-profit'
         last:
           type: string
           description: URL da última página de registros
-          pattern: ^(https:\/\/)(.*?)(\/open-insurance\/products-services\/v\d+)(\/private-guarantee.*)?$
-          example: 'https://api.organizacao.com.br/open-insurance/products-services/v3/private-guarantee'
+          pattern: ^(https:\/\/)(.*?)(\/open-insurance\/products-services\/v\d+)(\/lost-profit.*)?$
+          example: 'https://api.organizacao.com.br/open-insurance/products-services/v3/lost-profit'
     
     Meta:
       type: object
@@ -520,7 +529,7 @@ components:
         schema:
             type: string
             pattern: '[\w\W\s]*'
-
+    
   responses:
     UnprocessableEntity:
       description: 'O servidor entende o tipo de conteúdo da entidade da requisição, e a sintaxe da requisição está correta, mas não foi possível processar as instruções presentes.'
@@ -533,7 +542,7 @@ components:
       content:
         application/json; charset=utf-8:
           schema:
-            $ref: '#/components/schemas/ResponseError'
+            $ref: '#/components/schemas/ResponseError'   
     BadRequest:
       description: 'A requisição foi malformada, omitindo atributos obrigatórios, seja no payload ou através de atributos na URL.'
       content:
@@ -581,4 +590,4 @@ components:
       content:
         application/json; charset=utf-8:
           schema:
-            $ref: '#/components/schemas/ResponseError'
+            $ref: '#/components/schemas/ResponseError'    
