@@ -209,8 +209,17 @@ def load_stage_overrides(path: Path) -> dict[str, dict[str, str]]:
 
 
 def clear_stage_overrides(path: Path) -> None:
+    """Zera apenas o corpo de 'overrides', preservando outras chaves (ex.: '_comment')."""
+    try:
+        payload = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError):
+        payload = {}
+    if not isinstance(payload, dict):
+        payload = {}
+
+    payload["overrides"] = {}
     path.write_text(
-        json.dumps({"overrides": {}}, indent=2, ensure_ascii=False) + "\n",
+        json.dumps(payload, indent=2, ensure_ascii=False) + "\n",
         encoding="utf-8",
     )
 
