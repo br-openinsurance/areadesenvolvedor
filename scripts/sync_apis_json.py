@@ -14,9 +14,12 @@ build_swagger_pages.py publica os arquivos para o GitHub Pages).
 Comportamento:
   - Adiciona endpoints presentes em documentation mas ausentes no apis.json
   - Remove endpoints do apis.json cujos arquivos nao existem mais em documentation
-  - Estagio 'current'/'retired' e recomputado automaticamente (versao mais alta = current)
-  - Estagios manuais (certifying, deprecated, developing, release-candidate) sao
-    preservados entre execucoes -- so mudam via override
+  - O estagio de um endpoint ja existente e sempre preservado entre execucoes
+    (inclusive 'current') -- nunca e recomputado automaticamente a partir da versao
+  - Uma versao nova de um grupo ja existente entra como 'retired' por padrao; para
+    promove-la (a current ou qualquer outro estagio) use stage_overrides.json
+  - Excecao: se o grupo inteiro e novo (nenhuma versao dele existia antes), a versao
+    mais alta entre as novas entra como 'current' automaticamente (bootstrap)
   - Aplica overrides de stage_overrides.json e limpa o arquivo apos aplicar
   - Bloqueia com erro se estagios unicos se repetirem por (fase, group)
 
@@ -51,7 +54,6 @@ STAGE_ORDER = {
 }
 VALID_STAGES = set(STAGE_ORDER)
 UNIQUE_STAGES = VALID_STAGES - {"retired"}
-MANUAL_STAGES = UNIQUE_STAGES - {"current"}  # preservados entre syncs
 
 DIRECTORIES_ORDER = {"fase-1": 0, "fase-2": 1, "fase-3": 2, "monitoring": 3, "pcm": 4}
 
@@ -267,13 +269,18 @@ def main() -> int:
     added_urls = doc_url_set - api_url_set
     removed_urls = api_url_set - doc_url_set
 
-    # 5. Versao mais alta por (fase, group) entre todos os endpoints da documentation
-    highest: dict[tuple[str, str], tuple] = {}
+    # 5. Bootstrap: versao mais alta apenas entre grupos totalmente novos (sem
+    #    nenhuma entrada previa no apis.json). Grupos ja existentes nunca tem
+    #    seu estagio recomputado por aqui -- so via override.
+    existing_groups = {(e["fase"], e["group"]) for e in current_entries}
+    bootstrap_highest: dict[tuple[str, str], tuple] = {}
     for e in doc_entries:
         k = (e["fase"], e["group"])
+        if k in existing_groups:
+            continue
         sk = version_sort_key(e["version"])
-        if k not in highest or sk > highest[k]:
-            highest[k] = sk
+        if k not in bootstrap_highest or sk > bootstrap_highest[k]:
+            bootstrap_highest[k] = sk
 
     # 6. Constroi lista final
     final_entries: list[dict] = []
@@ -292,9 +299,9 @@ def main() -> int:
             stage = override_stage
             prev = existing["stage"] if existing else "novo"
             overrides_applied.append(f"    {group}/{version}: {prev} -> {override_stage}")
-        elif existing and existing.get("stage") in MANUAL_STAGES:
+        elif existing:
             stage = existing["stage"]
-        elif version_sort_key(version) == highest[k]:
+        elif k in bootstrap_highest and version_sort_key(version) == bootstrap_highest[k]:
             stage = "current"
         else:
             stage = "retired"
