@@ -21,9 +21,9 @@ enquanto a arquitetura antiga nao e removida:
 
 docs/.nojekyll tambem e criado se ainda nao existir.
 """
-
+ 
 from __future__ import annotations
-
+ 
 import json
 import re
 import shutil
@@ -31,8 +31,8 @@ from collections import defaultdict
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Dict, List, Optional, Tuple
-
-
+ 
+ 
 VALID_EXTENSIONS = {".yaml", ".yml", ".json"}
 PHASES = {"fase-1", "fase-2", "fase-3", "monitoring", "pcm"}
 FASE_ORDER = {"fase-1": 0, "fase-2": 1, "fase-3": 2, "monitoring": 3, "pcm": 4}
@@ -87,27 +87,27 @@ def extract_version_from_stem(stem: str) -> Optional[str]:
 def is_openapi_spec(file_path: Path) -> Tuple[bool, Optional[str], Optional[str]]:
     suffix = file_path.suffix.lower()
     text = file_path.read_text(encoding="utf-8", errors="ignore")
-
+ 
     if suffix == ".json":
         try:
             payload = json.loads(text)
         except json.JSONDecodeError:
             return False, None, None
-
+ 
         if not isinstance(payload, dict):
             return False, None, None
-
+ 
         if "openapi" not in payload and "swagger" not in payload:
             return False, None, None
-
+ 
         info = payload.get("info", {}) if isinstance(payload.get("info"), dict) else {}
         title = info.get("title") if isinstance(info.get("title"), str) else None
         version = info.get("version") if isinstance(info.get("version"), str) else None
         return True, clean_value(title), clean_value(version)
-
+ 
     if not OPENAPI_REGEX.search(text):
         return False, None, None
-
+ 
     title_match = TITLE_REGEX.search(text)
     version_match = VERSION_REGEX.search(text)
     title = clean_value(title_match.group(1) if title_match else None)
@@ -155,7 +155,7 @@ def collect_candidates(swagger_root: Path) -> Tuple[List[CandidateSpec], List[Pa
     """
     candidates: List[CandidateSpec] = []
     invalid: List[Path] = []
-
+ 
     for file_path in sorted(swagger_root.rglob("*")):
         if not file_path.is_file():
             continue
@@ -193,7 +193,7 @@ def collect_candidates(swagger_root: Path) -> Tuple[List[CandidateSpec], List[Pa
                 version=version,
             )
         )
-
+ 
     return candidates, invalid
 
 
@@ -294,7 +294,7 @@ def validate_unique_stages(candidates: List[CandidateSpec], stages: Dict[str, st
 
 def resolve_unique_publish_paths(candidates: List[CandidateSpec]) -> Dict[str, CandidateSpec]:
     selected: Dict[str, CandidateSpec] = {}
-
+ 
     for candidate in candidates:
         key = candidate.publish_relative.lower()
 
@@ -305,10 +305,10 @@ def resolve_unique_publish_paths(candidates: List[CandidateSpec]) -> Dict[str, C
             )
 
         selected[key] = candidate
-
+ 
     return selected
-
-
+ 
+ 
 def write_output(
     root: Path,
     selected: Dict[str, CandidateSpec],
@@ -317,10 +317,10 @@ def write_output(
     docs_dir = root / "docs"
     specs_dir = docs_dir / "specs"
     config_dir = docs_dir / "config"
-
+ 
     specs_dir.mkdir(parents=True, exist_ok=True)
     config_dir.mkdir(parents=True, exist_ok=True)
-
+ 
     copied_files: List[Tuple[str, Path, str]] = []
     api_urls: List[dict] = []
 
@@ -368,11 +368,11 @@ def write_output(
         json.dumps({"urls": api_urls}, indent=2, ensure_ascii=False) + "\n",
         encoding="utf-8",
     )
-
+ 
     nojekyll_path = docs_dir / ".nojekyll"
     if not nojekyll_path.exists():
         nojekyll_path.write_text("", encoding="utf-8")
-
+ 
     return api_urls, copied_files
 
 
@@ -464,7 +464,7 @@ def main() -> int:
         print("- Ignored files (not valid OpenAPI/Swagger):")
         for path in invalid:
             print(f"  * {path.relative_to(repo_root).as_posix()}")
-
+ 
     print("- Generated config entries:")
     for entry in api_urls:
         print(f"  * {entry['name']} -> {entry['url']}")
@@ -484,7 +484,7 @@ def main() -> int:
         print(f"  * {entry['name']} -> {entry['url']}")
 
     return 0
-
-
+ 
+ 
 if __name__ == "__main__":
     raise SystemExit(main())
