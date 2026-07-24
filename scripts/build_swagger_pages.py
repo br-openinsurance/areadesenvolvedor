@@ -27,6 +27,7 @@ from __future__ import annotations
 import json
 import re
 import shutil
+from collections import defaultdict
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Dict, List, Optional, Tuple
@@ -47,6 +48,8 @@ STAGE_ORDER = {"current": 0,
     "developing": 3,
     "deprecated": 4,
     "retired": 5,}
+VALID_STAGES = set(STAGE_ORDER)
+UNIQUE_STAGES = VALID_STAGES - {"retired"}
 
 
 @dataclass
@@ -126,7 +129,7 @@ def readable_name(
     if version and version.lower() not in base_name.lower():
         base_name = f"{base_name} - v{version}"
 
-    return f"{base_name} ({stage})"
+    return f"{base_name} ({stage or 'unknown'})"
 
 
 def version_sort_key(version: Optional[str]) -> Tuple:
@@ -234,24 +237,59 @@ def collect_legacy_candidates(swagger_root: Path) -> Tuple[List[LegacyCandidateS
     return candidates, invalid
 
 
-def assign_stages(candidates: List[CandidateSpec]) -> Dict[str, str]:
-    """Return {publish_relative: stage} — latest version per (fase, group) = current."""
-    latest_key: Dict[Tuple[str, str], Tuple] = {}
+def load_apis_fases(path: Path) -> List[dict]:
+    if not path.exists():
+        return []
+    try:
+        return json.loads(path.read_text(encoding="utf-8")).get("urls", [])
+    except (OSError, json.JSONDecodeError):
+        return []
+
+
+def assign_stages(
+    candidates: List[CandidateSpec],
+    existing_entries: List[dict],
+) -> Dict[str, str]:
+    """Return {publish_relative: stage}.
+
+    Nenhum estagio e decidido automaticamente por este script. O estagio de uma
+    versao ja publicada e sempre preservado entre execucoes (inclusive 'current'),
+    lido diretamente do apis_fases.json existente -- quem define o estagio de cada
+    versao e o desenvolvedor (editando apis_fases.json ou via promote_spec.py).
+    Uma versao nunca antes publicada entra com stage "" (vazio/indefinido) ate
+    ser promovida manualmente; nunca vira 'current' ou 'retired' sozinha, mesmo
+    sendo a mais nova do grupo. O front-end (docs/index.html) exibe stage vazio
+    como "unknown" e o sync_apis_json.py bloqueia a sincronizacao ate ser definido.
+    """
+    existing_by_url = {e.get("url"): e for e in existing_entries}
+
+    stages: Dict[str, str] = {}
+    for c in candidates:
+        url = f"./specs/{c.publish_relative}"
+        existing = existing_by_url.get(url)
+        stages[c.publish_relative] = existing["stage"] if existing else ""
+
+    return stages
+
+
+def validate_unique_stages(candidates: List[CandidateSpec], stages: Dict[str, str]) -> List[str]:
+    """Retorna erros para estagios unicos (todos exceto 'retired') duplicados por (fase, group)."""
+    stage_map: Dict[Tuple[str, str], Dict[str, List[str]]] = defaultdict(lambda: defaultdict(list))
 
     for c in candidates:
-        k = (c.fase, c.group)
-        sk = version_sort_key(c.version)
-        if k not in latest_key or sk > latest_key[k]:
-            latest_key[k] = sk
+        stage = stages.get(c.publish_relative, "")
+        if stage in UNIQUE_STAGES:
+            stage_map[(c.fase, c.group)][stage].append(c.version or "?")
 
-    return {
-        c.publish_relative: (
-            "current"
-            if version_sort_key(c.version) == latest_key[(c.fase, c.group)]
-            else "retired"
-        )
-        for c in candidates
-    }
+    errors: List[str] = []
+    for (fase, group), stage_versions in sorted(stage_map.items()):
+        for stage, versions in sorted(stage_versions.items()):
+            if len(versions) > 1:
+                errors.append(
+                    f"  {fase}/{group}: estagio '{stage}' aparece {len(versions)}x "
+                    f"(versoes: {', '.join(versions)})"
+                )
+    return errors
 
 
 def resolve_unique_publish_paths(candidates: List[CandidateSpec]) -> Dict[str, CandidateSpec]:
@@ -380,13 +418,29 @@ def write_legacy_output(
 def main() -> int:
     repo_root = Path(__file__).resolve().parents[1]
     swagger_root = repo_root / "documentation" / "source" / "files" / "swagger"
+    apis_fases_path = repo_root / "docs" / "config" / "apis_fases.json"
 
     if not swagger_root.exists():
         raise SystemExit(f"Swagger directory not found: {swagger_root}")
 
     candidates, invalid = collect_candidates(swagger_root)
-    stages = assign_stages(candidates)
     selected = resolve_unique_publish_paths(candidates)
+    selected_candidates = list(selected.values())
+
+    existing_entries = load_apis_fases(apis_fases_path)
+    stages = assign_stages(selected_candidates, existing_entries)
+
+    stage_errors = validate_unique_stages(selected_candidates, stages)
+    if stage_errors:
+        print("ERRO: estagios unicos duplicados detectados:")
+        for err in stage_errors:
+            print(err)
+        print(
+            "\nEdite docs/config/apis_fases.json (ou use promote_spec.py) para corrigir.\n"
+            "Estagios unicos (max 1 por grupo): " + ", ".join(sorted(UNIQUE_STAGES))
+        )
+        return 1
+
     api_urls, copied_files = write_output(repo_root, selected, stages)
 
     legacy_candidates, legacy_invalid = collect_legacy_candidates(swagger_root)
@@ -399,6 +453,12 @@ def main() -> int:
     print(f"- Invalid/ignored     : {len(invalid)}")
     print(f"- Published specs     : {len(copied_files)}")
     print(f"- Source separation   : by fase and group")
+
+    missing_stage = [c for c in selected_candidates if not stages.get(c.publish_relative)]
+    if missing_stage:
+        print(f"- Sem estagio definido: {len(missing_stage)} (aparecem como stage \"\" / \"unknown\")")
+        for c in missing_stage:
+            print(f"  * {c.fase}/{c.group} v{c.version or '?'} -> defina via promote_spec.py")
 
     if invalid:
         print("- Ignored files (not valid OpenAPI/Swagger):")

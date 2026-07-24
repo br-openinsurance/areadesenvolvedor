@@ -22,6 +22,9 @@ Comportamento:
     mais alta entre as novas entra como 'current' automaticamente (bootstrap)
   - Aplica overrides de stage_overrides.json e limpa o arquivo apos aplicar
   - Bloqueia com erro se estagios unicos se repetirem por (fase, group)
+  - Bloqueia com erro se algum endpoint estiver com stage "" (vazio) -- ocorre
+    quando build_swagger_pages.py publica uma versao nova ainda nao promovida;
+    defina o estagio via promote_spec.py antes de sincronizar
 
 Estagios unicos (max 1 por grupo): certifying, current, developing, deprecated, release-candidate
 Estagios repetiveis: retired
@@ -247,6 +250,15 @@ def validate_unique_stages(entries: list[dict]) -> list[str]:
     return errors
 
 
+def validate_missing_stages(entries: list[dict]) -> list[str]:
+    """Retorna erros para entries com stage vazio/indefinido ('')."""
+    return [
+        f"  {e['fase']}/{e['group']} v{e.get('version') or '?'}: sem estagio definido"
+        for e in entries
+        if not e.get("stage")
+    ]
+
+
 # ---------------------------------------------------------------------------
 # Main
 # ---------------------------------------------------------------------------
@@ -333,6 +345,20 @@ def main() -> int:
         print(
             "\nUse stage_overrides.json para corrigir antes de sincronizar.\n"
             "Estagios unicos (max 1 por grupo): " + ", ".join(sorted(UNIQUE_STAGES))
+        )
+        return 1
+
+    # 7b. Validacao de estagios ausentes (build_swagger_pages.py publica specs novas
+    #     com stage "" ate serem promovidas manualmente -- nunca sincroniza sem definir)
+    missing_errors = validate_missing_stages(final_entries)
+    if missing_errors:
+        print("ERRO: specs sem estagio definido:")
+        for err in missing_errors:
+            print(err)
+        print(
+            "\nDefina o estagio antes de sincronizar:\n"
+            "  python scripts/promote_spec.py <group> <version> <stage>\n"
+            "(grava em stage_overrides.json; este script aplica o override e limpa o arquivo)."
         )
         return 1
 
