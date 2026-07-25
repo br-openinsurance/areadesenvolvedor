@@ -16,10 +16,10 @@ Comportamento:
   - Remove endpoints do apis.json cujos arquivos nao existem mais em documentation
   - O estagio de um endpoint ja existente e sempre preservado entre execucoes
     (inclusive 'current') -- nunca e recomputado automaticamente a partir da versao
-  - Uma versao nova de um grupo ja existente entra como 'retired' por padrao; para
-    promove-la (a current ou qualquer outro estagio) use stage_overrides.json
-  - Excecao: se o grupo inteiro e novo (nenhuma versao dele existia antes), a versao
-    mais alta entre as novas entra como 'current' automaticamente (bootstrap)
+  - Nenhum estagio e atribuido automaticamente a uma versao nova: toda versao nova
+    (de um grupo novo ou ja existente) entra com stage "" (vazio/indefinido) ate
+    ser definida manualmente via promote_spec.py -- nao ha mais bootstrap para
+    'current' nem default para 'retired'
   - Aplica overrides de stage_overrides.json e limpa o arquivo apos aplicar
   - Bloqueia com erro se estagios unicos se repetirem por (fase, group)
   - Bloqueia com erro se algum endpoint estiver com stage "" (vazio) -- ocorre
@@ -126,14 +126,23 @@ def version_sort_key(version: Optional[str]) -> tuple:
 # I/O
 # ---------------------------------------------------------------------------
 
-def collect_from_documentation(swagger_root: Path) -> Tuple[list[dict], list[str]]:
-    """Varre documentation/source/files/swagger e retorna (entries, skipped).
+def collect_from_documentation(
+    swagger_root: Path,
+) -> Tuple[list[dict], list[str], list[str]]:
+    """Varre documentation/source/files/swagger e retorna (entries, skipped, mismatches).
 
     A URL de cada entry aponta para ./specs/... (nao para o caminho do source),
     pois e esse o caminho servido pelo GitHub Pages apos o build_swagger_pages.py.
+
+    A versao do nome do arquivo (<filename>-v<version>.<ext>) e a fonte principal,
+    pois e ela quem determina o caminho publicado e o agrupamento por versao. Se
+    o arquivo tambem declarar info.version e ela divergir da versao do nome, o
+    arquivo e reportado em `mismatches` e excluido de `entries` -- preferimos
+    bloquear a sincronizacao a gerar um apis_fases.json com a versao errada.
     """
     entries: list[dict] = []
     skipped: list[str] = []
+    mismatches: list[str] = []
 
     for file_path in sorted(swagger_root.rglob("*")):
         if not file_path.is_file():
@@ -160,7 +169,13 @@ def collect_from_documentation(swagger_root: Path) -> Tuple[list[dict], list[str
             continue
 
         version_from_name = extract_version_from_stem(Path(filename).stem)
-        version = version_from_spec or version_from_name
+        if version_from_name and version_from_spec and version_from_name != version_from_spec:
+            mismatches.append(
+                f"  {'/'.join(parts)}: nome do arquivo indica v{version_from_name}, "
+                f"mas info.version do spec e '{version_from_spec}'"
+            )
+            continue
+        version = version_from_name or version_from_spec
 
         # URL aponta para ./specs/ — caminho final apos build_swagger_pages
         entries.append({
@@ -171,7 +186,7 @@ def collect_from_documentation(swagger_root: Path) -> Tuple[list[dict], list[str
             "version": version,
         })
 
-    return entries, skipped
+    return entries, skipped, mismatches
 
 
 def load_apis_json(path: Path) -> list[dict]:
@@ -273,7 +288,14 @@ def main() -> int:
         raise SystemExit(f"Diretorio nao encontrado: {swagger_root}")
 
     # 1. Fonte da verdade: documentation
-    doc_entries, skipped = collect_from_documentation(swagger_root)
+    doc_entries, skipped, version_mismatches = collect_from_documentation(swagger_root)
+    if version_mismatches:
+        print("ERRO: versao do nome do arquivo diverge de info.version:")
+        for err in version_mismatches:
+            print(err)
+        print("\nCorrija o nome do arquivo ou o info.version antes de sincronizar.")
+        return 1
+
     doc_by_url = {e["url"]: e for e in doc_entries}
     doc_url_set = set(doc_by_url)
 
@@ -290,20 +312,10 @@ def main() -> int:
     added_urls = doc_url_set - api_url_set
     removed_urls = api_url_set - doc_url_set
 
-    # 5. Bootstrap: versao mais alta apenas entre grupos totalmente novos (sem
-    #    nenhuma entrada previa no apis.json). Grupos ja existentes nunca tem
-    #    seu estagio recomputado por aqui -- so via override.
-    existing_groups = {(e["fase"], e["group"]) for e in current_entries}
-    bootstrap_highest: dict[tuple[str, str], tuple] = {}
-    for e in doc_entries:
-        k = (e["fase"], e["group"])
-        if k in existing_groups:
-            continue
-        sk = version_sort_key(e["version"])
-        if k not in bootstrap_highest or sk > bootstrap_highest[k]:
-            bootstrap_highest[k] = sk
-
-    # 6. Constroi lista final
+    # 5. Constroi lista final -- nenhum estagio e decidido automaticamente aqui.
+    #    Uma versao nunca antes publicada entra com stage "" (vazio/indefinido)
+    #    ate ser promovida manualmente via promote_spec.py; a validacao abaixo
+    #    (7b) bloqueia a sincronizacao enquanto isso nao acontecer.
     final_entries: list[dict] = []
 
     for e in doc_entries:
@@ -311,7 +323,6 @@ def main() -> int:
         group = e["group"]
         fase = e["fase"]
         version = e["version"]
-        k = (fase, group)
 
         override_stage = overrides.get(group, {}).get(version)
         existing = api_by_url.get(url)
@@ -322,10 +333,8 @@ def main() -> int:
             overrides_applied.append(f"    {group}/{version}: {prev} -> {override_stage}")
         elif existing:
             stage = existing["stage"]
-        elif k in bootstrap_highest and version_sort_key(version) == bootstrap_highest[k]:
-            stage = "current"
         else:
-            stage = "retired"
+            stage = ""
 
         final_entries.append({
             "url": url,
@@ -336,7 +345,7 @@ def main() -> int:
             "version": version,
         })
 
-    # 7. Validacao de estagios unicos
+    # 6. Validacao de estagios unicos
     errors = validate_unique_stages(final_entries)
     if errors:
         print("ERRO: estagios unicos duplicados detectados:")
@@ -348,7 +357,7 @@ def main() -> int:
         )
         return 1
 
-    # 7b. Validacao de estagios ausentes (build_swagger_pages.py publica specs novas
+    # 6b. Validacao de estagios ausentes (build_swagger_pages.py publica specs novas
     #     com stage "" ate serem promovidas manualmente -- nunca sincroniza sem definir)
     missing_errors = validate_missing_stages(final_entries)
     if missing_errors:
@@ -362,7 +371,7 @@ def main() -> int:
         )
         return 1
 
-    # 8. Ordena e escreve apis.json
+    # 7. Ordena e escreve apis.json
     final_entries.sort(
         key=lambda e: (
             DIRECTORIES_ORDER.get(e["fase"], 99),
@@ -379,11 +388,11 @@ def main() -> int:
         encoding="utf-8",
     )
 
-    # 9. Limpa stage_overrides.json se havia overrides ativos
+    # 8. Limpa stage_overrides.json se havia overrides ativos
     if overrides:
         clear_stage_overrides(overrides_path)
 
-    # 10. Relatorio
+    # 9. Relatorio
     print("sync_apis_json complete")
     print(f"  Total entries written  : {len(final_entries)}")
     if added_urls:
