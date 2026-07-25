@@ -5,8 +5,8 @@ Nenhum arquivo de spec é movido. A URL física permanece a mesma; apenas o camp
 `stage` no apis.json (e no select do Swagger UI) é atualizado.
 
 Specs organizadas em docs/specs/fase-1, fase-2, fase-3/<group>/<filename>-v<version>.yaml.
-Por padrão a versão mais alta de cada grupo recebe estágio "current"; as demais "retired".
-Use os overrides abaixo para atribuir estágios diferentes.
+Nenhum estágio é atribuído automaticamente: toda versão nova entra sem estágio
+("" / indefinido) até ser definida manualmente com este script.
 
 Estágios válidos: certifying, current, release-candidate, developing, deprecated, retired
 
@@ -23,7 +23,7 @@ Uso:
   # Ver todos os grupos/versões disponíveis nas specs (fase-1/2/3)
   python scripts/promote_spec.py --list-specs
 
-  # Remover um override (volta ao estágio auto-detectado)
+  # Remover um override pendente (ainda não aplicado por sync_apis_json.py)
   python scripts/promote_spec.py --remove auto-insurance 2.0.0
 """
 
@@ -34,7 +34,6 @@ import json
 import re
 import subprocess
 import sys
-from collections import defaultdict
 from pathlib import Path
 
 VALID_STAGES = ("certifying", "current", "release-candidate", "developing", "deprecated", "retired")
@@ -73,6 +72,32 @@ def overrides_path() -> Path:
 
 def specs_dir() -> Path:
     return repo_root() / "docs" / "specs"
+
+
+def apis_fases_path() -> Path:
+    return repo_root() / "docs" / "config" / "apis_fases.json"
+
+
+def load_persisted_stages() -> dict[str, str]:
+    """Retorna {url: stage} conforme persistido em docs/config/apis_fases.json.
+
+    Essa e a fonte da verdade do estagio efetivo de cada versao -- nunca mais
+    recomputada a partir da versao mais alta do grupo (isso mudou de dono para
+    sync_apis_json.py/build_swagger_pages.py, que preservam o estagio gravado
+    aqui entre execucoes).
+    """
+    path = apis_fases_path()
+    if not path.exists():
+        return {}
+    try:
+        entries = json.loads(path.read_text(encoding="utf-8")).get("urls", [])
+    except (OSError, json.JSONDecodeError):
+        return {}
+    return {
+        e.get("url"): e.get("stage", "")
+        for e in entries
+        if isinstance(e, dict)
+    }
 
 
 # ---------------------------------------------------------------------------
@@ -153,10 +178,10 @@ def cmd_list_specs() -> None:
 
     data = load_overrides()
     active_overrides = data.get("overrides", {})
+    persisted_stages = load_persisted_stages()
 
-    # Coleta todas as versões por (fase, group) para detectar auto-stage.
-    group_versions: dict[tuple[str, str], list[str]] = defaultdict(list)
-    file_entries: list[tuple[str, str, str]] = []  # (fase, group, version)
+    # (fase, group, version, url, stage persistido em apis_fases.json)
+    rows: list[tuple[str, str, str, str, str]] = []
     seen: set[tuple[str, str, str]] = set()
 
     for file_path in sorted(root.rglob("*")):
@@ -187,20 +212,9 @@ def cmd_list_specs() -> None:
             continue
         seen.add(key)
 
-        group_versions[(fase, group)].append(version)
-        file_entries.append(key)
-
-    latest: dict[tuple[str, str], str] = {
-        k: max(versions, key=version_sort_key)
-        for k, versions in group_versions.items()
-    }
-
-    rows: list[tuple[str, str, str, str, str]] = []
-    for fase, group, version in file_entries:
-        k = (fase, group)
-        auto_stage = "current" if version == latest.get(k) else "retired"
-        effective = active_overrides.get(group, {}).get(version, auto_stage)
-        rows.append((fase, group, version, auto_stage, effective))
+        url = "./specs/" + "/".join(parts)
+        persisted_stage = persisted_stages.get(url, "")
+        rows.append((fase, group, version, url, persisted_stage))
 
     rows.sort(key=lambda r: (FASE_ORDER.get(r[0], 99), r[1], version_sort_key(r[2])))
 
@@ -208,14 +222,21 @@ def cmd_list_specs() -> None:
         print("Nenhuma spec encontrada em docs/specs/fase-1, fase-2 ou fase-3.")
         return
 
-    print(f"\n{'Fase':<10} {'Grupo':<45} {'Versão':<12} {'Auto':<15} {'Efetivo'}")
+    print(f"\n{'Fase':<10} {'Grupo':<45} {'Versão':<12} {'Persistido':<15} {'Efetivo'}")
     print("-" * 95)
-    for fase, group, version, auto_stage, effective_stage in rows:
-        marker = " *" if effective_stage != auto_stage else ""
-        print(f"  {fase:<8} {group:<43} {version:<12} {auto_stage:<15} {effective_stage}{marker}")
+    has_pending_override = False
+    for fase, group, version, _url, persisted_stage in rows:
+        override_stage = active_overrides.get(group, {}).get(version)
+        effective_stage = override_stage or persisted_stage or "(indefinido)"
+        persisted_display = persisted_stage or "(indefinido)"
+        marker = ""
+        if override_stage and override_stage != persisted_stage:
+            marker = " *"
+            has_pending_override = True
+        print(f"  {fase:<8} {group:<43} {version:<12} {persisted_display:<15} {effective_stage}{marker}")
 
-    if any(r[3] != r[4] for r in rows):
-        print("\n  * = estágio sobrescrito pelo override")
+    if has_pending_override:
+        print("\n  * = override pendente em stage_overrides.json (aplica no proximo sync_apis_json.py)")
     print()
 
 

@@ -20,6 +20,11 @@ enquanto a arquitetura antiga nao e removida:
       pelo configUrl do swagger-ui-dist em docs/index.html)
 
 docs/.nojekyll tambem e criado se ainda nao existir.
+
+Apos publicar as duas estruturas, o script remove de docs/specs qualquer
+arquivo cujo source em documentation/source/files/swagger/** nao existe mais
+(nem na nova arquitetura, nem na legada) -- evita specs orfaos acumulando
+indefinidamente no build (ver cleanup_orphaned_specs).
 """
 
 from __future__ import annotations
@@ -146,15 +151,24 @@ def version_sort_key(version: Optional[str]) -> Tuple:
     return tuple(normalized)
 
 
-def collect_candidates(swagger_root: Path) -> Tuple[List[CandidateSpec], List[Path]]:
+def collect_candidates(
+    swagger_root: Path,
+) -> Tuple[List[CandidateSpec], List[Path], List[str]]:
     """Scan swagger_root for spec files using the flat fase-based structure.
 
     Expected paths (relative to swagger_root):
       <fase>/<group>/<filename>-v<version>.<ext>            (3 parts)
       <fase>/<category>/<group>/<filename>-v<version>.<ext>  (4 parts)
+
+    A versao do nome do arquivo (<filename>-v<version>.<ext>) e a fonte principal,
+    pois e ela quem determina o caminho publicado e o agrupamento por versao. Se
+    o arquivo tambem declarar info.version e ela divergir da versao do nome, o
+    arquivo e reportado em `mismatches` e excluido dos candidatos publicados --
+    preferimos falhar o build a publicar com a versao errada.
     """
     candidates: List[CandidateSpec] = []
     invalid: List[Path] = []
+    mismatches: List[str] = []
 
     for file_path in sorted(swagger_root.rglob("*")):
         if not file_path.is_file():
@@ -181,7 +195,13 @@ def collect_candidates(swagger_root: Path) -> Tuple[List[CandidateSpec], List[Pa
             continue
 
         version_from_name = extract_version_from_stem(Path(filename).stem)
-        version = version_from_spec or version_from_name
+        if version_from_name and version_from_spec and version_from_name != version_from_spec:
+            mismatches.append(
+                f"  {'/'.join(parts)}: nome do arquivo indica v{version_from_name}, "
+                f"mas info.version do spec e '{version_from_spec}'"
+            )
+            continue
+        version = version_from_name or version_from_spec
 
         candidates.append(
             CandidateSpec(
@@ -194,7 +214,7 @@ def collect_candidates(swagger_root: Path) -> Tuple[List[CandidateSpec], List[Pa
             )
         )
 
-    return candidates, invalid
+    return candidates, invalid, mismatches
 
 
 def collect_legacy_candidates(swagger_root: Path) -> Tuple[List[LegacyCandidateSpec], List[Path]]:
@@ -415,6 +435,40 @@ def write_legacy_output(
     return api_urls, copied_files
 
 
+def cleanup_orphaned_specs(specs_dir: Path, valid_paths: set) -> List[str]:
+    """Remove de docs/specs arquivos publicados cujo caminho relativo (posix) nao
+    esteja em `valid_paths` -- ou seja, specs cujo arquivo fonte em
+    documentation/source/files/swagger/** foi removido/renomeado e que portanto
+    nao aparecem mais nem em apis_fases.json nem em apis.json apos este build.
+
+    Tambem remove diretorios que ficarem vazios apos a limpeza.
+    """
+    if not specs_dir.exists():
+        return []
+
+    removed: List[str] = []
+    for file_path in sorted(specs_dir.rglob("*")):
+        if not file_path.is_file():
+            continue
+        rel = file_path.relative_to(specs_dir).as_posix()
+        if rel not in valid_paths:
+            file_path.unlink()
+            removed.append(rel)
+
+    # Remove diretorios vazios (bottom-up, mais profundos primeiro).
+    for dir_path in sorted(
+        (p for p in specs_dir.rglob("*") if p.is_dir()),
+        key=lambda p: len(p.parts),
+        reverse=True,
+    ):
+        try:
+            next(dir_path.iterdir())
+        except StopIteration:
+            dir_path.rmdir()
+
+    return removed
+
+
 def main() -> int:
     repo_root = Path(__file__).resolve().parents[1]
     swagger_root = repo_root / "documentation" / "source" / "files" / "swagger"
@@ -423,7 +477,14 @@ def main() -> int:
     if not swagger_root.exists():
         raise SystemExit(f"Swagger directory not found: {swagger_root}")
 
-    candidates, invalid = collect_candidates(swagger_root)
+    candidates, invalid, version_mismatches = collect_candidates(swagger_root)
+    if version_mismatches:
+        print("ERRO: versao do nome do arquivo diverge de info.version:")
+        for err in version_mismatches:
+            print(err)
+        print("\nCorrija o nome do arquivo ou o info.version antes de compilar.")
+        return 1
+
     selected = resolve_unique_publish_paths(candidates)
     selected_candidates = list(selected.values())
 
@@ -445,6 +506,13 @@ def main() -> int:
 
     legacy_candidates, legacy_invalid = collect_legacy_candidates(swagger_root)
     legacy_urls, legacy_copied = write_legacy_output(repo_root, legacy_candidates)
+
+    # Remove de docs/specs qualquer arquivo publicado anteriormente cujo source
+    # em documentation/source/files/swagger/** nao existe mais (nem na nova
+    # arquitetura, nem na legada) -- evita specs orfaos acumulando no build.
+    valid_paths = {c.publish_relative for c in selected_candidates}
+    valid_paths |= {c.publish_relative for c in legacy_candidates}
+    orphaned_removed = cleanup_orphaned_specs(repo_root / "docs" / "specs", valid_paths)
 
     print("Swagger pages build complete")
 
@@ -482,6 +550,11 @@ def main() -> int:
     print("- Generated config entries:")
     for entry in legacy_urls:
         print(f"  * {entry['name']} -> {entry['url']}")
+
+    print("\n[Limpeza de specs orfaos em docs/specs]")
+    print(f"- Removidos           : {len(orphaned_removed)}")
+    for rel in orphaned_removed:
+        print(f"  * {rel}")
 
     return 0
 
