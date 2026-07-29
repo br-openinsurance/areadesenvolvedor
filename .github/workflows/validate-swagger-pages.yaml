@@ -1,0 +1,101 @@
+name: Validate Swagger Pages
+
+on:
+  pull_request:
+    types:
+      - opened
+      - synchronize
+      - reopened
+    branches:
+      - main
+      - master
+    paths:
+      - "documentation/source/files/swagger/**"
+      - "scripts/build_swagger_pages.py"
+      - "scripts/sync_apis_json.py"
+      - "scripts/promote_spec.py"
+      - "docs/index.html"
+      - "docs/config/apis_fases.json"
+      - ".github/workflows/swagger-pages-sync.yml"
+      - ".github/workflows/validate-swagger-pages.yaml"
+
+permissions:
+  contents: read
+
+jobs:
+  build-swagger-pages:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+
+      - name: Build Swagger docs files
+        run: python scripts/build_swagger_pages.py
+
+      - name: Validate Swagger Configuration
+        run: |
+          python - <<'PY'
+          import json
+          import sys
+          from pathlib import Path
+
+          config_path = (Path("docs/config/apis_fases.json"))
+          data = json.loads(config_path.read_text(encoding="utf-8"))
+
+          items = data.get("urls", [])
+          errors = []
+
+          VALID_STAGES = {"current", "certifying", "release-candidate", "developing", "deprecated", "retired"}
+
+          seen = set()
+
+          for idx, entry in enumerate(items, start=1):
+              fase = (entry.get("fase") or "").strip()
+              group = (entry.get("group") or "").strip()
+              stage = (entry.get("stage") or "").strip()
+              url = (entry.get("url") or "").strip()
+              
+              if not stage or not str(stage).strip():
+                  errors.append(f"Item {idx}: 'stage' field is missing or empty")
+                  continue
+
+              stage = str(stage).strip()
+
+              if stage not in VALID_STAGES:
+                  errors.append(f"Item {idx}: invalid stage '{stage}'")
+
+              if stage != "retired":
+                   key = (fase, group, stage)
+                   if key in seen:
+                     errors.append(
+                      f"Item {idx}: duplicate stage for (fase, group, stage)=({fase},{group}, {stage})")
+                   else:
+                     seen.add(key)
+
+              if not (Path("docs") / url.lstrip("./")).is_file():
+                  errors.append(f"Item {idx}: file not found for url: {url}")
+          if errors:
+              print("Errors found during validation:")
+              for error in errors:
+                  print(f"- {error}")
+              sys.exit(1)
+
+          print("apis_fases.json validation completed")
+          PY
+
+      - name: Check generated Swagger Pages
+        run: |
+          if [ -n "$(git status --porcelain docs/)" ]; then
+              echo "::error::Swagger pages were modified by the build. Please commit the changes."
+              git status --porcelain docs/
+              git diff -- docs/
+              exit 1
+          fi
