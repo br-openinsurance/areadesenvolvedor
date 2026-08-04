@@ -4,49 +4,197 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>API Documentation</title>
+
     <link
       rel="stylesheet"
       href="https://unpkg.com/swagger-ui-dist@5/swagger-ui.css"
     />
+
     <style>
+      :root {
+        --topbar-bg: rgb(15, 87, 13);
+        --topbar-text: #ffffff;
+        --page-bg: #ffffff;
+        --select-bg: #ffffff;
+        --select-border: #b8b8b8;
+      }
+
       html,
       body {
         margin: 0;
         padding: 0;
         height: 100%;
         color-scheme: light;
+        background: var(--page-bg);
+        font-family: Arial, Helvetica, sans-serif;
       }
-      #swagger-ui {
+
+      .app-shell {
         min-height: 100vh;
+        background: var(--page-bg);
+      }
+
+      .custom-topbar {
+        height: 56px;
+        background: var(--topbar-bg);
+        color: var(--topbar-text);
+        display: flex;
+        align-items: center;
+        padding: 0 20px;
+        box-sizing: border-box;
+      }
+
+      .custom-topbar-inner {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+      }
+
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-weight: 700;
+        font-size: 18px;
+        line-height: 1;
+        white-space: nowrap;
+      }
+
+      .brand img {
+        display: block;
+        height: 28px;
+      }
+
+      .version-switcher {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        white-space: nowrap;
+        font-size: 14px;
+        font-weight: 600;
+      }
+
+      .version-switcher label {
+        margin: 0;
+      }
+
+      .version-switcher select {
+        min-width: 150px;
+        max-width: 60vw;
+        height: 34px;
+        border: 1px solid var(--select-border);
+        border-radius: 4px;
+        padding: 0 12px;
+        background: var(--select-bg);
+        color: #222;
+        box-sizing: border-box;
+        outline: none;
+      }
+
+      .version-switcher select:disabled {
+        opacity: 0.65;
+        cursor: wait;
+      }
+
+      #swagger-ui-legacy,
+      #swagger-ui-fases {
+        min-height: calc(100vh - 56px);
         background: #ffffff;
       }
-      #swagger-ui > section,
-      #swagger-ui > section > div:nth-child(2),
+
+      #swagger-ui-legacy > section,
+      #swagger-ui-legacy > section > div:nth-child(2),
+      #swagger-ui-fases > section,
+      #swagger-ui-fases > section > div:nth-child(2),
       .swagger-ui .scheme-container,
       .swagger-ui .wrapper .servers {
         background: #ffffff !important;
       }
+
       .swagger-ui .topbar {
-        display: none;
+        display: none !important;
       }
+
       .swagger-ui .download-url-wrapper,
       .swagger-ui .info .url {
         display: none !important;
       }
+
       .swagger-ui .dark-mode-toggle {
         display: none !important;
       }
+
+      .loading-state {
+        padding: 16px 20px;
+        color: #555;
+        font-size: 14px;
+      }
+
+      @media (max-width: 768px) {
+        .custom-topbar {
+          height: auto;
+          padding: 12px 16px;
+        }
+
+        .custom-topbar-inner {
+          flex-direction: column;
+          align-items: flex-start;
+        }
+
+        .version-switcher {
+          width: 100%;
+          flex-direction: column;
+          align-items: flex-start;
+          gap: 6px;
+        }
+
+        .version-switcher select {
+          width: 100%;
+          min-width: 0;
+          max-width: none;
+        }
+      }
     </style>
   </head>
+
   <body>
-    <div id="swagger-ui"></div>
+    <!-- Duas arquiteturas convivendo lado a lado, selecionadas via ?ui= na URL:
+         - "legacy" (padrao, hoje em PRD): consome docs/config/apis.json.
+         - "fases": nova arquitetura fase-based, consome docs/config/apis_fases.json.
+         Ambas ficam presentes no DOM; a nao selecionada e removida antes de
+         inicializar para evitar ids duplicados e chamadas de fetch desnecessarias. -->
+
+    <div id="arch-legacy">
+      <div id="swagger-ui-legacy"></div>
+    </div>
+
+    <div id="arch-fases" class="app-shell">
+      <div class="custom-topbar">
+        <div class="custom-topbar-inner">
+          <div class="brand">
+            <img src="./logo.png" />
+          </div>
+
+          <div class="version-switcher">
+            <label for="spec-select-fases">Selecione a versão:</label>
+            <select id="spec-select-fases" disabled></select>
+          </div>
+        </div>
+      </div>
+
+      <div id="swagger-ui-fases"></div>
+    </div>
+
     <script src="https://unpkg.com/swagger-ui-dist@5/swagger-ui-bundle.js"></script>
     <script src="https://unpkg.com/swagger-ui-dist@5/swagger-ui-standalone-preset.js"></script>
+
     <script>
-      function getSpecUrlFromQuery() {
+      function getArchFromQuery() {
         const params = new URLSearchParams(window.location.search);
-        const url = params.get("url");
-        return url && url.trim() ? url.trim() : null;
+        const value = params.get("ui");
+        return value === "fases" ? "fases" : "legacy";
       }
 
       function forceLightMode() {
@@ -54,10 +202,20 @@
         document.documentElement.classList.add("light-mode");
       }
 
-      window.onload = function () {
+      // Estrutura legada (padrao/PRD) - aponta para docs/config/apis.json,
+      // gerado por build_swagger_pages.py a partir dos arquivos soltos e de
+      // current/ em documentation/source/files/swagger.
+      
+      function initLegacyArch() {
+        function getSpecUrlFromQuery() {
+          const params = new URLSearchParams(window.location.search);
+          const url = params.get("url");
+          return url && url.trim() ? url.trim() : null;
+        }
+
         const directUrl = getSpecUrlFromQuery();
         const config = {
-          dom_id: "#swagger-ui",
+          dom_id: "#swagger-ui-legacy",
           deepLinking: true,
           filter: false,
           docExpansion: "list",
@@ -75,6 +233,233 @@
         }
 
         window.ui = SwaggerUIBundle(config);
+      }
+
+      // Nova arquitetura (fase-based, preview em HML via ?ui=fases) - consome
+      // docs/config/apis_fases.json no formato rico (group/fase/stage/version).
+      function initFasesArch() {
+        let ui = null;
+        let specs = [];
+
+        const selectEl = document.getElementById("spec-select-fases");
+
+        function getQueryParam(name) {
+          const params = new URLSearchParams(window.location.search);
+          const value = params.get(name);
+
+          return value && value.trim() ? value.trim() : null;
+        }
+
+        function normalizeSpecUrl(url) {
+          if (!url) return url;
+
+          if (url.startsWith("/specs/")) {
+            return `.${url}`;
+          }
+
+          return url;
+        }
+
+        function setQueryParam(name, value) {
+          const url = new URL(window.location.href);
+
+          if (value) {
+            url.searchParams.set(name, value);
+          } else {
+            url.searchParams.delete(name);
+          }
+
+          window.history.replaceState({}, "", url.toString());
+        }
+
+        function destroyCurrentUi() {
+          const container = document.getElementById("swagger-ui-fases");
+          container.innerHTML = "";
+          ui = null;
+        }
+
+        function loadSwaggerSpec(specUrl) {
+          if (!specUrl) return;
+
+          destroyCurrentUi();
+
+          ui = SwaggerUIBundle({
+            dom_id: "#swagger-ui-fases",
+            url: specUrl,
+            deepLinking: true,
+            filter: false,
+            docExpansion: "list",
+            persistAuthorization: true,
+            validatorUrl: null,
+            onComplete: forceLightMode,
+            presets: [SwaggerUIBundle.presets.apis, SwaggerUIStandalonePreset],
+            layout: "StandaloneLayout",
+          });
+        }
+
+        function fillSelector(urls) {
+          selectEl.innerHTML = "";
+
+          urls.forEach((spec, index) => {
+            const option = document.createElement("option");
+
+            option.value = normalizeSpecUrl(spec.url);
+
+            const version = spec.version ? `v${spec.version}` : "unknown version";
+            const stage = spec.stage ? spec.stage : "unknown";
+
+            option.textContent = `${version} (${stage})`;
+            option.dataset.index = String(index);
+
+            selectEl.appendChild(option);
+          });
+
+          selectEl.disabled = urls.length === 0;
+        }
+
+        function getInitialSpecUrl(urls) {
+          const directUrl = normalizeSpecUrl(getQueryParam("url"));
+          if (directUrl) return directUrl;
+
+          const primaryName = getQueryParam("primaryName");
+          if (primaryName) {
+            const found = urls.find((spec) => spec.name === primaryName);
+            if (found) return normalizeSpecUrl(found.url);
+          }
+
+          return urls.length ? normalizeSpecUrl(urls[0].url) : null;
+        }
+
+        function selectOptionByUrl(url) {
+          const normalized = normalizeSpecUrl(url);
+          const options = Array.from(selectEl.options);
+
+          const match = options.find(
+            (opt) => normalizeSpecUrl(opt.value) === normalized,
+          );
+
+          if (match) {
+            selectEl.value = match.value;
+          }
+        }
+
+        function specKey(specUrl) {
+          return normalizeSpecUrl(specUrl)
+            .replace(/^\.\/specs\//, "")
+            .split("/")[0]
+            .toLowerCase();
+        }
+
+        function findSpecByUrl(urls, url) {
+          const normalized = normalizeSpecUrl(url);
+
+          return (
+            urls.find((spec) => normalizeSpecUrl(spec.url) === normalized) || null
+          );
+        }
+
+        function getSpecGroup(spec) {
+          if (spec && spec.group) {
+            return String(spec.group).toLowerCase();
+          }
+
+          if (spec && spec.url) {
+            return specKey(spec.url);
+          }
+
+          return null;
+        }
+
+        function sortSpecsForSelector(items) {
+          const stageOrder = {
+            "current": 1,
+            "certifying": 2,
+            "release-candidate": 3,
+            "developing": 4,
+            "deprecated": 5,
+            "retired": 6
+          };
+
+          return [...items].sort((a, b) => {
+            const stageA = stageOrder[a.stage] || 99;
+            const stageB = stageOrder[b.stage] || 99;
+
+            if (stageA !== stageB) {
+              return stageA - stageB;
+            }
+
+            return String(b.version || "").localeCompare(
+              String(a.version || ""),
+              undefined,
+              {
+                numeric: true,
+                sensitivity: "base",
+              },
+            );
+          });
+        }
+
+        selectEl.addEventListener("change", function (e) {
+          const selectedUrl = normalizeSpecUrl(e.target.value);
+
+          setQueryParam("url", selectedUrl);
+          loadSwaggerSpec(selectedUrl);
+        });
+
+        const loadingEl = document.createElement("div");
+        loadingEl.className = "loading-state";
+        loadingEl.textContent = "Loading API definitions...";
+        document.getElementById("swagger-ui-fases").appendChild(loadingEl);
+
+        fetch("./config/apis_fases.json", { cache: "no-store" })
+          .then((response) => {
+            if (!response.ok) {
+              throw new Error(`Failed to load apis_fases.json: ${response.status}`);
+            }
+            return response.json();
+          })
+          .then((data) => {
+            specs = Array.isArray(data.urls) ? data.urls : [];
+
+            const initialUrl = getInitialSpecUrl(specs);
+            if (!initialUrl) {
+              throw new Error("Could not determine initial spec URL");
+            }
+
+            const initialSpec = findSpecByUrl(specs, initialUrl);
+            const currentGroup = getSpecGroup(initialSpec) || specKey(initialUrl);
+
+            const visibleSpecs = sortSpecsForSelector(
+              specs.filter((spec) => getSpecGroup(spec) === currentGroup),
+            );
+
+            fillSelector(visibleSpecs);
+            selectOptionByUrl(initialUrl);
+            setQueryParam("url", initialUrl);
+            loadSwaggerSpec(initialUrl);
+          })
+          .catch((error) => {
+            document.getElementById("swagger-ui-fases").innerHTML = `
+              <div class="loading-state">
+                Error loading API documentation: ${error.message}
+              </div>
+            `;
+
+            selectEl.disabled = true;
+            console.error(error);
+          });
+      }
+
+      window.onload = function () {
+        const arch = getArchFromQuery();
+
+        if (arch === "fases") {
+          document.getElementById("arch-legacy").remove();
+          initFasesArch();
+        } else {
+          document.getElementById("arch-fases").remove();
+          initLegacyArch();
+        }
       };
     </script>
   </body>
