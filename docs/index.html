@@ -317,17 +317,39 @@
           selectEl.disabled = urls.length === 0;
         }
 
+        function getSpecByStage(urls, group, stage, fase) {
+          const match = urls.find((spec) => {
+            if (getSpecGroup(spec) !== group.toLowerCase()) return false;
+            if (fase && String(spec.fase || "").toLowerCase() !== fase.toLowerCase()) {
+              return false;
+            }
+            return String(spec.stage || "").toLowerCase() === stage.toLowerCase();
+          });
+
+          return match ? normalizeSpecUrl(match.url) : null;
+        }
+
         function getInitialSpecUrl(urls) {
           const directUrl = normalizeSpecUrl(getQueryParam("url"));
-          if (directUrl) return directUrl;
+          if (directUrl) return { url: directUrl, pin: true };
+
+          const group = getQueryParam("group");
+          const stageParam = getQueryParam("stage");
+          if (group && stageParam) {
+            const fase = getQueryParam("fase");
+            const resolved = getSpecByStage(urls, group, stageParam, fase);
+            if (resolved) return { url: resolved, pin: false };
+          }
 
           const primaryName = getQueryParam("primaryName");
           if (primaryName) {
             const found = urls.find((spec) => spec.name === primaryName);
-            if (found) return normalizeSpecUrl(found.url);
+            if (found) return { url: normalizeSpecUrl(found.url), pin: true };
           }
 
-          return urls.length ? normalizeSpecUrl(urls[0].url) : null;
+          return urls.length
+            ? { url: normalizeSpecUrl(urls[0].url), pin: true }
+            : null;
         }
 
         function selectOptionByUrl(url) {
@@ -421,11 +443,12 @@
           .then((data) => {
             specs = Array.isArray(data.urls) ? data.urls : [];
 
-            const initialUrl = getInitialSpecUrl(specs);
-            if (!initialUrl) {
+            const initial = getInitialSpecUrl(specs);
+            if (!initial) {
               throw new Error("Could not determine initial spec URL");
             }
 
+            const initialUrl = initial.url;
             const initialSpec = findSpecByUrl(specs, initialUrl);
             const currentGroup = getSpecGroup(initialSpec) || specKey(initialUrl);
 
@@ -435,7 +458,9 @@
 
             fillSelector(visibleSpecs);
             selectOptionByUrl(initialUrl);
-            setQueryParam("url", initialUrl);
+            if (initial.pin) {
+              setQueryParam("url", initialUrl);
+            }
             loadSwaggerSpec(initialUrl);
           })
           .catch((error) => {
