@@ -27,8 +27,8 @@ para gerar o código de clientes e também o código inicial de implementações
 partir de suas especificações. Recomenda-se que o código gerado seja analisado com o
 intuito de identificar possíveis recursos da linguagem OpenAPI que foram utilizados nas
 especificações, mas que não são adequadamente suportados pelo Swagger Codegen e,
-possivelmente, por outros softwares que trabalham com especificações OpenAPI. Caso
-isto ocorra, deve-se avaliar se não é possível alterar as especificações para não mais
+possivelmente, por outros softwares que trabalham com especificações OpenAPI. 
+Caso isto ocorra, deve-se avaliar se não é possível alterar as especificações para não mais
 fazer uso destes recursos.
 
 Implementações de exemplo das APIs devem ser disponibilizadas. Os dados retornados
