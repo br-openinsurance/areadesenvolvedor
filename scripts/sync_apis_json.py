@@ -56,7 +56,7 @@ STAGE_ORDER = {
     "retired": 5,
 }
 VALID_STAGES = set(STAGE_ORDER)
-UNIQUE_STAGES = VALID_STAGES - {"retired"}
+UNIQUE_STAGES = VALID_STAGES - {"retired", "release-candidate"}
 
 DIRECTORIES_ORDER = {"fase-1": 0, "fase-2": 1, "fase-3": 2, "monitoring": 3, "pcm": 4}
 
