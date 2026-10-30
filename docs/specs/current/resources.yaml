@@ -2,7 +2,7 @@
   info:
     title: API Resources - Open Insurance Brasil
     description: |
-      API que trata da consulta do status de recursos para o Open Insurance Brasil - Fase 2 e 3.
+      API que trata da consulta do status de recursos para o Open Insurance Brasil - Fase 2.
       Não possui segregação entre pessoa natural e pessoa jurídica.
 
       # Orientações importantes
@@ -22,7 +22,7 @@
       ### `/resources`
         - permissions:
           - GET: **RESOURCES_READ**
-    version: 2.5.0
+    version: 1.2.0
     license:
       name: Apache 2.0
       url: 'https://www.apache.org/licenses/LICENSE-2.0'
@@ -30,9 +30,9 @@
       name: Governança do Open Insurance Brasil – Especificações
       url: 'https://www.gov.br/susep/'
   servers:
-    - url: 'https://api.seguradora.com.br/open-insurance/resources/v2'
+    - url: 'https://api.seguradora.com.br/open-insurance/resources/v1'
       description: Servidor de Produção
-    - url: 'https://apih.seguradora.com.br/open-insurance/resources/v2'
+    - url: 'https://apih.seguradora.com.br/open-insurance/resources/v1'
       description: Servidor de Homologação
   tags:
     - name: Resources
@@ -50,13 +50,13 @@
           - $ref: '#/components/parameters/xFapiCustomerIpAddress'
           - $ref: '#/components/parameters/xFapiInteractionId'
           - $ref: '#/components/parameters/xCustomerUserAgent'
-          - $ref: "#/components/parameters/x-v"
-          - $ref: "#/components/parameters/x-min-v"
           - $ref: '#/components/parameters/page'
           - $ref: '#/components/parameters/pageSize'
         responses:
           '200':
             $ref: '#/components/responses/OKResponseResourceList'
+          '204':
+            $ref: '#/components/responses/NoContent'
           '400':
             $ref: '#/components/responses/BadRequest'
           '401':
@@ -76,7 +76,7 @@
           '500':
             $ref: '#/components/responses/InternalServerError'
           default:
-            $ref: '#/components/responses/Default'
+            $ref: '#/components/responses/OKResponseResourceList'
         security:
           - OpenId:
               - openid
@@ -117,14 +117,12 @@
                   enum:
                     - CUSTOMERS_PERSONAL_IDENTIFICATIONS
                     - CUSTOMERS_PERSONAL_QUALIFICATION
-                    - CUSTOMERS_PERSONAL_ADDITIONALINFO
+                    - CUSTOMERS_PERSONAL_ADITTIONALINFO
                     - CUSTOMERS_BUSINESS_IDENTIFICATIONS
                     - CUSTOMERS_BUSINESS_QUALIFICATION
-                    - CUSTOMERS_BUSINESS_ADDITIONALINFO                 
+                    - CUSTOMERS_BUSINESS_ADITTIONALINFO                 
                     - CAPITALIZATION_TITLES
-                    - PENSION_PLAN
-                    - LIFE_PENSION
-                    - FINANCIAL_ASSISTANCE
+                    - PENSION_RISK
                     - DAMAGES_AND_PEOPLE_PATRIMONIAL
                     - DAMAGES_AND_PEOPLE_RESPONSIBILITY
                     - DAMAGES_AND_PEOPLE_TRANSPORT
@@ -134,18 +132,17 @@
                     - DAMAGES_AND_PEOPLE_HOUSING
                     - DAMAGES_AND_PEOPLE_PERSON
                     - DAMAGES_AND_PEOPLE_ACCEPTANCE_AND_BRANCHES_ABROAD
+
                   description: |
                     Tipo de recurso (vide Enum):
                     - CUSTOMERS_PERSONAL_IDENTIFICATIONS: Informações de identificação PF
                     - CUSTOMERS_PERSONAL_QUALIFICATION: Informações de qualificação PF                    
-                    - CUSTOMERS_PERSONAL_ADDITIONALINFO: Informações complementares PF
+                    - CUSTOMERS_PERSONAL_ADITTIONALINFO: Informações complementares PF
                     - CUSTOMERS_BUSINESS_IDENTIFICATIONS: Informações de identificação PJ
                     - CUSTOMERS_BUSINESS_QUALIFICATION: Informações de qualificação PJ
-                    - CUSTOMERS_BUSINESS_ADDITIONALINFO: Informações complementares PJ
+                    - CUSTOMERS_BUSINESS_ADITTIONALINFO: Informações complementares PJ
                     - CAPITALIZATION_TITLES: Produtos de Titulos de Capitalização
-                    - PENSION_PLAN: Produtos de Previdência Risco
-                    - LIFE_PENSION: Produtos de Previdência Sobrevivência
-                    - FINANCIAL_ASSISTANCE: Produtos de Assistência Financeira                   
+                    - PENSION_RISK: Produtos de Previdência Risco                    
                     - DAMAGES_AND_PEOPLE_PATRIMONIAL: Produtos de Patrimonial
                     - DAMAGES_AND_PEOPLE_RESPONSIBILITY: Produtos de Responsabilidade
                     - DAMAGES_AND_PEOPLE_TRANSPORT: Produtos de Transportes
@@ -190,35 +187,35 @@
             maxLength: 2000
             description: URI completo que gerou a resposta atual.
             pattern: ^(https:\/\/)(.*?)(\/open-insurance\/resources\/v\d+)(\/resources.*)?$
-            example: 'https://api.organizacao.com.br/open-insurance/resources/v2/resources'
+            example: 'https://api.organizacao.com.br/open-insurance/resources/v1/resources'
           first:
             type: string
             format: uri
             maxLength: 2000
             description: URI da primeira página que originou essa lista de resultados. Restrição - Obrigatório quando não for a primeira página da resposta
             pattern: ^(https:\/\/)(.*?)(\/open-insurance\/resources\/v\d+)(\/resources.*)?$
-            example: 'https://api.organizacao.com.br/open-insurance/resources/v2/resources'
+            example: 'https://api.organizacao.com.br/open-insurance/resources/v1/resources'
           prev:
             type: string
             format: uri
             maxLength: 2000
             description: "URI da página anterior dessa lista de resultados. Restrição - \tObrigatório quando não for a primeira página da resposta"
             pattern: ^(https:\/\/)(.*?)(\/open-insurance\/resources\/v\d+)(\/resources.*)?$
-            example: 'https://api.organizacao.com.br/open-insurance/resources/v2/resources'
+            example: 'https://api.organizacao.com.br/open-insurance/resources/v1/resources'
           next:
             type: string
             format: uri
             maxLength: 2000
             description: URI da próxima página dessa lista de resultados. Restrição - Obrigatório quando não for a última página da resposta
             pattern: ^(https:\/\/)(.*?)(\/open-insurance\/resources\/v\d+)(\/resources.*)?$
-            example: 'https://api.organizacao.com.br/open-insurance/resources/v2/resources'
+            example: 'https://api.organizacao.com.br/open-insurance/resources/v1/resources'
           last:
             type: string
             format: uri
             maxLength: 2000
             description: URI da última página dessa lista de resultados. Restrição - Obrigatório quando não for a última página da resposta
             pattern: ^(https:\/\/)(.*?)(\/open-insurance\/resources\/v\d+)(\/resources.*)?$
-            example: 'https://api.organizacao.com.br/open-insurance/resources/v2/resources'
+            example: 'https://api.organizacao.com.br/open-insurance/resources/v1/resources'
         additionalProperties: false
       Meta:
         type: object
@@ -285,14 +282,6 @@
         pattern: '^[a-zA-Z0-9][a-zA-Z0-9\-]{0,99}$'
         maxLength: 100
         description: 'Um UID [RFC4122](https://tools.ietf.org/html/rfc4122) usado como um ID de correlação. Se fornecido, o transmissor deve "reproduzir" esse valor no cabeçalho de resposta.'
-      XV:
-        type: string
-        description: |
-          Versão do endpoint da API requisitado pelo cliente. O titular dos dados deve 
-          responder com a versão mais alta suportada entre x-min-v e x-v. Se o valor de 
-          x-min-v for igual ou maior que o valor de x-v, o cabeçalho x-min-v deve ser 
-          tratado como ausente. Se todas as versões solicitadas não forem suportadas, 
-          o titular dos dados deve responder com o código de status 406 Not Acceptable.
     parameters:
       Authorization:
         name: Authorization
@@ -356,37 +345,12 @@
         name: x-fapi-interaction-id
         in: header
         description: 'Um UID [RFC4122](https://tools.ietf.org/html/rfc4122) usado como um ID de correlação. Se fornecido, o transmissor deve "reproduzir" esse valor no cabeçalho de resposta.'
-        required: true
+        required: false
         schema:
           type: string
           pattern: '^[a-zA-Z0-9][a-zA-Z0-9\-]{0,99}$'
           minLength: 1
           maxLength: 100
-      x-v:
-        name: x-v
-        in: header
-        description: |
-          Versão do endpoint da API requisitado pelo cliente. O titular dos dados deve 
-          responder com a versão mais alta suportada entre x-min-v e x-v. Se o valor de 
-          x-min-v for igual ou maior que o valor de x-v, o cabeçalho x-min-v deve ser 
-          tratado como ausente. Se todas as versões solicitadas não forem suportadas, 
-          o titular dos dados deve responder com o código de status 406 Not Acceptable.
-        required: false
-        schema:
-          type: string
-        example: '2.1.3'
-      x-min-v:
-        name: x-min-v
-        in: header
-        description: |
-          Versão mínima do endpoint da API requisitado pelo cliente. O detentor dos dados 
-          deve responder com a versão mais alta suportada entre x-min-v e x-v. Se todas as 
-          versões solicitadas não forem suportadas, o titular dos dados deve responder com 
-          um código de status 406 Not Acceptable.
-        required: false
-        schema:
-          type: string
-        example: '2.0.0'
     securitySchemes:
       OpenId:
         type: openIdConnect
@@ -407,15 +371,18 @@
           x-fapi-interaction-id:
             schema:
               $ref: '#/components/schemas/XFapiInteractionId'
-          x-v: 
-            schema:
-              $ref: '#/components/schemas/XV'
         content:
           application/json:
             schema:
               $ref: '#/components/schemas/ResponseResourceList'
       UnprocessableEntity:
         description: 'O servidor entende o tipo de conteúdo da entidade da requisição, e a sintaxe da requisição esta correta, mas não foi possível processar as instruções presente.'
+        content:
+          application/json; charset=utf-8:
+            schema:
+              $ref: '#/components/schemas/ResponseError'
+      NoContent:
+        description: 'O recurso solicitado não existe ou não foi localizado.'
         content:
           application/json; charset=utf-8:
             schema:
@@ -434,12 +401,6 @@
               $ref: '#/components/schemas/ResponseError'
       InternalServerError:
         description: Ocorreu um erro no gateway da API ou no microsserviço
-        content:
-          application/json; charset=utf-8:
-            schema:
-              $ref: '#/components/schemas/ResponseError'
-      Default:
-        description: Erro inesperado.
         content:
           application/json; charset=utf-8:
             schema:

@@ -5,22 +5,20 @@ info:
     API de Webhook é responsável por notificar eventos definidos em cada uma das APIs que possuem a funcionalidade no Open Insurance Brasil.  
     
     
-  version: 1.2.0
+  version: 2.0.0
   contact:
     name: Governança do Open Insurance Brasil
     url: 'https://www.gov.br/susep'
 servers:
-  - url: 'https://api.organizacao.com.br/open-insurance/webhook/v1'
+  - url: 'https://api.organizacao.com.br/open-insurance/webhook/v2'
     description: Servidor de Produção
-  - url: 'https://api.organizacao.com.br/open-insurance/webhook/v1'
+  - url: 'https://api.organizacao.com.br/open-insurance/webhook/v2'
     description: Servidor de Homologação
 tags:
   - name: Quote
-    description: Notificações de mudanças de estados da cotação referente a alguma das APIs de Cotação de Danos e Pessoas.
+    description: Notificação de mudança no estado da cotação referente as APIs de Contratação (Danos, Previdência, Pessoas e Capitalização).
   - name: Capitalization Title
     description: Notificações de mudanças de payload referente a API de Produtos de Título de Capitalização.
-  - name: Quote Capitalization Title
-    description: Notificações de mudanças de estados da cotação referente a API de Cotação de Título de Capitalização.
   - name: Dynamic Fields
     description: Notificações de mudanças no payload da API de Campos Dinâmicos.
     
@@ -29,9 +27,9 @@ paths:
     post:
       tags:
         - Quote
-      summary: Notificações de mudanças de estados da cotação referente a alguma das APIs de Cotação de Danos e Pessoas.
+      summary: Notificação de mudança no estado da cotação referente as APIs de Contratação (Danos, Previdência, Pessoas e Capitalização)
       operationId: quoteNotification
-      description: Notificações de mudanças de estados da cotação referente a alguma das APIs de Cotação de Danos e Pessoas.
+      description: Notificação de mudança no estado da cotação referente as APIs de Contratação (Danos, Previdência, Pessoas e Capitalização)
       parameters:
         - $ref: '#/components/parameters/consentId'
         - $ref: '#/components/parameters/versionApi'
@@ -51,7 +49,7 @@ paths:
       tags:
         - Capitalization Title
       summary: Notificações de mudanças de payload referente a API de Produtos de Título de Capitalização.
-      operationId: productCaptalizationNotification
+      operationId: productCapitalizationNotification
       description: Notificações de mudanças de payload referente a API de Produtos de Título de Capitalização.
       parameters:
         - $ref: '#/components/parameters/authorisationServerId'
@@ -63,27 +61,6 @@ paths:
             schema:
               $ref: '#/components/schemas/RequestBodyWebhook'
         description: Payload enviado para notificar a alteração no payload referente a API de Produtos de Título de Capitalização.
-        required: true
-      responses:
-        '202':
-          $ref: '#/components/responses/202Webhook'
-  '/quote-capitalization-title/{versionApi}/request/{consentId}/quote-status':
-    post:
-      tags:
-        - Quote Capitalization Title
-      summary: Notificações de mudanças de estados da cotação referente a API de Cotação de Título de Capitalização.
-      operationId: quoteCaptalizationNotification
-      description: Notificações de mudanças de estados da cotação referente a API de Cotação de Título de Capitalização.
-      parameters:
-        - $ref: '#/components/parameters/consentId'
-        - $ref: '#/components/parameters/versionApi'
-        - $ref: '#/components/parameters/xWebhookInteractionId'
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/RequestBodyWebhook'
-        description: Payload enviado para notificar a alteração no estado da cotação.
         required: true
       responses:
         '202':
@@ -200,7 +177,7 @@ components:
       required: true
       schema:
         type: string
-        pattern: '^[a-zA-Z0-9][a-zA-Z0-9\-]{0,99}$'
+        pattern: '^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$'
         minLength: 1
         maxLength: 100
   responses:

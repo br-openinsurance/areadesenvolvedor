@@ -24,23 +24,23 @@ info:
     ### `/`
       - permissions:
         - GET: **DAMAGES_AND_PEOPLE_PERSON_READ**
-    ### `/{policyId}/policy-info`
+    ### `/{resourceId}/policy-info`
       - permissions:
         - GET: **DAMAGES_AND_PEOPLE_PERSON_POLICYINFO_READ**
-    ### `/{policyId}/premium`
+    ### `/{resourceId}/premium`
       - permissions:
         - GET: **DAMAGES_AND_PEOPLE_PERSON_PREMIUM_READ**
-    ### `/{policyId}/claim`
+    ### `/{resourceId}/claim`
       - permissions:
         - GET: **DAMAGES_AND_PEOPLE_PERSON_CLAIM_READ**
-  version: 2.0.0
+  version: 3.0.0
   contact:
     name: Governança do Open Insurance Brasil
     url: "https://www.gov.br/susep/"
 servers:
-  - url: "https://api.organizacao.com.br/open-insurance/insurance-person/v2"
+  - url: "https://api.organizacao.com.br/open-insurance/insurance-person/v3"
     description: Servidor de Produção
-  - url: "https://api.organizacao.com.br/open-insurance/insurance-person/v2"
+  - url: "https://api.organizacao.com.br/open-insurance/insurance-person/v3"
     description: Servidor de Homologação
 tags:
   - name: "InsurancePerson"
@@ -58,8 +58,6 @@ paths:
         - $ref: "#/components/parameters/xFapiCustomerIpAddress"
         - $ref: "#/components/parameters/xFapiInteractionId"
         - $ref: "#/components/parameters/xCustomerUserAgent"
-        - $ref: "#/components/parameters/x-v"
-        - $ref: "#/components/parameters/x-min-v"
         - $ref: "#/components/parameters/page"
         - $ref: "#/components/parameters/pageSize"
       responses:
@@ -83,28 +81,32 @@ paths:
           $ref: "#/components/responses/TooManyRequests"
         "500":
           $ref: "#/components/responses/InternalServerError"
+        default:
+          description: Erro inesperado
+          content:
+            application/json; charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/ResponseError'
       security:
         - OpenId:
             - openid
           OAuth2Security:
             - "consent:consentId"
             - insurance-person
-  /insurance-person/{policyId}/policy-info:
+  /insurance-person/{resourceId}/policy-info:
     get:
       tags:
         - InsurancePerson
-      summary: Obtém as informações gerais da apólice identificada por {policyId}
+      summary: Obtém as informações gerais da apólice identificada por {resourceId}
       description: "Método para obter as informações gerais da apólice"
-      operationId: "getInsurancePersonpolicyIdPolicyInfo"
+      operationId: "getInsurancePersonresourceIdPolicyInfo"
       parameters:
         - $ref: "#/components/parameters/Authorization"
         - $ref: "#/components/parameters/xFapiAuthDate"
         - $ref: "#/components/parameters/xFapiCustomerIpAddress"
         - $ref: "#/components/parameters/xFapiInteractionId"
         - $ref: "#/components/parameters/xCustomerUserAgent"
-        - $ref: "#/components/parameters/policyId"
-        - $ref: "#/components/parameters/x-v"
-        - $ref: "#/components/parameters/x-min-v"
+        - $ref: "#/components/parameters/resourceId"
       responses:
         "200":
           $ref: "#/components/responses/OKResponseInsurancePersonPolicyInfo"
@@ -126,28 +128,32 @@ paths:
           $ref: "#/components/responses/TooManyRequests"
         "500":
           $ref: "#/components/responses/InternalServerError"
+        default:
+          description: Erro inesperado
+          content:
+            application/json; charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/ResponseError'
       security:
         - OpenId:
             - openid
           OAuth2Security:
             - "consent:consentId"
             - insurance-person
-  /insurance-person/{policyId}/premium:
+  /insurance-person/{resourceId}/premium:
     get:
       tags:
         - InsurancePerson
-      summary: Obtém os dados de prêmio da apólice identificada por {policyId}
+      summary: Obtém os dados de prêmio da apólice identificada por {resourceId}
       description: "Método para obter os dados de prêmio da apólice."
-      operationId: "getInsurancePersonpolicyIdPremium"
+      operationId: "getInsurancePersonresourceIdPremium"
       parameters:
         - $ref: "#/components/parameters/Authorization"
         - $ref: "#/components/parameters/xFapiAuthDate"
         - $ref: "#/components/parameters/xFapiCustomerIpAddress"
         - $ref: "#/components/parameters/xFapiInteractionId"
         - $ref: "#/components/parameters/xCustomerUserAgent"
-        - $ref: "#/components/parameters/policyId"
-        - $ref: "#/components/parameters/x-v"
-        - $ref: "#/components/parameters/x-min-v"
+        - $ref: "#/components/parameters/resourceId"
       responses:
         "200":
           $ref: "#/components/responses/OKResponseInsurancePersonPremium"
@@ -169,28 +175,32 @@ paths:
           $ref: "#/components/responses/TooManyRequests"
         "500":
           $ref: "#/components/responses/InternalServerError"
+        default:
+          description: Erro inesperado
+          content:
+            application/json; charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/ResponseError'
       security:
         - OpenId:
             - openid
           OAuth2Security:
             - "consent:consentId"
             - insurance-person
-  /insurance-person/{policyId}/claim:
+  /insurance-person/{resourceId}/claim:
     get:
       tags:
         - InsurancePerson
-      summary: Obtém os dados de sinistro da apólice identificada por {policyId}
+      summary: Obtém os dados de sinistro da apólice identificada por {resourceId}
       description: "Método para obter os dados de sinistro associados à apólice"
-      operationId: "getInsurancePersonpolicyIdClaims"
+      operationId: "getInsurancePersonresourceIdClaim"
       parameters:
         - $ref: "#/components/parameters/Authorization"
         - $ref: "#/components/parameters/xFapiAuthDate"
         - $ref: "#/components/parameters/xFapiCustomerIpAddress"
         - $ref: "#/components/parameters/xFapiInteractionId"
         - $ref: "#/components/parameters/xCustomerUserAgent"
-        - $ref: "#/components/parameters/policyId"
-        - $ref: "#/components/parameters/x-v"
-        - $ref: "#/components/parameters/x-min-v"
+        - $ref: "#/components/parameters/resourceId"
         - $ref: "#/components/parameters/page"
         - $ref: "#/components/parameters/pageSize"
       responses:
@@ -214,6 +224,12 @@ paths:
           $ref: "#/components/responses/TooManyRequests"
         "500":
           $ref: "#/components/responses/InternalServerError"
+        default:
+          description: Erro inesperado
+          content:
+            application/json; charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/ResponseError'
       security:
         - OpenId:
             - openid
@@ -272,18 +288,18 @@ components:
                             type: object
                             required:
                               - productName
-                              - policyId
+                              - resourceId
                             properties:
                               productName:
                                 description: Nome comercial do produto, pelo qual é identificado nos canais de distribuição e atendimento da sociedade
                                 type: string
                                 maxLength: 100
                                 example: Produto A Pessoas
-                              policyId:
-                                description: Identificador da apólice ou bilhete
-                                type: string
-                                maxLength: 60
-                                example: "111111"
+                              resourceId:
+                                type: string 
+                                format: uuid
+                                example: 25cac914-d8ae-6789-b215-650a6215820d
+                                description: Identificador do recurso no formato UUID. Utilizado nas URLs secundárias das APIs de Fase 2 para consultar os dados de um recurso específico
         links:
           $ref: "#/components/schemas/Links"
         meta:
@@ -330,7 +346,7 @@ components:
                 CERTIFICADO_AUTOMOVEL]
           example: APOLICE_INDIVIDUAL
         policyId:
-          description: Identificador da apólice ou bilhete
+          description: Número do certificado/apólice individual, caso contrato individual. Número do certificado, caso contrato coletivo
           type: string
           maxLength: 60
           example: "111111"
@@ -339,7 +355,7 @@ components:
           type: string
           maxLength: 60
         groupCertificateId:
-          description: Identificador do Certificado (Caso Tipo de Documento Emitido for certificado)
+          description: Número do Certificado (Caso Tipo de Documento Emitido for certificado)
           type: string
           maxLength: 60
         issuanceType:
@@ -369,12 +385,12 @@ components:
           maxLength: 10
           example: "2022-12-31"
         leadInsurerCode:
-          description: Codigo da seguradora lider para contratos com arranjo de cosseguro
+          description: Código da seguradora líder para contratos com arranjo de cosseguro
           type: string
           maxLength: 1024
           example: "ABC123"
         leadInsurerPolicyId:
-          description: Identificador da apolice seguradora lider para apolice de cosseguro aceito
+          description: Número da apólice seguradora líder para apólice de cosseguro aceito
           type: string
           maxLength: 1024
           example: "ABC123"
@@ -460,7 +476,7 @@ components:
             type: string
             description: "Periodicidade da carência. OBS: Obrigatório, se houver"
             example: DIA
-            enum: [DIA, MES, ANO]
+            enum: [HORA, DIA, MES, ANO]
           gracePeriodCountingMethod:
             type: string
             description: "Indicador de dias úteis ou corridos da carência. OBS: Obrigatório, se houver"
@@ -803,6 +819,7 @@ components:
         - triggerEvent
         - financialType
         - benefitPaymentModality
+        - coverageUpdateIndex
       properties:
         branch:
           type: string
@@ -878,7 +895,7 @@ components:
         feature:
           description: Caracteristica da cobertura
           type: string
-          enum: [MASSIFICADOS, MASSIFICADOS_MICROSEGUROS, GRANDES_RISCOS]
+          enum: [MASSIFICADOS, MASSIFICADOS_MICROSSEGUROS, GRANDES_RISCOS]
           example: MASSIFICADOS
         type:
           description: Tipo de cobertura
@@ -1114,8 +1131,8 @@ components:
           description: Indice de precos referente a atualizacao monetaria anual do valor da cobertura
           type: string
           enum:
-            [IPC-FGV, IGP-DI-FGV, IPCA-IBGE, IGPM-FGV, INPC-IBGE, TR, OUTROS]
-          example: IGPM-FGV
+            [IPC_FGV, IGP_DI_FGV, IPCA_IBGE, IGPM_FGV, INPC_IBGE, TR, OUTROS]
+          example: IPC_FGV
         coverageUpdateIndexOthers:
           description: Descricao do Indice de precos referente a atualizacao monetaria anual do valor da cobertura quando for informada a opcao OUTROS
           type: string
@@ -1137,8 +1154,8 @@ components:
             Indice de Precos Garantido PMBaC
             Obrigatorio em caso de regime financeiro de Capitalizacao
           type: string
-          enum: [IPC-FGV, IGP-DI-FGV, IPCA-IBGE, IGPM-FGV, INPC-IBGE, TR, OUTROS]
-          example: IGPM-FGV
+          enum: [IPC_FGV, IGP_DI_FGV, IPCA_IBGE, IGPM_FGV, INPC_IBGE, TR, OUTROS]
+          example: IPC_FGV
         pmbacMonetaryUpdateIndexOthers:
           description: Descricao do Indice de Precos Garantido PMBaC quando for informada a opcao OUTROS
           type: string
@@ -1276,7 +1293,7 @@ components:
           maxLength: 60
           example: "Descricao de exemplo"
         minValue:
-          description: Valor minimo do POS (caso aplicavel)
+          description: Valor mÍnimo do POS (caso aplicavel)
           allOf:
             - $ref: "#/components/schemas/AmountDetails"
         maxValue:
@@ -1394,7 +1411,9 @@ components:
           type: string
           maxLength: 500
         premiumAmount:
-          $ref: "#/components/schemas/AmountDetails"
+          description: "Valor de prêmio da cobertura na moeda de emissão do contrato"
+          allOf:
+            - $ref: "#/components/schemas/AmountDetails"
 
     Payment:
       type: object
@@ -1696,7 +1715,9 @@ components:
             (para alguns Tipos de Renda verificar manual de escopo de dados)
           example: true
         incomeValueUniquePayment:
-          $ref: "#/components/schemas/AmountDetails"
+          description: "Valor do benefício concedido em forma de renda ou do pagamento único"
+          allOf:
+            - $ref: "#/components/schemas/AmountDetails"
         incomeTerm:
           type: string
           description: |
@@ -1717,8 +1738,8 @@ components:
           type: string
           description: Índice de preços referente à atualização monetária anual do valor da renda
           enum:
-            [IPC-FGV, IGP-DI-FGV, IPCA-IBGE, IGPM-FGV, INPC-IBGE, TR, OUTROS]
-          example: IGPM-FGV
+            [IPC_FGV, IGP_DI_FGV, IPCA_IBGE, IGPM_FGV, INPC_IBGE, TR, OUTROS]
+          example: IPC_FGV
         monetaryUpdateIndexOthers:
           description: Descrição do Índice de preços referente à atualização monetária anual do valor da renda quando for informada a opção OUTROS
           type: string
@@ -1847,27 +1868,27 @@ components:
           type: string
           description: URL da página atualmente requisitada
           pattern: ^(https:\/\/)(.*?)(\/open-insurance\/insurance-person\/v\d+)(\/insurance-person.*)?$
-          example: "https://api.organizacao.com.br/open-insurance/insurance-person/v2/insurance-person"
+          example: "https://api.organizacao.com.br/open-insurance/insurance-person/v3/insurance-person"
         first:
           type: string
           description: URL da primeira página de registros
           pattern: ^(https:\/\/)(.*?)(\/open-insurance\/insurance-person\/v\d+)(\/insurance-person.*)?$
-          example: "https://api.organizacao.com.br/open-insurance/insurance-person/v2/insurance-person"
+          example: "https://api.organizacao.com.br/open-insurance/insurance-person/v3/insurance-person"
         prev:
           type: string
           description: URL da página anterior de registros
           pattern: ^(https:\/\/)(.*?)(\/open-insurance\/insurance-person\/v\d+)(\/insurance-person.*)?$
-          example: "https://api.organizacao.com.br/open-insurance/insurance-person/v2/insurance-person"
+          example: "https://api.organizacao.com.br/open-insurance/insurance-person/v3/insurance-person"
         next:
           type: string
           description: URL da próxima página de registros
           pattern: ^(https:\/\/)(.*?)(\/open-insurance\/insurance-person\/v\d+)(\/insurance-person.*)?$
-          example: "https://api.organizacao.com.br/open-insurance/insurance-person/v2/insurance-person"
+          example: "https://api.organizacao.com.br/open-insurance/insurance-person/v3/insurance-person"
         last:
           type: string
           description: URL da última página de registros
           pattern: ^(https:\/\/)(.*?)(\/open-insurance\/insurance-person\/v\d+)(\/insurance-person.*)?$
-          example: "https://api.organizacao.com.br/open-insurance/insurance-person/v2/insurance-person"
+          example: "https://api.organizacao.com.br/open-insurance/insurance-person/v3/insurance-person"
 
     Meta:
       type: object
@@ -1930,14 +1951,6 @@ components:
       pattern: '^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$'
       maxLength: 100
       description: 'Um UID [RFC4122](https://tools.ietf.org/html/rfc4122) usado como um ID de correlação. Se fornecido, o transmissor deve "reproduzir" esse valor no cabeçalho de resposta.'
-    XV:
-      type: string
-      description: |
-        Versão do endpoint da API requisitado pelo cliente. O titular dos dados deve 
-        responder com a versão mais alta suportada entre x-min-v e x-v. Se o valor de 
-        x-min-v for igual ou maior que o valor de x-v, o cabeçalho x-min-v deve ser 
-        tratado como ausente. Se todas as versões solicitadas não forem suportadas, 
-        o titular dos dados deve responder com o código de status 406 Not Acceptable.
     Address:
       type: object
       description: 'dados do endereço'
@@ -1970,39 +1983,43 @@ components:
         type: 
           type: string
           description: 'Tipo do logradouro'
-          enum: [AEROPORTO, ALAMEDA, AREA, AVENIDA, CAMPO, CHACARA, COLONIA, CONDOMINIO, CONJUNTO, DISTRITO, ESPLANADA, ESTACAO, ESTRADA, FAZENDA, FEIRA, JARDIM, LADEIRA, LAGO, LAGOA, LARGO, LOTEAMENTO, NUCLEO, PARQUE, PASSARELA, PATIO, PRACA, QUADRA, RECANTO, RESIDENCIAL, RODOVIA, RUA, SETOR, SITIO, TRAVESSA, TRECHO, TREVO, VALE, VEREDA, VIA, VIADUTO, VIELA, VILA]
+          enum: [AEROPORTO, ALAMEDA, AREA, AVENIDA, CAMPO, CHACARA, COLONIA, CONDOMINIO, CONJUNTO, DISTRITO, ESPLANADA, ESTACAO, ESTRADA, FAZENDA, FEIRA, JARDIM, LADEIRA, LAGO, LAGOA, LARGO, LOTEAMENTO, NUCLEO, PARQUE, PASSARELA, PATIO, PRACA, QUADRA, RECANTO, RESIDENCIAL, RODOVIA, RUA, SETOR, SITIO, TRAVESSA, TRECHO, TREVO, VALE, VEREDA, VIA, VIADUTO, VIELA, VILA, OUTROS]
+        typeOthers:
+          type: string
+          maxLength: 30
+          description: 'Descrição do tipo do logradouro. Condicional ao preenchimento do campo "type" com valor OUTROS.'
         name: 
           type: string
           description: 'Nome do logradouro'
+          maxLength: 100
         number:
           type: string
           description: 'Número do logradouro'
-          maxLength: 6
-          pattern: '^[0-9]{1,6}$'
+          pattern: '^[0-9A-Za-zÀ-ÿ\s\/\-\.,ºª]{1,40}$'
         addressComplementaryInfo:
           type: string
-          maxLength: 30
+          maxLength: 50
           example: Fundos
           description: 'Alguns logradouros ainda necessitam ser especificados por meio de complemento.'
-        district:
+        districtName:
           type: string
-          maxLength: 50
+          maxLength: 70
           example: 'Centro'
           description: 'Bairro é uma comunidade ou região localizada em uma cidade ou município de acordo com as suas subdivisões geográficas'
         townName:
           type: string
           maxLength: 50
-          pattern: '^[A-Za-z\sáâãéêíïóôõúçÁÂÃÉÍÏÓÔÕÚÇ]+$'
+          pattern:  '^[0-9A-Za-zÀ-ÿ\s\/\-\.,ºª]+$'
           example: Marília
           description: |
                   Designação da cidade ou município no qual o endereço está localizado.
         countrySubDivision:
           type: string
           maxLength: 50
-          pattern: '^[A-Za-z\sáâãéêíïóôõúçÁÂÃÉÍÏÓÔÕÚÇ]+$'
+          pattern:  '^[0-9A-Za-zÀ-ÿ\s\/\-\.,ºª]+$'
           example: New York
           description: |
-                  Designação do estado no qual o endereço está localizado.
+                  Designação do estado, província, região ou cantão no qual o endereço está localizado.
         postCode:
           type: string
           maxLength: 11
@@ -2024,29 +2041,33 @@ components:
         type: 
           type: string
           description: 'Tipo do logradouro'
-          enum: [AEROPORTO, ALAMEDA, AREA, AVENIDA, CAMPO, CHACARA, COLONIA, CONDOMINIO, CONJUNTO, DISTRITO, ESPLANADA, ESTACAO, ESTRADA, FAZENDA, FEIRA, JARDIM, LADEIRA, LAGO, LAGOA, LARGO, LOTEAMENTO, NUCLEO, PARQUE, PASSARELA, PATIO, PRACA, QUADRA, RECANTO, RESIDENCIAL, RODOVIA, RUA, SETOR, SITIO, TRAVESSA, TRECHO, TREVO, VALE, VEREDA, VIA, VIADUTO, VIELA, VILA]
+          enum: [AEROPORTO, ALAMEDA, AREA, AVENIDA, CAMPO, CHACARA, COLONIA, CONDOMINIO, CONJUNTO, DISTRITO, ESPLANADA, ESTACAO, ESTRADA, FAZENDA, FEIRA, JARDIM, LADEIRA, LAGO, LAGOA, LARGO, LOTEAMENTO, NUCLEO, PARQUE, PASSARELA, PATIO, PRACA, QUADRA, RECANTO, RESIDENCIAL, RODOVIA, RUA, SETOR, SITIO, TRAVESSA, TRECHO, TREVO, VALE, VEREDA, VIA, VIADUTO, VIELA, VILA, OUTROS]
+        typeOthers:
+          type: string
+          maxLength: 30
+          description: 'Descrição do tipo do logradouro. Condicional ao preenchimento do campo "type" com valor OUTROS.'
         name: 
           type: string
           description: 'Nome do logradouro'
+          maxLength: 100
         number:
           type: string
           description: 'Número do logradouro'
-          maxLength: 6
-          pattern: '^[0-9]{1,6}$'
+          pattern: '^[0-9A-Za-zÀ-ÿ\s\/\-\.,ºª]{1,40}$'
         addressComplementaryInfo:
           type: string
-          maxLength: 30
+          maxLength: 50
           example: Fundos
           description: 'Alguns logradouros ainda necessitam ser especificados por meio de complemento.'
         districtName:
           type: string
-          maxLength: 50
+          maxLength: 70
           example: 'Centro'
           description: 'Bairro é uma comunidade ou região localizada em uma cidade ou município de acordo com as suas subdivisões geográficas'
         townName:
           type: string
           maxLength: 50
-          pattern: '^[A-Za-z\sáâãéêíïóôõúçÁÂÃÉÍÏÓÔÕÚÇ]+$'
+          pattern: '^[0-9A-Za-zÀ-ÿ\s\/\-\.,ºª]+$'
           example: Marília
           description: |
                   Localidade: O nome da localidade corresponde à designação da cidade ou município no qual o endereço está localizado.
@@ -2104,13 +2125,15 @@ components:
         - TO
       example: SP
   parameters:
-    policyId:
-      name: policyId
+    resourceId:
+      name: resourceId
       in: path
       required: true
       schema:
         type: string
-        maxLength: 60
+        format: uuid
+        example: "25cac914-d8ae-6789-b215-650a6215820d"
+        description: Identificador sistêmico da apólice
     Authorization:
       name: Authorization
       in: header
@@ -2179,31 +2202,6 @@ components:
         pattern: '^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$'
         minLength: 1
         maxLength: 100
-    x-v:
-      name: x-v
-      in: header
-      description: |
-        Versão do endpoint da API requisitado pelo cliente. O titular dos dados deve 
-        responder com a versão mais alta suportada entre x-min-v e x-v. Se o valor de 
-        x-min-v for igual ou maior que o valor de x-v, o cabeçalho x-min-v deve ser 
-        tratado como ausente. Se todas as versões solicitadas não forem suportadas, 
-        o titular dos dados deve responder com o código de status 406 Not Acceptable.
-      required: false
-      schema:
-        type: string
-      example: '2.1.3'
-    x-min-v:
-      name: x-min-v
-      in: header
-      description: |
-        Versão mínima do endpoint da API requisitado pelo cliente. O detentor dos dados 
-        deve responder com a versão mais alta suportada entre x-min-v e x-v. Se todas as 
-        versões solicitadas não forem suportadas, o titular dos dados deve responder com 
-        um código de status 406 Not Acceptable.
-      required: false
-      schema:
-        type: string
-      example: '2.0.0'
   securitySchemes:
     OpenId:
       type: openIdConnect
@@ -2225,9 +2223,6 @@ components:
         x-fapi-interaction-id:
           schema:
             $ref: "#/components/schemas/XFapiInteractionId"
-        x-v: 
-          schema:
-            $ref: '#/components/schemas/XV'
       content:
         application/json:
           schema:
@@ -2238,9 +2233,6 @@ components:
         x-fapi-interaction-id:
           schema:
             $ref: "#/components/schemas/XFapiInteractionId"
-        x-v: 
-          schema:
-            $ref: '#/components/schemas/XV'
       content:
         application/json:
           schema:
@@ -2251,9 +2243,6 @@ components:
         x-fapi-interaction-id:
           schema:
             $ref: "#/components/schemas/XFapiInteractionId"
-        x-v: 
-          schema:
-            $ref: '#/components/schemas/XV'
       content:
         application/json:
           schema:
@@ -2264,9 +2253,6 @@ components:
         x-fapi-interaction-id:
           schema:
             $ref: "#/components/schemas/XFapiInteractionId"
-        x-v: 
-          schema:
-            $ref: '#/components/schemas/XV'
       content:
         application/json:
           schema:

@@ -24,23 +24,23 @@ info:
     ### `/`
       - permissions:
         - GET: **DAMAGES_AND_PEOPLE_ACCEPTANCE_AND_BRANCHES_ABROAD_READ**
-    ### `/{policyId}/policy-info`
+    ### `/{resourceId}/policy-info`
       - permissions:
         - GET: **DAMAGES_AND_PEOPLE_ACCEPTANCE_AND_BRANCHES_ABROAD_POLICYINFO_READ**
-    ### `/{policyId}/premium`
+    ### `/{resourceId}/premium`
       - permissions:
         - GET: **DAMAGES_AND_PEOPLE_ACCEPTANCE_AND_BRANCHES_ABROAD_PREMIUM_READ**
-    ### `/{policyId}/claim`
+    ### `/{resourceId}/claim`
       - permissions:
         - GET: **DAMAGES_AND_PEOPLE_ACCEPTANCE_AND_BRANCHES_ABROAD_CLAIM_READ**
-  version: 1.4.0
+  version: 3.0.0
   contact:
     name: Governança do Open Insurance Brasil
     url: 'https://www.gov.br/susep/'
 servers:
-  - url: 'https://api.organizacao.com.br/open-insurance/insurance-acceptance-and-branches-abroad/v1'
+  - url: 'https://api.organizacao.com.br/open-insurance/insurance-acceptance-and-branches-abroad/v3'
     description: Servidor de Produção
-  - url: 'https://api.organizacao.com.br/open-insurance/insurance-acceptance-and-branches-abroad/v1'
+  - url: 'https://api.organizacao.com.br/open-insurance/insurance-acceptance-and-branches-abroad/v3'
     description: Servidor de Homologação
 tags:
   - name: 'InsuranceAcceptanceAndBranchesAbroad'
@@ -60,8 +60,6 @@ paths:
         - $ref: '#/components/parameters/xCustomerUserAgent'
         - $ref: "#/components/parameters/page"
         - $ref: "#/components/parameters/pageSize"
-        - $ref: "#/components/parameters/x-v"
-        - $ref: "#/components/parameters/x-min-v"
       responses:
         '200':
           $ref: '#/components/responses/OKResponseInsuranceAcceptanceAndBranchesAbroad'
@@ -85,10 +83,6 @@ paths:
           $ref: '#/components/responses/InternalServerError'
         default:
           description: Erro inesperado.
-          headers:
-            x-v:
-              schema:
-                $ref: '#/components/schemas/XV'
           content:
             application/json; charset=utf-8:
               schema:
@@ -99,22 +93,20 @@ paths:
           OAuth2Security:
             - 'consent:consentId'
             - insurance-acceptance-and-branches-abroad
-  /insurance-acceptance-and-branches-abroad/{policyId}/policy-info:
+  /insurance-acceptance-and-branches-abroad/{resourceId}/policy-info:
     get:
       tags:
         - InsuranceAcceptanceAndBranchesAbroad
-      summary: Obtém as informações gerais da apólice identificada por {policyId}
+      summary: Obtém as informações gerais da apólice identificada por {resourceId}
       description: "Método para obter as informações gerais da apólice"
-      operationId: "getInsuranceAcceptanceAndBranchesAbroadpolicyIdPolicyInfo"
+      operationId: "getInsuranceAcceptanceAndBranchesAbroadresourceIdPolicyInfo"
       parameters:
         - $ref: '#/components/parameters/Authorization'
         - $ref: '#/components/parameters/xFapiAuthDate'
         - $ref: '#/components/parameters/xFapiCustomerIpAddress'
         - $ref: '#/components/parameters/xFapiInteractionId'
         - $ref: '#/components/parameters/xCustomerUserAgent'
-        - $ref: "#/components/parameters/policyId"
-        - $ref: "#/components/parameters/x-v"
-        - $ref: "#/components/parameters/x-min-v"
+        - $ref: "#/components/parameters/resourceId"
       responses:
         '200':
           $ref: '#/components/responses/OKResponseInsuranceAcceptanceAndBranchesAbroadPolicyInfo'
@@ -148,22 +140,20 @@ paths:
           OAuth2Security:
             - 'consent:consentId'
             - insurance-acceptance-and-branches-abroad
-  /insurance-acceptance-and-branches-abroad/{policyId}/premium:
+  /insurance-acceptance-and-branches-abroad/{resourceId}/premium:
     get:
       tags:
         - InsuranceAcceptanceAndBranchesAbroad
-      summary: Obtém os dados de prêmio da apólice identificada por {policyId}
+      summary: Obtém os dados de prêmio da apólice identificada por {resourceId}
       description: "Método para obter os dados de prêmio da apólice."
-      operationId: "getInsuranceAcceptanceAndBranchesAbroadpolicyIdPremium"
+      operationId: "getInsuranceAcceptanceAndBranchesAbroadresourceIdPremium"
       parameters:
         - $ref: '#/components/parameters/Authorization'
         - $ref: '#/components/parameters/xFapiAuthDate'
         - $ref: '#/components/parameters/xFapiCustomerIpAddress'
         - $ref: '#/components/parameters/xFapiInteractionId'
         - $ref: '#/components/parameters/xCustomerUserAgent'
-        - $ref: "#/components/parameters/policyId"
-        - $ref: "#/components/parameters/x-v"
-        - $ref: "#/components/parameters/x-min-v"
+        - $ref: "#/components/parameters/resourceId"
       responses:
         '200':
           $ref: '#/components/responses/OKResponseInsuranceAcceptanceAndBranchesAbroadPremium'
@@ -197,24 +187,22 @@ paths:
           OAuth2Security:
             - 'consent:consentId'
             - insurance-acceptance-and-branches-abroad
-  /insurance-acceptance-and-branches-abroad/{policyId}/claim:
+  /insurance-acceptance-and-branches-abroad/{resourceId}/claim:
     get:
       tags:
         - InsuranceAcceptanceAndBranchesAbroad
-      summary: Obtém os dados de sinistro da apólice identificada por {policyId}
+      summary: Obtém os dados de sinistro da apólice identificada por {resourceId}
       description: "Método para obter os dados de sinistro associados à apólice"
-      operationId: "getInsuranceAcceptanceAndBranchesAbroadpolicyIdClaims"
+      operationId: "getInsuranceAcceptanceAndBranchesAbroadresourceIdClaims"
       parameters:
         - $ref: '#/components/parameters/Authorization'
         - $ref: '#/components/parameters/xFapiAuthDate'
         - $ref: '#/components/parameters/xFapiCustomerIpAddress'
         - $ref: '#/components/parameters/xFapiInteractionId'
         - $ref: '#/components/parameters/xCustomerUserAgent'
-        - $ref: "#/components/parameters/policyId"
+        - $ref: "#/components/parameters/resourceId"
         - $ref: "#/components/parameters/page"
         - $ref: "#/components/parameters/pageSize"
-        - $ref: "#/components/parameters/x-v"
-        - $ref: "#/components/parameters/x-min-v"
       responses:
         '200':
           $ref: '#/components/responses/OKResponseInsuranceAcceptanceAndBranchesAbroadClaims'
@@ -285,21 +273,21 @@ components:
                     cnpjNumber:
                       description: CNPJ da sociedade pertencente à marca
                       type: string
-                      pattern: '^\d{14}$'
+                      pattern: '^[A-Z0-9]{12}\d{2}$'
                       example: "12345678901234"
                     policies:
                       type: array
                       items:
                         type: object
                         required:
-                          - policyId
+                          - resourceId
                           - productName
                         properties:
-                          policyId:
-                            description: policyId - Identificador da apólice
-                            type: string
-                            maxLength: 60
-                            example: '42'
+                          resourceId:
+                            type: string 
+                            format: uuid
+                            example: 25cac914-d8ae-6789-b215-650a6215820d
+                            description: Identificador do recurso no formato UUID. Utilizado nas URLs secundárias das APIs de Fase 2 para consultar os dados de um recurso específico
                           productName:
                             type: string
                             description: Nome comercial do produto associado à apólice.
@@ -322,10 +310,10 @@ components:
           $ref: '#/components/schemas/Links'
         meta:
           $ref: '#/components/schemas/Meta'
-    InsuranceAcceptanceAndBranchesAbroadPolicyInfo:    
+    InsuranceAcceptanceAndBranchesAbroadPolicyInfo:
       type: object
       required:
-        - documentType 
+        - documentType
         - policyId
         - issuanceType
         - issuanceDate
@@ -348,19 +336,19 @@ components:
                 CERTIFICADO_AUTOMOVEL]
           example: APOLICE_INDIVIDUAL
         policyId:
-          description: Identificador da apólice ou bilhete
+          description: Número do certificado/apólice individual, caso contrato individual. Número do certificado, caso contrato coletivo
           type: string
           maxLength: 60
           example: "111111"
-        susepProcessNumber: 
+        susepProcessNumber:
           description: Número SUSEP da apólice, conforme regulamentação vigente (Obrigatório caso apólice com coberturas do ramo Garantia)
           type: string
           maxLength: 60
-        groupCertificateId: 
-          description: "Identificador do Certificado(Caso Tipo de Documento Emitido for certificado)"
+        groupCertificateId:
+          description: "Número do Certificado (Caso Tipo de Documento Emitido for certificado)"
           type: string
           maxLength: 60
-        issuanceType: 
+        issuanceType:
           description: "Tipo de Emissão"
           type: string
           enum: [EMISSAO_PROPRIA,
@@ -373,7 +361,7 @@ components:
           maxLength: 10
           pattern: '^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])$'
           example: '2022-05-21'
-        termStartDate: 
+        termStartDate:
           description: Data de início de vigência do documento
           type: string
           format: date
@@ -392,7 +380,7 @@ components:
           type: string
           maxLength: 1024
         leadInsurerPolicyId:
-          description: "Identificador da apólice seguradora líder para apólice de cosseguro aceito"
+          description: "Número da apólice seguradora líder para apólice de cosseguro aceito"
           type: string
           maxLength: 1024
         maxLMG:
@@ -408,7 +396,7 @@ components:
           description: Lista que agrupa os dados dos segurados.  
           items:
             $ref: '#/components/schemas/PersonalInfo'  
-        beneficiaries: 
+        beneficiaries:
           type: array
           description: Lista que agrupa os dados dos beneficiários.
           items:
@@ -428,7 +416,7 @@ components:
           description: Lista que agrupa os dados de objetos segurados.
           items:
             $ref: '#/components/schemas/InsuranceAcceptanceAndBranchesAbroadInsuredObject'
-        coverages:    
+        coverages:
           type: array
           description: Lista que agrupa os dados das coberturas.
           items:
@@ -451,10 +439,6 @@ components:
         - identification
         - identificationType
         - name
-        - postCode
-        - city
-        - state
-        - country
         - address
       properties:
         identification:
@@ -481,54 +465,20 @@ components:
           type: string
           maxLength: 60
           example: Nome Sobrenome
-        postCode:
-          description: Código Postal do Tomador/Garantidor
-          type: string
-          maxLength: 60
-          example: "10000000"
         email:
           description: E-mail do Tomador/Garantidor (caso possua)
           type: string
           example: 'email@gmail.com' 
           pattern: '^\S+@\S+\.\S+$'
           maxLength: 256
-        city:
-          description: Cidade do Tomador/Garantidor (por extenso)
-          type: string
-          maxLength: 60
-        state:
-          description: Estado do Tomador/Garantidor (por extenso)
-          type: string
-          enum: ['AC', 'AL', 'AP', 'AM', 'BA', 'CE', 'DF', 'ES', 'GO', 'MA', 'MT', 'MS', 'MG', 'PA', 'PB', 'PR', 'PE', 'PI', 'RJ', 'RN', 'RS', 'RO', 'RR', 'SC', 'SP', 'SE', 'TO', 'XX']
-          example: SP
-        country:
-          description: País do Tomador/Garantidor (de acordo com o código "alpha3" do ISO-3166)
-          type: string
-          enum: [AFG,ALA,ALB,DZA,ASM,AND,AGO,AIA,ATA,ATG,ARG,ARM,ABW,AUS,AUT,AZE,BHS,BHR,BGD,BRB,BLR,BEL,BLZ,BEN,BMU,BTN,BOL,BES,BIH,BWA,BVT,BRA,IOT,BRN,BGR,BFA,BDI,CPV,KHM,CMR,CAN,CYM,
-                  CAF,TCD,CHL,CHN,CXR,CCK,COL,COM,COG,COD,COK,CRI,CIV,HRV,CUB,CUW,CYP,CZE,DNK,DJI,DMA,DOM,ECU,EGY,SLV,GNQ,ERI,EST,SWZ,ETH,FLK,FRO,FJI,FIN,FRA,GUF,PYF,ATF,GAB,GMB,GEO,DEU,GHA,GIB,
-                  GRC,GRL,GRD,GLP,GUM,GTM,GGY,GIN,GNB,GUY,HTI,HMD,VAT,HND,HKG,HUN,ISL,IND,IDN,IRN,IRQ,IRL,IMN,ISR,ITA,JAM,JPN,JEY,JOR,KAZ,KEN,KIR,PRK,KOR,KWT,KGZ,LAO,LVA,LBN,LSO,LBR,LBY,LIE,LTU,
-                  LUX,MAC,MDG,MWI,MYS,MDV,MLI,MLT,MHL,MTQ,MRT,MUS,MYT,MEX,FSM,MDA,MCO,MNG,MNE,MSR,MAR,MOZ,MMR,NAM,NRU,NPL,NLD,NCL,NZL,NIC,NER,NGA,NIU,NFK,MKD,MNP,NOR,OMN,PAK,PLW,PSE,PAN,PNG,PRY,
-                  PER,PHL,PCN,POL,PRT,PRI,QAT,REU,ROU,RUS,RWA,BLM,SHN,KNA,LCA,MAF,SPM,VCT,WSM,SMR,STP,SAU,SEN,SRB,SYC,SLE,SGP,SXM,SVK,SVN,SLB,SOM,ZAF,SGS,SSD,ESP,LKA,SDN,SUR,SJM,SWE,CHE,SYR,TWN,
-                  TJK,TZA,THA,TLS,TGO,TKL,TON,TTO,TUN,TUR,TKM,TCA,TUV,UGA,UKR,ARE,GBR,USA,UMI,URY,UZB,VUT,VEN,VNM,VGB,VIR,WLF,ESH,YEM,ZMB,ZWE]
-          example: BRA 
         address:
-          description: Endereço do Tomador/Garantidor (restante do endereço, excluindo cidade, estado e país)
-          type: string
-          maxLength: 60
-        adressAditionalInfo:
-          description:  informar dados complementares do endereço, caso houver.
-          type: string
+          $ref: '#/components/schemas/Address'
     PersonalInfo:
       type: object
       required:
         - identification
         - identificationType
         - name
-        - postCode
-        - birthDate
-        - city
-        - state
-        - country
         - address
       properties:
         identification:
@@ -555,13 +505,8 @@ components:
           type: string
           maxLength: 60
           example: Nome Sobrenome
-        postCode:
-          description: Código Postal do segurado
-          type: string
-          maxLength: 60
-          example: "10000000"
         birthDate:
-          description: Data de nascimento do segurado
+          description: Data de nascimento do segurado, condicional ao tipo de documento ser CPF ou OUTROS.
           type: string
           format: date
           pattern: '^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])$'
@@ -572,32 +517,8 @@ components:
           example: 'email@gmail.com' 
           pattern: '^\S+@\S+\.\S+$'
           maxLength: 256
-        city:
-          description: Cidade do segurado (por extenso)
-          type: string
-          maxLength: 60
-        state:
-          description: Estado do segurado 
-          type: string
-          enum: ['AC', 'AL', 'AP', 'AM', 'BA', 'CE', 'DF', 'ES', 'GO', 'MA', 'MT', 'MS', 'MG', 'PA', 'PB', 'PR', 'PE', 'PI', 'RJ', 'RN', 'RS', 'RO', 'RR', 'SC', 'SP', 'SE', 'TO', 'XX']
-          example: SP
-        country:
-          description: País do segurado (de acordo com o código "alpha3" do ISO-3166)
-          type: string
-          enum: [AFG,ALA,ALB,DZA,ASM,AND,AGO,AIA,ATA,ATG,ARG,ARM,ABW,AUS,AUT,AZE,BHS,BHR,BGD,BRB,BLR,BEL,BLZ,BEN,BMU,BTN,BOL,BES,BIH,BWA,BVT,BRA,IOT,BRN,BGR,BFA,BDI,CPV,KHM,CMR,CAN,CYM,
-                  CAF,TCD,CHL,CHN,CXR,CCK,COL,COM,COG,COD,COK,CRI,CIV,HRV,CUB,CUW,CYP,CZE,DNK,DJI,DMA,DOM,ECU,EGY,SLV,GNQ,ERI,EST,SWZ,ETH,FLK,FRO,FJI,FIN,FRA,GUF,PYF,ATF,GAB,GMB,GEO,DEU,GHA,GIB,
-                  GRC,GRL,GRD,GLP,GUM,GTM,GGY,GIN,GNB,GUY,HTI,HMD,VAT,HND,HKG,HUN,ISL,IND,IDN,IRN,IRQ,IRL,IMN,ISR,ITA,JAM,JPN,JEY,JOR,KAZ,KEN,KIR,PRK,KOR,KWT,KGZ,LAO,LVA,LBN,LSO,LBR,LBY,LIE,LTU,
-                  LUX,MAC,MDG,MWI,MYS,MDV,MLI,MLT,MHL,MTQ,MRT,MUS,MYT,MEX,FSM,MDA,MCO,MNG,MNE,MSR,MAR,MOZ,MMR,NAM,NRU,NPL,NLD,NCL,NZL,NIC,NER,NGA,NIU,NFK,MKD,MNP,NOR,OMN,PAK,PLW,PSE,PAN,PNG,PRY,
-                  PER,PHL,PCN,POL,PRT,PRI,QAT,REU,ROU,RUS,RWA,BLM,SHN,KNA,LCA,MAF,SPM,VCT,WSM,SMR,STP,SAU,SEN,SRB,SYC,SLE,SGP,SXM,SVK,SVN,SLB,SOM,ZAF,SGS,SSD,ESP,LKA,SDN,SUR,SJM,SWE,CHE,SYR,TWN,
-                  TJK,TZA,THA,TLS,TGO,TKL,TON,TTO,TUN,TUR,TKM,TCA,TUV,UGA,UKR,ARE,GBR,USA,UMI,URY,UZB,VUT,VEN,VNM,VGB,VIR,WLF,ESH,YEM,ZMB,ZWE]
-          example: BRA 
         address:
-          description: Endereço do segurado (restante do endereço, excluindo cidade, estado e país)
-          type: string
-          maxLength: 60
-        adressAditionalInfo:
-          description:  informar dados complementares do endereço, caso houver.
-          type: string
+          $ref: '#/components/schemas/Address'
     BeneficiaryInfo:
       type: object
       required:
@@ -676,38 +597,12 @@ components:
           maxLength: 100
           example: RNE
         name:
-          description: Nome ou Razão Social da Intermediador
+          description: Nome ou Razão Social do Intermediador
           type: string
           maxLength: 60
           example: Nome Sobrenome
-        postCode:
-          description: Código Postal da Intermediador (Caso Tipo de Intermediador for ESTIPULANTE) 
-          type: string
-          maxLength: 60
-          example: "10000000"
-        city:
-          description: Cidade da Intermediador (por extenso; Caso Tipo de Intermediador for ESTIPULANTE)
-          type: string
-          maxLength: 60
-        state:
-          description: Estado da Intermediador (por extenso; Caso Tipo de Intermediador for ESTIPULANTE)
-          type: string
-          enum: ['AC', 'AL', 'AP', 'AM', 'BA', 'CE', 'DF', 'ES', 'GO', 'MA', 'MT', 'MS', 'MG', 'PA', 'PB', 'PR', 'PE', 'PI', 'RJ', 'RN', 'RS', 'RO', 'RR', 'SC', 'SP', 'SE', 'TO', 'XX']
-          example: SP
-        country:
-          description: País da Intermediador (de acordo com o código "alpha3" do ISO-3166; Caso Tipo de Intermediador for ESTIPULANTE)
-          type: string
-          enum: [AFG,ALA,ALB,DZA,ASM,AND,AGO,AIA,ATA,ATG,ARG,ARM,ABW,AUS,AUT,AZE,BHS,BHR,BGD,BRB,BLR,BEL,BLZ,BEN,BMU,BTN,BOL,BES,BIH,BWA,BVT,BRA,IOT,BRN,BGR,BFA,BDI,CPV,KHM,CMR,CAN,CYM,
-                  CAF,TCD,CHL,CHN,CXR,CCK,COL,COM,COG,COD,COK,CRI,CIV,HRV,CUB,CUW,CYP,CZE,DNK,DJI,DMA,DOM,ECU,EGY,SLV,GNQ,ERI,EST,SWZ,ETH,FLK,FRO,FJI,FIN,FRA,GUF,PYF,ATF,GAB,GMB,GEO,DEU,GHA,GIB,
-                  GRC,GRL,GRD,GLP,GUM,GTM,GGY,GIN,GNB,GUY,HTI,HMD,VAT,HND,HKG,HUN,ISL,IND,IDN,IRN,IRQ,IRL,IMN,ISR,ITA,JAM,JPN,JEY,JOR,KAZ,KEN,KIR,PRK,KOR,KWT,KGZ,LAO,LVA,LBN,LSO,LBR,LBY,LIE,LTU,
-                  LUX,MAC,MDG,MWI,MYS,MDV,MLI,MLT,MHL,MTQ,MRT,MUS,MYT,MEX,FSM,MDA,MCO,MNG,MNE,MSR,MAR,MOZ,MMR,NAM,NRU,NPL,NLD,NCL,NZL,NIC,NER,NGA,NIU,NFK,MKD,MNP,NOR,OMN,PAK,PLW,PSE,PAN,PNG,PRY,
-                  PER,PHL,PCN,POL,PRT,PRI,QAT,REU,ROU,RUS,RWA,BLM,SHN,KNA,LCA,MAF,SPM,VCT,WSM,SMR,STP,SAU,SEN,SRB,SYC,SLE,SGP,SXM,SVK,SVN,SLB,SOM,ZAF,SGS,SSD,ESP,LKA,SDN,SUR,SJM,SWE,CHE,SYR,TWN,
-                  TJK,TZA,THA,TLS,TGO,TKL,TON,TTO,TUN,TUR,TKM,TCA,TUV,UGA,UKR,ARE,GBR,USA,UMI,URY,UZB,VUT,VEN,VNM,VGB,VIR,WLF,ESH,YEM,ZMB,ZWE]
-          example: BRA
         address:
-          description: Endereço da Intermediador (restante do do endereço, excluindo cidade, estado e país; Caso Tipo de Intermediador for ESTIPULANTE)
-          type: string
-          maxLength: 60
+          $ref: '#/components/schemas/Address'
     InsuranceAcceptanceAndBranchesAbroadInsuredObject:
       type: object
       required:
@@ -733,9 +628,9 @@ components:
                 OUTROS]
         typeAdditionalInfo:
           type: string
-          maxLength: 100
+          maxLength: 500
           description: "Descrição do tipo do objeto segurado(caso tipo de objeto segurado for outros)."
-        description: 
+        description:
           type: string
           maxLength: 1024
           description: Descrição do objeto segurado 
@@ -778,21 +673,21 @@ components:
         susepProcessNumber:
             type: string
             maxLength: 50
-        LMI:          
+        LMI:
           description: Valor Limite Máximo de Indenização (LMI).
           allOf:
             - $ref: '#/components/schemas/AmountDetails'
         isLMISublimit:
           type: boolean
           description: Limite máximo de indenização (LMI) é sublimite (Caso aplicável)
-        termStartDate: 
+        termStartDate:
           type: string
           format: date
           maxLength: 10
           example: '2022-05-21'
           pattern: '^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])$'
           description: "Data de início de vigência da cobertura"
-        termEndDate:  
+        termEndDate:
           type: string
           format: date
           maxLength: 10
@@ -806,9 +701,9 @@ components:
           type: string
           description: "Característica da cobertura"
           enum: [MASSIFICADOS,
-                MASSIFICADOS_MICROSEGUROS,
+                MASSIFICADOS_MICROSSEGUROS,
                 GRANDES_RISCOS]
-        type:    
+        type:
           type: string
           description: "Tipo de cobertura"
           enum: [PARAMETRICO,
@@ -824,22 +719,23 @@ components:
         gracePeriodicity:
           type: string
           description: "Periodicidade da carência. OBS: Obrigatório, se houver"
-          enum: [DIA,
+          enum: [HORA,
+                DIA,
                 MES,
                 ANO]     
-        gracePeriodCountingMethod:   
+        gracePeriodCountingMethod:
           type: string
           description: "Indicador de dias úteis ou corridos da carência. OBS: Obrigatório, se houver"
           enum: [DIAS_UTEIS,
                 DIAS_CORRIDOS] 
-        gracePeriodStartDate:            
+        gracePeriodStartDate:       
           type: string
           format: date
           maxLength: 10
           pattern: '^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])$'
           example: '2022-05-21'
           description: "Data de início da carência. OBS: Obrigatório, se houver"
-        gracePeriodEndDate:            
+        gracePeriodEndDate:
           type: string
           format: date
           maxLength: 10
@@ -954,14 +850,13 @@ components:
         description:
           description: Descrição da Franquia
           type: string
-          maxLength: 60
+          maxLength: 500
           example: Franquia de exemplo
     POS:
       type: object
       description: Informações do POS
       required:
         - applicationType
-        - description
       properties:
         applicationType:
           description: Forma de Aplicação do POS
@@ -982,7 +877,7 @@ components:
           $ref: '#/components/schemas/AmountDetails'
         percentage:
           $ref: '#/components/schemas/AmountDetails'
-        valueOthers: 
+        valueOthers:
           $ref: '#/components/schemas/AmountDetails'
     Coinsurer:
       type: object
@@ -1127,7 +1022,7 @@ components:
         tellerIdOthers:
           description: Descrição do campo de tipo do documento do pagador/recebedor quando a opcao escolhida for OUTROS
           type: string
-          maxLength: 100
+          maxLength: 500
           example: RNE
         tellerName:
           description: Nome ou Razao Social do Pagador/Recebedor. Obrigatorio caso Tipo de Movimento for LIQUIDACAO_DE_PREMIO ou LIQUIDACAO_DE_CUSTO_DE_AQUISICAO
@@ -1245,7 +1140,7 @@ components:
         denialJustificationDescription:
           description: "Descrição da Justificativa da Negativa(Caso Justificativa da Negativa for 'OUTROS')"
           type: string
-          maxLength: 100  
+          maxLength: 500  
         coverages:
           type: array
           description: Lista que agrupa os dados de coberturas. 
@@ -1389,27 +1284,27 @@ components:
           type: string
           description: URL da página atualmente requisitada
           pattern: ^(https:\/\/)(.*?)(\/open-insurance\/insurance-acceptance-and-branches-abroad\/v\d+)(\/insurance-acceptance-and-branches-abroad.*)?$
-          example: 'https://api.organizacao.com.br/open-insurance/insurance-acceptance-and-branches-abroad/v1/insurance-acceptance-and-branches-abroad'
+          example: 'https://api.organizacao.com.br/open-insurance/insurance-acceptance-and-branches-abroad/v3/insurance-acceptance-and-branches-abroad'
         first:
           type: string
           description: URL da primeira página de registros
           pattern: ^(https:\/\/)(.*?)(\/open-insurance\/insurance-acceptance-and-branches-abroad\/v\d+)(\/insurance-acceptance-and-branches-abroad.*)?$
-          example: 'https://api.organizacao.com.br/open-insurance/insurance-acceptance-and-branches-abroad/v1/insurance-acceptance-and-branches-abroad'
+          example: 'https://api.organizacao.com.br/open-insurance/insurance-acceptance-and-branches-abroad/v3/insurance-acceptance-and-branches-abroad'
         prev:
           type: string
           description: URL da página anterior de registros
           pattern: ^(https:\/\/)(.*?)(\/open-insurance\/insurance-acceptance-and-branches-abroad\/v\d+)(\/insurance-acceptance-and-branches-abroad.*)?$
-          example: 'https://api.organizacao.com.br/open-insurance/insurance-acceptance-and-branches-abroad/v1/insurance-acceptance-and-branches-abroad'
+          example: 'https://api.organizacao.com.br/open-insurance/insurance-acceptance-and-branches-abroad/v3/insurance-acceptance-and-branches-abroad'
         next:
           type: string
           description: URL da próxima página de registros
           pattern: ^(https:\/\/)(.*?)(\/open-insurance\/insurance-acceptance-and-branches-abroad\/v\d+)(\/insurance-acceptance-and-branches-abroad.*)?$
-          example: 'https://api.organizacao.com.br/open-insurance/insurance-acceptance-and-branches-abroad/v1/insurance-acceptance-and-branches-abroad'
+          example: 'https://api.organizacao.com.br/open-insurance/insurance-acceptance-and-branches-abroad/v3/insurance-acceptance-and-branches-abroad'
         last:
           type: string
           description: URL da última página de registros
           pattern: ^(https:\/\/)(.*?)(\/open-insurance\/insurance-acceptance-and-branches-abroad\/v\d+)(\/insurance-acceptance-and-branches-abroad.*)?$
-          example: 'https://api.organizacao.com.br/open-insurance/insurance-acceptance-and-branches-abroad/v1/insurance-acceptance-and-branches-abroad'
+          example: 'https://api.organizacao.com.br/open-insurance/insurance-acceptance-and-branches-abroad/v3/insurance-acceptance-and-branches-abroad'
     Meta:
       type: object
       properties:
@@ -1467,25 +1362,195 @@ components:
       additionalProperties: false
     XFapiInteractionId:
       type: string
-      pattern: '^[a-zA-Z0-9][a-zA-Z0-9\-]{0,99}$'
+      pattern: '^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$'
       maxLength: 100
       description: 'Um UID [RFC4122](https://tools.ietf.org/html/rfc4122) usado como um ID de correlação. Se fornecido, o transmissor deve "reproduzir" esse valor no cabeçalho de resposta.'
-    XV:
-      description: |
-                Caso x-min-v e x-v tenham sido enviados, o titular dos dados deve responder
-                com a versao mais alta suportada entre x-min-v e x-v.
-                Caso x-min-v e x-v nao tenham sido enviados, o titular dos dados deve responder
-                com a versao que esta sendo utilizada naquele momento.
+    Address:
+      type: object
+      description: 'dados do endereço'
+      required:
+        - flagPostCode
+        - address
+      properties:
+        flagPostCode:
+          type: string
+          description: Indica se o endereço será nacional ou internacional
+          enum:
+            - NACIONAL
+            - INTERNACIONAL
+        address:
+          description: endereço completo
+          oneOf:
+            - $ref: '#/components/schemas/NationalAddress'
+            - $ref: '#/components/schemas/InternationalAddress'
+    InternationalAddress:
+      type: object
+      required:
+        - type
+        - name
+        - number
+        - townName
+        - countrySubDivision
+        - postCode
+        - countryCode
+      properties:
+        type: 
+          type: string
+          description: 'Tipo do logradouro'
+          enum: [AEROPORTO, ALAMEDA, AREA, AVENIDA, CAMPO, CHACARA, COLONIA, CONDOMINIO, CONJUNTO, DISTRITO, ESPLANADA, ESTACAO, ESTRADA, FAZENDA, FEIRA, JARDIM, LADEIRA, LAGO, LAGOA, LARGO, LOTEAMENTO, NUCLEO, PARQUE, PASSARELA, PATIO, PRACA, QUADRA, RECANTO, RESIDENCIAL, RODOVIA, RUA, SETOR, SITIO, TRAVESSA, TRECHO, TREVO, VALE, VEREDA, VIA, VIADUTO, VIELA, VILA, OUTROS]
+        typeOthers:
+          type: string
+          description: 'Descrição do tipo do logradouro. Condicional ao preenchimento do campo "type" com valor OUTROS'
+          maxLength: 30
+        name: 
+          type: string
+          description: 'Nome do logradouro'
+          maxLength: 100
+        number:
+          type: string
+          description: 'Número do logradouro'
+          pattern: '^[0-9A-Za-zÀ-ÿ\s\/\-\.,ºª]{1,40}$'
+        addressComplementaryInfo:
+          type: string
+          maxLength: 50
+          example: Fundos
+          description: 'Alguns logradouros ainda necessitam ser especificados por meio de complemento.'
+        districtName:
+          type: string
+          maxLength: 70
+          example: 'Centro'
+          description: 'Bairro é uma comunidade ou região localizada em uma cidade ou município de acordo com as suas subdivisões geográficas'
+        townName:
+          type: string
+          maxLength: 50
+          pattern:  '^[0-9A-Za-zÀ-ÿ\s\/\-\.,ºª]+$'
+          example: Marília
+          description: |
+                  Designação da cidade ou município no qual o endereço está localizado.
+        countrySubDivision:
+          type: string
+          maxLength: 50
+          pattern:  '^[0-9A-Za-zÀ-ÿ\s\/\-\.,ºª]+$'
+          example: New York
+          description: |
+                  Designação do estado, província, região ou cantão no qual o endereço está localizado.
+        postCode:
+          type: string
+          maxLength: 11
+          example: '17500001A'
+          description: |
+                  Código de Endereçamento Postal: Composto por um conjunto numérico ou alfanumérico.
+        countryCode:
+          $ref: '#/components/schemas/EnumCountryCode'
+    NationalAddress:
+      type: object
+      required:
+        - type
+        - name
+        - number
+        - townName
+        - countrySubDivision
+        - postCode
+      properties:
+        type: 
+          type: string
+          description: 'Tipo do logradouro'
+          enum: [AEROPORTO, ALAMEDA, AREA, AVENIDA, CAMPO, CHACARA, COLONIA, CONDOMINIO, CONJUNTO, DISTRITO, ESPLANADA, ESTACAO, ESTRADA, FAZENDA, FEIRA, JARDIM, LADEIRA, LAGO, LAGOA, LARGO, LOTEAMENTO, NUCLEO, PARQUE, PASSARELA, PATIO, PRACA, QUADRA, RECANTO, RESIDENCIAL, RODOVIA, RUA, SETOR, SITIO, TRAVESSA, TRECHO, TREVO, VALE, VEREDA, VIA, VIADUTO, VIELA, VILA, OUTROS]
+        typeOthers:
+          type: string
+          description: 'Descrição do tipo do logradouro. Condicional ao preenchimento do campo "type" com valor OUTROS.'
+          maxLength: 30
+        name: 
+          type: string
+          description: 'Nome do logradouro'
+          maxLength: 100
+        number:
+          type: string
+          description: 'Número do logradouro'
+          pattern:  '^[0-9A-Za-zÀ-ÿ\s\/\-\.,ºª]{1,40}$'
+        addressComplementaryInfo:
+          type: string
+          maxLength: 50
+          example: Fundos
+          description: 'Alguns logradouros ainda necessitam ser especificados por meio de complemento.'
+        districtName:
+          type: string
+          maxLength: 70
+          example: 'Centro'
+          description: 'Bairro é uma comunidade ou região localizada em uma cidade ou município de acordo com as suas subdivisões geográficas'
+        townName:
+          type: string
+          maxLength: 50
+          pattern:  '^[0-9A-Za-zÀ-ÿ\s\/\-\.,ºª]+$'
+          example: Marília
+          description: |
+                  Localidade: O nome da localidade corresponde à designação da cidade ou município no qual o endereço está localizado.
+        ibgeTownCode:
+          type: string
+          pattern: '^\d{7}$|^NA$'
+          maxLength: 7
+          example: "1750000"
+          description: |
+            Código IBGE do município
+        countrySubDivision:
+          $ref: '#/components/schemas/EnumCountrySubDivision'
+        postCode:
+          type: string
+          pattern: '^\d{8}$|^NA$'
+          maxLength: 8
+          example: '17500001'
+          description: |
+                  Código de Endereçamento Postal: Composto por um conjunto numérico de oito dígitos, o objetivo principal do CEP é orientar e acelerar o encaminhamento, o tratamento e a entrega de objetos postados nos Correios, por meio da sua atribuição a localidades, logradouros, unidades dos Correios, serviços, órgãos públicos, empresas e edifícios. p.ex. '01311000'. Condicional ao preenchimento do FlagPostCode ser igual a "Nacional".  
+    
+    EnumCountryCode:
+      description: Nome do país (de acordo com o código "alpha3" do ISO-3166)
       type: string
+      enum: [AFG,ALA,ALB,DZA,ASM,AND,AGO,AIA,ATA,ATG,ARG,ARM,ABW,AUS,AUT,AZE,BHS,BHR,BGD,BRB,BLR,BEL,BLZ,BEN,BMU,BTN,BOL,BES,BIH,BWA,BVT,BRA,IOT,BRN,BGR,BFA,BDI,CPV,KHM,CMR,CAN,CYM,CAF,TCD,CHL,CHN,CXR,CCK,COL,COM,COG,COD,COK,CRI,CIV,HRV,CUB,CUW,CYP,CZE,DNK,DJI,DMA,DOM,ECU,EGY,SLV,GNQ,ERI,EST,SWZ,ETH,FLK,FRO,FJI,FIN,FRA,GUF,PYF,ATF,GAB,GMB,GEO,DEU,GHA,GIB,GRC,GRL,GRD,GLP,GUM,GTM,GGY,GIN,GNB,GUY,HTI,HMD,VAT,HND,HKG,HUN,ISL,IND,IDN,IRN,IRQ,IRL,IMN,ISR,ITA,JAM,JPN,JEY,JOR,KAZ,KEN,KIR,PRK,KOR,KWT,KGZ,LAO,LVA,LBN,LSO,LBR,LBY,LIE,LTU, LUX,MAC,MDG,MWI,MYS,MDV,MLI,MLT,MHL,MTQ,MRT,MUS,MYT,MEX,FSM,MDA,MCO,MNG,MNE,MSR,MAR,MOZ,MMR,NAM,NRU,NPL,NLD,NCL,NZL,NIC,NER,NGA,NIU,NFK,MKD,MNP,NOR,OMN,PAK,PLW,PSE,PAN,PNG,PRY,PER,PHL,PCN,POL,PRT,PRI,QAT,REU,ROU,RUS,RWA,BLM,SHN,KNA,LCA,MAF,SPM,VCT,WSM,SMR,STP,SAU,SEN,SRB,SYC,SLE,SGP,SXM,SVK,SVN,SLB,SOM,ZAF,SGS,SSD,ESP,LKA,SDN,SUR,SJM,SWE,CHE,SYR,TWN,TJK,TZA,THA,TLS,TGO,TKL,TON,TTO,TUN,TUR,TKM,TCA,TUV,UGA,UKR,ARE,GBR,USA,UMI,URY,UZB,VUT,VEN,VNM,VGB,VIR,WLF,ESH,YEM,ZMB,ZWE]
+      example: BRA    
+   
+    EnumCountrySubDivision:
+      type: string
+      description: 'Enumeração referente a cada sigla da unidade da federação que identifica o estado ou o distrito federal, no qual o endereço está localizado. p.ex. ''AC''. São consideradas apenas as siglas para os estados brasileiros'
+      enum:
+        - AC
+        - AL
+        - AP
+        - AM
+        - BA
+        - CE
+        - DF
+        - ES
+        - GO
+        - MA
+        - MT
+        - MS
+        - MG
+        - PA
+        - PB
+        - PR
+        - PE
+        - PI
+        - RJ
+        - RN
+        - RS
+        - RO
+        - RR
+        - SC
+        - SP
+        - SE
+        - TO
+      example: SP
 
   parameters:
-    policyId:
-        name: policyId
-        in: path
-        required: true
-        schema:
-          type: string
-          maxLength: 60
+    resourceId:
+      name: resourceId
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+        example: "25cac914-d8ae-6789-b215-650a6215820d"
+        description: Identificador sistêmico da apólice
     Authorization:
       name: Authorization
       in: header
@@ -1551,32 +1616,9 @@ components:
       required: true
       schema:
         type: string
-        pattern: '^[a-zA-Z0-9][a-zA-Z0-9\-]{0,99}$'
+        pattern: '^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$'
         minLength: 1
         maxLength: 100
-    x-v:
-      name: x-v
-      in: header
-      description: |
-        Versão do endpoint da API requisitado pelo cliente. O titular dos dados deve 
-        responder com a versão mais alta suportada entre x-min-v e x-v. Se o valor de 
-        x-min-v for igual ou maior que o valor de x-v, o cabeçalho x-min-v deve ser 
-        tratado como ausente. Se todas as versões solicitadas não forem suportadas, 
-        o titular dos dados deve responder com o código de status 406 Not Acceptable.
-      schema:
-        type: string
-      example: '2.1.3'
-    x-min-v:
-      name: x-min-v
-      in: header
-      description: |
-        Versão mínima do endpoint da API requisitado pelo cliente. O detentor dos dados 
-        deve responder com a versão mais alta suportada entre x-min-v e x-v. Se todas as 
-        versões solicitadas não forem suportadas, o titular dos dados deve responder com 
-        um código de status 406 Not Acceptable.
-      schema:
-        type: string
-      example: '2.0.0'
   securitySchemes:
     OpenId:
       type: openIdConnect
@@ -1597,9 +1639,6 @@ components:
         x-fapi-interaction-id:
           schema:
             $ref: '#/components/schemas/XFapiInteractionId'
-        x-v:
-          schema:
-            $ref: '#/components/schemas/XV'
       content:
         application/json:
           schema:
