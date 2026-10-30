@@ -23,7 +23,7 @@ info:
       - 1 - `Idempotência:` Valida se há divergência entre chave de idempotência e informações enviadas (ERRO_IDEMPOTENCIA);
       - 2 - `Demais validações:` Valida itens não explicitamente informados pelo servidor - (NAO_INFORMADO).
       
-  version: 3.0.0
+  version: 2.0.0
   license:
     name: Apache 2.0
     url: https://www.apache.org/licenses/LICENSE-2.0
@@ -32,9 +32,9 @@ info:
     email: gt-interfaces@openbankingbr.org
     url: https://openinsurance-brasil.github.io/areadesenvolvedor/
 servers:
-  - url: https://api.seguradora.com.br/open-insurance/withdrawal/v3
+  - url: https://api.seguradora.com.br/open-insurance/withdrawal/v2
     description: Servidor de Produção
-  - url: https://apih.seguradora.com.br/open-insurance/withdrawal/v3
+  - url: https://apih.seguradora.com.br/open-insurance/withdrawal/v2
     description: Servidor de Homologação
 tags:
   - name: Withdrawal Lead
@@ -221,7 +221,7 @@ components:
         - productName
       properties:
         certificateId:
-          description: "Número do certificado/apólice individual, caso contrato individual. Número do certificado, caso contrato coletivo"
+          description: Identificador do Certificado (Caso Tipo de Documento Emitido for certificado)
           type: string
           maxLength: 60
         productName:
@@ -247,7 +247,7 @@ components:
           type: string
           enum:
             - EMERGENCIAS_DE_SAUDE
-            - APLICACAO_EM_INVESTIMENTOS
+            - APLICACAO_EM_OUTROS_INVESTIMENTOS
             - INSATISFACAO_COM_A_ENTIDADE
             - INSATISFACAO_COM_A_RENTABILIDADE_DO_PRODUTO
             - INSATISFACAO_COM_O_PRODUTO
@@ -402,7 +402,7 @@ components:
           type: string
           format: date
           maxLength: 10
-          pattern: ^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])$
+          pattern: ^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])$
           example: '2022-10-27'
     WithdrawalInformationCapitalizationTitleWithdrawal:
       type: object
@@ -968,23 +968,23 @@ components:
         self:
           type: string
           description: URL da página atualmente requisitada
-          example: https://api.organizacao.com.br/open-insurance/withdrawal/v3
+          example: https://api.organizacao.com.br/open-insurance/quote-auto/v2
         first:
           type: string
           description: URL da primeira página de registros
-          example: https://api.organizacao.com.br/open-insurance/withdrawal/v3
+          example: https://api.organizacao.com.br/open-insurance/quote-auto/v2
         prev:
           type: string
           description: URL da página anterior de registros
-          example: https://api.organizacao.com.br/open-insurance/withdrawal/v3
+          example: https://api.organizacao.com.br/open-insurance/quote-auto/v2
         next:
           type: string
           description: URL da próxima página de registros
-          example: https://api.organizacao.com.br/open-insurance/withdrawal/v3
+          example: https://api.organizacao.com.br/open-insurance/quote-auto/v2
         last:
           type: string
           description: URL da última página de registros
-          example: https://api.organizacao.com.br/open-insurance/withdrawal/v3
+          example: https://api.organizacao.com.br/open-insurance/quote-auto/v2
     ResponseError:
       type: object
       required:
@@ -1076,7 +1076,7 @@ components:
       additionalProperties: false
     XFapiInteractionId:
       type: string
-      pattern: ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12})$
+      pattern: ^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}
       maxLength: 100
       description: Um UID [RFC4122](https://tools.ietf.org/html/rfc4122) usado como um ID de correlação. Se fornecido, o transmissor deve reproduzir" esse valor no cabeçalho de resposta.'
     LinkInfo:
@@ -1158,7 +1158,7 @@ components:
       required: true
       schema:
         type: string
-        pattern: ^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12})$
+        pattern: ^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}
         minLength: 1
         maxLength: 100
   securitySchemes:

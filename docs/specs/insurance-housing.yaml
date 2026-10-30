@@ -24,23 +24,23 @@ info:
     ### `/`
       - permissions:
         - GET: **DAMAGES_AND_PEOPLE_HOUSING_READ**
-    ### `/{resourceId}/policy-info`
+    ### `/{policyId}/policy-info`
       - permissions:
         - GET: **DAMAGES_AND_PEOPLE_HOUSING_POLICYINFO_READ**
-    ### `/{resourceId}/premium`
+    ### `/{policyId}/premium`
       - permissions:
         - GET: **DAMAGES_AND_PEOPLE_HOUSING_PREMIUM_READ**
-    ### `/{resourceId}/claim`
+    ### `/{policyId}/claim`
       - permissions:
         - GET: **DAMAGES_AND_PEOPLE_HOUSING_CLAIM_READ**
-  version: 3.0.0
+  version: 2.0.0
   contact:
     name: Governança do Open Insurance Brasil
     url: 'https://www.gov.br/susep/'
 servers:
-  - url: 'https://api.organizacao.com.br/open-insurance/insurance-housing/v3'
+  - url: 'https://api.organizacao.com.br/open-insurance/insurance-housing/v2'
     description: Servidor de Produção
-  - url: 'https://api.organizacao.com.br/open-insurance/insurance-housing/v3'
+  - url: 'https://api.organizacao.com.br/open-insurance/insurance-housing/v2'
     description: Servidor de Homologação
 tags:
   - name: 'InsuranceHousing'
@@ -58,11 +58,15 @@ paths:
         - $ref: '#/components/parameters/xFapiCustomerIpAddress'
         - $ref: '#/components/parameters/xFapiInteractionId'
         - $ref: '#/components/parameters/xCustomerUserAgent'
+        - $ref: "#/components/parameters/x-v"
+        - $ref: "#/components/parameters/x-min-v"
         - $ref: "#/components/parameters/page"
         - $ref: "#/components/parameters/pageSize"
       responses:
         '200':
           $ref: '#/components/responses/OKResponseInsuranceHousing'
+        '204':
+          $ref: '#/components/responses/NoContent'
         '400':
           $ref: '#/components/responses/BadRequest'
         '401':
@@ -83,6 +87,10 @@ paths:
           $ref: '#/components/responses/InternalServerError'
         default:
           description: Erro inesperado.
+          headers:
+            x-v: 
+              schema:
+                $ref: '#/components/schemas/XV'
           content:
             application/json; charset=utf-8:
               schema:
@@ -93,23 +101,27 @@ paths:
           OAuth2Security:
             - 'consent:consentId'
             - insurance-housing
-  /insurance-housing/{resourceId}/policy-info:
+  /insurance-housing/{policyId}/policy-info:
     get:
       tags:
         - InsuranceHousing
-      summary: Obtém as informações gerais da apólice identificada por {resourceId}
+      summary: Obtém as informações gerais da apólice identificada por {policyId}
       description: "Método para obter as informações gerais da apólice"
-      operationId: "getInsuranceHousingresourceIdPolicyInfo"
+      operationId: "getInsuranceHousingpolicyIdPolicyInfo"
       parameters:
         - $ref: '#/components/parameters/Authorization'
         - $ref: '#/components/parameters/xFapiAuthDate'
         - $ref: '#/components/parameters/xFapiCustomerIpAddress'
         - $ref: '#/components/parameters/xFapiInteractionId'
         - $ref: '#/components/parameters/xCustomerUserAgent'
-        - $ref: "#/components/parameters/resourceId"        
+        - $ref: "#/components/parameters/policyId"        
+        - $ref: "#/components/parameters/x-v"
+        - $ref: "#/components/parameters/x-min-v"
       responses:
         '200':
           $ref: '#/components/responses/OKResponseInsuranceHousingPolicyInfo'
+        '204':
+          $ref: '#/components/responses/NoContent'
         '400':
           $ref: '#/components/responses/BadRequest'
         '401':
@@ -130,6 +142,10 @@ paths:
           $ref: '#/components/responses/InternalServerError'
         default:
           description: Erro inesperado.
+          headers:
+            x-v: 
+              schema:
+                $ref: '#/components/schemas/XV'
           content:
             application/json; charset=utf-8:
               schema:
@@ -140,23 +156,27 @@ paths:
           OAuth2Security:
             - 'consent:consentId'
             - insurance-housing
-  /insurance-housing/{resourceId}/premium:
+  /insurance-housing/{policyId}/premium:
     get:
       tags:
         - InsuranceHousing
-      summary: Obtém os dados de prêmio da apólice identificada por {resourceId}
+      summary: Obtém os dados de prêmio da apólice identificada por {policyId}
       description: "Método para obter os dados de prêmio da apólice."
-      operationId: "getInsuranceHousingresourceIdPremium"
+      operationId: "getInsuranceHousingpolicyIdPremium"
       parameters:
         - $ref: '#/components/parameters/Authorization'
         - $ref: '#/components/parameters/xFapiAuthDate'
         - $ref: '#/components/parameters/xFapiCustomerIpAddress'
         - $ref: '#/components/parameters/xFapiInteractionId'
         - $ref: '#/components/parameters/xCustomerUserAgent'
-        - $ref: "#/components/parameters/resourceId"
+        - $ref: "#/components/parameters/policyId"
+        - $ref: "#/components/parameters/x-v"
+        - $ref: "#/components/parameters/x-min-v"
       responses:
         '200':
           $ref: '#/components/responses/OKResponseInsuranceHousingPremium'
+        '204':
+          $ref: '#/components/responses/NoContent'
         '400':
           $ref: '#/components/responses/BadRequest'
         '401':
@@ -177,6 +197,10 @@ paths:
           $ref: '#/components/responses/InternalServerError'
         default:
           description: Erro inesperado.
+          headers:
+            x-v: 
+              schema:
+                $ref: '#/components/schemas/XV'
           content:
             application/json; charset=utf-8:
               schema:
@@ -187,25 +211,29 @@ paths:
           OAuth2Security:
             - 'consent:consentId'
             - insurance-housing
-  /insurance-housing/{resourceId}/claim:
+  /insurance-housing/{policyId}/claim:
     get:
       tags:
         - InsuranceHousing
-      summary: Obtém os dados de sinistro da apólice identificada por {resourceId}
+      summary: Obtém os dados de sinistro da apólice identificada por {policyId}
       description: "Método para obter os dados de sinistro associados à apólice"
-      operationId: "getInsuranceHousingresourceIdClaim"
+      operationId: "getInsuranceHousingpolicyIdClaims"
       parameters:
         - $ref: '#/components/parameters/Authorization'
         - $ref: '#/components/parameters/xFapiAuthDate'
         - $ref: '#/components/parameters/xFapiCustomerIpAddress'
         - $ref: '#/components/parameters/xFapiInteractionId'
         - $ref: '#/components/parameters/xCustomerUserAgent'
-        - $ref: "#/components/parameters/resourceId"
+        - $ref: "#/components/parameters/policyId"
+        - $ref: "#/components/parameters/x-v"
+        - $ref: "#/components/parameters/x-min-v"
         - $ref: "#/components/parameters/page"
         - $ref: "#/components/parameters/pageSize"
       responses:
         '200':
           $ref: '#/components/responses/OKResponseInsuranceHousingClaims'
+        '204':
+          $ref: '#/components/responses/NoContent'
         '400':
           $ref: '#/components/responses/BadRequest'
         '401':
@@ -226,6 +254,10 @@ paths:
           $ref: '#/components/responses/InternalServerError'
         default:
           description: Erro inesperado.
+          headers:
+            x-v: 
+              schema:
+                $ref: '#/components/schemas/XV'
           content:
             application/json; charset=utf-8:
               schema:
@@ -280,14 +312,14 @@ components:
                       items:
                         type: object
                         required:
-                          - resourceId
+                          - policyId
                           - productName
                         properties:
-                          resourceId:
-                            type: string 
-                            format: uuid
-                            example: 25cac914-d8ae-6789-b215-650a6215820d
-                            description: Identificador do recurso no formato UUID. Utilizado nas URLs secundárias das APIs de Fase 2 para consultar os dados de um recurso específico
+                          policyId:
+                            description: policyId - Identificador da apólice
+                            type: string
+                            maxLength: 60
+                            example: '42'
                           productName:
                             type: string
                             description: Nome comercial do produto associado à apólice.
@@ -337,7 +369,7 @@ components:
                 CERTIFICADO_AUTOMOVEL]
           example: APOLICE_INDIVIDUAL
         policyId:
-          description: Número do certificado/apólice individual, caso contrato individual. Número do certificado, caso contrato coletivo
+          description: Identificador da apólice ou bilhete
           type: string
           maxLength: 60
           example: "111111"
@@ -346,7 +378,7 @@ components:
           type: string
           maxLength: 60
         groupCertificateId: 
-          description: "Número do Certificado (Caso Tipo de Documento Emitido for certificado)"
+          description: "Identificador do Certificado(Caso Tipo de Documento Emitido for certificado)"
           type: string
           maxLength: 60
         issuanceType: 
@@ -381,7 +413,7 @@ components:
           type: string
           maxLength: 1024
         leadInsurerPolicyId:
-          description: "Número da apólice seguradora líder para apólice de cosseguro aceito"
+          description: "Identificador da apólice seguradora líder para apólice de cosseguro aceito"
           type: string
           maxLength: 1024
         maxLMG:
@@ -697,7 +729,7 @@ components:
           type: string
           description: "Característica da cobertura"
           enum: [MASSIFICADOS,
-                MASSIFICADOS_MICROSSEGUROS,
+                MASSIFICADOS_MICROSEGUROS,
                 GRANDES_RISCOS]
         type:    
           type: string
@@ -714,8 +746,7 @@ components:
         gracePeriodicity:
           type: string
           description: "Periodicidade da carência. OBS: Obrigatório, se houver"
-          enum: [HORA,
-                DIA,
+          enum: [DIA,
                 MES,
                 ANO]     
         gracePeriodCountingMethod:   
@@ -895,7 +926,7 @@ components:
         cededPercentage:
           description: "Percentual cedido para a congênere para contratos de cosseguro cedido. Obs: Obrigatório quando há cosseguro"
           type: string
-          pattern: '^100\.0{1,9}$|^\d{1,2}\.\d{1,9}$'
+          pattern: 100\.0{1,9}$|^\d{1,2}\.\d{1,9}$
           example: '10.00'
     ResponseInsuranceHousingPremium:
       type: object
@@ -1139,9 +1170,7 @@ components:
           example: '2022-12-31'
           pattern: '^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])$'
         amount:
-          description: "Valor total bruto do sinistro, considerando todos os movimentos e reavaliações, sem deduções)"
-          allOf:
-            - $ref: '#/components/schemas/AmountDetails'
+          $ref: '#/components/schemas/AmountDetails'
         denialJustification:
           description: "Justificativa da Negativa(Caso Status do Sinistro for 'ENCERRADO_SEM_INDENIZACAO')"
           type: string
@@ -1376,27 +1405,27 @@ components:
           type: string
           description: URL da página atualmente requisitada
           pattern: ^(https:\/\/)(.*?)(\/open-insurance\/insurance-housing\/v\d+)(\/insurance-housing.*)?$
-          example: 'https://api.organizacao.com.br/open-insurance/insurance-housing/v3/insurance-housing'
+          example: 'https://api.organizacao.com.br/open-insurance/insurance-housing/v2/insurance-housing'
         first:
           type: string
           description: URL da primeira página de registros
           pattern: ^(https:\/\/)(.*?)(\/open-insurance\/insurance-housing\/v\d+)(\/insurance-housing.*)?$
-          example: 'https://api.organizacao.com.br/open-insurance/insurance-housing/v3/insurance-housing'
+          example: 'https://api.organizacao.com.br/open-insurance/insurance-housing/v2/insurance-housing'
         prev:
           type: string
           description: URL da página anterior de registros
           pattern: ^(https:\/\/)(.*?)(\/open-insurance\/insurance-housing\/v\d+)(\/insurance-housing.*)?$
-          example: 'https://api.organizacao.com.br/open-insurance/insurance-housing/v3/insurance-housing'
+          example: 'https://api.organizacao.com.br/open-insurance/insurance-housing/v2/insurance-housing'
         next:
           type: string
           description: URL da próxima página de registros
           pattern: ^(https:\/\/)(.*?)(\/open-insurance\/insurance-housing\/v\d+)(\/insurance-housing.*)?$
-          example: 'https://api.organizacao.com.br/open-insurance/insurance-housing/v3/insurance-housing'
+          example: 'https://api.organizacao.com.br/open-insurance/insurance-housing/v2/insurance-housing'
         last:
           type: string
           description: URL da última página de registros
           pattern: ^(https:\/\/)(.*?)(\/open-insurance\/insurance-housing\/v\d+)(\/insurance-housing.*)?$
-          example: 'https://api.organizacao.com.br/open-insurance/insurance-housing/v3/insurance-housing'
+          example: 'https://api.organizacao.com.br/open-insurance/insurance-housing/v2/insurance-housing'
     Meta:
       type: object
       properties:
@@ -1457,6 +1486,14 @@ components:
       pattern: '^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$'
       maxLength: 100
       description: 'Um UID [RFC4122](https://tools.ietf.org/html/rfc4122) usado como um ID de correlação. Se fornecido, o transmissor deve "reproduzir" esse valor no cabeçalho de resposta.'
+    XV:
+      type: string
+      description: |
+        Versão do endpoint da API requisitado pelo cliente. O titular dos dados deve 
+        responder com a versão mais alta suportada entre x-min-v e x-v. Se o valor de 
+        x-min-v for igual ou maior que o valor de x-v, o cabeçalho x-min-v deve ser 
+        tratado como ausente. Se todas as versões solicitadas não forem suportadas, 
+        o titular dos dados deve responder com o código de status 406 Not Acceptable.
     Address:
       type: object
       description: 'dados do endereço'
@@ -1489,43 +1526,39 @@ components:
         type: 
           type: string
           description: 'Tipo do logradouro'
-          enum: [AEROPORTO, ALAMEDA, AREA, AVENIDA, CAMPO, CHACARA, COLONIA, CONDOMINIO, CONJUNTO, DISTRITO, ESPLANADA, ESTACAO, ESTRADA, FAZENDA, FEIRA, JARDIM, LADEIRA, LAGO, LAGOA, LARGO, LOTEAMENTO, NUCLEO, PARQUE, PASSARELA, PATIO, PRACA, QUADRA, RECANTO, RESIDENCIAL, RODOVIA, RUA, SETOR, SITIO, TRAVESSA, TRECHO, TREVO, VALE, VEREDA, VIA, VIADUTO, VIELA, VILA, OUTROS]
-        typeOthers:
-          type: string
-          description: 'Descrição do tipo do logradouro. Condicional ao preenchimento do campo "type" com valor OUTROS.'
-          maxLength: 30
+          enum: [AEROPORTO, ALAMEDA, AREA, AVENIDA, CAMPO, CHACARA, COLONIA, CONDOMINIO, CONJUNTO, DISTRITO, ESPLANADA, ESTACAO, ESTRADA, FAZENDA, FEIRA, JARDIM, LADEIRA, LAGO, LAGOA, LARGO, LOTEAMENTO, NUCLEO, PARQUE, PASSARELA, PATIO, PRACA, QUADRA, RECANTO, RESIDENCIAL, RODOVIA, RUA, SETOR, SITIO, TRAVESSA, TRECHO, TREVO, VALE, VEREDA, VIA, VIADUTO, VIELA, VILA]
         name: 
           type: string
           description: 'Nome do logradouro'
-          maxLength: 100
         number:
           type: string
           description: 'Número do logradouro'
-          pattern: '^[0-9A-Za-zÀ-ÿ\s\/\-\.,ºª]{1,40}$'
+          maxLength: 6
+          pattern: '^[0-9]{1,6}$'
         addressComplementaryInfo:
           type: string
-          maxLength: 50
+          maxLength: 30
           example: Fundos
           description: 'Alguns logradouros ainda necessitam ser especificados por meio de complemento.'
-        districtName:
+        district:
           type: string
-          maxLength: 70
+          maxLength: 50
           example: 'Centro'
           description: 'Bairro é uma comunidade ou região localizada em uma cidade ou município de acordo com as suas subdivisões geográficas'
         townName:
           type: string
           maxLength: 50
-          pattern: '^[0-9A-Za-zÀ-ÿ\s\/\-\.,ºª]+$'
+          pattern: '^[A-Za-z\sáâãéêíïóôõúçÁÂÃÉÍÏÓÔÕÚÇ]+$'
           example: Marília
           description: |
                   Designação da cidade ou município no qual o endereço está localizado.
         countrySubDivision:
           type: string
           maxLength: 50
-          pattern: '^[0-9A-Za-zÀ-ÿ\s\/\-\.,ºª]+$'
+          pattern: '^[A-Za-z\sáâãéêíïóôõúçÁÂÃÉÍÏÓÔÕÚÇ]+$'
           example: New York
           description: |
-                  Designação do estado, província, região ou cantão no qual o endereço está localizado.
+                  Designação do estado no qual o endereço está localizado.
         postCode:
           type: string
           maxLength: 11
@@ -1547,33 +1580,29 @@ components:
         type: 
           type: string
           description: 'Tipo do logradouro'
-          enum: [AEROPORTO, ALAMEDA, AREA, AVENIDA, CAMPO, CHACARA, COLONIA, CONDOMINIO, CONJUNTO, DISTRITO, ESPLANADA, ESTACAO, ESTRADA, FAZENDA, FEIRA, JARDIM, LADEIRA, LAGO, LAGOA, LARGO, LOTEAMENTO, NUCLEO, PARQUE, PASSARELA, PATIO, PRACA, QUADRA, RECANTO, RESIDENCIAL, RODOVIA, RUA, SETOR, SITIO, TRAVESSA, TRECHO, TREVO, VALE, VEREDA, VIA, VIADUTO, VIELA, VILA, OUTROS]
-        typeOthers:
-          type: string
-          description: 'Descrição do tipo do logradouro. Condicional ao preenchimento do campo "type" com valor OUTROS.'
-          maxLength: 30
+          enum: [AEROPORTO, ALAMEDA, AREA, AVENIDA, CAMPO, CHACARA, COLONIA, CONDOMINIO, CONJUNTO, DISTRITO, ESPLANADA, ESTACAO, ESTRADA, FAZENDA, FEIRA, JARDIM, LADEIRA, LAGO, LAGOA, LARGO, LOTEAMENTO, NUCLEO, PARQUE, PASSARELA, PATIO, PRACA, QUADRA, RECANTO, RESIDENCIAL, RODOVIA, RUA, SETOR, SITIO, TRAVESSA, TRECHO, TREVO, VALE, VEREDA, VIA, VIADUTO, VIELA, VILA]
         name: 
           type: string
           description: 'Nome do logradouro'
-          maxLength: 100
         number:
           type: string
           description: 'Número do logradouro'
-          pattern: '^[0-9A-Za-zÀ-ÿ\s\/\-\.,ºª]{1,40}$'
+          maxLength: 6
+          pattern: '^[0-9]{1,6}$'
         addressComplementaryInfo:
           type: string
-          maxLength: 50
+          maxLength: 30
           example: Fundos
           description: 'Alguns logradouros ainda necessitam ser especificados por meio de complemento.'
         districtName:
           type: string
-          maxLength: 70
+          maxLength: 50
           example: 'Centro'
           description: 'Bairro é uma comunidade ou região localizada em uma cidade ou município de acordo com as suas subdivisões geográficas'
         townName:
           type: string
           maxLength: 50
-          pattern: '^[0-9A-Za-zÀ-ÿ\s\/\-\.,ºª]+$'
+          pattern: '^[A-Za-z\sáâãéêíïóôõúçÁÂÃÉÍÏÓÔÕÚÇ]+$'
           example: Marília
           description: |
                   Localidade: O nome da localidade corresponde à designação da cidade ou município no qual o endereço está localizado.
@@ -1633,15 +1662,13 @@ components:
         - TO
       example: SP
   parameters:
-    resourceId:
-      name: resourceId
-      in: path
-      required: true
-      schema:
-        type: string
-        format: uuid
-        example: "25cac914-d8ae-6789-b215-650a6215820d"
-        description: Identificador sistêmico da apólice
+    policyId:
+        name: policyId
+        in: path
+        required: true
+        schema:
+          type: string
+          maxLength: 60
     Authorization:
       name: Authorization
       in: header
@@ -1710,6 +1737,31 @@ components:
         pattern: '^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$'
         minLength: 1
         maxLength: 100
+    x-v:
+      name: x-v
+      in: header
+      description: |
+        Versão do endpoint da API requisitado pelo cliente. O titular dos dados deve 
+        responder com a versão mais alta suportada entre x-min-v e x-v. Se o valor de 
+        x-min-v for igual ou maior que o valor de x-v, o cabeçalho x-min-v deve ser 
+        tratado como ausente. Se todas as versões solicitadas não forem suportadas, 
+        o titular dos dados deve responder com o código de status 406 Not Acceptable.
+      required: false
+      schema:
+        type: string
+      example: '2.1.3'
+    x-min-v:
+      name: x-min-v
+      in: header
+      description: |
+        Versão mínima do endpoint da API requisitado pelo cliente. O detentor dos dados 
+        deve responder com a versão mais alta suportada entre x-min-v e x-v. Se todas as 
+        versões solicitadas não forem suportadas, o titular dos dados deve responder com 
+        um código de status 406 Not Acceptable.
+      required: false
+      schema:
+        type: string
+      example: '2.0.0'
   securitySchemes:
     OpenId:
       type: openIdConnect
@@ -1730,6 +1782,9 @@ components:
         x-fapi-interaction-id:
           schema:
             $ref: '#/components/schemas/XFapiInteractionId'
+        x-v: 
+          schema:
+            $ref: '#/components/schemas/XV'
       content:
         application/json:
           schema:
@@ -1740,6 +1795,9 @@ components:
         x-fapi-interaction-id:
           schema:
             $ref: '#/components/schemas/XFapiInteractionId'
+        x-v: 
+          schema:
+            $ref: '#/components/schemas/XV'
       content:
         application/json:
           schema:
@@ -1750,6 +1808,9 @@ components:
         x-fapi-interaction-id:
           schema:
             $ref: '#/components/schemas/XFapiInteractionId'
+        x-v: 
+          schema:
+            $ref: '#/components/schemas/XV'
       content:
         application/json:
           schema:
@@ -1760,6 +1821,9 @@ components:
         x-fapi-interaction-id:
           schema:
             $ref: '#/components/schemas/XFapiInteractionId'
+        x-v: 
+          schema:
+            $ref: '#/components/schemas/XV'
       content:
         application/json:
           schema:

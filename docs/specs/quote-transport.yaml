@@ -29,15 +29,15 @@ info:
       - 1 - `Idempotência:` Valida se há divergência entre chave de idempotência e informações enviadas (ERRO_IDEMPOTENCIA);
       - 2 - `Não Informado:` Valida itens não explicitamente informados pelo servidor - (NAO_INFORMADO).
 
-  version: 3.0.0
+  version: 2.0.0
   contact:
     name: Governança do Open Insurance Brasil
-    email: gt-dados@opinbrasil.com.br
+    email: gt-interfaces@openinsurancebr.org
     url: 'https://www.gov.br/susep'
 servers:
-  - url: 'https://api.organizacao.com.br/open-insurance/quote-transport/v3'
+  - url: 'https://api.organizacao.com.br/open-insurance/quote-transport/v2'
     description: Servidor de Produção
-  - url: 'https://api.organizacao.com.br/open-insurance/quote-transport/v3'
+  - url: 'https://api.organizacao.com.br/open-insurance/quote-transport/v2'
     description: Servidor de Homologação
 tags:
   - name: TransportLead
@@ -186,7 +186,7 @@ components:
                 CERTIFICADO_AUTOMOVEL]
           example: APOLICE_INDIVIDUAL
         policyId:
-          description: "Número do certificado/apólice individual, caso contrato individual. Número do certificado, caso contrato coletivo"
+          description: Identificador da apólice ou bilhete
           type: string
           maxLength: 60
           example: "111111"
@@ -195,7 +195,7 @@ components:
           type: string
           maxLength: 60
         groupCertificateId: 
-          description: "Número do Certificado (Caso Tipo de Documento Emitido for certificado)"
+          description: "Identificador do Certificado(Caso Tipo de Documento Emitido for certificado)"
           type: string
           maxLength: 60
         issuanceType: 
@@ -230,7 +230,7 @@ components:
           type: string
           maxLength: 1024
         leadInsurerPolicyId:
-          description: "Número da apólice seguradora líder para apólice de cosseguro aceito"
+          description: "Identificador da apólice seguradora líder para apólice de cosseguro aceito"
           type: string
           maxLength: 1024
         maxLMG:
@@ -306,7 +306,7 @@ components:
           ]
           example: CPF
         identificationTypeOthers:
-          description: Campo de detalhamento para quando a opção do tipo de documento do segurado for OUTROS
+          description: Campo de detalhamento para quando a opcao do tipo de documento do segurado for OUTROS
           type: string
           maxLength: 100
           example: RNE
@@ -350,7 +350,7 @@ components:
           ]
           example: CPF
         identificationTypeOthers:
-          description: Campo de detalhamento para quando a opção do tipo de documento do bebeficiário for OUTROS
+          description: Campo de detalhamento para quando a opcao do tipo de documento do bebeficiário for OUTROS
           type: string
           maxLength: 100
           example: RNE
@@ -382,7 +382,7 @@ components:
           ]
           example: CPF
         identificationTypeOthers:
-          description: Campo de detalhamento para quando a opção do tipo de documento do Tomador/Garantidor for OUTROS
+          description: Campo de detalhamento para quando a opcao do tipo de documento do Tomador/Garantidor for OUTROS
           type: string
           maxLength: 100
           example: RNE
@@ -418,7 +418,7 @@ components:
           ]
           example: REPRESENTANTE
         typeOthers:
-          description: Descrição do Tipo do Intermediador quando for informada a opção OUTROS
+          description: Descricao do Tipo do Intermediador quando for informada a opcao OUTROS
           type: string
           maxLength: 100
         identification:
@@ -441,7 +441,7 @@ components:
           ]
           example: CPF
         identificationTypeOthers:
-          description: Campo de detalhamento para quando a opção do tipo de documento do intermediador(a) for OUTROS
+          description: Campo de detalhamento para quando a opcao do tipo de documento do intermediador(a) for OUTROS
           type: string
           maxLength: 100
           example: RNE
@@ -462,7 +462,7 @@ components:
         identification:
           type: string
           maxLength: 100
-          description: Identificador do objeto segurado (Quando o Tipo de Objeto Segurado for diferente de PESSOA). Para Fianca Locaticia, colocar a identificação do Contrato de Locacao
+          description: Identificador do objeto segurado (Quando o Tipo de Objeto Segurado for diferente de PESSOA). Para Fianca Locaticia, colocar a identificacao do Contrato de Locacao
         type:
           type: string
           description: Tipo do objeto segurado
@@ -509,7 +509,7 @@ components:
           description: Grupo e Ramo da Cobertura (Conforme regulamentação Susep vigente)
         code:
             type: string
-            description: Código da cobertura (Vide Tabela 50 até Tabela 62)
+            description: Codigo da cobertura (Vide Tabela 50 até Tabela 62)
             example: ACIDENTES_PESSOAIS_COM_PASSAGEIROS
             enum: [
               ACIDENTES_PESSOAIS_COM_PASSAGEIROS,
@@ -534,17 +534,16 @@ components:
               RESPONSABILIDADE_CIVIL_DO_TRANSPORTADOR_AQUAVIARIO_CARGA, 
               RESPONSABILIDADE_CIVIL_DO_TRANSPORTADOR_FERROVIARIO_CARGA,              
               RESPONSABILIDADE_CIVIL_DO_TRANSPORTADOR_RODOVIARIO_CARGA,
-              RESPONSABILIDADE_CIVIL_DO_TRANSPORTADOR_RODOVIARIO_EM_VIAGEM_INTERNACIONAL_DANOS_CAUSADOS_A_PESSOAS_OU_COISAS_TRANSPORTADAS_OU_NAO_A_EXCECAO_DA_CARGA_TRANSPORTADA_CARTA_AZUL,
+              RESPONSABILIDADE_CIVIL_DO_TRANSPORTADOR_RODOVIARIO_EM_VIAGEM_INTERNACIONAL_DANOS_CAUSADOS_A_PESSOAS_OU_COISAS_TRANSPORTADAS_OU_NAO_A_EXCECAO_DA_CARGA_TRANSPORTADA_CARTA_AZUL
               RESPONSABILIDADE_CIVIL_DO_TRANSPORTADOR_RODOVIARIO_EM_VIAGEM_INTERNACIONAL, 
               RESPONSABILIDADE_CIVIL_DO_TRANSPORTADOR_RODOVIARIO_EM_VIAGEM_INTERNACIONAL_DANOS_CARGA_TRANSPORTADA,
               RESPONSABILIDADE_CIVIL_DO_TRANSPORTADOR_RODOVIARIO_POR_DESAPARECIMENTO_DE_CARGA,
-              RESPONSABILIDADE_CIVIL_DE_VEICULO_RC_V_TRANSPORTADOR_RODOVIARIO_DE_CARGA,
               OUTRAS
             ]
         description:
           type: string
           maxLength: 500
-          description: "Descrição / Nome da Cobertura (Obrigatório quando o campo 'Código' for preenchido com 'Outras')"
+          description: "Descrição / Nome da Cobertura (Obrigatório quando o campo 'Codigo' for preenchido com 'Outras')"
         internalCode:
           type: string
           maxLength: 500
@@ -582,7 +581,7 @@ components:
           description: "Característica da cobertura"
           example: MASSIFICADOS
           enum: [MASSIFICADOS,
-                MASSIFICADOS_MICROSSEGUROS,
+                MASSIFICADOS_MICROSEGUROS,
                 GRANDES_RISCOS]
         type:    
           type: string
@@ -603,8 +602,7 @@ components:
           example: DIA
           enum: [DIA,
                 MES,
-                ANO,
-                HORA]     
+                ANO]     
         gracePeriodCountingMethod:   
           type: string
           description: "Indicador de dias úteis ou corridos da carência. OBS: Obrigatório, se houver"
@@ -626,7 +624,7 @@ components:
           example: '2022-12-31'
           description: "Data de fim da carência. OBS: Obrigatório, se houver"
         premiumPeriodicity:
-          description: Periodicidade de pagamento do prêmio
+          description: Periodicidade de pagamento do premio
           type: string
           example: MENSAL
           enum: [MENSAL,
@@ -639,7 +637,7 @@ components:
                 PAGAMENTO_UNICO,
                 OUTROS]
         premiumPeriodicityOthers:
-          description: Descrição da Periodicidade de pagamento do prêmio quando for informada a opção OUTROS
+          description: Descricao da Periodicidade de pagamento do premio quando for informada a opcao OUTROS
           type: string
           maxLength: 100
     InsuranceTransportCoverage:
@@ -656,7 +654,7 @@ components:
           example: '0111'
         code:
             type: string
-            description: Código da cobertura, conforme Anexo II do Manual de Escopo de Dados
+            description: Código da cobertura, conforme Anexo II do Manuel de Escopo de Dados
             enum: [
               ACIDENTES_PESSOAIS_COM_PASSAGEIROS,
               ACIDENTES_PESSOAIS_COM_TRIPULANTES,
@@ -674,8 +672,12 @@ components:
               DANOS_MORAIS_TRIPULANTES,
               DESPESAS_COM_HONORARIOS,
               EMBARCADOR_AMPLA_A_RISCOS_DE_PERDA_OU_DANO_MATERIAL_SOFRIDOS_PELO_OBJETO_SEGURADO_EM_CONSEQUENCIA_DE_QUAISQUER_CAUSAS_EXTERNAS_EXCETO_AS_PREVISTAS_NA_CLAUSULA_DE_PREJUIZOS_NAO_INDENIZAVEIS,
-              EMBARCADOR_RESTRITA_B_COBERTURAS_ELENCADAS_NA_EMBARCADOR_RESTRITA_C_E_INCLUI_INUNDACAO_TRANSBORDAMENTO_DE_CURSOS_DAGUA_REPRESAS_LAGOS_OU_LAGOAS_DURANTE_A_VIAGEM_TERRESTRE_DESMORONAMENTO_OU_QUEDA_DE_PEDRAS_TERRAS_OBRAS_DE_ARTE_DE_QUALQUER_NATUREZA_OU_OUTROS_OBJETOS_DURANTE_A_VIAGEM_TERRESTRE_TERREMOTO_OU_ERUPCAO_VULCANICA_E_ENTRADA_DE_AGUA_DO_MAR_LAGO_OU_RIO_NA_EMBARCACAO_OU_NO_NAVIO_VEICULO_CONTAINER_FURGAO_LIFTVAN_OU_LOCAL_DE_ARMAZENAGEM,
-              EMBARCADOR_RESTRITA_C_PERDAS_E_DANOS_MATERIAIS_CAUSADOS_AO_OBJETO_SEGURADO_EXCLUSIVAMENTE_POR_INCENDIO_RAIO_OU_EXPLOSAO_ENCALHE_NAUFRAGIO_OU_SOCOBRAMENTO_DO_NAVIO_OU_EMBARCACAO_CAPOTAGEM_COLISAO_TOMBAMENTO_OU_DESCARRILAMENTO_DE_VEICULO_TERRESTRE_ABALROAMENTO_COLISAO_OU_CONTATO_DO_NAVIO_OU_EMBARCACAO_COM_QUALQUER_OBJETO_EXTERNO_QUE_NAO_SEJA_AGUA_COLISAO_QUEDA_E_OU_ATERRISSAGEM_FORCADA_DA_AERONAVE_DEVIDAMENTE_COMPROVADA_DESCARGA_DA_CARGA_EM_PORTO_DE_ARRIBADA_CARGA_LANCADA_AO_MAR_PERDA_TOTAL_DE_QUALQUER_VOLUME_DURANTE_AS_OPERACOES_DE_CARGA_E_DESCARGA_DO_NAVIO_E_PERDA_TOTAL_DECORRENTE_DE_FORTUNA_DO_MAR_E_OU_DE_ARREBATAMENTO_PELO_MAR,
+              EMBARCADOR_RESTRITA_B_COBERTURAS_ELENCADAS_NA_EMBARCADOR_RESTRITA_C_E_INCLUI_INUNDACAO_TRANSBORDAMENTO_DE_CURSOS_DAGUA_REPRESAS_LAGOS_OU_LAGOAS_DURANTE_A_VIAGEM_TERRESTRE_DESMORONAMENTO_OU_QUEDA_DE_PEDRAS_TERRAS_OBRAS_DE_ARTE_DE_QUALQUER_NATUREZA_OU_OUTROS_OBJETOS_DURANTE_A_VIAGEM_TERRESTRE_TERREMOTO_OU_ERUPCAO_VULCANICA_E,
+              ENTRADA_DE_AGUA_DO_MAR_LAGO_OU_RIO_NA_EMBARCACAO_OU_NO_NAVIO,
+              VEICULO_CONTAINER_FURGAO_LIFTVAN_OU_LOCAL_DE_ARMAZENAGEM,
+              EMBARCADOR_RESTRITA_C_PERDAS_E_DANOS_MATERIAIS_CAUSADOS_AO_OBJETO_SEGURADO_EXCLUSIVAMENTE_POR_INCENDIO_RAIO_OU_EXPLOSAO_ENCALHE,
+              NAUFRAGIO_OU_SOCOBRAMENTO_DO_NAVIO_OU_EMBARCACAO_CAPOTAGEM_COLISAO_TOMBAMENTO_OU_DESCARRILAMENTO_DE_VEICULO_TERRESTRE_ABALROAMENTO_COLISAO_OU_CONTATO_DO_NAVIO_OU_EMBARCACAO_COM_QUALQUER_OBJETO_EXTERNO_QUE_NAO_SEJA_AGUA_COLISAO_QUEDA_E_OU_ATERRISSAGEM_FORCADA_DA_AERONAVE_DEVIDAMENTE_COMPROVADA_DESCARGA_DA_CARGA_EM_PORTO_DE_ARRIBADA_CARGA_LANCADA_AO_MAR_PERDA_TOTAL_DE_QUALQUER_VOLUME_DURANTE_AS_OPERACOES_DE_CARGA_E_DESCARGA_DO_NAVIO_E,
+              PERDA_TOTAL_DECORRENTE_DE_FORTUNA_DO_MAR_E_OU_DE_ARREBATAMENTO_PELO_MAR,
               RESPONSABILIDADE_CIVIL_DO_OPERADOR_DE_TRANSPORTES_MULTIMODAL_CARGA_RCOTM_C,
               RESPONSABILIDADE_CIVIL_DO_TRANSPORTADOR_TERRESTRE_VIAGEM_INTERNACIONAL_ACORDOS_FORA_DO_ATIT,
               RESPONSABILIDADE_CIVIL_DO_TRANSPORTADOR_AEREO_CARGA_RCTA_C,
@@ -825,7 +827,7 @@ components:
           maxLength: 3
           example: 4
         amount:
-          description: Valor total do prêmio do contrato
+          description: Valor total do premio do contrato
           allOf:
             - $ref: '#/components/schemas/AmountDetails'
         coverages:
@@ -876,11 +878,10 @@ components:
               RESPONSABILIDADE_CIVIL_DO_TRANSPORTADOR_AQUAVIARIO_CARGA, 
               RESPONSABILIDADE_CIVIL_DO_TRANSPORTADOR_FERROVIARIO_CARGA,              
               RESPONSABILIDADE_CIVIL_DO_TRANSPORTADOR_RODOVIARIO_CARGA,
-              RESPONSABILIDADE_CIVIL_DO_TRANSPORTADOR_RODOVIARIO_EM_VIAGEM_INTERNACIONAL_DANOS_CAUSADOS_A_PESSOAS_OU_COISAS_TRANSPORTADAS_OU_NAO_A_EXCECAO_DA_CARGA_TRANSPORTADA_CARTA_AZUL,
+              RESPONSABILIDADE_CIVIL_DO_TRANSPORTADOR_RODOVIARIO_EM_VIAGEM_INTERNACIONAL_DANOS_CAUSADOS_A_PESSOAS_OU_COISAS_TRANSPORTADAS_OU_NAO_A_EXCECAO_DA_CARGA_TRANSPORTADA_CARTA_AZUL
               RESPONSABILIDADE_CIVIL_DO_TRANSPORTADOR_RODOVIARIO_EM_VIAGEM_INTERNACIONAL, 
               RESPONSABILIDADE_CIVIL_DO_TRANSPORTADOR_RODOVIARIO_EM_VIAGEM_INTERNACIONAL_DANOS_CARGA_TRANSPORTADA,
               RESPONSABILIDADE_CIVIL_DO_TRANSPORTADOR_RODOVIARIO_POR_DESAPARECIMENTO_DE_CARGA,
-              RESPONSABILIDADE_CIVIL_DE_VEICULO_RC_V_TRANSPORTADOR_RODOVIARIO_DE_CARGA,
               OUTRAS
             ]
             example: ACIDENTES_PESSOAIS_COM_PASSAGEIROS
@@ -956,7 +957,7 @@ components:
             OUTROS]
           example: CPF
         tellerIdOthers:
-          description: Descrição do campo de tipo do documento do pagador/recebedor quando a opção escolhida for OUTROS
+          description: Descricao do campo de tipo do documento do pagador/recebedor quando a opcao escolhida for OUTROS
           type: string
           maxLength: 100
           example: RNE
@@ -984,7 +985,7 @@ components:
                 OUTROS]
           example: BOLETO
         paymentTypeOthers:
-          description: Campo de detalhamento para quando a opção do meio de pagamento for OUTROS
+          description: Campo de detalhamento para quando a opcao do meio de pagamento for OUTROS
           type: string
           maxLength: 100
     InsuranceTransportClaim:
@@ -1087,7 +1088,7 @@ components:
           example: '0111'
         code:
             type: string
-            description: Código da cobertura, conforme Anexo II do Manual de Escopo de Dados
+            description: Código da cobertura, conforme Anexo II do Manuel de Escopo de Dados
             enum: [
               ACIDENTES_PESSOAIS_COM_PASSAGEIROS,
               ACIDENTES_PESSOAIS_COM_TRIPULANTES,
@@ -1111,11 +1112,10 @@ components:
               RESPONSABILIDADE_CIVIL_DO_TRANSPORTADOR_AQUAVIARIO_CARGA, 
               RESPONSABILIDADE_CIVIL_DO_TRANSPORTADOR_FERROVIARIO_CARGA,              
               RESPONSABILIDADE_CIVIL_DO_TRANSPORTADOR_RODOVIARIO_CARGA,
-              RESPONSABILIDADE_CIVIL_DO_TRANSPORTADOR_RODOVIARIO_EM_VIAGEM_INTERNACIONAL_DANOS_CAUSADOS_A_PESSOAS_OU_COISAS_TRANSPORTADAS_OU_NAO_A_EXCECAO_DA_CARGA_TRANSPORTADA_CARTA_AZUL,
+              RESPONSABILIDADE_CIVIL_DO_TRANSPORTADOR_RODOVIARIO_EM_VIAGEM_INTERNACIONAL_DANOS_CAUSADOS_A_PESSOAS_OU_COISAS_TRANSPORTADAS_OU_NAO_A_EXCECAO_DA_CARGA_TRANSPORTADA_CARTA_AZUL
               RESPONSABILIDADE_CIVIL_DO_TRANSPORTADOR_RODOVIARIO_EM_VIAGEM_INTERNACIONAL, 
               RESPONSABILIDADE_CIVIL_DO_TRANSPORTADOR_RODOVIARIO_EM_VIAGEM_INTERNACIONAL_DANOS_CARGA_TRANSPORTADA,
               RESPONSABILIDADE_CIVIL_DO_TRANSPORTADOR_RODOVIARIO_POR_DESAPARECIMENTO_DE_CARGA,
-              RESPONSABILIDADE_CIVIL_DE_VEICULO_RC_V_TRANSPORTADOR_RODOVIARIO_DE_CARGA,
               OUTRAS
             ]
             example: ACIDENTES_PESSOAIS_COM_PASSAGEIROS
@@ -2029,6 +2029,38 @@ components:
          $ref: '#/components/schemas/Address'
       additionalProperties: false
 
+    EnumCountrySubDivision:
+      type: string
+      description: 'Enumeração referente a cada sigla da unidade da federação que identifica o estado ou o distrito federal, no qual o endereço está localizado. p.ex. ''AC''. São consideradas apenas as siglas para os estados brasileiros'
+      enum:
+        - AC
+        - AL
+        - AP
+        - AM
+        - BA
+        - CE
+        - DF
+        - ES
+        - GO
+        - MA
+        - MT
+        - MS
+        - MG
+        - PA
+        - PB
+        - PR
+        - PE
+        - PI
+        - RJ
+        - RN
+        - RS
+        - RO
+        - RR
+        - SC
+        - SP
+        - SE
+        - TO
+      example: SP
     EnumCivilStatusCode:
       type: string
       enum:
@@ -2314,7 +2346,7 @@ components:
                   type: string
                   description: Número de identificação (CPF ou CNPJ) do solicitante do cancelamento/revogação.
                   maxLength: 20
-                  pattern: '^([A-Z0-9]{12}\d{2}|\d{11})$'
+                  pattern: '^[A-Z0-9]{12}\d{2}|\d{11}$'
                   example: '73677831148'
     
     ResponseRevokePatch:
@@ -2339,23 +2371,23 @@ components:
         self:
           type: string
           description: URL da página atualmente requisitada
-          example: 'https://api.organizacao.com.br/open-insurance/quote-transport/v3'
+          example: 'https://api.organizacao.com.br/open-insurance/quote-transport/v2'
         first:
           type: string
           description: URL da primeira página de registros
-          example: 'https://api.organizacao.com.br/open-insurance/quote-transport/v3'
+          example: 'https://api.organizacao.com.br/open-insurance/quote-transport/v2'
         prev:
           type: string
           description: URL da página anterior de registros
-          example: 'https://api.organizacao.com.br/open-insurance/quote-transport/v3'
+          example: 'https://api.organizacao.com.br/open-insurance/quote-transport/v2'
         next:
           type: string
           description: URL da próxima página de registros
-          example: 'https://api.organizacao.com.br/open-insurance/quote-transport/v3'
+          example: 'https://api.organizacao.com.br/open-insurance/quote-transport/v2'
         last:
           type: string
           description: URL da última página de registros
-          example: 'https://api.organizacao.com.br/open-insurance/quote-transport/v3'
+          example: 'https://api.organizacao.com.br/open-insurance/quote-transport/v2'
     Meta:
       type: object
       properties:
@@ -2487,7 +2519,7 @@ components:
                 seja um identificador de recurso persistente e independente da localização.  
                 Considerando a string urn:initiator:C1DD93123 como exemplo para consentId temos:
                 - o namespace(urn)
-                - o identificador associado ao namespace da instituição transmissora (initiator) 
+                - o identificador associado ao namespace da instituição transnmissora (initiator) 
                 - o identificador específico dentro do namespace (C1DD93123).  
                 Informações mais detalhadas sobre a construção de namespaces devem ser consultadas na [RFC8141](https://tools.ietf.org/html/rfc8141).
               type: string
@@ -2553,6 +2585,7 @@ components:
                     required:
                       - branch
                       - code
+                      - description
                     properties:
                       branch:
                         type: string
@@ -2561,7 +2594,7 @@ components:
                         description: Grupo e Ramo da Cobertura (Conforme regulamentação Susep vigente)
                       code:
                         type: string
-                        description: Código da cobertura (Vide Tabela 50 até Tabela 62)
+                        description: Codigo da cobertura (Vide Tabela 50 até Tabela 62)
                         example: ACIDENTES_PESSOAIS_COM_PASSAGEIROS
                         enum: [
                           ACIDENTES_PESSOAIS_COM_PASSAGEIROS,
@@ -2586,17 +2619,16 @@ components:
                           RESPONSABILIDADE_CIVIL_DO_TRANSPORTADOR_AQUAVIARIO_CARGA, 
                           RESPONSABILIDADE_CIVIL_DO_TRANSPORTADOR_FERROVIARIO_CARGA,              
                           RESPONSABILIDADE_CIVIL_DO_TRANSPORTADOR_RODOVIARIO_CARGA,
-                          RESPONSABILIDADE_CIVIL_DO_TRANSPORTADOR_RODOVIARIO_EM_VIAGEM_INTERNACIONAL_DANOS_CAUSADOS_A_PESSOAS_OU_COISAS_TRANSPORTADAS_OU_NAO_A_EXCECAO_DA_CARGA_TRANSPORTADA_CARTA_AZUL,
+                          RESPONSABILIDADE_CIVIL_DO_TRANSPORTADOR_RODOVIARIO_EM_VIAGEM_INTERNACIONAL_DANOS_CAUSADOS_A_PESSOAS_OU_COISAS_TRANSPORTADAS_OU_NAO_A_EXCECAO_DA_CARGA_TRANSPORTADA_CARTA_AZUL
                           RESPONSABILIDADE_CIVIL_DO_TRANSPORTADOR_RODOVIARIO_EM_VIAGEM_INTERNACIONAL, 
                           RESPONSABILIDADE_CIVIL_DO_TRANSPORTADOR_RODOVIARIO_EM_VIAGEM_INTERNACIONAL_DANOS_CARGA_TRANSPORTADA,
                           RESPONSABILIDADE_CIVIL_DO_TRANSPORTADOR_RODOVIARIO_POR_DESAPARECIMENTO_DE_CARGA,
-                          RESPONSABILIDADE_CIVIL_DE_VEICULO_RC_V_TRANSPORTADOR_RODOVIARIO_DE_CARGA,
                           OUTRAS
                         ]
                       description:
                         type: string
                         maxLength: 500
-                        description: "Descrição / Nome da Cobertura (Obrigatório quando o campo 'Código' for preenchido com 'Outras')"
+                        description: "Descrição / Nome da Cobertura (Obrigatório quando o campo 'Codigo' for preenchido com 'Outras')"
                     additionalProperties: false
     ###### quoteRequest
     
@@ -2646,43 +2678,39 @@ components:
         type: 
           type: string
           description: 'Tipo do logradouro'
-          enum: [AEROPORTO, ALAMEDA, AREA, AVENIDA, CAMPO, CHACARA, COLONIA, CONDOMINIO, CONJUNTO, DISTRITO, ESPLANADA, ESTACAO, ESTRADA, FAZENDA, FEIRA, JARDIM, LADEIRA, LAGO, LAGOA, LARGO, LOTEAMENTO, NUCLEO, PARQUE, PASSARELA, PATIO, PRACA, QUADRA, RECANTO, RESIDENCIAL, RODOVIA, RUA, SETOR, SITIO, TRAVESSA, TRECHO, TREVO, VALE, VEREDA, VIA, VIADUTO, VIELA, VILA, OUTROS]
-        typeOthers: 
-          type: string
-          description: Descrição do tipo do logradouro. Condicional ao preenchimento do campo "type" com valor OUTROS
-          maxLength: 30
+          enum: [AEROPORTO, ALAMEDA, AREA, AVENIDA, CAMPO, CHACARA, COLONIA, CONDOMINIO, CONJUNTO, DISTRITO, ESPLANADA, ESTACAO, ESTRADA, FAZENDA, FEIRA, JARDIM, LADEIRA, LAGO, LAGOA, LARGO, LOTEAMENTO, NUCLEO, PARQUE, PASSARELA, PATIO, PRACA, QUADRA, RECANTO, RESIDENCIAL, RODOVIA, RUA, SETOR, SITIO, TRAVESSA, TRECHO, TREVO, VALE, VEREDA, VIA, VIADUTO, VIELA, VILA]
         name: 
           type: string
           description: 'Nome do logradouro'
-          maxLength: 100
         number:
           type: string
           description: 'Número do logradouro'
-          pattern: '^[0-9A-Za-zÀ-ÿ\s\/\-\.,ºª]{1,40}$'
+          maxLength: 6
+          pattern: '^[0-9]{1,6}$'
         addressComplementaryInfo:
           type: string
-          maxLength: 50
+          maxLength: 30
           example: Fundos
           description: 'Alguns logradouros ainda necessitam ser especificados por meio de complemento.'
-        districtName:
+        district:
           type: string
-          maxLength: 70
+          maxLength: 50
           example: 'Centro'
           description: 'Bairro é uma comunidade ou região localizada em uma cidade ou município de acordo com as suas subdivisões geográficas'
         townName:
           type: string
           maxLength: 50
-          pattern: '^[0-9A-Za-zÀ-ÿ\s\/\-\.,ºª]+$'
+          pattern: '^[A-Za-z\sáâãéêíïóôõúçÁÂÃÉÍÏÓÔÕÚÇ]+$'
           example: Marília
           description: |
                   Designação da cidade ou município no qual o endereço está localizado.
         countrySubDivision:
           type: string
           maxLength: 50
-          pattern: '^[0-9A-Za-zÀ-ÿ\s\/\-\.,ºª]+$'
+          pattern: '^[A-Za-z\sáâãéêíïóôõúçÁÂÃÉÍÏÓÔÕÚÇ]+$'
           example: New York
           description: |
-                  Designação do estado, província, região ou cantão no qual o endereço está localizado.
+                  Designação do estado no qual o endereço está localizado.
         postCode:
           type: string
           maxLength: 11
@@ -2690,7 +2718,8 @@ components:
           description: |
                   Código de Endereçamento Postal: Composto por um conjunto numérico ou alfanumérico.
         countryCode:
-          $ref: '#/components/schemas/EnumCountryCode'  
+          $ref: '#/components/schemas/EnumCountryCode'
+  
     NationalAddress:
       type: object
       required:
@@ -2704,33 +2733,29 @@ components:
         type: 
           type: string
           description: 'Tipo do logradouro'
-          enum: [AEROPORTO, ALAMEDA, AREA, AVENIDA, CAMPO, CHACARA, COLONIA, CONDOMINIO, CONJUNTO, DISTRITO, ESPLANADA, ESTACAO, ESTRADA, FAZENDA, FEIRA, JARDIM, LADEIRA, LAGO, LAGOA, LARGO, LOTEAMENTO, NUCLEO, PARQUE, PASSARELA, PATIO, PRACA, QUADRA, RECANTO, RESIDENCIAL, RODOVIA, RUA, SETOR, SITIO, TRAVESSA, TRECHO, TREVO, VALE, VEREDA, VIA, VIADUTO, VIELA, VILA, OUTROS]
-        typeOthers: 
-          type: string
-          description: Descrição do tipo do logradouro. Condicional ao preenchimento do campo "type" com valor OUTROS
-          maxLength: 30
+          enum: [AEROPORTO, ALAMEDA, AREA, AVENIDA, CAMPO, CHACARA, COLONIA, CONDOMINIO, CONJUNTO, DISTRITO, ESPLANADA, ESTACAO, ESTRADA, FAZENDA, FEIRA, JARDIM, LADEIRA, LAGO, LAGOA, LARGO, LOTEAMENTO, NUCLEO, PARQUE, PASSARELA, PATIO, PRACA, QUADRA, RECANTO, RESIDENCIAL, RODOVIA, RUA, SETOR, SITIO, TRAVESSA, TRECHO, TREVO, VALE, VEREDA, VIA, VIADUTO, VIELA, VILA]
         name: 
           type: string
-          maxLength: 100
           description: 'Nome do logradouro'
         number:
           type: string
           description: 'Número do logradouro'
-          pattern: '^[0-9A-Za-zÀ-ÿ\s\/\-\.,ºª]{1,40}$'
+          maxLength: 6
+          pattern: '^[0-9]{1,6}$'
         addressComplementaryInfo:
           type: string
-          maxLength: 50
+          maxLength: 30
           example: Fundos
           description: 'Alguns logradouros ainda necessitam ser especificados por meio de complemento.'
         districtName:
           type: string
-          maxLength: 70
+          maxLength: 50
           example: 'Centro'
           description: 'Bairro é uma comunidade ou região localizada em uma cidade ou município de acordo com as suas subdivisões geográficas'
         townName:
           type: string
           maxLength: 50
-          pattern: '^[0-9A-Za-zÀ-ÿ\s\/\-\.,ºª]+$'
+          pattern: '^[A-Za-z\sáâãéêíïóôõúçÁÂÃÉÍÏÓÔÕÚÇ]+$'
           example: Marília
           description: |
                   Localidade: O nome da localidade corresponde à designação da cidade ou município no qual o endereço está localizado.
@@ -2750,44 +2775,13 @@ components:
           example: '17500001'
           description: |
                   Código de Endereçamento Postal: Composto por um conjunto numérico de oito dígitos, o objetivo principal do CEP é orientar e acelerar o encaminhamento, o tratamento e a entrega de objetos postados nos Correios, por meio da sua atribuição a localidades, logradouros, unidades dos Correios, serviços, órgãos públicos, empresas e edifícios. p.ex. '01311000'. Condicional ao preenchimento do FlagPostCode ser igual a "Nacional".
-    EnumCountrySubDivision:
-      type: string
-      description: "Enumeração referente a cada sigla da unidade da federação que identifica o estado ou o distrito federal, no qual o endereço está localizado. p.ex. 'AC'. São consideradas apenas as siglas para os estados brasileiros"
-      enum:
-        - AC
-        - AL
-        - AP
-        - AM
-        - BA
-        - CE
-        - DF
-        - ES
-        - GO
-        - MA
-        - MT
-        - MS
-        - MG
-        - PA
-        - PB
-        - PR
-        - PE
-        - PI
-        - RJ
-        - RN
-        - RS
-        - RO
-        - RR
-        - SC
-        - SP
-        - SE
-        - TO
-      example: RJ
+    
     EnumCountryCode:
       description: Nome do país (de acordo com o código "alpha3" do ISO-3166)
       type: string
       enum: [AFG,ALA,ALB,DZA,ASM,AND,AGO,AIA,ATA,ATG,ARG,ARM,ABW,AUS,AUT,AZE,BHS,BHR,BGD,BRB,BLR,BEL,BLZ,BEN,BMU,BTN,BOL,BES,BIH,BWA,BVT,BRA,IOT,BRN,BGR,BFA,BDI,CPV,KHM,CMR,CAN,CYM,CAF,TCD,CHL,CHN,CXR,CCK,COL,COM,COG,COD,COK,CRI,CIV,HRV,CUB,CUW,CYP,CZE,DNK,DJI,DMA,DOM,ECU,EGY,SLV,GNQ,ERI,EST,SWZ,ETH,FLK,FRO,FJI,FIN,FRA,GUF,PYF,ATF,GAB,GMB,GEO,DEU,GHA,GIB,GRC,GRL,GRD,GLP,GUM,GTM,GGY,GIN,GNB,GUY,HTI,HMD,VAT,HND,HKG,HUN,ISL,IND,IDN,IRN,IRQ,IRL,IMN,ISR,ITA,JAM,JPN,JEY,JOR,KAZ,KEN,KIR,PRK,KOR,KWT,KGZ,LAO,LVA,LBN,LSO,LBR,LBY,LIE,LTU, LUX,MAC,MDG,MWI,MYS,MDV,MLI,MLT,MHL,MTQ,MRT,MUS,MYT,MEX,FSM,MDA,MCO,MNG,MNE,MSR,MAR,MOZ,MMR,NAM,NRU,NPL,NLD,NCL,NZL,NIC,NER,NGA,NIU,NFK,MKD,MNP,NOR,OMN,PAK,PLW,PSE,PAN,PNG,PRY,PER,PHL,PCN,POL,PRT,PRI,QAT,REU,ROU,RUS,RWA,BLM,SHN,KNA,LCA,MAF,SPM,VCT,WSM,SMR,STP,SAU,SEN,SRB,SYC,SLE,SGP,SXM,SVK,SVN,SLB,SOM,ZAF,SGS,SSD,ESP,LKA,SDN,SUR,SJM,SWE,CHE,SYR,TWN,TJK,TZA,THA,TLS,TGO,TKL,TON,TTO,TUN,TUR,TKM,TCA,TUV,UGA,UKR,ARE,GBR,USA,UMI,URY,UZB,VUT,VEN,VNM,VGB,VIR,WLF,ESH,YEM,ZMB,ZWE]
       example: BRA
-      
+
   
   
   
