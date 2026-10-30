@@ -3,13 +3,13 @@ info:
   title: APIs Open Data do Open Insurance Brasil
   description:
     API de informações de Planos de Previdência e Seguros de Pessoas ambos com cobertura por sobrevivência (excluindo seguros Dotais). Os recursos que podem ser consumidos pelos participantes conforme a regra 3.1.1 do manual de escopo de dados.
-  version: 4.0.0
+  version: 3.0.0
   contact:
     url: 'https://www.gov.br/susep/'
 servers:
-  - url: 'https://api.organizacao.com.br/open-insurance/products-services/v4'
+  - url: 'https://api.organizacao.com.br/open-insurance/products-services/v3'
     description: Servidor de Produção
-  - url: 'https://api.organizacao.com.br/open-insurance/products-services/v4'
+  - url: 'https://api.organizacao.com.br/open-insurance/products-services/v3'
     description: Servidor de Homologação
 tags:
 - name: "life-pension"
@@ -22,28 +22,23 @@ paths:
       description: "Obtém a lista dos produtos do tipo vida e previdência."
       operationId: "getLifePension"
       parameters:
+        - $ref: "#/components/parameters/cache-Control"
+        - $ref: "#/components/parameters/content-Security-Policy"
+        - $ref: "#/components/parameters/content-Type"
+        - $ref: "#/components/parameters/strict-Transport-Security"
+        - $ref: "#/components/parameters/x-Content-Type-Options"
+        - $ref: "#/components/parameters/x-Frame-Options"
         - $ref: "#/components/parameters/page"
         - $ref: "#/components/parameters/pageSize"
       responses:
         '200':
           description: Dados dos produtos de Vida e Previdência
-          headers:
-            Cache-Control:
-              $ref: "#/components/headers/Cache-Control"
-            Content-Security-Policy:
-              $ref: "#/components/headers/Content-Security-Policy"
-            Strict-Transport-Security:
-              $ref: "#/components/headers/Strict-Transport-Security"
-            X-Content-Type-Options:
-              $ref: "#/components/headers/X-Content-Type-Options"
-            X-Frame-Options:
-              $ref: "#/components/headers/X-Frame-Options"
-            Content-Type:
-              $ref: "#/components/headers/Content-Type"
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ResponseLifePensionList'
+        '204':
+          $ref: '#/components/responses/NoContent'
         '400':
           $ref: '#/components/responses/BadRequest'
         '401':
@@ -63,11 +58,11 @@ paths:
         '500':
           $ref: '#/components/responses/InternalServerError'
         default:
-          description: Erro inesperado
+          description: Dados dos produtos de Vida e Previdência
           content:
-            application/json; charset=utf-8:
+            application/json:
               schema:
-                $ref: '#/components/schemas/ResponseError'  
+                $ref: '#/components/schemas/ResponseLifePensionList'
 components:
   schemas:
     ResponseLifePensionList:
@@ -165,7 +160,7 @@ components:
                 type: string
                 description: Tipo do produto contratado.
                 example: PGBL
-                enum: [PGBL , PRGP , PAGP, PRSA, PRI_PRID, PDR, VGBL, VRGP, VAGP, VRSA, VRI_VRID, VDR, DEMAIS_PRODUTOS_PREVIDENCIA]
+                enum: [PGBL , PRGP , PAGP, PRSA, PRI/PRID, PDR, VGBL, VRGP, VAGP, VRSA, VRI/VRID, VDR, DEMAIS_PRODUTOS_PREVIDENCIA]
             modality:
               type: string
               description: Modalidade do produto contratado.
@@ -242,7 +237,7 @@ components:
         - minimumPremiumAmount
         - premiumPaymentMethod
         - permissionExtraordinaryContributions
-        - permissionScheduledFinancialPayments
+        - permissonScheduledFinancialPayments
         - gracePeriodRedemption
         - gracePeriodBetweenRedemptionRequests
         - redemptionPaymentTerm
@@ -261,7 +256,7 @@ components:
           type: string
           description: Índice garantido que remunera o plano durante a fase de diferimento/ acumulação.
           example: IPCA
-          enum: [IPCA,IGP_M,INPC, NAO_SE_APLICA]
+          enum: [IPCA,IGP-M,INPC, NAO_SE_APLICA]
         otherMinGuaranteesIndex:
           type: string
           description: |
@@ -316,7 +311,7 @@ components:
           type: boolean
           description: Se ficam permitidos aportes extraordinários.
           example: true
-        permissionScheduledFinancialPayments:
+        permissonScheduledFinancialPayments:
           type: boolean
           description: Se ficam permitidos pagamentos financeiros programados.
           example: true
@@ -441,7 +436,7 @@ components:
           type: string
           description: É o índice contratado para atualização monetária dos valores relativos ao plano, na forma estabelecida por este regulamento.
           example: IPCA
-          enum: [IPCA, IGP_M, INPC, NAO_SE_APLICA]
+          enum: [IPCA, IGP-M, INPC, NAO_SE_APLICA]
         reversalResultsFinancial:
           type: string
           description: Percentual de reversão de excedente financeiro na concessão. Em %.
@@ -453,10 +448,10 @@ components:
     LifePensionCosts:
       type: object
       required:
-        - loadingAnticipated
+        - loadingAntecipated
         - loadingLate
       properties:
-        loadingAnticipated:
+        loadingAntecipated:
           description: Percentual de carregamento cobrado quando do pagamento do prêmio/contribuição. Para coletivos Valor máximo
           allOf:
             - $ref: '#/components/schemas/LifePensionLoading'
@@ -510,27 +505,27 @@ components:
           type: string
           description: URL da página atualmente requisitada
           pattern: ^(https:\/\/)(.*?)(\/open-insurance\/products-services\/v\d+)(\/life-pension.*)?$
-          example: 'https://api.organizacao.com.br/open-insurance/products-services/v4/life-pension'
+          example: 'https://api.organizacao.com.br/open-insurance/products-services/v3/life-pension'
         first:
           type: string
           description: URL da primeira página de registros
           pattern: ^(https:\/\/)(.*?)(\/open-insurance\/products-services\/v\d+)(\/life-pension.*)?$
-          example: 'https://api.organizacao.com.br/open-insurance/products-services/v4/life-pension'
+          example: 'https://api.organizacao.com.br/open-insurance/products-services/v3/life-pension'
         prev:
           type: string
           description: URL da página anterior de registros
           pattern: ^(https:\/\/)(.*?)(\/open-insurance\/products-services\/v\d+)(\/life-pension.*)?$
-          example: 'https://api.organizacao.com.br/open-insurance/products-services/v4/life-pension'
+          example: 'https://api.organizacao.com.br/open-insurance/products-services/v3/life-pension'
         next:
           type: string
           description: URL da próxima página de registros
           pattern: ^(https:\/\/)(.*?)(\/open-insurance\/products-services\/v\d+)(\/life-pension.*)?$
-          example: 'https://api.organizacao.com.br/open-insurance/products-services/v4/life-pension'
+          example: 'https://api.organizacao.com.br/open-insurance/products-services/v3/life-pension'
         last:
           type: string
           description: URL da última página de registros
           pattern: ^(https:\/\/)(.*?)(\/open-insurance\/products-services\/v\d+)(\/life-pension.*)?$
-          example: 'https://api.organizacao.com.br/open-insurance/products-services/v4/life-pension'
+          example: 'https://api.organizacao.com.br/open-insurance/products-services/v3/life-pension'
 
     Meta:
       type: object
@@ -608,32 +603,58 @@ components:
         type: integer
         default: 10
         minimum: 1
-    
-  headers:
-    Cache-Control:
+    cnpjNumber:
+      name: cnpjNumber
+      in: path
+      description: Número de CNPJ.
+      required: true
+      schema:
+        type: string
+        pattern: '^[A-Z0-9]{12}\d{2}$'
+    cache-Control:
+      name: cache-control
+      in: header
       description: Controle de cache para evitar que informações confidenciais sejam armazenadas em cache.
+      required: true
       schema:
         type: string
-    Content-Security-Policy:
-      description: Campo para proteção contra ataques clickjack.
+        pattern: '[\w\W\s]*'
+    content-Security-Policy:
+      name: Content-Security-Policy
+      in: header
+      description: Campo para proteção contra ataques clickjack do estilo - drag and drop.
       schema:
         type: string
-    Strict-Transport-Security:
-      description: Campo para exigir conexões por HTTPS.
-      schema:
-        type: string
-    X-Content-Type-Options:
-      description: Evita detecção de MIME inadequada.
-      schema:
-        type: string
-    X-Frame-Options:
-      description: Indica se o navegador deve renderizar um frame.
-      schema:
-        type: string
-    Content-Type:
+        pattern: '[\w\W\s]*'
+    content-Type:
+      name: content-Type
+      in: header
       description: Especificar o tipo de conteúdo da resposta.
       schema:
         type: string
+        pattern: '[\w\W\s]*'
+    strict-Transport-Security:
+      name: Strict-Transport-Security
+      in: header
+      description: Campo para exigir conexões por HTTPS e proteger contra certificados falsificados.
+      schema:
+        type: string
+        pattern:  '[\w\W\s]*'
+    x-Content-Type-Options:
+      name: X-Content-Type-Options
+      in: header
+      description: Campo para evitar que navegadores executem a detecção de MIME e interpretem respostas como HTML de forma inadequada.
+      schema:
+        type: string
+        pattern: '[\w\W\s]*'
+    x-Frame-Options:
+      name: X-Frame-Options
+      in: header
+      description: Campo indica se o navegador deve ou não renderizar um frame.
+      schema:
+        type: string
+        pattern: '[\w\W\s]*'
+  
   responses:
     UnprocessableEntity:
       description: 'O servidor entende o tipo de conteúdo da entidade da requisição, e a sintaxe da requisição está correta, mas não foi possível processar as instruções presentes.'

@@ -24,21 +24,21 @@ info:
     ### `/contracts`
       - permissions:
         - GET: **FINANCIAL_ASSISTANCE_READ**
-    ### `/{resourceId}/contract-info`
+    ### `/{contractId}/contract-info`
       - permissions:
         - GET: **FINANCIAL_ASSISTANCE_CONTRACTINFO_READ**
-    ### `/{resourceId}/movements`
+    ### `/{contractId}/movements`
       - permissions:
         - GET: **FINANCIAL_ASSISTANCE_MOVEMENTS_READ**
 
-  version: 3.0.0
+  version: 2.0.0
   contact:
     name: Governança do Open Insurance Brasil
     url: "https://www.gov.br/susep"
 servers:
-  - url: "https://api.organizacao.com.br/open-insurance/insurance-financial-assistance/v3"
+  - url: "https://api.organizacao.com.br/open-insurance/insurance-financial-assistance/v2"
     description: Servidor de Produção
-  - url: "https://apih.organizacao.com.br/open-insurance/insurance-financial-assistance/v3"
+  - url: "https://apih.organizacao.com.br/open-insurance/insurance-financial-assistance/v2"
     description: Servidor de Homologação
 tags:
   - name: InsuranceFinancialAssistance
@@ -57,6 +57,8 @@ paths:
         - $ref: "#/components/parameters/xFapiCustomerIpAddress"
         - $ref: "#/components/parameters/xFapiInteractionId"
         - $ref: "#/components/parameters/xCustomerUserAgent"
+        - $ref: "#/components/parameters/x-v"
+        - $ref: "#/components/parameters/x-min-v"
         - $ref: "#/components/parameters/page"
         - $ref: "#/components/parameters/pageSize"
       responses:
@@ -80,23 +82,17 @@ paths:
           $ref: "#/components/responses/TooManyRequests"
         "500":
           $ref: "#/components/responses/InternalServerError"
-        default:
-          description: Erro inesperado
-          content:
-            application/json; charset=utf-8:
-              schema:
-                $ref: '#/components/schemas/ResponseError'
       security:
         - OpenId:
             - openid
           OAuth2Security:
             - "consent:consentId"
             - insurance-financial-assistance
-  /insurance-financial-assistance/{resourceId}/contract-info:
+  /insurance-financial-assistance/{contractId}/contract-info:
     get:
       tags:
         - InsuranceFinancialAssistance
-      summary: Obtém as informações gerais do contrato identificado por {resourceId}
+      summary: Obtém as informações gerais do contrato identificado por {contractId}
       description: "Método para obter as informações gerais do contrato"
       operationId: "getInsuranceFinancialAssistanceContractInfo"
       parameters:
@@ -105,7 +101,9 @@ paths:
         - $ref: "#/components/parameters/xFapiCustomerIpAddress"
         - $ref: "#/components/parameters/xFapiInteractionId"
         - $ref: "#/components/parameters/xCustomerUserAgent"
-        - $ref: "#/components/parameters/resourceId"
+        - $ref: "#/components/parameters/x-v"
+        - $ref: "#/components/parameters/x-min-v"
+        - $ref: "#/components/parameters/contractId"
       responses:
         "200":
           $ref: "#/components/responses/OKResponseInsuranceFinancialAssistanceContractInfo"
@@ -127,23 +125,17 @@ paths:
           $ref: "#/components/responses/TooManyRequests"
         "500":
           $ref: "#/components/responses/InternalServerError"
-        default:
-          description: Erro inesperado
-          content:
-            application/json; charset=utf-8:
-              schema:
-                $ref: '#/components/schemas/ResponseError'
       security:
         - OpenId:
             - openid
           OAuth2Security:
             - "consent:consentId"
             - insurance-financial-assistance
-  /insurance-financial-assistance/{resourceId}/movements:
+  /insurance-financial-assistance/{contractId}/movements:
     get:
       tags:
         - InsuranceFinancialAssistance
-      summary: Obtém os dados de movimentação do contrato identificado por {resourceId}
+      summary: Obtém os dados de movimentação do contrato identificado por {contractId}
       description: "Método para obter os dados de movimentação do contrato."
       operationId: "getInsuranceFinancialAssistanceMovements"
       parameters:
@@ -152,7 +144,9 @@ paths:
         - $ref: "#/components/parameters/xFapiCustomerIpAddress"
         - $ref: "#/components/parameters/xFapiInteractionId"
         - $ref: "#/components/parameters/xCustomerUserAgent"
-        - $ref: "#/components/parameters/resourceId"
+        - $ref: "#/components/parameters/contractId"
+        - $ref: "#/components/parameters/x-v"
+        - $ref: "#/components/parameters/x-min-v"
         - $ref: "#/components/parameters/page"
         - $ref: "#/components/parameters/pageSize"
       responses:
@@ -176,12 +170,6 @@ paths:
           $ref: "#/components/responses/TooManyRequests"
         "500":
           $ref: "#/components/responses/InternalServerError"
-        default:
-          description: Erro inesperado
-          content:
-            application/json; charset=utf-8:
-              schema:
-                $ref: '#/components/schemas/ResponseError'
       security:
         - OpenId:
             - openid
@@ -239,13 +227,13 @@ components:
                           items:
                             type: object
                             required:
-                              - resourceId
+                              - contractId
                             properties:
-                              resourceId:
-                                type: string 
-                                format: uuid
-                                example: 25cac914-d8ae-6789-b215-650a6215820d
-                                description: Identificador do recurso no formato UUID. Utilizado nas URLs secundárias das APIs de Fase 2 para consultar os dados de um recurso específico
+                              contractId:
+                                description: Identificador do contrato de assistência financeira
+                                type: string
+                                maxLength: 60
+                                example: "42"
         links:
           $ref: "#/components/schemas/Links"
         meta:
@@ -281,17 +269,17 @@ components:
         - interestValue
       properties:
         contractId:
-          description: Número do contrato de assistência financeira
+          description: Identificador do contrato de assistência financeira
           type: string
           maxLength: 60
           example: "42"
         certificateId:
-          description: Número do certificado de participante ou certificado individual ou apólice individual
+          description: Identificação do certificado de participante ou certificado individual ou apólice individual
           type: string
           maxLength: 60
           example: "42"
         groupContractId:
-          description: Número do contrato ou apólice (Quando contratação coletiva)
+          description: Identificação do contrato ou apólice (Quando contratação coletiva)
           type: string
           maxLength: 60
           example: "42"
@@ -520,27 +508,27 @@ components:
           type: string
           description: URL da página atualmente requisitada
           pattern: ^(https:\/\/)(.*?)(\/open-insurance\/insurance-financial-assistance\/v\d+)(\/insurance-financial-assistance.*)?$
-          example: "https://api.organizacao.com.br/open-insurance/insurance-financial-assistance/v3/insurance-financial-assistance"
+          example: "https://api.organizacao.com.br/open-insurance/insurance-financial-assistance/v2/insurance-financial-assistance"
         first:
           type: string
           description: URL da primeira página de registros
           pattern: ^(https:\/\/)(.*?)(\/open-insurance\/insurance-financial-assistance\/v\d+)(\/insurance-financial-assistance.*)?$
-          example: "https://api.organizacao.com.br/open-insurance/insurance-financial-assistance/v3/insurance-financial-assistance"
+          example: "https://api.organizacao.com.br/open-insurance/insurance-financial-assistance/v2/insurance-financial-assistance"
         prev:
           type: string
           description: URL da página anterior de registros
           pattern: ^(https:\/\/)(.*?)(\/open-insurance\/insurance-financial-assistance\/v\d+)(\/insurance-financial-assistance.*)?$
-          example: "https://api.organizacao.com.br/open-insurance/insurance-financial-assistance/v3/insurance-financial-assistance"
+          example: "https://api.organizacao.com.br/open-insurance/insurance-financial-assistance/v2/insurance-financial-assistance"
         next:
           type: string
           description: URL da próxima página de registros
           pattern: ^(https:\/\/)(.*?)(\/open-insurance\/insurance-financial-assistance\/v\d+)(\/insurance-financial-assistance.*)?$
-          example: "https://api.organizacao.com.br/open-insurance/insurance-financial-assistance/v3/insurance-financial-assistance"
+          example: "https://api.organizacao.com.br/open-insurance/insurance-financial-assistance/v2/insurance-financial-assistance"
         last:
           type: string
           description: URL da última página de registros
           pattern: ^(https:\/\/)(.*?)(\/open-insurance\/insurance-financial-assistance\/v\d+)(\/insurance-financial-assistance.*)?$
-          example: "https://api.organizacao.com.br/open-insurance/insurance-financial-assistance/v3/insurance-financial-assistance"
+          example: "https://api.organizacao.com.br/open-insurance/insurance-financial-assistance/v2/insurance-financial-assistance"
     Meta:
       type: object
       properties:
@@ -600,16 +588,25 @@ components:
       pattern: '^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$'
       maxLength: 100
       description: 'Um UID [RFC4122](https://tools.ietf.org/html/rfc4122) usado como um ID de correlação. Se fornecido, o transmissor deve "reproduzir" esse valor no cabeçalho de resposta.'
+
+    XV:
+      type: string
+      description: |
+        Versão do endpoint da API requisitado pelo cliente. O titular dos dados deve 
+        responder com a versão mais alta suportada entre x-min-v e x-v. Se o valor de 
+        x-min-v for igual ou maior que o valor de x-v, o cabeçalho x-min-v deve ser 
+        tratado como ausente. Se todas as versões solicitadas não forem suportadas, 
+        o titular dos dados deve responder com o código de status 406 Not Acceptable.
+ 
   parameters:
-    resourceId:
-      name: resourceId
+    contractId:
+      name: contractId
+      description: Identificador do contrato de assistência financeira
       in: path
       required: true
       schema:
         type: string
-        format: uuid
-        example: "25cac914-d8ae-6789-b215-650a6215820d"
-        description: Identificador sistêmico da apólice
+        maxLength: 60
     Authorization:
       name: Authorization
       in: header
@@ -677,7 +674,33 @@ components:
         type: string
         pattern: '^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$'
         minLength: 1
-        maxLength: 100    
+        maxLength: 100
+    x-v:
+      name: x-v
+      in: header
+      description: |
+        Versão do endpoint da API requisitado pelo cliente. O titular dos dados deve 
+        responder com a versão mais alta suportada entre x-min-v e x-v. Se o valor de 
+        x-min-v for igual ou maior que o valor de x-v, o cabeçalho x-min-v deve ser 
+        tratado como ausente. Se todas as versões solicitadas não forem suportadas, 
+        o titular dos dados deve responder com o código de status 406 Not Acceptable.
+      required: false
+      schema:
+        type: string
+      example: '2.1.3'
+    x-min-v:
+      name: x-min-v
+      in: header
+      description: |
+        Versão mínima do endpoint da API requisitado pelo cliente. O detentor dos dados 
+        deve responder com a versão mais alta suportada entre x-min-v e x-v. Se todas as 
+        versões solicitadas não forem suportadas, o titular dos dados deve responder com 
+        um código de status 406 Not Acceptable.
+      required: false
+      schema:
+        type: string
+      example: '2.0.0'
+    
   securitySchemes:
     OpenId:
       type: openIdConnect
@@ -698,6 +721,9 @@ components:
         x-fapi-interaction-id:
           schema:
             $ref: "#/components/schemas/XFapiInteractionId"
+        x-v: 
+          schema:
+            $ref: '#/components/schemas/XV'
       content:
         application/json:
           schema:
@@ -708,6 +734,9 @@ components:
         x-fapi-interaction-id:
           schema:
             $ref: "#/components/schemas/XFapiInteractionId"
+        x-v: 
+          schema:
+            $ref: '#/components/schemas/XV'
       content:
         application/json:
           schema:
@@ -718,6 +747,9 @@ components:
         x-fapi-interaction-id:
           schema:
             $ref: "#/components/schemas/XFapiInteractionId"
+        x-v: 
+          schema:
+            $ref: '#/components/schemas/XV'
       content:
         application/json:
           schema:
