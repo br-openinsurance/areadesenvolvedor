@@ -24,23 +24,23 @@ info:
     ### `/plans`
       - permissions:
         - GET: **CAPITALIZATION_TITLE_READ**
-    ### `/{resourceId}/plan-info`
+    ### `/{planId}/plan-info`
       - permissions:
         - GET: **CAPITALIZATION_TITLE_PLANINFO_READ**
-    ### `/{resourceId}/events`
+    ### `/{planId}/events`
       - permissions:
         - GET: **CAPITALIZATION_TITLE_EVENTS_READ**
-    ### `/{resourceId}/settlements`
+    ### `/{planId}/settlements`
       - permissions:
         - GET: **CAPITALIZATION_TITLE_SETTLEMENTS_READ**
-  version: 3.0.0
+  version: 2.0.0
   contact:
     name: Governança do Open Insurance Brasil
     url: 'https://www.gov.br/susep'
 servers:
-  - url: 'https://api.organizacao.com.br/open-insurance/insurance-capitalization-title/v3'
+  - url: 'https://api.organizacao.com.br/open-insurance/insurance-capitalization-title/v2'
     description: Servidor de Produção
-  - url: 'https://api.organizacao.com.br/open-insurance/insurance-capitalization-title/v3'
+  - url: 'https://api.organizacao.com.br/open-insurance/insurance-capitalization-title/v2'
     description: Servidor de Homologação
 tags:
   - name: InsuranceCapitalizationTitle
@@ -61,6 +61,8 @@ paths:
         - $ref: '#/components/parameters/xCustomerUserAgent'
         - $ref: "#/components/parameters/page"
         - $ref: "#/components/parameters/pageSize"
+        - $ref: "#/components/parameters/x-v"
+        - $ref: "#/components/parameters/x-min-v"
       responses:
         "200":
           $ref: '#/components/responses/OKResponseInsuranceCapitalizationTitle'
@@ -84,6 +86,10 @@ paths:
           $ref: '#/components/responses/InternalServerError'
         default:
           description: Erro inesperado.
+          headers:
+            x-v:
+              schema:
+                $ref: '#/components/schemas/XV'
           content:
             application/json; charset=utf-8:
               schema:
@@ -94,20 +100,22 @@ paths:
           OAuth2Security:
             - 'consent:consentId'
             - capitalization-title
-  /insurance-capitalization-title/{resourceId}/plan-info:
+  /insurance-capitalization-title/{planId}/plan-info:
     get:
       tags:
         - InsuranceCapitalizationTitle
-      summary: Obtém as informações gerais do plano identificado por {resourceId}
+      summary: Obtém as informações gerais do plano identificado por {planId}
       description: "Método para obter as informações gerais do plano"
-      operationId: "getInsuranceCapitalizationTitleresourceIdPlanInfo"
+      operationId: "getInsuranceCapitalizationTitleplanIdPlanInfo"
       parameters:
         - $ref: '#/components/parameters/Authorization'
         - $ref: '#/components/parameters/xFapiAuthDate'
         - $ref: '#/components/parameters/xFapiCustomerIpAddress'
         - $ref: '#/components/parameters/xFapiInteractionId'
         - $ref: '#/components/parameters/xCustomerUserAgent'
-        - $ref: "#/components/parameters/resourceId"
+        - $ref: "#/components/parameters/planId"
+        - $ref: "#/components/parameters/x-v"
+        - $ref: "#/components/parameters/x-min-v"
       responses:
         "200":
           $ref: '#/components/responses/OKResponseInsuranceCapitalizationTitlePlanInfo'
@@ -131,6 +139,10 @@ paths:
           $ref: '#/components/responses/InternalServerError'
         default:
           description: Erro inesperado.
+          headers:
+            x-v:
+              schema:
+                $ref: '#/components/schemas/XV'
           content:
             application/json; charset=utf-8:
               schema:
@@ -141,22 +153,24 @@ paths:
           OAuth2Security:
             - 'consent:consentId'
             - capitalization-title
-  /insurance-capitalization-title/{resourceId}/events:
+  /insurance-capitalization-title/{planId}/events:
     get:
       tags:
         - InsuranceCapitalizationTitle
-      summary: Obtém os dados de eventos do plano identificado por {resourceId}
+      summary: Obtém os dados de eventos do plano identificado por {planId}
       description: "Método para obter os dados de sorteios e resgates associados ao plano"
-      operationId: "getInsuranceCapitalizationTitleresourceIdEvents"
+      operationId: "getInsuranceCapitalizationTitleplanIdEvents"
       parameters:
         - $ref: '#/components/parameters/Authorization'
         - $ref: '#/components/parameters/xFapiAuthDate'
         - $ref: '#/components/parameters/xFapiCustomerIpAddress'
         - $ref: '#/components/parameters/xFapiInteractionId'
         - $ref: '#/components/parameters/xCustomerUserAgent'
-        - $ref: "#/components/parameters/resourceId"
+        - $ref: "#/components/parameters/planId"
         - $ref: "#/components/parameters/page"
         - $ref: "#/components/parameters/pageSize"
+        - $ref: "#/components/parameters/x-v"
+        - $ref: "#/components/parameters/x-min-v"
       responses:
         "200":
           $ref: '#/components/responses/OKResponseInsuranceCapitalizationTitleEvent'
@@ -180,6 +194,10 @@ paths:
           $ref: '#/components/responses/InternalServerError'
         default:
           description: Erro inesperado.
+          headers:
+            x-v:
+              schema:
+                $ref: '#/components/schemas/XV'
           content:
             application/json; charset=utf-8:
               schema:
@@ -190,22 +208,24 @@ paths:
           OAuth2Security:
             - 'consent:consentId'
             - capitalization-title
-  /insurance-capitalization-title/{resourceId}/settlements:
+  /insurance-capitalization-title/{planId}/settlements:
     get:
       tags:
         - InsuranceCapitalizationTitle
-      summary: Obtém os dados de liquidações do plano identificado por {resourceId}
+      summary: Obtém os dados de liquidações do plano identificado por {planId}
       description: "Método para obter os dados de liquidações do plano."
-      operationId: "getInsuranceCapitalizationTitleresourceIdSettlement"
+      operationId: "getInsuranceCapitalizationTitleplanIdSettlement"
       parameters:
         - $ref: '#/components/parameters/Authorization'
         - $ref: '#/components/parameters/xFapiAuthDate'
         - $ref: '#/components/parameters/xFapiCustomerIpAddress'
         - $ref: '#/components/parameters/xFapiInteractionId'
         - $ref: '#/components/parameters/xCustomerUserAgent'
-        - $ref: "#/components/parameters/resourceId"
+        - $ref: "#/components/parameters/planId"
         - $ref: "#/components/parameters/page"
         - $ref: "#/components/parameters/pageSize"
+        - $ref: "#/components/parameters/x-v"
+        - $ref: "#/components/parameters/x-min-v"
       responses:
         "200":
           $ref: '#/components/responses/OKResponseInsuranceCapitalizationTitleSettlement'
@@ -229,6 +249,10 @@ paths:
           $ref: '#/components/responses/InternalServerError'
         default:
           description: Erro inesperado.
+          headers:
+            x-v:
+              schema:
+                $ref: '#/components/schemas/XV'
           content:
             application/json; charset=utf-8:
               schema:
@@ -297,18 +321,16 @@ components:
                             type: object
                             required:
                               - productName
-                              - resourceId
+                              - planId
                             properties:
                               productName:
                                 description: Nome comercial do produto associado ao plano
                                 type: string
                                 maxLength: 70
                                 example: "Produto Exemplo"
-                              resourceId:
-                                type: string 
-                                format: uuid
-                                example: 25cac914-d8ae-6789-b215-650a6215820d
-                                description: Identificador do recurso no formato UUID. Utilizado nas URLs secundárias das APIs de Fase 2 para consultar os dados de um recurso específico
+                              planId:
+                                description: planId - Identificador do contrato do plano
+                                type: string
         links:
             $ref: '#/components/schemas/Links'
         meta:
@@ -355,7 +377,7 @@ components:
         - titles
       properties:
         planId:
-          description: Número do contrato referente ao plano de capitalização
+          description: Número do plano de capitalização
           type: string
         seriesId:
           description: Deve ser informado o número da série
@@ -962,27 +984,27 @@ components:
           type: string
           description: URL da página atualmente requisitada
           pattern: ^(https:\/\/)(.*?)(\/open-insurance\/insurance-capitalization-title\/v\d+)(\/insurance-capitalization-title.*)?$
-          example: "https://api.organizacao.com.br/open-insurance/insurance-capitalization-title/v3/insurance-capitalization-title"
+          example: "https://api.organizacao.com.br/open-insurance/insurance-capitalization-title/v2/insurance-capitalization-title"
         first:
           type: string
           description: URL da primeira página de registros
           pattern: ^(https:\/\/)(.*?)(\/open-insurance\/insurance-capitalization-title\/v\d+)(\/insurance-capitalization-title.*)?$
-          example: "https://api.organizacao.com.br/open-insurance/insurance-capitalization-title/v3/insurance-capitalization-title"
+          example: "https://api.organizacao.com.br/open-insurance/insurance-capitalization-title/v2/insurance-capitalization-title"
         prev:
           type: string
           description: URL da página anterior de registros
           pattern: ^(https:\/\/)(.*?)(\/open-insurance\/insurance-capitalization-title\/v\d+)(\/insurance-capitalization-title.*)?$
-          example: "https://api.organizacao.com.br/open-insurance/insurance-capitalization-title/v3/insurance-capitalization-title"
+          example: "https://api.organizacao.com.br/open-insurance/insurance-capitalization-title/v2/insurance-capitalization-title"
         next:
           type: string
           description: URL da próxima página de registros
           pattern: ^(https:\/\/)(.*?)(\/open-insurance\/insurance-capitalization-title\/v\d+)(\/insurance-capitalization-title.*)?$
-          example: "https://api.organizacao.com.br/open-insurance/insurance-capitalization-title/v3/insurance-capitalization-title"
+          example: "https://api.organizacao.com.br/open-insurance/insurance-capitalization-title/v2/insurance-capitalization-title"
         last:
           type: string
           description: URL da última página de registros
           pattern: ^(https:\/\/)(.*?)(\/open-insurance\/insurance-capitalization-title\/v\d+)(\/insurance-capitalization-title.*)?$
-          example: "https://api.organizacao.com.br/open-insurance/insurance-capitalization-title/v3/insurance-capitalization-title"
+          example: "https://api.organizacao.com.br/open-insurance/insurance-capitalization-title/v2/insurance-capitalization-title"
     Meta:
       type: object
       properties:
@@ -1042,6 +1064,14 @@ components:
       pattern: '^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$'
       maxLength: 100
       description: 'Um UID [RFC4122](https://tools.ietf.org/html/rfc4122) usado como um ID de correlação. Se fornecido, o transmissor deve "reproduzir" esse valor no cabeçalho de resposta.'
+    XV:
+      description: |
+                Caso x-min-v e x-v tenham sido enviados, o titular dos dados deve responder
+                com a versao mais alta suportada entre x-min-v e x-v.
+                Caso x-min-v e x-v nao tenham sido enviados, o titular dos dados deve responder
+                com a versao que esta sendo utilizada naquele momento.
+      type: string
+
     Address:
       type: object
       description: 'dados do endereço'
@@ -1075,43 +1105,39 @@ components:
         type: 
           type: string
           description: 'Tipo do logradouro'
-          enum: [AEROPORTO, ALAMEDA, AREA, AVENIDA, CAMPO, CHACARA, COLONIA, CONDOMINIO, CONJUNTO, DISTRITO, ESPLANADA, ESTACAO, ESTRADA, FAZENDA, FEIRA, JARDIM, LADEIRA, LAGO, LAGOA, LARGO, LOTEAMENTO, NUCLEO, PARQUE, PASSARELA, PATIO, PRACA, QUADRA, RECANTO, RESIDENCIAL, RODOVIA, RUA, SETOR, SITIO, TRAVESSA, TRECHO, TREVO, VALE, VEREDA, VIA, VIADUTO, VIELA, VILA, OUTROS]
-        typeOthers:
-          type: string
-          description: 'Descrição do tipo do logradouro. Condicional ao preenchimento do campo "type" com valor OUTROS.'
-          maxLength: 30
+          enum: [AEROPORTO, ALAMEDA, AREA, AVENIDA, CAMPO, CHACARA, COLONIA, CONDOMINIO, CONJUNTO, DISTRITO, ESPLANADA, ESTACAO, ESTRADA, FAZENDA, FEIRA, JARDIM, LADEIRA, LAGO, LAGOA, LARGO, LOTEAMENTO, NUCLEO, PARQUE, PASSARELA, PATIO, PRACA, QUADRA, RECANTO, RESIDENCIAL, RODOVIA, RUA, SETOR, SITIO, TRAVESSA, TRECHO, TREVO, VALE, VEREDA, VIA, VIADUTO, VIELA, VILA]
         name: 
           type: string
           description: 'Nome do logradouro'
-          maxLength: 100
         number:
           type: string
           description: 'Número do logradouro'
-          pattern: '^[0-9A-Za-zÀ-ÿ\s\/\-\.,ºª]{1,40}$'
+          maxLength: 6
+          pattern: '^[0-9]{1,6}$'
         addressComplementaryInfo:
           type: string
-          maxLength: 50
+          maxLength: 30
           example: Fundos
           description: 'Alguns logradouros ainda necessitam ser especificados por meio de complemento.'
-        districtName:
+        district:
           type: string
-          maxLength: 70
+          maxLength: 50
           example: 'Centro'
           description: 'Bairro é uma comunidade ou região localizada em uma cidade ou município de acordo com as suas subdivisões geográficas'
         townName:
           type: string
           maxLength: 50
-          pattern:  '^[0-9A-Za-zÀ-ÿ\s\/\-\.,ºª]+$'
+          pattern: '^[A-Za-z\sáâãéêíïóôõúçÁÂÃÉÍÏÓÔÕÚÇ]+$'
           example: Marília
           description: |
                   Designação da cidade ou município no qual o endereço está localizado.
         countrySubDivision:
           type: string
           maxLength: 50
-          pattern:  '^[0-9A-Za-zÀ-ÿ\s\/\-\.,ºª]+$'
+          pattern: '^[A-Za-z\sáâãéêíïóôõúçÁÂÃÉÍÏÓÔÕÚÇ]+$'
           example: New York
           description: |
-                  Designação do estado, província, região ou cantão no qual o endereço está localizado.
+                  Designação do estado no qual o endereço está localizado.
         postCode:
           type: string
           maxLength: 11
@@ -1134,33 +1160,29 @@ components:
         type: 
           type: string
           description: 'Tipo do logradouro'
-          enum: [AEROPORTO, ALAMEDA, AREA, AVENIDA, CAMPO, CHACARA, COLONIA, CONDOMINIO, CONJUNTO, DISTRITO, ESPLANADA, ESTACAO, ESTRADA, FAZENDA, FEIRA, JARDIM, LADEIRA, LAGO, LAGOA, LARGO, LOTEAMENTO, NUCLEO, PARQUE, PASSARELA, PATIO, PRACA, QUADRA, RECANTO, RESIDENCIAL, RODOVIA, RUA, SETOR, SITIO, TRAVESSA, TRECHO, TREVO, VALE, VEREDA, VIA, VIADUTO, VIELA, VILA, OUTROS]
-        typeOthers:
-          type: string
-          description: 'Descrição do tipo do logradouro. Condicional ao preenchimento do campo "type" com valor OUTROS.'
-          maxLength: 30
+          enum: [AEROPORTO, ALAMEDA, AREA, AVENIDA, CAMPO, CHACARA, COLONIA, CONDOMINIO, CONJUNTO, DISTRITO, ESPLANADA, ESTACAO, ESTRADA, FAZENDA, FEIRA, JARDIM, LADEIRA, LAGO, LAGOA, LARGO, LOTEAMENTO, NUCLEO, PARQUE, PASSARELA, PATIO, PRACA, QUADRA, RECANTO, RESIDENCIAL, RODOVIA, RUA, SETOR, SITIO, TRAVESSA, TRECHO, TREVO, VALE, VEREDA, VIA, VIADUTO, VIELA, VILA]
         name: 
           type: string
           description: 'Nome do logradouro'
-          maxLength: 100
         number:
           type: string
           description: 'Número do logradouro'
-          pattern: '^[0-9A-Za-zÀ-ÿ\s\/\-\.,ºª]{1,40}$'
+          maxLength: 6
+          pattern: '^[0-9]{1,6}$'
         addressComplementaryInfo:
           type: string
-          maxLength: 50
+          maxLength: 30
           example: Fundos
           description: 'Alguns logradouros ainda necessitam ser especificados por meio de complemento.'
         districtName:
           type: string
-          maxLength: 70
+          maxLength: 50
           example: 'Centro'
           description: 'Bairro é uma comunidade ou região localizada em uma cidade ou município de acordo com as suas subdivisões geográficas'
         townName:
           type: string
           maxLength: 50
-          pattern: '^[0-9A-Za-zÀ-ÿ\s\/\-\.,ºª]+$'
+          pattern: '^[A-Za-z\sáâãéêíïóôõúçÁÂÃÉÍÏÓÔÕÚÇ]+$'
           example: Marília
           description: |
                   Localidade: O nome da localidade corresponde à designação da cidade ou município no qual o endereço está localizado.
@@ -1182,15 +1204,13 @@ components:
                   Código de Endereçamento Postal: Composto por um conjunto numérico de oito dígitos, o objetivo principal do CEP é orientar e acelerar o encaminhamento, o tratamento e a entrega de objetos postados nos Correios, por meio da sua atribuição a localidades, logradouros, unidades dos Correios, serviços, órgãos públicos, empresas e edifícios. p.ex. '01311000'. Condicional ao preenchimento do FlagPostCode ser igual a "Nacional".     
   
   parameters:
-    resourceId:
-        name: resourceId
+    planId:
+        name: planId
         in: path
         required: true
         schema:
-         type: string
-         format: uuid
-         example: "25cac914-d8ae-6789-b215-650a6215820d"
-         description: Identificador sistêmico da apólice
+          type: string
+          maxLength: 60
     Authorization:
       name: Authorization
       in: header
@@ -1259,6 +1279,29 @@ components:
         pattern: '^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$'
         minLength: 1
         maxLength: 100
+    x-v:
+      name: x-v
+      in: header
+      description: |
+        Versão do endpoint da API requisitado pelo cliente. O titular dos dados deve 
+        responder com a versão mais alta suportada entre x-min-v e x-v. Se o valor de 
+        x-min-v for igual ou maior que o valor de x-v, o cabeçalho x-min-v deve ser 
+        tratado como ausente. Se todas as versões solicitadas não forem suportadas, 
+        o titular dos dados deve responder com o código de status 406 Not Acceptable.
+      schema:
+        type: string
+      example: '2.1.3'
+    x-min-v:
+      name: x-min-v
+      in: header
+      description: |
+        Versão mínima do endpoint da API requisitado pelo cliente. O detentor dos dados 
+        deve responder com a versão mais alta suportada entre x-min-v e x-v. Se todas as 
+        versões solicitadas não forem suportadas, o titular dos dados deve responder com 
+        um código de status 406 Not Acceptable.
+      schema:
+        type: string
+      example: '2.0.0'
   securitySchemes:
     OpenId:
       type: openIdConnect
@@ -1276,6 +1319,9 @@ components:
     OKResponseInsuranceCapitalizationTitle:
       description: Dados de ResponseInsuranceCapitalizationTitle obtidos com sucesso
       headers:
+        x-v:
+          schema:
+            $ref: '#/components/schemas/XV'
         x-fapi-interaction-id:
           schema:
             $ref: '#/components/schemas/XFapiInteractionId'
@@ -1286,6 +1332,9 @@ components:
     OKResponseInsuranceCapitalizationTitlePlanInfo:
       description: Dados de ResponseInsuranceCapitalizationTitlePlanInfo obtidos com sucesso
       headers:
+        x-v:
+          schema:
+            $ref: '#/components/schemas/XV'
         x-fapi-interaction-id:
           schema:
             $ref: '#/components/schemas/XFapiInteractionId'
@@ -1296,6 +1345,9 @@ components:
     OKResponseInsuranceCapitalizationTitleEvent:
       description: Dados de ResponseInsuranceCapitalizationTitleEvent obtidos com sucesso
       headers:
+        x-v:
+          schema:
+            $ref: '#/components/schemas/XV'
         x-fapi-interaction-id:
           schema:
             $ref: '#/components/schemas/XFapiInteractionId'
@@ -1306,6 +1358,9 @@ components:
     OKResponseInsuranceCapitalizationTitleSettlement:
       description: Dados de ResponseInsuranceCapitalizationTitleSettlement obtidos com sucesso
       headers:
+        x-v:
+          schema:
+            $ref: '#/components/schemas/XV'
         x-fapi-interaction-id:
           schema:
             $ref: '#/components/schemas/XFapiInteractionId'

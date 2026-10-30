@@ -2,14 +2,14 @@ openapi: 3.0.0
 info:
   title: APIs Open Data do Open Insurance Brasil
   description: As APIs descritas neste documento são referentes as APIs da fase Open Data do Open Insurance Brasil.
-  version: 4.0.0
+  version: 3.0.0
   contact:
     url: 'https://www.gov.br/susep/'
 tags:
   - name: "Channels"
     description: "Operações para listagem de canais de atendimentos"
 servers:
-  - url: http://api.organizacao.com.br/open-insurance/channels/v4
+  - url: http://api.organizacao.com.br/open-insurance/channels/v3
 paths:
   /branches:
     get:
@@ -24,23 +24,12 @@ paths:
       responses:
         '200':
           description: Lista de dependências próprias obtida com sucesso.
-          headers:
-            Cache-Control:
-              $ref: "#/components/headers/Cache-Control"
-            Content-Security-Policy:
-              $ref: "#/components/headers/Content-Security-Policy"
-            Strict-Transport-Security:
-              $ref: "#/components/headers/Strict-Transport-Security"
-            X-Content-Type-Options:
-              $ref: "#/components/headers/X-Content-Type-Options"
-            X-Frame-Options:
-              $ref: "#/components/headers/X-Frame-Options"
-            Content-Type:
-              $ref: "#/components/headers/Content-Type"
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ResponseBranchesList'
+        '204':
+          $ref: '#/components/responses/NoContent'
         '400':
           $ref: '#/components/responses/BadRequest'
         '401':
@@ -60,11 +49,11 @@ paths:
         '500':
           $ref: '#/components/responses/InternalServerError'
         default:
-          description: Erro inesperado
+          description: Lista de dependências próprias obtida com sucesso.
           content:
-            application/json; charset=utf-8:
+            application/json:
               schema:
-                $ref: '#/components/schemas/ResponseError'
+                $ref: '#/components/schemas/ResponseBranchesList'     
   /electronic-channels:
     get:
       tags:
@@ -78,23 +67,12 @@ paths:
       responses:
         '200':
           description: Listagem de canais eletrônicos de atendimento obtida com sucesso.
-          headers:
-            Cache-Control:
-              $ref: "#/components/headers/Cache-Control"
-            Content-Security-Policy:
-              $ref: "#/components/headers/Content-Security-Policy"
-            Strict-Transport-Security:
-              $ref: "#/components/headers/Strict-Transport-Security"
-            X-Content-Type-Options:
-              $ref: "#/components/headers/X-Content-Type-Options"
-            X-Frame-Options:
-              $ref: "#/components/headers/X-Frame-Options"
-            Content-Type:
-              $ref: "#/components/headers/Content-Type"
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ResponseElectronicChannelsList'
+        '204':
+          $ref: '#/components/responses/NoContent'
         '400':
           $ref: '#/components/responses/BadRequest'
         '401':
@@ -114,11 +92,11 @@ paths:
         '500':
           $ref: '#/components/responses/InternalServerError'
         default:
-          description: Erro inesperado
+          description: Listagem de canais eletrônicos de atendimento obtida com sucesso.
           content:
-            application/json; charset=utf-8:
+            application/json:
               schema:
-                $ref: '#/components/schemas/ResponseError'
+                $ref: '#/components/schemas/ResponseElectronicChannelsList'  
   /phone-channels:
     get:
       tags:
@@ -132,23 +110,12 @@ paths:
       responses:
         '200':
           description: Listagem de canais telefônicos de atendimento obtida com sucesso.
-          headers:
-            Cache-Control:
-              $ref: "#/components/headers/Cache-Control"
-            Content-Security-Policy:
-              $ref: "#/components/headers/Content-Security-Policy"
-            Strict-Transport-Security:
-              $ref: "#/components/headers/Strict-Transport-Security"
-            X-Content-Type-Options:
-              $ref: "#/components/headers/X-Content-Type-Options"
-            X-Frame-Options:
-              $ref: "#/components/headers/X-Frame-Options"
-            Content-Type:
-              $ref: "#/components/headers/Content-Type"
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ResponsePhoneChannelsList'
+        '204':
+          $ref: '#/components/responses/NoContent'
         '400':
           $ref: '#/components/responses/BadRequest'
         '401':
@@ -168,11 +135,11 @@ paths:
         '500':
           $ref: '#/components/responses/InternalServerError'
         default:
-          description: Erro inesperado
+          description: Listagem de canais telefônicos de atendimento obtida com sucesso.
           content:
-            application/json; charset=utf-8:
+            application/json:
               schema:
-                $ref: '#/components/schemas/ResponseError'
+                $ref: '#/components/schemas/ResponsePhoneChannelsList'
 components:
   schemas:
     ResponseBranchesList:
@@ -204,7 +171,7 @@ components:
           type: string
           description: Nome da marca reportada pelo participante do Open Insurance. O conceito a que se refere a marca é em essência uma promessa das sociedades sob ela em fornecer uma série específica de atributos, benefícios e serviços uniformes aos clientes.
           maxLength: 80
-          pattern: ^[\w\W\s]*$
+          pattern: \w*\W*
           example: Organização AZ
         companies:
           type: array
@@ -223,7 +190,7 @@ components:
         name:
           type: string
           maxLength: 80
-          pattern: ^[\w\W\s]*$
+          pattern: \w*\W*
           example: Empresa A1
         cnpjNumber:
           type: string
@@ -270,7 +237,7 @@ components:
           description: Nome da sociedade responsável pelo canal eletrônico.
           example: "Marca A"
           maxLength: 80
-          pattern: ^[\w\W\s]*$
+          pattern: \w*\W*
         companies:
           type: array
           items:
@@ -290,7 +257,7 @@ components:
           description: Nome da marca selecionada pela Organização proprietária da dependência (titular).
           example: "Empresa da Marca A"
           maxLength: 80
-          pattern: ^[\w\W\s]*$
+          pattern: \w*\W*
         cnpjNumber:
           type: string
           description: CNPJ da sociedade responsável pelo canal eletrônico.
@@ -370,7 +337,6 @@ components:
         - countrySubDivision
         - postCode
         - countryCode
-        - districtName
       properties:
         type: 
           type: string
@@ -429,8 +395,6 @@ components:
         - townName
         - countrySubDivision
         - postCode
-        - districtName
-        - ibgeTownCode
       properties:
         type: 
           type: string
@@ -520,8 +484,6 @@ components:
       example: BRA
     BranchIdentification:
       type: object
-      required:
-        - type
       properties:
         type:
           type: string
@@ -543,7 +505,7 @@ components:
         name:
           type: string
           maxLength: 100
-          pattern: ^[\w\W\s]*$
+          pattern: \w*\W*
           description: Nome da dependência
           example: Dependência ABC    
 
@@ -766,7 +728,7 @@ components:
         accessType:
           type: string
           description: Tipo de acesso
-          enum: [ENDERECO_ELETRONICO_E_MAIL, URL_PARA_AQUISICAO_NA_INTERNET, URL_PARA_AQUISICAO_NO_APP, URL_PARA_CHAT_INTELIGENCIA_ARTIFICIAL, WHATSAPP, CONSUMIDOR_GOV_BR, OUTROS]
+          enum: [EMAIL, INTERNET, APP, CHAT, WHATSAPP, CONSUMIDOR_GOV_BR, OUTROS]
         accessTypeOthers:
           type: string
           maxLength: 500
@@ -780,7 +742,7 @@ components:
 
     ElectronicChannelsUrl:
       type: string
-      pattern: ^[\w\W\s]*$
+      pattern: \w*\W*
       maxLength: 1024
 
     ElectronicChannelsServices:
@@ -862,8 +824,24 @@ components:
           description: "Número de DDD (Discagem Direta à Distância) do telefone da dependência - se houver. p.ex. '19'"
         number:
           type: string
-          pattern: '^(0[0-9]{3}([\s\-]?[0-9]{3}[\s\-]?[0-9]{4}|[0-9]{7})|(9[0-9]{4}|[2-8][0-9]{3})[\s\-]?[0-9]{4}|(3003|4004)[\s\-]?[0-9]{4})$'
-          description: "Número de telefone de acesso ao canal."
+          pattern: '^(0[0-9]{3}([\s\-]?[0-9]{4}[\s\-]?[0-9]{4}|[0-9]{8})|(\(([1-9][1-9][0-9])\)|([1-9][1-9][0-9]))[\s\-]?(9[0-9]{4}|[2-8][0-9]{3})[\s\-]?[0-9]{4})$'
+          description: "Número de telefone da dependência (se houver). Segue abaixo exemplos de preenchimento possíveis:
+          
+                        - 0800 1234-5678
+
+                        - 080012345678
+                        
+                        - (11) 99999-9999
+
+                        - 11 99999-9999
+
+                        - 11999999999
+                        
+                        - (11) 3333-3333
+
+                        - 11 3333-3333
+                        
+                        - 1133333333"
 
     ####################
     ## Phone ElectronicChannels ##
@@ -898,7 +876,7 @@ components:
       properties:
         name:
           type: string
-          pattern: ^[\w\W\s]*$
+          pattern: '\w*\W*'
           maxLength: 80
           description: "Nome da Marca reportada pelo participante do Open Insurance. O conceito a que se refere a 'marca' utilizada está em definição pelos participantes."
           example: "Marca A"
@@ -919,7 +897,7 @@ components:
       properties:
         name:
           type: string
-          pattern: ^[\w\W\s]*$
+          pattern: \w*\W*
           maxLength: 80
           description: "Nome da Instituição, pertencente à organização, responsável pelo Canal Telefônico."
           example: "Empresa da Marca A"
@@ -1005,9 +983,26 @@ components:
           description: "Número de DDD (Discagem Direta à Distância) para telefone de acesso ao Canal - se houver."
         number:
           type: string
-          pattern: '^(0[0-9]{3}([\s\-]?[0-9]{3}[\s\-]?[0-9]{4}|[0-9]{7})|(9[0-9]{4}|[2-8][0-9]{3})[\s\-]?[0-9]{4}|(3003|4004)[\s\-]?[0-9]{4})$'
-          description: "Número de telefone de acesso ao canal."
-        
+          pattern: '^(0[0-9]{3}([\s\-]?[0-9]{4}[\s\-]?[0-9]{4}|[0-9]{8})|(\(([1-9][1-9][0-9])\)|([1-9][1-9][0-9]))[\s\-]?(9[0-9]{4}|[2-8][0-9]{3})[\s\-]?[0-9]{4})$'
+          description: "Número de telefone de acesso ao canal. Segue abaixo exemplos de preenchimento possíveis:
+          
+                        - 0800 1234-5678
+
+                        - 080012345678
+                        
+                        - (11) 99999-9999
+
+                        - 11 99999-9999
+
+                        - 11999999999
+                        
+                        - (11) 3333-3333
+
+                        - 11 3333-3333
+                        
+                        - 1133333333"
+   
+
     #### PhoneChannelsServices ####
     PhoneChannelsServices:
       type: object
@@ -1086,27 +1081,27 @@ components:
           type: string
           description: URL da página atualmente requisitada
           pattern: ^(https:\/\/)(.*?)(\/open-insurance\/channels\/v\d+)(\/(branches|electronic-channels|phone-channels).*)?$
-          example: 'https://api.organizacao.com.br/open-insurance/channels/v4/branches'
+          example: 'https://api.organizacao.com.br/open-insurance/channels/v3/branches'
         first:
           type: string
           description: URL da primeira página de registros
           pattern: ^(https:\/\/)(.*?)(\/open-insurance\/channels\/v\d+)(\/(branches|electronic-channels|phone-channels).*)?$
-          example: 'https://api.organizacao.com.br/open-insurance/channels/v4/branches'
+          example: 'https://api.organizacao.com.br/open-insurance/channels/v3/branches'
         prev:
           type: string
           description: URL da página anterior de registros
           pattern: ^(https:\/\/)(.*?)(\/open-insurance\/channels\/v\d+)(\/(branches|electronic-channels|phone-channels).*)?$
-          example: 'https://api.organizacao.com.br/open-insurance/channels/v4/branches'
+          example: 'https://api.organizacao.com.br/open-insurance/channels/v3/branches'
         next:
           type: string
           description: URL da próxima página de registros
           pattern: ^(https:\/\/)(.*?)(\/open-insurance\/channels\/v\d+)(\/(branches|electronic-channels|phone-channels).*)?$
-          example: 'https://api.organizacao.com.br/open-insurance/channels/v4/branches'
+          example: 'https://api.organizacao.com.br/open-insurance/channels/v3/branches'
         last:
           type: string
           description: URL da última página de registros
           pattern: ^(https:\/\/)(.*?)(\/open-insurance\/channels\/v\d+)(\/(branches|electronic-channels|phone-channels).*)?$
-          example: 'https://api.organizacao.com.br/open-insurance/channels/v4/branches'
+          example: 'https://api.organizacao.com.br/open-insurance/channels/v3/branches'
 
     Meta:
       type: object
@@ -1166,31 +1161,7 @@ components:
         meta:
           $ref: '#/components/schemas/Meta'
       additionalProperties: false   
-  headers:
-    Cache-Control:
-      description: Controle de cache para evitar que informações confidenciais sejam armazenadas em cache.
-      schema:
-        type: string
-    Content-Security-Policy:
-      description: Campo para proteção contra ataques clickjack.
-      schema:
-        type: string
-    Strict-Transport-Security:
-      description: Campo para exigir conexões por HTTPS.
-      schema:
-        type: string
-    X-Content-Type-Options:
-      description: Evita detecção de MIME inadequada.
-      schema:
-        type: string
-    X-Frame-Options:
-      description: Indica se o navegador deve renderizar um frame.
-      schema:
-        type: string
-    Content-Type:
-      description: Especificar o tipo de conteúdo da resposta.
-      schema:
-        type: string
+
   parameters:
     page:
       name: page

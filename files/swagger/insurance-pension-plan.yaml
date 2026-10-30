@@ -24,29 +24,29 @@ info:
     ### `/contracts`
       - permissions:
         - GET: **PENSION_PLAN_READ**
-    ### `/{resourceId}/contract-info`
+    ### `/{pensionIdentification}/contract-info`
       - permissions:
         - GET: **PENSION_PLAN_CONTRACTINFO_READ**
-    ### `/{resourceId}/movements`
+    ### `/{pensionIdentification}/movements`
       - permissions:
         - GET: **PENSION_PLAN_MOVEMENTS_READ**
-    ### `/{resourceId}/portabilites`
+    ### `/{pensionIdentification}/portabilites`
       - permissions:
         - GET: **PENSION_PLAN_PORTABILITIES_READ**
-    ### `/{resourceId}/withdrawals`
+    ### `/{pensionIdentification}/withdrawals`
       - permissions:
         - GET: **PENSION_PLAN_WITHDRAWALS_READ**
-    ### `/{resourceId}/claim`
+    ### `/{pensionIdentification}/claim`
       - permissions:
         - GET: **PENSION_PLAN_CLAIM_READ**
-  version: 3.0.0
+  version: 2.0.0
   contact:
     name: Governança do Open Insurance Brasil
     url: "https://www.gov.br/susep"
 servers:
-  - url: "https://api.organizacao.com.br/open-insurance/insurance-pension-plan/v3"
+  - url: "https://api.organizacao.com.br/open-insurance/insurance-pension-plan/v2"
     description: Servidor de Produção
-  - url: "https://api.organizacao.com.br/open-insurance/insurance-pension-plan/v3"
+  - url: "https://api.organizacao.com.br/open-insurance/insurance-pension-plan/v2"
     description: Servidor de Homologação
 tags:
   - name: InsurancePensionPlan
@@ -65,6 +65,8 @@ paths:
         - $ref: "#/components/parameters/xFapiCustomerIpAddress"
         - $ref: "#/components/parameters/xFapiInteractionId"
         - $ref: "#/components/parameters/xCustomerUserAgent"        
+        - $ref: "#/components/parameters/x-v"
+        - $ref: "#/components/parameters/x-min-v"
         - $ref: "#/components/parameters/page"
         - $ref: "#/components/parameters/pageSize"
       responses:
@@ -88,32 +90,28 @@ paths:
           $ref: "#/components/responses/TooManyRequests"
         "500":
           $ref: "#/components/responses/InternalServerError"
-        default:
-          description: Erro inesperado
-          content:
-            application/json; charset=utf-8:
-              schema:
-                $ref: '#/components/schemas/ResponseError'
       security:
         - OpenId:
             - openid
           OAuth2Security:
             - "consent:consentId"
             - insurance-pension-plan
-  /insurance-pension-plan/{resourceId}/contract-info:
+  /insurance-pension-plan/{pensionIdentification}/contract-info:
     get:
       tags:
         - InsurancePensionPlan
-      summary: Obtém as informações gerais do contrato identificado por {resourceId}
+      summary: Obtém as informações gerais do contrato identificado por {pensionIdentification}
       description: "Método para obter as informações gerais do contrato"
-      operationId: "getInsurancePensionPlanresourceIdContractInfo"
+      operationId: "getInsurancePensionPlanpensionIdentificationContractInfo"
       parameters:
         - $ref: "#/components/parameters/Authorization"
         - $ref: "#/components/parameters/xFapiAuthDate"
         - $ref: "#/components/parameters/xFapiCustomerIpAddress"
         - $ref: "#/components/parameters/xFapiInteractionId"
         - $ref: "#/components/parameters/xCustomerUserAgent"
-        - $ref: "#/components/parameters/resourceId"
+        - $ref: "#/components/parameters/pensionIdentification"
+        - $ref: "#/components/parameters/x-v"
+        - $ref: "#/components/parameters/x-min-v"
       responses:
         "200":
           $ref: "#/components/responses/OKResponseInsurancePensionPlanContractInfo"
@@ -135,32 +133,28 @@ paths:
           $ref: "#/components/responses/TooManyRequests"
         "500":
           $ref: "#/components/responses/InternalServerError"
-        default:
-          description: Erro inesperado
-          content:
-            application/json; charset=utf-8:
-              schema:
-                $ref: '#/components/schemas/ResponseError'
       security:
         - OpenId:
             - openid
           OAuth2Security:
             - "consent:consentId"
             - insurance-pension-plan
-  /insurance-pension-plan/{resourceId}/movements:
+  /insurance-pension-plan/{pensionIdentification}/movements:
     get:
       tags:
         - InsurancePensionPlan
-      summary: Obtém os dados de contribuições do contrato identificado por {resourceId}
+      summary: Obtém os dados de contribuições do contrato identificado por {pensionIdentification}
       description: "Método para obter os dados de contribuições do contrato."
-      operationId: "getInsurancePensionPlanresourceIdMovements"
+      operationId: "getInsurancePensionPlanpensionIdentificationMovements"
       parameters:
         - $ref: "#/components/parameters/Authorization"
         - $ref: "#/components/parameters/xFapiAuthDate"
         - $ref: "#/components/parameters/xFapiCustomerIpAddress"
         - $ref: "#/components/parameters/xFapiInteractionId"
         - $ref: "#/components/parameters/xCustomerUserAgent"
-        - $ref: "#/components/parameters/resourceId"
+        - $ref: "#/components/parameters/pensionIdentification"
+        - $ref: "#/components/parameters/x-v"
+        - $ref: "#/components/parameters/x-min-v"
       responses:
         "200":
           $ref: "#/components/responses/OKResponseInsurancePensionPlanMovements"
@@ -182,32 +176,28 @@ paths:
           $ref: "#/components/responses/TooManyRequests"
         "500":
           $ref: "#/components/responses/InternalServerError"
-        default:
-          description: Erro inesperado
-          content:
-            application/json; charset=utf-8:
-              schema:
-                $ref: '#/components/schemas/ResponseError'
       security:
         - OpenId:
             - openid
           OAuth2Security:
             - "consent:consentId"
             - insurance-pension-plan
-  /insurance-pension-plan/{resourceId}/portabilities:
+  /insurance-pension-plan/{pensionIdentification}/portabilities:
     get:
       tags:
         - InsurancePensionPlan
-      summary: Obtém os dados de portabilidades do contrato identificada por {resourceId}
+      summary: Obtém os dados de portabilidades do contrato identificada por {pensionIdentification}
       description: "Método para obter os dados de portabilidades associadas ao contrato"
-      operationId: "getInsurancePensionPlanresourceIdPortabilities"
+      operationId: "getInsurancePensionPlanpensionIdentificationPortabilities"
       parameters:
         - $ref: "#/components/parameters/Authorization"
         - $ref: "#/components/parameters/xFapiAuthDate"
         - $ref: "#/components/parameters/xFapiCustomerIpAddress"
         - $ref: "#/components/parameters/xFapiInteractionId"
         - $ref: "#/components/parameters/xCustomerUserAgent"
-        - $ref: "#/components/parameters/resourceId"
+        - $ref: "#/components/parameters/pensionIdentification"
+        - $ref: "#/components/parameters/x-v"
+        - $ref: "#/components/parameters/x-min-v"
         - $ref: "#/components/parameters/page"
         - $ref: "#/components/parameters/pageSize"
       responses:
@@ -231,32 +221,28 @@ paths:
           $ref: "#/components/responses/TooManyRequests"
         "500":
           $ref: "#/components/responses/InternalServerError"
-        default:
-          description: Erro inesperado
-          content:
-            application/json; charset=utf-8:
-              schema:
-                $ref: '#/components/schemas/ResponseError'
       security:
         - OpenId:
             - openid
           OAuth2Security:
             - "consent:consentId"
             - insurance-pension-plan
-  /insurance-pension-plan/{resourceId}/withdrawals:
+  /insurance-pension-plan/{pensionIdentification}/withdrawals:
     get:
       tags:
         - InsurancePensionPlan
-      summary: Obtém os dados de resgates do contrato identificado por {resourceId}
+      summary: Obtém os dados de resgates do contrato identificado por {pensionIdentification}
       description: "Método para obter os dados de resgates associados ao contrato"
-      operationId: "getInsurancePensionPlanresourceIdWithdrawals"
+      operationId: "getInsurancePensionPlanpensionIdentificationWithdrawals"
       parameters:
         - $ref: "#/components/parameters/Authorization"
         - $ref: "#/components/parameters/xFapiAuthDate"
         - $ref: "#/components/parameters/xFapiCustomerIpAddress"
         - $ref: "#/components/parameters/xFapiInteractionId"
         - $ref: "#/components/parameters/xCustomerUserAgent"
-        - $ref: "#/components/parameters/resourceId"        
+        - $ref: "#/components/parameters/pensionIdentification"        
+        - $ref: "#/components/parameters/x-v"
+        - $ref: "#/components/parameters/x-min-v"
         - $ref: "#/components/parameters/page"
         - $ref: "#/components/parameters/pageSize"
       responses:
@@ -280,32 +266,28 @@ paths:
           $ref: "#/components/responses/TooManyRequests"
         "500":
           $ref: "#/components/responses/InternalServerError"
-        default:
-          description: Erro inesperado
-          content:
-            application/json; charset=utf-8:
-              schema:
-                $ref: '#/components/schemas/ResponseError'
       security:
         - OpenId:
             - openid
           OAuth2Security:
             - "consent:consentId"
             - insurance-pension-plan
-  /insurance-pension-plan/{resourceId}/claim:
+  /insurance-pension-plan/{pensionIdentification}/claim:
     get:
       tags:
         - InsurancePensionPlan
-      summary: Obtém os dados de sinistro do contrato identificado por {resourceId}
+      summary: Obtém os dados de sinistro do contrato identificado por {pensionIdentification}
       description: "Método para obter os dados de sinistro associados ao contrato"
-      operationId: "getInsurancePensionPlanresourceIdClaim"
+      operationId: "getInsurancePensionPlanpensionIdentificationPeople"
       parameters:
         - $ref: "#/components/parameters/Authorization"
         - $ref: "#/components/parameters/xFapiAuthDate"
         - $ref: "#/components/parameters/xFapiCustomerIpAddress"
         - $ref: "#/components/parameters/xFapiInteractionId"
         - $ref: "#/components/parameters/xCustomerUserAgent"
-        - $ref: "#/components/parameters/resourceId"        
+        - $ref: "#/components/parameters/pensionIdentification"        
+        - $ref: "#/components/parameters/x-v"
+        - $ref: "#/components/parameters/x-min-v"
         - $ref: "#/components/parameters/page"
         - $ref: "#/components/parameters/pageSize"
       responses:
@@ -329,12 +311,6 @@ paths:
           $ref: "#/components/responses/TooManyRequests"
         "500":
           $ref: "#/components/responses/InternalServerError"
-        default:
-          description: Erro inesperado
-          content:
-            application/json; charset=utf-8:
-              schema:
-                $ref: '#/components/schemas/ResponseError'
       security:
         - OpenId:
             - openid
@@ -393,18 +369,18 @@ components:
                           items:
                             type: object
                             required:
-                              - resourceId
+                              - pensionIdentification
                               - productName
                             properties:
                               productName:
                                 type: string
                                 description: Nome comercial do produto, pelo qual é identificado nos canais de distribuição e atendimento da sociedade
                                 maxLength: 100
-                              resourceId:
-                                type: string 
-                                format: uuid
-                                example: 25cac914-d8ae-6789-b215-650a6215820d
-                                description: Identificador do recurso no formato UUID. Utilizado nas URLs secundárias das APIs de Fase 2 para consultar os dados de um recurso específico
+                              pensionIdentification:
+                                description: Código único a ser definido pela sociedade participante
+                                type: string
+                                maxLength: 60
+                                example: "42"
         links:
           $ref: "#/components/schemas/Links"
         meta:
@@ -430,7 +406,7 @@ components:
         - documents
       properties:
         pensionIdentification:
-          description: "Número do certificado/apólice individual, caso contrato individual. Número do certificado, caso contrato coletivo"
+          description: Código único a ser definido pela sociedade
           type: string
           maxLength: 60
           example: "42"
@@ -462,12 +438,12 @@ components:
         - plans
       properties:
         certificateId:
-          description: Número utilizado para as "entidades de 1º nível", a saber, apólices individuais , bilhetes e certificados de participante individual de previdência; por sua vez, nas operações coletivas equivale às apólices coletivas e aos contratos coletivos de previdência
+          description: Identificador utilizado para as "entidades de 1º nível", a saber, apólices individuais , bilhetes ei certificados de participante individual de previdência; por sua vez, nas operações coletivas equivale às apólices coletivas e aos contratos coletivos de previdência
           type: string
           maxLength: 60
           example: "67"
         contractId:
-          description: Número do contrato/apólice, em caso de contratação coletiva, obrigatório caso Tipo de contratação seja COLETIVO
+          description: identificação do contrato/apólice, em caso de contratação coletiva, obrigatório caso Tipo de contratação seja COLETIVO
           type: string
           maxLength: 60
           example: "681"
@@ -660,6 +636,7 @@ components:
         - periodicity
         - coverageName
         - lockedPlan
+        - updateIndexLagging
         - termStartDate
         - termEndDate
         - benefitAmount
@@ -775,13 +752,13 @@ components:
         updateIndex:
           description: Índice de Atualização da Cobertura
           type: string
-          example: IPC_FGV
+          example: IPC-FGV
           enum:
-            - IPC_FGV
-            - IGP_DI_FGV
-            - IPCA_IBGE
-            - IGPM_FGV
-            - INPC_IBGE
+            - IPC-FGV
+            - IGP-DI-FGV
+            - IPCA-IBGE
+            - IGPM-FGV
+            - INPC-IBGE
             - TR
             - OUTROS
         updateIndexDescription:
@@ -828,7 +805,7 @@ components:
           type: string
           description: Periodicidade da Carência, Obrigatório se houver
           example: DIA
-          enum: [HORA, DIA, MES, ANO]
+          enum: [DIA, MES, ANO]
         dayIndicator:
           type: string
           description: Índicador de dias úteis ou Corridos, Obrigatório se houver
@@ -1056,9 +1033,9 @@ components:
     InsurancePensionPlanWithdrawal:
       type: object
       required:
-        - withdrawalOccurrence
+        - withdrawalOccurence
       properties:
-        withdrawalOccurrence:
+        withdrawalOccurence:
           type: boolean
           description: Indica se houve resgate
           example: true
@@ -1066,7 +1043,7 @@ components:
           type: array
           items:
             type: object
-            description: Objeto obrigatório caso withdrawalOccurrence seja true.
+            description: Objeto obrigatório caso withdrawalOccurence seja true.
             properties:
               type:
                 description: Tipo de resgate, Obrigatório, se houver
@@ -1263,14 +1240,14 @@ components:
               description: Índice de Atualização Monetária
               type: string
               enum:
-                - IPC_FGV
-                - IGP_DI_FGV
-                - IPCA_IBGE
-                - IGPM_FGV
-                - INPC_IBGE
+                - IPC-FGV
+                - IGP-DI-FGV
+                - IPCA-IBGE
+                - IGPM-FGV
+                - INPC-IBGE
                 - TR
                 - OUTROS
-              example: IPC_FGV
+              example: IPC-FGV
             monetaryUpdIndexOthers:
               description: Descricao do campo de Indice de Atualizacao Monetaria quando a opcao escolhida for OUTROS
               type: string
@@ -1368,27 +1345,27 @@ components:
           type: string
           description: URL da página atualmente requisitada
           pattern: ^(https:\/\/)(.*?)(\/open-insurance\/insurance-pension-plan\/v\d+)(\/insurance-pension-plan.*)?$
-          example: "https://api.organizacao.com.br/open-insurance/insurance-pension-plan/v3/insurance-pension-plan"
+          example: "https://api.organizacao.com.br/open-insurance/insurance-pension-plan/v2/insurance-pension-plan"
         first:
           type: string
           description: URL da primeira página de registros
           pattern: ^(https:\/\/)(.*?)(\/open-insurance\/insurance-pension-plan\/v\d+)(\/insurance-pension-plan.*)?$
-          example: "https://api.organizacao.com.br/open-insurance/insurance-pension-plan/v3/insurance-pension-plan"
+          example: "https://api.organizacao.com.br/open-insurance/insurance-pension-plan/v2/insurance-pension-plan"
         prev:
           type: string
           description: URL da página anterior de registros
           pattern: ^(https:\/\/)(.*?)(\/open-insurance\/insurance-pension-plan\/v\d+)(\/insurance-pension-plan.*)?$
-          example: "https://api.organizacao.com.br/open-insurance/insurance-pension-plan/v3/insurance-pension-plan"
+          example: "https://api.organizacao.com.br/open-insurance/insurance-pension-plan/v2/insurance-pension-plan"
         next:
           type: string
           description: URL da próxima página de registros
           pattern: ^(https:\/\/)(.*?)(\/open-insurance\/insurance-pension-plan\/v\d+)(\/insurance-pension-plan.*)?$
-          example: "https://api.organizacao.com.br/open-insurance/insurance-pension-plan/v3/insurance-pension-plan"
+          example: "https://api.organizacao.com.br/open-insurance/insurance-pension-plan/v2/insurance-pension-plan"
         last:
           type: string
           description: URL da última página de registros
           pattern: ^(https:\/\/)(.*?)(\/open-insurance\/insurance-pension-plan\/v\d+)(\/insurance-pension-plan.*)?$
-          example: "https://api.organizacao.com.br/open-insurance/insurance-pension-plan/v3/insurance-pension-plan"
+          example: "https://api.organizacao.com.br/open-insurance/insurance-pension-plan/v2/insurance-pension-plan"
     Meta:
       type: object
       properties:
@@ -1449,6 +1426,14 @@ components:
       pattern: '^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$'
       maxLength: 100
       description: 'Um UID [RFC4122](https://tools.ietf.org/html/rfc4122) usado como um ID de correlação. Se fornecido, o transmissor deve "reproduzir" esse valor no cabeçalho de resposta.'
+    XV:
+      type: string
+      description: |
+        Versão do endpoint da API requisitado pelo cliente. O titular dos dados deve 
+        responder com a versão mais alta suportada entre x-min-v e x-v. Se o valor de 
+        x-min-v for igual ou maior que o valor de x-v, o cabeçalho x-min-v deve ser 
+        tratado como ausente. Se todas as versões solicitadas não forem suportadas, 
+        o titular dos dados deve responder com o código de status 406 Not Acceptable.
     Address:
       type: object
       description: 'dados do endereço'
@@ -1481,43 +1466,39 @@ components:
         type: 
           type: string
           description: 'Tipo do logradouro'
-          enum: [AEROPORTO, ALAMEDA, AREA, AVENIDA, CAMPO, CHACARA, COLONIA, CONDOMINIO, CONJUNTO, DISTRITO, ESPLANADA, ESTACAO, ESTRADA, FAZENDA, FEIRA, JARDIM, LADEIRA, LAGO, LAGOA, LARGO, LOTEAMENTO, NUCLEO, PARQUE, PASSARELA, PATIO, PRACA, QUADRA, RECANTO, RESIDENCIAL, RODOVIA, RUA, SETOR, SITIO, TRAVESSA, TRECHO, TREVO, VALE, VEREDA, VIA, VIADUTO, VIELA, VILA, OUTROS]
-        typeOthers:
-          type: string
-          maxLength: 30
-          description: 'Descrição do tipo do logradouro. Condicional ao preenchimento do campo "type" com valor OUTROS.'
+          enum: [AEROPORTO, ALAMEDA, AREA, AVENIDA, CAMPO, CHACARA, COLONIA, CONDOMINIO, CONJUNTO, DISTRITO, ESPLANADA, ESTACAO, ESTRADA, FAZENDA, FEIRA, JARDIM, LADEIRA, LAGO, LAGOA, LARGO, LOTEAMENTO, NUCLEO, PARQUE, PASSARELA, PATIO, PRACA, QUADRA, RECANTO, RESIDENCIAL, RODOVIA, RUA, SETOR, SITIO, TRAVESSA, TRECHO, TREVO, VALE, VEREDA, VIA, VIADUTO, VIELA, VILA]
         name: 
           type: string
           description: 'Nome do logradouro'
-          maxLength: 100
         number:
           type: string
           description: 'Número do logradouro'
-          pattern: '^[0-9A-Za-zÀ-ÿ\s\/\-\.,ºª]{1,40}$'
+          maxLength: 6
+          pattern: '^[0-9]{1,6}$'
         addressComplementaryInfo:
           type: string
-          maxLength: 50
+          maxLength: 30
           example: Fundos
           description: 'Alguns logradouros ainda necessitam ser especificados por meio de complemento.'
-        districtName:
+        district:
           type: string
-          maxLength: 70
+          maxLength: 50
           example: 'Centro'
           description: 'Bairro é uma comunidade ou região localizada em uma cidade ou município de acordo com as suas subdivisões geográficas'
         townName:
           type: string
           maxLength: 50
-          pattern:  '^[0-9A-Za-zÀ-ÿ\s\/\-\.,ºª]+$'
+          pattern: '^[A-Za-z\sáâãéêíïóôõúçÁÂÃÉÍÏÓÔÕÚÇ]+$'
           example: Marília
           description: |
                   Designação da cidade ou município no qual o endereço está localizado.
         countrySubDivision:
           type: string
           maxLength: 50
-          pattern:  '^[0-9A-Za-zÀ-ÿ\s\/\-\.,ºª]+$'
+          pattern: '^[A-Za-z\sáâãéêíïóôõúçÁÂÃÉÍÏÓÔÕÚÇ]+$'
           example: New York
           description: |
-                   Designação do estado, província, região ou cantão no qual o endereço está localizado.
+                  Designação do estado no qual o endereço está localizado.
         postCode:
           type: string
           maxLength: 11
@@ -1539,33 +1520,29 @@ components:
         type: 
           type: string
           description: 'Tipo do logradouro'
-          enum: [AEROPORTO, ALAMEDA, AREA, AVENIDA, CAMPO, CHACARA, COLONIA, CONDOMINIO, CONJUNTO, DISTRITO, ESPLANADA, ESTACAO, ESTRADA, FAZENDA, FEIRA, JARDIM, LADEIRA, LAGO, LAGOA, LARGO, LOTEAMENTO, NUCLEO, PARQUE, PASSARELA, PATIO, PRACA, QUADRA, RECANTO, RESIDENCIAL, RODOVIA, RUA, SETOR, SITIO, TRAVESSA, TRECHO, TREVO, VALE, VEREDA, VIA, VIADUTO, VIELA, VILA, OUTROS]
-        typeOthers:
-          type: string
-          maxLength: 30
-          description: 'Descrição do tipo do logradouro. Condicional ao preenchimento do campo "type" com valor OUTROS.'
+          enum: [AEROPORTO, ALAMEDA, AREA, AVENIDA, CAMPO, CHACARA, COLONIA, CONDOMINIO, CONJUNTO, DISTRITO, ESPLANADA, ESTACAO, ESTRADA, FAZENDA, FEIRA, JARDIM, LADEIRA, LAGO, LAGOA, LARGO, LOTEAMENTO, NUCLEO, PARQUE, PASSARELA, PATIO, PRACA, QUADRA, RECANTO, RESIDENCIAL, RODOVIA, RUA, SETOR, SITIO, TRAVESSA, TRECHO, TREVO, VALE, VEREDA, VIA, VIADUTO, VIELA, VILA]
         name: 
           type: string
           description: 'Nome do logradouro'
-          maxLength: 100
         number:
           type: string
           description: 'Número do logradouro'
-          pattern: '^[0-9A-Za-zÀ-ÿ\s\/\-\.,ºª]{1,40}$'
+          maxLength: 6
+          pattern: '^[0-9]{1,6}$'
         addressComplementaryInfo:
           type: string
-          maxLength: 50
+          maxLength: 30
           example: Fundos
           description: 'Alguns logradouros ainda necessitam ser especificados por meio de complemento.'
         districtName:
           type: string
-          maxLength: 70
+          maxLength: 50
           example: 'Centro'
           description: 'Bairro é uma comunidade ou região localizada em uma cidade ou município de acordo com as suas subdivisões geográficas'
         townName:
           type: string
           maxLength: 50
-          pattern: '^[0-9A-Za-zÀ-ÿ\s\/\-\.,ºª]+$'
+          pattern: '^[A-Za-z\sáâãéêíïóôõúçÁÂÃÉÍÏÓÔÕÚÇ]+$'
           example: Marília
           description: |
                   Localidade: O nome da localidade corresponde à designação da cidade ou município no qual o endereço está localizado.
@@ -1591,15 +1568,14 @@ components:
       enum: [AFG,ALA,ALB,DZA,ASM,AND,AGO,AIA,ATA,ATG,ARG,ARM,ABW,AUS,AUT,AZE,BHS,BHR,BGD,BRB,BLR,BEL,BLZ,BEN,BMU,BTN,BOL,BES,BIH,BWA,BVT,BRA,IOT,BRN,BGR,BFA,BDI,CPV,KHM,CMR,CAN,CYM,CAF,TCD,CHL,CHN,CXR,CCK,COL,COM,COG,COD,COK,CRI,CIV,HRV,CUB,CUW,CYP,CZE,DNK,DJI,DMA,DOM,ECU,EGY,SLV,GNQ,ERI,EST,SWZ,ETH,FLK,FRO,FJI,FIN,FRA,GUF,PYF,ATF,GAB,GMB,GEO,DEU,GHA,GIB,GRC,GRL,GRD,GLP,GUM,GTM,GGY,GIN,GNB,GUY,HTI,HMD,VAT,HND,HKG,HUN,ISL,IND,IDN,IRN,IRQ,IRL,IMN,ISR,ITA,JAM,JPN,JEY,JOR,KAZ,KEN,KIR,PRK,KOR,KWT,KGZ,LAO,LVA,LBN,LSO,LBR,LBY,LIE,LTU, LUX,MAC,MDG,MWI,MYS,MDV,MLI,MLT,MHL,MTQ,MRT,MUS,MYT,MEX,FSM,MDA,MCO,MNG,MNE,MSR,MAR,MOZ,MMR,NAM,NRU,NPL,NLD,NCL,NZL,NIC,NER,NGA,NIU,NFK,MKD,MNP,NOR,OMN,PAK,PLW,PSE,PAN,PNG,PRY,PER,PHL,PCN,POL,PRT,PRI,QAT,REU,ROU,RUS,RWA,BLM,SHN,KNA,LCA,MAF,SPM,VCT,WSM,SMR,STP,SAU,SEN,SRB,SYC,SLE,SGP,SXM,SVK,SVN,SLB,SOM,ZAF,SGS,SSD,ESP,LKA,SDN,SUR,SJM,SWE,CHE,SYR,TWN,TJK,TZA,THA,TLS,TGO,TKL,TON,TTO,TUN,TUR,TKM,TCA,TUV,UGA,UKR,ARE,GBR,USA,UMI,URY,UZB,VUT,VEN,VNM,VGB,VIR,WLF,ESH,YEM,ZMB,ZWE]
       example: BRA
   parameters:
-    resourceId:
-      name: resourceId
+    pensionIdentification:
+      name: pensionIdentification
+      description: Código único a ser definido pela sociedade
       in: path
       required: true
       schema:
         type: string
-        format: uuid
-        example: "25cac914-d8ae-6789-b215-650a6215820d"
-        description: Identificador sistêmico da apólice
+        maxLength: 60
     Authorization:
       name: Authorization
       in: header
@@ -1668,6 +1644,31 @@ components:
         pattern: '^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$'
         minLength: 1
         maxLength: 100
+    x-v:
+      name: x-v
+      in: header
+      description: |
+        Versão do endpoint da API requisitado pelo cliente. O titular dos dados deve 
+        responder com a versão mais alta suportada entre x-min-v e x-v. Se o valor de 
+        x-min-v for igual ou maior que o valor de x-v, o cabeçalho x-min-v deve ser 
+        tratado como ausente. Se todas as versões solicitadas não forem suportadas, 
+        o titular dos dados deve responder com o código de status 406 Not Acceptable.
+      required: false
+      schema:
+        type: string
+      example: '2.1.3'
+    x-min-v:
+      name: x-min-v
+      in: header
+      description: |
+        Versão mínima do endpoint da API requisitado pelo cliente. O detentor dos dados 
+        deve responder com a versão mais alta suportada entre x-min-v e x-v. Se todas as 
+        versões solicitadas não forem suportadas, o titular dos dados deve responder com 
+        um código de status 406 Not Acceptable.
+      required: false
+      schema:
+        type: string
+      example: '2.0.0'
   securitySchemes:
     OpenId:
       type: openIdConnect
@@ -1688,6 +1689,9 @@ components:
         x-fapi-interaction-id:
           schema:
             $ref: "#/components/schemas/XFapiInteractionId"
+        x-v: 
+          schema:
+            $ref: '#/components/schemas/XV'
       content:
         application/json:
           schema:
@@ -1698,6 +1702,9 @@ components:
         x-fapi-interaction-id:
           schema:
             $ref: "#/components/schemas/XFapiInteractionId"
+        x-v: 
+          schema:
+            $ref: '#/components/schemas/XV'
       content:
         application/json:
           schema:
@@ -1708,6 +1715,9 @@ components:
         x-fapi-interaction-id:
           schema:
             $ref: "#/components/schemas/XFapiInteractionId"
+        x-v: 
+          schema:
+            $ref: '#/components/schemas/XV'
       content:
         application/json:
           schema:
@@ -1718,6 +1728,9 @@ components:
         x-fapi-interaction-id:
           schema:
             $ref: "#/components/schemas/XFapiInteractionId"
+        x-v: 
+          schema:
+            $ref: '#/components/schemas/XV'
       content:
         application/json:
           schema:
@@ -1728,6 +1741,9 @@ components:
         x-fapi-interaction-id:
           schema:
             $ref: "#/components/schemas/XFapiInteractionId"
+        x-v: 
+          schema:
+            $ref: '#/components/schemas/XV'
       content:
         application/json:
           schema:
@@ -1738,6 +1754,9 @@ components:
         x-fapi-interaction-id:
           schema:
             $ref: "#/components/schemas/XFapiInteractionId"
+        x-v: 
+          schema:
+            $ref: '#/components/schemas/XV'
       content:
         application/json:
           schema:
