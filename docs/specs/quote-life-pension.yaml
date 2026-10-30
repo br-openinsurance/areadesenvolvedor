@@ -42,15 +42,15 @@ info:
       - 1 - `Idempotência:` Valida se há divergência entre chave de idempotência e informações enviadas (ERRO_IDEMPOTENCIA);
       - 2 - `Não Informado:` Valida itens não explicitamente informados pelo servidor - (NAO_INFORMADO). 
       
-  version: 2.0.0
+  version: 3.0.0
   contact:
     name: Governança do Open Insurance Brasil
-    email: gt-interfaces@openinsurancebr.org
+    email: gt-dados@opinbrasil.com.br
     url: https://www.gov.br/susep
 servers:
-  - url: https://api.organizacao.com.br/open-insurance/contract-life-pension/v2
+  - url: https://api.organizacao.com.br/open-insurance/contract-life-pension/v3
     description: Servidor de Produção
-  - url: https://api.organizacao.com.br/open-insurance/contract-life-pension/v2
+  - url: https://api.organizacao.com.br/open-insurance/contract-life-pension/v3
     description: Servidor de Homologação
 tags:
   - name: LifePensionLead
@@ -354,7 +354,7 @@ components:
         - suseps
       properties:
         certificateId:
-          description: Identificador do certificado/apólice individual, caso contrato individual. Identificador do certificado, caso contrato coletivo.
+          description: "Número do certificado/apólice individual, caso contrato individual. Número do certificado, caso contrato coletivo"
           type: string
           maxLength: 60
           example: '67'
@@ -405,14 +405,14 @@ components:
           type: string
           format: date
           maxLength: 10
-          pattern: ^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])$
+          pattern: ^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])$
           example: '2021-05-21'
         effectiveDateEnd:
           description: Data de Fim da Vigência do documento.
           type: string
           format: date
           maxLength: 10
-          pattern: ^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])$
+          pattern: ^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])$
           example: '2021-05-21'
         beneficiary:
           type: array
@@ -433,7 +433,7 @@ components:
             - OUTROS
           example: MENSAL
         periodicityOthers:
-          description: Descricao do campo de Periodicidade da Contribuicao quando a opcao escolhida for OUTROS
+          description: Descrição do campo de Periodicidade da Contribuicao quando a opção escolhida for OUTROS
           type: string
           maxLength: 100
         taxRegime:
@@ -462,7 +462,7 @@ components:
       properties:
         coverageCode:
           type: string
-          description: Codigo da cobertura
+          description: Código da cobertura
           maxLength: 5
           example: '1999'
         susepProcessNumber:
@@ -478,7 +478,7 @@ components:
             - CONTRIBUICAO_VARIAVEL
           example: BENEFICIO_DEFINIDO
         benefitAmount:
-          description: Valor do beneficio em reais da cobertura contratada (Caso campo Modalidade de estruturacao for beneficio definido)
+          description: Valor do benefício em reais da cobertura contratada (Caso campo Modalidade de estruturação for benefício definido)
           allOf:
             - $ref: '#/components/schemas/AmountDetails'
         rentsInterestRate:
@@ -499,13 +499,13 @@ components:
             - PRGP
             - PAGP
             - PRSA
-            - PRI/PRID
+            - PRI_PRID
             - PDR
             - VGBL
             - VRGP
             - VAGP
             - VRSA
-            - VRI/VRID
+            - VRI_VRID
             - VDR
             - TRADICIONAL
             - OUTROS
@@ -551,16 +551,16 @@ components:
           description: Indíce de Preços Garantido PMBaC, Obrigatório se houver
           type: string
           enum:
-            - IPC-FGV
-            - IGP-DI-FGV
-            - IPCA-IBGE
-            - IGPM-FGV
-            - INPC-IBGE
+            - IPC_FGV
+            - IGP_DI_FGV
+            - IPCA_IBGE
+            - IGPM_FGV
+            - INPC_IBGE
             - TR
             - OUTROS
-          example: IPC-FGV
+          example: IPC_FGV
         pmbacGuaranteePriceOthers:
-          description: Descricao do Indice de Precos Garantido PMBaC quando a opcao escolhida for OUTROS
+          description: Descrição do Indice de Preços Garantido PMBaC quando a opção escolhida for OUTROS
           type: string
           maxLength: 100
         pmbacIndexLagging:
@@ -577,26 +577,26 @@ components:
           type: string
           pattern: ^\d{1,3}\.\d{1,9}$
           example: '10.00'
-        pdrOrVdrminimalGuaranteeIndex:
+        pdrOrVdrMinimalGuaranteeIndex:
           description: Indíce de Garantia Mínimia do PDR ou VDR, Obrigatório se houver
           type: string
           enum:
-            - IPC-FGV
-            - IGP-DI-FGV
-            - IPCA-IBGE
-            - IGPM-FGV
-            - INPC-IBGE
+            - IPC_FGV
+            - IGP_DI_FGV
+            - IPCA_IBGE
+            - IGPM_FGV
+            - INPC_IBGE
             - TR
             - OUTROS
-          example: IPC-FGV
-        pdrOrVdrminimalGuaranteeOthers:
-          description: Descricao do Indice de Garantia Minimia do PDR ou VDR quando a opcao escolhida for OUTROS
+          example: IPC_FGV
+        pdrOrVdrMinimalGuaranteeOthers:
+          description: Descrição do Indice de Garantia Mínima do PDR ou VDR quando a opção escolhida for OUTROS
           type: string
           maxLength: 100
-        pdrOrVdrminimalGuaranteePercentage:
+        pdrOrVdrMinimalGuaranteePercentage:
           description: Percentual de Garantia Mínima do PDR ou VDR, Obrigatório se houver
           type: string
-          pattern: ^100\.0{1,9}$|^\d{1,2}\.\d{1,9}
+          pattern: ^(100\.0{1,9})$|^(\d{1,2}\.\d{1,9})$
           example: '10.00'
         calculationBasis:
           description: Base de Cálculo
@@ -680,7 +680,7 @@ components:
           type: string
           format: date
           maxLength: 10
-          pattern: ^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])$
+          pattern: ^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])$
           example: '2021-05-21'
         gender:
           description: Sexo do Segurado / Participante, Obrigatório, se houver
@@ -766,11 +766,11 @@ components:
             - OUTROS
           example: CORRETOR
         typeOthers:
-          description: Descricao do campo de Tipo do Intermediador quando a opcao escolhida for OUTROS
+          description: Descrição do campo de Tipo do Intermediador quando a opção escolhida for OUTROS
           type: string
           maxLength: 100
         documentNumber:
-          description: Documento do intermediador (Caso Tipo de Intermediador nao seja CORRETOR, ou quando for CORRETOR, porem o identificador do intermediador nao seja informado)
+          description: Documento do intermediador (Caso Tipo de Intermediador não seja CORRETOR, ou quando for CORRETOR, porem o identificador do intermediador não seja informado)
           type: string
           maxLength: 60
           example: '12345678910'
@@ -823,6 +823,7 @@ components:
             - DIA
             - MES
             - ANO
+            - HORA
           example: ANO
         dayIndicator:
           type: string
@@ -850,7 +851,7 @@ components:
           example: 6
         gracePeriodBetweenType:
           type: string
-          description: Tipo de Prazo de Carência entre Resgates, Obrigatório quando o valor do campo 'Tipo de Carencia' for 'RESGATE'
+          description: Tipo de Prazo de Carência entre Resgates, Obrigatório quando o valor do campo 'Tipo de Carência' for 'RESGATE'
           enum:
             - DIA
             - MES
@@ -879,14 +880,14 @@ components:
                 type: string
                 format: date
                 maxLength: 10
-                pattern: ^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])$
+                pattern: ^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])$
                 example: '2021-05-21'
               contributionExpirationDate:
                 description: Datas de Vencimentos das contribuições/prêmios comerciais (em relação aos últimos 12 meses)
                 type: string
                 format: date
                 maxLength: 10
-                pattern: ^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])$
+                pattern: ^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])$
                 example: '2021-05-21'
               chargedInAdvanceAmount:
                 description: Valor do carregamento cobrado de forma antecipada, Obrigatório se houver
@@ -907,7 +908,7 @@ components:
                   - OUTROS
                 example: MENSAL
               periodicityOthers:
-                description: Descricao do campo de Periodicidade das contribuicoes quando a opcao escolhida for OUTROS
+                description: Descrição do campo de Periodicidade das contribuições quando a opção escolhida for OUTROS
                 type: string
                 maxLength: 100
         movementBenefits:
@@ -927,7 +928,7 @@ components:
                 type: string
                 format: date
                 maxLength: 10
-                pattern: ^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])$
+                pattern: ^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])$
                 example: '2021-05-21'
     InsuranceLifePensionPortability:
       type: object
@@ -980,11 +981,11 @@ components:
                 description: Declara a data de ocorrência da efetiva liquidação da portabilidade
                 type: string
                 format: date-time
-                pattern: (\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])T(?:[01]\d|2[0123]):(?:[012345]\d):(?:[012345]\d)Z$
+                pattern: ^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])T(?:[01]\d|2[0123]):(?:[012345]\d):(?:[012345]\d)Z$
                 maxLength: 20
                 example: '2022-05-16T00:00:00Z'
               postedChargedAmount:
-                description: Valor do carregamento cobrado de forma postecipada (caso nao haja reportar nulo)
+                description: Valor do carregamento cobrado de forma postecipada (caso não haja reportar nulo)
                 allOf:
                   - $ref: '#/components/schemas/AmountDetails'
               sourceEntity:
@@ -1004,6 +1005,11 @@ components:
                   - PROGRESSIVO
                   - REGRESSIVO
                 example: PROGRESSIVO
+              taxRegimeElection:           
+                description: Estado do regime tributário (Condicional ao campo taxRegime estar preenchido).
+                type: string
+                enum: [RETRATAVEL, IRRETRATAVEL]
+                example: RETRATAVEL    
               FIE:
                 type: array
                 description: Informações do FIE do Valor Portado (Caso Ocorrência da portabilidade for Sim)
@@ -1036,15 +1042,15 @@ components:
     InsuranceLifePensionWithdrawal:
       type: object
       required:
-        - withdrawalOccurence
+        - withdrawalOccurrence
       properties:
-        withdrawalOccurence:
+        withdrawalOccurrence:
           type: boolean
           description: Indica se houve resgate
           example: true
         withdrawalInfo:
           type: array
-          description: Agurpa as informações de Resgate. Objeto obrigatório caso "withdrawalOccurence" seja true.
+          description: Agurpa as informações de Resgate. Objeto obrigatório caso "withdrawalOccurrence" seja true.
           items:
             type: object
             required:
@@ -1078,7 +1084,7 @@ components:
                 description: Declara a data da efetiva liquidação do valor resgatado.
                 type: string
                 format: date-time
-                pattern: (\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])T(?:[01]\d|2[0123]):(?:[012345]\d):(?:[012345]\d)Z$
+                pattern: ^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])T(?:[01]\d|2[0123]):(?:[012345]\d):(?:[012345]\d)Z$
                 maxLength: 20
                 example: '2022-05-16T00:00:00Z'
               postedChargedAmount:
@@ -1149,14 +1155,14 @@ components:
               type: string
               format: date
               maxLength: 10
-              pattern: ^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])$
+              pattern: ^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])$
               example: '2021-05-21'
             eventRegisterDate:
               description: Data do Registro de Aviso à Seguradora
               type: string
               format: date
               maxLength: 10
-              pattern: ^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])$
+              pattern: ^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])$
               example: '2021-05-21'
         incomeInfo:
           type: object
@@ -1188,7 +1194,7 @@ components:
                 - OUTROS
               example: CPF
             beneficiaryDocTypeOthers:
-              description: Descricao do campo de Tipo do Intermediador quando a opcao escolhida for OUTROS
+              description: Descrição do campo de Tipo do Intermediador quando a opção escolhida for OUTROS
               type: string
               maxLength: 100
             beneficiaryName:
@@ -1209,7 +1215,7 @@ components:
               type: string
               format: date
               maxLength: 10
-              pattern: ^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])$
+              pattern: ^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])$
               example: '2021-05-21'
             incomeType:
               description: Tipo de Renda, Obrigatório, se houver
@@ -1261,16 +1267,16 @@ components:
               description: Índice de Atualização Monetária
               type: string
               enum:
-                - IPC-FGV
-                - IGP-DI-FGV
-                - IPCA-IBGE
-                - IGPM-FGV
-                - INPC-IBGE
+                - IPC_FGV
+                - IGP_DI_FGV
+                - IPCA_IBGE
+                - IGPM_FGV
+                - INPC_IBGE
                 - TR
                 - OUTROS
-              example: IPC-FGV
+              example: IPC_FGV
             monetaryUpdIndexOthers:
-              description: Descricao do campo de Indice de Atualizacao Monetaria quando a opcao escolhida for OUTROS
+              description: Descrição do campo de Indice de Atualização Monetaria quando a opção escolhida for OUTROS
               type: string
               maxLength: 100
             lastUpdateDate:
@@ -1285,7 +1291,7 @@ components:
               type: string
               format: date
               example: '2025-12-31'
-              pattern: ^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])$
+              pattern: ^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])$
               maxLength: 10
     ContractDataPensionPlan:
       type: array
@@ -1345,12 +1351,12 @@ components:
         - plans
       properties:
         certificateId:
-          description: Identificador utilizado para as "entidades de 1º nível", a saber, apólices individuais , bilhetes ei certificados de participante individual de previdência; por sua vez, nas operações coletivas equivale às apólices coletivas e aos contratos coletivos de previdência
+          description: "Número do certificado/apólice individual, caso contrato individual. Número do certificado, caso contrato coletivo"
           type: string
           maxLength: 60
           example: '67'
         contractId:
-          description: identificação do contrato/apólice, em caso de contratação coletiva, obrigatório caso Tipo de contratação seja COLETIVO
+          description: "Número utilizado para as 'entidades de 1º nível', a saber, apólices individuais, bilhetes e certificados de participante individual de previdência; por sua vez, nas operações coletivas equivale às apólices coletivas e aos contratos coletivos de previdência"
           type: string
           maxLength: 60
           example: '681'
@@ -1359,14 +1365,14 @@ components:
           type: string
           format: date
           maxLength: 10
-          pattern: ^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])$
+          pattern: ^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])$
           example: '2021-05-21'
         effectiveDateEnd:
           description: Data de Fim da Vigência do documento.
           type: string
           format: date
           maxLength: 10
-          pattern: ^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])$
+          pattern: ^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])$
           example: '2021-05-21'
         proposalId:
           description: Identificador da Proposta
@@ -1425,7 +1431,7 @@ components:
           type: string
           format: date
           maxLength: 10
-          pattern: ^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])$
+          pattern: ^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])$
           example: '2021-05-21'
         gender:
           description: Sexo do Segurado / Participante, Obrigatório, se houver
@@ -1504,11 +1510,11 @@ components:
             - OUTROS
           example: CORRETOR
         typeOthers:
-          description: Descricao do campo de Tipo do Intermediador quando a opcao escolhida for OUTROS
+          description: Descrição do campo de Tipo do Intermediador quando a opção escolhida for OUTROS
           type: string
           maxLength: 100
         documentNumber:
-          description: Documento do Intermediador (Caso Tipo de Intermediador nao seja Corretor, ou quando for Corretor, porem o identificador do intermediador nao seja informado)
+          description: Documento do Intermediador (Caso Tipo de Intermediador não seja Corretor, ou quando for Corretor, porem o identificador do intermediador não seja informado)
           type: string
           maxLength: 60
           example: '12345678910'
@@ -1573,7 +1579,7 @@ components:
       properties:
         coverageCode:
           type: string
-          description: Codigo da cobertura
+          description: Código da cobertura
           maxLength: 5
           example: '1999'
         susepProcessNumber:
@@ -1612,7 +1618,7 @@ components:
             - OUTROS
           example: MENSAL
         periodicityOthers:
-          description: Descricao do campo de Periodicidade de pagamento da Contribuicao/Premio quando a opcao escolhida for OUTROS
+          description: Descrição do campo de Periodicidade de pagamento da Contribuicao/Premio quando a opção escolhida for OUTROS
           type: string
           maxLength: 100
         coverageName:
@@ -1683,13 +1689,13 @@ components:
         updateIndex:
           description: Índice de Atualização da Cobertura
           type: string
-          example: IPC-FGV
+          example: IPC_FGV
           enum:
-            - IPC-FGV
-            - IGP-DI-FGV
-            - IPCA-IBGE
-            - IGPM-FGV
-            - INPC-IBGE
+            - IPC_FGV
+            - IGP_DI_FGV
+            - IPCA_IBGE
+            - IGPM_FGV
+            - INPC_IBGE
             - TR
             - OUTROS
         updateIndexDescription:
@@ -1744,6 +1750,7 @@ components:
             - DIA
             - MES
             - ANO
+            - HORA
           example: DIA
         dayIndicator:
           type: string
@@ -1817,14 +1824,14 @@ components:
                 type: string
                 format: date
                 maxLength: 10
-                pattern: ^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])$
+                pattern: ^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])$
                 example: '2021-05-21'
               contributionExpirationDate:
                 description: Datas de Vencimentos das contribuições/prêmios comerciais (em relação aos últimos 12 meses)
                 type: string
                 format: date
                 maxLength: 10
-                pattern: ^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])$
+                pattern: ^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])$
                 example: '2021-05-21'
               chargedInAdvanceAmount:
                 description: Valor do carregamento cobrado de forma antecipada, Obrigatório se houver
@@ -1845,7 +1852,7 @@ components:
                   - OUTROS
                 example: MENSAL
               periodicityOthers:
-                description: Descricao do campo de Periodicidade da contribuicoes quando a opcao escolhida for OUTROS
+                description: Descrição do campo de Periodicidade da contribuições quando a opção escolhida for OUTROS
                 type: string
                 maxLength: 100
         movementBenefits:
@@ -1862,7 +1869,7 @@ components:
                 type: string
                 format: date
                 maxLength: 10
-                pattern: ^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])$
+                pattern: ^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])$
                 example: '2021-05-21'
     InsurancePensionPlanPortability:
       type: object
@@ -1914,7 +1921,7 @@ components:
                 description: Declara a data de ocorrência da efetiva liquidação da portabilidade
                 type: string
                 format: date-time
-                pattern: (\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])T(?:[01]\d|2[0123]):(?:[012345]\d):(?:[012345]\d)Z$
+                pattern: ^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])T(?:[01]\d|2[0123]):(?:[012345]\d):(?:[012345]\d)Z$
                 maxLength: 20
                 example: '2022-05-16T00:00:00Z'
               chargingValue:
@@ -1934,9 +1941,9 @@ components:
     InsurancePensionPlanWithdrawal:
       type: object
       required:
-        - withdrawalOccurence
+        - withdrawalOccurrence
       properties:
-        withdrawalOccurence:
+        withdrawalOccurrence:
           type: boolean
           description: Indica se houve resgate
           example: true
@@ -1944,7 +1951,7 @@ components:
           type: array
           items:
             type: object
-            description: Objeto obrigatório caso withdrawalOccurence seja true.
+            description: Objeto obrigatório caso withdrawalOccurrence seja true.
             required:
               - type
               - requestDate
@@ -1975,7 +1982,7 @@ components:
                 description: Declara a data da efetiva liquidação do valor resgatado
                 type: string
                 format: date-time
-                pattern: (\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])T(?:[01]\d|2[0123]):(?:[012345]\d):(?:[012345]\d)Z$
+                pattern: ^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])T(?:[01]\d|2[0123]):(?:[012345]\d):(?:[012345]\d)Z$
                 maxLength: 20
                 example: '2022-05-16T00:00:00Z'
               postedChargedAmount:
@@ -2026,14 +2033,14 @@ components:
               type: string
               format: date
               maxLength: 10
-              pattern: ^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])$
+              pattern: ^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])$
               example: '2021-05-21'
             eventRegisterDate:
               description: Data do Registro de Aviso à Seguradora
               type: string
               format: date
               maxLength: 10
-              pattern: ^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])$
+              pattern: ^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])$
               example: '2021-05-21'
         incomeInfo:
           type: object
@@ -2065,7 +2072,7 @@ components:
                 - OUTROS
               example: CPF
             beneficiaryDocTypeOthers:
-              description: Descricao do campo de Tipo de Documento do Beneficiario quando a opcao escolhida for OUTROS
+              description: Descrição do campo de Tipo de Documento do Beneficiário quando a opção escolhida for OUTROS
               type: string
               maxLength: 100
             beneficiaryName:
@@ -2086,7 +2093,7 @@ components:
               type: string
               format: date
               maxLength: 10
-              pattern: ^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])$
+              pattern: ^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])$
               example: '2021-05-21'
             incomeType:
               description: Tipo de Renda
@@ -2138,16 +2145,16 @@ components:
               description: Índice de Atualização Monetária
               type: string
               enum:
-                - IPC-FGV
-                - IGP-DI-FGV
-                - IPCA-IBGE
-                - IGPM-FGV
-                - INPC-IBGE
+                - IPC_FGV
+                - IGP_DI_FGV
+                - IPCA_IBGE
+                - IGPM_FGV
+                - INPC_IBGE
                 - TR
                 - OUTROS
-              example: IPC-FGV
+              example: IPC_FGV
             monetaryUpdIndexOthers:
-              description: Descricao do campo de Indice de Atualizacao Monetaria quando a opcao escolhida for OUTROS
+              description: Descrição do campo de Indice de Atualização Monetaria quando a opção escolhida for OUTROS
               type: string
               maxLength: 100
             lastUpdateDate:
@@ -2239,14 +2246,14 @@ components:
           type: string
           format: date
           maxLength: 10
-          pattern: ^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])$
+          pattern: ^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])$
           example: '2014-05-21'
           description: Data mais antiga de início de relacionamento, considerando todos os contratos (vigentes e não vigentes). Os contratos não vigentes considerados devem contemplar, no mínimo o período indicado na Tabela 4.1.
         relationshipBeginning:
           type: string
           format: date
           maxLength: 10
-          pattern: ^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])$
+          pattern: ^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])$
           example: '2014-05-21'
           description: Campo deve ser preenchido com a data da apólice/contrato vigente mais antiga. (caso haja contrato vigente)
         productsServices:
@@ -2346,7 +2353,7 @@ components:
           type: string
           maxLength: 10
           format: date
-          pattern: ^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])$
+          pattern: ^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])$
           example: '2012-05-21'
           description: Data de constituição, conforme especificação RFC-3339
         document:
@@ -2468,14 +2475,14 @@ components:
           type: string
           format: date
           maxLength: 10
-          pattern: ^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])$
+          pattern: ^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])$
           example: '2014-05-21'
           description: Data mais antiga de início de relacionamento, considerando todos os contratos (vigentes e não vigentes). Os contratos não vigentes considerados devem contemplar, no mínimo o período indicado na Tabela 4.1.
         relationshipBeginning:
           type: string
           format: date
           maxLength: 10
-          pattern: ^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])$
+          pattern: ^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])$
           example: '2014-05-21'
           description: Campo deve ser preenchido com a data da apólice/contrato vigente mais antiga (caso haja contrato vigente)
         productsServices:
@@ -2605,7 +2612,7 @@ components:
           type: string
           maxLength: 10
           format: date
-          pattern: ^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])$
+          pattern: ^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])$
           example: '2021-05-21'
           description: Data de nascimento, conforme especificação RFC-3339
         filiation:
@@ -2716,7 +2723,7 @@ components:
               type: string
               maxLength: 10
               format: date
-              pattern: ^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])$
+              pattern: ^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])$
               example: '2012-05-21'
               description: Data de referência da renda, conforme especificação RFC-3339.
           additionalProperties: false
@@ -2797,7 +2804,7 @@ components:
                 seja um identificador de recurso persistente e independente da localização.  
                 Considerando a string urn:initiator:C1DD93123 como exemplo para consentId temos:
                 - o namespace(urn)
-                - o identificador associado ao namespace da instituição transnmissora (initiator) 
+                - o identificador associado ao namespace da instituição transmissora (initiator) 
                 - o identificador específico dentro do namespace (C1DD93123).  
                 Informações mais detalhadas sobre a construção de namespaces devem ser consultadas na [RFC8141](https://tools.ietf.org/html/rfc8141).
               type: string
@@ -2969,11 +2976,6 @@ components:
               - insurerQuoteId
               - generalPlan
               - generalDataEstablishedFie
-              - modality
-              - period
-              - grouperCode
-              - raffle
-              - paymentType
             properties:
               insurerQuoteId:
                 type: string
@@ -3062,14 +3064,14 @@ components:
           description: Índice de preços referente à atualização monetária anual do valor da renda
           type: string
           enum:
-            - IPC-FGV
-            - IGP-DI-FGV
-            - IPCA-IBGE
-            - IGPM-FGV
-            - INPC-IBGE
+            - IPC_FGV
+            - IGP_DI_FGV
+            - IPCA_IBGE
+            - IGPM_FGV
+            - INPC_IBGE
             - TR
             - OUTROS
-          example: IPC-FGV
+          example: IPC_FGV
         financialResultReversalPercentage:
           type: string
           description: Percentual de Reversão do Resultado Financeiro na concessão.
@@ -3244,7 +3246,7 @@ components:
             type: string
             maxLength: 10
             format: date
-            pattern: ^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])$
+            pattern: ^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])$
             example: '2023-05-21'
             description: Data de validade do(s) documento(s) de identificação - Se aplicável.
           issueLocation:
@@ -3274,7 +3276,7 @@ components:
           type: string
           maxLength: 10
           format: date
-          pattern: ^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])$
+          pattern: ^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])$
           example: '2023-05-21'
           description: Data de vigência do documento de registro - conforme especificação RFC-3339.
       additionalProperties: false
@@ -3304,7 +3306,7 @@ components:
           type: string
           maxLength: 10
           format: date
-          pattern: ^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])$
+          pattern: ^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])$
           example: '2023-05-21'
           description: Data de vigência do documento de registro - conforme especificação RFC-3339.
       additionalProperties: false
@@ -3738,292 +3740,6 @@ components:
         - XPD
         - XPT
         - XAG
-    EnumCountryCode:
-      type: string
-      description: Código do país de acordo com o código “alpha3” do ISO-3166
-      enum:
-        - AFG
-        - ALA
-        - ALB
-        - DZA
-        - ASM
-        - AND
-        - AGO
-        - AIA
-        - ATA
-        - ATG
-        - ARG
-        - ARM
-        - ABW
-        - AUS
-        - AUT
-        - AZE
-        - BHS
-        - BHR
-        - BGD
-        - BRB
-        - BLR
-        - BEL
-        - BLZ
-        - BEN
-        - BMU
-        - BTN
-        - BOL
-        - BES
-        - BIH
-        - BWA
-        - BVT
-        - BRA
-        - IOT
-        - BRN
-        - BGR
-        - BFA
-        - BDI
-        - CPV
-        - KHM
-        - CMR
-        - CAN
-        - CYM
-        - CAF
-        - TCD
-        - CHL
-        - CHN
-        - CXR
-        - CCK
-        - COL
-        - COM
-        - COG
-        - COD
-        - COK
-        - CRI
-        - CIV
-        - HRV
-        - CUB
-        - CUW
-        - CYP
-        - CZE
-        - DNK
-        - DJI
-        - DMA
-        - DOM
-        - ECU
-        - EGY
-        - SLV
-        - GNQ
-        - ERI
-        - EST
-        - SWZ
-        - ETH
-        - FLK
-        - FRO
-        - FJI
-        - FIN
-        - FRA
-        - GUF
-        - PYF
-        - ATF
-        - GAB
-        - GMB
-        - GEO
-        - DEU
-        - GHA
-        - GIB
-        - GRC
-        - GRL
-        - GRD
-        - GLP
-        - GUM
-        - GTM
-        - GGY
-        - GIN
-        - GNB
-        - GUY
-        - HTI
-        - HMD
-        - VAT
-        - HND
-        - HKG
-        - HUN
-        - ISL
-        - IND
-        - IDN
-        - IRN
-        - IRQ
-        - IRL
-        - IMN
-        - ISR
-        - ITA
-        - JAM
-        - JPN
-        - JEY
-        - JOR
-        - KAZ
-        - KEN
-        - KIR
-        - PRK
-        - KOR
-        - KWT
-        - KGZ
-        - LAO
-        - LVA
-        - LBN
-        - LSO
-        - LBR
-        - LBY
-        - LIE
-        - LTU
-        - LUX
-        - MAC
-        - MDG
-        - MWI
-        - MYS
-        - MDV
-        - MLI
-        - MLT
-        - MHL
-        - MTQ
-        - MRT
-        - MUS
-        - MYT
-        - MEX
-        - FSM
-        - MDA
-        - MCO
-        - MNG
-        - MNE
-        - MSR
-        - MAR
-        - MOZ
-        - MMR
-        - NAM
-        - NRU
-        - NPL
-        - NLD
-        - NCL
-        - NZL
-        - NIC
-        - NER
-        - NGA
-        - NIU
-        - NFK
-        - MKD
-        - MNP
-        - NOR
-        - OMN
-        - PAK
-        - PLW
-        - PSE
-        - PAN
-        - PNG
-        - PRY
-        - PER
-        - PHL
-        - PCN
-        - POL
-        - PRT
-        - PRI
-        - QAT
-        - REU
-        - ROU
-        - RUS
-        - RWA
-        - BLM
-        - SHN
-        - KNA
-        - LCA
-        - MAF
-        - SPM
-        - VCT
-        - WSM
-        - SMR
-        - STP
-        - SAU
-        - SEN
-        - SRB
-        - SYC
-        - SLE
-        - SGP
-        - SXM
-        - SVK
-        - SVN
-        - SLB
-        - SOM
-        - ZAF
-        - SGS
-        - SSD
-        - ESP
-        - LKA
-        - SDN
-        - SUR
-        - SJM
-        - SWE
-        - CHE
-        - SYR
-        - TWN
-        - TJK
-        - TZA
-        - THA
-        - TLS
-        - TGO
-        - TKL
-        - TON
-        - TTO
-        - TUN
-        - TUR
-        - TKM
-        - TCA
-        - TUV
-        - UGA
-        - UKR
-        - ARE
-        - GBR
-        - USA
-        - UMI
-        - URY
-        - UZB
-        - VUT
-        - VEN
-        - VNM
-        - VGB
-        - VIR
-        - WLF
-        - ESH
-        - YEM
-        - ZMB
-        - ZWE
-      example: BRA
-    EnumCountrySubDivision:
-      type: string
-      description: Enumeração referente a cada sigla da unidade da federação que identifica o estado ou o distrito federal, no qual o endereço está localizado. p.ex. 'AC'. São consideradas apenas as siglas para os estados brasileiros
-      enum:
-        - AC
-        - AL
-        - AP
-        - AM
-        - BA
-        - CE
-        - DF
-        - ES
-        - GO
-        - MA
-        - MT
-        - MS
-        - MG
-        - PA
-        - PB
-        - PR
-        - PE
-        - PI
-        - RJ
-        - RN
-        - RS
-        - RO
-        - RR
-        - SC
-        - SP
-        - SE
-        - TO
-      example: SP
     EnumCivilStatusCode:
       type: string
       enum:
@@ -4183,7 +3899,7 @@ components:
             type: string
             format: date
             maxLength: 10
-            pattern: ^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])$
+            pattern: ^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])$
             example: '2014-05-21'
             description: Data de início da participação, conforme especificação RFC-3339.
           shareholding:
@@ -4191,7 +3907,7 @@ components:
             format: double
             maxLength: 8
             minLength: 8
-            pattern: ^[01]\.\d{6}$
+            pattern: ^100\.0{6}$|^\d{1,2}\.\d{6}$
             example: '0.510000'
             description: |
               Percentual de participação societária (informar com 6 casas decimais). 
@@ -4217,7 +3933,7 @@ components:
             format: date
             maxLength: 10
             example: '2021-05-21'
-            pattern: ^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])$
+            pattern: ^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])$
             description: Data de validade do documento informado, conforme especificação RFC-3339.
       additionalProperties: false
     BusinessContact:
@@ -4401,23 +4117,23 @@ components:
         self:
           type: string
           description: URL da página atualmente requisitada
-          example: https://api.organizacao.com.br/open-insurance/contract-life-pension/v2
+          example: https://api.organizacao.com.br/open-insurance/contract-life-pension/v3
         first:
           type: string
           description: URL da primeira página de registros
-          example: https://api.organizacao.com.br/open-insurance/contract-life-pension/v2
+          example: https://api.organizacao.com.br/open-insurance/contract-life-pension/v3
         prev:
           type: string
           description: URL da página anterior de registros
-          example: https://api.organizacao.com.br/open-insurance/contract-life-pension/v2
+          example: https://api.organizacao.com.br/open-insurance/contract-life-pension/v3
         next:
           type: string
           description: URL da próxima página de registros
-          example: https://api.organizacao.com.br/open-insurance/contract-life-pension/v2
+          example: https://api.organizacao.com.br/open-insurance/contract-life-pension/v3
         last:
           type: string
           description: URL da última página de registros
-          example: https://api.organizacao.com.br/open-insurance/contract-life-pension/v2
+          example: https://api.organizacao.com.br/open-insurance/contract-life-pension/v3
     Meta:
       type: object
       properties:
@@ -4552,7 +4268,7 @@ components:
                 seja um identificador de recurso persistente e independente da localização.  
                 Considerando a string urn:initiator:C1DD93123 como exemplo para consentId temos:
                 - o namespace(urn)
-                - o identificador associado ao namespace da instituição transnmissora (initiator) 
+                - o identificador associado ao namespace da instituição transmissora (initiator) 
                 - o identificador específico dentro do namespace (C1DD93123).  
                 Informações mais detalhadas sobre a construção de namespaces devem ser consultadas na [RFC8141](https://tools.ietf.org/html/rfc8141).
               type: string
@@ -4657,39 +4373,43 @@ components:
         type: 
           type: string
           description: 'Tipo do logradouro'
-          enum: [AEROPORTO, ALAMEDA, AREA, AVENIDA, CAMPO, CHACARA, COLONIA, CONDOMINIO, CONJUNTO, DISTRITO, ESPLANADA, ESTACAO, ESTRADA, FAZENDA, FEIRA, JARDIM, LADEIRA, LAGO, LAGOA, LARGO, LOTEAMENTO, NUCLEO, PARQUE, PASSARELA, PATIO, PRACA, QUADRA, RECANTO, RESIDENCIAL, RODOVIA, RUA, SETOR, SITIO, TRAVESSA, TRECHO, TREVO, VALE, VEREDA, VIA, VIADUTO, VIELA, VILA]
+          enum: [AEROPORTO, ALAMEDA, AREA, AVENIDA, CAMPO, CHACARA, COLONIA, CONDOMINIO, CONJUNTO, DISTRITO, ESPLANADA, ESTACAO, ESTRADA, FAZENDA, FEIRA, JARDIM, LADEIRA, LAGO, LAGOA, LARGO, LOTEAMENTO, NUCLEO, PARQUE, PASSARELA, PATIO, PRACA, QUADRA, RECANTO, RESIDENCIAL, RODOVIA, RUA, SETOR, SITIO, TRAVESSA, TRECHO, TREVO, VALE, VEREDA, VIA, VIADUTO, VIELA, VILA, OUTROS]
+        typeOthers: 
+          type: string
+          description: Descrição do tipo do logradouro. Condicional ao preenchimento do campo "type" com valor OUTROS
+          maxLength: 30
         name: 
           type: string
           description: 'Nome do logradouro'
+          maxLength: 100
         number:
           type: string
           description: 'Número do logradouro'
-          maxLength: 6
-          pattern: '^[0-9]{1,6}$'
+          pattern: '^[0-9A-Za-zÀ-ÿ\s\/\-\.,ºª]{1,40}$'
         addressComplementaryInfo:
           type: string
-          maxLength: 30
+          maxLength: 50
           example: Fundos
           description: 'Alguns logradouros ainda necessitam ser especificados por meio de complemento.'
-        district:
+        districtName:
           type: string
-          maxLength: 50
+          maxLength: 70
           example: 'Centro'
           description: 'Bairro é uma comunidade ou região localizada em uma cidade ou município de acordo com as suas subdivisões geográficas'
         townName:
           type: string
           maxLength: 50
-          pattern: '^[A-Za-z\sáâãéêíïóôõúçÁÂÃÉÍÏÓÔÕÚÇ]+$'
+          pattern: '^[0-9A-Za-zÀ-ÿ\s\/\-\.,ºª]+$'
           example: Marília
           description: |
                   Designação da cidade ou município no qual o endereço está localizado.
         countrySubDivision:
           type: string
           maxLength: 50
-          pattern: '^[A-Za-z\sáâãéêíïóôõúçÁÂÃÉÍÏÓÔÕÚÇ]+$'
+          pattern: '^[0-9A-Za-zÀ-ÿ\s\/\-\.,ºª]+$'
           example: New York
           description: |
-                  Designação do estado no qual o endereço está localizado.
+                  Designação do estado, província, região ou cantão no qual o endereço está localizado.
         postCode:
           type: string
           maxLength: 11
@@ -4697,8 +4417,7 @@ components:
           description: |
                   Código de Endereçamento Postal: Composto por um conjunto numérico ou alfanumérico.
         countryCode:
-          $ref: '#/components/schemas/EnumCountryCode'
-  
+          $ref: '#/components/schemas/EnumCountryCode'  
     NationalAddress:
       type: object
       required:
@@ -4712,29 +4431,33 @@ components:
         type: 
           type: string
           description: 'Tipo do logradouro'
-          enum: [AEROPORTO, ALAMEDA, AREA, AVENIDA, CAMPO, CHACARA, COLONIA, CONDOMINIO, CONJUNTO, DISTRITO, ESPLANADA, ESTACAO, ESTRADA, FAZENDA, FEIRA, JARDIM, LADEIRA, LAGO, LAGOA, LARGO, LOTEAMENTO, NUCLEO, PARQUE, PASSARELA, PATIO, PRACA, QUADRA, RECANTO, RESIDENCIAL, RODOVIA, RUA, SETOR, SITIO, TRAVESSA, TRECHO, TREVO, VALE, VEREDA, VIA, VIADUTO, VIELA, VILA]
+          enum: [AEROPORTO, ALAMEDA, AREA, AVENIDA, CAMPO, CHACARA, COLONIA, CONDOMINIO, CONJUNTO, DISTRITO, ESPLANADA, ESTACAO, ESTRADA, FAZENDA, FEIRA, JARDIM, LADEIRA, LAGO, LAGOA, LARGO, LOTEAMENTO, NUCLEO, PARQUE, PASSARELA, PATIO, PRACA, QUADRA, RECANTO, RESIDENCIAL, RODOVIA, RUA, SETOR, SITIO, TRAVESSA, TRECHO, TREVO, VALE, VEREDA, VIA, VIADUTO, VIELA, VILA, OUTROS]
+        typeOthers: 
+          type: string
+          description: Descrição do tipo do logradouro. Condicional ao preenchimento do campo "type" com valor OUTROS
+          maxLength: 30
         name: 
           type: string
+          maxLength: 100
           description: 'Nome do logradouro'
         number:
           type: string
           description: 'Número do logradouro'
-          maxLength: 6
-          pattern: '^[0-9]{1,6}$'
+          pattern: '^[0-9A-Za-zÀ-ÿ\s\/\-\.,ºª]{1,40}$'
         addressComplementaryInfo:
           type: string
-          maxLength: 30
+          maxLength: 50
           example: Fundos
           description: 'Alguns logradouros ainda necessitam ser especificados por meio de complemento.'
         districtName:
           type: string
-          maxLength: 50
+          maxLength: 70
           example: 'Centro'
           description: 'Bairro é uma comunidade ou região localizada em uma cidade ou município de acordo com as suas subdivisões geográficas'
         townName:
           type: string
           maxLength: 50
-          pattern: '^[A-Za-z\sáâãéêíïóôõúçÁÂÃÉÍÏÓÔÕÚÇ]+$'
+          pattern: '^[0-9A-Za-zÀ-ÿ\s\/\-\.,ºª]+$'
           example: Marília
           description: |
                   Localidade: O nome da localidade corresponde à designação da cidade ou município no qual o endereço está localizado.
@@ -4754,7 +4477,44 @@ components:
           example: '17500001'
           description: |
                   Código de Endereçamento Postal: Composto por um conjunto numérico de oito dígitos, o objetivo principal do CEP é orientar e acelerar o encaminhamento, o tratamento e a entrega de objetos postados nos Correios, por meio da sua atribuição a localidades, logradouros, unidades dos Correios, serviços, órgãos públicos, empresas e edifícios. p.ex. '01311000'. Condicional ao preenchimento do FlagPostCode ser igual a "Nacional".
-    
+    EnumCountrySubDivision:
+      type: string
+      description: "Enumeração referente a cada sigla da unidade da federação que identifica o estado ou o distrito federal, no qual o endereço está localizado. p.ex. 'AC'. São consideradas apenas as siglas para os estados brasileiros"
+      enum:
+        - AC
+        - AL
+        - AP
+        - AM
+        - BA
+        - CE
+        - DF
+        - ES
+        - GO
+        - MA
+        - MT
+        - MS
+        - MG
+        - PA
+        - PB
+        - PR
+        - PE
+        - PI
+        - RJ
+        - RN
+        - RS
+        - RO
+        - RR
+        - SC
+        - SP
+        - SE
+        - TO
+      example: RJ
+    EnumCountryCode:
+      description: Nome do país (de acordo com o código "alpha3" do ISO-3166)
+      type: string
+      enum: [AFG,ALA,ALB,DZA,ASM,AND,AGO,AIA,ATA,ATG,ARG,ARM,ABW,AUS,AUT,AZE,BHS,BHR,BGD,BRB,BLR,BEL,BLZ,BEN,BMU,BTN,BOL,BES,BIH,BWA,BVT,BRA,IOT,BRN,BGR,BFA,BDI,CPV,KHM,CMR,CAN,CYM,CAF,TCD,CHL,CHN,CXR,CCK,COL,COM,COG,COD,COK,CRI,CIV,HRV,CUB,CUW,CYP,CZE,DNK,DJI,DMA,DOM,ECU,EGY,SLV,GNQ,ERI,EST,SWZ,ETH,FLK,FRO,FJI,FIN,FRA,GUF,PYF,ATF,GAB,GMB,GEO,DEU,GHA,GIB,GRC,GRL,GRD,GLP,GUM,GTM,GGY,GIN,GNB,GUY,HTI,HMD,VAT,HND,HKG,HUN,ISL,IND,IDN,IRN,IRQ,IRL,IMN,ISR,ITA,JAM,JPN,JEY,JOR,KAZ,KEN,KIR,PRK,KOR,KWT,KGZ,LAO,LVA,LBN,LSO,LBR,LBY,LIE,LTU, LUX,MAC,MDG,MWI,MYS,MDV,MLI,MLT,MHL,MTQ,MRT,MUS,MYT,MEX,FSM,MDA,MCO,MNG,MNE,MSR,MAR,MOZ,MMR,NAM,NRU,NPL,NLD,NCL,NZL,NIC,NER,NGA,NIU,NFK,MKD,MNP,NOR,OMN,PAK,PLW,PSE,PAN,PNG,PRY,PER,PHL,PCN,POL,PRT,PRI,QAT,REU,ROU,RUS,RWA,BLM,SHN,KNA,LCA,MAF,SPM,VCT,WSM,SMR,STP,SAU,SEN,SRB,SYC,SLE,SGP,SXM,SVK,SVN,SLB,SOM,ZAF,SGS,SSD,ESP,LKA,SDN,SUR,SJM,SWE,CHE,SYR,TWN,TJK,TZA,THA,TLS,TGO,TKL,TON,TTO,TUN,TUR,TKM,TCA,TUV,UGA,UKR,ARE,GBR,USA,UMI,URY,UZB,VUT,VEN,VNM,VGB,VIR,WLF,ESH,YEM,ZMB,ZWE]
+      example: BRA
+  
   parameters:
     consentId:
       name: consentId

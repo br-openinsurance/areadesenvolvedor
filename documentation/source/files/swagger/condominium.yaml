@@ -3,13 +3,13 @@ info:
   title: APIs Open Data do Open Insurance Brasil
   description:
     API de informações de dados do produto Condominio. Os recursos que podem ser consumidos pelos participantes conforme a regra 3.1.2 do manual de escopo de dados.
-  version: 3.0.0
+  version: 4.0.0
   contact:
     url: 'https://www.gov.br/susep/'
 servers:
-  - url: 'https://api.organizacao.com.br/open-insurance/products-services/v3'
+  - url: 'https://api.organizacao.com.br/open-insurance/products-services/v4'
     description: Servidor de Produção
-  - url: 'https://api.organizacao.com.br/open-insurance/products-services/v3'
+  - url: 'https://api.organizacao.com.br/open-insurance/products-services/v4'
     description: Servidor de Homologação
 tags:
 - name: "Condominio"
@@ -24,24 +24,29 @@ paths:
       description: "Obtém a lista dos produtos do tipo Condomínio"
       operationId: "getCondominium"
       parameters:
-        - $ref: "#/components/parameters/cache-Control"
-        - $ref: "#/components/parameters/content-Security-Policy"
-        - $ref: "#/components/parameters/content-Type"
-        - $ref: "#/components/parameters/strict-Transport-Security"
-        - $ref: "#/components/parameters/x-Content-Type-Options"
         - $ref: "#/components/parameters/commercializationArea"
-        - $ref: "#/components/parameters/x-Frame-Options"
         - $ref: "#/components/parameters/page"
         - $ref: "#/components/parameters/pageSize"
       responses:
         '200':
           description: Dados dos produtos de Condomínio
+          headers:
+            Cache-Control:
+              $ref: "#/components/headers/Cache-Control"
+            Content-Security-Policy:
+              $ref: "#/components/headers/Content-Security-Policy"
+            Strict-Transport-Security:
+              $ref: "#/components/headers/Strict-Transport-Security"
+            X-Content-Type-Options:
+              $ref: "#/components/headers/X-Content-Type-Options"
+            X-Frame-Options:
+              $ref: "#/components/headers/X-Frame-Options"
+            Content-Type:
+              $ref: "#/components/headers/Content-Type"
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ResponseCondominiumList'
-        '204':
-          $ref: '#/components/responses/NoContent'
         '400':
           $ref: '#/components/responses/BadRequest'
         '401':
@@ -61,11 +66,11 @@ paths:
         '500':
           $ref: '#/components/responses/InternalServerError'
         default:
-          description: Dados dos produtos de API de informações de dados do produto Condominio. Os recursos que podem ser consumidos pelos participantes conforme a regra 3.1.2 do manual de escopo de dados. 
+          description: Erro inesperado
           content:
-            application/json:
+            application/json; charset=utf-8:
               schema:
-                $ref: '#/components/schemas/ResponseCondominiumList' 
+                $ref: '#/components/schemas/ResponseError'
 
 components:
   schemas:
@@ -515,27 +520,27 @@ components:
           type: string
           description: URL da página atualmente requisitada
           pattern: ^(https:\/\/)(.*?)(\/open-insurance\/products-services\/v\d+)(\/condominium.*)?$
-          example: 'https://api.organizacao.com.br/open-insurance/products-services/v3/condominium'
+          example: 'https://api.organizacao.com.br/open-insurance/products-services/v4/condominium'
         first:
           type: string
           description: URL da primeira página de registros
           pattern: ^(https:\/\/)(.*?)(\/open-insurance\/products-services\/v\d+)(\/condominium.*)?$
-          example: 'https://api.organizacao.com.br/open-insurance/products-services/v3/condominium'
+          example: 'https://api.organizacao.com.br/open-insurance/products-services/v4/condominium'
         prev:
           type: string
           description: URL da página anterior de registros
           pattern: ^(https:\/\/)(.*?)(\/open-insurance\/products-services\/v\d+)(\/condominium.*)?$
-          example: 'https://api.organizacao.com.br/open-insurance/products-services/v3/condominium'
+          example: 'https://api.organizacao.com.br/open-insurance/products-services/v4/condominium'
         next:
           type: string
           description: URL da próxima página de registros
           pattern: ^(https:\/\/)(.*?)(\/open-insurance\/products-services\/v\d+)(\/condominium.*)?$
-          example: 'https://api.organizacao.com.br/open-insurance/products-services/v3/condominium'
+          example: 'https://api.organizacao.com.br/open-insurance/products-services/v4/condominium'
         last:
           type: string
           description: URL da última página de registros
           pattern: ^(https:\/\/)(.*?)(\/open-insurance\/products-services\/v\d+)(\/condominium.*)?$
-          example: 'https://api.organizacao.com.br/open-insurance/products-services/v3/condominium'
+          example: 'https://api.organizacao.com.br/open-insurance/products-services/v4/condominium'
     
     Meta:
       type: object
@@ -611,49 +616,6 @@ components:
             type: integer
             default: 10
             minimum: 1
-      cache-Control:
-        name: cache-control
-        in: header
-        description: Controle de cache para evitar que informações confidenciais sejam armazenadas em cache.
-        required: true
-        schema:
-            type: string
-            pattern: '[\w\W\s]*'
-      content-Security-Policy:
-        name: Content-Security-Policy
-        in: header
-        description: Campo para proteção contra ataques clickjack do estilo - drag and drop.
-        schema:
-            type: string
-            pattern: '[\w\W\s]*'
-      content-Type:
-        name: content-Type
-        in: header
-        description: Especificar o tipo de conteúdo da resposta.
-        schema:
-            type: string
-            pattern: '[\w\W\s]*'
-      strict-Transport-Security:
-        name: Strict-Transport-Security
-        in: header
-        description: Campo para exigir conexões por HTTPS e proteger contra certificados falsificados.
-        schema:
-            type: string
-            pattern:  '[\w\W\s]*'
-      x-Content-Type-Options:
-        name: X-Content-Type-Options
-        in: header
-        description: Campo para evitar que navegadores executem a detecção de MIME e interpretem respostas como HTML de forma inadequada.
-        schema:
-            type: string
-            pattern: '[\w\W\s]*'
-      x-Frame-Options:
-        name: X-Frame-Options
-        in: header
-        description: Campo indica se o navegador deve ou não renderizar um frame.
-        schema:
-            type: string
-            pattern: '[\w\W\s]*'
       commercializationArea:
         name: commercializationArea
         in: path
@@ -661,7 +623,31 @@ components:
         required: true
         schema: 
           type: string
-
+  headers:
+    Cache-Control:
+      description: Controle de cache para evitar que informações confidenciais sejam armazenadas em cache.
+      schema:
+        type: string
+    Content-Security-Policy:
+      description: Campo para proteção contra ataques clickjack.
+      schema:
+        type: string
+    Strict-Transport-Security:
+      description: Campo para exigir conexões por HTTPS.
+      schema:
+        type: string
+    X-Content-Type-Options:
+      description: Evita detecção de MIME inadequada.
+      schema:
+        type: string
+    X-Frame-Options:
+      description: Indica se o navegador deve renderizar um frame.
+      schema:
+        type: string
+    Content-Type:
+      description: Especificar o tipo de conteúdo da resposta.
+      schema:
+        type: string
     
   responses:
     UnprocessableEntity:

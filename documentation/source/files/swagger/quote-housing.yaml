@@ -29,15 +29,15 @@ info:
       - 1 - `Idempotência:` Valida se há divergência entre chave de idempotência e informações enviadas (ERRO_IDEMPOTENCIA);
       - 2 - `Não Informado:` Valida itens não explicitamente informados pelo servidor - (NAO_INFORMADO).
 
-  version: 2.0.0
+  version: 3.0.0
   contact:
     name: Governança do Open Insurance Brasil
-    email: gt-interfaces@openinsurancebr.org
+    email: gt-dados@opinbrasil.com.br
     url: 'https://www.gov.br/susep'
 servers:
-  - url: 'https://api.organizacao.com.br/open-insurance/quote-housing/v2'
+  - url: 'https://api.organizacao.com.br/open-insurance/quote-housing/v3'
     description: Servidor de Produção
-  - url: 'https://api.organizacao.com.br/open-insurance/quote-housing/v2'
+  - url: 'https://api.organizacao.com.br/open-insurance/quote-housing/v3'
     description: Servidor de Homologação
 tags:
   - name: HousingLead
@@ -305,7 +305,7 @@ components:
           ]
           example: CPF
         identificationTypeOthers:
-          description: Campo de detalhamento para quando a opcao do tipo de documento do Tomador/Garantidor for OUTROS
+          description: Campo de detalhamento para quando a opção do tipo de documento do Tomador/Garantidor for OUTROS
           type: string
           maxLength: 100
           example: RNE
@@ -345,7 +345,7 @@ components:
           ]
           example: CPF
         identificationTypeOthers:
-          description: Campo de detalhamento para quando a opcao do tipo de documento do segurado for OUTROS
+          description: Campo de detalhamento para quando a opção do tipo de documento do segurado for OUTROS
           type: string
           maxLength: 100
           example: RNE
@@ -390,7 +390,7 @@ components:
           ]
           example: CPF
         identificationTypeOthers:
-          description: Campo de detalhamento para quando a opcao do tipo de documento do beneficiário for OUTROS
+          description: Campo de detalhamento para quando a opção do tipo de documento do beneficiário for OUTROS
           type: string
           maxLength: 100
           example: RNE
@@ -418,7 +418,7 @@ components:
           ]
           example: REPRESENTANTE
         typeOthers:
-          description: Descricao do Tipo do Intermediador quando for informada a opcao OUTROS
+          description: Descrição do Tipo do Intermediador quando for informada a opção OUTROS
           type: string
           maxLength: 100
         identification:
@@ -441,7 +441,7 @@ components:
           ]
           example: CPF
         identificationTypeOthers:
-          description: Campo de detalhamento para quando a opcao do tipo de documento do intermediador(a) for OUTROS
+          description: Campo de detalhamento para quando a opção do tipo de documento do intermediador(a) for OUTROS
           type: string
           maxLength: 100
           example: RNE
@@ -523,7 +523,7 @@ components:
         description:
           type: string
           maxLength: 500
-          description: "Descrição / Nome da Cobertura (Obrigatório quando o campo 'Codigo' for preenchido com 'Outras')"
+          description: "Descrição / Nome da Cobertura (Obrigatório quando o campo 'Código' for preenchido com 'Outras')"
         internalCode:
           type: string
           maxLength: 500
@@ -559,7 +559,7 @@ components:
           type: string
           description: "Característica da cobertura"
           enum: [MASSIFICADOS,
-                MASSIFICADOS_MICROSEGUROS,
+                MASSIFICADOS_MICROSSEGUROS,
                 GRANDES_RISCOS]
         type:    
           type: string
@@ -578,7 +578,8 @@ components:
           description: "Periodicidade da carência. OBS: Obrigatório, se houver"
           enum: [DIA,
                 MES,
-                ANO]     
+                ANO,
+                HORA]     
         gracePeriodCountingMethod:   
           type: string
           description: "Indicador de dias úteis ou corridos da carência. OBS: Obrigatório, se houver"
@@ -599,7 +600,7 @@ components:
           example: '2022-12-31'
           description: "Data de fim da carência. OBS: Obrigatório, se houver"
         premiumPeriodicity:
-          description: Periodicidade de pagamento do premio
+          description: Periodicidade de pagamento do prêmio
           type: string
           enum: [MENSAL,
                 BIMESTRAL,
@@ -611,7 +612,7 @@ components:
                 PAGAMENTO_UNICO,
                 OUTROS]
         premiumPeriodicityOthers:
-          description: Descricao da Periodicidade de pagamento do premio quando for informada a opcao OUTROS
+          description: Descrição da Periodicidade de pagamento do prêmio quando for informada a opção OUTROS
           type: string
           maxLength: 100  
     InsuranceHousingCoverage:
@@ -878,7 +879,7 @@ components:
             OUTROS]
           example: CPF
         tellerIdOthers:
-          description: Descricao do campo de tipo do documento do pagador/recebedor quando a opcao escolhida for OUTROS
+          description: Descrição do campo de tipo do documento do pagador/recebedor quando a opção escolhida for OUTROS
           type: string
           maxLength: 100
           example: RNE
@@ -906,7 +907,7 @@ components:
                 OUTROS]
           example: BOLETO
         paymentTypeOthers:
-          description: Campo de detalhamento para quando a opcao do meio de pagamento for OUTROS
+          description: Campo de detalhamento para quando a opção do meio de pagamento for OUTROS
           type: string
           maxLength: 100
     InsuranceHousingClaim:
@@ -1149,7 +1150,7 @@ components:
           ]
           example: CPF
         identificationTypeOthers:
-          description: Campo de detalhamento para quando a opcao do tipo de documento do intermediador(a) for OUTROS
+          description: Campo de detalhamento para quando a opção do tipo de documento do intermediador(a) for OUTROS
           type: string
           maxLength: 100
           example: RNE
@@ -1598,7 +1599,7 @@ components:
           type: string
           maxLength: 10
           format: date
-          pattern: '^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])$'
+          pattern: '^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])$'
           example: '2021-05-21'
           description: 'Data de nascimento, conforme especificação RFC-3339'  
         filiation:
@@ -1778,7 +1779,7 @@ components:
           type:
             $ref: '#/components/schemas/EnumPersonalDocumentType'
           documentTypeOthers:
-            description: Descricao do tipo de documento quando for informada a opcao OUTROS
+            description: Descrição do tipo de documento quando for informada a opção OUTROS
             type: string
             maxLength: 100
           number:
@@ -1980,38 +1981,6 @@ components:
         address:
           $ref: '#/components/schemas/Address'
         
-    EnumCountrySubDivision:
-      type: string
-      description: 'Enumeração referente a cada sigla da unidade da federação que identifica o estado ou o distrito federal, no qual o endereço está localizado. p.ex. ''AC''. São consideradas apenas as siglas para os estados brasileiros'
-      enum:
-        - AC
-        - AL
-        - AP
-        - AM
-        - BA
-        - CE
-        - DF
-        - ES
-        - GO
-        - MA
-        - MT
-        - MS
-        - MG
-        - PA
-        - PB
-        - PR
-        - PE
-        - PI
-        - RJ
-        - RN
-        - RS
-        - RO
-        - RR
-        - SC
-        - SP
-        - SE
-        - TO
-      example: SP
     EnumCivilStatusCode:
       type: string
       enum:
@@ -2319,23 +2288,23 @@ components:
         self:
           type: string
           description: URL da página atualmente requisitada
-          example: 'https://api.organizacao.com.br/open-insurance/quote-housing/v2'
+          example: 'https://api.organizacao.com.br/open-insurance/quote-housing/v3'
         first:
           type: string
           description: URL da primeira página de registros
-          example: 'https://api.organizacao.com.br/open-insurance/quote-housing/v2'
+          example: 'https://api.organizacao.com.br/open-insurance/quote-housing/v3'
         prev:
           type: string
           description: URL da página anterior de registros
-          example: 'https://api.organizacao.com.br/open-insurance/quote-housing/v2'
+          example: 'https://api.organizacao.com.br/open-insurance/quote-housing/v3'
         next:
           type: string
           description: URL da próxima página de registros
-          example: 'https://api.organizacao.com.br/open-insurance/quote-housing/v2'
+          example: 'https://api.organizacao.com.br/open-insurance/quote-housing/v3'
         last:
           type: string
           description: URL da última página de registros
-          example: 'https://api.organizacao.com.br/open-insurance/quote-housing/v2'
+          example: 'https://api.organizacao.com.br/open-insurance/quote-housing/v3'
     Meta:
       type: object
       properties:
@@ -2467,7 +2436,7 @@ components:
                 seja um identificador de recurso persistente e independente da localização.  
                 Considerando a string urn:initiator:C1DD93123 como exemplo para consentId temos:
                 - o namespace(urn)
-                - o identificador associado ao namespace da instituição transnmissora (initiator) 
+                - o identificador associado ao namespace da instituição transmissora (initiator) 
                 - o identificador específico dentro do namespace (C1DD93123).  
                 Informações mais detalhadas sobre a construção de namespaces devem ser consultadas na [RFC8141](https://tools.ietf.org/html/rfc8141).
               type: string
@@ -2533,7 +2502,6 @@ components:
                     required:
                       - branch
                       - code
-                      - description
                     properties:
                       branch:
                         description: Grupo e ramo da cobertura
@@ -2606,39 +2574,43 @@ components:
         type: 
           type: string
           description: 'Tipo do logradouro'
-          enum: [AEROPORTO, ALAMEDA, AREA, AVENIDA, CAMPO, CHACARA, COLONIA, CONDOMINIO, CONJUNTO, DISTRITO, ESPLANADA, ESTACAO, ESTRADA, FAZENDA, FEIRA, JARDIM, LADEIRA, LAGO, LAGOA, LARGO, LOTEAMENTO, NUCLEO, PARQUE, PASSARELA, PATIO, PRACA, QUADRA, RECANTO, RESIDENCIAL, RODOVIA, RUA, SETOR, SITIO, TRAVESSA, TRECHO, TREVO, VALE, VEREDA, VIA, VIADUTO, VIELA, VILA]
+          enum: [AEROPORTO, ALAMEDA, AREA, AVENIDA, CAMPO, CHACARA, COLONIA, CONDOMINIO, CONJUNTO, DISTRITO, ESPLANADA, ESTACAO, ESTRADA, FAZENDA, FEIRA, JARDIM, LADEIRA, LAGO, LAGOA, LARGO, LOTEAMENTO, NUCLEO, PARQUE, PASSARELA, PATIO, PRACA, QUADRA, RECANTO, RESIDENCIAL, RODOVIA, RUA, SETOR, SITIO, TRAVESSA, TRECHO, TREVO, VALE, VEREDA, VIA, VIADUTO, VIELA, VILA, OUTROS]
+        typeOthers: 
+          type: string
+          description: Descrição do tipo do logradouro. Condicional ao preenchimento do campo "type" com valor OUTROS
+          maxLength: 30
         name: 
           type: string
           description: 'Nome do logradouro'
+          maxLength: 100
         number:
           type: string
           description: 'Número do logradouro'
-          maxLength: 6
-          pattern: '^[0-9]{1,6}$'
+          pattern: '^[0-9A-Za-zÀ-ÿ\s\/\-\.,ºª]{1,40}$'
         addressComplementaryInfo:
           type: string
-          maxLength: 30
+          maxLength: 50
           example: Fundos
           description: 'Alguns logradouros ainda necessitam ser especificados por meio de complemento.'
-        district:
+        districtName:
           type: string
-          maxLength: 50
+          maxLength: 70
           example: 'Centro'
           description: 'Bairro é uma comunidade ou região localizada em uma cidade ou município de acordo com as suas subdivisões geográficas'
         townName:
           type: string
           maxLength: 50
-          pattern: '^[A-Za-z\sáâãéêíïóôõúçÁÂÃÉÍÏÓÔÕÚÇ]+$'
+          pattern: '^[0-9A-Za-zÀ-ÿ\s\/\-\.,ºª]+$'
           example: Marília
           description: |
                   Designação da cidade ou município no qual o endereço está localizado.
         countrySubDivision:
           type: string
           maxLength: 50
-          pattern: '^[A-Za-z\sáâãéêíïóôõúçÁÂÃÉÍÏÓÔÕÚÇ]+$'
+          pattern: '^[0-9A-Za-zÀ-ÿ\s\/\-\.,ºª]+$'
           example: New York
           description: |
-                  Designação do estado no qual o endereço está localizado.
+                  Designação do estado, província, região ou cantão no qual o endereço está localizado.
         postCode:
           type: string
           maxLength: 11
@@ -2646,8 +2618,7 @@ components:
           description: |
                   Código de Endereçamento Postal: Composto por um conjunto numérico ou alfanumérico.
         countryCode:
-          $ref: '#/components/schemas/EnumCountryCode'
-  
+          $ref: '#/components/schemas/EnumCountryCode'  
     NationalAddress:
       type: object
       required:
@@ -2661,29 +2632,33 @@ components:
         type: 
           type: string
           description: 'Tipo do logradouro'
-          enum: [AEROPORTO, ALAMEDA, AREA, AVENIDA, CAMPO, CHACARA, COLONIA, CONDOMINIO, CONJUNTO, DISTRITO, ESPLANADA, ESTACAO, ESTRADA, FAZENDA, FEIRA, JARDIM, LADEIRA, LAGO, LAGOA, LARGO, LOTEAMENTO, NUCLEO, PARQUE, PASSARELA, PATIO, PRACA, QUADRA, RECANTO, RESIDENCIAL, RODOVIA, RUA, SETOR, SITIO, TRAVESSA, TRECHO, TREVO, VALE, VEREDA, VIA, VIADUTO, VIELA, VILA]
+          enum: [AEROPORTO, ALAMEDA, AREA, AVENIDA, CAMPO, CHACARA, COLONIA, CONDOMINIO, CONJUNTO, DISTRITO, ESPLANADA, ESTACAO, ESTRADA, FAZENDA, FEIRA, JARDIM, LADEIRA, LAGO, LAGOA, LARGO, LOTEAMENTO, NUCLEO, PARQUE, PASSARELA, PATIO, PRACA, QUADRA, RECANTO, RESIDENCIAL, RODOVIA, RUA, SETOR, SITIO, TRAVESSA, TRECHO, TREVO, VALE, VEREDA, VIA, VIADUTO, VIELA, VILA, OUTROS]
+        typeOthers: 
+          type: string
+          description: Descrição do tipo do logradouro. Condicional ao preenchimento do campo "type" com valor OUTROS
+          maxLength: 30
         name: 
           type: string
+          maxLength: 100
           description: 'Nome do logradouro'
         number:
           type: string
           description: 'Número do logradouro'
-          maxLength: 6
-          pattern: '^[0-9]{1,6}$'
+          pattern: '^[0-9A-Za-zÀ-ÿ\s\/\-\.,ºª]{1,40}$'
         addressComplementaryInfo:
           type: string
-          maxLength: 30
+          maxLength: 50
           example: Fundos
           description: 'Alguns logradouros ainda necessitam ser especificados por meio de complemento.'
         districtName:
           type: string
-          maxLength: 50
+          maxLength: 70
           example: 'Centro'
           description: 'Bairro é uma comunidade ou região localizada em uma cidade ou município de acordo com as suas subdivisões geográficas'
         townName:
           type: string
           maxLength: 50
-          pattern: '^[A-Za-z\sáâãéêíïóôõúçÁÂÃÉÍÏÓÔÕÚÇ]+$'
+          pattern: '^[0-9A-Za-zÀ-ÿ\s\/\-\.,ºª]+$'
           example: Marília
           description: |
                   Localidade: O nome da localidade corresponde à designação da cidade ou município no qual o endereço está localizado.
@@ -2703,13 +2678,44 @@ components:
           example: '17500001'
           description: |
                   Código de Endereçamento Postal: Composto por um conjunto numérico de oito dígitos, o objetivo principal do CEP é orientar e acelerar o encaminhamento, o tratamento e a entrega de objetos postados nos Correios, por meio da sua atribuição a localidades, logradouros, unidades dos Correios, serviços, órgãos públicos, empresas e edifícios. p.ex. '01311000'. Condicional ao preenchimento do FlagPostCode ser igual a "Nacional".
-    
+    EnumCountrySubDivision:
+      type: string
+      description: "Enumeração referente a cada sigla da unidade da federação que identifica o estado ou o distrito federal, no qual o endereço está localizado. p.ex. 'AC'. São consideradas apenas as siglas para os estados brasileiros"
+      enum:
+        - AC
+        - AL
+        - AP
+        - AM
+        - BA
+        - CE
+        - DF
+        - ES
+        - GO
+        - MA
+        - MT
+        - MS
+        - MG
+        - PA
+        - PB
+        - PR
+        - PE
+        - PI
+        - RJ
+        - RN
+        - RS
+        - RO
+        - RR
+        - SC
+        - SP
+        - SE
+        - TO
+      example: RJ
     EnumCountryCode:
       description: Nome do país (de acordo com o código "alpha3" do ISO-3166)
       type: string
       enum: [AFG,ALA,ALB,DZA,ASM,AND,AGO,AIA,ATA,ATG,ARG,ARM,ABW,AUS,AUT,AZE,BHS,BHR,BGD,BRB,BLR,BEL,BLZ,BEN,BMU,BTN,BOL,BES,BIH,BWA,BVT,BRA,IOT,BRN,BGR,BFA,BDI,CPV,KHM,CMR,CAN,CYM,CAF,TCD,CHL,CHN,CXR,CCK,COL,COM,COG,COD,COK,CRI,CIV,HRV,CUB,CUW,CYP,CZE,DNK,DJI,DMA,DOM,ECU,EGY,SLV,GNQ,ERI,EST,SWZ,ETH,FLK,FRO,FJI,FIN,FRA,GUF,PYF,ATF,GAB,GMB,GEO,DEU,GHA,GIB,GRC,GRL,GRD,GLP,GUM,GTM,GGY,GIN,GNB,GUY,HTI,HMD,VAT,HND,HKG,HUN,ISL,IND,IDN,IRN,IRQ,IRL,IMN,ISR,ITA,JAM,JPN,JEY,JOR,KAZ,KEN,KIR,PRK,KOR,KWT,KGZ,LAO,LVA,LBN,LSO,LBR,LBY,LIE,LTU, LUX,MAC,MDG,MWI,MYS,MDV,MLI,MLT,MHL,MTQ,MRT,MUS,MYT,MEX,FSM,MDA,MCO,MNG,MNE,MSR,MAR,MOZ,MMR,NAM,NRU,NPL,NLD,NCL,NZL,NIC,NER,NGA,NIU,NFK,MKD,MNP,NOR,OMN,PAK,PLW,PSE,PAN,PNG,PRY,PER,PHL,PCN,POL,PRT,PRI,QAT,REU,ROU,RUS,RWA,BLM,SHN,KNA,LCA,MAF,SPM,VCT,WSM,SMR,STP,SAU,SEN,SRB,SYC,SLE,SGP,SXM,SVK,SVN,SLB,SOM,ZAF,SGS,SSD,ESP,LKA,SDN,SUR,SJM,SWE,CHE,SYR,TWN,TJK,TZA,THA,TLS,TGO,TKL,TON,TTO,TUN,TUR,TKM,TCA,TUV,UGA,UKR,ARE,GBR,USA,UMI,URY,UZB,VUT,VEN,VNM,VGB,VIR,WLF,ESH,YEM,ZMB,ZWE]
       example: BRA
-    
+  
 
 
   parameters:
@@ -2766,7 +2772,7 @@ components:
       required: true
       schema:
         type: string
-        pattern: '^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$$'
+        pattern: '^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$'
         minLength: 1
         maxLength: 100
     xIdempotencyKey:
