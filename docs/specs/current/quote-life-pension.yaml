@@ -8,13 +8,15 @@ info:
     Requer consentimento do cliente para todos os 'endpoints'.
 
     # Orientações
-    A `Role`  do diretório de participantes relacionada à presente API é a ``.\
+    A `Role`  do diretório de participantes relacionada à presente API é a `ICS`.\
     Para todos os `endpoints` desta API é previsto o envio de um `token` através do header `Authorization`.\
     Este `token` deverá estar relacionado ao consentimento (identificado pelo `consentId`) mantido na instituição transmissora das dados, o qual permitirá a pesquisa e retorno, na API em questão, dos
     dados relacionados ao `consentId` específico.\
     Os dados serão entregues pela iniciadora na seguradora desde que o `consentId` relacionado corresponda a um consentimento válido e com o status `AUTHORISED`.\
     Além disso, as `permissions` necessárias deverão ter sido solicitadas quando da criação do consentimento relacionado.\
-    Relacionamos a seguir as `permissions` necessárias para o envio de dados em cada `endpoint` da presente API.
+    Relacionamos a seguir as `permissions` necessárias para o envio de dados em cada `endpoint` da presente API.\
+    A requisição PATCH deve ser rejeitada caso a origem da chamada seja um client_id que não gerou aquele consentId.
+    
 
     ## Permissions necessárias para a API Contract LifePension
 
@@ -40,15 +42,15 @@ info:
       - 1 - `Idempotência:` Valida se há divergência entre chave de idempotência e informações enviadas (ERRO_IDEMPOTENCIA);
       - 2 - `Não Informado:` Valida itens não explicitamente informados pelo servidor - (NAO_INFORMADO). 
       
-  version: 1.13.0
+  version: 2.0.0
   contact:
     name: Governança do Open Insurance Brasil
     email: gt-interfaces@openinsurancebr.org
     url: https://www.gov.br/susep
 servers:
-  - url: https://api.organizacao.com.br/open-insurance/contract-life-pension/v1
+  - url: https://api.organizacao.com.br/open-insurance/contract-life-pension/v2
     description: Servidor de Produção
-  - url: https://api.organizacao.com.br/open-insurance/contract-life-pension/v1
+  - url: https://api.organizacao.com.br/open-insurance/contract-life-pension/v2
     description: Servidor de Homologação
 tags:
   - name: LifePensionLead
@@ -457,7 +459,6 @@ components:
         - benefitPaymentMethod
         - financialResultReversal
         - calculationBasis
-        - FIE
       properties:
         coverageCode:
           type: string
@@ -498,13 +499,13 @@ components:
             - PRGP
             - PAGP
             - PRSA
-            - PRI
+            - PRI/PRID
             - PDR
             - VGBL
             - VRGP
             - VAGP
             - VRSA
-            - VRI
+            - VRI/VRID
             - VDR
             - TRADICIONAL
             - OUTROS
@@ -605,6 +606,8 @@ components:
             - MENSAL
             - ANUAL
         FIE:
+          description: |
+             Fundo de Investimento Especialmente Constituído (FIE). Obrigatório o preenchimento, caso o tipo de plano informado em "Type" (Tipo de plano) ou "TypeDetail" (descrição do tipo de plano) possua um FIE atrelado.
           type: array
           items:
             type: object
@@ -618,7 +621,7 @@ components:
               FIECNPJ:
                 description: CNPJ do FIE
                 type: string
-                pattern: ^\d{14}$
+                pattern: '^[A-Z0-9]{12}\d{2}$'
                 example: '12345678901234'
               FIEName:
                 description: Razão social do FIE
@@ -648,10 +651,6 @@ components:
         - name
         - birthDate
         - gender
-        - postCode
-        - townName
-        - countrySubDivision
-        - countryCode
         - address
       properties:
         documentType:
@@ -664,6 +663,7 @@ components:
         documentTypeOthers:
           description: Descrição do Tipo de Documento quando for informada a opção OUTROS
           type: string
+          maxLength: 100
           example: OUTROS
         documentNumber:
           description: Documento do Segurado/Participante
@@ -689,51 +689,15 @@ components:
             - MASCULINO
             - FEMININO
             - NAO_INFORMADO
-        postCode:
-          description: |
-            Código de Endereçamento Postal: Composto por um conjunto numérico de oito dígitos, o objetivo principal do CEP é orientar e acelerar o encaminhamento, o tratamento e a entrega de objetos postados nos Correios, por meio da sua atribuição a localidades, logradouros, unidades dos Correios, serviços, órgãos públicos, empresas e edifícios. p.ex. '01311000'.
-            Código Postal do Segurado / Participante, Obrigatório, se houver
-          type: string
-          pattern: \d{8}|^NA$
-          maxLength: 8
-          example: '17500001'
         email:
           description: Endereço de email, Obrigatório, se houver
           type: string
           maxLength: 320
           pattern: '^\S+@\S+\.\S+$'
           example: nome@br.net
-        townName:
-          type: string
-          maxLength: 50
-          pattern: '[A-Za-z\sáâãéêíïóôõúçÁÂÃÉÍÏÓÔÕÚÇ]'          
-          example: Rio de Janeiro
-          description: |
-            Localidade: O nome da localidade corresponde à designação da cidade ou município no qual o endereço está localizado.
-            Cidade do Segurado / Participante
-        countrySubDivision:
-          description: Estado do Segurado / Participante
-          allOf:
-            - $ref: '#/components/schemas/EnumCountrySubDivision'
-        countryCode:
-          description: |
-            Código do pais de acordo com o código “alpha3” do ISO-3166.
-            País do Segurado / Participante
-          allOf:
-            - $ref: '#/components/schemas/EnumCountryCode'
         address:
-          description: |
-            Endereço do Segurado / Participante
-          type: string
-          maxLength: 200
-          pattern: '[\w\W\s]*'
-          example: Av Naburo Ykesaki, 1270
-        addressAdditionalInfo:
-          type: string
-          maxLength: 30
-          pattern: '[\w\W\s]*'
-          example: Fundos
-          description: Alguns logradouros ainda necessitam ser especificados por meio de complemento.
+          $ref: '#/components/schemas/Address'
+
     InsuranceLifePensionDocumentsBeneficiary:
       description: Informações do beneficiário/pessoa associada, obrigatório se houver.
       type: object
@@ -757,6 +721,7 @@ components:
         documentTypeOthers:
           description: Descrição do Tipo de Documento quando for informada a opção OUTROS
           type: string
+          maxLength: 100
           example: OUTROS
         name:
           description: Nome beneficiário
@@ -815,7 +780,7 @@ components:
           maxLength: 60
           example: '12097'
         documentType:
-          description: Tipo de Documento do Intermediador, Campo obrigatório, Caso Tipo de Intermediador não seja Corretor ou quando for Corretor, porém o identificador do intermediador não seja informado)
+          description: Tipo de Documento do Intermediador, Campo obrigatório, Caso Tipo de Intermediador não seja Corretor ou quando for Corretor, porém o identificador do intermediador não seja informado
           type: string
           enum:
             - CPF
@@ -825,52 +790,16 @@ components:
         documentTypeOthers:
           description: Descrição do Tipo de Documento quando for informada a opção OUTROS
           type: string
+          maxLength: 100
           example: OUTROS
         name:
-          description: Nome ou Razão Social do Intermediador, Campo obrigatório, caso Tipo de Intermediador for estipulante /averbador/ instituidor)
+          description: Nome ou Razão Social do Intermediador, Campo obrigatório, caso Tipo de Intermediador for estipulante /averbador/ instituidor
           type: string
           maxLength: 80
           example: Empresa A
-        postCode:
-          description: |
-            Código de Endereçamento Postal: Composto por um conjunto numérico de oito dígitos, o objetivo principal do CEP é orientar e acelerar o encaminhamento, o tratamento e a entrega de objetos postados nos Correios, por meio da sua atribuição a localidades, logradouros, unidades dos Correios, serviços, órgãos públicos, empresas e edifícios. p.ex. '01311000'.
-            Código Postal do Intermediador, Campo obrigatório, caso Tipo de Intermediador for estipulante /averbador/ instituidor)
-          type: string
-          pattern: \d{8}|^NA$
-          maxLength: 8
-          example: '17500001'
-        townName:
-          type: string
-          maxLength: 50
-          pattern: '[A-Za-z\sáâãéêíïóôõúçÁÂÃÉÍÏÓÔÕÚÇ]'
-          example: Rio de Janeiro
-          description: |
-            Localidade: O nome da localidade corresponde à designação da cidade ou município no qual o endereço está localizado.
-            Cidade da Pessoa Intermediador, Campo obrigatório, caso Tipo de Intermediador for estipulante /averbador/ instituidor)
-        countrySubDivision:
-          description: |
-            Estado da Pessoa Intermediador, Campo obrigatório, caso Tipo de Intermediador for estipulante /averbador/ instituidor)
-          allOf:
-            - $ref: '#/components/schemas/EnumCountrySubDivision'
-        countryCode:
-          description: |
-            Código do pais de acordo com o código “alpha3” do ISO-3166.
-            País da Pessoa Intermediador, Campo obrigatório, caso Tipo de Intermediador for estipulante /averbador/ instituidor)
-          allOf:
-            - $ref: '#/components/schemas/EnumCountryCode'
         address:
-          description: |
-            Corresponde ao Endereço do Intermediador, Campo obrigatório, caso Tipo de Intermediador for estipulante /averbador/ instituidor)
-          type: string
-          maxLength: 200
-          pattern: '[\w\W\s]*'
-          example: Av Naburo Ykesaki, 1270
-        additionalInfo:
-          type: string
-          maxLength: 30
-          pattern: '[\w\W\s]*'
-          example: Fundos
-          description: Alguns logradouros ainda necessitam ser especificados por meio de complemento.
+          $ref: '#/components/schemas/Address'
+
     InsuranceLifePensionPlansGrace:
       description: Dados de Carência para RCC, Capitalização e Sobrevivência, obrigatório se houver
       type: object
@@ -1087,7 +1016,7 @@ components:
                       description: CNPJ do FIE
                       type: string
                       maxLength: 14
-                      pattern: ^\d{14}$
+                      pattern: '^[A-Z0-9]{12}\d{2}$'
                       example: '12345678901234'
                     FIEName:
                       description: Razão social do FIE
@@ -1113,66 +1042,81 @@ components:
           type: boolean
           description: Indica se houve resgate
           example: true
-        type:
-          description: Tipo de resgate, Obrigatório, se houver
-          type: string
-          enum:
-            - TOTAL
-            - PARCIAL
-          example: PARCIAL
-        requestDate:
-          description: Declara a data da solicitação do resgate, Obrigatório, se houver
-          type: string
-          format: date-time
-          maxLength: 20
-          pattern: ^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])T(?:[01]\d|2[0123]):(?:[012345]\d):(?:[012345]\d)Z$
-          example: '2022-05-16T00:00:00Z'
-        amount:
-          description: Declara o valor bruto resgatado, Obrigatório, se houver
-          allOf:
-            - $ref: '#/components/schemas/AmountDetails'
-        liquidationDate:
-          description: Declara a data da efetiva liquidação do valor resgatado, Obrigatório, se houver
-          type: string
-          format: date-time
-          pattern: (\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])T(?:[01]\d|2[0123]):(?:[012345]\d):(?:[012345]\d)Z$
-          maxLength: 20
-          example: '2022-05-16T00:00:00Z'
-        postedChargedAmount:
-          description: Valor do carregamento cobrado de forma postecipada, Obrigatório, se houver
-          allOf:
-            - $ref: '#/components/schemas/AmountDetails'
-        nature:
-          description: Natureza do resgate, Obrigatório, se houver
-          type: string
-          enum:
-            - RESGATE_REGULAR
-            - MORTE
-            - INVALIDEZ
-            - PAGAMENTO_FINANCEIRO_PROGRAMADO
-            - CUSTEIO_DE_COBERTURA_DE_RISCO_EM_PLANOS_CONJUGADOS
-            - ASSISTENCIA_FINANCEIRA
-          example: RESGATE_REGULAR
-        FIE:
+        withdrawalInfo:
           type: array
-          description: Informações do FIE do Valor Resgatado (Caso Ocorrência do resgate for Sim)
+          description: Agurpa as informações de Resgate. Objeto obrigatório caso "withdrawalOccurence" seja true.
           items:
             type: object
+            required:
+              - type
+              - requestDate
+              - amount
+              - liquidationDate
+              - postedChargedAmount
+              - nature
+              - FIE
             properties:
-              FIECNPJ:
-                description: CNPJ do FIE
+              type:
+                description: Tipo de resgate.
                 type: string
-                maxLength: 14
-                pattern: ^\d{14}$
-                example: '12345678901234'
-              FIEName:
-                description: Razão social do FIE
+                enum:
+                  - TOTAL
+                  - PARCIAL
+                example: PARCIAL
+              requestDate:
+                description: Declara a data da solicitação do resgate.
                 type: string
-                example: RAZÃO SOCIAL
-              FIETradeName:
-                description: Nome fantasia do FIE
+                format: date-time
+                maxLength: 20
+                pattern: ^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])T(?:[01]\d|2[0123]):(?:[012345]\d):(?:[012345]\d)Z$
+                example: '2022-05-16T00:00:00Z'
+              amount:
+                description: Declara o valor bruto resgatado.
+                allOf:
+                  - $ref: '#/components/schemas/AmountDetails'
+              liquidationDate:
+                description: Declara a data da efetiva liquidação do valor resgatado.
                 type: string
-                example: NOME FANTASIA
+                format: date-time
+                pattern: (\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])T(?:[01]\d|2[0123]):(?:[012345]\d):(?:[012345]\d)Z$
+                maxLength: 20
+                example: '2022-05-16T00:00:00Z'
+              postedChargedAmount:
+                description: Valor do carregamento cobrado de forma postecipada.
+                allOf:
+                  - $ref: '#/components/schemas/AmountDetails'
+              nature:
+                description: Natureza do resgate.
+                type: string
+                enum:
+                  - RESGATE_REGULAR
+                  - MORTE
+                  - INVALIDEZ
+                  - PAGAMENTO_FINANCEIRO_PROGRAMADO
+                  - CUSTEIO_DE_COBERTURA_DE_RISCO_EM_PLANOS_CONJUGADOS
+                  - ASSISTENCIA_FINANCEIRA
+                example: RESGATE_REGULAR
+              FIE:
+                type: array
+                description: Informações do FIE do Valor Resgatado (Caso Ocorrência do resgate for Sim)
+                items:
+                  type: object
+                  properties:
+                    FIECNPJ:
+                      description: CNPJ do FIE
+                      type: string
+                      maxLength: 14
+                      pattern: '^[A-Z0-9]{12}\d{2}$'
+                      example: '12345678901234'
+                    FIEName:
+                      description: Razão social do FIE
+                      type: string
+                      example: RAZÃO SOCIAL
+                    FIETradeName:
+                      description: Nome fantasia do FIE
+                      type: string
+                      example: NOME FANTASIA
+
     InsuranceLifePensionClaim:
       type: object
       required:
@@ -1256,9 +1200,9 @@ components:
               type: string
               enum:
                 - SEGURADO
-                - CÔNJUGE
+                - CONJUGE
                 - FILHO_MENOR_DE_IDADE
-                - BENEFICIÁRIO_INDICADO
+                - BENEFICIARIO_INDICADO
               example: SEGURADO
             beneficiaryBirthDate:
               description: Data de nascimento do beneficiário da renda concedida
@@ -1452,10 +1396,6 @@ components:
         - name
         - birthDate
         - gender
-        - postCode
-        - townName
-        - countrySubDivision
-        - countryCode
         - address
       properties:
         documentType:
@@ -1468,6 +1408,7 @@ components:
         documentTypeOthers:
           description: Descrição do Tipo de Documento quando for informada a opção OUTROS
           type: string
+          maxLength: 100
           example: OUTROS
         documentNumber:
           description: Documento do Segurado/Participante
@@ -1493,51 +1434,15 @@ components:
             - MASCULINO
             - FEMININO
             - NAO_INFORMADO
-        postCode:
-          description: |
-            Código de Endereçamento Postal: Composto por um conjunto numérico de oito dígitos, o objetivo principal do CEP é orientar e acelerar o encaminhamento, o tratamento e a entrega de objetos postados nos Correios, por meio da sua atribuição a localidades, logradouros, unidades dos Correios, serviços, órgãos públicos, empresas e edifícios. p.ex. '01311000'.
-            Código Postal do Segurado / Participante, Obrigatório, se houver
-          type: string
-          pattern: \d{8}|^NA$
-          maxLength: 8
-          example: '17500001'
         email:
           description: Endereço de email, Obrigatório, se houver
           type: string
           maxLength: 320
           pattern: '^\S+@\S+\.\S+$'
           example: nome@br.net
-        townName:
-          type: string
-          maxLength: 50
-          pattern: '^[A-Za-z\sáâãéêíïóôõúçÁÂÃÉÍÏÓÔÕÚÇ]+$'
-          example: Rio de Janeiro
-          description: |
-            Localidade: O nome da localidade corresponde à designação da cidade ou município no qual o endereço está localizado.
-            Cidade do Segurado / Participante
-        countrySubDivision:
-          description: Estado do Segurado / Participante
-          allOf:
-            - $ref: '#/components/schemas/EnumCountrySubDivision'
-        countryCode:
-          description: |
-            Código do pais de acordo com o código “alpha3” do ISO-3166.
-            País do Segurado / Participante
-          allOf:
-            - $ref: '#/components/schemas/EnumCountryCode'
         address:
-          description: |
-            Endereço do Segurado / Participante
-          type: string
-          maxLength: 200
-          pattern: '[\w\W\s]*'
-          example: Av Naburo Ykesaki, 1270
-        addressAdditionalInfo:
-          type: string
-          maxLength: 30
-          pattern: '[\w\W\s]*'
-          example: Fundos
-          description: Alguns logradouros ainda necessitam ser especificados por meio de complemento.
+         $ref: '#/components/schemas/Address'
+
     InsurancePensionPlanDocumentsBeneficiary:
       description: Informações do beneficiário/pessoa associada, obrigatório se houver.
       type: object
@@ -1561,6 +1466,7 @@ components:
         documentTypeOthers:
           description: Descrição do Tipo de Documento quando for informada a opção OUTROS
           type: string
+          maxLength: 100
           example: OUTROS
         name:
           description: Nome beneficiário
@@ -1579,6 +1485,7 @@ components:
           type: string
           pattern: ^100\.0{1,9}$|^\d{1,2}\.\d{1,9}$
           example: '10.00'
+    
     InsurancePensionPlanDocumentsIntermediary:
       description: Informações de intermediário, obrigatório se houver.
       type: object
@@ -1621,52 +1528,16 @@ components:
         documentTypeOthers:
           description: Descrição do Tipo de Documento quando for informada a opção OUTROS
           type: string
+          maxLength: 100
           example: OUTROS
         name:
           description: Nome ou Razão Social do Intermediador, Campo obrigatório, caso Tipo de Intermediador for estipulante /averbador/ instituidor)
           type: string
           maxLength: 80
           example: Empresa A
-        postCode:
-          description: |
-            Código de Endereçamento Postal: Composto por um conjunto numérico de oito dígitos, o objetivo principal do CEP é orientar e acelerar o encaminhamento, o tratamento e a entrega de objetos postados nos Correios, por meio da sua atribuição a localidades, logradouros, unidades dos Correios, serviços, órgãos públicos, empresas e edifícios. p.ex. '01311000'.
-            Código Postal do Intermediador, Campo obrigatório, caso Tipo de Intermediador for estipulante /averbador/ instituidor)
-          type: string
-          pattern: \d{8}|^NA$
-          maxLength: 8
-          example: '17500001'
-        townName:
-          type: string
-          maxLength: 50
-          pattern: '[A-Za-z\sáâãéêíïóôõúçÁÂÃÉÍÏÓÔÕÚÇ]'
-          example: Rio de Janeiro
-          description: |
-            Localidade: O nome da localidade corresponde à designação da cidade ou município no qual o endereço está localizado.
-            Cidade da Pessoa Intermediador, Campo obrigatório, caso Tipo de Intermediador for estipulante /averbador/ instituidor)
-        countrySubDivision:
-          description: |
-            Estado da Pessoa Intermediador, Campo obrigatório, caso Tipo de Intermediador for estipulante /averbador/ instituidor)
-          allOf:
-            - $ref: '#/components/schemas/EnumCountrySubDivision'
-        countryCode:
-          description: |
-            Código do pais de acordo com o código “alpha3” do ISO-3166.
-            País da Pessoa Intermediador, Campo obrigatório, caso Tipo de Intermediador for estipulante /averbador/ instituidor)
-          allOf:
-            - $ref: '#/components/schemas/EnumCountryCode'
         address:
-          description: |
-            Corresponde ao Endereço do Intermediador, Campo obrigatório, caso Tipo de Intermediador for estipulante /averbador/ instituidor)
-          type: string
-          maxLength: 200
-          pattern: '[\w\W\s]*'
-          example: Av Naburo Ykesaki, 1270
-        addressAdditionalInfo:
-          type: string
-          maxLength: 30
-          pattern: '[\w\W\s]*'
-          example: Fundos
-          description: Alguns logradouros ainda necessitam ser especificados por meio de complemento.
+          $ref: '#/components/schemas/Address'
+
     InsurancePensionPlanDocumentsPlans:
       type: object
       required:
@@ -1798,7 +1669,7 @@ components:
           enum:
             - POR_IDADE
             - TAXA_MEDIA
-            - FAIXA_ETÁRIA
+            - FAIXA_ETARIA
             - OUTROS
         pricingMethodDescription:
           type: string
@@ -1921,6 +1792,7 @@ components:
         eventTypeOthers:
           description: Descrição do tipo de evento gerador quando for informada a opção OUTROS
           type: string
+          maxLength: 100
           example: OUTROS
     InsurancePensionPlanMovements:
       type: object
@@ -2068,46 +1940,60 @@ components:
           type: boolean
           description: Indica se houve resgate
           example: true
-        type:
-          description: Tipo de resgate, Obrigatório, se houver
-          type: string
-          enum:
-            - TOTAL
-            - PARCIAL
-          example: PARCIAL
-        requestDate:
-          description: Declara a data da solicitação do resgate, Obrigatório, se houver
-          type: string
-          format: date-time
-          maxLength: 20
-          pattern: ^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])T(?:[01]\d|2[0123]):(?:[012345]\d):(?:[012345]\d)Z$
-          example: '2022-05-16T00:00:00Z'
-        amount:
-          description: Valor do Resgate
-          allOf:
-            - $ref: '#/components/schemas/AmountDetails'
-        liquidationDate:
-          description: Declara a data da efetiva liquidação do valor resgatado, Obrigatório, se houver
-          type: string
-          format: date-time
-          pattern: (\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])T(?:[01]\d|2[0123]):(?:[012345]\d):(?:[012345]\d)Z$
-          maxLength: 20
-          example: '2022-05-16T00:00:00Z'
-        postedChargedAmount:
-          description: Valor do carregamento cobrado de forma postecipada, Obrigatório, se houver
-          allOf:
-            - $ref: '#/components/schemas/AmountDetails'
-        nature:
-          description: Natureza do resgate, Obrigatório, se houver
-          type: string
-          enum:
-            - RESGATE_REGULAR
-            - MORTE
-            - INVALIDEZ
-            - PAGAMENTO_FINANCEIRO_PROGRAMADO
-            - CUSTEIO_DE_COBERTURA_DE_RISCO_EM_PLANOS_CONJUGADOS
-            - ASSISTENCIA_FINANCEIRA
-          example: RESGATE_REGULAR
+        withdrawalInfo:
+          type: array
+          items:
+            type: object
+            description: Objeto obrigatório caso withdrawalOccurence seja true.
+            required:
+              - type
+              - requestDate
+              - amount
+              - liquidationDate
+              - postedChargedAmount
+              - nature
+            properties:
+              type:
+                description: Tipo de resgate
+                type: string
+                enum:
+                  - TOTAL
+                  - PARCIAL
+                example: PARCIAL
+              requestDate:
+                description: Declara a data da solicitação do resgate
+                type: string
+                format: date-time
+                maxLength: 20
+                pattern: ^(\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])T(?:[01]\d|2[0123]):(?:[012345]\d):(?:[012345]\d)Z$
+                example: '2022-05-16T00:00:00Z'
+              amount:
+                description: Valor do Resgate
+                allOf:
+                  - $ref: '#/components/schemas/AmountDetails'
+              liquidationDate:
+                description: Declara a data da efetiva liquidação do valor resgatado
+                type: string
+                format: date-time
+                pattern: (\d{4})-(1[0-2]|0[1-9])-(3[01]|[12][0-9]|0[1-9])T(?:[01]\d|2[0123]):(?:[012345]\d):(?:[012345]\d)Z$
+                maxLength: 20
+                example: '2022-05-16T00:00:00Z'
+              postedChargedAmount:
+                description: Valor do carregamento cobrado de forma postecipada
+                allOf:
+                  - $ref: '#/components/schemas/AmountDetails'
+              nature:
+                description: Natureza do resgate
+                type: string
+                enum:
+                  - RESGATE_REGULAR
+                  - MORTE
+                  - INVALIDEZ
+                  - PAGAMENTO_FINANCEIRO_PROGRAMADO
+                  - CUSTEIO_DE_COBERTURA_DE_RISCO_EM_PLANOS_CONJUGADOS
+                  - ASSISTENCIA_FINANCEIRA
+                example: RESGATE_REGULAR
+    
     InsurancePensionPlanClaim:
       type: object
       required:
@@ -2285,7 +2171,7 @@ components:
         cnpjCpfNumber:
           type: string
           maxLength: 14
-          pattern: ^\d{11}$|^\d{14}$
+          pattern: '^([A-Z0-9]{12}\d{2}$|^\d{11})$'
           example: '73677831148'
           description: (Caso Natureza dos poderes vigentes de representante for “Representante legal” ou “Procurador”) CPF ou CNPJ do representante
         civilName:
@@ -2317,7 +2203,7 @@ components:
         cnpjCpfNumber:
           type: string
           maxLength: 14
-          pattern: ^\d{11}$|^\d{14}$
+          pattern: '^([A-Z0-9]{12}\d{2}$|^\d{11})$'
           example: '73677831148'
           description: (Caso Natureza dos poderes vigentes de representante for “Representante legal” ou “Procurador”) CPF ou CNPJ do representante
         civilName:
@@ -2432,7 +2318,7 @@ components:
           properties:
             cnpjNumber:
               type: string
-              pattern: \d{14}$
+              pattern: '^[A-Z0-9]{12}\d{2}$'
               maxLength: 14
               example: '01773247000563'
               description: |
@@ -2683,7 +2569,7 @@ components:
           properties:
             cnpjNumber:
               type: string
-              pattern: \d{14}$
+              pattern: '^[A-Z0-9]{12}\d{2}$'
               maxLength: 14
               example: '01773247000563'
               description: |
@@ -2997,6 +2883,7 @@ components:
           $ref: '#/components/schemas/QuoteDataProductLifePensionFirm'
         investorProfile:
           $ref: '#/components/schemas/QuoteDataInvestorProfileLifePensionFirm'
+
     QuoteDataComplementaryIdentificationLifePensionFirm:
       type: object
       required:
@@ -3004,10 +2891,11 @@ components:
       properties:
         isNewPlanHolder:
           type: boolean
-          description: Novo titular plano?
+          description: Indica se o cliente será o novo titular do plano.
         isIntendedForMinor:
           type: boolean
-          description: Plano destinado a um menor de idade? Obrigatório Condicional, Caso a opção "2. Não" seja selecionada no campo "Você será o titular novo plano?"
+          description: Indica se o plano é destinado a um menor de idade. Obrigatório, caso o campo "isNewPlanHolder" seja preenchido como "False/Não".
+
     QuoteDataProductLifePensionFirm:
       description: Lista de dados do produto.
       type: array
@@ -3174,14 +3062,14 @@ components:
           description: Índice de preços referente à atualização monetária anual do valor da renda
           type: string
           enum:
-            - IPC_FGV
-            - IGP_DI_FGV
-            - IPCA_IBGE
-            - IGPM_FGV
-            - INPC_IBGE
+            - IPC-FGV
+            - IGP-DI-FGV
+            - IPCA-IBGE
+            - IGPM-FGV
+            - INPC-IBGE
             - TR
             - OUTROS
-          example: IPC_FGV
+          example: IPC-FGV
         financialResultReversalPercentage:
           type: string
           description: Percentual de Reversão do Resultado Financeiro na concessão.
@@ -3222,7 +3110,7 @@ components:
           type: string
           description: CNPJ do FIE vinculado. Condicional, caso a entidade de previdência não deseje retornar uma proposta.
           maxLength: 14
-          pattern: ^\d{14}$
+          pattern: '^[A-Z0-9]{12}\d{2}$'
           example: '12345678901234'
         maximumAdministrationFee:
           type: string
@@ -3235,7 +3123,7 @@ components:
           pattern: ^100\.0{1,9}$|^\d{1,2}\.\d{1,9}$
           example: '20.0'
         minimumApplication:
-          description: Valor de cada sorteio
+          description: Valor da aplicação mínima.
           allOf:
             - $ref: '#/components/schemas/AmountDetails'
     LinkInfo:
@@ -3399,7 +3287,7 @@ components:
         businesscnpjNumber:
           type: string
           maxLength: 14
-          pattern: \d{14}|^NA$
+          pattern: '^[A-Z0-9]{12}\d{2}$'
           example: '50685362006773'
           description: |
             Número completo do CNPJ da Empresa consultada  - o CNPJ corresponde ao número de inscrição no Cadastro de Pessoa Jurídica. Deve-se ter apenas os números do CNPJ, sem máscara
@@ -3539,48 +3427,9 @@ components:
       type: object
       required:
         - address
-        - townName
-        - countrySubDivision
-        - postCode
-        - country
       properties:
         address:
-          type: string
-          maxLength: 200
-          pattern: '[\w\W\s]*'
-          example: Av Naburo Ykesaki, 1270
-          description: Corresponde ao endereço residencial do cliente.
-        additionalInfo:
-          type: string
-          maxLength: 30
-          pattern: '[\w\W\s]*'
-          example: Fundos
-          description: Alguns logradouros ainda necessitam ser especificados por meio de complemento.
-        districtName:
-          type: string
-          maxLength: 50
-          pattern: '[\w\W\s]*'
-          example: Centro
-          description: Bairro é uma comunidade ou região localizada em uma cidade ou município de acordo com as suas subdivisões geográficas.
-        townName:
-          type: string
-          maxLength: 50
-          pattern: '^[A-Za-z\sáâãéêíïóôõúçÁÂÃÉÍÏÓÔÕÚÇ]+$'
-          example: Marília
-          description: |
-            Localidade: O nome da localidade corresponde à designação da cidade ou município no qual o endereço está localizado.
-        countrySubDivision:
-          $ref: '#/components/schemas/EnumCountrySubDivision'
-        postCode:
-          type: string
-          pattern: \d{8}
-          maxLength: 8
-          example: '17500001'
-          description: |
-            Código de Endereçamento Postal: Composto por um conjunto numérico de oito dígitos, o objetivo principal do CEP é orientar e acelerar o encaminhamento, o tratamento e a entrega de objetos postados nos Correios, por meio da sua atribuição a localidades, logradouros, unidades dos Correios, serviços, órgãos públicos, empresas e edifícios. p.ex. '01311000'.
-        country:
-          allOf:
-            - $ref: '#/components/schemas/EnumCountryCode'
+          $ref: '#/components/schemas/Address'
       additionalProperties: false
     EnumCurrencyCode:
       type: string
@@ -4400,59 +4249,9 @@ components:
       type: object
       required:
         - address
-        - townName
-        - countrySubDivision
-        - postCode
-        - country
       properties:
         address:
-          type: string
-          maxLength: 200
-          pattern: '[\w\W\s]*'
-          example: Av Naburo Ykesaki, 1270
-          description: Corresponde ao endereço residencial do cliente.
-        additionalInfo:
-          type: string
-          maxLength: 30
-          pattern: '[\w\W\s]*'
-          example: Fundos
-          description: Alguns logradouros ainda necessitam ser especificados por meio de complemento.
-        districtName:
-          type: string
-          maxLength: 50
-          pattern: '[\w\W\s]*'
-          example: Centro
-          description: Bairro é uma comunidade ou região localizada em uma cidade ou município de acordo com as suas subdivisões geográficas.
-        townName:
-          type: string
-          maxLength: 50
-          pattern: '^[A-Za-z\sáâãéêíïóôõúçÁÂÃÉÍÏÓÔÕÚÇ]+$'
-          example: Marília
-          description: |
-            Localidade: O nome da localidade corresponde à designação da cidade ou município no qual o endereço está localizado.
-        countrySubDivision:
-          $ref: '#/components/schemas/EnumCountrySubDivision'
-        postCode:
-          type: string
-          pattern: \d{8}
-          maxLength: 8
-          example: '17500001'
-          description: |
-            Código de Endereçamento Postal: Composto por um conjunto numérico de oito dígitos, o objetivo principal do CEP é orientar e acelerar o encaminhamento, o tratamento e a entrega de objetos postados nos Correios, por meio da sua atribuição a localidades, logradouros, unidades dos Correios, serviços, órgãos públicos, empresas e edifícios. p.ex. '01311000'.
-        ibgeTownCode:
-          type: string
-          pattern: \d{7}|^NA$
-          maxLength: 8
-          example: '17500001'
-          description: |
-            Código IBGE do município
-        country:
-          type: string
-          maxLength: 60
-          example: Brasil
-        countryCode:
-          allOf:
-            - $ref: '#/components/schemas/EnumCountryCode'
+          $ref: '#/components/schemas/Address'
         geographicCoordinates:
           $ref: '#/components/schemas/GeographicCoordinates'
       additionalProperties: false
@@ -4490,13 +4289,12 @@ components:
           type: string
           description: Número de identificação (CPF ou CNPJ) da pessoa solicitante.
           maxLength: 20
-          pattern: '[\w\W\s]*'
+          pattern: '^([A-Z0-9]{12}\d{2}|\d{11})$'
           example: '73677831148'
     ResponseQuoteFirmLifePension:
       type: object
       required:
         - data
-        - links
         - meta
       properties:
         data:
@@ -4603,23 +4401,23 @@ components:
         self:
           type: string
           description: URL da página atualmente requisitada
-          example: https://api.organizacao.com.br/open-insurance/contract-life-pension/v1
+          example: https://api.organizacao.com.br/open-insurance/contract-life-pension/v2
         first:
           type: string
           description: URL da primeira página de registros
-          example: https://api.organizacao.com.br/open-insurance/contract-life-pension/v1
+          example: https://api.organizacao.com.br/open-insurance/contract-life-pension/v2
         prev:
           type: string
           description: URL da página anterior de registros
-          example: https://api.organizacao.com.br/open-insurance/contract-life-pension/v1
+          example: https://api.organizacao.com.br/open-insurance/contract-life-pension/v2
         next:
           type: string
           description: URL da próxima página de registros
-          example: https://api.organizacao.com.br/open-insurance/contract-life-pension/v1
+          example: https://api.organizacao.com.br/open-insurance/contract-life-pension/v2
         last:
           type: string
           description: URL da última página de registros
-          example: https://api.organizacao.com.br/open-insurance/contract-life-pension/v1
+          example: https://api.organizacao.com.br/open-insurance/contract-life-pension/v2
     Meta:
       type: object
       properties:
@@ -4649,6 +4447,7 @@ components:
               - code
               - title
               - detail
+              - requestDateTime
             properties:
               code:
                 description: Código de erro específico do endpoint
@@ -4659,10 +4458,12 @@ components:
                 description: Título legível por humanos deste erro específico
                 type: string
                 maxLength: 255
+                pattern: '[\w\W\s]*'
               detail:
                 description: Descrição legível por humanos deste erro específico
                 type: string
                 maxLength: 2048
+                pattern: '[\w\W\s]*'
               requestDateTime:
                 description: Data e hora da consulta, conforme especificação RFC-3339, formato UTC.
                 type: string
@@ -4681,40 +4482,54 @@ components:
         - errors
       properties:
         errors:
-          type: object
+          type: array
           minItems: 1
-          required:
-            - code
-            - title
-            - detail
-          properties:
-            code:
-              type: string
-              enum:
-                - ERRO_IDEMPOTENCIA
-                - NAO_INFORMADO
-              example: ERRO_IDEMPOTENCIA
-              description: Código do erro 422 de Entidade não processada.
-            title:
-              type: string
-              maxLength: 255
-              pattern: '[\w\W\s]*'
-              example: Tentativa de alteração de requisição já processada
-              description: |
-                - ERRO_ IDEMPOTENCIA: Tentativa de alteração de requisição já processada
-                - NÃO_INFORMADO: Não informada pelo servidor
-            detail:
-              type: string
-              maxLength: 2048
-              pattern: '[\w\W\s]*'
-              example: Tentativa de alteração de requisição já processada
-              description: |
-                - ERRO_ IDEMPOTENCIA: Tentativa de alteração de requisição já processada
-                - NÃO_INFORMADO: Não informada pelo servidor  
+          items:
+            type: object
+            required:
+              - code
+              - title
+              - detail
+              - requestDateTime
+            properties:
+              code:
+                type: string
+                enum:
+                  - ERRO_IDEMPOTENCIA
+                  - NAO_INFORMADO
+                example: ERRO_IDEMPOTENCIA
+                description: Código do erro 422 de Entidade não processada.
+              title:
+                type: string
+                maxLength: 255
+                pattern: '[\w\W\s]*'
+                example: Tentativa de alteração de requisição já processada
+                description: |
+                  - ERRO_IDEMPOTENCIA: Tentativa de alteração de requisição já processada
+                  - NAO_INFORMADO: Não informada pelo servidor
+              detail:
+                type: string
+                maxLength: 2048
+                pattern: '[\w\W\s]*'
+                example: Tentativa de alteração de requisição já processada
+                description: |
+                  - ERRO_IDEMPOTENCIA: Tentativa de alteração de requisição já processada
+                  - NAO_INFORMADO: Não informada pelo servidor
+              requestDateTime:
+                description: Data e hora da consulta, conforme especificação RFC-3339, formato UTC.
+                type: string
+                format: date-time
+                maxLength: 20
+                pattern: ^(\d{4})-(1[0-2]|0?[1-9])-(3[01]|[12][0-9]|0?[1-9])T(?:[01]\d|2[0123]):(?:[012345]\d):(?:[012345]\d)Z$
+                example: '2021-08-20T08:30:00Z'
+            additionalProperties: false
+        meta:
+          $ref: '#/components/schemas/Meta'
+      additionalProperties: false  
 
     XFapiInteractionId:
       type: string
-      pattern: ^[a-zA-Z0-9][a-zA-Z0-9\-]{0,99}$
+      pattern: '^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$'
       maxLength: 100
       description: Um UID [RFC4122](https://tools.ietf.org/html/rfc4122) usado como um ID de correlação. Se fornecido, o transmissor deve "reproduzir" esse valor no cabeçalho de resposta.
     QuoteRequestLifePensionLead:
@@ -4799,7 +4614,6 @@ components:
       type: object
       required:
         - data
-        - links
         - meta
       properties:
         data:
@@ -4808,6 +4622,139 @@ components:
           $ref: '#/components/schemas/Links'
         meta:
           $ref: '#/components/schemas/Meta'
+
+          
+    Address:
+      type: object
+      description: 'dados do endereço'
+      required:
+        - flagPostCode
+        - address
+      properties:
+        flagPostCode:
+          type: string
+          description: Indica se o endereço será nacional ou internacional
+          enum:
+            - NACIONAL
+            - INTERNACIONAL
+        address:
+          description: endereço completo
+          oneOf:
+            - $ref: '#/components/schemas/NationalAddress'
+            - $ref: '#/components/schemas/InternationalAddress'
+
+    InternationalAddress:
+      type: object
+      required:
+        - type
+        - name
+        - number
+        - townName
+        - countrySubDivision
+        - postCode
+        - countryCode
+      properties:
+        type: 
+          type: string
+          description: 'Tipo do logradouro'
+          enum: [AEROPORTO, ALAMEDA, AREA, AVENIDA, CAMPO, CHACARA, COLONIA, CONDOMINIO, CONJUNTO, DISTRITO, ESPLANADA, ESTACAO, ESTRADA, FAZENDA, FEIRA, JARDIM, LADEIRA, LAGO, LAGOA, LARGO, LOTEAMENTO, NUCLEO, PARQUE, PASSARELA, PATIO, PRACA, QUADRA, RECANTO, RESIDENCIAL, RODOVIA, RUA, SETOR, SITIO, TRAVESSA, TRECHO, TREVO, VALE, VEREDA, VIA, VIADUTO, VIELA, VILA]
+        name: 
+          type: string
+          description: 'Nome do logradouro'
+        number:
+          type: string
+          description: 'Número do logradouro'
+          maxLength: 6
+          pattern: '^[0-9]{1,6}$'
+        addressComplementaryInfo:
+          type: string
+          maxLength: 30
+          example: Fundos
+          description: 'Alguns logradouros ainda necessitam ser especificados por meio de complemento.'
+        district:
+          type: string
+          maxLength: 50
+          example: 'Centro'
+          description: 'Bairro é uma comunidade ou região localizada em uma cidade ou município de acordo com as suas subdivisões geográficas'
+        townName:
+          type: string
+          maxLength: 50
+          pattern: '^[A-Za-z\sáâãéêíïóôõúçÁÂÃÉÍÏÓÔÕÚÇ]+$'
+          example: Marília
+          description: |
+                  Designação da cidade ou município no qual o endereço está localizado.
+        countrySubDivision:
+          type: string
+          maxLength: 50
+          pattern: '^[A-Za-z\sáâãéêíïóôõúçÁÂÃÉÍÏÓÔÕÚÇ]+$'
+          example: New York
+          description: |
+                  Designação do estado no qual o endereço está localizado.
+        postCode:
+          type: string
+          maxLength: 11
+          example: '17500001A'
+          description: |
+                  Código de Endereçamento Postal: Composto por um conjunto numérico ou alfanumérico.
+        countryCode:
+          $ref: '#/components/schemas/EnumCountryCode'
+  
+    NationalAddress:
+      type: object
+      required:
+        - type
+        - name
+        - number
+        - townName
+        - countrySubDivision
+        - postCode
+      properties:
+        type: 
+          type: string
+          description: 'Tipo do logradouro'
+          enum: [AEROPORTO, ALAMEDA, AREA, AVENIDA, CAMPO, CHACARA, COLONIA, CONDOMINIO, CONJUNTO, DISTRITO, ESPLANADA, ESTACAO, ESTRADA, FAZENDA, FEIRA, JARDIM, LADEIRA, LAGO, LAGOA, LARGO, LOTEAMENTO, NUCLEO, PARQUE, PASSARELA, PATIO, PRACA, QUADRA, RECANTO, RESIDENCIAL, RODOVIA, RUA, SETOR, SITIO, TRAVESSA, TRECHO, TREVO, VALE, VEREDA, VIA, VIADUTO, VIELA, VILA]
+        name: 
+          type: string
+          description: 'Nome do logradouro'
+        number:
+          type: string
+          description: 'Número do logradouro'
+          maxLength: 6
+          pattern: '^[0-9]{1,6}$'
+        addressComplementaryInfo:
+          type: string
+          maxLength: 30
+          example: Fundos
+          description: 'Alguns logradouros ainda necessitam ser especificados por meio de complemento.'
+        districtName:
+          type: string
+          maxLength: 50
+          example: 'Centro'
+          description: 'Bairro é uma comunidade ou região localizada em uma cidade ou município de acordo com as suas subdivisões geográficas'
+        townName:
+          type: string
+          maxLength: 50
+          pattern: '^[A-Za-z\sáâãéêíïóôõúçÁÂÃÉÍÏÓÔÕÚÇ]+$'
+          example: Marília
+          description: |
+                  Localidade: O nome da localidade corresponde à designação da cidade ou município no qual o endereço está localizado.
+        ibgeTownCode:
+          type: string
+          pattern: '^\d{7}$|^NA$'
+          maxLength: 7
+          example: "1750000"
+          description: |
+            Código IBGE do município
+        countrySubDivision:
+          $ref: '#/components/schemas/EnumCountrySubDivision'
+        postCode:
+          type: string
+          pattern: '^\d{8}$|^NA$'
+          maxLength: 8
+          example: '17500001'
+          description: |
+                  Código de Endereçamento Postal: Composto por um conjunto numérico de oito dígitos, o objetivo principal do CEP é orientar e acelerar o encaminhamento, o tratamento e a entrega de objetos postados nos Correios, por meio da sua atribuição a localidades, logradouros, unidades dos Correios, serviços, órgãos públicos, empresas e edifícios. p.ex. '01311000'. Condicional ao preenchimento do FlagPostCode ser igual a "Nacional".
+    
   parameters:
     consentId:
       name: consentId
@@ -4881,7 +4828,7 @@ components:
       required: true
       schema:
         type: string
-        pattern: ^[a-zA-Z0-9][a-zA-Z0-9\-]{0,99}$
+        pattern: '^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$'
         minLength: 1
         maxLength: 100
     xIdempotencyKey:

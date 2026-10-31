@@ -2,11 +2,11 @@ openapi: 3.0.0
 info:
   title: APIs Open Data do Open Insurance Brasil
   description: As APIs descritas neste documento são referentes as APIs da fase Open Data do Open Insurance Brasil.
-  version: 2.0.0
+  version: 3.0.0
   contact:
     email: "apiteam@swagger.io"
 servers:
-  - url: 'http://api.seguradora.com.br/open-insurance/discovery/v2'
+  - url: 'http://api.seguradora.com.br/open-insurance/discovery/v3'
 tags:
 - name: "Discovery"
 paths:
@@ -23,12 +23,23 @@ paths:
       responses:
         '200':
           description: Código de status retornado pelas APIs
+          headers:
+            Cache-Control:
+              $ref: "#/components/headers/Cache-Control"
+            Content-Security-Policy:
+              $ref: "#/components/headers/Content-Security-Policy"
+            Strict-Transport-Security:
+              $ref: "#/components/headers/Strict-Transport-Security"
+            X-Content-Type-Options:
+              $ref: "#/components/headers/X-Content-Type-Options"
+            X-Frame-Options:
+              $ref: "#/components/headers/X-Frame-Options"
+            Content-Type:
+              $ref: "#/components/headers/Content-Type"
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ResponseDiscoveryStatusList'
-        '204':
-          $ref: '#/components/responses/NoContent'
         '400':
           $ref: '#/components/responses/BadRequest'
         '401':
@@ -47,6 +58,12 @@ paths:
           $ref: '#/components/responses/TooManyRequests'
         '500':
           $ref: '#/components/responses/InternalServerError'
+        default:
+          description: Erro inesperado
+          content:
+            application/json; charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/ResponseError'
   /outages:
     get:
       tags:
@@ -60,12 +77,23 @@ paths:
       responses:
         '200':
           description: listagem de indisponibilidades agendadas para os serviços
+          headers:
+            Cache-Control:
+              $ref: "#/components/headers/Cache-Control"
+            Content-Security-Policy:
+              $ref: "#/components/headers/Content-Security-Policy"
+            Strict-Transport-Security:
+              $ref: "#/components/headers/Strict-Transport-Security"
+            X-Content-Type-Options:
+              $ref: "#/components/headers/X-Content-Type-Options"
+            X-Frame-Options:
+              $ref: "#/components/headers/X-Frame-Options"
+            Content-Type:
+              $ref: "#/components/headers/Content-Type"
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ResponseDiscoveryOutageList'
-        '204':
-          $ref: '#/components/responses/NoContent'
         '400':
           $ref: '#/components/responses/BadRequest'
         '401':
@@ -84,6 +112,12 @@ paths:
           $ref: '#/components/responses/TooManyRequests'
         '500':
           $ref: '#/components/responses/InternalServerError'
+        default:
+          description: Erro inesperado
+          content:
+            application/json; charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/ResponseError'
 components:
   schemas:
     ResponseDiscoveryStatusList:
@@ -159,27 +193,27 @@ components:
           type: string
           description: URL da página atualmente requisitada
           pattern: ^(https:\/\/)(.*?)(\/open-insurance\/discovery\/v\d+)(\/(status|outages).*)?$
-          example: 'https://api.organizacao.com.br/open-insurance/discovery/v2/status'
+          example: 'https://api.organizacao.com.br/open-insurance/discovery/v3/status'
         first:
           type: string
           description: URL da primeira página de registros
           pattern: ^(https:\/\/)(.*?)(\/open-insurance\/discovery\/v\d+)(\/(status|outages).*)?$
-          example: 'https://api.organizacao.com.br/open-insurance/discovery/v2/status'
+          example: 'https://api.organizacao.com.br/open-insurance/discovery/v3/status'
         prev:
           type: string
           description: URL da página anterior de registros
           pattern: ^(https:\/\/)(.*?)(\/open-insurance\/discovery\/v\d+)(\/(status|outages).*)?$
-          example: 'https://api.organizacao.com.br/open-insurance/discovery/v2/status'
+          example: 'https://api.organizacao.com.br/open-insurance/discovery/v3/status'
         next:
           type: string
           description: URL da próxima página de registros
           pattern: ^(https:\/\/)(.*?)(\/open-insurance\/discovery\/v\d+)(\/(status|outages).*)?$
-          example: 'https://api.organizacao.com.br/open-insurance/discovery/v2/status'
+          example: 'https://api.organizacao.com.br/open-insurance/discovery/v3/status'
         last:
           type: string
           description: URL da última página de registros
           pattern: ^(https:\/\/)(.*?)(\/open-insurance\/discovery\/v\d+)(\/(status|outages).*)?$
-          example: 'https://api.organizacao.com.br/open-insurance/discovery/v2/status'
+          example: 'https://api.organizacao.com.br/open-insurance/discovery/v3/status'
     Meta:
       type: object
       properties:
@@ -239,7 +273,7 @@ components:
           items:
             type: string
           example:
-            - 'https://api.seguradora.com.br/open-insurance/channels/v2/electronic-channels'
+            - 'https://api.seguradora.com.br/open-insurance/channels/v3/electronic-channels'
     ResponseError:
       type: object
       required:
@@ -301,16 +335,35 @@ components:
         type: integer
         default: 25
         minimum: 1
+  headers:
+    Cache-Control:
+      description: Controle de cache para evitar que informações confidenciais sejam armazenadas em cache.
+      schema:
+        type: string
+    Content-Security-Policy:
+      description: Campo para proteção contra ataques clickjack.
+      schema:
+        type: string
+    Strict-Transport-Security:
+      description: Campo para exigir conexões por HTTPS.
+      schema:
+        type: string
+    X-Content-Type-Options:
+      description: Evita detecção de MIME inadequada.
+      schema:
+        type: string
+    X-Frame-Options:
+      description: Indica se o navegador deve renderizar um frame.
+      schema:
+        type: string
+    Content-Type:
+      description: Especificar o tipo de conteúdo da resposta.
+      schema:
+        type: string
         
   responses:
     UnprocessableEntity:
       description: 'O servidor entende o tipo de conteúdo da entidade da requisição, e a sintaxe da requisição está correta, mas não foi possível processar as instruções presentes.'
-      content:
-        application/json; charset=utf-8:
-          schema:
-            $ref: '#/components/schemas/ResponseError'
-    NoContent:
-      description: 'O recurso solicitado não existe ou não foi localizado.'
       content:
         application/json; charset=utf-8:
           schema:

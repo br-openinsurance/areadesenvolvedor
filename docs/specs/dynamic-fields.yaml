@@ -11,14 +11,14 @@ info:
     - Ao entrar no ecossistema, a `TCS` deve atualizar todas as `ICS`s e receber confirmação via webhook
     - Ao atualizar seus dados, a `TCS` deve atualizar todas as `ICS`s e receber confirmação via webhook
     - Ao entrar no ecossistema, a `ICS` deve consumir as APIs de todas as `TCS`s para garantir a atualização dos dados
-  version: 2.0.0
+  version: 3.0.0
   contact:
     name: Governança do Open Insurance Brasil
     url: https://www.gov.br/susep
 servers:
-  - url: https://api.organizacao.com.br/open-insurance/dynamic-fields/v2
+  - url: https://api.organizacao.com.br/open-insurance/dynamic-fields/v3
     description: Servidor de Produção
-  - url: https://api.organizacao.com.br/open-insurance/dynamic-fields/v2
+  - url: https://api.organizacao.com.br/open-insurance/dynamic-fields/v3
     description: Servidor de Homologação
 tags:
   - name: Dynamic Fields
@@ -61,7 +61,11 @@ paths:
         '500':
           $ref: '#/components/responses/InternalServerError'
         default:
-          $ref: '#/components/responses/OKResponseDynamicFieldsList'
+          description: Erro inesperado
+          content:
+            application/json; charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/ResponseError'
       security:
         - OAuth2Security:
             - dynamic-fields
@@ -102,7 +106,11 @@ paths:
         '500':
           $ref: '#/components/responses/InternalServerError'
         default:
-          $ref: '#/components/responses/OKResponseDynamicFieldsCapitalizationList'
+          description: Erro inesperado
+          content:
+            application/json; charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/ResponseError'
       security:
         - OAuth2Security:
             - dynamic-fields
@@ -458,23 +466,23 @@ components:
         self:
           type: string
           description: URL da página atualmente requisitada
-          example: https://api.organizacao.com.br/open-insurance/dynamic-fields/v2
+          example: https://api.organizacao.com.br/open-insurance/dynamic-fields/v3
         first:
           type: string
           description: URL da primeira página de registros
-          example: https://api.organizacao.com.br/open-insurance/dynamic-fields/v2
+          example: https://api.organizacao.com.br/open-insurance/dynamic-fields/v3
         prev:
           type: string
           description: URL da página anterior de registros
-          example: https://api.organizacao.com.br/open-insurance/dynamic-fields/v2
+          example: https://api.organizacao.com.br/open-insurance/dynamic-fields/v3
         next:
           type: string
           description: URL da próxima página de registros
-          example: https://api.organizacao.com.br/open-insurance/dynamic-fields/v2
+          example: https://api.organizacao.com.br/open-insurance/dynamic-fields/v3
         last:
           type: string
           description: URL da última página de registros
-          example: https://api.organizacao.com.br/open-insurance/dynamic-fields/v2
+          example: https://api.organizacao.com.br/open-insurance/dynamic-fields/v3
     Meta:
       type: object
       properties:
@@ -636,7 +644,7 @@ components:
       required: true
       schema:
         type: string
-        pattern: ^[a-zA-Z0-9][a-zA-Z0-9\-]{0,99}$
+        pattern:  '^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12})$'
         minLength: 1
         maxLength: 100
     xCallbackInteractionId:
@@ -667,7 +675,7 @@ components:
             Se fornecido, o transmissor deve "reproduzir" esse valor no cabeçalho de resposta.
           schema:
             type: string
-            pattern: ^[a-zA-Z0-9][a-zA-Z0-9\-]{0,99}$
+            pattern: '^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12})$'
             minLength: 1
             maxLength: 100
             example: 73cac523-d3ae-2289-b106-330a6218710d
@@ -684,7 +692,7 @@ components:
             Se fornecido, o transmissor deve "reproduzir" esse valor no cabeçalho de resposta.
           schema:
             type: string
-            pattern: ^[a-zA-Z0-9][a-zA-Z0-9\-]{0,99}$
+            pattern: '^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12})$'
             minLength: 1
             maxLength: 100
             example: 73cac523-d3ae-2289-b106-330a6218710d

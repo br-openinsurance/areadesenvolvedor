@@ -5,7 +5,7 @@ info:
     API de Webhook é responsável por notificar eventos definidos em cada uma das APIs que possuem a funcionalidade no Open Insurance Brasil.  
     
     
-  version: 2.0.0
+  version: 2.1.0
   contact:
     name: Governança do Open Insurance Brasil
     url: 'https://www.gov.br/susep'
@@ -21,7 +21,9 @@ tags:
     description: Notificações de mudanças de payload referente a API de Produtos de Título de Capitalização.
   - name: Dynamic Fields
     description: Notificações de mudanças no payload da API de Campos Dinâmicos.
-    
+  - name: Consent
+    description: Notificações de mudanças de estados do consentimento referente a iniciação de serviços ou compartilhamento de dados.
+  
 paths:
   '/quote/{versionApi}/request/{consentId}/quote-status':
     post:
@@ -107,7 +109,27 @@ paths:
       responses:
         '202':
           $ref: '#/components/responses/202Webhook'
-          
+  '/consent/{versionApi}/request/{consentId}/consent-status':
+    post:
+      tags:
+        - Consent
+      summary: Notificações de mudanças de estados do consentimento
+      operationId: consentNotification
+      description: Notificações de mudanças de estados do consentimento referente a iniciação de serviços ou compartilhamento de dados.
+      parameters:
+        - $ref: '#/components/parameters/consentId'
+        - $ref: '#/components/parameters/versionApi'
+        - $ref: '#/components/parameters/xWebhookInteractionId'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RequestBodyWebhook'
+        description: Payload enviado para notificar a alteração no estado do consentimento.
+        required: true
+      responses:
+        '202':
+          $ref: '#/components/responses/202Webhook'        
 components:
   schemas:
     RequestBodyWebhook:
@@ -153,7 +175,7 @@ components:
                 seja um identificador de recurso persistente e independente da localização.  
                 Considerando a string urn:initiator:C1DD93123 como exemplo para consentId temos:
                 - o namespace(urn)
-                - o identificador associado ao namespace da instituição transnmissora (initiator) 
+                - o identificador associado ao namespace da instituição transmissora (initiator) 
                 - o identificador específico dentro do namespace (C1DD93123).  
                 Informações mais detalhadas sobre a construção de namespaces devem ser consultadas na [RFC8141](https://tools.ietf.org/html/rfc8141).
       required: true

@@ -33,14 +33,14 @@ info:
     ### `/{planId}/settlements`
       - permissions:
         - GET: **CAPITALIZATION_TITLE_SETTLEMENTS_READ**
-  version: 1.5.0
+  version: 2.0.0
   contact:
     name: Governança do Open Insurance Brasil
     url: 'https://www.gov.br/susep'
 servers:
-  - url: 'https://api.organizacao.com.br/open-insurance/insurance-capitalization-title/v1'
+  - url: 'https://api.organizacao.com.br/open-insurance/insurance-capitalization-title/v2'
     description: Servidor de Produção
-  - url: 'https://api.organizacao.com.br/open-insurance/insurance-capitalization-title/v1'
+  - url: 'https://api.organizacao.com.br/open-insurance/insurance-capitalization-title/v2'
     description: Servidor de Homologação
 tags:
   - name: InsuranceCapitalizationTitle
@@ -313,7 +313,7 @@ components:
                         cnpjNumber:
                           description: CNPJ da sociedade pertencente à marca
                           type: string
-                          pattern: '^\d{14}$'
+                          pattern: '^[A-Z0-9]{12}\d{2}$'
                           example: "12345678901234"
                         products:
                           type: array
@@ -362,6 +362,7 @@ components:
       description: Dados Gerais da Série
       type: object
       required:
+        - planId
         - seriesId
         - modality
         - susepProcessNumber
@@ -392,7 +393,7 @@ components:
           description: Número do processo administrativo sob o qual o plano foi aprovado pela Susep.
           maxLength: 20
           example: "15414622222222222"
-        commercialName:
+        commercialDenomination:
           type: string
           description: Denominação comercial do produto de propriedade exclusiva da sociedade de capitalização. Condicional, caso selecionada as opções "Filantropia Premiável" ou "Popular" no campo "Modalidade".
           maxLength: 100
@@ -448,7 +449,7 @@ components:
         frequencyDescription:
           type: string
           description: Descrição do Tipo de Contribuição (Quando o Tipo de Contribuição for 3. Pagamento Periódico)
-          maxLength: 100
+          maxLength: 500
         interestRate:
           description: Taxa de juros efetiva real mensal utilizada para remuneração do título de capitalização.
           allOf:
@@ -544,10 +545,6 @@ components:
         - subscriberDocumentType
         - subscriberDocumentNumber
         - subscriberAddress
-        - subscriberTownName
-        - subscriberCountrySubDivision
-        - subscriberCountryCode
-        - subscriberPostCode
       properties:
         subscriberName:
           description: Nome ou Razão Social do Subscritor
@@ -561,6 +558,7 @@ components:
           example: OUTROS
         subscriberDocumentTypeOthers:
           description: Tipo de Documento do Subscritor, caso seja selecionado OUTROS.
+          maxLength: 100
           type: string
         subscriberDocumentNumber:
           description: Documento de Identificação do Subscritor
@@ -572,44 +570,7 @@ components:
           items:
             $ref: '#/components/schemas/RequestorPhone'
         subscriberAddress:
-          description: |
-            Endereço do subscritor
-          type: string
-          maxLength: 200
-          pattern: '[\w\W\s]*'
-          example: "Av Naburo Ykesaki, 1270"
-        subscriberAddressAdditionalInfo:
-          type: string
-          pattern: '[\w\W\s]*'
-          example: Fundos
-          description: Alguns logradouros ainda necessitam ser especificados por meio de complemento.
-        subscriberTownName:
-          type: string
-          maxLength: 50
-          pattern: '[\w\W\s]*'
-          example: Rio de Janeiro
-          description: |
-            Localidade: O nome da localidade corresponde à designação da cidade ou município no qual o endereço está localizado.
-            Cidade do subscritor
-        subscriberCountrySubDivision:
-          description: Estado do subscritor
-          allOf:
-            - $ref: "#/components/schemas/EnumCountrySubDivision"
-        subscriberCountryCode:
-          description: |
-            Código do pais de acordo com o código “alpha3” do ISO-3166.
-            País do subscritor
-          type: string
-          maxLength: 3
-          example: BRA
-        subscriberPostCode:
-          description: |
-            Código de Endereçamento Postal: Composto por um conjunto numérico de oito dígitos, o objetivo principal do CEP é orientar e acelerar o encaminhamento, o tratamento e a entrega de objetos postados nos Correios, por meio da sua atribuição a localidades, logradouros, unidades dos Correios, serviços, órgãos públicos, empresas e edifícios. p.ex. '01311000'.
-            Código Postal do subscritor, Obrigatório, se houver
-          type: string
-          pattern: '\d{8}|^NA$'
-          maxLength: 8
-          example: "17500001"
+          $ref: '#/components/schemas/Address'
         holder:
           description: Dados Gerais do Titular
           type: array
@@ -652,10 +613,6 @@ components:
         - holderDocumentType
         - holderDocumentNumber
         - holderAddress
-        - holderTownName
-        - holderCountrySubDivision
-        - holderCountryCode
-        - holderPostCode
         - holderRedemption
         - holderRaffle
       properties:
@@ -671,6 +628,7 @@ components:
           example: OUTROS
         holderDocumentTypeOthers:
           description: Tipo de Documento do Titular, caso seja selecionado OUTROS.
+          maxLength: 100
           type: string
         holderDocumentNumber:
           description: Documento de Identificação do Titular
@@ -682,44 +640,7 @@ components:
           items:
             $ref: '#/components/schemas/RequestorPhone'
         holderAddress:
-          description: |
-            Endereço do titular
-          type: string
-          maxLength: 200
-          pattern: '[\w\W\s]*'
-          example: "Av Naburo Ykesaki, 1270"
-        holderAddressAdditionalInfo:
-          type: string
-          pattern: '[\w\W\s]*'
-          example: Fundos
-          description: Alguns logradouros ainda necessitam ser especificados por meio de complemento.
-        holderTownName:
-          type: string
-          maxLength: 50
-          pattern: '[\w\W\s]*'
-          example: Rio de Janeiro
-          description: |
-            Localidade: O nome da localidade corresponde à designação da cidade ou município no qual o endereço está localizado.
-            Cidade do titular
-        holderCountrySubDivision:
-          description: Estado do titular
-          allOf:
-            - $ref: "#/components/schemas/EnumCountrySubDivision"
-        holderCountryCode:
-          description: |
-            Código do pais de acordo com o código “alpha3” do ISO-3166.
-            País do titular
-          type: string
-          maxLength: 3
-          example: BRA
-        holderPostCode:
-          description: |
-            Código de Endereçamento Postal: Composto por um conjunto numérico de oito dígitos, o objetivo principal do CEP é orientar e acelerar o encaminhamento, o tratamento e a entrega de objetos postados nos Correios, por meio da sua atribuição a localidades, logradouros, unidades dos Correios, serviços, órgãos públicos, empresas e edifícios. p.ex. '01311000'.
-            Código Postal do titular, Obrigatório, se houver
-          type: string
-          pattern: '\d{8}|^NA$'
-          maxLength: 8
-          example: "17500001"
+          $ref: '#/components/schemas/Address'
         holderRedemption:
           type: boolean
           description: Titular do direito de resgate?
@@ -850,6 +771,11 @@ components:
         - SE
         - TO
       example: RJ
+    EnumCountryCode:
+      description: Nome do país (de acordo com o código "alpha3" do ISO-3166)
+      type: string
+      enum: [AFG,ALA,ALB,DZA,ASM,AND,AGO,AIA,ATA,ATG,ARG,ARM,ABW,AUS,AUT,AZE,BHS,BHR,BGD,BRB,BLR,BEL,BLZ,BEN,BMU,BTN,BOL,BES,BIH,BWA,BVT,BRA,IOT,BRN,BGR,BFA,BDI,CPV,KHM,CMR,CAN,CYM,CAF,TCD,CHL,CHN,CXR,CCK,COL,COM,COG,COD,COK,CRI,CIV,HRV,CUB,CUW,CYP,CZE,DNK,DJI,DMA,DOM,ECU,EGY,SLV,GNQ,ERI,EST,SWZ,ETH,FLK,FRO,FJI,FIN,FRA,GUF,PYF,ATF,GAB,GMB,GEO,DEU,GHA,GIB,GRC,GRL,GRD,GLP,GUM,GTM,GGY,GIN,GNB,GUY,HTI,HMD,VAT,HND,HKG,HUN,ISL,IND,IDN,IRN,IRQ,IRL,IMN,ISR,ITA,JAM,JPN,JEY,JOR,KAZ,KEN,KIR,PRK,KOR,KWT,KGZ,LAO,LVA,LBN,LSO,LBR,LBY,LIE,LTU, LUX,MAC,MDG,MWI,MYS,MDV,MLI,MLT,MHL,MTQ,MRT,MUS,MYT,MEX,FSM,MDA,MCO,MNG,MNE,MSR,MAR,MOZ,MMR,NAM,NRU,NPL,NLD,NCL,NZL,NIC,NER,NGA,NIU,NFK,MKD,MNP,NOR,OMN,PAK,PLW,PSE,PAN,PNG,PRY,PER,PHL,PCN,POL,PRT,PRI,QAT,REU,ROU,RUS,RWA,BLM,SHN,KNA,LCA,MAF,SPM,VCT,WSM,SMR,STP,SAU,SEN,SRB,SYC,SLE,SGP,SXM,SVK,SVN,SLB,SOM,ZAF,SGS,SSD,ESP,LKA,SDN,SUR,SJM,SWE,CHE,SYR,TWN,TJK,TZA,THA,TLS,TGO,TKL,TON,TTO,TUN,TUR,TKM,TCA,TUV,UGA,UKR,ARE,GBR,USA,UMI,URY,UZB,VUT,VEN,VNM,VGB,VIR,WLF,ESH,YEM,ZMB,ZWE]
+      example: BRA   
     InsuranceCapitalizationTitleTechnicalProvisions:
       description: (Esses valores poderão sofrer alterações no momento do resgate/pagamento,conforme regras do produto nas condições gerais)
       type: object
@@ -1058,27 +984,27 @@ components:
           type: string
           description: URL da página atualmente requisitada
           pattern: ^(https:\/\/)(.*?)(\/open-insurance\/insurance-capitalization-title\/v\d+)(\/insurance-capitalization-title.*)?$
-          example: "https://api.organizacao.com.br/open-insurance/insurance-capitalization-title/v1/insurance-capitalization-title"
+          example: "https://api.organizacao.com.br/open-insurance/insurance-capitalization-title/v2/insurance-capitalization-title"
         first:
           type: string
           description: URL da primeira página de registros
           pattern: ^(https:\/\/)(.*?)(\/open-insurance\/insurance-capitalization-title\/v\d+)(\/insurance-capitalization-title.*)?$
-          example: "https://api.organizacao.com.br/open-insurance/insurance-capitalization-title/v1/insurance-capitalization-title"
+          example: "https://api.organizacao.com.br/open-insurance/insurance-capitalization-title/v2/insurance-capitalization-title"
         prev:
           type: string
           description: URL da página anterior de registros
           pattern: ^(https:\/\/)(.*?)(\/open-insurance\/insurance-capitalization-title\/v\d+)(\/insurance-capitalization-title.*)?$
-          example: "https://api.organizacao.com.br/open-insurance/insurance-capitalization-title/v1/insurance-capitalization-title"
+          example: "https://api.organizacao.com.br/open-insurance/insurance-capitalization-title/v2/insurance-capitalization-title"
         next:
           type: string
           description: URL da próxima página de registros
           pattern: ^(https:\/\/)(.*?)(\/open-insurance\/insurance-capitalization-title\/v\d+)(\/insurance-capitalization-title.*)?$
-          example: "https://api.organizacao.com.br/open-insurance/insurance-capitalization-title/v1/insurance-capitalization-title"
+          example: "https://api.organizacao.com.br/open-insurance/insurance-capitalization-title/v2/insurance-capitalization-title"
         last:
           type: string
           description: URL da última página de registros
           pattern: ^(https:\/\/)(.*?)(\/open-insurance\/insurance-capitalization-title\/v\d+)(\/insurance-capitalization-title.*)?$
-          example: "https://api.organizacao.com.br/open-insurance/insurance-capitalization-title/v1/insurance-capitalization-title"
+          example: "https://api.organizacao.com.br/open-insurance/insurance-capitalization-title/v2/insurance-capitalization-title"
     Meta:
       type: object
       properties:
@@ -1108,6 +1034,7 @@ components:
               - code
               - title
               - detail
+              - requestDateTime
             properties:
               code:
                 description: Código de erro específico do endpoint
@@ -1134,7 +1061,7 @@ components:
       additionalProperties: false
     XFapiInteractionId:
       type: string
-      pattern: '^[a-zA-Z0-9][a-zA-Z0-9\-]{0,99}$'
+      pattern: '^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$'
       maxLength: 100
       description: 'Um UID [RFC4122](https://tools.ietf.org/html/rfc4122) usado como um ID de correlação. Se fornecido, o transmissor deve "reproduzir" esse valor no cabeçalho de resposta.'
     XV:
@@ -1145,6 +1072,137 @@ components:
                 com a versao que esta sendo utilizada naquele momento.
       type: string
 
+    Address:
+      type: object
+      description: 'dados do endereço'
+      required:
+        - flagPostCode
+        - address
+      properties:
+        flagPostCode:
+          type: string
+          description: Indica se o endereço será nacional ou internacional
+          enum:
+            - NACIONAL
+            - INTERNACIONAL
+        address:
+          description: endereço completo
+          oneOf:
+            - $ref: '#/components/schemas/NationalAddress'
+            - $ref: '#/components/schemas/InternationalAddress'
+    
+    InternationalAddress:
+      type: object
+      required:
+        - type
+        - name
+        - number
+        - townName
+        - countrySubDivision
+        - postCode
+        - countryCode
+      properties:
+        type: 
+          type: string
+          description: 'Tipo do logradouro'
+          enum: [AEROPORTO, ALAMEDA, AREA, AVENIDA, CAMPO, CHACARA, COLONIA, CONDOMINIO, CONJUNTO, DISTRITO, ESPLANADA, ESTACAO, ESTRADA, FAZENDA, FEIRA, JARDIM, LADEIRA, LAGO, LAGOA, LARGO, LOTEAMENTO, NUCLEO, PARQUE, PASSARELA, PATIO, PRACA, QUADRA, RECANTO, RESIDENCIAL, RODOVIA, RUA, SETOR, SITIO, TRAVESSA, TRECHO, TREVO, VALE, VEREDA, VIA, VIADUTO, VIELA, VILA]
+        name: 
+          type: string
+          description: 'Nome do logradouro'
+        number:
+          type: string
+          description: 'Número do logradouro'
+          maxLength: 6
+          pattern: '^[0-9]{1,6}$'
+        addressComplementaryInfo:
+          type: string
+          maxLength: 30
+          example: Fundos
+          description: 'Alguns logradouros ainda necessitam ser especificados por meio de complemento.'
+        district:
+          type: string
+          maxLength: 50
+          example: 'Centro'
+          description: 'Bairro é uma comunidade ou região localizada em uma cidade ou município de acordo com as suas subdivisões geográficas'
+        townName:
+          type: string
+          maxLength: 50
+          pattern: '^[A-Za-z\sáâãéêíïóôõúçÁÂÃÉÍÏÓÔÕÚÇ]+$'
+          example: Marília
+          description: |
+                  Designação da cidade ou município no qual o endereço está localizado.
+        countrySubDivision:
+          type: string
+          maxLength: 50
+          pattern: '^[A-Za-z\sáâãéêíïóôõúçÁÂÃÉÍÏÓÔÕÚÇ]+$'
+          example: New York
+          description: |
+                  Designação do estado no qual o endereço está localizado.
+        postCode:
+          type: string
+          maxLength: 11
+          example: '17500001A'
+          description: |
+                  Código de Endereçamento Postal: Composto por um conjunto numérico ou alfanumérico.
+        countryCode:
+          $ref: '#/components/schemas/EnumCountryCode'
+    
+    NationalAddress:
+      type: object
+      required:
+        - type
+        - name
+        - number
+        - townName
+        - countrySubDivision
+        - postCode
+      properties:
+        type: 
+          type: string
+          description: 'Tipo do logradouro'
+          enum: [AEROPORTO, ALAMEDA, AREA, AVENIDA, CAMPO, CHACARA, COLONIA, CONDOMINIO, CONJUNTO, DISTRITO, ESPLANADA, ESTACAO, ESTRADA, FAZENDA, FEIRA, JARDIM, LADEIRA, LAGO, LAGOA, LARGO, LOTEAMENTO, NUCLEO, PARQUE, PASSARELA, PATIO, PRACA, QUADRA, RECANTO, RESIDENCIAL, RODOVIA, RUA, SETOR, SITIO, TRAVESSA, TRECHO, TREVO, VALE, VEREDA, VIA, VIADUTO, VIELA, VILA]
+        name: 
+          type: string
+          description: 'Nome do logradouro'
+        number:
+          type: string
+          description: 'Número do logradouro'
+          maxLength: 6
+          pattern: '^[0-9]{1,6}$'
+        addressComplementaryInfo:
+          type: string
+          maxLength: 30
+          example: Fundos
+          description: 'Alguns logradouros ainda necessitam ser especificados por meio de complemento.'
+        districtName:
+          type: string
+          maxLength: 50
+          example: 'Centro'
+          description: 'Bairro é uma comunidade ou região localizada em uma cidade ou município de acordo com as suas subdivisões geográficas'
+        townName:
+          type: string
+          maxLength: 50
+          pattern: '^[A-Za-z\sáâãéêíïóôõúçÁÂÃÉÍÏÓÔÕÚÇ]+$'
+          example: Marília
+          description: |
+                  Localidade: O nome da localidade corresponde à designação da cidade ou município no qual o endereço está localizado.
+        ibgeTownCode:
+          type: string
+          pattern: '^\d{7}$|^NA$'
+          maxLength: 7
+          example: "1750000"
+          description: |
+            Código IBGE do município
+        countrySubDivision:
+          $ref: '#/components/schemas/EnumCountrySubDivision'
+        postCode:
+          type: string
+          pattern: '^\d{8}$|^NA$'
+          maxLength: 8
+          example: '17500001'
+          description: |
+                  Código de Endereçamento Postal: Composto por um conjunto numérico de oito dígitos, o objetivo principal do CEP é orientar e acelerar o encaminhamento, o tratamento e a entrega de objetos postados nos Correios, por meio da sua atribuição a localidades, logradouros, unidades dos Correios, serviços, órgãos públicos, empresas e edifícios. p.ex. '01311000'. Condicional ao preenchimento do FlagPostCode ser igual a "Nacional".     
+  
   parameters:
     planId:
         name: planId
@@ -1218,7 +1276,7 @@ components:
       required: true
       schema:
         type: string
-        pattern: '^[a-zA-Z0-9][a-zA-Z0-9\-]{0,99}$'
+        pattern: '^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$'
         minLength: 1
         maxLength: 100
     x-v:
