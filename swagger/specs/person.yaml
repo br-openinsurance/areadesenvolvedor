@@ -3,13 +3,13 @@ info:
   title: APIs Open Data do Open Insurance Brasil
   description: 
     Obtém a lista dos produtos Seguros de Pessoas – Coberturas de Risco (excluindo VGBL).
-  version: 3.0.0
+  version: 4.0.0
   contact:
     url: 'https://www.gov.br/susep/'
 servers:
-  - url: 'https://api.organizacao.com.br/open-insurance/products-services/v3'
+  - url: 'https://api.organizacao.com.br/open-insurance/products-services/v4'
     description: Servidor de Produção
-  - url: 'https://api.organizacao.com.br/open-insurance/products-services/v3'
+  - url: 'https://api.organizacao.com.br/open-insurance/products-services/v4'
     description: Servidor de Homologação  
 tags:
 - name: "person"
@@ -22,35 +22,29 @@ paths:
       description: "Obtém a lista dos produtos do tipo seguro de pessoas."
       operationId: "getPerson"
       parameters:
-        - $ref: "#/components/parameters/cache-Control"
-        - $ref: "#/components/parameters/content-Security-Policy"
-        - $ref: "#/components/parameters/content-Type"
-        - $ref: "#/components/parameters/strict-Transport-Security"
-        - $ref: "#/components/parameters/x-Content-Type-Options"
-        - $ref: "#/components/parameters/x-Frame-Options"
         - $ref: "#/components/parameters/page"
         - $ref: "#/components/parameters/pageSize"
-        - $ref: "#/components/parameters/x-v"
-        - $ref: "#/components/parameters/x-min-v"
+
       responses:
         '200':
           description: Dados dos Plano de Seguro de Pessoas
+          headers:
+            Cache-Control:
+              $ref: "#/components/headers/Cache-Control"
+            Content-Security-Policy:
+              $ref: "#/components/headers/Content-Security-Policy"
+            Strict-Transport-Security:
+              $ref: "#/components/headers/Strict-Transport-Security"
+            X-Content-Type-Options:
+              $ref: "#/components/headers/X-Content-Type-Options"
+            X-Frame-Options:
+              $ref: "#/components/headers/X-Frame-Options"
+            Content-Type:
+              $ref: "#/components/headers/Content-Type"
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ResponsePersonList'
-          headers:
-            x-v:
-              description: |
-                Caso x-min-v e x-v tenham sido enviados, o titular dos dados deve responder
-                com a versao mais alta suportada entre x-min-v e x-v.
-                Caso x-min-v e x-v nao tenham sido enviados, o titular dos dados deve responder
-                com a versao que esta sendo utilizada naquele momento.
-              required: true
-              schema:
-                type: string
-        '204':
-          $ref: '#/components/responses/NoContent'
         '400':
           $ref: '#/components/responses/BadRequest'
         '401':
@@ -70,21 +64,11 @@ paths:
         '500':
           $ref: '#/components/responses/InternalServerError'
         default:
-          description: Dados dos Plano de Seguro de Pessoas
+          description: Erro inesperado
           content:
-            application/json:
+            application/json; charset=utf-8:
               schema:
-                $ref: '#/components/schemas/ResponsePersonList'
-          headers:
-            x-v:
-              description: |
-                Caso x-min-v e x-v tenham sido enviados, o titular dos dados deve responder
-                com a versao mais alta suportada entre x-min-v e x-v.
-                Caso x-min-v e x-v nao tenham sido enviados, o titular dos dados deve responder
-                com a versao que esta sendo utilizada naquele momento.
-              required: true
-              schema:
-                type: string
+                $ref: '#/components/schemas/ResponseError'  
 components:
   schemas:
     ResponsePersonList:
@@ -248,7 +232,7 @@ components:
           insuranceModality:
             type: string
             example: FUNERAL
-            enum: [FUNERAL, PRESTAMISTA, VIAGEM, EDUCACIONAL, DOTAL, ACIDENTES_PESSOAIS, VIDA, PERDA_CERTIFICADO_HABILITACAOO_VOO, DOENCAS_GRAVES_DOENCA_TERMINAL, DESEMPREGO_PERDA_RENDA, EVENTOS_ALEATORIOS] 
+            enum: [FUNERAL, PRESTAMISTA, VIAGEM, EDUCACIONAL, DOTAL, ACIDENTES_PESSOAIS, VIDA, PERDA_CERTIFICADO_HABILITACAO_VOO_PCHV, DOENCAS_GRAVES_DOENCA_TERMINAL, DESEMPREGO_PERDA_RENDA, EVENTOS_ALEATORIOS] 
           coverages:
             type: array
             items:
@@ -321,7 +305,7 @@ components:
                   type: string
                   description: Regime Financeiro  
                   example: CAPITALIZACAO
-                  enum: [REPARTICAO_SIMPLES, REPARTICAO_CAPITAIS, CAPITALIZACAO ] 
+                  enum: [REPARTICAO_SIMPLES, REPARTICAO_CAPITAIS_COBERTURA, CAPITALIZACAO ] 
           assistanceType:        
             type: array
             description: Listagem dos serviços de assistências complementares disponíveis vinculados ao produto. Deve ser padronizada na proposta técnica submetida pela Estrutura Inicial de  Governança para observância comum por todas as sociedades participantes 
@@ -422,7 +406,7 @@ components:
             type: string
             description: Outros valores garantidos (Somente informado se Regime Financeiro for igual a Capitalizacao)
             example: SALDAMENTO
-            enum: [SALDAMENTO, BENEFICIO_PROLONGADO, NAO_SE_APLICA]
+            enum: [SALDAMENTO, SEGURO_PROLONGADO, NAO_SE_APLICA]
           allowPortability:
             type: boolean
             description: Permite Portabilidade (Somente informado se Regime Financeiro for igual a Capitalizacao)
@@ -576,7 +560,6 @@ components:
         - deductibleDays 
         - deductibleBRL    
         - excludedRisks
-        - excludedRisksURL
         - allowApartPurchase
         - indemnityPaymentMode
         - ageAdjustment
@@ -593,8 +576,8 @@ components:
           description: Listagem de tipos de frequência de pagamento de indenização para cada combinação de modalidade/cobertura do produto 
           items:
            type: string
-           example: DIARIA
-           enum: [PAGAMENTO_UNICO_OU_RENDA, DIARIA, PARCELA]
+           example: DIARIA_OU_PARCELA
+           enum: [PAGAMENTO_UNICO_OU_RENDA, DIARIA_OU_PARCELA]
         minValue:
           type: array
           description: Listagem do valor mínimo de cobertura (Capital Segurado), diária ou parcela aceito pela  sociedade para cada  combinação de modalidade/cobertura do produto. Em reais
@@ -699,8 +682,8 @@ components:
         pmbacUpdateIndex:
           type: string
           description: Índice utilizado na atualização da PMBaC.
-          example: IPC-FGV
-          enum: [IPC-FGV, IGP-DI-FGV, IPCA-IBGE, IGPM-FGV, INPC-IBGE, TR, OUTROS]
+          example: IPC_FGV
+          enum: [IPC_FGV, IGP_DI_FGV, IPCA_IBGE, IGPM_FGV, INPC_IBGE, TR, OUTROS]
         pmbacIndexOthers:
           type: string
           description: Campo de livre preenchimento para quando a opção escolhida para o índice utilizado na atualização da PMBaC (campo anterior) for OUTROS.
@@ -719,8 +702,8 @@ components:
         benefitUpdateIndex:
           type: string
           description: Índice utilizado na atualização do prêmio/contribuição e do capital segurado/ benefício,  caso critério de atualização por meio de índice  
-          example: IPC-FGV
-          enum: [IPC-FGV, IGP-DI-FGV, IPCA-IBGE, IGPM-FGV, INPC-IBGE, TR, OUTROS]
+          example: IPC_FGV
+          enum: [IPC_FGV, IGP_DI_FGV, IPCA_IBGE, IGPM_FGV, INPC_IBGE, TR, OUTROS]
         benefitIndexOthers:
           type: string
           description: Campo de livre preenchimento para quando a opção escolhida para o índice utilizado na atualização do prêmio/contribuição e do capital segurado/benefício (campo anterior) for OUTROS.
@@ -831,27 +814,27 @@ components:
           type: string
           description: URL da página atualmente requisitada
           pattern: ^(https:\/\/)(.*?)(\/open-insurance\/products-services\/v\d+)(\/person.*)?$
-          example: 'https://api.organizacao.com.br/open-insurance/products-services/v3/person'
+          example: 'https://api.organizacao.com.br/open-insurance/products-services/v4/person'
         first:
           type: string
           description: URL da primeira página de registros
           pattern: ^(https:\/\/)(.*?)(\/open-insurance\/products-services\/v\d+)(\/person.*)?$
-          example: 'https://api.organizacao.com.br/open-insurance/products-services/v3/person'
+          example: 'https://api.organizacao.com.br/open-insurance/products-services/v4/person'
         prev:
           type: string
           description: URL da página anterior de registros
           pattern: ^(https:\/\/)(.*?)(\/open-insurance\/products-services\/v\d+)(\/person.*)?$
-          example: 'https://api.organizacao.com.br/open-insurance/products-services/v3/person'
+          example: 'https://api.organizacao.com.br/open-insurance/products-services/v4/person'
         next:
           type: string
           description: URL da próxima página de registros
           pattern: ^(https:\/\/)(.*?)(\/open-insurance\/products-services\/v\d+)(\/person.*)?$
-          example: 'https://api.organizacao.com.br/open-insurance/products-services/v3/person'
+          example: 'https://api.organizacao.com.br/open-insurance/products-services/v4/person'
         last:
           type: string
           description: URL da última página de registros
           pattern: ^(https:\/\/)(.*?)(\/open-insurance\/products-services\/v\d+)(\/person.*)?$
-          example: 'https://api.organizacao.com.br/open-insurance/products-services/v3/person'
+          example: 'https://api.organizacao.com.br/open-insurance/products-services/v4/person'
 
     Meta:
       type: object
@@ -929,83 +912,31 @@ components:
         type: integer
         default: 10
         minimum: 1
-    cnpjNumber:
-      name: cnpjNumber
-      in: path
-      description: Número de CNPJ.
-      required: true
-      schema:
-        type: string
-        pattern: '^[A-Z0-9]{12}\d{2}$'
-    cache-Control:
-      name: cache-control
-      in: header
+  headers:
+    Cache-Control:
       description: Controle de cache para evitar que informações confidenciais sejam armazenadas em cache.
-      required: true
-      schema: 
-        type: string
-        pattern: '[\w\W\s]*'
-    content-Security-Policy:
-      name: Content-Security-Policy
-      in: header
-      description: Campo para proteção contra ataques clickjack do estilo - drag and drop.
       schema:
         type: string
-        pattern: '[\w\W\s]*'
-    content-Type:
-      name: content-Type
-      in: header
+    Content-Security-Policy:
+      description: Campo para proteção contra ataques clickjack.
+      schema:
+        type: string
+    Strict-Transport-Security:
+      description: Campo para exigir conexões por HTTPS.
+      schema:
+        type: string
+    X-Content-Type-Options:
+      description: Evita detecção de MIME inadequada.
+      schema:
+        type: string
+    X-Frame-Options:
+      description: Indica se o navegador deve renderizar um frame.
+      schema:
+        type: string
+    Content-Type:
       description: Especificar o tipo de conteúdo da resposta.
       schema:
         type: string
-        pattern: '[\w\W\s]*'
-    strict-Transport-Security:
-      name: Strict-Transport-Security
-      in: header
-      description: Campo para exigir conexões por HTTPS e proteger contra certificados falsificados.
-      schema:
-        type: string
-        pattern:  '[\w\W\s]*'
-    x-Content-Type-Options:
-      name: X-Content-Type-Options
-      in: header
-      description: Campo para evitar que navegadores executem a detecção de MIME e interpretem respostas como HTML de forma inadequada.
-      schema:
-        type: string
-        pattern: '[\w\W\s]*'
-    x-Frame-Options:
-      name: X-Frame-Options
-      in: header
-      description: Campo indica se o navegador deve ou não renderizar um frame.
-      schema:
-        type: string
-        pattern: '[\w\W\s]*'
-    x-v:
-      name: x-v
-      in: header
-      description: |
-        Versão do endpoint da API requisitado pelo cliente. O titular dos dados deve 
-        responder com a versão mais alta suportada entre x-min-v e x-v. Se o valor de 
-        x-min-v for igual ou maior que o valor de x-v, o cabeçalho x-min-v deve ser 
-        tratado como ausente. Se todas as versões solicitadas não forem suportadas, 
-        o titular dos dados deve responder com o código de status 406 Not Acceptable.
-      required: false
-      schema:
-        type: string
-      example: '2.1.3'
-    x-min-v:
-      name: x-min-v
-      in: header
-      description: |
-        Versão mínima do endpoint da API requisitado pelo cliente. O detentor dos dados 
-        deve responder com a versão mais alta suportada entre x-min-v e x-v. Se todas as 
-        versões solicitadas não forem suportadas, o titular dos dados deve responder com 
-        um código de status 406 Not Acceptable.
-      required: false
-      schema:
-        type: string
-      example: '2.0.0'
-  
   responses:
     UnprocessableEntity:
       description: 'O servidor entende o tipo de conteúdo da entidade da requisição, e a sintaxe da requisição está correta, mas não foi possível processar as instruções presentes.'
