@@ -1689,13 +1689,13 @@ components:
         updateIndex:
           description: Índice de Atualização da Cobertura
           type: string
-          example: IPC_FGV
+          example: IPC-FGV
           enum:
-            - IPC_FGV
-            - IGP_DI_FGV
-            - IPCA_IBGE
-            - IGPM_FGV
-            - INPC_IBGE
+            - IPC-FGV
+            - IGP-DI-FGV
+            - IPCA-IBGE
+            - IGPM-FGV
+            - INPC-IBGE
             - TR
             - OUTROS
         updateIndexDescription:
@@ -2866,11 +2866,24 @@ components:
       type: object
       description: Objeto que agrupa dados específicos da cotação.
       required:
+        - documentType
         - pensionRiskCoverage
         - complementaryIdentification
         - products
         - investorProfile
       properties:
+        documentType:
+          description: Tipo de documento emitido.
+          type: string
+          enum: [APOLICE_INDIVIDUAL, BILHETE, CERTIFICADO]
+        certificateId:
+          description: Identificador do certificado. Condicional ao campo documentType ser CERTIFICADO.
+          type: string
+          maxLength: 60
+        policyId:
+          description: Identificador da apólice individual ou do bilhete. Condicional ao campo documentType ser APOLICE_INDIVIDUAL ou BILHETE.
+          type: string
+          maxLength: 60
         isPortabilityHiringQuote:
           type: boolean
           description: Contratação será feita por uma portabilidade? Obrigatório, caso houver compartilhamento do plano ou caso exista plano compartilhado
@@ -2993,6 +3006,7 @@ components:
     GeneralPlanDataQuoteFirmInfoLifePension:
       type: object
       required:
+        - certificateId
         - EapcName
         - productName
         - isIntendedQualifiedProponents
@@ -3003,6 +3017,10 @@ components:
         - monetaryUpdateIndex
         - financialResultReversalPercentage
       properties:
+        certificateId:
+          description: Identificador do certificado de participante ou do certificado/apólice individual, caso contrato individual. Identificador do certificado, caso contrato coletivo.
+          type: string
+          maxLength: 60
         EapcName:
           type: string
           description: Nome da sociedade pertencente à marca. Nome da entidade aberta de previdência complementar ou sociedade seguradora autorizada a operar planos de previdência complementar aberta.
@@ -3065,7 +3083,7 @@ components:
           type: string
           enum:
             - IPC_FGV
-            - IGP_DI_FGV
+            - IGP_DI-FGV
             - IPCA_IBGE
             - IGPM_FGV
             - INPC_IBGE

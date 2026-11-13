@@ -59,7 +59,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/RequestPensionWithdrawal'
+              $ref: '#/components/schemas/RequestPensionWithdrawalLead'
       responses:
         '201':
           $ref: '#/components/responses/OKResponseWithdrawalRequestLead'
@@ -111,7 +111,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/RequestPensionWithdrawal'
+              $ref: '#/components/schemas/RequestPensionWithdrawalFirm'
         description: Payload para criação de Resgate.
         required: true
       responses:
@@ -196,32 +196,22 @@ paths:
   
 components:
   schemas:
-    RequestPensionWithdrawal:
-      type: object
-      required:
-        - data
-      properties:
-        data:
-          type: object
-          description: Objeto contendo dados de resgate.
-          required:
-            - generalInfo
-            - withdrawalInfo
-          properties:
-            generalInfo:
-              $ref: '#/components/schemas/GeneralInfoPensionWithdrawal'
-            withdrawalInfo:
-              $ref: '#/components/schemas/WithdrawalInfoPensionWithdrawal'
-            withdrawalCustomData:
-              $ref: '#/components/schemas/WithdrawalCustomDataPension'
     GeneralInfoPensionWithdrawal:
       type: object
       required:
-        - certificateId
+        - documentType
         - productName
       properties:
+        documentType:
+          description: Tipo de documento emitido.
+          type: string
+          enum: [CERTIFICADO_INDIVIDUAL, CERTIFICADO_CONTRATO_COLETIVO]
         certificateId:
-          description: "Número do certificado/apólice individual, caso contrato individual. Número do certificado, caso contrato coletivo"
+          description: "Identificador do certificado (contrato coletivo). Condicional ao campo documentType ser CERTIFICADO_CONTRATO_COLETIVO." 
+          type: string
+          maxLength: 60
+        personalCertificateId:
+          description: "Identificador do certificado individual. Condicional ao campo documentType ser CERTIFICADO_INDIVIDUAL."
           type: string
           maxLength: 60
         productName:
@@ -231,10 +221,6 @@ components:
           example: Produto A Previdência
     WithdrawalInfoPensionWithdrawal:
       type: object
-      required:
-        - withdrawalType
-        - withdrawalReason
-        - pmbacAmount
       properties:
         withdrawalType:
           description: Tipo de resgate. Este valor será submetido a análise e estará sujeito as alterações (aplicação de impostos, variação de saldos, e condições contratuais).
@@ -267,7 +253,46 @@ components:
           description: Valor PMBaC (fim do mês). O valor exibido refere-se ao mês anterior, podendo estar sujeito a variações.
           allOf:
             - $ref: '#/components/schemas/AmountDetails'
-    ResponsePensionWithdrawal:
+
+    RequestPensionWithdrawalFirm:       
+      type: object
+      required:
+        - data
+      properties:
+        data:
+          type: object
+          description: Objeto contendo dados de resgate.
+          required:
+            - generalInfo
+            - withdrawalInfo
+          properties:
+            generalInfo:
+              $ref: '#/components/schemas/GeneralInfoPensionWithdrawal'
+            withdrawalInfo:
+              allOf:
+                - $ref: '#/components/schemas/WithdrawalInfoPensionWithdrawal'
+                - required: [withdrawalType, withdrawalReason, pmbacAmount]
+            withdrawalCustomData:
+              $ref: '#/components/schemas/WithdrawalCustomDataPension'
+    RequestPensionWithdrawalLead:
+      type: object
+      required:
+        - data
+      properties:
+        data:
+          type: object
+          description: Objeto contendo dados de resgate.
+          required:
+            - generalInfo
+            - withdrawalInfo
+          properties:
+            generalInfo:
+              $ref: '#/components/schemas/GeneralInfoPensionWithdrawal'
+            withdrawalInfo:
+              $ref: '#/components/schemas/WithdrawalInfoPensionWithdrawal'
+            withdrawalCustomData:
+              $ref: '#/components/schemas/WithdrawalCustomDataPension'
+    ResponsePensionWithdrawalFirm:
       type: object
       required:
         - data
@@ -296,7 +321,14 @@ components:
             generalInfo:
               $ref: '#/components/schemas/GeneralInfoPensionWithdrawal'
             withdrawalInfo:
-              $ref: '#/components/schemas/WithdrawalInfoPensionWithdrawal'
+              allOf:
+                - $ref: '#/components/schemas/WithdrawalInfoPensionWithdrawal'
+                - required: [withdrawalType, withdrawalReason, pmbacAmount]
+            withdrawalDeclineReason:
+              description: Motivo de não prosseguir com o resgate. Condicional ao resgate negado. Para maiores detalhes entre em contato com a nossa central de atendimento.
+              type: string
+              maxLength: 500
+              pattern: ^[\w\W\s]*$
             contactChannel:
               type: string
               description: Canal de contato da instituição.
@@ -1246,7 +1278,7 @@ components:
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/ResponsePensionWithdrawal'
+            $ref: '#/components/schemas/ResponsePensionWithdrawalFirm'
     CreatedCapitalizationTitleWithdrawal:
       description: Solicitação de Resgate de Título de Capitalização enviado com sucesso
       headers:
